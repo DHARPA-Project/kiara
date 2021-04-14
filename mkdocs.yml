@@ -1,0 +1,58 @@
+site_name: kiara
+repo_url: https://github.com/DHARPA-Project/kiara
+site_author: Markus Binsteiner
+docs_dir: docs
+site_dir: build/site
+
+theme:
+  name: material
+  features:
+    - navigation.instant
+    - navigation.tracking
+
+markdown_extensions:
+- attr_list
+- admonition
+- def_list
+- codehilite:
+    guess_lang: false
+- toc:
+    permalink: true
+    toc_depth: 3
+- pymdownx.snippets:
+    base_path: docs
+- mkdocs-click
+- pymdownx.highlight
+- pymdownx.superfences
+
+nav:
+- Home: index.md
+- Install: install.md
+- Usage: usage.md
+- Modules:
+    - Overview: modules/index.md
+    - Core modules: modules/core_modules.md
+    - Pipeline modules: modules/pipeline_modules.md
+- Development:
+    - Overview: development/index.md
+    - Entities:
+      - Overview: development/entities/index.md
+      - Values / Data: development/entities/values.md
+      - Modules / Pipelines: development/entities/modules.md
+      - Events: development/entities/events.md
+
+plugins:
+- search
+- mkdocstrings:
+    default_handler: python
+    watch:
+      - "src"
+- frkl-docgen:
+    main_module: "kiara"
+- macros:
+   modules:
+     - frkl.project.meta.documentation.mkdocs_macros_frkl
+     - kiara.doc.mkdocs_macros_kiara
+- gen-files:
+    scripts:
+      - scripts/documentation/gen_schemas.py

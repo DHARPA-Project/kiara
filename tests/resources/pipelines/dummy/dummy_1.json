@@ -1,0 +1,26 @@
+{
+  "steps": [
+    {
+      "module_type": "dummy",
+      "step_id": "and_1",
+      "module_config": {
+        "input_schema": {
+          "a": {
+            "type": "integer"
+          }
+        },
+        "output_schema": {
+          "x": {
+            "type": "integer"
+          },
+          "y": {
+            "type": "string"
+          },
+          "z": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  ]
+}

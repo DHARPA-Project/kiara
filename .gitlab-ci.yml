@@ -1,0 +1,38 @@
+---
+variables:
+  GIT_STRATEGY: fetch
+  GIT_DEPTH: 0
+  GIT_SUBMODULE_STRATEGY: recursive
+  LM_PYTHON_VERSION: "2"
+  DS_PYTHON_VERSION: "3"
+  PIP_EXTRA_INDEX_URL: "https://pkgs.frkl.io/frkl/dev"
+
+# include:
+#  - template: Dependency-Scanning.gitlab-ci.yml
+#  - template: License-Management.gitlab-ci.yml
+
+image: python:3.8
+
+stages:
+  - test
+  - build
+  - build_windows
+  - release
+
+include:
+  - local: '/ci/gitlab/test/tox.yml'
+  - local: '/ci/gitlab/test/mypy.yml'
+  - local: '/ci/gitlab/test/flake8.yml'
+  - local: '/ci/gitlab/test/coverage.yml'
+  - local: '/ci/gitlab/test/safety.yml'
+  - local: '/ci/gitlab/test/commitlint.yml'
+  - local: '/ci/gitlab/build/docs.yml'
+  - local: '/ci/gitlab/build/pkg.yml'
+  - local: '/ci/gitlab/build/binary_linux.yml'
+  - local: '/ci/gitlab/build/binary_windows.yml'
+#  - local: '/ci/gitlab/release/binaries.yml'
+#  - local: '/ci/gitlab/release/container.yml'
+
+
+pages:
+  extends: .kiara_build_docs

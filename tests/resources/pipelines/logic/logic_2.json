@@ -1,0 +1,24 @@
+{
+  "steps": [
+    {
+      "module_type": "and",
+      "step_id": "and_1"
+    },
+    {
+      "module_type": "and",
+      "step_id": "and_2",
+      "input_links": {
+        "a": "and_1.y"
+      }
+    }
+  ],
+  "input_aliases": {
+    "and_1__a": "a",
+    "and_1__b": "b",
+    "and_2__b": "c"
+  },
+  "output_aliases": {
+    "and_2__y": "y"
+  },
+  "doc": "Returns 'true' only if all 3 inputs are also 'true'."
+}

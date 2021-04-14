@@ -1,0 +1,11 @@
+{
+  "project": {
+    "full_name": "Markus Binsteiner",
+    "email": "markus.binsteiner@uni.lu",
+    "project_name": "kiara",
+    "exe_name": "kiara",
+    "project_slug": "kiara",
+    "project_main_module": "kiara",
+    "project_short_description": "kiara"
+  }
+}

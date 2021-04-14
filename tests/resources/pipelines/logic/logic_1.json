@@ -1,0 +1,9 @@
+{
+  "steps": [
+    {
+      "module_type": "and",
+      "step_id": "and_1"
+    }
+  ],
+  "doc": "Simple example pipeline, wrapping a single 'and' module."
+}

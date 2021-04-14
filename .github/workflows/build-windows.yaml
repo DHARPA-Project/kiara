@@ -1,0 +1,78 @@
+name: "windows tests & binary build for 'kiara'"
+# This workflow is triggered on pushes to the repository.
+on: [push]
+
+
+jobs:
+  test-windows:
+    name: pytest on windows
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python_version: [3.6, 3.7, 3.8, 3.9]
+    steps:
+      - name: "Set up Python ${{ matrix.python_version }}"
+        uses: actions/setup-python@v2
+        with:
+          python-version: "${{ matrix.python_version }}"
+      - uses: actions/checkout@v2
+      - name: install requirements
+        run: pip install -U -e '.[dev_testing,all]'
+      - name: Test with pytest
+        run: make test
+
+  mypy-windows:
+    name: mypy check on windows
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python_version: [3.6, 3.7, 3.8, 3.9]
+    steps:
+      - name: "Set up Python ${{ matrix.python_version }}"
+        uses: actions/setup-python@v2
+        with:
+          python-version: "${{ matrix.python_version }}"
+      - uses: actions/checkout@v2
+      - name: install requirements
+        run: pip install -U -e '.[dev_testing,all]'
+      - name: Test with mypy
+        run: make mypy
+
+  flake8-windows:
+    name: flake8 on windows
+    runs-on: windows-latest
+    steps:
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - uses: actions/checkout@v2
+      - name: install requirements
+        run: pip install -U -e '.[dev_testing,all]'
+      - name: Test with flake8
+        run: make flake
+
+  build-windows:
+    name: build windows binary
+    runs-on: windows-latest
+    needs:
+      - test-windows
+      - mypy-windows
+      - flake8-windows
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.9' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+          architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+      - name: download build script
+        run: C:\msys64\usr\bin\wget.exe https://gitlab.com/frkl/frkl.project/-/raw/develop/scripts/build-binary/build.sh && chmod +x build.sh
+      - name: download spec file
+        run: C:\msys64\usr\bin\wget.exe https://gitlab.com/frkl/frkl.project/-/raw/develop/scripts/build-binary/onefile.spec
+      - name: build_binary
+        run: "bash ./build.sh --python-type system"
+      - name: Archive windows binary
+        uses: actions/upload-artifact@v1
+        with:
+          name: kiara
+          path: dist/msys/kiara.exe

@@ -1,0 +1,15 @@
+include AUTHORS.rst
+include CONTRIBUTING.rst
+include HISTORY.rst
+include LICENSE
+include README.md
+
+include src/kiara/_frkl/_frkl.json
+include src/kiara/py.typed
+
+recursive-include tests *
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+
+recursive-include docs *.md *.jpg *.png *.gif
+recursive-include src/kiara/resources *

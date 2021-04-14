@@ -1,0 +1,70 @@
+default_language_version:
+    python: python3
+
+repos:
+
+- repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
+  rev: 'v4.0.0'
+  hooks:
+    - id: commitlint
+      stages: [commit-msg]
+      additional_dependencies: ['@commitlint/config-conventional']
+
+- repo: https://github.com/asottile/setup-cfg-fmt
+  rev: 'v1.16.0'
+  hooks:
+    - id: setup-cfg-fmt
+
+- repo: https://github.com/pycqa/isort
+  rev: 5.7.0
+  hooks:
+    - id: isort
+
+- repo: https://github.com/psf/black
+  rev: 20.8b1
+  hooks:
+    - id: black
+
+- repo: https://github.com/myint/autoflake
+  rev: 'v1.4'
+  hooks:
+    - id: autoflake
+      args: ['--in-place', '--remove-all-unused-imports']
+      # args: ['--in-place', '--remove-all-unused-imports', '--remove-unused-variable']
+
+- repo: https://gitlab.com/pycqa/flake8
+  rev: '3.8.4'  # pick a git hash / tag to point to
+  hooks:
+    - id: flake8
+
+- repo: https://github.com/pre-commit/mirrors-mypy
+  rev: 'v0.812'  # Use the sha / tag you want to point at
+  hooks:
+  - id: mypy
+    files: "^src/"
+    pass_filenames: true
+    args: ["--config-file", "setup.cfg"]
+    additional_dependencies: [pydantic>=1.8.0, rich>=10.0.0, ruamel.yaml]
+
+
+- repo: git://github.com/pre-commit/pre-commit-hooks
+  rev: 'v3.4.0'
+  hooks:
+  - id: trailing-whitespace
+    exclude: 'setup.cfg'
+  - id: check-added-large-files
+  - id: check-ast
+  - id: check-json
+  - id: check-merge-conflict
+  - id: check-xml
+  - id: check-yaml
+    exclude: 'tests/\*'
+  - id: debug-statements
+  - id: end-of-file-fixer
+    exclude: '.*.json'
+  - id: requirements-txt-fixer
+  - id: fix-encoding-pragma
+  - id: mixed-line-ending
+    args: ['--fix=no']
+  #- id: no-commit-to-branch
+  #  args: [--branch, master]

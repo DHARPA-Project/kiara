@@ -318,19 +318,19 @@ class Pipeline(object):
             )
             self._controller.pipeline_inputs_changed(event_pi)
 
-        if updated_inputs:
-            event_si = StepInputEvent(
-                pipeline_id=self._structure.pipeline_id,
-                updated_step_inputs=updated_inputs,
-            )
-            self._controller.step_inputs_changed(event_si)
-
         if updated_outputs:
             event_so = StepOutputEvent(
                 pipeline_id=self._structure.pipeline_id,
                 updated_step_outputs=updated_outputs,
             )
             self._controller.step_outputs_changed(event_so)
+
+        if updated_inputs:
+            event_si = StepInputEvent(
+                pipeline_id=self._structure.pipeline_id,
+                updated_step_inputs=updated_inputs,
+            )
+            self._controller.step_inputs_changed(event_si)
 
         if updated_pipeline_outputs:
             event_po = PipelineOutputEvent(

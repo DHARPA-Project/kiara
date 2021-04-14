@@ -69,12 +69,12 @@ Step inputs changed, new values:
   - step 'and':
       b: False
 Executing step: and
-Step inputs changed, new values:
-  - step 'not':
-      a: False
 Step outputs changed, new values:
   - step 'and':
       y: False
+Step inputs changed, new values:
+  - step 'not':
+      a: False
 Executing step: not
 Step outputs changed, new values:
   - step 'not':

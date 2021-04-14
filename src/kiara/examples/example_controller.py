@@ -47,6 +47,10 @@ def execute_pipeline_with_example_controller():
     controller = ExampleController()
     workflow = kiara.create_workflow("nand", controller=controller)
 
+    # note, outside of example code it's recommended to use
+    # the 'workflow.inputs.set_values(...)' method to set
+    # multiple values at the same time, because in most cases
+    # that will be more efficient
     workflow.inputs.a = True
     workflow.inputs.b = False
 

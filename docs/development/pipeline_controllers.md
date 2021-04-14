@@ -57,7 +57,7 @@ Then, executing code like this:
 {{ get_src_of_object('kiara.examples.example_controller.execute_pipeline_with_example_controller') }}
 ```
 
-will yield output like:
+will yield output similar to:
 
 ```
 Pipeline inputs changed: ['a']

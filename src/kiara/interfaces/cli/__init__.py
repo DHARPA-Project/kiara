@@ -41,7 +41,7 @@ def cli(ctx):
 @cli.group()
 @click.pass_context
 def module(ctx):
-    pass
+    """Information about available modules, and details about them."""
 
 
 @module.command(name="list")
@@ -82,7 +82,7 @@ def list_modules(ctx, only_pipeline_modules: bool, only_core_modules: bool):
 @click.argument("module_type", nargs=1, required=True)
 @click.pass_context
 def describe_module_type(ctx, module_type: str):
-    """Print details of a (PYthon) module."""
+    """Print details of a (Python) module."""
 
     kiara_obj = ctx.obj["kiara"]
 
@@ -151,7 +151,7 @@ def step(ctx):
 
 
 @step.command("describe")
-@click.option("--module-type", "-t", nargs=1)
+@click.option("--module-type", "-t", required=True)
 @click.option(
     "--config",
     "-c",

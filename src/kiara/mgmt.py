@@ -15,6 +15,7 @@ from kiara.modules.pipelines import create_pipeline_class
 from kiara.utils import find_kiara_modules, get_data_from_file
 
 if typing.TYPE_CHECKING:
+    from kiara import Kiara
     from kiara.config import KiaraModuleConfig
     from kiara.module import KiaraModule
     from kiara.pipeline.module import PipelineModule
@@ -46,6 +47,7 @@ class ModuleManager(abc.ABC):
 
     def create_module(
         self,
+        kiara: "Kiara",
         id: str,
         module_type: str,
         module_config: typing.Mapping[str, typing.Any] = None,
@@ -54,7 +56,9 @@ class ModuleManager(abc.ABC):
 
         module_cls = self.get_module_class(module_type)
 
-        module = module_cls(id=id, parent_id=parent_id, module_config=module_config)
+        module = module_cls(
+            id=id, parent_id=parent_id, module_config=module_config, kiara=kiara
+        )
         return module
 
 

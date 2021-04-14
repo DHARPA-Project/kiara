@@ -33,6 +33,9 @@ nav:
     - Overview: modules/index.md
     - Core modules: modules/core_modules.md
     - Pipeline modules: modules/pipeline_modules.md
+- Data:
+    - Overview: data/index.md
+    - Data registry: data/registry.md
 - Development:
     - Overview: development/index.md
     - Entities:

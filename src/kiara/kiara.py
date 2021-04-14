@@ -3,10 +3,14 @@
 """Main module."""
 
 import logging
+import os
 import typing
 
+from kiara.config import KiaraWorkflowConfig
 from kiara.data.registry import DataRegistry
 from kiara.mgmt import ModuleManager, PipelineModuleManager, PythonModuleManager
+from kiara.utils import get_auto_workflow_alias, get_data_from_file
+from kiara.workflow import KiaraWorkflow
 
 if typing.TYPE_CHECKING:
     from kiara.module import KiaraModule
@@ -120,4 +124,51 @@ class Kiara(object):
             parent_id=parent_id,
             module_type=module_type,
             module_config=module_config,
+            kiara=self,
         )
+
+    def create_workflow(
+        self,
+        config: typing.Union[KiaraWorkflowConfig, typing.Mapping[str, typing.Any], str],
+        workflow_id: str = None,
+    ):
+
+        if isinstance(config, typing.Mapping):
+            workflow_config: KiaraWorkflowConfig = KiaraWorkflowConfig(**config)
+
+        elif isinstance(config, str):
+            if config == "pipeline":
+                raise Exception(
+                    "Can't create workflow from 'pipeline' module type without further configuration."
+                )
+
+            if config in self.available_module_types:
+                workflow_config = KiaraWorkflowConfig(module_type=config)
+
+            elif os.path.isfile(os.path.expanduser(config)):
+                path = os.path.expanduser(config)
+                workflow_config_data = get_data_from_file(path)
+                workflow_config = KiaraWorkflowConfig(
+                    module_config=workflow_config_data, module_type="pipeline"
+                )
+            else:
+                raise Exception(
+                    f"Can't create workflow config from string: {config}. Value either needs to be a (registered) module type name, or a path to a file."
+                )
+        elif isinstance(config, KiaraWorkflowConfig):
+            workflow_config = config
+        else:
+            # raise TypeError(f"Invalid type '{type(workflow_config)}' for workflow configuration: {workflow_config}")
+            raise TypeError(
+                f"Invalid type '{type(config)}' for workflow configuration."
+            )
+
+        if not workflow_id:
+            workflow_id = get_auto_workflow_alias(
+                workflow_config.module_type, use_incremental_ids=True
+            )
+
+        workflow = KiaraWorkflow(
+            workflow_id=workflow_id, config=workflow_config, kiara=self
+        )
+        return workflow

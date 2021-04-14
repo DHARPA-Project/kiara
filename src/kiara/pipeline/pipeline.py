@@ -21,13 +21,15 @@ from kiara.events import (
     StepInputEvent,
     StepOutputEvent,
 )
-from kiara.kiara import Kiara
 from kiara.pipeline.controller import BatchController, PipelineController
 from kiara.pipeline.structure import (
     PipelineStep,
     PipelineStructure,
     PipelineStructureDesc,
 )
+
+if typing.TYPE_CHECKING:
+    from kiara.kiara import Kiara
 
 log = logging.getLogger("kiara")
 
@@ -50,6 +52,7 @@ class Pipeline(object):
         constants: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         controller: typing.Optional[PipelineController] = None,
         data_registry: typing.Optional[DataRegistry] = None,
+        kiara: typing.Optional["Kiara"] = None,
     ):
 
         self._id: str = str(uuid.uuid4())
@@ -63,12 +66,18 @@ class Pipeline(object):
 
         self._status: StepStatus = StepStatus.STALE
 
+        if kiara is None:
+            from kiara import Kiara
+
+            kiara = Kiara.instance()
+        self._kiara: Kiara = kiara
+
         if constants is None:
             constants = {}
         self._constants: typing.Mapping[str, typing.Any] = constants
 
         if data_registry is None:
-            data_registry = Kiara.instance().data_registry
+            data_registry = self._kiara.data_registry
         self._data_registry: DataRegistry = data_registry
 
         self._init_values()

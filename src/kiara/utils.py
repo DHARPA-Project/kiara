@@ -105,9 +105,7 @@ def find_kiara_modules() -> typing.Dict[str, typing.Type["KiaraModule"]]:
 
     log2 = logging.getLogger("stevedore")
     out_hdlr = logging.StreamHandler(sys.stdout)
-    out_hdlr.setFormatter(
-        logging.Formatter("freckles connector plugin error -> %(message)s")
-    )
+    out_hdlr.setFormatter(logging.Formatter("kiara module plugin error -> %(message)s"))
     out_hdlr.setLevel(logging.INFO)
     log2.addHandler(out_hdlr)
     log2.setLevel(logging.INFO)

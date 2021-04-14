@@ -3,13 +3,12 @@ import inspect
 import textwrap
 import typing
 from abc import abstractmethod
-from pydantic import BaseModel, Extra, Field, root_validator
+from pydantic import BaseModel, Extra, Field, PrivateAttr, root_validator
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.syntax import Syntax
 from rich.table import Table
 
-from kiara import Kiara
 from kiara.config import KIARA_CONFIG, KiaraModuleConfig
 from kiara.data.values import ValueSchema, ValueSet
 from kiara.utils import (
@@ -17,6 +16,10 @@ from kiara.utils import (
     create_table_from_config_class,
     get_doc_for_module_class,
 )
+
+if typing.TYPE_CHECKING:
+    from kiara import Kiara
+
 
 yaml = StringYAML()
 
@@ -57,6 +60,7 @@ class StepOutputs(object):
     """
 
     def __init__(self, outputs: ValueSet):
+        super().__setattr__("_outputs_staging", {})
         super().__setattr__("_outputs", outputs)
 
     def __getattr__(self, key):
@@ -85,7 +89,11 @@ class StepOutputs(object):
                 f"Can't set output value(s), invalid key name(s): {', '.join(wrong)}. Available: {av}"
             )
 
-        self._outputs.update(values)
+        self._outputs_staging.update(values)
+
+    def _sync(self):
+
+        self._outputs.update(self._outputs_staging)
 
 
 class KiaraModule(typing.Generic[KIARA_CONFIG]):
@@ -125,10 +133,15 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
             None, KIARA_CONFIG, typing.Mapping[str, typing.Any]
         ] = None,
         meta: typing.Mapping[str, typing.Any] = None,
+        kiara: typing.Optional["Kiara"] = None,
     ):
 
         self._id: str = id
         self._parent_id = parent_id
+
+        if kiara is None:
+            kiara = Kiara.instance()
+        self._kiara = kiara
 
         if isinstance(module_config, KiaraModuleConfig):
             self._config: KIARA_CONFIG = module_config  # type: ignore
@@ -247,6 +260,8 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
 
         self.process(inputs=input_wrap, outputs=output_wrap)
 
+        output_wrap._sync()
+
     @abstractmethod
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
         """Abstract method to implement by child classes, should be a pure, idempotent function that uses the values from ``inputs``, and stores results in the provided ``outputs`` object.
@@ -321,9 +336,20 @@ class ModuleInfo(BaseModel):
     config_cls: typing.Type[KiaraModuleConfig] = Field(
         description="The configuration class for this module."
     )
+    _kiara: "Kiara" = PrivateAttr()
+
+    def __init__(self, **data):  # type: ignore
+        kiara = data.get("_kiara", None)
+        if kiara is None:
+            kiara = Kiara.instance()
+            data["_kiara"] = kiara
+        self._kiara: Kiara = kiara
+        super().__init__(**data)
 
     @root_validator(pre=True)
     def ensure_type(cls, values):
+
+        kiara = values.pop("_kiara")
 
         module_type = values.pop("module_type", None)
         assert module_type is not None
@@ -333,7 +359,7 @@ class ModuleInfo(BaseModel):
                 f"Only 'module_type' allowed in constructor, not: {values.keys()}"
             )
 
-        module_cls = Kiara.instance().get_module_class(module_type)
+        module_cls = kiara.get_module_class(module_type)
         values["module_type"] = module_type
         values["module_cls"] = module_cls
 

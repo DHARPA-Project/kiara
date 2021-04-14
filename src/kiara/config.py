@@ -15,7 +15,7 @@ from kiara.data.values import StepValueAddress
 from kiara.utils import get_data_from_file
 
 if typing.TYPE_CHECKING:
-    from kiara import PipelineStructure
+    from kiara import Kiara, PipelineStructure
 
 
 class PipelineStepConfig(BaseModel):
@@ -135,7 +135,55 @@ KIARA_CONFIG = typing.TypeVar("KIARA_CONFIG", bound=KiaraModuleConfig)
 
 
 class PipelineModuleConfig(KiaraModuleConfig):
-    """A class to hold the configuration for a [PipelineModule][kiara.pipeline.module.PipelineModule]."""
+    """A class to hold the configuration for a [PipelineModule][kiara.pipeline.module.PipelineModule].
+
+    Examples:
+
+        Configuration for a pipeline module that functions as a ``nand`` logic gate (in Python):
+
+        ``` python
+        and_step = PipelineStepConfig(module_type="and", step_id="and")
+        not_step = PipelineStepConfig(module_type="not", step_id="not", input_links={"a": ["and.y"]}
+        nand_p_conf = PipelineModuleConfig(doc="Returns 'False' if both inputs are 'True'.",
+                            steps=[and_step, not_step],
+                            input_aliases={
+                                "and__a": "a",
+                                "and__b": "b"
+                            },
+                            output_aliases={
+                                "not__y": "y"
+                            }}
+        ```
+
+        Or, the same thing in json:
+
+        ``` json
+        {
+          "module_type_name": "nand",
+          "doc": "Returns 'False' if both inputs are 'True'.",
+          "steps": [
+            {
+              "module_type": "and",
+              "step_id": "and"
+            },
+            {
+              "module_type": "not",
+              "step_id": "not",
+              "input_links": {
+                "a": "and.y"
+              }
+            }
+          ],
+          "input_aliases": {
+            "and__a": "a",
+            "and__b": "b"
+          },
+          "output_aliases": {
+            "not__y": "y"
+          }
+        }
+        ```
+    """
 
     class Config:
         extra = Extra.allow
@@ -147,11 +195,11 @@ class PipelineModuleConfig(KiaraModuleConfig):
     )
     input_aliases: typing.Dict[str, str] = Field(
         default_factory=dict,
-        description="A map of input aliases, with the calculated (<step_id>__<input_name> -- double underscore!) name as key, and a string (the resulting workflow input alias) as value",
+        description="A map of input aliases, with the calculated (<step_id>__<input_name> -- double underscore!) name as key, and a string (the resulting workflow input alias) as value.",
     )
     output_aliases: typing.Dict[str, str] = Field(
         default_factory=dict,
-        description="A map of output aliases, with the calculated (<step_id>__<output_name> -- double underscore!) name as key, and a string (the resulting workflow output alias) as value",
+        description="A map of output aliases, with the calculated (<step_id>__<output_name> -- double underscore!) name as key, and a string (the resulting workflow output alias) as value.",
     )
     doc: str = Field(
         default="-- n/a --", description="Documentation about what the pipeline does."
@@ -161,14 +209,20 @@ class PipelineModuleConfig(KiaraModuleConfig):
         default_factory=dict, description="Metadata for this workflow."
     )
 
-    def create_structure(self, parent_id: str) -> "PipelineStructure":
-        from kiara import PipelineStructure
+    def create_structure(
+        self, parent_id: str, kiara: typing.Optional["Kiara"] = None
+    ) -> "PipelineStructure":
+        from kiara import Kiara, PipelineStructure
+
+        if kiara is None:
+            kiara = Kiara.instance()
 
         ps = PipelineStructure(
             parent_id=parent_id,
             steps=self.steps,
             input_aliases=self.input_aliases,
             output_aliases=self.output_aliases,
+            kiara=kiara,
         )
         return ps
 

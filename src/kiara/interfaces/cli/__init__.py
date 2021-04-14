@@ -11,7 +11,6 @@ from kiara import Kiara
 from kiara.module import ModuleInfo
 from kiara.pipeline.module import PipelineModuleInfo
 from kiara.utils import module_config_from_cli_args
-from kiara.workflow import KiaraWorkflow
 
 # from importlib.metadata import entry_points
 
@@ -34,18 +33,8 @@ click.anyio_backend = "asyncio"
 def cli(ctx):
     """Main cli entry-point, contains all the sub-commands."""
 
-    # test_pipelines_folder = os.path.abspath(
-    #     os.path.join(
-    #         os.path.dirname(__file__),
-    #         "..",
-    #         "..",
-    #         "..",
-    #         "..",
-    #         "tests/resources/pipelines",
-    #     )
-    # )
-    # test_pipeline_module_manager = PipelineModuleManager(test_pipelines_folder)
-    # Kiara.instance().add_module_manager(test_pipeline_module_manager)
+    ctx.obj = {}
+    ctx.obj["kiara"] = Kiara.instance()
 
 
 @cli.group()
@@ -75,12 +64,14 @@ def list_modules(ctx, only_pipeline_modules: bool, only_core_modules: bool):
         )
         sys.exit(1)
 
+    kiara_obj = ctx.obj["kiara"]
+
     if only_pipeline_modules:
-        m_list = Kiara.instance().available_pipeline_module_types
+        m_list = kiara_obj.available_pipeline_module_types
     elif only_core_modules:
-        m_list = Kiara.instance().available_non_pipeline_module_types
+        m_list = kiara_obj.available_non_pipeline_module_types
     else:
-        m_list = Kiara.instance().available_module_types
+        m_list = kiara_obj.available_module_types
 
     for name in m_list:
         rich_print(name)
@@ -92,7 +83,9 @@ def list_modules(ctx, only_pipeline_modules: bool, only_core_modules: bool):
 def describe_module_type(ctx, module_type: str):
     """Print details of a (PYthon) module."""
 
-    m_cls = Kiara.instance().get_module_class(module_type)
+    kiara_obj = ctx.obj["kiara"]
+
+    m_cls = kiara_obj.get_module_class(module_type)
     if module_type == "pipeline" or not m_cls.is_pipeline():
         info = ModuleInfo(module_type=module_type)
     else:
@@ -117,8 +110,11 @@ def pipeline(ctx):
 )
 @click.pass_context
 def data_flow_graph(ctx, pipeline_module_type: str, full: bool):
+    """Print the data flow graph for a pipeline structure."""
 
-    m_cls = Kiara.instance().get_module_class(pipeline_module_type)
+    kiara_obj = ctx.obj["kiara"]
+
+    m_cls = kiara_obj.get_module_class(pipeline_module_type)
     if not m_cls.is_pipeline():
         rich_print()
         rich_print(f"Module '{pipeline_module_type}' is not a pipeline-type module.")
@@ -133,8 +129,11 @@ def data_flow_graph(ctx, pipeline_module_type: str, full: bool):
 @click.argument("pipeline_module_type", nargs=1)
 @click.pass_context
 def execution_graph(ctx, pipeline_module_type: str):
+    """Print the execution graph for a pipeline structure."""
 
-    m_cls = Kiara.instance().get_module_class(pipeline_module_type)
+    kiara_obj = ctx.obj["kiara"]
+
+    m_cls = kiara_obj.get_module_class(pipeline_module_type)
     if not m_cls.is_pipeline():
         rich_print()
         rich_print(f"Module '{pipeline_module_type}' is not a pipeline-type module.")
@@ -161,10 +160,14 @@ def step(ctx):
 )
 @click.pass_context
 def describe_step(ctx, module_type: str, config: typing.Iterable[typing.Any]):
+    """Describe a step.
+
+    A step, in this context, is basically a an instantiated module class, incl. (optional) config."""
 
     config = module_config_from_cli_args(*config)
 
-    module_obj = Kiara.instance().create_module(
+    kiara_obj = ctx.obj["kiara"]
+    module_obj = kiara_obj.create_module(
         id=module_type, module_type=module_type, module_config=config
     )
     rich_print()
@@ -204,50 +207,18 @@ def dev(ctx):
     #     "/home/markus/projects/dharpa/kiara/tests/resources/workflows/dummy/dummy_1_delay.json"
     # )
 
-    wf = KiaraWorkflow("xor")
+    kiara_obj = ctx.obj["kiara"]
 
-    # pp(wf.pipeline.get_current_state().__dict__)
+    wf = kiara_obj.create_workflow("xor")
+
     print(wf.pipeline.get_current_state().json())
 
-    # wf = KiaraWorkflow("logic_1")
-    # wf = KiaraWorkflow("and")
-    # import pp
-    # pp(wf._workflow_config.__dict__)
-    # print("XXXXXXXXXXX")
-    # print(wf.structure.data_flow_graph.nodes)
-    # print(graph_to_ascii(wf.structure.data_flow_graph))
-    # pp(wf.__dict__)
-
-    # cls = kiara.get_module_class("logic_1")
-    # print(cls)
-
-    # m = cls(id="test")
-    # print(wf.input_names)
-    # print(wf.output_names)
-
-    # wc = KiaraWorkflowConfig.from_file(
-    #     "/home/markus/projects/dharpa/kiara/tests/resources/workflows/logic_2.json"
-    # )
-    # # wc = KiaraWorkflowConfig(module_type="and")
-    # wf = KiaraWorkflow(workflow_config=wc)
-    #
-    # # print_ascii_graph(wf.structure.data_flow_graph_simple)
-
-    # wf.inputs.and_1__a = True
-    # wf.inputs.and_1__b = True
-    # wf.inputs.and_2__b = True
-    # wf.inputs.and_1__a = True
     wf.inputs.a = True
     wf.inputs.b = False
 
-    # print(wf.inputs)
-    #
-    # print(wf.state)
-    #
-    # print(wf.outputs.dict())
+    print(wf.status)
 
-    # print(wf.outputs.and_2__y.get_value())
-    # print(Kiara().instance().data_registry.get_stats())
+    rich_print(wf.get_current_state().dict())
 
 
 if __name__ == "__main__":

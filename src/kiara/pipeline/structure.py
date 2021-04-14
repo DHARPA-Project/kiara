@@ -15,11 +15,11 @@ from kiara.data.values import (
     generate_step_alias,
 )
 from kiara.defaults import PIPELINE_PARENT_MARKER
-from kiara.kiara import Kiara
 from kiara.module import KiaraModule
 
 if typing.TYPE_CHECKING:
     from kiara.config import PipelineStepConfig
+    from kiara.kiara import Kiara
 
 
 class PipelineStep(BaseModel):
@@ -27,13 +27,19 @@ class PipelineStep(BaseModel):
 
     class Config:
         validate_assignment = True
+        extra = Extra.forbid
 
     @classmethod
     def create_steps(
-        cls, parent_id: str, *steps: "PipelineStepConfig"
+        cls, parent_id: str, *steps: "PipelineStepConfig", kiara: "Kiara"
     ) -> typing.List["PipelineStep"]:
 
         result: typing.List[PipelineStep] = []
+        if kiara is None:
+            from kiara.module import Kiara
+
+            kiara = Kiara.instance()
+
         for step in steps:
 
             _s = PipelineStep(
@@ -42,6 +48,7 @@ class PipelineStep(BaseModel):
                 module_type=step.module_type,
                 module_config=step.module_config,
                 input_links=step.input_links,
+                _kiara=kiara,
             )
             result.append(_s)
 
@@ -63,13 +70,27 @@ class PipelineStep(BaseModel):
         description="The links that connect to inputs of the module.",
         default_factory=list,
     )
+    _kiara: typing.Optional["Kiara"] = PrivateAttr(default=None)
+
+    def __init__(self, **data):  # type: ignore
+        kiara = data.pop("_kiara", None)
+        if kiara is None:
+            from kiara import Kiara
+
+            kiara = Kiara.instance()
+        super().__init__(**data)
+        self._kiara: Kiara = kiara
+
+    @property
+    def kiara(self):
+        return self._kiara
 
     @property
     def module(self) -> KiaraModule:
 
         if self._module is None:
 
-            self._module = Kiara.instance().create_module(
+            self._module = self.kiara.create_module(
                 id=self.step_id,
                 module_type=self.module_type,
                 module_config=self.module_config,
@@ -81,6 +102,7 @@ class PipelineStep(BaseModel):
         if not isinstance(other, PipelineStep):
             return False
 
+        # TODO: also check whether _kiara obj is equal?
         eq = (self.step_id, self.parent_id, self.module, self.processing_stage,) == (
             other.step_id,
             other.parent_id,
@@ -98,6 +120,7 @@ class PipelineStep(BaseModel):
 
     def __hash__(self):
 
+        # TODO: also include _kiara obj?
         # TODO: figure out whether that can be made to work without deephash
         hs = DeepHash(self.input_links)
         return hash(
@@ -133,13 +156,17 @@ class PipelineStructure(object):
         input_aliases: typing.Mapping[str, str] = None,
         output_aliases: typing.Mapping[str, str] = None,
         add_all_workflow_outputs: bool = False,
+        kiara: typing.Optional["Kiara"] = None,
     ):
 
         if not steps:
             raise Exception("No steps provided.")
 
+        if kiara is None:
+            kiara = Kiara.instance()
+
         self._steps: typing.List[PipelineStep] = PipelineStep.create_steps(
-            parent_id, *steps
+            parent_id, *steps, kiara=kiara
         )
         self._pipeline_id: str = parent_id
 

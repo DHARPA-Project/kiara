@@ -6,7 +6,6 @@ from rich.console import Console, ConsoleOptions, RenderResult
 from rich.syntax import Syntax
 from rich.table import Table
 
-from kiara import Kiara
 from kiara.config import PipelineModuleConfig
 from kiara.data.values import ValueField, ValueSchema
 from kiara.module import KiaraModule, ModuleInfo, StepInputs, StepOutputs
@@ -17,6 +16,9 @@ from kiara.utils import (
     get_doc_for_module_class,
     print_ascii_graph,
 )
+
+if typing.TYPE_CHECKING:
+    from kiara import Kiara
 
 yaml = StringYAML()
 
@@ -38,11 +40,16 @@ class PipelineModule(KiaraModule[PipelineModuleConfig]):
             None, PipelineModuleConfig, typing.Mapping[str, typing.Any]
         ] = None,
         meta: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+        kiara: typing.Optional["Kiara"] = None,
     ):
 
         self._pipeline_structure: typing.Optional[PipelineStructure] = None
         super().__init__(
-            id=id, parent_id=parent_id, module_config=module_config, meta=meta
+            id=id,
+            parent_id=parent_id,
+            module_config=module_config,
+            meta=meta,
+            kiara=kiara,
         )
 
     @property
@@ -55,6 +62,7 @@ class PipelineModule(KiaraModule[PipelineModuleConfig]):
                 steps=self._config.steps,
                 input_aliases=self._config.input_aliases,
                 output_aliases=self._config.output_aliases,
+                kiara=self._kiara,
             )
         return self._pipeline_structure
 
@@ -81,8 +89,9 @@ class PipelineModuleInfo(ModuleInfo):
         allow_mutation = False
 
     def create_structure(self) -> "PipelineStructure":
+
         base_conf: PipelineModuleConfig = self.module_cls._base_pipeline_config  # type: ignore
-        return base_conf.create_structure(parent_id=self.module_type)
+        return base_conf.create_structure(parent_id=self.module_type, kiara=self._kiara)
 
     def print_data_flow_graph(self, simplified: bool = True) -> None:
 
@@ -143,7 +152,7 @@ class PipelineModuleInfo(ModuleInfo):
         for nr, stage in enumerate(structure.processing_stages):
             for s_id in stage:
                 step = structure.get_step(s_id)
-                mc = Kiara.instance().get_module_class(step.module_type)
+                mc = self._kiara.get_module_class(step.module_type)
                 desc = get_doc_for_module_class(mc)
                 inputs: typing.Dict[ValueField, typing.List[str]] = {}
                 for inp in structure.steps_inputs.values():

@@ -140,6 +140,8 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
         self._parent_id = parent_id
 
         if kiara is None:
+            from kiara import Kiara
+
             kiara = Kiara.instance()
         self._kiara = kiara
 
@@ -341,9 +343,11 @@ class ModuleInfo(BaseModel):
     def __init__(self, **data):  # type: ignore
         kiara = data.get("_kiara", None)
         if kiara is None:
+            from kiara import Kiara
+
             kiara = Kiara.instance()
             data["_kiara"] = kiara
-        self._kiara: Kiara = kiara
+        self._kiara: "Kiara" = kiara
         super().__init__(**data)
 
     @root_validator(pre=True)

@@ -9,6 +9,7 @@ from rich.table import Table
 from kiara.config import PipelineModuleConfig
 from kiara.data.values import ValueField, ValueSchema
 from kiara.module import KiaraModule, ModuleInfo, StepInputs, StepOutputs
+from kiara.pipeline.controller import BatchController, PipelineController
 from kiara.pipeline.structure import PipelineStructure
 from kiara.utils import (
     StringYAML,
@@ -18,7 +19,7 @@ from kiara.utils import (
 )
 
 if typing.TYPE_CHECKING:
-    from kiara import Kiara
+    from kiara.kiara import Kiara
 
 yaml = StringYAML()
 
@@ -40,10 +41,19 @@ class PipelineModule(KiaraModule[PipelineModuleConfig]):
             None, PipelineModuleConfig, typing.Mapping[str, typing.Any]
         ] = None,
         meta: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+        controller: typing.Union[
+            None, PipelineController, str, typing.Type[PipelineController]
+        ] = None,
         kiara: typing.Optional["Kiara"] = None,
     ):
 
+        if controller is not None and not isinstance(controller, PipelineController):
+            raise NotImplementedError()
+        if controller is None:
+            controller = BatchController()
+
         self._pipeline_structure: typing.Optional[PipelineStructure] = None
+        self._pipeline_controller: PipelineController = controller
         super().__init__(
             id=id,
             parent_id=parent_id,

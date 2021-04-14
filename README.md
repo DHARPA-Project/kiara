@@ -48,8 +48,6 @@ make init
 
 If you use [direnv](https://direnv.net/), you can alternatively do:
 
-*Note*: you might want to adjust the Python version in ``.envrc`` (should not be necessary in most cases though)
-
 ``` console
 git clone https://github.com/DHARPA-Project/kiara.git
 cd kiara
@@ -57,6 +55,9 @@ cp .envrc.disabled .envrc
 direnv allow   # if using direnv, otherwise activate virtualenv
 make init
 ```
+
+*Note*: you might want to adjust the Python version in ``.envrc`` (should not be necessary in most cases though)
+
 
 ## ``make`` targets
 

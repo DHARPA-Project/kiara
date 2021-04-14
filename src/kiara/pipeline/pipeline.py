@@ -84,6 +84,8 @@ class Pipeline(object):
 
         if controller is None:
             controller = BatchController(self)
+        else:
+            controller.set_pipeline(self)
         self._controller: PipelineController = controller
 
         self._update_status()

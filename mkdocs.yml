@@ -33,11 +33,15 @@ nav:
     - Overview: modules/index.md
     - Core modules: modules/core_modules.md
     - Pipeline modules: modules/pipeline_modules.md
+- Workflows:
+    - Overview: workflows/index.md
 - Data:
     - Overview: data/index.md
     - Data registry: data/registry.md
 - Development:
     - Overview: development/index.md
+    - Pipeline controllers: development/pipeline_controllers.md
+    - Workflows: development/workflows.md
     - Entities:
       - Overview: development/entities/index.md
       - Values / Data: development/entities/values.md

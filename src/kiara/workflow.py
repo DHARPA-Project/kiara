@@ -3,6 +3,7 @@ import typing
 
 from kiara.config import KiaraWorkflowConfig
 from kiara.data.values import ValueSet
+from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.module import PipelineModule
 from kiara.pipeline.pipeline import Pipeline, PipelineState, StepStatus
 from kiara.pipeline.structure import PipelineStructure
@@ -19,8 +20,10 @@ class KiaraWorkflow(object):
         workflow_id: str,
         config: KiaraWorkflowConfig,
         kiara: "Kiara",
+        controller: typing.Optional[PipelineController] = None,
     ):
 
+        self._controller: typing.Optional[PipelineController] = controller
         self._workflow_id: str = workflow_id
         self._workflow_config: KiaraWorkflowConfig = config
         self._kiara: Kiara = kiara
@@ -58,7 +61,9 @@ class KiaraWorkflow(object):
     def pipeline(self) -> Pipeline:
 
         if self._pipeline is None:
-            self._pipeline = Pipeline(self.structure)
+            self._pipeline = Pipeline(
+                self.structure, controller=self._controller, kiara=self._kiara
+            )
         return self._pipeline
 
     @property

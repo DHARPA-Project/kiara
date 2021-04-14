@@ -184,7 +184,7 @@ class PipelineController(abc.ABC):
         """
         return self.get_step_inputs(step_id).items_are_valid
 
-    def step_is_valid(self, step_id: str) -> bool:
+    def step_is_finished(self, step_id: str) -> bool:
         """Return whether the step with the provided id has been processed successfully.
 
         A ``True`` result means that all output fields are currently set with valid values, and the inputs haven't changed
@@ -210,7 +210,7 @@ class PipelineController(abc.ABC):
         """
         return self.pipeline.inputs.items_are_valid
 
-    def pipeline_is_valid(self) -> bool:
+    def pipeline_is_finished(self) -> bool:
         """Return whether the pipeline has been processed successfully.
 
         A ``True`` result means that every step of the pipeline has been processed successfully, and no pipeline input
@@ -304,6 +304,6 @@ class BatchController(PipelineController):
 
     def pipeline_outputs_changed(self, event: "PipelineOutputEvent"):
 
-        if self.pipeline_is_valid():
+        if self.pipeline_is_finished():
             # TODO: check if soemthing is running
             self._is_running = False

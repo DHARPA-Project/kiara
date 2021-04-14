@@ -8,6 +8,7 @@ import typing
 from rich import print as rich_print
 
 from kiara import Kiara
+from kiara.examples import example_controller
 from kiara.module import ModuleInfo
 from kiara.pipeline.module import PipelineModuleInfo
 from kiara.utils import module_config_from_cli_args
@@ -206,19 +207,19 @@ def dev(ctx):
     # wf = KiaraWorkflow(
     #     "/home/markus/projects/dharpa/kiara/tests/resources/workflows/dummy/dummy_1_delay.json"
     # )
-
-    kiara_obj = ctx.obj["kiara"]
-
-    wf = kiara_obj.create_workflow("xor")
-
-    print(wf.pipeline.get_current_state().json())
-
-    wf.inputs.a = True
-    wf.inputs.b = False
-
-    print(wf.status)
-
-    rich_print(wf.get_current_state().dict())
+    example_controller.execute_pipeline_with_example_controller()
+    # kiara_obj = ctx.obj["kiara"]
+    #
+    # wf = kiara_obj.create_workflow("xor")
+    #
+    # print(wf.pipeline.get_current_state().json())
+    #
+    # wf.inputs.a = True
+    # wf.inputs.b = False
+    #
+    # print(wf.status)
+    #
+    # rich_print(wf.get_current_state().dict())
 
 
 if __name__ == "__main__":

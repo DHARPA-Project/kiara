@@ -9,6 +9,7 @@ import typing
 from kiara.config import KiaraWorkflowConfig
 from kiara.data.registry import DataRegistry
 from kiara.mgmt import ModuleManager, PipelineModuleManager, PythonModuleManager
+from kiara.pipeline.controller import PipelineController
 from kiara.utils import get_auto_workflow_alias, get_data_from_file
 from kiara.workflow import KiaraWorkflow
 
@@ -130,7 +131,8 @@ class Kiara(object):
     def create_workflow(
         self,
         config: typing.Union[KiaraWorkflowConfig, typing.Mapping[str, typing.Any], str],
-        workflow_id: str = None,
+        workflow_id: typing.Optional[str] = None,
+        controller: typing.Optional[PipelineController] = None,
     ):
 
         if isinstance(config, typing.Mapping):
@@ -169,6 +171,9 @@ class Kiara(object):
             )
 
         workflow = KiaraWorkflow(
-            workflow_id=workflow_id, config=workflow_config, kiara=self
+            workflow_id=workflow_id,
+            config=workflow_config,
+            controller=controller,
+            kiara=self,
         )
         return workflow

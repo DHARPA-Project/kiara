@@ -1,0 +1,55 @@
+# -*- coding: utf-8 -*-
+# type: ignore
+
+from kiara import Kiara, PipelineController
+from kiara.events import (
+    PipelineInputEvent,
+    PipelineOutputEvent,
+    StepInputEvent,
+    StepOutputEvent,
+)
+
+
+class ExampleController(PipelineController):
+    def pipeline_inputs_changed(self, event: PipelineInputEvent):
+        print(f"Pipeline inputs changed: {event.updated_pipeline_inputs}")
+
+    def pipeline_outputs_changed(self, event: PipelineOutputEvent):
+        print(f"Pipeline outputs changed: {event.updated_pipeline_outputs}")
+
+    def step_inputs_changed(self, event: StepInputEvent):
+        print("Step inputs changed, new values:")
+        for step_id, input_names in event.updated_step_inputs.items():
+            print(f"  - step '{step_id}':")
+            for name in input_names:
+                new_value = self.get_step_inputs(step_id).get(name).get_value_data()
+                print(f"      {name}: {new_value}")
+
+    def step_outputs_changed(self, event: StepOutputEvent):
+        print("Step outputs changed, new values:")
+        for step_id, output_names in event.updated_step_outputs.items():
+            print(f"  - step '{step_id}':")
+            for name in output_names:
+                new_value = self.get_step_outputs(step_id).get(name).get_value_data()
+                print(f"      {name}: {new_value}")
+
+    def execute(self, step_id: str):
+
+        print(f"Executing step: {step_id}")
+        self.process_step(step_id)
+
+
+def execute_pipeline_with_example_controller():
+
+    kiara = Kiara.instance()
+    controller = ExampleController()
+    workflow = kiara.create_workflow("nand", controller=controller)
+
+    workflow.inputs.a = True
+    workflow.inputs.b = False
+
+    controller.execute("and")
+    controller.execute("not")
+
+    print("Pipeline result:")
+    print(workflow.outputs.dict())

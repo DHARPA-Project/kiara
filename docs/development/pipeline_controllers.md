@@ -61,10 +61,12 @@ will yield output like:
 
 ```
 Pipeline inputs changed: ['a']
+  -> pipeline status: STALE
 Step inputs changed, new values:
   - step 'and':
       a: True
 Pipeline inputs changed: ['b']
+  -> pipeline status: INPUTS_READY
 Step inputs changed, new values:
   - step 'and':
       b: False
@@ -80,6 +82,7 @@ Step outputs changed, new values:
   - step 'not':
       y: True
 Pipeline outputs changed: ['y']
+  -> pipeline status: RESULTS_READY
 Pipeline result:
 {'y': True}
 ```

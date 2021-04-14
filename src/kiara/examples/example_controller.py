@@ -13,9 +13,11 @@ from kiara.events import (
 class ExampleController(PipelineController):
     def pipeline_inputs_changed(self, event: PipelineInputEvent):
         print(f"Pipeline inputs changed: {event.updated_pipeline_inputs}")
+        print(f"  -> pipeline status: {self.pipeline_status.name}")
 
     def pipeline_outputs_changed(self, event: PipelineOutputEvent):
         print(f"Pipeline outputs changed: {event.updated_pipeline_outputs}")
+        print(f"  -> pipeline status: {self.pipeline_status.name}")
 
     def step_inputs_changed(self, event: StepInputEvent):
         print("Step inputs changed, new values:")

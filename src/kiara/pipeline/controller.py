@@ -13,7 +13,7 @@ if typing.TYPE_CHECKING:
         StepInputEvent,
         StepOutputEvent,
     )
-    from kiara.pipeline.pipeline import Pipeline, PipelineState
+    from kiara.pipeline.pipeline import Pipeline, PipelineState, StepStatus
 
 log = logging.getLogger("kiara")
 
@@ -56,6 +56,10 @@ class PipelineController(abc.ABC):
         if self._pipeline is None:
             raise Exception("Pipeline not set yet.")
         return self._pipeline
+
+    @property
+    def pipeline_status(self) -> "StepStatus":
+        return self.pipeline.status
 
     def set_pipeline(self, pipeline: "Pipeline"):
         """Set the pipeline object for this controller.

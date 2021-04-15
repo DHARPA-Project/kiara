@@ -58,7 +58,6 @@ make init
 
 *Note*: you might want to adjust the Python version in ``.envrc`` (should not be necessary in most cases though)
 
-
 ## ``make`` targets
 
 - ``init``: init development project (install project & dev dependencies into virtualenv, as well as pre-commit git hook)

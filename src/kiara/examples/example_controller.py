@@ -35,10 +35,11 @@ class ExampleController(PipelineController):
                 new_value = self.get_step_outputs(step_id).get(name).get_value_data()
                 print(f"      {name}: {new_value}")
 
-    def execute(self, step_id: str):
+    def execute(self):
 
-        print(f"Executing step: {step_id}")
-        self.process_step(step_id)
+        print("Executing steps: 'and', 'not'...")
+        self.process_step("and")
+        self.process_step("not")
 
 
 def execute_pipeline_with_example_controller():
@@ -54,8 +55,7 @@ def execute_pipeline_with_example_controller():
     workflow.inputs.a = True
     workflow.inputs.b = False
 
-    controller.execute("and")
-    controller.execute("not")
+    controller.execute()
 
     print("Pipeline result:")
     print(workflow.outputs.dict())

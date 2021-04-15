@@ -70,14 +70,13 @@ Pipeline inputs changed: ['b']
 Step inputs changed, new values:
   - step 'and':
       b: False
-Executing step: and
+Executing steps: 'and', 'not'...
 Step outputs changed, new values:
   - step 'and':
       y: False
 Step inputs changed, new values:
   - step 'not':
       a: False
-Executing step: not
 Step outputs changed, new values:
   - step 'not':
       y: True

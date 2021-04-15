@@ -15,14 +15,12 @@ Only snapshot binaries for now, not for production use:
 
 ## Python package
 
-*Note*: this does not work yet!
-
-The python package is currently not available on [pypi](https://pypi.org), so you need to specify the ``--extra-url`` parameter for your pip command. If you chooose this install method, I assume you know how to install Python packages manually, which is why I only show you an example way of getting *kiara* onto your machine:
+The python package is currently not available on [pypi](https://pypi.org), so for now you have to install the package directly from the git repo. If you chooose this install method, I assume you know how to install Python packages manually, which is why I only show you an example way of getting *kiara* onto your machine:
 
 ``` console
 > python3 -m venv ~/.venvs/kiara
 > source ~/.venvs/kiara/bin/activate
-> pip install kiara
+> pip install git+https://github.com/DHARPA-Project/kiara.git
 ...
 ...
 ...
@@ -32,4 +30,3 @@ Usage: kiara [OPTIONS] COMMAND [ARGS]...
    ...
    ...
 ```
-München

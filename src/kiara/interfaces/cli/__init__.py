@@ -171,7 +171,6 @@ def execution_graph(ctx, pipeline_module_type: str):
 # @cli.command()
 # @click.pass_context
 # def dev(ctx):
-#
 #     # main_module = "kiara"
 #
 #     # md_obj: ProjectMetadata = ProjectMetadata(project_main_module=main_module)
@@ -196,11 +195,12 @@ def execution_graph(ctx, pipeline_module_type: str):
 #     # wf = KiaraWorkflow(
 #     #     "/home/markus/projects/dharpa/kiara/tests/resources/workflows/logic/logic_2.json"
 #     # )
-#
-#     # wf = KiaraWorkflow(
-#     #     "/home/markus/projects/dharpa/kiara/tests/resources/workflows/dummy/dummy_1_delay.json"
+#     # kiara_obj: Kiara = ctx.obj['kiara']
+#     # wf = kiara_obj.create_workflow(
+#     #     "/home/markus/projects/dharpa/kiara/tests/resources/pipelines/dummy/dummy_1_delay.json"
 #     # )
-#     example_controller.execute_pipeline_with_example_controller()
+#
+#     # example_controller.execute_pipeline_with_example_controller()
 #     # kiara_obj = ctx.obj["kiara"]
 #     #
 #     # wf = kiara_obj.create_workflow("xor")

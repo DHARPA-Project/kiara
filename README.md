@@ -6,14 +6,17 @@
 
 # kiara
 
-*A workflow management and execution engine for the DHARPA project.*
+*A pipeline management and execution engine for the DHARPA project.*
 
  - Documentation: [https://dharpa.org/kiara](https://dharpa.org/kiara)
  - Code: [https://github.com/DHARPA-Project/kiara](https://github.com/DHARPA-Project/kiara)
 
 ## Description
 
-Documentation still to be done.
+*Kiara* is the data orchestration engine driving the DHARPA project application (yet to be named). It uses a modular approach
+to let users re-use tried and tested data orchestration pipelines, as well as create new ones from existing building
+blocks. It also helps you manage your research data, and augment it with automatically-, semi-automatically-, and manually-
+created metadata.
 
 ## Downloads
 

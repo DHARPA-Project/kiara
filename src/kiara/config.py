@@ -12,10 +12,11 @@ from rich.console import Console, ConsoleOptions, RenderResult
 from rich.table import Table
 
 from kiara.data.values import StepValueAddress
+from kiara.defaults import DEFAULT_PIPELINE_PARENT_ID
 from kiara.utils import get_data_from_file
 
 if typing.TYPE_CHECKING:
-    from kiara import Kiara, PipelineStructure
+    from kiara import Kiara, PipelineController, PipelineStructure
 
 
 class PipelineStepConfig(BaseModel):
@@ -225,6 +226,27 @@ class PipelineModuleConfig(KiaraModuleConfig):
             kiara=kiara,
         )
         return ps
+
+    def create_pipeline(
+        self,
+        parent_id: typing.Optional[str] = None,
+        constants: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+        controller: typing.Optional["PipelineController"] = None,
+        kiara: typing.Optional["Kiara"] = None,
+    ):
+
+        if parent_id is None:
+            parent_id = DEFAULT_PIPELINE_PARENT_ID
+        structure = self.create_structure(parent_id=parent_id, kiara=kiara)
+
+        from kiara import Pipeline
+
+        pipeline = Pipeline(
+            structure=structure,
+            constants=constants,
+            controller=controller,
+        )
+        return pipeline
 
 
 class KiaraWorkflowConfig(BaseModel):

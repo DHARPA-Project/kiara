@@ -164,9 +164,9 @@ class PipelineStructure(object):
 
         if kiara is None:
             kiara = Kiara.instance()
-
+        self._kiara: Kiara = kiara
         self._steps: typing.List[PipelineStep] = PipelineStep.create_steps(
-            parent_id, *steps, kiara=kiara
+            parent_id, *steps, kiara=self._kiara
         )
         self._pipeline_id: str = parent_id
 

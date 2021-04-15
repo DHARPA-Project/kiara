@@ -4,6 +4,7 @@ import os
 from pydantic import BaseModel, typing
 from pydoc import locate
 
+from kiara import Kiara
 from kiara.config import KiaraModuleConfig, KiaraWorkflowConfig, PipelineModuleConfig
 from kiara.data.values import (
     PipelineInputField,
@@ -17,6 +18,8 @@ from kiara.data.values import (
     ValueSchema,
 )
 from kiara.mgmt import PipelineModuleManager
+from kiara.module import ModuleInfo
+from kiara.pipeline.module import PipelineModuleInfo
 from kiara.pipeline.pipeline import (
     PipelineInputEvent,
     PipelineOutputEvent,
@@ -101,6 +104,23 @@ def define_env(env):
 
         desc_str = yaml.dump(desc)
         return desc_str
+
+    @env.macro
+    def get_module_info(module_type: str):
+
+        m_cls = Kiara.instance().get_module_class(module_type)
+        if module_type == "pipeline" or not m_cls.is_pipeline():
+            info = ModuleInfo(module_type=module_type)
+        else:
+            info = PipelineModuleInfo(module_type=module_type)
+
+        from rich.console import Console
+
+        console = Console(record=True)
+        console.print(info)
+
+        html = console.export_text()
+        return html
 
 
 def on_post_build(env):

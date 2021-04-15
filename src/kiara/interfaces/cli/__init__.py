@@ -3,6 +3,7 @@
 """A command-line interface for *Kiara*.
 """
 import asyncclick as click
+import os.path
 import sys
 import typing
 from rich import print as rich_print
@@ -83,13 +84,20 @@ def list_modules(ctx, only_pipeline_modules: bool, only_core_modules: bool):
 def describe_module_type(ctx, module_type: str):
     """Print details of a (Python) module."""
 
-    kiara_obj = ctx.obj["kiara"]
+    kiara_obj: Kiara = ctx.obj["kiara"]
 
-    m_cls = kiara_obj.get_module_class(module_type)
-    if module_type == "pipeline" or not m_cls.is_pipeline():
-        info = ModuleInfo(module_type=module_type)
+    if os.path.isfile(module_type):
+        _module_type: str = kiara_obj.register_pipeline_description(
+            module_type, raise_exception=True
+        )  # type: ignore
     else:
-        info = PipelineModuleInfo(module_type=module_type)
+        _module_type = module_type
+
+    m_cls = kiara_obj.get_module_class(_module_type)
+    if _module_type == "pipeline" or not m_cls.is_pipeline():
+        info = ModuleInfo(module_type=_module_type, _kiara=kiara_obj)
+    else:
+        info = PipelineModuleInfo(module_type=_module_type, _kiara=kiara_obj)
     rich_print()
     rich_print(info)
 
@@ -104,7 +112,7 @@ def describe_module_type(ctx, module_type: str):
     help="Configuration values for module initialization.",
 )
 @click.pass_context
-def describe_step(ctx, module_type: str, config: typing.Iterable[typing.Any]):
+def describe_module(ctx, module_type: str, config: typing.Iterable[typing.Any]):
     """Describe a step.
 
     A step, in this context, is basically a an instantiated module class, incl. (optional) config."""
@@ -112,6 +120,9 @@ def describe_step(ctx, module_type: str, config: typing.Iterable[typing.Any]):
     config = module_config_from_cli_args(*config)
 
     kiara_obj = ctx.obj["kiara"]
+    if os.path.isfile(module_type):
+        module_type = kiara_obj.register_pipeline_description(module_type)
+
     module_obj = kiara_obj.create_module(
         id=module_type, module_type=module_type, module_config=config
     )
@@ -138,6 +149,10 @@ def data_flow_graph(ctx, pipeline_module_type: str, full: bool):
     """Print the data flow graph for a pipeline structure."""
 
     kiara_obj = ctx.obj["kiara"]
+    if os.path.isfile(pipeline_module_type):
+        pipeline_module_type = kiara_obj.register_pipeline_description(
+            pipeline_module_type
+        )
 
     m_cls = kiara_obj.get_module_class(pipeline_module_type)
     if not m_cls.is_pipeline():
@@ -158,6 +173,11 @@ def execution_graph(ctx, pipeline_module_type: str):
 
     kiara_obj = ctx.obj["kiara"]
 
+    if os.path.isfile(pipeline_module_type):
+        pipeline_module_type = kiara_obj.register_pipeline_description(
+            pipeline_module_type
+        )
+
     m_cls = kiara_obj.get_module_class(pipeline_module_type)
     if not m_cls.is_pipeline():
         rich_print()
@@ -171,48 +191,13 @@ def execution_graph(ctx, pipeline_module_type: str):
 # @cli.command()
 # @click.pass_context
 # def dev(ctx):
-#     # main_module = "kiara"
 #
-#     # md_obj: ProjectMetadata = ProjectMetadata(project_main_module=main_module)
-#     #
-#     # md_json = json.dumps(
-#     #     md_obj.to_dict(), sort_keys=True, indent=2, separators=(",", ": ")
-#     # )
-#     # print(md_json)
+#     kiara: Kiara = ctx.obj["kiara"]
 #
-#     # for entry_point_group, eps in entry_points().items():
-#     #     print(entry_point_group)
-#     #     print(eps)
-#
-#     # pc = get_data_from_file(
-#     #     "/home/markus/projects/dharpa/kiara/tests/resources/workflows/logic_1.json"
-#     # )
-#     # wc = KiaraWorkflowConfig(module_config=pc)
-#
-#     # kiara = Kiara.instance()
-#     # print(kiara)
-#
-#     # wf = KiaraWorkflow(
-#     #     "/home/markus/projects/dharpa/kiara/tests/resources/workflows/logic/logic_2.json"
-#     # )
-#     # kiara_obj: Kiara = ctx.obj['kiara']
-#     # wf = kiara_obj.create_workflow(
-#     #     "/home/markus/projects/dharpa/kiara/tests/resources/pipelines/dummy/dummy_1_delay.json"
-#     # )
-#
-#     # example_controller.execute_pipeline_with_example_controller()
-#     # kiara_obj = ctx.obj["kiara"]
-#     #
-#     # wf = kiara_obj.create_workflow("xor")
-#     #
-#     # print(wf.pipeline.get_current_state().json())
-#     #
-#     # wf.inputs.a = True
-#     # wf.inputs.b = False
-#     #
-#     # print(wf.status)
-#     #
-#     # rich_print(wf.get_current_state().dict())
+#     kiara.register_pipeline_description("/home/markus/projects/dharpa/kiara/tests/resources/pipelines/dummy/dummy_1_delay.json")
+#     print(kiara.available_module_types)
+#     p = kiara.create_pipeline("dummy_1_delay")
+#     print(p.get_current_state().json())
 
 
 if __name__ == "__main__":

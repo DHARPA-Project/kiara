@@ -61,9 +61,7 @@ class KiaraWorkflow(object):
     def pipeline(self) -> Pipeline:
 
         if self._pipeline is None:
-            self._pipeline = Pipeline(
-                self.structure, controller=self._controller, kiara=self._kiara
-            )
+            self._pipeline = Pipeline(self.structure, controller=self._controller)
         return self._pipeline
 
     @property

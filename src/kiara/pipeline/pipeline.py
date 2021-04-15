@@ -51,8 +51,6 @@ class Pipeline(object):
         structure: PipelineStructure,
         constants: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         controller: typing.Optional[PipelineController] = None,
-        data_registry: typing.Optional[DataRegistry] = None,
-        kiara: typing.Optional["Kiara"] = None,
     ):
 
         self._id: str = str(uuid.uuid4())
@@ -66,19 +64,13 @@ class Pipeline(object):
 
         self._status: StepStatus = StepStatus.STALE
 
-        if kiara is None:
-            from kiara import Kiara
-
-            kiara = Kiara.instance()
-        self._kiara: Kiara = kiara
+        self._kiara: Kiara = self._structure._kiara
 
         if constants is None:
             constants = {}
         self._constants: typing.Mapping[str, typing.Any] = constants
 
-        if data_registry is None:
-            data_registry = self._kiara.data_registry
-        self._data_registry: DataRegistry = data_registry
+        self._data_registry: DataRegistry = self._kiara.data_registry
 
         self._init_values()
 

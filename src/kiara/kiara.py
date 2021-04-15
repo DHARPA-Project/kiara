@@ -5,16 +5,19 @@
 import logging
 import os
 import typing
+from pathlib import Path
 
-from kiara.config import KiaraWorkflowConfig
+from kiara.config import KiaraWorkflowConfig, PipelineModuleConfig
 from kiara.data.registry import DataRegistry
 from kiara.mgmt import ModuleManager, PipelineModuleManager, PythonModuleManager
 from kiara.pipeline.controller import PipelineController
+from kiara.pipeline.pipeline import Pipeline
 from kiara.utils import get_auto_workflow_alias, get_data_from_file
 from kiara.workflow import KiaraWorkflow
 
 if typing.TYPE_CHECKING:
     from kiara.module import KiaraModule
+
 
 log = logging.getLogger("kiara")
 
@@ -33,15 +36,26 @@ class Kiara(object):
     ):
 
         self._default_python_mgr = PythonModuleManager()
-        self._default_pipeline_mgr = PipelineModuleManager()
-        module_managers = [self._default_python_mgr, self._default_pipeline_mgr]
+        self._default_pipeline_mgr = PipelineModuleManager(folders=None)
+        self._custom_pipelines_mgr = PipelineModuleManager(folders=[])
 
-        self._module_mgrs: typing.List[ModuleManager] = []
+        _mms = [
+            self._default_python_mgr,
+            self._default_pipeline_mgr,
+            self._custom_pipelines_mgr,
+        ]
+        if module_managers:
+            _mms.extend(module_managers)
+
+        self._module_mgrs: typing.List[ModuleManager] = [
+            self._default_python_mgr,
+            self._default_pipeline_mgr,
+        ]
         self._modules: typing.Dict[str, ModuleManager] = {}
 
         self._data_registry: DataRegistry = DataRegistry()
 
-        for mm in module_managers:
+        for mm in _mms:
             self.add_module_manager(mm)
 
     def add_module_manager(self, module_manager: ModuleManager):
@@ -51,9 +65,50 @@ class Kiara(object):
                 log.warning(
                     f"Duplicate module name '{module_type}'. Ignoring all but the first."
                 )
+                continue
             self._modules[module_type] = module_manager
 
         self._module_mgrs.append(module_manager)
+
+    def add_pipeline_folder(self, folder: typing.Union[Path, str]) -> typing.List[str]:
+
+        if isinstance(folder, str):
+            folder = Path(os.path.expanduser(folder))
+
+        if not folder.is_dir():
+            raise Exception(
+                f"Can't add pipeline folder '{folder.as_posix()}': not a directory"
+            )
+
+        added = self._custom_pipelines_mgr.add_pipelines_path(folder)
+        result = []
+        for a in added:
+            if a in self._modules.keys():
+                log.warning(f"Duplicate module name '{a}'. Ignoring all but the first.")
+                continue
+            self._modules[a] = self._custom_pipelines_mgr
+            result.append(a)
+
+        return result
+
+    def register_pipeline_description(
+        self,
+        data: typing.Union[Path, str, typing.Mapping[str, typing.Any]],
+        module_type_name: typing.Optional[str] = None,
+        raise_exception: bool = False,
+    ) -> typing.Optional[str]:
+
+        name = self._custom_pipelines_mgr.register_pipeline(
+            data, module_type_name=module_type_name
+        )
+        if name in self._modules.keys():
+            if raise_exception:
+                raise Exception(f"Duplicate module name: {name}")
+            log.warning(f"Duplicate module name '{name}'. Ignoring all but the first.")
+            return None
+        else:
+            self._modules[name] = self._custom_pipelines_mgr
+            return name
 
     @property
     def data_registry(self) -> DataRegistry:
@@ -68,8 +123,9 @@ class Kiara(object):
         cls = mm.get_module_class(module_type)
         if hasattr(cls, "_module_type_id") and cls._module_type_id != module_type:  # type: ignore
             raise Exception(
-                f"Can't create module class '{cls}', it already has a _module_type_id attribute and it's different to the module name '{module_type}'."
+                f"Can't create module class '{cls}', it already has a _module_type_id attribute and it's different to the module name '{module_type}': {cls._module_type_id}"  # type: ignore
             )
+
         setattr(cls, "_module_type_id", module_type)
         return cls
 
@@ -127,6 +183,43 @@ class Kiara(object):
             module_config=module_config,
             kiara=self,
         )
+
+    def create_pipeline(
+        self,
+        config: typing.Union[KiaraWorkflowConfig, typing.Mapping[str, typing.Any], str],
+        controller: typing.Optional[PipelineController] = None,
+    ) -> Pipeline:
+
+        if isinstance(config, typing.Mapping):
+            pipeline_config: PipelineModuleConfig = PipelineModuleConfig(**config)
+
+        elif isinstance(config, str):
+            if config == "pipeline":
+                raise Exception(
+                    "Can't create pipeline from 'pipeline' module type without further configuration."
+                )
+
+            if config in self.available_module_types:
+                config_data = {"steps": [{"module_type": config, "step_id": config}]}
+                pipeline_config = PipelineModuleConfig(**config_data)
+            elif os.path.isfile(os.path.expanduser(config)):
+                path = os.path.expanduser(config)
+                pipeline_config_data = get_data_from_file(path)
+                pipeline_config = PipelineModuleConfig(**pipeline_config_data)
+            else:
+                raise Exception(
+                    f"Can't create pipeline config from string: {config}. Value either needs to be a (registered) module type name, or a path to a file."
+                )
+        elif isinstance(config, PipelineModuleConfig):
+            pipeline_config = config
+        else:
+            # raise TypeError(f"Invalid type '{type(workflow_config)}' for workflow configuration: {workflow_config}")
+            raise TypeError(
+                f"Invalid type '{type(config)}' for pipeline configuration."
+            )
+
+        pipeline = pipeline_config.create_pipeline(controller=controller, kiara=self)
+        return pipeline
 
     def create_workflow(
         self,

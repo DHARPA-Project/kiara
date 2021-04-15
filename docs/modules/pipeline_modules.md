@@ -13,4 +13,4 @@ An example of a configuration for such a *pipeline module* would be the ``nand``
 
 ## Configuration schema
 
-In order to create the configuration that in turn will create a ``PipelineModule`` object, we need to follow a schema. The description of this schema can be found [here](/development/entities/modules/#pipelinemoduleconfig) (json schema format) and [here][kiara.config.PipelineModuleConfig] (Python model class).
+In order to create the configuration that in turn will create a ``PipelineModule`` object, we need to follow a schema. The description of this schema can be found [here](../../development/entities/modules/#pipelinemoduleconfig) (json schema format) and [here][kiara.config.PipelineModuleConfig] (Python model class).

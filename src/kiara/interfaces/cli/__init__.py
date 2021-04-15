@@ -121,7 +121,9 @@ def describe_module(ctx, module_type: str, config: typing.Iterable[typing.Any]):
 
     kiara_obj = ctx.obj["kiara"]
     if os.path.isfile(module_type):
-        module_type = kiara_obj.register_pipeline_description(module_type)
+        module_type = kiara_obj.register_pipeline_description(
+            module_type, raise_exception=True
+        )
 
     module_obj = kiara_obj.create_module(
         id=module_type, module_type=module_type, module_config=config
@@ -151,7 +153,7 @@ def data_flow_graph(ctx, pipeline_module_type: str, full: bool):
     kiara_obj = ctx.obj["kiara"]
     if os.path.isfile(pipeline_module_type):
         pipeline_module_type = kiara_obj.register_pipeline_description(
-            pipeline_module_type
+            pipeline_module_type, raise_exception=True
         )
 
     m_cls = kiara_obj.get_module_class(pipeline_module_type)
@@ -175,7 +177,7 @@ def execution_graph(ctx, pipeline_module_type: str):
 
     if os.path.isfile(pipeline_module_type):
         pipeline_module_type = kiara_obj.register_pipeline_description(
-            pipeline_module_type
+            pipeline_module_type, raise_exception=True
         )
 
     m_cls = kiara_obj.get_module_class(pipeline_module_type)

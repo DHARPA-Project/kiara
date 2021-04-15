@@ -29,7 +29,7 @@ gets it's own command section.
 
 ### describe the characteristics of an instantiated module
 
-{{ cli("kiara", "step", "describe", "--module-type", "nand") }}
+{{ cli("kiara", "module", "describe", "--module-type", "nand") }}
 
 !!! note
 This command also can take module configuration, in different forms. This will be documented in the future.

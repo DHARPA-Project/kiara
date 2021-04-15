@@ -3,6 +3,7 @@ import inspect
 import json
 import logging
 import os
+import re
 import sys
 import typing
 import yaml
@@ -20,13 +21,13 @@ from ruamel.yaml import YAML
 from stevedore import ExtensionManager
 from typing import Union
 
-from kiara.data.values import ValueSchema
-
 if typing.TYPE_CHECKING:
     from kiara.config import KiaraModuleConfig, PipelineModuleConfig
+    from kiara.data.values import ValueSchema
     from kiara.module import KiaraModule
 
 log = logging.getLogger("kiara")
+CAMEL_TO_SNAKE_REGEX = re.compile(r"(?<!^)(?=[A-Z])")
 
 
 def get_data_from_file(path: Union[str, Path]) -> typing.Any:
@@ -156,7 +157,7 @@ def create_table_from_config_class(
     return table
 
 
-def create_table_from_field_schemas(**fields: ValueSchema):
+def create_table_from_field_schemas(**fields: "ValueSchema"):
 
     table = Table(box=box.SIMPLE, show_header=False)
     table.add_column("Field name", style="i")
@@ -219,6 +220,10 @@ def get_doc_for_module_class(module_cls: typing.Type["KiaraModule"]):
         bpc: "PipelineModuleConfig" = module_cls._base_pipeline_config  # type: ignore
         doc = bpc.doc
     return doc
+
+
+def camel_case_to_snake_case(camel_text: str, repl: str = "_"):
+    return CAMEL_TO_SNAKE_REGEX.sub(repl, camel_text).lower()
 
 
 class StringYAML(YAML):

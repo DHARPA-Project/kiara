@@ -138,7 +138,7 @@ class PipelineStep(BaseModel):
         return f"{self.__class__.__name__}(step_id={self.step_id} parent={self.parent_id} module_type={self.module_type} processing_stage={self.processing_stage}"
 
     def __str__(self):
-        return self.__repr__()
+        return f"step: {self.step_id} (module: {self.module_type})"
 
 
 def generate_pipeline_endpoint_name(step_id: str, value_name: str):

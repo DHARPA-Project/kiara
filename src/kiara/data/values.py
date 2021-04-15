@@ -21,6 +21,7 @@ from faker import Faker
 from pydantic import BaseModel, Extra, Field, PrivateAttr, root_validator
 
 from kiara.defaults import INVALID_VALUE_NAMES, PIPELINE_PARENT_MARKER
+from kiara.utils import camel_case_to_snake_case
 
 if typing.TYPE_CHECKING:
     from kiara.data.registry import DataRegistry
@@ -604,7 +605,8 @@ class ValueField(BaseModel):
         return f"{self.__class__.__name__}(value_name='{self.value_name}' pipeline_id='{self.pipeline_id}'{step_id})"
 
     def __str__(self):
-        return self.__repr__()
+        name = camel_case_to_snake_case(self.__class__.__name__[0:-5], repl=" ")
+        return f"{name}: {self.value_name} ({self.value_schema.type})"
 
 
 def generate_step_alias(step_id: str, value_name):
@@ -644,6 +646,10 @@ class StepInputField(ValueField):
     def address(self) -> StepValueAddress:
         return StepValueAddress(step_id=self.step_id, value_name=self.value_name)
 
+    def __str__(self):
+        name = camel_case_to_snake_case(self.__class__.__name__[0:-5], repl=" ")
+        return f"{name}: {self.step_id}.{self.value_name} ({self.value_schema.type})"
+
 
 class StepOutputField(ValueField):
     """An output to a step."""
@@ -667,6 +673,10 @@ class StepOutputField(ValueField):
     @property
     def address(self) -> StepValueAddress:
         return StepValueAddress(step_id=self.step_id, value_name=self.value_name)
+
+    def __str__(self):
+        name = camel_case_to_snake_case(self.__class__.__name__[0:-5], repl=" ")
+        return f"{name}: {self.step_id}.{self.value_name} ({self.value_schema.type})"
 
 
 class PipelineInputField(ValueField):

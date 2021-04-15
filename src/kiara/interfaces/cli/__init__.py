@@ -87,7 +87,7 @@ def describe_module_type(ctx, module_type: str):
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     if os.path.isfile(module_type):
-        _module_type: str = kiara_obj.register_pipeline_description(
+        _module_type: str = kiara_obj.register_pipeline_description(  # type: ignore
             module_type, raise_exception=True
         )  # type: ignore
     else:

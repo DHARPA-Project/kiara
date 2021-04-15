@@ -1,6 +1,6 @@
 # Installation
 
-There are three ways to install *kiara* on your machine. Via a manual binary download, an install script, or installation of the python package.
+There are currently two ways to install *kiara* on your machine. Via a manual binary download, or installation of the python package.
 
 ## Binaries
 

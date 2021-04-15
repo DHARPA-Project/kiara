@@ -7,4 +7,4 @@ as well as how to use it as a library, and how to extend it.
 
 - **[Pipeline controllers](pipeline_controllers.md)**: what is a *Kiara* pipeline controller, and how to create one
 - **[Workflows](workflows.md)**: how to create and work with *Kiara* workflow objects
-- **[Entities](entities.md)**: contains an overview of all model classes in *Kiara*, and their schemas
+- **[Entities](entities/)**: contains an overview of all model classes in *Kiara*, and their schemas

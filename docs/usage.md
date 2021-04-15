@@ -17,19 +17,17 @@ List all available modules ([core](/modules/core_modules)- as well as as [pipeli
 
 {{ cli("kiara", "module", "list") }}
 
-### display details about a module
+### display details about a module type
 
 Display information about a modules, like description, configuration schema, source code (in case of a core-module) or processing stages (in case of pipeline modules).
 
-{{ cli("kiara", "module", "describe", "nand") }}
-
-## pipeline-step related sub-commands
+{{ cli("kiara", "module", "describe-type", "nand") }}
 
 In this context, a pipeline-step is a module that was instantiated with some optional module configuration. It is necessary to know whether/what configuration is used, because that can
 change characteristics like available input/output fields and their schemas, which is why this
 gets it's own command section.
 
-### describe the characteristics of a pipeline step
+### describe the characteristics of an instantiated module
 
 {{ cli("kiara", "step", "describe", "--module-type", "nand") }}
 

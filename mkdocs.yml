@@ -1,6 +1,9 @@
-site_name: kiara
+site_name: Kiara
+site_description: Documentation for the Kiara project
+site_url: https://dharpa.org/kiara
 repo_url: https://github.com/DHARPA-Project/kiara
 site_author: Markus Binsteiner
+copyright: DHARPA project
 docs_dir: docs
 site_dir: build/site
 

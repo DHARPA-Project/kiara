@@ -43,17 +43,7 @@ nav:
     - Data registry: data/registry.md
 - Development:
     - Overview: development/index.md
-    - Architecture:
-        - Overview: development/architecture/index.md
-        - Project management: development/architecture/project_management.md
-        - Data:
-          - Overview: development/architecture/data/index.md
-          - Formats: development/architecture/data/data_formats.ipynb
-        - Workflows:
-          - Workflows: development/architecture/workflows/index.md
-          - Modularity: development/architecture/workflows/modularity/modularity.ipynb
-        - Metadata: development/architecture/metadata.md
-    - Environment: development/environment.md
+    - Development environment: development/environment.md
     - Pipeline controllers: development/pipeline_controllers.md
     - Workflows: development/workflows.md
     - Entities:
@@ -61,7 +51,16 @@ nav:
       - Values / Data: development/entities/values.md
       - Modules / Pipelines: development/entities/modules.md
       - Events: development/entities/events.md
-    - Available modules: development/modules_list.md
+- Architecture:
+    - Overview: architecture/index.md
+    - Project management: architecture/project_management.md
+    - Data:
+      - Overview: architecture/data/index.md
+      - Formats: architecture/data/data_formats.ipynb
+    - Workflows:
+      - Workflows: architecture/workflows/index.md
+      - Modularity: architecture/workflows/modularity/modularity.ipynb
+    - Metadata: architecture/metadata.md
 
 plugins:
 - search

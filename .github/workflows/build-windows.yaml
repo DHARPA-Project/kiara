@@ -82,7 +82,7 @@ jobs:
       - name: download spec file
         run: C:\msys64\usr\bin\wget.exe https://gitlab.com/frkl/frkl.project/-/raw/develop/scripts/build-binary/onefile.spec
       - name: build_binary
-        run: "bash ./build.sh --python-type system"
+        run: "bash ./build.sh --python-type system --requirements ci/build/requirements.txt"
       - name: Archive windows binary
         uses: actions/upload-artifact@v1
         with:

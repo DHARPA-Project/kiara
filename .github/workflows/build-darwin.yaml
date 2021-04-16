@@ -86,7 +86,7 @@ jobs:
       - name: download spec file
         run: wget https://gitlab.com/frkl/frkl.project/-/raw/develop/scripts/build-binary/onefile.spec
       - name: build_binary
-        run: ./build.sh --python-type pyenv
+        run: ./build.sh --python-type pyenv --requirements ci/build/requirements.txt
 #      # uncomment to sign binary (needs certificate data in env)
 #      - name: Add MacOS certs
 #        run: chmod +x ./scripts/build-binary/add-osx-cert.sh && ./scripts/build-binary/add-osx-cert.sh

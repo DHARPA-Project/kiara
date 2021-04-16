@@ -64,11 +64,12 @@ make init
 ## ``make`` targets
 
 - ``init``: init development project (install project & dev dependencies into virtualenv, as well as pre-commit git hook)
+- ``update-modules``: update default kiara modules package from git
 - ``flake``: run *flake8* tests
 - ``mypy``: run mypy tests
 - ``test``: run unit tests
-- ``docs``: create static documentation pages
-- ``serve-docs``: serve documentation pages (incl. auto-reload)
+- ``docs``: create static documentation pages (under ``build/site``)
+- ``serve-docs``: serve documentation pages (incl. auto-reload) for getting direct feedback when working on documentation
 - ``clean``: clean build directories
 
 For details (and other, minor targets), check the ``Makefile``.

@@ -7,13 +7,16 @@ from pathlib import Path
 
 from kiara.defaults import (
     DEFAULT_EXCLUDE_DIRS,
-    KIARA_RESOURCES_FOLDER,
     MODULE_TYPE_NAME_KEY,
     USER_PIPELINES_FOLDER,
     VALID_PIPELINE_FILE_EXTENSIONS,
 )
 from kiara.modules.pipelines import create_pipeline_class
-from kiara.utils import find_kiara_modules, get_data_from_file
+from kiara.utils import (
+    find_kiara_modules,
+    find_kiara_pipeline_folders,
+    get_data_from_file,
+)
 
 if typing.TYPE_CHECKING:
     from kiara import Kiara
@@ -77,7 +80,7 @@ class PythonModuleManager(ModuleManager):
 
         cls = self._module_classes.get(module_type, None)
         if cls is None:
-            raise ValueError(f"No module of type '{module_type}' availble.")
+            raise ValueError(f"No module of type '{module_type}' available.")
         return cls
 
     def get_module_types(self) -> typing.Iterable[str]:
@@ -90,7 +93,7 @@ class PipelineModuleManager(ModuleManager):
     ):
 
         if folders is None:
-            folders = [os.path.join(KIARA_RESOURCES_FOLDER, "pipelines")]
+            folders = list(find_kiara_pipeline_folders().values())
             if os.path.exists(USER_PIPELINES_FOLDER):
                 folders.append(USER_PIPELINES_FOLDER)
 

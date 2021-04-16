@@ -11,7 +11,7 @@ from rich import print as rich_print
 from kiara import Kiara
 from kiara.module import ModuleInfo
 from kiara.pipeline.module import PipelineModuleInfo
-from kiara.utils import module_config_from_cli_args
+from kiara.utils import find_kiara_pipeline_folders, module_config_from_cli_args
 
 # from importlib.metadata import entry_points
 
@@ -190,16 +190,18 @@ def execution_graph(ctx, pipeline_module_type: str):
     info.print_execution_graph()
 
 
-# @cli.command()
-# @click.pass_context
-# def dev(ctx):
-#
-#     kiara: Kiara = ctx.obj["kiara"]
-#
-#     kiara.register_pipeline_description("/home/markus/projects/dharpa/kiara/tests/resources/pipelines/dummy/dummy_1_delay.json")
-#     print(kiara.available_module_types)
-#     p = kiara.create_pipeline("dummy_1_delay")
-#     print(p.get_current_state().json())
+@cli.command()
+@click.pass_context
+def dev(ctx):
+
+    find_kiara_pipeline_folders()
+
+    # kiara: Kiara = ctx.obj["kiara"]
+    #
+    # kiara.register_pipeline_description("/home/markus/projects/dharpa/kiara/tests/resources/pipelines/dummy/dummy_1_delay.json")
+    # print(kiara.available_module_types)
+    # p = kiara.create_pipeline("dummy_1_delay")
+    # print(p.get_current_state().json())
 
 
 if __name__ == "__main__":

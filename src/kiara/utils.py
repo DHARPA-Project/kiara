@@ -21,6 +21,8 @@ from ruamel.yaml import YAML
 from stevedore import ExtensionManager
 from typing import Union
 
+from kiara.defaults import RELATIVE_PIPELINES_PATH
+
 if typing.TYPE_CHECKING:
     from kiara.config import KiaraModuleConfig, PipelineModuleConfig
     from kiara.data.values import ValueSchema
@@ -124,6 +126,35 @@ def find_kiara_modules() -> typing.Dict[str, typing.Type["KiaraModule"]]:
         ep = plugin.entry_point
         module_cls = ep.load()
         result[name] = module_cls
+
+    return result
+
+
+def find_kiara_pipeline_folders() -> typing.Dict[str, str]:
+
+    log2 = logging.getLogger("stevedore")
+    out_hdlr = logging.StreamHandler(sys.stdout)
+    out_hdlr.setFormatter(logging.Formatter("kiara module plugin error -> %(message)s"))
+    out_hdlr.setLevel(logging.INFO)
+    log2.addHandler(out_hdlr)
+    log2.setLevel(logging.INFO)
+
+    log.debug("Loading kiara pipelines...")
+
+    mgr = ExtensionManager(
+        namespace="kiara.pipelines", invoke_on_load=False, propagate_map_exceptions=True
+    )
+
+    result = {}
+    # TODO: make sure we load 'default' first?
+    for plugin in mgr:
+        name = plugin.name
+        ep = plugin.entry_point
+        module_cls = ep.load()
+        path = os.path.join(
+            os.path.dirname(module_cls.__file__), RELATIVE_PIPELINES_PATH
+        )
+        result[name] = path
 
     return result
 

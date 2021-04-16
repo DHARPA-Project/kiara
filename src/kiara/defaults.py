@@ -17,6 +17,8 @@ KIARA_RESOURCES_FOLDER = os.path.join(KIARA_MODULE_BASE_FOLDER, "resources")
 
 USER_PIPELINES_FOLDER = os.path.join(kiara_app_dirs.user_config_dir, "pipelines")
 
+RELATIVE_PIPELINES_PATH = os.path.join("resources", "pipelines")
+
 MODULE_TYPE_KEY = "module_type"
 """The key to specify the type of a module."""
 

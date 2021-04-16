@@ -35,12 +35,17 @@ init: clean ## initialize a development environment (to be run in virtualenv)
 	git init
 	git checkout -b develop || true
 	pip install -U pip
+	pip install -e .
+	pip install -U git+https://github.com/DHARPA-Project/kiara_modules.default.git
 	pip install --extra-index-url https://gitlab.com/api/v4/projects/25344049/packages/pypi/simple -U -e '.[all_dev]'
 	pre-commit install
 	setup-cfg-fmt setup.cfg || true
 	git add "*" ".*"
 	pre-commit run --all-files || true
 	git add "*" ".*"
+
+update-modules:  ## update default modules dependency
+	pip install -U git+https://github.com/DHARPA-Project/kiara_modules.default.git#egg=kiara_modules.default
 
 setup-cfg-fmt: # format setup.cfg
 	setup-cfg-fmt setup.cfg || true

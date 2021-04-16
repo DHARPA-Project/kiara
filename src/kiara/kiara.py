@@ -116,6 +116,11 @@ class Kiara(object):
 
     def get_module_class(self, module_type: str) -> typing.Type["KiaraModule"]:
 
+        if module_type == "pipeline":
+            raise Exception(
+                "Creating non-subclassed pipeline modules is not supported."
+            )
+
         mm = self._modules.get(module_type, None)
         if mm is None:
             raise Exception(f"No module '{module_type}' available.")
@@ -141,7 +146,8 @@ class Kiara(object):
         return [
             module_type
             for module_type in self.available_module_types
-            if not self.get_module_class(module_type).is_pipeline()
+            if module_type != "pipeline"
+            and not self.get_module_class(module_type).is_pipeline()
         ]
 
     @property

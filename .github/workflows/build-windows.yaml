@@ -16,7 +16,11 @@ jobs:
         with:
           python-version: "${{ matrix.python_version }}"
       - uses: actions/checkout@v2
-      - name: install requirements
+      - name: install kiara
+        run: pip install -U .
+      - name: install default kiara modules
+        run: pip install -U git+https://github.com/DHARPA-Project/kiara_modules.default.git#egg=kiara_modules.default[all]
+      - name: install other requirements
         run: pip install -U -e '.[dev_testing,all]'
       - name: Test with pytest
         run: make test
@@ -33,7 +37,11 @@ jobs:
         with:
           python-version: "${{ matrix.python_version }}"
       - uses: actions/checkout@v2
-      - name: install requirements
+      - name: install kiara
+        run: pip install -U .
+      - name: install default kiara modules
+        run: pip install -U git+https://github.com/DHARPA-Project/kiara_modules.default.git#egg=kiara_modules.default[all]
+      - name: install other requirements
         run: pip install -U -e '.[dev_testing,all]'
       - name: Test with mypy
         run: make mypy
@@ -47,7 +55,11 @@ jobs:
         with:
           python-version: 3.9
       - uses: actions/checkout@v2
-      - name: install requirements
+      - name: install kiara
+        run: pip install -U .
+      - name: install default kiara modules
+        run: pip install -U git+https://github.com/DHARPA-Project/kiara_modules.default.git#egg=kiara_modules.default[all]
+      - name: install other requirements
         run: pip install -U -e '.[dev_testing,all]'
       - name: Test with flake8
         run: make flake

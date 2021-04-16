@@ -239,7 +239,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
             if isinstance(v, ValueSchema):
                 result[k] = v
             elif isinstance(v, typing.Mapping):
-                result = ValueSchema(**v)
+                result[k] = ValueSchema(**v)
             else:
                 raise Exception(
                     f"Invalid return type when tryping to create schema for '{self.id}': {type(v)}"
@@ -256,7 +256,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
         if self._output_schemas is not None:
             return self._output_schemas
 
-        _output_schema = self.create_input_schema()
+        _output_schema = self.create_output_schema()
 
         if not _output_schema:
             raise Exception(
@@ -268,7 +268,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
             if isinstance(v, ValueSchema):
                 result[k] = v
             elif isinstance(v, typing.Mapping):
-                result = ValueSchema(**v)
+                result[k] = ValueSchema(**v)
             else:
                 raise Exception(
                     f"Invalid return type when tryping to create schema for '{self.id}': {type(v)}"

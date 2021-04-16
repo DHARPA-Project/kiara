@@ -88,13 +88,16 @@ def define_env(env):
     @env.macro
     def get_src_of_object(obj: typing.Union[str, typing.Any]):
 
-        if isinstance(obj, str):
-            _obj: typing.Type[BaseModel] = locate(obj)  # type: ignore
-        else:
-            _obj = obj
+        try:
+            if isinstance(obj, str):
+                _obj: typing.Type[BaseModel] = locate(obj)  # type: ignore
+            else:
+                _obj = obj
 
-        src = inspect.getsource(_obj)
-        return src
+            src = inspect.getsource(_obj)
+            return src
+        except Exception as e:
+            return f"Can't render object source: {str(e)}"
 
     @env.macro
     def get_pipeline_config(pipeline_name: str):
@@ -108,19 +111,23 @@ def define_env(env):
     @env.macro
     def get_module_info(module_type: str):
 
-        m_cls = Kiara.instance().get_module_class(module_type)
-        if module_type == "pipeline" or not m_cls.is_pipeline():
-            info = ModuleInfo(module_type=module_type)
-        else:
-            info = PipelineModuleInfo(module_type=module_type)
+        try:
 
-        from rich.console import Console
+            m_cls = Kiara.instance().get_module_class(module_type)
+            if module_type == "pipeline" or not m_cls.is_pipeline():
+                info = ModuleInfo(module_type=module_type)
+            else:
+                info = PipelineModuleInfo(module_type=module_type)
 
-        console = Console(record=True)
-        console.print(info)
+            from rich.console import Console
 
-        html = console.export_text()
-        return html
+            console = Console(record=True)
+            console.print(info)
+
+            html = console.export_text()
+            return html
+        except Exception as e:
+            return f"Can't render module info: {str(e)}"
 
 
 def on_post_build(env):

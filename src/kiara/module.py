@@ -205,35 +205,77 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
         return self.config.get(key)
 
     @abstractmethod
-    def create_input_schema(self) -> typing.Mapping[str, ValueSchema]:
+    def create_input_schema(
+        self,
+    ) -> typing.Mapping[
+        str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
+    ]:
         """Abstract method to implement by child classes, returns a description of the input schema of this module."""
 
     @abstractmethod
-    def create_output_schema(self) -> typing.Mapping[str, ValueSchema]:
+    def create_output_schema(
+        self,
+    ) -> typing.Mapping[
+        str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
+    ]:
         """Abstract method to implement by child classes, returns a description of the output schema of this module."""
 
     @property
     def input_schemas(self) -> typing.Mapping[str, ValueSchema]:
         """The input schema for this module."""
 
-        if self._input_schemas is None:
-            self._input_schemas = self.create_input_schema()
-        if not self._input_schemas:
+        if self._input_schemas is not None:
+            return self._input_schemas
+
+        _input_schemas = self.create_input_schema()
+
+        if not _input_schemas:
             raise Exception(
                 f"Invalid module implementation for '{self.__class__.__name__}': empty input schema"
             )
+
+        result = {}
+        for k, v in _input_schemas.items():
+            if isinstance(v, ValueSchema):
+                result[k] = v
+            elif isinstance(v, typing.Mapping):
+                result = ValueSchema(**v)
+            else:
+                raise Exception(
+                    f"Invalid return type when tryping to create schema for '{self.id}': {type(v)}"
+                )
+
+        self._input_schemas = result
+
         return self._input_schemas
 
     @property
     def output_schemas(self) -> typing.Mapping[str, ValueSchema]:
         """The output schema for this module."""
 
-        if self._output_schemas is None:
-            self._output_schemas = self.create_output_schema()
-            if not self._output_schemas:
+        if self._output_schemas is not None:
+            return self._output_schemas
+
+        _output_schema = self.create_input_schema()
+
+        if not _output_schema:
+            raise Exception(
+                f"Invalid module implementation for '{self.__class__.__name__}': empty output schema"
+            )
+
+        result = {}
+        for k, v in _output_schema.items():
+            if isinstance(v, ValueSchema):
+                result[k] = v
+            elif isinstance(v, typing.Mapping):
+                result = ValueSchema(**v)
+            else:
                 raise Exception(
-                    f"Invalid module implementation for '{self.__class__.__name__}': empty output schema"
+                    f"Invalid return type when tryping to create schema for '{self.id}': {type(v)}"
                 )
+
+        self._output_schemas = result
+
         return self._output_schemas
 
     @property

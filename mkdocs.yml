@@ -24,7 +24,7 @@ markdown_extensions:
     toc_depth: 3
 - pymdownx.snippets:
     base_path: docs
-- mkdocs-click
+#- mkdocs-click
 - pymdownx.highlight
 - pymdownx.superfences
 
@@ -53,6 +53,7 @@ nav:
       - Events: development/entities/events.md
 - Architecture:
     - Overview: architecture/index.md
+    - Decisions: architecture/decisions.md
     - Project management: architecture/project_management.md
     - Data:
       - Overview: architecture/data/index.md

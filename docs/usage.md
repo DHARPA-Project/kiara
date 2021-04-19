@@ -44,7 +44,7 @@ To print graphs, currently Java (JRE) needs to be installed, as well as the ``as
 Use the ``--full`` flag to display the non-simplified graph.
 
 ```
-> kiara pipeline data-flow-graph nand
+> kiara pipeline data-flow-graph --pipeline-type nand
 ...
 ...
 ```
@@ -52,7 +52,7 @@ Use the ``--full`` flag to display the non-simplified graph.
 ### print the execution graph for a pipeline
 
 ```
-> kiara pipeline execution-graph nand
+> kiara pipeline execution-graph --pipeline-type nand
 ...
 ...
 ```

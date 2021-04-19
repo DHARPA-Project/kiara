@@ -139,54 +139,80 @@ def pipeline(ctx):
 
 
 @pipeline.command()
-@click.argument("pipeline_module_type", nargs=1)
+@click.option("--pipeline-type", "-t", required=True)
 @click.option(
     "--full",
     "-f",
     is_flag=True,
     help="Display full data-flow graph, incl. intermediate input/output connections.",
 )
+@click.option(
+    "--config",
+    "-c",
+    multiple=True,
+    required=False,
+    help="Configuration values for module initialization.",
+)
 @click.pass_context
-def data_flow_graph(ctx, pipeline_module_type: str, full: bool):
+def data_flow_graph(
+    ctx, pipeline_type: str, config: typing.Iterable[typing.Any], full: bool
+):
     """Print the data flow graph for a pipeline structure."""
 
+    config = module_config_from_cli_args(*config)
+    if config:
+        print("Pipeline config not supported yet.")
+        sys.exit()
+
     kiara_obj = ctx.obj["kiara"]
-    if os.path.isfile(pipeline_module_type):
-        pipeline_module_type = kiara_obj.register_pipeline_description(
-            pipeline_module_type, raise_exception=True
+    if os.path.isfile(pipeline_type):
+        pipeline_type = kiara_obj.register_pipeline_description(
+            pipeline_type, raise_exception=True
         )
 
-    m_cls = kiara_obj.get_module_class(pipeline_module_type)
+    m_cls = kiara_obj.get_module_class(pipeline_type)
     if not m_cls.is_pipeline():
         rich_print()
-        rich_print(f"Module '{pipeline_module_type}' is not a pipeline-type module.")
+        rich_print(f"Module '{pipeline_type}' is not a pipeline-type module.")
         sys.exit(1)
 
-    info = PipelineModuleInfo(module_type=pipeline_module_type)
+    info = PipelineModuleInfo(module_type=pipeline_type)
 
     info.print_data_flow_graph(simplified=not full)
 
 
 @pipeline.command()
-@click.argument("pipeline_module_type", nargs=1)
+@click.option("--pipeline-type", "-t", required=True)
+@click.option(
+    "--config",
+    "-c",
+    multiple=True,
+    required=False,
+    help="Configuration values for module initialization.",
+)
 @click.pass_context
-def execution_graph(ctx, pipeline_module_type: str):
+def execution_graph(ctx, pipeline_type: str, config: typing.Iterable[typing.Any]):
     """Print the execution graph for a pipeline structure."""
+
+    config = module_config_from_cli_args(*config)
+    if config:
+        print("Pipeline config not supported yet.")
+        sys.exit()
 
     kiara_obj = ctx.obj["kiara"]
 
-    if os.path.isfile(pipeline_module_type):
-        pipeline_module_type = kiara_obj.register_pipeline_description(
-            pipeline_module_type, raise_exception=True
+    if os.path.isfile(pipeline_type):
+        pipeline_type = kiara_obj.register_pipeline_description(
+            pipeline_type, raise_exception=True
         )
 
-    m_cls = kiara_obj.get_module_class(pipeline_module_type)
+    m_cls = kiara_obj.get_module_class(pipeline_type)
     if not m_cls.is_pipeline():
         rich_print()
-        rich_print(f"Module '{pipeline_module_type}' is not a pipeline-type module.")
+        rich_print(f"Module '{pipeline_type}' is not a pipeline-type module.")
         sys.exit(1)
 
-    info = PipelineModuleInfo(module_type=pipeline_module_type)
+    info = PipelineModuleInfo(module_type=pipeline_type)
     info.print_execution_graph()
 
 

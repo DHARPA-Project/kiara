@@ -97,7 +97,7 @@ def describe_module_type(ctx, module_type: str):
     if _module_type == "pipeline" or not m_cls.is_pipeline():
         info = ModuleInfo(module_type=_module_type, _kiara=kiara_obj)
     else:
-        info = PipelineModuleInfo(module_type=_module_type, _kiara=kiara_obj)
+        info = ModuleInfo(module_type=_module_type, _kiara=kiara_obj)
     rich_print()
     rich_print(info)
 

@@ -476,7 +476,12 @@ class ModuleInfo(BaseModel):
             f"{self.config_cls.__module__}.{self.config_cls.__qualname__}",
         )
         my_table.add_row("config", create_table_from_config_class(self.config_cls))
-        syn_src = Syntax(self.process_src, "python")
+        if not self.module_cls.is_pipeline():
+            syn_src = Syntax(self.process_src, "python")
+        else:
+            base_pipeline_config = self.module_cls._base_pipeline_config.dict()  # type: ignore
+            yaml_str = yaml.dump(base_pipeline_config)
+            syn_src = Syntax(yaml_str, "yaml")
         my_table.add_row("src", syn_src)
 
         yield my_table

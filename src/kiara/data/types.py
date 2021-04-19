@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import typing
+from abc import ABCMeta
 from enum import Enum
 from faker import Faker
 
@@ -38,3 +39,15 @@ class ValueType(Enum):
         "python": dict,
         "fake_value": NotImplemented,
     }
+
+
+class KiaraValueType(metaclass=ABCMeta):
+    def __init__(self):
+
+        pass
+
+    def serialize(self, object: typing.Any):
+        pass
+
+    def deserialize(self, object: typing.Any):
+        pass

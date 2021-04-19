@@ -54,7 +54,7 @@ nav:
 - Architecture:
     - Overview: architecture/index.md
     - Decisions: architecture/decisions.md
-    - Project management: architecture/project_management.md
+    - Assumptions: architecture/assumptions.md
     - Data:
       - Overview: architecture/data/index.md
       - Formats: architecture/data/data_formats.ipynb

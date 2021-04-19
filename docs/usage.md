@@ -19,15 +19,28 @@ List all available modules ([core](/modules/core_modules)- as well as as [pipeli
 
 ### display details about a module type
 
-Display information about a modules, like description, configuration schema, source code (in case of a core-module) or processing stages (in case of pipeline modules).
+Display information about a modules, like description, configuration schema, source code (in case of a core-module).
+
+#### for a core module
+
+{{ cli("kiara", "module", "describe-type", "and") }}
+
+#### for a pipeline module
 
 {{ cli("kiara", "module", "describe-type", "nand") }}
 
-In this context, a pipeline-step is a module that was instantiated with some optional module configuration. It is necessary to know whether/what configuration is used, because that can
-change characteristics like available input/output fields and their schemas, which is why this
-gets it's own command section.
+### describe the characteristics of an instantiated module (core)
 
-### describe the characteristics of an instantiated module
+In this context, an instantiated module is a module that was created with some optional configuration. It is necessary to know whether/what configuration is used, because that can change characteristics like available input/output fields and their schemas, which is why this gets it's own command section.
+
+#### for a core module
+
+{{ cli("kiara", "module", "describe", "--module-type", "and") }}
+
+!!! note
+This command also can take module configuration, in different forms. This will be documented in the future.
+
+#### for a pipeline module
 
 {{ cli("kiara", "module", "describe", "--module-type", "nand") }}
 

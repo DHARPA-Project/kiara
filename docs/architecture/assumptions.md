@@ -1,6 +1,4 @@
-# Project-management
-
-This section discusses some of the project-management related issues around our project.
+# Assumptions & considerations
 
 ## Core assumptions
 

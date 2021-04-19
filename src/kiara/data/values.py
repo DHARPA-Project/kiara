@@ -16,10 +16,9 @@ import logging
 import typing
 import uuid
 from datetime import datetime
-from enum import Enum
-from faker import Faker
 from pydantic import BaseModel, Extra, Field, PrivateAttr, root_validator
 
+from kiara.data.types import ValueType
 from kiara.defaults import INVALID_VALUE_NAMES, PIPELINE_PARENT_MARKER
 from kiara.utils import camel_case_to_snake_case
 
@@ -27,7 +26,6 @@ if typing.TYPE_CHECKING:
     from kiara.data.registry import DataRegistry
 
 log = logging.getLogger("kiara")
-fake = Faker()
 
 try:
 
@@ -455,40 +453,6 @@ class ValueSet(typing.MutableMapping[str, Value]):
     def __repr__(self):
 
         return f"ValueItems(values={self._value_items} valid={self.items_are_valid})"
-
-
-class ValueType(Enum):
-    """Supported value types.
-
-    It's very early days, so this does not really do anything yet.
-    """
-
-    def __new__(cls, *args, **kwds):
-        value = args[0]["id"]
-        obj = object.__new__(cls)
-        obj._value_ = value
-        return obj
-
-    def __init__(self, type_map: typing.Mapping[str, typing.Any]):
-
-        for k, v in type_map.items():
-            setattr(self, k, v)
-
-    any = {"id": "any", "python": object, "fake_value": fake.pydict}
-    integer = {"id": "integer", "python": int, "fake_value": fake.pyint}
-    string = {"id": "string", "python": str, "fake_value": fake.pystr}
-    dict = {"id": "dict", "python": dict, "fake_value": fake.pydict}
-    boolean = {"id": "boolean", "python": bool, "fake_value": fake.pybool}
-    table = {
-        "id": "table",
-        "python": typing.List[typing.Dict],
-        "fake_value": fake.pydict,
-    }
-    value_items = {
-        "id": "value_items",
-        "python": ValueSet,
-        "fake_value": NotImplemented,
-    }
 
 
 ValueSchema.update_forward_refs()

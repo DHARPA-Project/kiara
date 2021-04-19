@@ -4,13 +4,13 @@ import logging
 import typing
 import uuid
 
+from kiara.data.types import ValueType
 from kiara.data.values import (
     DataValue,
     LinkedValue,
     Value,
     ValueField,
     ValueSchema,
-    ValueType,
     ValueUpdateHandler,
 )
 

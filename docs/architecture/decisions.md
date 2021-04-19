@@ -41,3 +41,15 @@ Advantages:
 
 Disadvantages:
 - more abstraction layers than strictly necessary
+
+## Separating data from the Python objects that describe them / Data registry
+
+TBD
+
+Advantages:
+- efficiency, option to save on memory and IO
+- (hopefully) decrease of complexity for non trivial scenarios like multi-process or remote job execution
+
+Disadvantages:
+- extra level of abstraction
+- increase in complexity (at least for simple use-cases)

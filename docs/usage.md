@@ -21,35 +21,32 @@ List all available modules ([core](/modules/core_modules)- as well as as [pipeli
 
 Display information about a modules, like description, configuration schema, source code (in case of a core-module).
 
-#### for a core module
+#### ...for a core module
 
 {{ cli("kiara", "module", "describe-type", "and") }}
 
-#### for a pipeline module
+#### ...for a pipeline module
 
 {{ cli("kiara", "module", "describe-type", "nand") }}
 
-### describe the characteristics of an instantiated module (core)
+### get properties of an instantiated module
 
 In this context, an instantiated module is a module that was created with some optional configuration. It is necessary to know whether/what configuration is used, because that can change characteristics like available input/output fields and their schemas, which is why this gets it's own command section.
 
-#### for a core module
+!!! note
+This command also can take module configuration, in different forms. This will be documented in the future.
+
+#### ...for a core module
 
 {{ cli("kiara", "module", "describe", "--module-type", "and") }}
 
-!!! note
-This command also can take module configuration, in different forms. This will be documented in the future.
-
-#### for a pipeline module
+#### ...for a pipeline module
 
 {{ cli("kiara", "module", "describe", "--module-type", "nand") }}
 
-!!! note
-This command also can take module configuration, in different forms. This will be documented in the future.
-
 ## pipeline-specific sub-commands
 
-This subcommand lets you display module details that are specific to pipeline-type mopdules.
+This subcommand lets you display module details that are specific to pipeline-type modules.
 To print graphs, currently Java (JRE) needs to be installed, as well as the ``asciinet`` python package from GitHub (``pip install 'git+https://github.com/cosminbasca/asciinet.git#egg=asciinet&subdirectory=pyasciinet``). This might change in the future.
 
 ### print the data flow graph for a pipeline

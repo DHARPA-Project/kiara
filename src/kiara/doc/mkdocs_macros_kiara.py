@@ -19,7 +19,6 @@ from kiara.data.values import (
 )
 from kiara.mgmt import PipelineModuleManager
 from kiara.module import ModuleInfo
-from kiara.pipeline.module import PipelineModuleInfo
 from kiara.pipeline.pipeline import (
     PipelineInputEvent,
     PipelineOutputEvent,
@@ -117,7 +116,7 @@ def define_env(env):
             if module_type == "pipeline" or not m_cls.is_pipeline():
                 info = ModuleInfo(module_type=module_type)
             else:
-                info = PipelineModuleInfo(module_type=module_type)
+                info = ModuleInfo(module_type=module_type)
 
             from rich.console import Console
 

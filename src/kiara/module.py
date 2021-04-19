@@ -10,7 +10,7 @@ from rich.syntax import Syntax
 from rich.table import Table
 
 from kiara.config import KIARA_CONFIG, KiaraModuleConfig
-from kiara.data.values import ValueSchema, ValueSet
+from kiara.data.values import Value, ValueSchema, ValueSet
 from kiara.utils import (
     StringYAML,
     create_table_from_config_class,
@@ -46,6 +46,10 @@ class StepInputs(object):
             return self.__dict__["_inputs"][key].get_value_data()
         else:
             return super().__getattribute__(key)
+
+    def get_value_obj(self, input_name) -> Value:
+
+        return self._inputs[input_name]
 
 
 class StepOutputs(object):
@@ -314,6 +318,20 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
             inputs: the input value set
             outputs: the output value set
         """
+
+    @property
+    def module_instance_hash(self) -> int:
+        """Return this modules 'module_hash'.
+
+        If two module instances ``module_instance_hash`` values are the same, it is guaranteed that their ``process`` methods will
+        return the same output, given the same inputs (except if that processing step uses randomness). It can also be
+        assumed that the two instances have the same input and output fields, with the same schemas.
+
+        Returns:
+            this modules 'module_instance_hash'
+        """
+
+        return hash((self.__class__, self.config.config_hash))
 
     def __eq__(self, other):
         if self.__class__ != other.__class__:

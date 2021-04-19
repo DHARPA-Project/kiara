@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import deepdiff
 import inspect
 import textwrap
 import typing
@@ -157,6 +158,8 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
             self._config = self.__class__._config_cls(**module_config)
         else:
             raise TypeError(f"Invalid type for module config: {type(module_config)}")
+
+        self._module_hash: typing.Optional[int] = None
 
         if meta is None:
             meta = {}
@@ -327,11 +330,25 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
         return the same output, given the same inputs (except if that processing step uses randomness). It can also be
         assumed that the two instances have the same input and output fields, with the same schemas.
 
+        !!! note
+        This implementation is preliminary, since it's not yet 100% clear to me how much that will be needed, and
+        in which situations. Also, module versioning needs to be implemented before this can work reliably. Also, for now
+        it is assumed that a module configuration is not changed once set, this also might change in the future
+
         Returns:
             this modules 'module_instance_hash'
         """
 
-        return hash((self.__class__, self.config.config_hash))
+        # TODO:
+        if self._module_hash is None:
+            _d = {
+                "module_cls": f"{self.__class__.__module__}.{self.__class__.__name__}",
+                "version": "0.0.0",  # TODO: implement module versioning, package name might also need to be included here
+                "config_hash": self.config.config_hash,
+            }
+            hashes = deepdiff.DeepHash(_d)
+            self._module_hash = hashes[_d]
+        return self._module_hash
 
     def __eq__(self, other):
         if self.__class__ != other.__class__:

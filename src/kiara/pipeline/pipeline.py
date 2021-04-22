@@ -176,7 +176,9 @@ class Pipeline(object):
                 if output_point.pipeline_output:
                     po = self._structure.pipeline_outputs[output_point.pipeline_output]
                     pv = self._data_registry.register_linked_value(
-                        output_value_item, value_fields=po
+                        output_value_item,
+                        value_fields=po,
+                        origin=f"step_output:{self.structure.pipeline_id}.{step_id}.{output_name}",
                     )
                     self._data_registry.register_callback(self.values_updated, pv)
                     pipeline_outputs[output_point.pipeline_output] = pv
@@ -260,14 +262,35 @@ class Pipeline(object):
                         f"Invalid value point type for this location: {input_point}"
                     )
 
-        self._pipeline_inputs = ValueSet(items=pipeline_inputs)
-        self._pipeline_outputs = ValueSet(items=pipeline_outputs)
+        if not pipeline_inputs:
+            raise Exception(
+                f"Can't init pipeline '{self.structure.pipeline_id}': no pipeline inputs"
+            )
+        self._pipeline_inputs = ValueSet(
+            items=pipeline_inputs,
+            title=f"Inputs for pipeline '{self.structure.pipeline_id}'",
+        )
+        if not pipeline_outputs:
+            raise Exception(
+                f"Can't init pipeline '{self.structure.pipeline_id}': no pipeline outputs"
+            )
+
+        self._pipeline_outputs = ValueSet(
+            items=pipeline_outputs,
+            title=f"Outputs for pipeline '{self.structure.pipeline_id}'",
+        )
         self._step_inputs = {}
         for step_id, inputs in all_step_inputs.items():
-            self._step_inputs[step_id] = ValueSet(items=inputs)
+            self._step_inputs[step_id] = ValueSet(
+                items=inputs,
+                title=f"Inputs for step '{step_id}' of pipeline '{self.structure.pipeline_id}",
+            )
         self._step_outputs = {}
         for step_id, outputs in all_step_outputs.items():
-            self._step_outputs[step_id] = ValueSet(items=outputs)
+            self._step_outputs[step_id] = ValueSet(
+                items=outputs,
+                title=f"Outputs for step '{step_id}' of pipeline '{self.structure.pipeline_id}'",
+            )
 
     def values_updated(self, *items: Value):
 
@@ -377,3 +400,9 @@ class PipelineState(BaseModel):
         description="The current (internal) output values of each step of this pipeline."
     )
     status: StepStatus = Field(description="The current overal status of the pipeline.")
+
+    # def __rich_console__(
+    #     self, console: Console, options: ConsoleOptions
+    # ) -> RenderResult:
+    #
+    #     yield "[b]Current pipeline state[/b]"

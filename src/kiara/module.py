@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import deepdiff
 import inspect
+import json
 import textwrap
 import typing
 from abc import abstractmethod
@@ -15,7 +16,7 @@ from kiara.data.values import Value, ValueSchema, ValueSet
 from kiara.utils import (
     StringYAML,
     create_table_from_config_class,
-    get_doc_for_module_class,
+    create_table_from_field_schemas,
 )
 
 if typing.TYPE_CHECKING:
@@ -97,7 +98,6 @@ class StepOutputs(object):
         self._outputs_staging.update(values)
 
     def _sync(self):
-
         self._outputs.update(self._outputs_staging)
 
 
@@ -125,6 +125,15 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
 
     # TODO: not quite sure about this generic type here, mypy doesn't seem to like it
     _config_cls: typing.Type[KIARA_CONFIG] = KiaraModuleConfig  # type: ignore
+
+    @classmethod
+    def doc(cls) -> str:
+        doc = cls.__doc__
+        if not doc:
+            doc = "-- n/a --"
+        else:
+            doc = inspect.cleandoc(doc)
+        return doc
 
     @classmethod
     def is_pipeline(cls) -> bool:
@@ -246,7 +255,9 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
             if isinstance(v, ValueSchema):
                 result[k] = v
             elif isinstance(v, typing.Mapping):
-                result[k] = ValueSchema(**v)
+                schema = ValueSchema(**v)
+                schema.validate_types(self._kiara)
+                result[k] = schema
             else:
                 raise Exception(
                     f"Invalid return type when tryping to create schema for '{self.id}': {type(v)}"
@@ -275,7 +286,9 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
             if isinstance(v, ValueSchema):
                 result[k] = v
             elif isinstance(v, typing.Mapping):
-                result[k] = ValueSchema(**v)
+                schema = ValueSchema(**v)
+                schema.validate_types(self._kiara)
+                result[k] = schema
             else:
                 raise Exception(
                     f"Invalid return type when tryping to create schema for '{self.id}': {type(v)}"
@@ -370,26 +383,39 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
                 "Invalid model class, no '_module_type_id' attribute added. This is a bug"
             )
 
-        data = {
-            # "module id": self.full_id,
-            "module type": self.__class__._module_type_id,  # type: ignore
-            "module_config": self.config.dict(),
-            "inputs": {},
-            "outputs": {},
-        }
+        yield f"[b]Module: {self.id}"
 
-        for field_name, schema in self.input_schemas.items():
-            d = "-- no default --" if schema.default is None else str(schema.default)
-            data["inputs"][field_name] = {
-                "type": schema.type,
-                "doc": schema.doc,
-                "default": d,
-            }
-        for field_name, schema in self.output_schemas.items():
-            data["outputs"][field_name] = {"type": schema.type, "doc": schema.doc}
+        doc = self.doc()
+        if doc and doc != "-- n/a --":
+            yield f"\n{self.doc()}\n"
 
-        yaml_str = yaml.dump(data)
-        yield Syntax(yaml_str, "yaml", background_color="default")
+        table = Table(box=box.SIMPLE, show_header=False)
+        table.add_column("property", style="i")
+        table.add_column("value")
+
+        table.add_row("module_type", self.__class__._module_type_id)
+        table.add_row(
+            "module_class", f"{self.__class__.__module__}.{self.__class__.__name__}"
+        )
+        table.add_row("is pipeline", "yes" if self.__class__.is_pipeline() else "no")
+        config = self.config.dict()
+        config.pop("doc", None)
+        config.pop("steps", None)
+        config.pop("input_aliases", None)
+        config.pop("output_aliases", None)
+        config_str = json.dumps(config, indent=2)
+        c = Syntax(config_str, "json", background_color="default")
+        table.add_row("config", c)
+        inputs_table = create_table_from_field_schemas(
+            _show_header=True, **self.input_schemas
+        )
+        table.add_row("inputs", inputs_table)
+        outputs_table = create_table_from_field_schemas(
+            _show_header=True, **self.output_schemas
+        )
+        table.add_row("outputs", outputs_table)
+
+        yield table
 
 
 class ModuleInfo(BaseModel):
@@ -444,7 +470,7 @@ class ModuleInfo(BaseModel):
         values["module_type"] = module_type
         values["module_cls"] = module_cls
 
-        doc = get_doc_for_module_class(module_cls)
+        doc = module_cls.doc()
 
         values["doc"] = doc
         proc_doc = module_cls.process.__doc__

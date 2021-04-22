@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import networkx as nx
 import typing
-from deepdiff import DeepHash
+import uuid
 from functools import lru_cache
 from pydantic import BaseModel, Extra, Field, PrivateAttr
 
@@ -71,8 +71,11 @@ class PipelineStep(BaseModel):
         default_factory=list,
     )
     _kiara: typing.Optional["Kiara"] = PrivateAttr(default=None)
+    _id: str = PrivateAttr()
 
     def __init__(self, **data):  # type: ignore
+
+        self._id = str(uuid.uuid4())
         kiara = data.pop("_kiara", None)
         if kiara is None:
             from kiara import Kiara
@@ -102,40 +105,44 @@ class PipelineStep(BaseModel):
         if not isinstance(other, PipelineStep):
             return False
 
-        # TODO: also check whether _kiara obj is equal?
-        eq = (self.step_id, self.parent_id, self.module, self.processing_stage,) == (
-            other.step_id,
-            other.parent_id,
-            other.module,
-            other.processing_stage,
-        )
+        return self._id == other._id
 
-        if not eq:
-            return False
-
-        hs = DeepHash(self.input_links)
-        ho = DeepHash(other.input_links)
-
-        return hs[self.input_links] == ho[other.input_links]
+        # # TODO: also check whether _kiara obj is equal?
+        # eq = (self.step_id, self.parent_id, self.module, self.processing_stage,) == (
+        #     other.step_id,
+        #     other.parent_id,
+        #     other.module,
+        #     other.processing_stage,
+        # )
+        #
+        # if not eq:
+        #     return False
+        #
+        # hs = DeepHash(self.input_links)
+        # ho = DeepHash(other.input_links)
+        #
+        # return hs[self.input_links] == ho[other.input_links]
 
     def __hash__(self):
 
-        # TODO: also include _kiara obj?
-        # TODO: figure out whether that can be made to work without deephash
-        hs = DeepHash(self.input_links)
-        return hash(
-            (
-                self.step_id,
-                self.parent_id,
-                self.module,
-                self.processing_stage,
-                hs[self.input_links],
-            )
-        )
+        return hash(self._id)
+
+        # # TODO: also include _kiara obj?
+        # # TODO: figure out whether that can be made to work without deephash
+        # hs = DeepHash(self.input_links)
+        # return hash(
+        #     (
+        #         self.step_id,
+        #         self.parent_id,
+        #         self.module,
+        #         self.processing_stage,
+        #         hs[self.input_links],
+        #     )
+        # )
 
     def __repr__(self):
 
-        return f"{self.__class__.__name__}(step_id={self.step_id} parent={self.parent_id} module_type={self.module_type} processing_stage={self.processing_stage}"
+        return f"{self.__class__.__name__}(step_id={self.step_id} parent={self.parent_id} module_type={self.module_type} processing_stage={self.processing_stage})"
 
     def __str__(self):
         return f"step: {self.step_id} (module: {self.module_type})"
@@ -617,7 +624,17 @@ class StepDesc(BaseModel):
         description="The processing stage of this step within a Pipeline."
     )
     input_connections: typing.Dict[str, typing.List[str]] = Field(
-        description="A map that explains what elements connect to this steps inputs. A connection could either be a Pipeline input (indicated by the '__pipeline__' token), or another steps output."
+        description="""A map that explains what elements connect to this steps inputs. A connection could either be a Pipeline input (indicated by the ``__pipeline__`` token), or another steps output.
+
+Example:
+``` json
+input_connections: {
+    "a": "__pipeline__.a",
+    "b": "step_one.a"
+}
+
+```
+        """
     )
     output_connections: typing.Dict[str, typing.List[str]] = Field(
         description="A map that explains what elemnts connect to this steps outputs. A connection could be either a Pipeline output, or another steps input."

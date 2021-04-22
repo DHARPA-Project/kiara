@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import typing
+from rich import box
+from rich.console import Console, ConsoleOptions, RenderResult
+from rich.table import Table
 
 from kiara.config import KiaraWorkflowConfig
 from kiara.data.values import ValueSet
@@ -98,3 +101,25 @@ class KiaraWorkflow(object):
     def __repr__(self):
 
         return f"{self.__class__.__name__}(workflow_id={self.workflow_id}, root_module={self._root_module})"
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+
+        yield f"[b]Workflow: {self.workflow_id}"
+
+        doc = self._root_module.doc()
+        if doc and doc != "-- n/a --":
+            yield f"\n{self._root_module.doc()}\n"
+
+        table = Table(box=box.SIMPLE, show_header=False)
+        table.add_column("property", style="i")
+        table.add_column("value")
+        table.add_row("root module", self._root_module._module_type_id)
+        table.add_row("current status", self.status.name)
+        inputs_table = self.inputs._create_rich_table(show_headers=True)
+        table.add_row("inputs", inputs_table)
+        outputs_table = self.outputs._create_rich_table(show_headers=True)
+        table.add_row("outputs", outputs_table)
+
+        yield table

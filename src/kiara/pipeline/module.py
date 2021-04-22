@@ -11,12 +11,7 @@ from kiara.data.values import ValueField, ValueSchema
 from kiara.module import KiaraModule, ModuleInfo, StepInputs, StepOutputs
 from kiara.pipeline.controller import BatchController, PipelineController
 from kiara.pipeline.structure import PipelineStructure
-from kiara.utils import (
-    StringYAML,
-    create_table_from_config_class,
-    get_doc_for_module_class,
-    print_ascii_graph,
-)
+from kiara.utils import StringYAML, create_table_from_config_class, print_ascii_graph
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -32,6 +27,12 @@ class PipelineModule(KiaraModule[PipelineModuleConfig]):
     @classmethod
     def is_pipeline(cls) -> bool:
         return True
+
+    @classmethod
+    def doc(cls) -> str:
+        bpc: "PipelineModuleConfig" = cls._base_pipeline_config  # type: ignore
+        doc = bpc.doc
+        return doc
 
     def __init__(
         self,
@@ -163,7 +164,7 @@ class PipelineModuleInfo(ModuleInfo):
             for s_id in stage:
                 step = structure.get_step(s_id)
                 mc = self._kiara.get_module_class(step.module_type)
-                desc = get_doc_for_module_class(mc)
+                desc = mc.doc()
                 inputs: typing.Dict[ValueField, typing.List[str]] = {}
                 for inp in structure.steps_inputs.values():
                     if inp.step_id != s_id:

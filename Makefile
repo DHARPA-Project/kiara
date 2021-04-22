@@ -12,6 +12,9 @@ serve-docs: ## serve and watch documentation
 
 clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
 
+clean-doc: ## remove doc artifacts
+	rm -fr build/site
+
 clean-build: ## remove build artifacts
 	rm -fr build/
 	rm -fr dist/

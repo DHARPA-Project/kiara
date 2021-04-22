@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import inspect
 import json
 import logging
 import os
@@ -24,7 +23,7 @@ from typing import Union
 from kiara.defaults import RELATIVE_PIPELINES_PATH
 
 if typing.TYPE_CHECKING:
-    from kiara.config import KiaraModuleConfig, PipelineModuleConfig
+    from kiara.config import KiaraModuleConfig
     from kiara.data.values import ValueSchema
     from kiara.module import KiaraModule
 
@@ -134,7 +133,9 @@ def find_kiara_pipeline_folders() -> typing.Dict[str, str]:
 
     log2 = logging.getLogger("stevedore")
     out_hdlr = logging.StreamHandler(sys.stdout)
-    out_hdlr.setFormatter(logging.Formatter("kiara module plugin error -> %(message)s"))
+    out_hdlr.setFormatter(
+        logging.Formatter("kiara pipeline plugin error -> %(message)s")
+    )
     out_hdlr.setLevel(logging.INFO)
     log2.addHandler(out_hdlr)
     log2.setLevel(logging.INFO)
@@ -188,16 +189,19 @@ def create_table_from_config_class(
     return table
 
 
-def create_table_from_field_schemas(**fields: "ValueSchema"):
+def create_table_from_field_schemas(
+    _show_header: bool = False, **fields: "ValueSchema"
+):
 
-    table = Table(box=box.SIMPLE, show_header=False)
+    table = Table(box=box.SIMPLE, show_header=_show_header)
     table.add_column("Field name", style="i")
-    table.add_column("Value type")
+    table.add_column("Type")
+    table.add_column("Description")
     table.add_column("Default")
 
     for field_name, schema in fields.items():
         d = "-- no default --" if schema.default is None else str(schema.default)
-        table.add_row(field_name, schema.type, d)  # type: ignore
+        table.add_row(field_name, schema.type, schema.doc, d)  # type: ignore
 
     return table
 
@@ -234,23 +238,6 @@ def module_config_from_cli_args(*args: str) -> typing.Dict[str, typing.Any]:
                 )
             config[k] = v
     return config
-
-
-def get_doc_for_module_class(module_cls: typing.Type["KiaraModule"]):
-
-    from kiara import PipelineModule
-
-    if module_cls == PipelineModule or not module_cls.is_pipeline():
-
-        doc = module_cls.__doc__
-        if not doc:
-            doc = "-- n/a --"
-        else:
-            doc = inspect.cleandoc(doc)
-    else:
-        bpc: "PipelineModuleConfig" = module_cls._base_pipeline_config  # type: ignore
-        doc = bpc.doc
-    return doc
 
 
 def camel_case_to_snake_case(camel_text: str, repl: str = "_"):

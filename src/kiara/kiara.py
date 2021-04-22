@@ -9,6 +9,7 @@ from pathlib import Path
 
 from kiara.config import KiaraWorkflowConfig, PipelineModuleConfig
 from kiara.data.registry import DataRegistry
+from kiara.data.types import ValueType
 from kiara.mgmt import ModuleManager, PipelineModuleManager, PythonModuleManager
 from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.pipeline import Pipeline
@@ -22,8 +23,18 @@ if typing.TYPE_CHECKING:
 log = logging.getLogger("kiara")
 
 
+def info(item: typing.Any):
+    from rich import print as rich_print
+
+    rich_print(item)
+
+
 class Kiara(object):
     _instance = None
+
+    @classmethod
+    def info(cls, item: typing.Any):
+        info(item)
 
     @classmethod
     def instance(cls):
@@ -52,11 +63,44 @@ class Kiara(object):
             self._default_pipeline_mgr,
         ]
         self._modules: typing.Dict[str, ModuleManager] = {}
+        self._value_types: typing.Dict[str, ValueType] = None
 
-        self._data_registry: DataRegistry = DataRegistry()
+        self._data_registry: DataRegistry = DataRegistry(self)
 
         for mm in _mms:
             self.add_module_manager(mm)
+
+    @property
+    def value_types(self) -> typing.Mapping[str, typing.Type[ValueType]]:
+
+        if self._value_types is not None:
+            return self._value_types
+
+        all_value_type_classes = ValueType.__subclasses__()
+        value_type_dict = {}
+        for cls in all_value_type_classes:
+            type_name = cls.type_name()
+            if type_name in value_type_dict.keys():
+                raise Exception(
+                    f"Can't initiate types: duplicate type name '{type_name}'"
+                )
+            value_type_dict[type_name] = cls
+
+        self._value_types = value_type_dict
+        return self._value_types
+
+    @property
+    def value_type_names(self) -> typing.List[str]:
+        return list(self.value_types.keys())
+
+    def get_value_type_cls(self, type_name: str) -> typing.Type[ValueType]:
+
+        t = self.value_types.get(type_name, None)
+        if t is None:
+            raise Exception(
+                f"No value type '{type_name}', available types: {', '.join(self.value_types.keys())}"
+            )
+        return t
 
     def add_module_manager(self, module_manager: ModuleManager):
 
@@ -69,6 +113,7 @@ class Kiara(object):
             self._modules[module_type] = module_manager
 
         self._module_mgrs.append(module_manager)
+        self._value_types = None
 
     def add_pipeline_folder(self, folder: typing.Union[Path, str]) -> typing.List[str]:
 
@@ -214,7 +259,7 @@ class Kiara(object):
                 pipeline_config = PipelineModuleConfig(**pipeline_config_data)
             else:
                 raise Exception(
-                    f"Can't create pipeline config from string: {config}. Value either needs to be a (registered) module type name, or a path to a file."
+                    f"Can't create pipeline config from string '{config}'. Value must be path to a file, or one of: {', '.join(self.available_module_types)}"
                 )
         elif isinstance(config, PipelineModuleConfig):
             pipeline_config = config
@@ -232,7 +277,7 @@ class Kiara(object):
         config: typing.Union[KiaraWorkflowConfig, typing.Mapping[str, typing.Any], str],
         workflow_id: typing.Optional[str] = None,
         controller: typing.Optional[PipelineController] = None,
-    ):
+    ) -> KiaraWorkflow:
 
         if isinstance(config, typing.Mapping):
             workflow_config: KiaraWorkflowConfig = KiaraWorkflowConfig(**config)
@@ -254,7 +299,7 @@ class Kiara(object):
                 )
             else:
                 raise Exception(
-                    f"Can't create workflow config from string: {config}. Value either needs to be a (registered) module type name, or a path to a file."
+                    f"Can't create workflow config from string '{config}'. Value must be path to a file, or one of: {', '.join(self.available_module_types)}"
                 )
         elif isinstance(config, KiaraWorkflowConfig):
             workflow_config = config

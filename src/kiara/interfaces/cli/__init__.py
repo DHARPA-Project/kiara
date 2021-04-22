@@ -10,6 +10,7 @@ from rich import print as rich_print
 
 from kiara import Kiara
 from kiara.module import ModuleInfo
+from kiara.pipeline.controller import BatchController
 from kiara.pipeline.module import PipelineModuleInfo
 from kiara.utils import module_config_from_cli_args
 
@@ -216,18 +217,65 @@ def execution_graph(ctx, pipeline_type: str, config: typing.Iterable[typing.Any]
     info.print_execution_graph()
 
 
-# @cli.command()
-# @click.pass_context
-# def dev(ctx):
-#
-#     kiara: Kiara = ctx.obj["kiara"]
-#
-#     m = kiara.create_module("nand", "nand", None)
-#     print(m)
-# kiara.register_pipeline_description("/home/markus/projects/dharpa/kiara/tests/resources/pipelines/dummy/dummy_1_delay.json")
-# print(kiara.available_module_types)
-# p = kiara.create_pipeline("dummy_1_delay")
-# print(p.get_current_state().json())
+@cli.command()
+@click.pass_context
+def dev(ctx):
+
+    # kiara: Kiara = ctx.obj['kiara']
+    #
+    # # print('---')
+    # workflow = kiara.create_workflow("network_analysis")
+    #
+    # workflow.inputs.nodes_info_path = "/home/markus/projects/dharpa/notebooks/NetworkXAnalysis/ReviewMasterTable.csv"
+    # workflow.inputs.edges_path = "/home/markus/projects/dharpa/notebooks/NetworkXAnalysis/JournalEdges1902.csv"
+    # workflow.inputs.source_column = "Source"
+    # workflow.inputs.target_column = "Target"
+    # workflow.inputs.weight_column = "weight"
+    #
+    # # for k, v in workflow.inputs.items():
+    # #     print(f"{k}: {v.is_valid}")
+    #
+    # workflow.inputs.nodes_table_index = "Id"
+    #
+    # print(f"Workflow status: {workflow.status}")
+
+    # print(workflow.get_current_state().json())
+    # rich_print(workflow.outputs.data)
+    # rich_print(workflow.outputs.graph)
+    # print("---")
+    # print(workflow.outputs.graph.get_value_data())
+
+    # print(workflow.pipeline.get_current_state().json())
+
+    # wf = kiara.create_workflow("nand")
+    # wf.inputs.a = True
+    # wf.inputs.b = False
+    # j = wf.get_current_state().json()
+    # print(j)
+
+    kiara: Kiara = Kiara.instance()
+
+    controller = BatchController()
+
+    # print('---')
+    workflow = kiara.create_workflow("assemble_network_graph", controller=controller)
+    workflow = kiara.create_workflow("nand")
+
+    workflow.get_current_state()
+
+    # workflow.inputs.nodes_info_path = "/home/markus/projects/dharpa/notebooks/NetworkXAnalysis/ReviewMasterTable.csv"
+    # workflow.inputs.edges_path = "/home/markus/projects/dharpa/notebooks/NetworkXAnalysis/JournalEdges1902.csv"
+    # workflow.inputs.source_column = "Source"
+    # workflow.inputs.target_column = "Target"
+    # workflow.inputs.weight_column = "weight"
+    # workflow.inputs.nodes_table_index = "Id"
+    #
+    # print_ascii_graph(workflow.structure.data_flow_graph)
+    #
+    # rich_print(workflow)
+    #
+    # rich_print(workflow.outputs.graph)
+    # print(workflow.pipeline.get_current_state().json())
 
 
 if __name__ == "__main__":

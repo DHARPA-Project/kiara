@@ -28,9 +28,9 @@ Only snapshot binaries (for now):
   - [Windows](https://github.com/DHARPA-Project/kiara/actions/workflows/build-windows.yaml)
   - [Mac OS X](https://github.com/DHARPA-Project/kiara/actions/workflows/build-darwin.yaml)
 
-# Development
+## Development
 
-## Requirements
+### Requirements
 
 - Python (version >=3.6 -- some make targets only work for Python >=3.7, but *kiara* itself should work on 3.6)
 - pip, virtualenv
@@ -39,7 +39,7 @@ Only snapshot binaries (for now):
 - [direnv](https://direnv.net/) (optional)
 
 
-## Prepare development environment
+### Prepare development environment
 
 ```console
 git clone https://github.com/DHARPA-Project/kiara.git
@@ -55,13 +55,13 @@ If you use [direnv](https://direnv.net/), you can alternatively do:
 git clone https://github.com/DHARPA-Project/kiara.git
 cd kiara
 cp .envrc.disabled .envrc
-direnv allow   # if using direnv, otherwise activate virtualenv
+direnv allow
 make init
 ```
 
 *Note*: you might want to adjust the Python version in ``.envrc`` (should not be necessary in most cases though)
 
-## ``make`` targets
+### ``make`` targets
 
 - ``init``: init development project (install project & dev dependencies into virtualenv, as well as pre-commit git hook)
 - ``update-modules``: update default kiara modules package from git
@@ -75,7 +75,7 @@ make init
 For details (and other, minor targets), check the ``Makefile``.
 
 
-## Running tests
+### Running tests
 
 ``` console
 > make test

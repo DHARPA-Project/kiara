@@ -4,7 +4,6 @@ import logging
 import typing
 import uuid
 
-from kiara.data.types import ValueType
 from kiara.data.values import (
     DataValue,
     LinkedValue,
@@ -13,6 +12,9 @@ from kiara.data.values import (
     ValueSchema,
     ValueUpdateHandler,
 )
+
+if typing.TYPE_CHECKING:
+    from kiara.kiara import Kiara
 
 log = logging.getLogger("kiara")
 
@@ -37,7 +39,9 @@ class DataRegistry(object):
 
     """
 
-    def __init__(self):
+    def __init__(self, kiara: "Kiara"):
+
+        self._kiara: Kiara = kiara
 
         self._id: str = str(uuid.uuid4())
         self._value_items: typing.Dict[str, DataValue] = {}
@@ -133,7 +137,7 @@ class DataRegistry(object):
             id=value_id,
             value_schema=value_schema,
             value_fields=_value_fields,
-            registry=self,  # type: ignore
+            kiara=self._kiara,  # type: ignore
             origin=origin,
             is_constant=is_constant,
         )
@@ -247,13 +251,20 @@ class DataRegistry(object):
             _linked_value_objs.append(_i)
 
         # TODO: auto-generate doc string
-        schema = ValueSchema(type=ValueType.any, doc="-- linked value --")
+        if len(_linked_values) == 1:
+            k = next(iter(_linked_values.keys()))
+            _i = self.get_value_item(k)
+            schema = _i.value_schema
+        else:
+            doc = "-- linked value --"
+            schema = ValueSchema(type="any", doc=doc)
+            schema.validate_types(self._kiara)
 
         value_item = LinkedValue(  # type: ignore
             id=value_id,
             value_schema=schema,
             value_fields=_value_fields,
-            registry=self,  # type: ignore
+            kiara=self._kiara,  # type: ignore
             origin=origin,
             links=_linked_values,
         )
@@ -333,7 +344,6 @@ class DataRegistry(object):
         """
 
         item = self.get_value_item(item)
-
         result = self.set_values({item: value})  # type: ignore
         return result[item]
 
@@ -376,9 +386,13 @@ class DataRegistry(object):
             old_value = self.get_value_data(item)
             changed = True
             if old_value == value:
+                # TODO: make sure this is enough
                 changed = False
             else:
-                # TODO: validate value
+                item.type_obj.validate(value)
+                metadata = item.type_obj.extract_metadata(value)
+                item.metadata["type"] = metadata
+
                 self._values[item.id] = value
                 self._value_items[item.id].is_valid = True
                 for cb in self._callbacks.get(item.id, []):
@@ -416,14 +430,22 @@ class DataRegistry(object):
 
         assert isinstance(item, LinkedValue)
 
-        valid = True
-        for value_id, details in item.links.items():
-            linked_item = self.get_value_item(value_id)
-            if not linked_item.is_valid:
-                valid = False
-                break
+        if len(item.links) == 1:
+            linked_item_id = next(iter(item.links.keys()))
+            linked_item = self.get_value_item(linked_item_id)
+            item.is_valid = linked_item.is_valid
+            if "type" in linked_item.metadata:
+                item.metadata["type"] = linked_item.metadata["type"]
+        else:
+            raise NotImplementedError()
+            valid = True
+            for value_id, details in item.links.items():
+                linked_item = self.get_value_item(value_id)
+                if not linked_item.is_valid:
+                    valid = False
+                    break
 
-        item.is_valid = valid
+            item.is_valid = valid
 
     def get_stats(self) -> typing.Dict:
 

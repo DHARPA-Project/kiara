@@ -12,20 +12,27 @@ whenever the data that is associated with a value was changed).
 """
 
 import abc
+import json
 import logging
 import typing
 import uuid
 from datetime import datetime
 from pydantic import BaseModel, Extra, Field, PrivateAttr, root_validator
+from rich import box
+from rich.console import Console, ConsoleOptions, RenderResult
+from rich.syntax import Syntax
+from rich.table import Table
 
 from kiara.data.types import ValueType
 from kiara.defaults import INVALID_VALUE_NAMES, PIPELINE_PARENT_MARKER
-from kiara.utils import camel_case_to_snake_case
+from kiara.utils import StringYAML, camel_case_to_snake_case
 
 if typing.TYPE_CHECKING:
     from kiara.data.registry import DataRegistry
+    from kiara.kiara import Kiara
 
 log = logging.getLogger("kiara")
+yaml = StringYAML()
 
 try:
 
@@ -94,29 +101,31 @@ class ValueSchema(BaseModel):
     The schema contains the [ValueType][kiara.data.values.ValueType] of a value, as well as an optional default that
     will be used if no user input was given (yet) for a value.
 
-    For more complex types like arrays and tables, a sub-schema will be available (e.g. columns of a table, type of
-    the array-items, ...). This bit is not implemented yet.
+    For more complex container types like arrays, tables, unions etc, types can also be configured with values from the ``type_config`` field.
     """
 
     class Config:
         use_enum_values = True
+        extra = Extra.forbid
 
-    type: "ValueType"
+    type: str = Field(description="The type of the value.")
+    type_config: typing.Dict[str, typing.Any] = Field(
+        description="Configuration for the type, in case it's complex.",
+        default_factory=dict,
+    )
+
     doc: str = Field(
         default="-- n/a --",
         description="A description for the value of this input field.",
     )
     default: typing.Any = Field(description="A default value.", default=None)
-    sub_schema: typing.Union[
-        None, "ValueSchema", typing.Mapping[str, "ValueSchema"]
-    ] = Field(
-        description="In case this schemas type is a container type (list, dict, ...), this field specifies the schema of its content.",
-        default=None,
-    )
 
-    @property
-    def type_obj(self):
-        return ValueType[self.type]
+    def validate_types(self, kiara: "Kiara"):
+
+        if self.type not in kiara.value_type_names:
+            raise ValueError(
+                f"Invalid value type '{self.type}', available types: {kiara.value_type_names}"
+            )
 
     def __eq__(self, other):
 
@@ -143,7 +152,8 @@ class Value(BaseModel, abc.ABC):
         extra = Extra.forbid
         use_enum_values = True
 
-    _registry: typing.Optional["DataRegistry"] = PrivateAttr()
+    _kiara: typing.Optional["Kiara"] = PrivateAttr()
+    _type_obj: ValueType = PrivateAttr(default=None)
 
     id: str = Field(description="A unique id for this value.")
     value_schema: ValueSchema = Field(description="The schema of this value.")
@@ -174,22 +184,36 @@ class Value(BaseModel, abc.ABC):
 
     def __init__(self, **data):  # type: ignore
         data["stage"] = "init"
-        registry = data.pop("registry", None)
-        if registry is None:
-            raise ValueError("No 'registry' provided.")
+        kiara = data.pop("kiara", None)
+        if kiara is None:
+            raise ValueError("No 'kiara' object provided.")
         super().__init__(**data)
-        self._registry = registry
+        self._kiara = kiara
+
+    def get_value_data(self) -> typing.Any:
+        """Retrieve the actual data from the registry.
+
+        This will be implemented by subclasses.
+        """
+        raise NotImplementedError()
+
+    @property
+    def type_obj(self):
+        if self._type_obj is None:
+            cls = self._kiara.get_value_type_cls(self.value_schema.type)
+            self._type_obj = cls(**self.value_schema.type_config)
+        return self._type_obj
 
     @property
     def registry(self) -> "DataRegistry":
-        if self._registry is None:
-            raise Exception(f"Registry not set for value: {self}")
-        return self._registry
+        if self._kiara is None:
+            raise Exception(f"Kiara object not set for value: {self}")
+        return self._kiara.data_registry
 
     def register_callback(
         self, callback: typing.Callable
     ):  # this needs to implement ValueUpdateHandler, but can't add that type hint due to a pydantic error
-        self.registry.register_callback(callback, self)
+        self._kiara.data_registry.register_callback(callback, self)
 
     def __eq__(self, other):
 
@@ -207,6 +231,31 @@ class Value(BaseModel, abc.ABC):
 
     def __str__(self):
         return self.__repr__()
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+
+        yield f"[b]Value: {self.origin}"
+
+        table = Table(box=box.SIMPLE, show_header=False)
+        table.add_column("property", style="i")
+        table.add_column("value")
+
+        table.add_row("id", self.id)
+        table.add_row("type", self.value_schema.type)
+        table.add_row("desc", self.value_schema.doc)
+        table.add_row("is set", "yes" if self.is_valid else "no")
+        table.add_row("is constant", "yes" if self.is_constant else "no")
+
+        if self.metadata:
+            json_string = json.dumps(self.metadata, indent=2)
+            metadata = Syntax(json_string, "json")
+            table.add_row("metadata", metadata)
+        else:
+            table.add_row("metadata", "-- no metadata --")
+
+        yield table
 
 
 class DataValue(Value):
@@ -329,7 +378,12 @@ class LinkedValue(Value):
 class ValueSet(typing.MutableMapping[str, Value]):
     """A dict-like object that contains a set of value fields that belong together in some way (for example outputs of a step or pipeline)."""
 
-    def __init__(self, items: typing.Mapping[str, Value]):
+    def __init__(
+        self, items: typing.Mapping[str, Value], title: typing.Optional[str] = None
+    ):
+
+        if not items:
+            raise ValueError("Can't create ValueSet: no values provided")
 
         for item, value in items.items():
 
@@ -344,7 +398,13 @@ class ValueSet(typing.MutableMapping[str, Value]):
                 raise ValueError(f"Invalid value name '{item}'.")
         super(ValueSet, self).__setattr__("_value_items", items)
         # TODO: auto-generate doc
-        self._schema = ValueSchema(type="value_items", default=None, doc="-- n/a --")
+        # TODO: auto-generate schema
+        # TODO: validate schema types
+        schema = ValueSchema(type="any", default=None, doc="-- n/a --")
+        self._schema = schema
+        if title is None:
+            title = "-- n/a --"
+        self._title = title
 
     def __getattr__(self, item):
 
@@ -357,7 +417,12 @@ class ValueSet(typing.MutableMapping[str, Value]):
         elif item in self.__dict__["_value_items"].keys():
             return self.__dict__["_value_items"][item]
         else:
-            return super().__getattribute__(item)
+            try:
+                return super().__getattribute__(item)
+            except AttributeError:
+                raise AttributeError(
+                    f"ValueSet does not have a field '{item}', available fields: {' ,'.join(self._value_items.keys())}"
+                )
 
     def __setattr__(self, key, value):
 
@@ -453,6 +518,29 @@ class ValueSet(typing.MutableMapping[str, Value]):
     def __repr__(self):
 
         return f"ValueItems(values={self._value_items} valid={self.items_are_valid})"
+
+    def _create_rich_table(self, show_headers: bool = True) -> Table:
+
+        table = Table(box=box.SIMPLE, show_header=show_headers)
+        table.add_column("name", style="i")
+        table.add_column("type")
+        table.add_column("desc")
+        table.add_column("is set")
+
+        for k, v in self.items():
+            t = v.value_schema.type
+            desc = v.value_schema.doc
+            is_set = "yes" if v.is_valid else "no"
+            table.add_row(k, t, desc, is_set)
+
+        return table
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+
+        yield f"[b]Value-set: {self._title}[/b]"
+        yield self._create_rich_table(show_headers=True)
 
 
 ValueSchema.update_forward_refs()

@@ -115,7 +115,7 @@ class KiaraWorkflow(object):
         table = Table(box=box.SIMPLE, show_header=False)
         table.add_column("property", style="i")
         table.add_column("value")
-        table.add_row("root module", self._root_module._module_type_id)
+        table.add_row("root module", self._root_module._module_type_id)  # type: ignore
         table.add_row("current status", self.status.name)
         inputs_table = self.inputs._create_rich_table(show_headers=True)
         table.add_row("inputs", inputs_table)

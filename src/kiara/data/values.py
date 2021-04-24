@@ -7,8 +7,8 @@ valid/set, what type/schema it has, when it was last modified, ...), but it does
 that is that such data can be fairly large, and in a lot of cases it is not necessary for the code involved to have
 access to it, access to the metadata is enough.
 
-Each Value has a unique id, which can be used to retrieve the data (whole, or parts of it) from a [DataRegistry][kiara.data.registry.DataRegistry]. In addition, that id can be used to subscribe to change events for a value (published
-whenever the data that is associated with a value was changed).
+Each Value has a unique id, which can be used to retrieve the data (whole, or parts of it) from a [DataRegistry][kiara.data.registry.DataRegistry].
+In addition, that id can be used to subscribe to change events for a value (published whenever the data that is associated with a value was changed).
 """
 
 import abc
@@ -17,6 +17,7 @@ import logging
 import typing
 import uuid
 from datetime import datetime
+from enum import Enum
 from pydantic import BaseModel, Extra, Field, PrivateAttr, root_validator
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderResult
@@ -46,6 +47,12 @@ try:
 except Exception:
     # there is some issue with older Python versions, typing.Protocol, and Pydantic
     ValueUpdateHandler = typing.Callable  # type:ignore
+
+
+class SpecialValue(Enum):
+
+    NOT_SET = "__not_set__"
+    NO_VALUE = "__no_value__"
 
 
 class StepValueAddress(BaseModel):
@@ -113,12 +120,17 @@ class ValueSchema(BaseModel):
         description="Configuration for the type, in case it's complex.",
         default_factory=dict,
     )
+    default: typing.Any = Field(
+        description="A default value.", default=SpecialValue.NOT_SET
+    )
+    required: typing.Any = Field(
+        description="Whether this value is required to be set.", default=True
+    )
 
     doc: str = Field(
         default="-- n/a --",
         description="A description for the value of this input field.",
     )
-    default: typing.Any = Field(description="A default value.", default=None)
 
     def validate_types(self, kiara: "Kiara"):
 
@@ -174,6 +186,12 @@ class Value(BaseModel, abc.ABC):
         default=False,
         description="Whether the value is currently streamed into this object.",
     )
+    is_set: bool = Field(
+        description="Whether the value was set (in some way: user input, default, constant...).",
+        default=False,
+    )
+    is_none: bool = Field(description="Whether the value is 'None'.", default=True)
+
     is_valid: bool = Field(
         description="Whether the value is set and valid.", default=False
     )
@@ -213,6 +231,7 @@ class Value(BaseModel, abc.ABC):
     def register_callback(
         self, callback: typing.Callable
     ):  # this needs to implement ValueUpdateHandler, but can't add that type hint due to a pydantic error
+        assert self._kiara is not None
         self._kiara.data_registry.register_callback(callback, self)
 
     def __eq__(self, other):
@@ -460,7 +479,7 @@ class ValueSet(typing.MutableMapping[str, Value]):
     def items_are_valid(self) -> bool:
 
         for item in self._value_items.values():
-            if item is None or not item.is_valid:
+            if not item.is_valid and item.value_schema.required:
                 return False
         return True
 
@@ -476,9 +495,6 @@ class ValueSet(typing.MutableMapping[str, Value]):
         registries: typing.Dict[DataRegistry, typing.Dict[Value, typing.Any]] = {}
 
         for k, v in values.items():
-
-            if isinstance(v, Value):
-                raise Exception("Invalid value type")
 
             if k not in self._value_items.keys():
                 invalid.append(k)
@@ -525,13 +541,15 @@ class ValueSet(typing.MutableMapping[str, Value]):
         table.add_column("name", style="i")
         table.add_column("type")
         table.add_column("desc")
+        table.add_column("required")
         table.add_column("is set")
 
         for k, v in self.items():
             t = v.value_schema.type
             desc = v.value_schema.doc
+            req = "yes" if v.value_schema.required else "no"
             is_set = "yes" if v.is_valid else "no"
-            table.add_row(k, t, desc, is_set)
+            table.add_row(k, t, desc, req, is_set)
 
         return table
 
@@ -632,7 +650,7 @@ class ValueField(BaseModel):
     """
 
     class Config:
-        allow_mutation = False
+        allow_mutation = True
         extra = Extra.forbid
 
     _id: uuid.UUID = PrivateAttr(default_factory=uuid.uuid4)

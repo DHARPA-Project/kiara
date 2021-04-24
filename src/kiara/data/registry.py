@@ -7,6 +7,7 @@ import uuid
 from kiara.data.values import (
     DataValue,
     LinkedValue,
+    SpecialValue,
     Value,
     ValueField,
     ValueSchema,
@@ -89,7 +90,7 @@ class DataRegistry(object):
         ] = None,
         value_id: typing.Optional[str] = None,
         callbacks: typing.Optional[typing.Iterable[ValueUpdateHandler]] = None,
-        initial_value: typing.Any = None,
+        initial_value: typing.Any = SpecialValue.NOT_SET,
         origin: typing.Optional[str] = None,
         is_constant: bool = False,
     ) -> DataValue:
@@ -117,7 +118,17 @@ class DataRegistry(object):
         if value_id is None:
             value_id = generate_random_value_id()
 
-        if is_constant and initial_value is None:
+        if initial_value is None:
+            initial_value = SpecialValue.NOT_SET
+
+        # when initializing a value object we can be a bit more lenient in overloading 'None', and interprete
+        # it in a pragmatic way, depending on the schema of the value
+        if initial_value == SpecialValue.NOT_SET:
+            default_value = value_schema.default
+            if default_value is not None and default_value != SpecialValue.NOT_SET:
+                initial_value = default_value
+
+        if is_constant and initial_value == SpecialValue.NOT_SET:
             raise Exception("Can't register constant, no initial value provided.")
 
         if value_fields is None:
@@ -149,7 +160,7 @@ class DataRegistry(object):
             for cb in callbacks:
                 self.register_callback(cb, value_item)
 
-        if initial_value is not None:
+        if initial_value != SpecialValue.NOT_SET:
             self.set_value(value_id, initial_value)
 
         return value_item
@@ -162,6 +173,7 @@ class DataRegistry(object):
             Value,
             typing.Iterable[typing.Union[str, Value]],
         ],
+        value_schema: ValueSchema,
         value_fields: typing.Union[
             ValueField, typing.Iterable[ValueField], None
         ] = None,
@@ -178,6 +190,7 @@ class DataRegistry(object):
             Currently only one-to-one mappings of ``Value``/``LinkedValue`` is allowed. This will be more flexible in the future.
 
         Arguments:
+             value_schema: the schema of the linked value
              value_fields: field(s) within a [PipelineStructure][kiara.pipeline.structure.PipelineStructure] that is associated with this value
              value_id: the (unique) id for this value, if not provided one will be generated
              callbacks: the callbacks to register for this value (can be added later too)
@@ -251,18 +264,18 @@ class DataRegistry(object):
             _linked_value_objs.append(_i)
 
         # TODO: auto-generate doc string
-        if len(_linked_values) == 1:
-            k = next(iter(_linked_values.keys()))
-            _i = self.get_value_item(k)
-            schema = _i.value_schema
-        else:
-            doc = "-- linked value --"
-            schema = ValueSchema(type="any", doc=doc)
-            schema.validate_types(self._kiara)
+        # if len(_linked_values) == 1:
+        #     k = next(iter(_linked_values.keys()))
+        #     _i = self.get_value_item(k)
+        #     schema = _i.value_schema
+        # else:
+        #     doc = "-- linked value --"
+        #     schema = ValueSchema(type="any", doc=doc)
+        #     schema.validate_types(self._kiara)
 
         value_item = LinkedValue(  # type: ignore
             id=value_id,
-            value_schema=schema,
+            value_schema=value_schema,
             value_fields=_value_fields,
             kiara=self._kiara,  # type: ignore
             origin=origin,
@@ -315,7 +328,15 @@ class DataRegistry(object):
         item = self.get_value_item(item)
         value: typing.Any = None
         if item.id in self._value_items.keys():
-            return self._values[item.id]
+            value_data = self._values[item.id]
+            if value_data == SpecialValue.NOT_SET:
+                raise Exception(
+                    f"Can't retrieve value for item '{item.id}': not set yet"
+                )
+            elif value_data == SpecialValue.NO_VALUE:
+                return None
+            else:
+                return value_data
         elif item.id in self._linked_value_items.keys():
             linked_item = self._linked_value_items[item.id]
             if len(linked_item.links) != 1:
@@ -343,6 +364,9 @@ class DataRegistry(object):
             whether the value was changed (``True``) or not (``False``)
         """
 
+        if value == SpecialValue.NOT_SET:
+            raise Exception("'not_set' is not a valid value to set.")
+
         item = self.get_value_item(item)
         result = self.set_values({item: value})  # type: ignore
         return result[item]
@@ -360,19 +384,27 @@ class DataRegistry(object):
                                       value was changed or not for that value
         """
 
-        # ensure we are only dealing with values that can be set
+        # ensure we are only dealing with values that can be set and are valid
         for _item, value in values.items():
+
+            if value == SpecialValue.NOT_SET:
+                raise Exception("'not_set' is not a valid value to set.")
 
             item: DataValue = self.get_value_item(_item)  # type: ignore
             if not isinstance(item, DataValue):
-                raise Exception(f"Can't set non-datavalue '{item.id}'.")
+                raise Exception(f"Can't set non-data-value '{item.id}'.")
 
             if item.is_constant:
                 if self._values.get(item.id) is not None:
                     raise Exception(f"Can't set value '{item.id}', it's a constant.")
 
             if value is None:
-                raise ValueError("Value can't be None")
+                value = SpecialValue.NO_VALUE
+
+            if value == SpecialValue.NO_VALUE and item.value_schema.required:
+                raise ValueError(
+                    f"Value is required, can't be None/no_value for item: {item}"
+                )
 
         result: typing.Dict[Value, bool] = {}
         callbacks: typing.Dict[typing.Callable, typing.List[Value]] = {}
@@ -383,20 +415,37 @@ class DataRegistry(object):
 
             item: DataValue = self.get_value_item(_item)  # type:ignore
 
+            if isinstance(value, Value):
+                # TODO: make this smarter/more efficient
+                value = self.get_value_data(value)
+
             old_value = self.get_value_data(item)
             changed = True
             if old_value == value:
                 # TODO: make sure this is enough
                 changed = False
             else:
-                item.type_obj.validate(value)
-                metadata = item.type_obj.extract_metadata(value)
-                item.metadata["type"] = metadata
+                if value is None or value == SpecialValue.NO_VALUE:
+                    item.metadata.pop("type", None)
+                    self._value_items[item.id].is_none = True
+                    if item.value_schema.required:
+                        self._value_items[item.id].is_valid = False
+                    else:
+                        self._value_items[item.id].is_valid = True
+                    self._values[item.id] = SpecialValue.NO_VALUE
+                else:
+                    item.type_obj.validate(value)
+                    metadata = item.type_obj.extract_metadata(value)
+                    item.metadata["type"] = metadata
 
-                self._values[item.id] = value
-                self._value_items[item.id].is_valid = True
+                    self._values[item.id] = value
+                    self._value_items[item.id].is_valid = True
+                    self._value_items[item.id].is_none = False
+
                 for cb in self._callbacks.get(item.id, []):
                     callbacks.setdefault(cb, []).append(item)
+
+                self._value_items[item.id].is_set = True
 
                 _downstream_values = self._linked_value_items_reverse.get(item.id, None)
                 if _downstream_values:
@@ -433,7 +482,18 @@ class DataRegistry(object):
         if len(item.links) == 1:
             linked_item_id = next(iter(item.links.keys()))
             linked_item = self.get_value_item(linked_item_id)
-            item.is_valid = linked_item.is_valid
+
+            item.is_set = linked_item.is_set
+            item.is_none = linked_item.is_none
+
+            if not item.value_schema.required:
+                item.is_valid = True
+            else:
+                if not item.is_set or item.is_none:
+                    item.is_valid = False
+                else:
+                    item.is_valid = True
+
             if "type" in linked_item.metadata:
                 item.metadata["type"] = linked_item.metadata["type"]
         else:

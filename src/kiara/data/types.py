@@ -12,13 +12,21 @@ from kiara.utils import camel_case_to_snake_case
 fake = Faker()
 
 
+def get_type_name(obj: typing.Any):
+
+    if obj.__class__.__module__ == "builtins":
+        return obj.__class__.__name__
+    else:
+        return f"{obj.__class__.__module__}.{obj.__class__.__name__}"
+
+
 class ValueType(object):
     def __init__(self, **type_config: typing.Any):
 
         self._type_config: typing.Mapping[str, typing.Any] = type_config
 
     def parse_value(self, value: typing.Any) -> typing.Mapping[str, typing.Any]:
-        value = self.validate(value)
+        self.validate(value)
         value_metadata = self.extract_metadata(value)
         return value_metadata
 
@@ -40,12 +48,12 @@ class ValueType(object):
 
     def serialize(cls, object: typing.Any):
         raise NotImplementedError(
-            f"Type class '{cls.__name__}' missing implementation of 'serialize' class method. This is a bug."
+            f"Type class '{cls}' missing implementation of 'serialize' class method. This is a bug."
         )
 
     def deserialize(cls, object: typing.Any):
         raise NotImplementedError(
-            f"Type class '{cls.__name__}' missing implementation of 'deserialize' class method. This is a bug."
+            f"Type class '{cls}' missing implementation of 'deserialize' class method. This is a bug."
         )
 
     def __rich_console__(
@@ -57,7 +65,7 @@ class ValueType(object):
 class AnyType(ValueType):
     def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
 
-        return {"python_cls": str(type(v))}
+        return {"python_cls": get_type_name(v)}
 
 
 class StringType(ValueType):
@@ -67,7 +75,7 @@ class StringType(ValueType):
             raise ValueError(f"Invalid type '{type(v)}': string required")
 
     def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
-        return {"python_cls": "string"}
+        return {"python_cls": get_type_name(v)}
 
 
 class BooleanType(ValueType):
@@ -84,7 +92,7 @@ class BooleanType(ValueType):
             raise ValueError(f"Invalid type '{type(v)}' for boolean: {v}")
 
     def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
-        return {"python_cls": "bool"}
+        return {"python_cls": get_type_name(v)}
 
 
 class IntegerType(ValueType):
@@ -100,14 +108,24 @@ class IntegerType(ValueType):
             raise ValueError(f"Invalid type '{type(v)}' for integer: {v}")
 
     def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
-        return {"python_cls": "int"}
+        return {"python_cls": get_type_name(v)}
+
+
+class FloatType(ValueType):
+    def validate(cls, v: typing.Any) -> typing.Any:
+
+        if not isinstance(v, float):
+            raise ValueError(f"Invalid type '{type(v)}' for float: {v}")
+
+    def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
+        return {"python_cls": get_type_name(v)}
 
 
 class ArrayType(ValueType):
     def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
 
         a: typing.List = v
-        return {"length": len(a)}
+        return {"python_cls": get_type_name(a), "length": len(a)}
 
 
 class TableType(ValueType):
@@ -116,7 +134,11 @@ class TableType(ValueType):
 
     def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
         table: pyarrow.Table = v
-        return {"column_names": table.column_names, "rows": table.num_rows}
+        return {
+            "column_names": table.column_names,
+            "rows": table.num_rows,
+            "python_cls": get_type_name(table),
+        }
 
 
 class NetworkGraphType(ValueType):
@@ -130,7 +152,7 @@ class NetworkGraphType(ValueType):
 
         graph: nx.Graph = v
         return {
-            "python_cls": f"{v.__class__.__module__}.{v.__class__.__name__}",
+            "python_cls": get_type_name(graph),
             "directed": isinstance(v, DiGraph),
             "number_of_nodes": len(graph.nodes),
             "number_of_edges": len(graph.edges),

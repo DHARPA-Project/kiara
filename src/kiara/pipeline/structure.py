@@ -8,6 +8,7 @@ from pydantic import BaseModel, Extra, Field, PrivateAttr
 from kiara.data.values import (
     PipelineInputField,
     PipelineOutputField,
+    SpecialValue,
     StepInputField,
     StepOutputField,
     StepValueAddress,
@@ -61,6 +62,10 @@ class PipelineStep(BaseModel):
     module_type: str = Field(description="The module type.")
     module_config: typing.Mapping[str, typing.Any] = Field(
         description="The module config.", default_factory=dict
+    )
+    required: bool = Field(
+        description="Whether this step is required within the workflow.\n\nIn some cases, when none of the pipeline outputs have a required input that connects to a step, then it is not necessary for this step to have been executed, even if it is placed before a step in the execution hierarchy. This also means that the pipeline inputs that are connected to this step might not be required.",
+        default=True,
     )
     processing_stage: typing.Optional[int] = Field(
         default=None,
@@ -339,6 +344,7 @@ class PipelineStructure(object):
 
         # process all pipeline and step outputs first
         _temp_steps_map: typing.Dict[str, PipelineStep] = {}
+        pipeline_outputs: typing.Dict[str, PipelineOutputField] = {}
         for step in self._steps:
 
             _temp_steps_map[step.step_id] = step
@@ -391,6 +397,7 @@ class PipelineStructure(object):
                         connected_output=step_output_address,
                         value_schema=schema,
                     )
+                    pipeline_outputs[step_output_name] = pipeline_output
                     step_output.pipeline_output = pipeline_output.value_name
 
                     data_flow_graph.add_node(
@@ -555,6 +562,78 @@ class PipelineStructure(object):
 
         self._get_node_of_type.cache_clear()
 
+        # calculating which steps are always required to execute to compute one of the required pipeline outputs.
+        # this is done because in some cases it's possible that some steps can be skipped to execute if they
+        # don't have a valid input set, because the inputs downstream they are connecting to are 'non-required'
+        optional_steps = []
+        for i in reversed(range(0, len(self._processing_stages))):
+            stage = self._processing_stages[i]
+            all_connected_stage_outputs = []
+            all_connected_pipeline_inputs = []
+            required_outputs = []
+            required_pipeline_inputs = []
+            for step_id in stage:
+                step = self.get_step(step_id)
+                optional_inputs = []
+                required_inputs = []
+
+                for input_name, schema in step.module.input_schemas.items():
+                    inp = self.get_step_inputs(step_id)[input_name]
+                    if inp.connected_outputs is not None:
+                        all_connected_stage_outputs.extend(inp.connected_outputs)
+                    else:
+                        all_connected_pipeline_inputs.append(
+                            inp.connected_pipeline_input
+                        )
+
+                    if (
+                        not step.required
+                        or not schema.required
+                        or schema.default != SpecialValue.NOT_SET
+                    ):
+                        optional_inputs.append(inp)
+                    else:
+                        required_inputs.append(inp)
+                        if inp.connected_outputs is not None:
+                            required_outputs.extend(inp.connected_outputs)
+                        else:
+                            required_pipeline_inputs.append(
+                                inp.connected_pipeline_input
+                            )
+
+            optional_outputs = []
+            for outp in all_connected_stage_outputs:
+                if outp not in required_outputs:
+                    optional_outputs.append(outp)
+
+            previous_stage = self._processing_stages[i - 1]
+            for step_id in previous_stage:
+                step = self.get_step(step_id)
+                optional = True
+                for output_name, schema in step.module.output_schemas.items():
+                    outp = self.get_step_outputs(step_id)[output_name]
+                    if outp.address not in optional_outputs:
+                        optional = False
+                        break
+
+                if optional:
+                    optional_steps.append(step_id)
+                    step.required = False
+
+        for input_name, inp in self.pipeline_inputs.items():
+            steps = set()
+            for ci in inp.connected_inputs:
+                steps.add(ci.step_id)
+
+            optional = True
+            for step_id in steps:
+                step = self.get_step(step_id)
+                if step.required:
+                    optional = False
+                    break
+            if optional:
+                inp.value_schema.required = False
+
     def to_details(self) -> "PipelineStructureDesc":
 
         steps = {}
@@ -629,8 +708,8 @@ class StepDesc(BaseModel):
 Example:
 ``` json
 input_connections: {
-    "a": "__pipeline__.a",
-    "b": "step_one.a"
+    "a": ["__pipeline__.a"],
+    "b": ["step_one.a"]
 }
 
 ```

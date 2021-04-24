@@ -178,6 +178,7 @@ class Pipeline(object):
                     pv = self._data_registry.register_linked_value(
                         output_value_item,
                         value_fields=po,
+                        value_schema=po.value_schema,
                         origin=f"step_output:{self.structure.pipeline_id}.{step_id}.{output_name}",
                     )
                     self._data_registry.register_callback(self.values_updated, pv)
@@ -194,9 +195,9 @@ class Pipeline(object):
                 # we need to create a DataValue for that pipeline input
                 if input_point.connected_pipeline_input:
                     connected_pipeline_input_name = input_point.connected_pipeline_input
-                    pipeline_input_field = self._structure.pipeline_inputs[
-                        connected_pipeline_input_name
-                    ]
+                    pipeline_input_field: PipelineInputField = (
+                        self._structure.pipeline_inputs[connected_pipeline_input_name]
+                    )
                     pipeline_input = pipeline_inputs.get(
                         connected_pipeline_input_name, None
                     )
@@ -209,7 +210,7 @@ class Pipeline(object):
                             connected_pipeline_input_name, None
                         )
                         pipeline_input = self._data_registry.register_value(
-                            value_schema=input_point.value_schema,
+                            value_schema=pipeline_input_field.value_schema,
                             value_fields=pipeline_input_field,
                             is_constant=False if constant is None else True,
                             initial_value=constant,
@@ -224,12 +225,13 @@ class Pipeline(object):
                     else:
                         # TODO: compare schemas of multiple inputs
                         log.warning(
-                            "WARNING: not comparing schemas of pipeline inputs with links to more than one step input"
+                            "WARNING: not comparing schemas of pipeline inputs with links to more than one step input currently, but this will be implemented in the future"
                         )
                         # raise NotImplementedError()
 
                     step_input = self._data_registry.register_linked_value(
                         linked_values=pipeline_input,
+                        value_schema=input_point.value_schema,
                         value_fields=input_point,
                         origin=f"step_input:{self.structure.pipeline_id}.{input_point.alias}",
                     )
@@ -247,6 +249,7 @@ class Pipeline(object):
                         output_value = all_step_outputs[co.step_id][co.value_name]
                         step_input = self._data_registry.register_linked_value(
                             linked_values=output_value,
+                            value_schema=input_point.value_schema,
                             value_fields=input_point,
                             origin=f"step_input:{self.structure.pipeline_id}.{input_point.alias}",
                         )

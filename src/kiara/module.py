@@ -393,7 +393,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
         table.add_column("property", style="i")
         table.add_column("value")
 
-        table.add_row("module_type", self.__class__._module_type_id)
+        table.add_row("module_type", self.__class__._module_type_id)  # type: ignore
         table.add_row(
             "module_class", f"{self.__class__.__module__}.{self.__class__.__name__}"
         )

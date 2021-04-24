@@ -63,7 +63,9 @@ class Kiara(object):
             self._default_pipeline_mgr,
         ]
         self._modules: typing.Dict[str, ModuleManager] = {}
-        self._value_types: typing.Dict[str, ValueType] = None
+        self._value_types: typing.Optional[
+            typing.Dict[str, typing.Type[ValueType]]
+        ] = None
 
         self._data_registry: DataRegistry = DataRegistry(self)
 
@@ -77,7 +79,7 @@ class Kiara(object):
             return self._value_types
 
         all_value_type_classes = ValueType.__subclasses__()
-        value_type_dict = {}
+        value_type_dict: typing.Dict[str, typing.Type[ValueType]] = {}
         for cls in all_value_type_classes:
             type_name = cls.type_name()
             if type_name in value_type_dict.keys():

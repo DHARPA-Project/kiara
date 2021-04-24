@@ -148,6 +148,41 @@ class PipelineController(abc.ABC):
 
         return self.pipeline._pipeline_outputs
 
+    def can_be_processed(self, step_id: str) -> bool:
+        """Check whether the step with the provided id is ready to be processed."""
+
+        ready = True
+
+        for input_name, value in self.get_step_inputs(step_id=step_id).items():
+
+            if not value.value_schema.required:
+                continue
+
+            if not value.is_set or value.is_none:
+                ready = False
+                break
+
+        return ready
+
+    def can_be_skipped(self, step_id: str) -> bool:
+        """Check whether the processing of a step can be skipped."""
+
+        step = self.get_step(step_id)
+        if step.required:
+            return False
+
+        all_values_set = True
+        for input_name, value in self.get_step_inputs(step_id=step_id).items():
+
+            if not value.is_set:
+                all_values_set = False
+                break
+            if not value.is_valid:
+                all_values_set = False
+                break
+
+        return not all_values_set
+
     def process_step(self, step_id: str):
         """Kick off processing for the step with the provided id.
 
@@ -212,6 +247,7 @@ class PipelineController(abc.ABC):
         Returns:
             whether the pipeline can be processed as a whole (``True``) or not (``False``)
         """
+
         return self.pipeline.inputs.items_are_valid
 
     def pipeline_is_finished(self) -> bool:
@@ -282,12 +318,55 @@ class BatchController(PipelineController):
 
     This is the default implementation of a ``PipelineController``, and probably the most simple implementation of one.
     It waits until all inputs are set, after which it executes all pipeline steps in the required order.
+
+    Arguments:
+        pipeline: the pipeline to control
+        auto_process: whether to automatically start processing the pipeline as soon as the input set is valid
     """
 
-    def __init__(self, pipeline: typing.Optional["Pipeline"] = None):
+    def __init__(
+        self, pipeline: typing.Optional["Pipeline"] = None, auto_process: bool = True
+    ):
 
+        self._auto_process: bool = auto_process
         self._is_running: bool = False
         super().__init__(pipeline=pipeline)
+
+    @property
+    def auto_process(self) -> bool:
+        return self._auto_process
+
+    @auto_process.setter
+    def auto_process(self, auto_process: bool):
+        self._auto_process = auto_process
+
+    def process_pipeline(self) -> bool:
+
+        if self._is_running:
+            log.debug("Pipeline running, doing nothing.")
+            return False
+
+        self._is_running = True
+        try:
+            for stage in self.processing_stages:
+
+                for step_id in stage:
+                    if not self.can_be_processed(step_id):
+                        if self.can_be_skipped(step_id):
+                            continue
+                        else:
+                            raise Exception(
+                                f"Required pipeline step '{step_id}' can't be processed, inputs not ready yet."
+                            )
+                    try:
+                        self.process_step(step_id)
+                    except Exception as e:
+                        log.error(f"Processing of step '{step_id}' failed: {e}")
+                        return False
+        finally:
+            self._is_running = False
+
+        return True
 
     def step_inputs_changed(self, event: "StepInputEvent"):
 
@@ -299,15 +378,11 @@ class BatchController(PipelineController):
             log.debug(f"Pipeline not ready after input event: {event}")
             return
 
-        self._is_running = True
-
-        for stage in self.processing_stages:
-
-            for step_id in stage:
-                self.process_step(step_id)
+        if self._auto_process:
+            self.process_pipeline()
 
     def pipeline_outputs_changed(self, event: "PipelineOutputEvent"):
 
         if self.pipeline_is_finished():
-            # TODO: check if soemthing is running
+            # TODO: check if something is running
             self._is_running = False

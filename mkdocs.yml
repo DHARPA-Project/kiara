@@ -79,4 +79,4 @@ plugins:
 - gen-files:
     scripts:
       - scripts/documentation/gen_schemas.py
-      - scripts/documentation/gen_module_doc.py
+#      - scripts/documentation/gen_module_doc.py

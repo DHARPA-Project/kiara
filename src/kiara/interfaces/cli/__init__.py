@@ -102,22 +102,18 @@ def describe_module_type(ctx, module_type: str):
     rich_print(info)
 
 
-@module.command("describe")
-@click.option("--module-type", "-t", required=True)
-@click.option(
-    "--config",
-    "-c",
-    multiple=True,
-    required=False,
-    help="Configuration values for module initialization.",
+@module.command("describe-instance")
+@click.argument("module_type", nargs=1)
+@click.argument(
+    "module_config",
+    nargs=-1,
 )
 @click.pass_context
-def describe_module(ctx, module_type: str, config: typing.Iterable[typing.Any]):
+def describe_module(ctx, module_type: str, module_config: typing.Iterable[typing.Any]):
     """Describe a step.
 
     A step, in this context, is basically a an instantiated module class, incl. (optional) config."""
-
-    config = module_config_from_cli_args(*config)
+    config = module_config_from_cli_args(*module_config)
 
     kiara_obj = ctx.obj["kiara"]
     if os.path.isfile(module_type):
@@ -139,7 +135,7 @@ def pipeline(ctx):
 
 
 @pipeline.command()
-@click.option("--pipeline-type", "-t", required=True)
+@click.argument("pipeline-type", nargs=1)
 @click.option(
     "--full",
     "-f",
@@ -182,7 +178,7 @@ def data_flow_graph(
 
 
 @pipeline.command()
-@click.option("--pipeline-type", "-t", required=True)
+@click.argument("pipeline-type", nargs=1)
 @click.option(
     "--config",
     "-c",
@@ -255,20 +251,24 @@ def dev(ctx):
     kiara: Kiara = Kiara.instance()
 
     load_graph = kiara.create_workflow("onboard_network_graph")
-    load_graph.pipeline._controller.auto_process = True
+    # load_graph.pipeline._controller.auto_process = True
 
-    # load_graph.inputs.nodes_path = "/home/markus/projects/dharpa/notebooks/NetworkXAnalysis/ReviewMasterTable.csv"
+    load_graph.inputs.nodes_path = (
+        "/home/markus/projects/dharpa/notebooks/NetworkXAnalysis/JournalNodes1902.csv"
+    )
+    load_graph.inputs.nodes_table_index = "Id"
     load_graph.inputs.edges_path = (
         "/home/markus/projects/dharpa/notebooks/NetworkXAnalysis/JournalEdges1902.csv"
     )
     load_graph.inputs.source_column = "Source"
+    kiara.info(load_graph.pipeline)
     # load_graph.inputs.target_column = "Target"
     load_graph.inputs.weight_column = "weight"
     load_graph.inputs.target_column = "Target"
 
     # load_graph._pipeline._controller._unlock = True
 
-    kiara.info(load_graph)
+    # kiara.info(load_graph.pipeline.structure)
 
     #
     # print("Onboarding workflow info:")

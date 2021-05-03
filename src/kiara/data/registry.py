@@ -7,12 +7,12 @@ import uuid
 from kiara.data.values import (
     DataValue,
     LinkedValue,
-    SpecialValue,
     Value,
     ValueField,
     ValueSchema,
     ValueUpdateHandler,
 )
+from kiara.defaults import SpecialValue
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara

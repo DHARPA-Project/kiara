@@ -7,12 +7,14 @@ import typing
 from abc import abstractmethod
 from pydantic import BaseModel, Extra, Field, PrivateAttr, root_validator
 from rich import box
-from rich.console import Console, ConsoleOptions, RenderResult
+from rich.console import Console, ConsoleOptions, RenderGroup, RenderResult
+from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
 
 from kiara.config import KIARA_CONFIG, KiaraModuleConfig
 from kiara.data.values import Value, ValueSchema, ValueSet
+from kiara.exceptions import KiaraProcessingException
 from kiara.utils import (
     StringYAML,
     create_table_from_config_class,
@@ -138,6 +140,35 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
     @classmethod
     def is_pipeline(cls) -> bool:
         return False
+
+    @classmethod
+    def doc_link(cls) -> typing.Optional[str]:
+
+        if cls.is_pipeline():
+            x = "pipelines_list"
+        else:
+            x = "modules_list"
+
+        if hasattr(cls, "_module_type_id") and cls.__module__.startswith(
+            "kiara_modules.default"
+        ):
+            link = f"https://dharpa.org/kiara_modules.default/{x}/#{cls._module_type_id}"  # type: ignore
+            return link
+        else:
+            return None
+
+    @classmethod
+    def source_link(cls) -> typing.Optional[str]:
+
+        if cls.is_pipeline():
+            return None
+        else:
+            if cls.__module__.startswith("kiara_modules.default"):
+                base_url = "https://dharpa.org/kiara_modules.default/api_reference"
+                url = f"{base_url}/{cls.__module__}/#{cls.__module__}.{cls.__name__}"
+                return url
+            else:
+                return None
 
     def __init__(
         self,
@@ -322,7 +353,15 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
         input_wrap: StepInputs = StepInputs(inputs=inputs)
         output_wrap: StepOutputs = StepOutputs(outputs=outputs)
 
-        self.process(inputs=input_wrap, outputs=output_wrap)
+        try:
+            self.process(inputs=input_wrap, outputs=output_wrap)
+        except Exception as e:
+            if isinstance(e, KiaraProcessingException):
+                e._module = self
+                e._inputs = input_wrap
+                raise e
+            else:
+                raise KiaraProcessingException(e, module=self, inputs=input_wrap)
 
         output_wrap._sync()
 
@@ -383,17 +422,21 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
                 "Invalid model class, no '_module_type_id' attribute added. This is a bug"
             )
 
-        yield f"[b]Module: {self.id}"
-
+        r_gro: typing.List[typing.Any] = []
         doc = self.doc()
         if doc and doc != "-- n/a --":
-            yield f"\n{self.doc()}\n"
+            r_gro.append(f"\n  {self.doc()}\n")
 
         table = Table(box=box.SIMPLE, show_header=False)
         table.add_column("property", style="i")
         table.add_column("value")
 
-        table.add_row("module_type", self.__class__._module_type_id)  # type: ignore
+        doc_link = self.doc_link()
+        if doc_link:
+            m_str = f"[link={doc_link}]{self.__class__._module_type_id}[/link]"  # type: ignore
+        else:
+            m_str = self.__class__._module_type_id  # type: ignore
+        table.add_row("module_type", m_str)
         table.add_row(
             "module_class", f"{self.__class__.__module__}.{self.__class__.__name__}"
         )
@@ -414,8 +457,14 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
             _show_header=True, **self.output_schemas
         )
         table.add_row("outputs", outputs_table)
+        r_gro.append(table)
 
-        yield table
+        yield Panel(
+            RenderGroup(*r_gro),
+            box=box.ROUNDED,
+            title_align="left",
+            title=f"Module: [b]{self.id}[/b]",
+        )
 
 
 class ModuleInfo(BaseModel):
@@ -489,7 +538,7 @@ class ModuleInfo(BaseModel):
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        yield f"[i]Module[/i]: [b]{self.module_type}[/b]"
+
         my_table = Table(box=box.SIMPLE, show_lines=True, show_header=False)
         my_table.add_column("Property", style="i")
         my_table.add_column("Value")
@@ -497,6 +546,12 @@ class ModuleInfo(BaseModel):
             "class", f"{self.module_cls.__module__}.{self.module_cls.__qualname__}"
         )
         my_table.add_row("doc", self.doc)
+        source_link = self.module_cls.source_link()
+        if source_link is None:
+            source_link = "-- n/a --"
+        else:
+            source_link = f"[i link={source_link}]kiara_modules.default.{self.module_type}[/i link]"
+        my_table.add_row("source repo", source_link)
         my_table.add_row(
             "config class",
             f"{self.config_cls.__module__}.{self.config_cls.__qualname__}",
@@ -510,4 +565,9 @@ class ModuleInfo(BaseModel):
             syn_src = Syntax(yaml_str, "yaml")
         my_table.add_row("src", syn_src)
 
-        yield my_table
+        yield Panel(
+            my_table,
+            box=box.ROUNDED,
+            title=f"Module: [b]{self.module_type}[/b]",
+            title_align="left",
+        )

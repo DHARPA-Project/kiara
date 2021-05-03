@@ -20,7 +20,7 @@ from ruamel.yaml import YAML
 from stevedore import ExtensionManager
 from typing import Union
 
-from kiara.defaults import RELATIVE_PIPELINES_PATH
+from kiara.defaults import RELATIVE_PIPELINES_PATH, SpecialValue
 
 if typing.TYPE_CHECKING:
     from kiara.config import KiaraModuleConfig
@@ -200,7 +200,10 @@ def create_table_from_field_schemas(
     table.add_column("Default")
 
     for field_name, schema in fields.items():
-        d = "-- no default --" if schema.default is None else str(schema.default)
+        if schema.default in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
+            d = "-- no default --"
+        else:
+            d = str(schema.default)
         table.add_row(field_name, schema.type, schema.doc, d)  # type: ignore
 
     return table

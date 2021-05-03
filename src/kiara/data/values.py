@@ -17,15 +17,15 @@ import logging
 import typing
 import uuid
 from datetime import datetime
-from enum import Enum
 from pydantic import BaseModel, Extra, Field, PrivateAttr, root_validator
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderResult
+from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
 
 from kiara.data.types import ValueType
-from kiara.defaults import INVALID_VALUE_NAMES, PIPELINE_PARENT_MARKER
+from kiara.defaults import INVALID_VALUE_NAMES, PIPELINE_PARENT_MARKER, SpecialValue
 from kiara.utils import StringYAML, camel_case_to_snake_case
 
 if typing.TYPE_CHECKING:
@@ -47,12 +47,6 @@ try:
 except Exception:
     # there is some issue with older Python versions, typing.Protocol, and Pydantic
     ValueUpdateHandler = typing.Callable  # type:ignore
-
-
-class SpecialValue(Enum):
-
-    NOT_SET = "__not_set__"
-    NO_VALUE = "__no_value__"
 
 
 class StepValueAddress(BaseModel):
@@ -255,8 +249,6 @@ class Value(BaseModel, abc.ABC):
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
 
-        yield f"[b]Value: {self.origin}"
-
         table = Table(box=box.SIMPLE, show_header=False)
         table.add_column("property", style="i")
         table.add_column("value")
@@ -274,7 +266,12 @@ class Value(BaseModel, abc.ABC):
         else:
             table.add_row("metadata", "-- no metadata --")
 
-        yield table
+        yield Panel(
+            table,
+            box=box.ROUNDED,
+            title_align="left",
+            title=f"Value: [b]{self.origin}[/b]",
+        )
 
 
 class DataValue(Value):
@@ -547,7 +544,17 @@ class ValueSet(typing.MutableMapping[str, Value]):
         for k, v in self.items():
             t = v.value_schema.type
             desc = v.value_schema.doc
-            req = "yes" if v.value_schema.required else "no"
+            if not v.value_schema.required:
+                req = "no"
+            else:
+                if (
+                    v.value_schema.default
+                    and v.value_schema.default != SpecialValue.NO_VALUE
+                    and v.value_schema.default != SpecialValue.NOT_SET
+                ):
+                    req = "no"
+                else:
+                    req = "[red]yes[/red]"
             is_set = "yes" if v.is_valid else "no"
             table.add_row(k, t, desc, req, is_set)
 
@@ -557,8 +564,12 @@ class ValueSet(typing.MutableMapping[str, Value]):
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
 
-        yield f"[b]Value-set: {self._title}[/b]"
-        yield self._create_rich_table(show_headers=True)
+        yield Panel(
+            self._create_rich_table(show_headers=True),
+            box=box.ROUNDED,
+            title_align="left",
+            title=f"Value-Set: [b]{self._title}[/b]",
+        )
 
 
 ValueSchema.update_forward_refs()
@@ -574,6 +585,7 @@ class PipelineValue(BaseModel):
             id=value.id,
             value_schema=value.value_schema,
             is_valid=value.is_valid,
+            is_set=value.is_set,
             is_constant=value.is_constant,
             origin=value.origin,
             last_update=value.last_update,
@@ -589,6 +601,7 @@ class PipelineValue(BaseModel):
     is_valid: bool = Field(
         description="Whether the value is set and valid.", default=False
     )
+    is_set: bool = Field(description="Whether the value is set.")
     value_schema: ValueSchema = Field(description="The schema of this value.")
     is_constant: bool = Field(
         description="Whether this value is a constant.", default=False

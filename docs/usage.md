@@ -38,11 +38,11 @@ This command also can take module configuration, in different forms. This will b
 
 #### ...for a core module
 
-{{ cli("kiara", "module", "describe", "--module-type", "and") }}
+{{ cli("kiara", "module", "describe-instance", "and") }}
 
 #### ...for a pipeline module
 
-{{ cli("kiara", "module", "describe", "--module-type", "nand") }}
+{{ cli("kiara", "module", "describe-instance", "nand") }}
 
 ## pipeline-specific sub-commands
 
@@ -54,7 +54,7 @@ To print graphs, currently Java (JRE) needs to be installed, as well as the ``as
 Use the ``--full`` flag to display the non-simplified graph.
 
 ```
-> kiara pipeline data-flow-graph --pipeline-type nand
+> kiara pipeline data-flow-graph nand
 ...
 ...
 ```
@@ -62,7 +62,7 @@ Use the ``--full`` flag to display the non-simplified graph.
 ### print the execution graph for a pipeline
 
 ```
-> kiara pipeline execution-graph --pipeline-type nand
+> kiara pipeline execution-graph nand
 ...
 ...
 ```

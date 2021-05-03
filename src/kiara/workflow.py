@@ -115,7 +115,12 @@ class KiaraWorkflow(object):
         table = Table(box=box.SIMPLE, show_header=False)
         table.add_column("property", style="i")
         table.add_column("value")
-        table.add_row("root module", self._root_module._module_type_id)  # type: ignore
+        doc_link = self._root_module.doc_link()
+        if doc_link:
+            module_str = f"[link={doc_link}]{self._root_module._module_type_id}[/link]"  # type: ignore
+        else:
+            module_str = self._root_module._module_type_id  # type: ignore
+        table.add_row("root module", module_str)
         table.add_row("current status", self.status.name)
         inputs_table = self.inputs._create_rich_table(show_headers=True)
         table.add_row("inputs", inputs_table)

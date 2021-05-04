@@ -446,6 +446,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
         config.pop("steps", None)
         config.pop("input_aliases", None)
         config.pop("output_aliases", None)
+        config.pop("module_type_name", None)
         config_str = json.dumps(config, indent=2)
         c = Syntax(config_str, "json", background_color="default")
         table.add_row("config", c)
@@ -454,7 +455,10 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
         )
         table.add_row("inputs", inputs_table)
         outputs_table = create_table_from_field_schemas(
-            _show_header=True, **self.output_schemas
+            _add_required=False,
+            _add_default=False,
+            _show_header=True,
+            **self.output_schemas,
         )
         table.add_row("outputs", outputs_table)
         r_gro.append(table)

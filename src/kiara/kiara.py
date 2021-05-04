@@ -10,6 +10,7 @@ from pathlib import Path
 from kiara.config import KiaraWorkflowConfig, PipelineModuleConfig
 from kiara.data.registry import DataRegistry
 from kiara.data.types import ValueType
+from kiara.interfaces import get_console
 from kiara.mgmt import ModuleManager, PipelineModuleManager, PythonModuleManager
 from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.pipeline import Pipeline
@@ -23,18 +24,18 @@ if typing.TYPE_CHECKING:
 log = logging.getLogger("kiara")
 
 
-def info(item: typing.Any):
-    from rich import print as rich_print
+def explain(item: typing.Any):
 
-    rich_print(item)
+    console = get_console()
+    console.print(item)
 
 
 class Kiara(object):
     _instance = None
 
     @classmethod
-    def info(cls, item: typing.Any):
-        info(item)
+    def explain(cls, item: typing.Any):
+        explain(item)
 
     @classmethod
     def instance(cls):

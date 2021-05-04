@@ -49,6 +49,16 @@ This command also can take module configuration, in different forms. This will b
 This subcommand lets you display module details that are specific to pipeline-type modules.
 To print graphs, currently Java (JRE) needs to be installed, as well as the ``asciinet`` python package from GitHub (``pip install 'git+https://github.com/cosminbasca/asciinet.git#egg=asciinet&subdirectory=pyasciinet``). This might change in the future.
 
+### list and explain pipeline steps
+
+{{ cli("kiara", "pipeline", "explain-steps", "xor") }}/similar
+
+### print details about the pipeline structure
+
+This command outlines the inputs, outputs, as well as step details (how step inputs/outputs are connected) of a pipeline.
+
+{{ cli("kiara", "pipeline", "structure", "nand") }}
+
 ### print the data flow graph for a pipeline
 
 Use the ``--full`` flag to display the non-simplified graph.

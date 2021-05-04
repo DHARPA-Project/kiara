@@ -594,7 +594,7 @@ def create_pipeline_step_table(
         elif details.is_streaming:
             status_str = "[yellow]-- streaming --[/yellow]"
         elif details.is_set:
-            status_str = "[green]-- set / valid --[/green]"
+            status_str = "[green]-- set --[/green]"
         else:
             if details.is_valid:
                 status_str = "[green]-- not set (not required) --[/green]"

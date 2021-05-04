@@ -9,7 +9,7 @@ from kiara.data.values import ValueSet
 from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.module import PipelineModule
 from kiara.pipeline.pipeline import Pipeline, PipelineState, StepStatus
-from kiara.pipeline.structure import PipelineStructure
+from kiara.pipeline.structure import PipelineStructure, StepsInfo
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -97,6 +97,10 @@ class KiaraWorkflow(object):
     @property
     def workflow_id(self) -> str:
         return self._workflow_id
+
+    @property
+    def steps(self) -> StepsInfo:
+        return self.pipeline.structure.to_details().steps_info
 
     def __repr__(self):
 

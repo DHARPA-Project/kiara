@@ -535,11 +535,11 @@ class ValueSet(typing.MutableMapping[str, Value]):
     def _create_rich_table(self, show_headers: bool = True) -> Table:
 
         table = Table(box=box.SIMPLE, show_header=show_headers)
-        table.add_column("name", style="i")
-        table.add_column("type")
-        table.add_column("desc")
-        table.add_column("required")
-        table.add_column("is set")
+        table.add_column("Field name", style="i")
+        table.add_column("Type")
+        table.add_column("Description")
+        table.add_column("Required")
+        table.add_column("Is set")
 
         for k, v in self.items():
             t = v.value_schema.type

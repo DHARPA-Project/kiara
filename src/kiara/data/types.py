@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
+import datetime
+import filetype
 import networkx
 import networkx as nx
+import os.path
 import pyarrow
+import shutil
 import typing
 from faker import Faker
 from networkx import DiGraph
+from pydantic import BaseModel, Field
 from rich.console import Console, ConsoleOptions, RenderResult
 
 from kiara.utils import camel_case_to_snake_case
@@ -66,6 +71,74 @@ class AnyType(ValueType):
     def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
 
         return {"python_cls": get_type_name(v)}
+
+
+class FileModel(BaseModel):
+    @classmethod
+    def import_file(cls, source: str, target: typing.Optional[str] = None):
+
+        if not os.path.isfile(os.path.realpath(source)):
+            raise ValueError(f"Path does not exist: {source}")
+
+        orig_filename = os.path.basename(source)
+        orig_path = os.path.abspath(source)
+        import_time = datetime.datetime.now()  # TODO: timezone
+
+        file_stats = os.stat(orig_path)
+        size = file_stats.st_size
+
+        if target:
+            if os.path.exists(target):
+                raise ValueError(f"Target path exists: {target}")
+            os.makedirs(os.path.dirname(target), exist_ok=True)
+            shutil.copy2(source, target)
+        else:
+            target = orig_path
+        mime_type = filetype.guess(target)
+        if not mime_type:
+            mime_type = "application/octet-stream"
+
+        m = FileModel(
+            orig_filename=orig_filename,
+            orig_path=orig_path,
+            import_time=import_time,
+            mime_type=mime_type,
+            size=size,
+            path=target,
+        )
+        return m
+
+    orig_filename: str = Field(
+        description="The original filename of this file at the time of import."
+    )
+    orig_path: str = Field(
+        description="The original path to this file at the time of import."
+    )
+    import_time: datetime.datetime = Field(
+        description="The time when the file was imported."
+    )
+    mime_type: str = Field(description="The mime type of the file.")
+    size: int = Field(description="The size of the file.")
+    path: str = Field(description="The archive path of the file.")
+
+
+class FileType(ValueType):
+    def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
+
+        assert isinstance(v, FileModel)
+
+        md = v.dict()
+        md["python_cls"] = FileModel
+        return md
+
+
+class FileBundleType(ValueType):
+    def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
+
+        if not os.path.isfile(os.path.realpath(v)):
+            raise ValueError(f"File does not exist: {v}")
+
+        return {"python_cls": bytes}
 
 
 class StringType(ValueType):

@@ -18,7 +18,7 @@ from kiara.data.values import (
     ValueSchema,
     generate_step_alias,
 )
-from kiara.defaults import PIPELINE_PARENT_MARKER, SpecialValue
+from kiara.defaults import DEFAULT_NO_DESC_VALUE, PIPELINE_PARENT_MARKER, SpecialValue
 from kiara.module import KiaraModule
 
 if typing.TYPE_CHECKING:
@@ -582,6 +582,7 @@ class PipelineStructure(object):
             required_outputs = []
             required_pipeline_inputs = []
             for step_id in stage:
+
                 step = self.get_step(step_id)
                 optional_inputs = []
                 required_inputs = []
@@ -621,6 +622,7 @@ class PipelineStructure(object):
                 optional = True
                 for output_name, schema in step.module.output_schemas.items():
                     outp = self.get_step_outputs(step_id)[output_name]
+
                     if outp.address not in optional_outputs:
                         optional = False
                         break
@@ -748,6 +750,55 @@ input_connections: {
         yield f"[b]Step: {self.step.step_id}[\b]"
 
 
+class StepsInfo(BaseModel):
+
+    pipeline_id: str = Field(description="The pipeline id.")
+    steps: typing.Dict[str, StepDesc] = Field(description="A list of step details.")
+    processing_stages: typing.List[typing.List[str]] = Field(
+        description="The stages in which the steps are processed."
+    )
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+
+        explanation = {}
+
+        for nr, stage in enumerate(self.processing_stages):
+
+            stage_details = {}
+            for step_id in stage:
+                step: StepDesc = self.steps[step_id]
+                if step.required:
+                    title = step_id
+                else:
+                    title = f"{step_id} (optional)"
+                stage_details[title] = step.step.module.doc()
+
+            explanation[nr + 1] = stage_details
+
+        lines = []
+        for stage_nr, stage_steps in explanation.items():
+            lines.append(f"[bold]Processing stage {stage_nr}[/bold]:")
+            lines.append("")
+            for step_id, desc in stage_steps.items():
+                desc
+                if desc == DEFAULT_NO_DESC_VALUE:
+                    lines.append(f"  - {step_id}")
+                else:
+                    lines.append(f"  - {step_id}: [i]{desc}[/i]")
+                lines.append("")
+
+        padding = (1, 2, 0, 2)
+        yield Panel(
+            "\n".join(lines),
+            box=box.ROUNDED,
+            title_align="left",
+            title=f"Stages for pipeline: [b]{self.pipeline_id}[/b]",
+            padding=padding,
+        )
+
+
 class PipelineStructureDesc(BaseModel):
     """Outlines the internal structure of a [Pipeline][kiara.pipeline.pipeline.Pipeline]."""
 
@@ -774,6 +825,15 @@ class PipelineStructureDesc(BaseModel):
     pipeline_outputs: typing.Dict[str, PipelineOutputField] = Field(
         description="The pipeline outputs."
     )
+
+    @property
+    def steps_info(self) -> StepsInfo:
+
+        return StepsInfo(
+            pipeline_id=self.pipeline_id,
+            processing_stages=self.processing_stages,
+            steps=self.steps,
+        )
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -825,30 +885,13 @@ class PipelineStructureDesc(BaseModel):
         out_table.add_column("Name", style="i")
         out_table.add_column("Type")
         out_table.add_column("Description")
-        out_table.add_column("Required")
-        out_table.add_column("Default")
 
         for inp, details_o in self.pipeline_outputs.items():
-            req = details_o.value_schema.required
-            if not req:
-                req_str = "no"
-            else:
-                d = details_o.value_schema.default
-                if d in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
-                    req_str = "[b]yes[/b]"
-                else:
-                    req_str = "no"
-            default = details_o.value_schema.default
-            if default in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
-                default = "-- no default --"
-            else:
-                default = str(default)
+
             out_table.add_row(
                 inp,
                 details_o.value_schema.type,
                 details_o.value_schema.doc,
-                req_str,
-                default,
             )
 
         outp = Panel(
@@ -906,7 +949,6 @@ def create_step_table(
     table.add_column("step_id:", style="i", no_wrap=True)
     c = step_color_map[step.step_id]
     table.add_column(f"[b {c}]{step.step_id}[/b {c}]", no_wrap=True)
-    table.add_column("", no_wrap=True)
 
     doc_link = step.module.doc_link()
     if doc_link:
@@ -914,12 +956,13 @@ def create_step_table(
     else:
         module_str = step.module_type
 
-    table.add_row("type", module_str, "")
+    table.add_row("", f"\n{step.module.doc()}\n")
+    table.add_row("type", module_str)
 
     table.add_row(
-        "required", "[red]yes[/red]" if step.required else "[greepn]no[/green]", ""
+        "required", "[red]yes[/red]" if step.required else "[greepn]no[/green]"
     )
-    table.add_row("is pipeline", "yes" if step.module.is_pipeline() else "no", "")
+    table.add_row("is pipeline", "yes\n" if step.module.is_pipeline() else "no\n")
 
     input_links: typing.List[typing.Any] = []
     max_source_len = 0
@@ -940,7 +983,7 @@ def create_step_table(
         if source is None:
             source_str = " " * max_source_len + "    "
         else:
-            source_str = source.ljust(max_source_len) + " ➜ "
+            source_str = source.ljust(max_source_len) + " ← "
         target = il[1]
         tokens = target.split(".")
         assert len(tokens) == 2
@@ -949,11 +992,15 @@ def create_step_table(
         else:
             c = step_color_map[tokens[0]]
             target_str = f"[b {c}]{tokens[0]}[/b {c}].{tokens[1]}"
+
+        postfix = ""
+        if len(input_links) == i + 1:
+            postfix = "\n"
         if i == 0:
-            row_str = f"{source_str}{target_str}"
+            row_str = f"{source_str}{target_str}{postfix}"
             table.add_row("inputs", row_str)
         else:
-            row_str = f"{source_str}{target_str}"
+            row_str = f"{source_str}{target_str}{postfix}"
             table.add_row("", row_str)
 
     output_links: typing.List[typing.Any] = []
@@ -975,7 +1022,7 @@ def create_step_table(
         if source is None:
             source_str = " " * max_source_len + "    "
         else:
-            source_str = source.ljust(max_source_len) + " ➜ "
+            source_str = source.ljust(max_source_len) + " → "
         target = il[1]
         tokens = target.split(".")
         assert len(tokens) == 2

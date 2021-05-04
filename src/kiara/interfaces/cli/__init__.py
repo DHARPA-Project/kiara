@@ -6,9 +6,9 @@ import asyncclick as click
 import os.path
 import sys
 import typing
-from rich import print as rich_print
 
 from kiara import Kiara
+from kiara.interfaces import get_console
 from kiara.module import ModuleInfo
 from kiara.pipeline.module import PipelineModuleInfo
 from kiara.utils import module_config_from_cli_args
@@ -27,6 +27,14 @@ except Exception:
     pass
 
 click.anyio_backend = "asyncio"
+
+
+def rich_print(msg: typing.Any = None) -> None:
+
+    if msg is None:
+        msg = ""
+    console = get_console()
+    console.print(msg)
 
 
 @click.group()
@@ -142,23 +150,9 @@ def pipeline(ctx):
     is_flag=True,
     help="Display full data-flow graph, incl. intermediate input/output connections.",
 )
-@click.option(
-    "--config",
-    "-c",
-    multiple=True,
-    required=False,
-    help="Configuration values for module initialization.",
-)
 @click.pass_context
-def data_flow_graph(
-    ctx, pipeline_type: str, config: typing.Iterable[typing.Any], full: bool
-):
+def data_flow_graph(ctx, pipeline_type: str, full: bool):
     """Print the data flow graph for a pipeline structure."""
-
-    config = module_config_from_cli_args(*config)
-    if config:
-        print("Pipeline config not supported yet.")
-        sys.exit()
 
     kiara_obj = ctx.obj["kiara"]
     if os.path.isfile(pipeline_type):
@@ -179,21 +173,9 @@ def data_flow_graph(
 
 @pipeline.command()
 @click.argument("pipeline-type", nargs=1)
-@click.option(
-    "--config",
-    "-c",
-    multiple=True,
-    required=False,
-    help="Configuration values for module initialization.",
-)
 @click.pass_context
-def execution_graph(ctx, pipeline_type: str, config: typing.Iterable[typing.Any]):
+def execution_graph(ctx, pipeline_type: str):
     """Print the execution graph for a pipeline structure."""
-
-    config = module_config_from_cli_args(*config)
-    if config:
-        print("Pipeline config not supported yet.")
-        sys.exit()
 
     kiara_obj = ctx.obj["kiara"]
 
@@ -210,6 +192,55 @@ def execution_graph(ctx, pipeline_type: str, config: typing.Iterable[typing.Any]
 
     info = PipelineModuleInfo(module_type=pipeline_type)
     info.print_execution_graph()
+
+
+@pipeline.command()
+@click.argument("pipeline-type", nargs=1)
+@click.pass_context
+def structure(ctx, pipeline_type: str):
+    """Print details about a pipeline structure."""
+
+    kiara_obj = ctx.obj["kiara"]
+
+    if os.path.isfile(pipeline_type):
+        pipeline_type = kiara_obj.register_pipeline_description(
+            pipeline_type, raise_exception=True
+        )
+
+    m_cls = kiara_obj.get_module_class(pipeline_type)
+    if not m_cls.is_pipeline():
+        rich_print()
+        rich_print(f"Module '{pipeline_type}' is not a pipeline-type module.")
+        sys.exit(1)
+
+    info = PipelineModuleInfo(module_type=pipeline_type)
+    structure = info.create_structure()
+    print()
+    kiara_obj.explain(structure)
+
+
+@pipeline.command()
+@click.argument("pipeline-type", nargs=1)
+@click.pass_context
+def explain_steps(ctx, pipeline_type: str):
+
+    kiara_obj = ctx.obj["kiara"]
+
+    if os.path.isfile(pipeline_type):
+        pipeline_type = kiara_obj.register_pipeline_description(
+            pipeline_type, raise_exception=True
+        )
+
+    m_cls = kiara_obj.get_module_class(pipeline_type)
+    if not m_cls.is_pipeline():
+        rich_print()
+        rich_print(f"Module '{pipeline_type}' is not a pipeline-type module.")
+        sys.exit(1)
+
+    info = PipelineModuleInfo(module_type=pipeline_type)
+    structure = info.create_structure()
+    print()
+    kiara_obj.explain(structure.to_details().steps_info)
 
 
 @cli.command()
@@ -261,7 +292,7 @@ def dev(ctx):
         "/home/markus/projects/dharpa/notebooks/NetworkXAnalysis/JournalEdges1902.csv"
     )
     load_graph.inputs.source_column = "Source"
-    kiara.info(load_graph.pipeline)
+    kiara.explain(load_graph.pipeline)
     # load_graph.inputs.target_column = "Target"
     load_graph.inputs.weight_column = "weight"
     load_graph.inputs.target_column = "Target"

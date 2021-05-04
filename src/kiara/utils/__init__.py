@@ -190,21 +190,48 @@ def create_table_from_config_class(
 
 
 def create_table_from_field_schemas(
-    _show_header: bool = False, **fields: "ValueSchema"
+    _add_default: bool = True,
+    _add_required: bool = True,
+    _show_header: bool = False,
+    **fields: "ValueSchema",
 ):
 
     table = Table(box=box.SIMPLE, show_header=_show_header)
     table.add_column("Field name", style="i")
     table.add_column("Type")
     table.add_column("Description")
-    table.add_column("Default")
+    if _add_required:
+        table.add_column("Required")
+    if _add_default:
+        table.add_column("Default")
 
     for field_name, schema in fields.items():
-        if schema.default in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
-            d = "-- no default --"
-        else:
-            d = str(schema.default)
-        table.add_row(field_name, schema.type, schema.doc, d)  # type: ignore
+
+        row = [field_name, schema.type, schema.doc]
+
+        if _add_required:
+            req = schema.required
+            if not req:
+                req_str = "no"
+            else:
+                if schema.default in [
+                    None,
+                    SpecialValue.NO_VALUE,
+                    SpecialValue.NOT_SET,
+                ]:
+                    req_str = "[b]yes[b]"
+                else:
+                    req_str = "no"
+            row.append(req_str)
+
+        if _add_default:
+            if schema.default in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
+                d = "-- no default --"
+            else:
+                d = str(schema.default)
+            row.append(d)
+
+        table.add_row(*row)
 
     return table
 

@@ -44,6 +44,8 @@ MODULE_TYPE_NAME_KEY = "module_type_name"
 DEFAULT_PIPELINE_PARENT_ID = "__kiara__"
 """Default parent id for pipeline objects that are not associated with a workflow."""
 
+DEFAULT_NO_DESC_VALUE = "-- n/a --"
+
 
 class SpecialValue(Enum):
 

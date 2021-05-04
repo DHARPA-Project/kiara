@@ -361,7 +361,9 @@ class BatchController(PipelineController):
                     try:
                         self.process_step(step_id)
                     except Exception as e:
-                        log.error(f"Processing of step '{step_id}' failed: {e}")
+                        log.error(
+                            f"Processing of step '{step_id}' from pipeline '{self.pipeline.structure.pipeline_id}' failed: {e}"
+                        )
                         return False
         finally:
             self._is_running = False

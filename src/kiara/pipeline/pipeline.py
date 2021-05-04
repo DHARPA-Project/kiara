@@ -132,9 +132,9 @@ class Pipeline(object):
 
     def _update_status(self):
 
-        if not self.inputs.items_are_valid:
+        if not self.inputs.items_are_valid():
             new_state = StepStatus.STALE
-        elif not self.outputs.items_are_valid:
+        elif not self.outputs.items_are_valid():
             new_state = StepStatus.INPUTS_READY
         else:
             new_state = StepStatus.RESULTS_READY
@@ -368,7 +368,7 @@ class Pipeline(object):
         step_states = {}
         for k, v in self._step_inputs.items():
             step_inputs[k] = PipelineValues.from_value_set(v)
-            if v.items_are_valid:
+            if v.items_are_valid():
                 step_states[k] = StepStatus.INPUTS_READY
             else:
                 step_states[k] = StepStatus.STALE
@@ -376,7 +376,7 @@ class Pipeline(object):
         step_outputs = {}
         for k, v in self._step_outputs.items():
             step_outputs[k] = PipelineValues.from_value_set(v)
-            if v.items_are_valid:
+            if v.items_are_valid():
                 step_states[k] = StepStatus.RESULTS_READY
 
         state = PipelineState(
@@ -452,7 +452,7 @@ class PipelineState(BaseModel):
         inp_table.add_column("Status", justify="center")
         inp_table.add_column("Ready", justify="center")
         for field_name, value in self.pipeline_inputs.values.items():
-            req = value.value_schema.required
+            req = value.value_schema.is_required()
             if not req:
                 req_string = "no"
             else:
@@ -494,7 +494,7 @@ class PipelineState(BaseModel):
         out_table.add_column("Status", justify="center")
         out_table.add_column("Ready", justify="center")
         for field_name, value in self.pipeline_outputs.values.items():
-            req = value.value_schema.required
+            req = value.value_schema.is_required()
             if not req:
                 req_string = "no"
             else:

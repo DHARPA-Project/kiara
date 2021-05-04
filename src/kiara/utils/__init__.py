@@ -210,7 +210,7 @@ def create_table_from_field_schemas(
         row = [field_name, schema.type, schema.doc]
 
         if _add_required:
-            req = schema.required
+            req = schema.is_required()
             if not req:
                 req_str = "no"
             else:

@@ -401,7 +401,7 @@ class DataRegistry(object):
             if value is None:
                 value = SpecialValue.NO_VALUE
 
-            if value == SpecialValue.NO_VALUE and item.value_schema.required:
+            if value == SpecialValue.NO_VALUE and not item.value_schema.optional:
                 raise ValueError(
                     f"Value is required, can't be None/no_value for item: {item}"
                 )
@@ -428,10 +428,6 @@ class DataRegistry(object):
                 if value is None or value == SpecialValue.NO_VALUE:
                     item.metadata.pop("type", None)
                     self._value_items[item.id].is_none = True
-                    if item.value_schema.required:
-                        self._value_items[item.id].is_valid = False
-                    else:
-                        self._value_items[item.id].is_valid = True
                     self._values[item.id] = SpecialValue.NO_VALUE
                 else:
                     item.type_obj.validate(value)
@@ -439,7 +435,6 @@ class DataRegistry(object):
                     item.metadata["type"] = metadata
 
                     self._values[item.id] = value
-                    self._value_items[item.id].is_valid = True
                     self._value_items[item.id].is_none = False
 
                 for cb in self._callbacks.get(item.id, []):
@@ -485,14 +480,6 @@ class DataRegistry(object):
 
             item.is_set = linked_item.is_set
             item.is_none = linked_item.is_none
-
-            if not item.value_schema.required:
-                item.is_valid = True
-            else:
-                if not item.is_set or item.is_none:
-                    item.is_valid = False
-                else:
-                    item.is_valid = True
 
             if "type" in linked_item.metadata:
                 item.metadata["type"] = linked_item.metadata["type"]

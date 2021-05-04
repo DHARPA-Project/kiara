@@ -151,37 +151,24 @@ class PipelineController(abc.ABC):
     def can_be_processed(self, step_id: str) -> bool:
         """Check whether the step with the provided id is ready to be processed."""
 
-        ready = True
-
+        result = True
         for input_name, value in self.get_step_inputs(step_id=step_id).items():
 
-            if not value.value_schema.required:
-                continue
-
-            if not value.is_set or value.is_none:
-                ready = False
+            if not value.item_is_valid():
+                result = False
                 break
 
-        return ready
+        return result
 
     def can_be_skipped(self, step_id: str) -> bool:
         """Check whether the processing of a step can be skipped."""
 
+        result = True
         step = self.get_step(step_id)
         if step.required:
-            return False
+            result = self.can_be_processed(step_id)
 
-        all_values_set = True
-        for input_name, value in self.get_step_inputs(step_id=step_id).items():
-
-            if not value.is_set:
-                all_values_set = False
-                break
-            if not value.is_valid:
-                all_values_set = False
-                break
-
-        return not all_values_set
+        return result
 
     def process_step(self, step_id: str):
         """Kick off processing for the step with the provided id.
@@ -193,7 +180,7 @@ class PipelineController(abc.ABC):
         step_inputs = self.get_step_inputs(step_id)
 
         # if the inputs are not valid, ignore this step
-        if not step_inputs.items_are_valid:
+        if not step_inputs.items_are_valid():
             raise Exception(
                 f"Can't execute step '{step_id}': it does not have valid input set."
             )
@@ -221,7 +208,7 @@ class PipelineController(abc.ABC):
         Returns:
             whether the step is ready (``True``) or not (``False``)
         """
-        return self.get_step_inputs(step_id).items_are_valid
+        return self.get_step_inputs(step_id).items_are_valid()
 
     def step_is_finished(self, step_id: str) -> bool:
         """Return whether the step with the provided id has been processed successfully.
@@ -236,7 +223,7 @@ class PipelineController(abc.ABC):
               whether the step result is valid (``True``) or not (``False``)
         """
 
-        return self.get_step_outputs(step_id).items_are_valid
+        return self.get_step_outputs(step_id).items_are_valid()
 
     def pipeline_is_ready(self) -> bool:
         """Return whether the pipeline is ready to be processed.
@@ -248,7 +235,7 @@ class PipelineController(abc.ABC):
             whether the pipeline can be processed as a whole (``True``) or not (``False``)
         """
 
-        return self.pipeline.inputs.items_are_valid
+        return self.pipeline.inputs.items_are_valid()
 
     def pipeline_is_finished(self) -> bool:
         """Return whether the pipeline has been processed successfully.
@@ -259,7 +246,7 @@ class PipelineController(abc.ABC):
         Returns:
             whether the pipeline was processed successfully (``True``) or not (``False``)
         """
-        return self.pipeline.outputs.items_are_valid
+        return self.pipeline.outputs.items_are_valid()
 
     def set_pipeline_inputs(self, **inputs: typing.Any):
         """Set one, several or all inputs for this pipeline.

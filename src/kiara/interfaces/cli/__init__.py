@@ -247,96 +247,24 @@ def explain_steps(ctx, pipeline_type: str):
 @click.pass_context
 def dev(ctx):
 
-    # kiara: Kiara = ctx.obj['kiara']
-    #
-    # # print('---')
-    # workflow = kiara.create_workflow("network_analysis")
-    #
-    # workflow.inputs.nodes_info_path = "/home/markus/projects/dharpa/notebooks/NetworkXAnalysis/ReviewMasterTable.csv"
-    # workflow.inputs.edges_path = "/home/markus/projects/dharpa/notebooks/NetworkXAnalysis/JournalEdges1902.csv"
-    # workflow.inputs.source_column = "Source"
-    # workflow.inputs.target_column = "Target"
-    # workflow.inputs.weight_column = "weight"
-    #
-    # # for k, v in workflow.inputs.items():
-    # #     print(f"{k}: {v.is_valid}")
-    #
-    # workflow.inputs.nodes_table_index = "Id"
-    #
-    # print(f"Workflow status: {workflow.status}")
-
-    # print(workflow.get_current_state().json())
-    # rich_print(workflow.outputs.data)
-    # rich_print(workflow.outputs.graph)
-    # print("---")
-    # print(workflow.outputs.graph.get_value_data())
-
-    # print(workflow.pipeline.get_current_state().json())
-
-    # wf = kiara.create_workflow("nand")
-    # wf.inputs.a = True
-    # wf.inputs.b = False
-    # j = wf.get_current_state().json()
-    # print(j)
-
     kiara: Kiara = Kiara.instance()
 
-    load_graph = kiara.create_workflow("onboard_network_graph")
+    load_graph = kiara.create_workflow("create_network_graph")
     # load_graph.pipeline._controller.auto_process = True
 
-    load_graph.inputs.nodes_path = (
-        "/home/markus/projects/dharpa/notebooks/NetworkXAnalysis/JournalNodes1902.csv"
-    )
-    load_graph.inputs.nodes_table_index = "Id"
+    # load_graph.inputs.nodes_path = (
+    #     "/home/markus/projects/dharpa/notebooks/NetworkXAnalysis/JournalNodes1902.csv"
+    # )
+    # load_graph.inputs.nodes_table_index = "Id"
     load_graph.inputs.edges_path = (
         "/home/markus/projects/dharpa/notebooks/NetworkXAnalysis/JournalEdges1902.csv"
     )
     load_graph.inputs.source_column = "Source"
-    kiara.explain(load_graph.pipeline)
     # load_graph.inputs.target_column = "Target"
     load_graph.inputs.weight_column = "weight"
     load_graph.inputs.target_column = "Target"
 
-    # load_graph._pipeline._controller._unlock = True
-
-    # kiara.info(load_graph.pipeline.structure)
-
-    #
-    # print("Onboarding workflow info:")
-    # kiara.info(load_graph)
-    # print("Onboarding result info:")
-    # kiara.info(load_graph.outputs.graph)
-    #
-    # import pp
-    # pp(load_graph.inputs.nodes_path.__dict__)
-
-    # for n in load_graph.outputs.graph.get_value_data().nodes:
-    #     print(n)
-
-    # print_ascii_graph(load_graph.structure.data_flow_graph)
-
-    # analysis = kiara.create_workflow("network_analysis")
-    # analysis.inputs.graph = load_graph.outputs.graph
-    # analysis.inputs.shortest_path_source_node = 27
-    # analysis.inputs.shortest_path_target_node = 102
-
-    # print("Analysis workflow info:")
-    # print_ascii_graph(analysis.structure.data_flow_graph)
-    # kiara.info(analysis)
-
-    # print("Analysis result info:")
-    # for field_name, value in analysis.outputs.items():
-    #     print("====================")
-    #     print(f"Field: {field_name}")
-    #     kiara.info(value)
-    #     print(f"Actual value: {value.get_value_data()}")
-
-    # state = analysis.get_current_state()
-    # for k, v in state.step_inputs.items():
-    #     print("---")
-    #     print(k)
-    #     print(v.__dict__)
-    # print(analysis.get_current_state().json(indent=2))
+    kiara.explain(load_graph.pipeline)
 
 
 if __name__ == "__main__":

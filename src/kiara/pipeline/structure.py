@@ -3,6 +3,7 @@ import networkx as nx
 import typing
 import uuid
 from functools import lru_cache
+from networkx import NetworkXNoPath
 from pydantic import BaseModel, Extra, Field, PrivateAttr
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderGroup, RenderResult
@@ -574,62 +575,44 @@ class PipelineStructure(object):
         # calculating which steps are always required to execute to compute one of the required pipeline outputs.
         # this is done because in some cases it's possible that some steps can be skipped to execute if they
         # don't have a valid input set, because the inputs downstream they are connecting to are 'non-required'
-        optional_steps = []
-        for i in reversed(range(0, len(self._processing_stages))):
-            stage = self._processing_stages[i]
-            all_connected_stage_outputs = []
-            all_connected_pipeline_inputs = []
-            required_outputs = []
-            required_pipeline_inputs = []
-            for step_id in stage:
+        # optional_steps = []
 
-                step = self.get_step(step_id)
-                optional_inputs = []
-                required_inputs = []
+        last_stage = self._processing_stages[-1]
 
-                for input_name, schema in step.module.input_schemas.items():
-                    inp = self.get_step_inputs(step_id)[input_name]
-                    if inp.connected_outputs is not None:
-                        all_connected_stage_outputs.extend(inp.connected_outputs)
-                    else:
-                        all_connected_pipeline_inputs.append(
-                            inp.connected_pipeline_input
-                        )
+        step_nodes: typing.List[PipelineStep] = [
+            node
+            for node in self._data_flow_graph_simple.nodes
+            if isinstance(node, PipelineStep)
+        ]
 
-                    if (
-                        not step.required
-                        or not schema.required
-                        or schema.default != SpecialValue.NOT_SET
-                    ):
-                        optional_inputs.append(inp)
-                    else:
-                        required_inputs.append(inp)
-                        if inp.connected_outputs is not None:
-                            required_outputs.extend(inp.connected_outputs)
-                        else:
-                            required_pipeline_inputs.append(
-                                inp.connected_pipeline_input
-                            )
+        all_required_inputs = []
+        for step_id in last_stage:
 
-            optional_outputs = []
-            for outp in all_connected_stage_outputs:
-                if outp not in required_outputs:
-                    optional_outputs.append(outp)
+            step = self.get_step(step_id)
+            step_nodes.remove(step)
 
-            previous_stage = self._processing_stages[i - 1]
-            for step_id in previous_stage:
-                step = self.get_step(step_id)
-                optional = True
-                for output_name, schema in step.module.output_schemas.items():
-                    outp = self.get_step_outputs(step_id)[output_name]
+            for s_inp in self.get_step_inputs(step_id).values():
+                if not s_inp.value_schema.is_required():
+                    continue
+                all_required_inputs.append(s_inp)
 
-                    if outp.address not in optional_outputs:
-                        optional = False
-                        break
+        for pipeline_input in self.pipeline_inputs.values():
 
-                if optional:
-                    optional_steps.append(step_id)
-                    step.required = False
+            for last_step_input in all_required_inputs:
+                try:
+                    path = nx.shortest_path(
+                        self._data_flow_graph_simple, pipeline_input, last_step_input
+                    )
+                    for p in path:
+                        if p in step_nodes:
+                            step_nodes.remove(p)
+                except NetworkXNoPath:
+                    pass
+                    # print("NO PATH")
+                    # print(f"{pipeline_input} -> {last_step_input}")
+
+        for s in step_nodes:
+            s.required = False
 
         for input_name, inp in self.pipeline_inputs.items():
             steps = set()
@@ -643,7 +626,7 @@ class PipelineStructure(object):
                     optional = False
                     break
             if optional:
-                inp.value_schema.required = False
+                inp.value_schema.optional = True
 
     def to_details(self) -> "PipelineStructureDesc":
 
@@ -852,7 +835,7 @@ class PipelineStructureDesc(BaseModel):
         inp_table.add_column("Default")
 
         for inp, details in self.pipeline_inputs.items():
-            req = details.value_schema.required
+            req = details.value_schema.is_required()
             if not req:
                 req_str = "no"
             else:
@@ -960,7 +943,7 @@ def create_step_table(
     table.add_row("type", module_str)
 
     table.add_row(
-        "required", "[red]yes[/red]" if step.required else "[greepn]no[/green]"
+        "required", "[red]yes[/red]" if step.required else "[green]no[/green]"
     )
     table.add_row("is pipeline", "yes\n" if step.module.is_pipeline() else "no\n")
 

@@ -107,7 +107,7 @@ class ValueSchema(BaseModel):
 
     class Config:
         use_enum_values = True
-        extra = Extra.forbid
+        # extra = Extra.forbid
 
     type: str = Field(description="The type of the value.")
     type_config: typing.Dict[str, typing.Any] = Field(
@@ -117,14 +117,29 @@ class ValueSchema(BaseModel):
     default: typing.Any = Field(
         description="A default value.", default=SpecialValue.NOT_SET
     )
-    required: typing.Any = Field(
-        description="Whether this value is required to be set.", default=True
+
+    optional: bool = Field(
+        description="Whether this value is required (True), or whether 'None' value is allowed (False).",
+        default=False,
     )
+    # required: typing.Any = Field(
+    #     description="Whether this value is required to be set.", default=True
+    # )
 
     doc: str = Field(
         default="-- n/a --",
         description="A description for the value of this input field.",
     )
+
+    def is_required(self):
+
+        if self.optional:
+            return False
+        else:
+            if self.default in [None, SpecialValue.NOT_SET, SpecialValue.NO_VALUE]:
+                return True
+            else:
+                return False
 
     def validate_types(self, kiara: "Kiara"):
 
@@ -186,9 +201,9 @@ class Value(BaseModel, abc.ABC):
     )
     is_none: bool = Field(description="Whether the value is 'None'.", default=True)
 
-    is_valid: bool = Field(
-        description="Whether the value is set and valid.", default=False
-    )
+    # is_valid: bool = Field(
+    #     description="Whether the value is set and valid.", default=False
+    # )
     metadata: typing.Dict[str, typing.Any] = Field(
         description="Metadata relating to the actual data (size, no. of rows, etc. -- depending on data type).",
         default_factory=dict,
@@ -208,6 +223,13 @@ class Value(BaseModel, abc.ABC):
         This will be implemented by subclasses.
         """
         raise NotImplementedError()
+
+    def item_is_valid(self) -> bool:
+
+        if self.value_schema.optional:
+            return True
+        else:
+            return not self.is_none
 
     @property
     def type_obj(self):
@@ -240,7 +262,9 @@ class Value(BaseModel, abc.ABC):
         return hash(self.id)
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(id={str(self.id)} valid={self.is_valid})"
+        return (
+            f"{self.__class__.__name__}(id={str(self.id)} valid={self.item_is_valid()})"
+        )
 
     def __str__(self):
         return self.__repr__()
@@ -256,7 +280,7 @@ class Value(BaseModel, abc.ABC):
         table.add_row("id", self.id)
         table.add_row("type", self.value_schema.type)
         table.add_row("desc", self.value_schema.doc)
-        table.add_row("is set", "yes" if self.is_valid else "no")
+        table.add_row("is set", "yes" if self.item_is_valid() else "no")
         table.add_row("is constant", "yes" if self.is_constant else "no")
 
         if self.metadata:
@@ -472,11 +496,10 @@ class ValueSet(typing.MutableMapping[str, Value]):
     def __len__(self):
         return len(self._value_items)
 
-    @property
     def items_are_valid(self) -> bool:
 
         for item in self._value_items.values():
-            if not item.is_valid and item.value_schema.required:
+            if not item.item_is_valid():
                 return False
         return True
 
@@ -530,7 +553,7 @@ class ValueSet(typing.MutableMapping[str, Value]):
 
     def __repr__(self):
 
-        return f"ValueItems(values={self._value_items} valid={self.items_are_valid})"
+        return f"ValueItems(values={self._value_items} valid={self.items_are_valid()})"
 
     def _create_rich_table(self, show_headers: bool = True) -> Table:
 
@@ -544,7 +567,7 @@ class ValueSet(typing.MutableMapping[str, Value]):
         for k, v in self.items():
             t = v.value_schema.type
             desc = v.value_schema.doc
-            if not v.value_schema.required:
+            if not v.value_schema.is_required():
                 req = "no"
             else:
                 if (
@@ -555,7 +578,7 @@ class ValueSet(typing.MutableMapping[str, Value]):
                     req = "no"
                 else:
                     req = "[red]yes[/red]"
-            is_set = "yes" if v.is_valid else "no"
+            is_set = "yes" if v.item_is_valid() else "no"
             table.add_row(k, t, desc, req, is_set)
 
         return table
@@ -584,7 +607,7 @@ class PipelineValue(BaseModel):
         return PipelineValue(
             id=value.id,
             value_schema=value.value_schema,
-            is_valid=value.is_valid,
+            is_valid=value.item_is_valid(),
             is_set=value.is_set,
             is_constant=value.is_constant,
             origin=value.origin,

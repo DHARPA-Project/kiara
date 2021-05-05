@@ -3,7 +3,7 @@ import networkx as nx
 import typing
 import uuid
 from functools import lru_cache
-from networkx import NetworkXNoPath
+from networkx import NetworkXNoPath, NodeNotFound
 from pydantic import BaseModel, Extra, Field, PrivateAttr
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderGroup, RenderResult
@@ -606,7 +606,7 @@ class PipelineStructure(object):
                     for p in path:
                         if p in step_nodes:
                             step_nodes.remove(p)
-                except NetworkXNoPath:
+                except (NetworkXNoPath, NodeNotFound):
                     pass
                     # print("NO PATH")
                     # print(f"{pipeline_input} -> {last_step_input}")

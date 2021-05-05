@@ -23,6 +23,8 @@ jobs:
         run: pip install -U .
       - name: install default kiara modules
         run: pip install -U git+https://github.com/DHARPA-Project/kiara_modules.default.git#egg=kiara_modules.default[all]
+      - name: install kiara default modules
+        run: pip install -U git+https://github.com/DHARPA-Project/kiara_modules.default.git#egg=kiara
       - name: install other requirements
         run: pip install -U -e '.[dev_testing,all]'
       - name: Test with pytest

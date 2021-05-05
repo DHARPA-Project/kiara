@@ -14,7 +14,6 @@ import typing
 
 from kiara.config import PipelineModuleConfig
 
-from .test_modules import DummyModule  # noqa
 from .utils import PIPELINES_FOLDER
 
 

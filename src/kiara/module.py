@@ -1,22 +1,37 @@
 # -*- coding: utf-8 -*-
+import deepdiff
 import inspect
+import json
 import textwrap
 import typing
 from abc import abstractmethod
-from pydantic import BaseModel, Extra, Field, root_validator
+from pydantic import (
+    BaseModel,
+    Extra,
+    Field,
+    PrivateAttr,
+    ValidationError,
+    root_validator,
+)
 from rich import box
-from rich.console import Console, ConsoleOptions, RenderResult
+from rich.console import Console, ConsoleOptions, RenderGroup, RenderResult
+from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
 
-from kiara import Kiara
 from kiara.config import KIARA_CONFIG, KiaraModuleConfig
-from kiara.data.values import ValueSchema, ValueSet
+from kiara.data.values import Value, ValueSchema, ValueSet
+from kiara.exceptions import KiaraModuleConfigException, KiaraProcessingException
 from kiara.utils import (
     StringYAML,
     create_table_from_config_class,
-    get_doc_for_module_class,
+    create_table_from_field_schemas,
+    is_debug,
 )
+
+if typing.TYPE_CHECKING:
+    from kiara import Kiara
+
 
 yaml = StringYAML()
 
@@ -40,9 +55,24 @@ class StepInputs(object):
         if key == "_inputs":
             raise KeyError()
         elif key in self.__dict__["_inputs"].keys():
-            return self.__dict__["_inputs"][key].get_value_data()
+            return self.get_value_data(key)
         else:
             return super().__getattribute__(key)
+
+    @property
+    def field_names(self) -> typing.Iterable[str]:
+        return self.__dict__["_inputs"].keys()
+
+    def get_value_data(self, input_name) -> typing.Any:
+
+        return self.__dict__["_inputs"][input_name].get_value_data()
+
+    def get_value_obj(self, input_name) -> Value:
+
+        return self.__dict__["_inputs"][input_name]
+
+    def get_all_value_data(self) -> typing.Dict[str, typing.Any]:
+        return self._inputs.dict()
 
 
 class StepOutputs(object):
@@ -57,6 +87,7 @@ class StepOutputs(object):
     """
 
     def __init__(self, outputs: ValueSet):
+        super().__setattr__("_outputs_staging", {})
         super().__setattr__("_outputs", outputs)
 
     def __getattr__(self, key):
@@ -64,13 +95,17 @@ class StepOutputs(object):
         if key == "_outputs":
             raise KeyError()
         elif key in self.__dict__["_outputs"].keys():
-            return self.__dict__["_outputs"][key].get_value_data()
+            return self.get_value_data(key)
         else:
             return super().__getattribute__(key)
 
     def __setattr__(self, key, value):
 
         self.set_values(**{key: value})
+
+    @property
+    def field_names(self) -> typing.Iterable[str]:
+        return self.__dict__["_outputs"].keys()
 
     def set_values(self, **values: typing.Any):
 
@@ -85,7 +120,23 @@ class StepOutputs(object):
                 f"Can't set output value(s), invalid key name(s): {', '.join(wrong)}. Available: {av}"
             )
 
-        self._outputs.update(values)
+        self._outputs_staging.update(values)
+
+    def get_value_data(self, output_name: str) -> typing.Any:
+        self._sync()
+        return self.__dict__["_outputs"][output_name].get_value_data()
+
+    def get_value_obj(self, output_name):
+        self._sync()
+        return self.__dict__["_outputs"][output_name]
+
+    def _sync(self):
+        self._outputs.update(self._outputs_staging)
+        self._outputs_staging.clear()
+
+    def get_all_value_data(self) -> typing.Dict[str, typing.Any]:
+        self._sync()
+        return self._outputs.dict()
 
 
 class KiaraModule(typing.Generic[KIARA_CONFIG]):
@@ -114,8 +165,46 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
     _config_cls: typing.Type[KIARA_CONFIG] = KiaraModuleConfig  # type: ignore
 
     @classmethod
+    def doc(cls) -> str:
+        doc = cls.__doc__
+        if not doc:
+            doc = "-- n/a --"
+        else:
+            doc = inspect.cleandoc(doc)
+        return doc
+
+    @classmethod
     def is_pipeline(cls) -> bool:
         return False
+
+    @classmethod
+    def doc_link(cls) -> typing.Optional[str]:
+
+        if cls.is_pipeline():
+            x = "pipelines_list"
+        else:
+            x = "modules_list"
+
+        if hasattr(cls, "_module_type_id") and cls.__module__.startswith(
+            "kiara_modules.default"
+        ):
+            link = f"https://dharpa.org/kiara_modules.default/{x}/#{cls._module_type_id}"  # type: ignore
+            return link
+        else:
+            return None
+
+    @classmethod
+    def source_link(cls) -> typing.Optional[str]:
+
+        if cls.is_pipeline():
+            return None
+        else:
+            if cls.__module__.startswith("kiara_modules.default"):
+                base_url = "https://dharpa.org/kiara_modules.default/api_reference"
+                url = f"{base_url}/{cls.__module__}/#{cls.__module__}.{cls.__name__}"
+                return url
+            else:
+                return None
 
     def __init__(
         self,
@@ -125,19 +214,36 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
             None, KIARA_CONFIG, typing.Mapping[str, typing.Any]
         ] = None,
         meta: typing.Mapping[str, typing.Any] = None,
+        kiara: typing.Optional["Kiara"] = None,
     ):
 
         self._id: str = id
         self._parent_id = parent_id
+
+        if kiara is None:
+            from kiara import Kiara
+
+            kiara = Kiara.instance()
+        self._kiara = kiara
 
         if isinstance(module_config, KiaraModuleConfig):
             self._config: KIARA_CONFIG = module_config  # type: ignore
         elif module_config is None:
             self._config = self.__class__._config_cls()
         elif isinstance(module_config, typing.Mapping):
-            self._config = self.__class__._config_cls(**module_config)
+            try:
+                self._config = self.__class__._config_cls(**module_config)
+            except ValidationError as ve:
+                raise KiaraModuleConfigException(
+                    f"Error creating module '{id}'. {ve}",
+                    self.__class__,
+                    module_config,
+                    ve,
+                )
         else:
             raise TypeError(f"Invalid type for module config: {type(module_config)}")
+
+        self._module_hash: typing.Optional[int] = None
 
         if meta is None:
             meta = {}
@@ -190,35 +296,81 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
         return self.config.get(key)
 
     @abstractmethod
-    def create_input_schema(self) -> typing.Mapping[str, ValueSchema]:
+    def create_input_schema(
+        self,
+    ) -> typing.Mapping[
+        str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
+    ]:
         """Abstract method to implement by child classes, returns a description of the input schema of this module."""
 
     @abstractmethod
-    def create_output_schema(self) -> typing.Mapping[str, ValueSchema]:
+    def create_output_schema(
+        self,
+    ) -> typing.Mapping[
+        str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
+    ]:
         """Abstract method to implement by child classes, returns a description of the output schema of this module."""
 
     @property
     def input_schemas(self) -> typing.Mapping[str, ValueSchema]:
         """The input schema for this module."""
 
-        if self._input_schemas is None:
-            self._input_schemas = self.create_input_schema()
-        if not self._input_schemas:
+        if self._input_schemas is not None:
+            return self._input_schemas
+
+        _input_schemas = self.create_input_schema()
+
+        if not _input_schemas:
             raise Exception(
                 f"Invalid module implementation for '{self.__class__.__name__}': empty input schema"
             )
+
+        result = {}
+        for k, v in _input_schemas.items():
+            if isinstance(v, ValueSchema):
+                result[k] = v
+            elif isinstance(v, typing.Mapping):
+                schema = ValueSchema(**v)
+                schema.validate_types(self._kiara)
+                result[k] = schema
+            else:
+                raise Exception(
+                    f"Invalid return type when tryping to create schema for '{self.id}': {type(v)}"
+                )
+
+        self._input_schemas = result
+
         return self._input_schemas
 
     @property
     def output_schemas(self) -> typing.Mapping[str, ValueSchema]:
         """The output schema for this module."""
 
-        if self._output_schemas is None:
-            self._output_schemas = self.create_output_schema()
-            if not self._output_schemas:
+        if self._output_schemas is not None:
+            return self._output_schemas
+
+        _output_schema = self.create_output_schema()
+
+        if not _output_schema:
+            raise Exception(
+                f"Invalid module implementation for '{self.__class__.__name__}': empty output schema"
+            )
+
+        result = {}
+        for k, v in _output_schema.items():
+            if isinstance(v, ValueSchema):
+                result[k] = v
+            elif isinstance(v, typing.Mapping):
+                schema = ValueSchema(**v)
+                schema.validate_types(self._kiara)
+                result[k] = schema
+            else:
                 raise Exception(
-                    f"Invalid module implementation for '{self.__class__.__name__}': empty output schema"
+                    f"Invalid return type when tryping to create schema for '{self.id}': {type(v)}"
                 )
+
+        self._output_schemas = result
+
         return self._output_schemas
 
     @property
@@ -245,7 +397,24 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
         input_wrap: StepInputs = StepInputs(inputs=inputs)
         output_wrap: StepOutputs = StepOutputs(outputs=outputs)
 
-        self.process(inputs=input_wrap, outputs=output_wrap)
+        try:
+            self.process(inputs=input_wrap, outputs=output_wrap)
+        except Exception as e:
+            if is_debug():
+                try:
+                    import traceback
+
+                    traceback.print_exc()
+                except Exception:
+                    pass
+            if isinstance(e, KiaraProcessingException):
+                e._module = self
+                e._inputs = input_wrap
+                raise e
+            else:
+                raise KiaraProcessingException(e, module=self, inputs=input_wrap)
+
+        output_wrap._sync()
 
     @abstractmethod
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
@@ -255,6 +424,58 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
             inputs: the input value set
             outputs: the output value set
         """
+
+    def run(self, **inputs: typing.Any) -> typing.Mapping[str, typing.Any]:
+        """Execute the module with the provided inputs directly.
+
+        TODO: make this less wasteful, currently there are lots of objects created
+
+        Arguments:
+            inputs: a map of the input values (as described by the input schema
+        Returns:
+            a map of the output values (as described by the output schema)
+        """
+
+        input_value_set = ValueSet.from_schemas(
+            schemas=self.input_schemas, initial_values=inputs
+        )
+        output_value_set = ValueSet.from_schemas(schemas=self.output_schemas)
+
+        m_inputs = StepInputs(inputs=input_value_set)
+        m_outputs = StepOutputs(outputs=output_value_set)
+
+        self.process(inputs=m_inputs, outputs=m_outputs)
+
+        result = m_outputs.get_all_value_data()
+        return result
+
+    @property
+    def module_instance_hash(self) -> int:
+        """Return this modules 'module_hash'.
+
+        If two module instances ``module_instance_hash`` values are the same, it is guaranteed that their ``process`` methods will
+        return the same output, given the same inputs (except if that processing step uses randomness). It can also be
+        assumed that the two instances have the same input and output fields, with the same schemas.
+
+        !!! note
+        This implementation is preliminary, since it's not yet 100% clear to me how much that will be needed, and
+        in which situations. Also, module versioning needs to be implemented before this can work reliably. Also, for now
+        it is assumed that a module configuration is not changed once set, this also might change in the future
+
+        Returns:
+            this modules 'module_instance_hash'
+        """
+
+        # TODO:
+        if self._module_hash is None:
+            _d = {
+                "module_cls": f"{self.__class__.__module__}.{self.__class__.__name__}",
+                "version": "0.0.0",  # TODO: implement module versioning, package name might also need to be included here
+                "config_hash": self.config.config_hash,
+            }
+            hashes = deepdiff.DeepHash(_d)
+            self._module_hash = hashes[_d]
+        return self._module_hash
 
     def __eq__(self, other):
         if self.__class__ != other.__class__:
@@ -276,26 +497,53 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
                 "Invalid model class, no '_module_type_id' attribute added. This is a bug"
             )
 
-        data = {
-            # "module id": self.full_id,
-            "module type": self.__class__._module_type_id,  # type: ignore
-            "module_config": self.config.dict(),
-            "inputs": {},
-            "outputs": {},
-        }
+        r_gro: typing.List[typing.Any] = []
+        doc = self.doc()
+        if doc and doc != "-- n/a --":
+            r_gro.append(f"\n  {self.doc()}\n")
 
-        for field_name, schema in self.input_schemas.items():
-            d = "-- no default --" if schema.default is None else str(schema.default)
-            data["inputs"][field_name] = {
-                "type": schema.type,
-                "doc": schema.doc,
-                "default": d,
-            }
-        for field_name, schema in self.output_schemas.items():
-            data["outputs"][field_name] = {"type": schema.type, "doc": schema.doc}
+        table = Table(box=box.SIMPLE, show_header=False)
+        table.add_column("property", style="i")
+        table.add_column("value")
 
-        yaml_str = yaml.dump(data)
-        yield Syntax(yaml_str, "yaml", background_color="default")
+        doc_link = self.doc_link()
+        if doc_link:
+            m_str = f"[link={doc_link}]{self.__class__._module_type_id}[/link]"  # type: ignore
+        else:
+            m_str = self.__class__._module_type_id  # type: ignore
+        table.add_row("module_type", m_str)
+        table.add_row(
+            "module_class", f"{self.__class__.__module__}.{self.__class__.__name__}"
+        )
+        table.add_row("is pipeline", "yes" if self.__class__.is_pipeline() else "no")
+        config = self.config.dict()
+        config.pop("doc", None)
+        config.pop("steps", None)
+        config.pop("input_aliases", None)
+        config.pop("output_aliases", None)
+        config.pop("module_type_name", None)
+        config_str = json.dumps(config, indent=2)
+        c = Syntax(config_str, "json", background_color="default")
+        table.add_row("config", c)
+        inputs_table = create_table_from_field_schemas(
+            _show_header=True, **self.input_schemas
+        )
+        table.add_row("inputs", inputs_table)
+        outputs_table = create_table_from_field_schemas(
+            _add_required=False,
+            _add_default=False,
+            _show_header=True,
+            **self.output_schemas,
+        )
+        table.add_row("outputs", outputs_table)
+        r_gro.append(table)
+
+        yield Panel(
+            RenderGroup(*r_gro),
+            box=box.ROUNDED,
+            title_align="left",
+            title=f"Module: [b]{self.id}[/b]",
+        )
 
 
 class ModuleInfo(BaseModel):
@@ -321,9 +569,22 @@ class ModuleInfo(BaseModel):
     config_cls: typing.Type[KiaraModuleConfig] = Field(
         description="The configuration class for this module."
     )
+    _kiara: "Kiara" = PrivateAttr()
+
+    def __init__(self, **data):  # type: ignore
+        kiara = data.get("_kiara", None)
+        if kiara is None:
+            from kiara import Kiara
+
+            kiara = Kiara.instance()
+            data["_kiara"] = kiara
+        self._kiara: "Kiara" = kiara
+        super().__init__(**data)
 
     @root_validator(pre=True)
     def ensure_type(cls, values):
+
+        kiara = values.pop("_kiara")
 
         module_type = values.pop("module_type", None)
         assert module_type is not None
@@ -333,11 +594,11 @@ class ModuleInfo(BaseModel):
                 f"Only 'module_type' allowed in constructor, not: {values.keys()}"
             )
 
-        module_cls = Kiara.instance().get_module_class(module_type)
+        module_cls = kiara.get_module_class(module_type)
         values["module_type"] = module_type
         values["module_cls"] = module_cls
 
-        doc = get_doc_for_module_class(module_cls)
+        doc = module_cls.doc()
 
         values["doc"] = doc
         proc_doc = module_cls.process.__doc__
@@ -356,20 +617,91 @@ class ModuleInfo(BaseModel):
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        yield f"[i]Module[/i]: [b]{self.module_type}[/b]"
+
         my_table = Table(box=box.SIMPLE, show_lines=True, show_header=False)
         my_table.add_column("Property", style="i")
         my_table.add_column("Value")
         my_table.add_row(
             "class", f"{self.module_cls.__module__}.{self.module_cls.__qualname__}"
         )
+        my_table.add_row(
+            "is pipeline", "yes" if self.module_cls.is_pipeline() else "no"
+        )
         my_table.add_row("doc", self.doc)
+        source_link = self.module_cls.source_link()
+        if source_link is None:
+            source_link = "-- n/a --"
+        else:
+            source_link = f"[i link={source_link}]kiara_modules.default.{self.module_type}[/i link]"
+        my_table.add_row("source repo", source_link)
         my_table.add_row(
             "config class",
             f"{self.config_cls.__module__}.{self.config_cls.__qualname__}",
         )
         my_table.add_row("config", create_table_from_config_class(self.config_cls))
-        syn_src = Syntax(self.process_src, "python")
+        if not self.module_cls.is_pipeline():
+            syn_src = Syntax(self.process_src, "python")
+        else:
+            base_pipeline_config = self.module_cls._base_pipeline_config.dict()  # type: ignore
+            yaml_str = yaml.dump(base_pipeline_config)
+            syn_src = Syntax(yaml_str, "yaml", background_color="default")
         my_table.add_row("src", syn_src)
 
-        yield my_table
+        yield Panel(
+            my_table,
+            box=box.ROUNDED,
+            title=f"Module: [b]{self.module_type}[/b]",
+            title_align="left",
+        )
+
+
+class ModulesList(object):
+    def __init__(
+        self, modules: typing.Iterable[str], kiara: typing.Optional["Kiara"] = None
+    ):
+
+        if kiara is None:
+            from kiara import Kiara
+
+            kiara = Kiara.instance()
+
+        self._kiara: Kiara = kiara
+        self._modules: typing.Iterable[str] = modules
+        self._info_map: typing.Optional[typing.Dict[str, ModuleInfo]] = None
+
+    @property
+    def module_info_map(self) -> typing.Mapping[str, ModuleInfo]:
+
+        if self._info_map is not None:
+            return self._info_map
+
+        from kiara.module import ModuleInfo
+
+        result = {}
+        for m in self._modules:
+            info = ModuleInfo(_kiara=self._kiara, module_type=m)
+            result[m] = info
+
+        self._info_map = result
+        return self._info_map
+
+    def __repr__(self):
+
+        return str(list(self._modules.keys()))
+
+    def __str__(self):
+
+        return self.__repr__()
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+
+        table = Table(show_header=False, box=box.SIMPLE, show_lines=True)
+        table.add_column("name", style="b")
+        table.add_column("desc", style="i")
+
+        for name, details in self.module_info_map.items():
+            table.add_row(name, details.doc)
+
+        yield table

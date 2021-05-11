@@ -1,6 +1,9 @@
-site_name: kiara
+site_name: Kiara
+site_description: Documentation for the Kiara project
+site_url: https://dharpa.org/kiara
 repo_url: https://github.com/DHARPA-Project/kiara
 site_author: Markus Binsteiner
+copyright: DHARPA project
 docs_dir: docs
 site_dir: build/site
 
@@ -21,7 +24,7 @@ markdown_extensions:
     toc_depth: 3
 - pymdownx.snippets:
     base_path: docs
-- mkdocs-click
+#- mkdocs-click
 - pymdownx.highlight
 - pymdownx.superfences
 
@@ -33,16 +36,36 @@ nav:
     - Overview: modules/index.md
     - Core modules: modules/core_modules.md
     - Pipeline modules: modules/pipeline_modules.md
+- Workflows:
+    - Overview: workflows/index.md
+- Data:
+    - Overview: data/index.md
+    - Data registry: data/registry.md
 - Development:
     - Overview: development/index.md
+    - Development environment: development/environment.md
+    - Pipeline controllers: development/pipeline_controllers.md
+    - Workflows: development/workflows.md
     - Entities:
       - Overview: development/entities/index.md
       - Values / Data: development/entities/values.md
       - Modules / Pipelines: development/entities/modules.md
       - Events: development/entities/events.md
+- Architecture:
+    - Overview: architecture/index.md
+    - Data:
+      - Overview: architecture/data/index.md
+      - Formats: architecture/data/data_formats.ipynb
+    - Workflows:
+      - Workflows: architecture/workflows/index.md
+      - Modularity: architecture/workflows/modularity/modularity.ipynb
+    - Metadata: architecture/metadata.md
+    - Decisions: architecture/decisions.md
+    - Assumptions: architecture/assumptions.md
 
 plugins:
 - search
+- mknotebooks
 - mkdocstrings:
     default_handler: python
     watch:
@@ -51,8 +74,9 @@ plugins:
     main_module: "kiara"
 - macros:
    modules:
-     - frkl.project.meta.documentation.mkdocs_macros_frkl
+     - frkl.project.documentation.mkdocs_macros_frkl
      - kiara.doc.mkdocs_macros_kiara
 - gen-files:
     scripts:
       - scripts/documentation/gen_schemas.py
+#      - scripts/documentation/gen_module_doc.py

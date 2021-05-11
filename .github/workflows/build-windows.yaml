@@ -16,7 +16,11 @@ jobs:
         with:
           python-version: "${{ matrix.python_version }}"
       - uses: actions/checkout@v2
-      - name: install requirements
+      - name: install kiara
+        run: pip install -U .
+      - name: install default kiara modules
+        run: pip install -U git+https://github.com/DHARPA-Project/kiara_modules.default.git#egg=kiara_modules.default[all]
+      - name: install other requirements
         run: pip install -U -e '.[dev_testing,all]'
       - name: Test with pytest
         run: make test
@@ -33,7 +37,11 @@ jobs:
         with:
           python-version: "${{ matrix.python_version }}"
       - uses: actions/checkout@v2
-      - name: install requirements
+      - name: install kiara
+        run: pip install -U .
+      - name: install default kiara modules
+        run: pip install -U git+https://github.com/DHARPA-Project/kiara_modules.default.git#egg=kiara_modules.default[all]
+      - name: install other requirements
         run: pip install -U -e '.[dev_testing,all]'
       - name: Test with mypy
         run: make mypy
@@ -47,32 +55,36 @@ jobs:
         with:
           python-version: 3.9
       - uses: actions/checkout@v2
-      - name: install requirements
+      - name: install kiara
+        run: pip install -U .
+      - name: install default kiara modules
+        run: pip install -U git+https://github.com/DHARPA-Project/kiara_modules.default.git#egg=kiara_modules.default[all]
+      - name: install other requirements
         run: pip install -U -e '.[dev_testing,all]'
       - name: Test with flake8
         run: make flake
 
-  build-windows:
-    name: build windows binary
-    runs-on: windows-latest
-    needs:
-      - test-windows
-      - mypy-windows
-      - flake8-windows
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: '3.9' # Version range or exact version of a Python version to use, using SemVer's version range syntax
-          architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
-      - name: download build script
-        run: C:\msys64\usr\bin\wget.exe https://gitlab.com/frkl/frkl.project/-/raw/develop/scripts/build-binary/build.sh && chmod +x build.sh
-      - name: download spec file
-        run: C:\msys64\usr\bin\wget.exe https://gitlab.com/frkl/frkl.project/-/raw/develop/scripts/build-binary/onefile.spec
-      - name: build_binary
-        run: "bash ./build.sh --python-type system"
-      - name: Archive windows binary
-        uses: actions/upload-artifact@v1
-        with:
-          name: kiara
-          path: dist/msys/kiara.exe
+#  build-windows:
+#    name: build windows binary
+#    runs-on: windows-latest
+#    needs:
+#      - test-windows
+#      - mypy-windows
+#      - flake8-windows
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: actions/setup-python@v2
+#        with:
+#          python-version: '3.9' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+#          architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+#      - name: download build script
+#        run: C:\msys64\usr\bin\wget.exe https://gitlab.com/frkl/frkl.project/-/raw/develop/scripts/build-binary/build.sh && chmod +x build.sh
+#      - name: download spec file
+#        run: C:\msys64\usr\bin\wget.exe https://gitlab.com/frkl/frkl.project/-/raw/develop/scripts/build-binary/onefile.spec
+#      - name: build_binary
+#        run: "bash ./build.sh --python-type system --requirements ci/build/requirements.txt"
+#      - name: Archive windows binary
+#        uses: actions/upload-artifact@v1
+#        with:
+#          name: kiara
+#          path: dist/msys/kiara.exe

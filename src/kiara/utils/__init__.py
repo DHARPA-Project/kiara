@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-import inspect
 import json
 import logging
 import os
+import re
 import sys
 import typing
 import yaml
@@ -20,13 +20,24 @@ from ruamel.yaml import YAML
 from stevedore import ExtensionManager
 from typing import Union
 
-from kiara.data.values import ValueSchema
+from kiara.defaults import RELATIVE_PIPELINES_PATH, SpecialValue
 
 if typing.TYPE_CHECKING:
-    from kiara.config import KiaraModuleConfig, PipelineModuleConfig
+    from kiara.config import KiaraModuleConfig
+    from kiara.data.values import ValueSchema
     from kiara.module import KiaraModule
 
 log = logging.getLogger("kiara")
+CAMEL_TO_SNAKE_REGEX = re.compile(r"(?<!^)(?=[A-Z])")
+
+
+def is_debug() -> bool:
+
+    debug = os.environ.get("DEBUG", None)
+    if isinstance(debug, str) and debug.lower() == "true":
+        return True
+    else:
+        return False
 
 
 def get_data_from_file(path: Union[str, Path]) -> typing.Any:
@@ -56,20 +67,21 @@ def get_data_from_file(path: Union[str, Path]) -> typing.Any:
 def print_ascii_graph(graph: Graph):
 
     try:
-        from asciinet._libutil import check_java
-
-        check_java("Java ")
-    except Exception:
-        print(
-            "\nJava is currently necessary to print ascii graphs. This might change in the future, but to use this functionality please install a JRE."
-        )
-        return
-
-    try:
         from asciinet import graph_to_ascii
     except:  # noqa
         print(
             "\nCan't print graph on terminal, package 'asciinet' not available. Please install it into the current virtualenv using:\n\npip install 'git+https://github.com/cosminbasca/asciinet.git#egg=asciinet&subdirectory=pyasciinet'"
+        )
+        return
+
+    try:
+        from asciinet._libutil import check_java
+
+        check_java("Java ")
+    except Exception as e:
+        print(e)
+        print(
+            "\nJava is currently necessary to print ascii graphs. This might change in the future, but to use this functionality please install a JRE."
         )
         return
 
@@ -105,9 +117,7 @@ def find_kiara_modules() -> typing.Dict[str, typing.Type["KiaraModule"]]:
 
     log2 = logging.getLogger("stevedore")
     out_hdlr = logging.StreamHandler(sys.stdout)
-    out_hdlr.setFormatter(
-        logging.Formatter("freckles connector plugin error -> %(message)s")
-    )
+    out_hdlr.setFormatter(logging.Formatter("kiara module plugin error -> %(message)s"))
     out_hdlr.setLevel(logging.INFO)
     log2.addHandler(out_hdlr)
     log2.setLevel(logging.INFO)
@@ -124,6 +134,37 @@ def find_kiara_modules() -> typing.Dict[str, typing.Type["KiaraModule"]]:
         ep = plugin.entry_point
         module_cls = ep.load()
         result[name] = module_cls
+
+    return result
+
+
+def find_kiara_pipeline_folders() -> typing.Dict[str, str]:
+
+    log2 = logging.getLogger("stevedore")
+    out_hdlr = logging.StreamHandler(sys.stdout)
+    out_hdlr.setFormatter(
+        logging.Formatter("kiara pipeline plugin error -> %(message)s")
+    )
+    out_hdlr.setLevel(logging.INFO)
+    log2.addHandler(out_hdlr)
+    log2.setLevel(logging.INFO)
+
+    log.debug("Loading kiara pipelines...")
+
+    mgr = ExtensionManager(
+        namespace="kiara.pipelines", invoke_on_load=False, propagate_map_exceptions=True
+    )
+
+    result = {}
+    # TODO: make sure we load 'default' first?
+    for plugin in mgr:
+        name = plugin.name
+        ep = plugin.entry_point
+        module_cls = ep.load()
+        path = os.path.join(
+            os.path.dirname(module_cls.__file__), RELATIVE_PIPELINES_PATH
+        )
+        result[name] = path
 
     return result
 
@@ -150,28 +191,62 @@ def create_table_from_config_class(
         ]:
             continue
 
-        table.add_row(
-            field_name, details["type"], details.get("description", "-- n/a --")
-        )
+        type_str = "-- n/a --"
+        if "type" in details.keys():
+            type_str = details["type"]
+        table.add_row(field_name, type_str, details.get("description", "-- n/a --"))
 
     return table
 
 
-def create_table_from_field_schemas(**fields: ValueSchema):
+def create_table_from_field_schemas(
+    _add_default: bool = True,
+    _add_required: bool = True,
+    _show_header: bool = False,
+    **fields: "ValueSchema",
+):
 
-    table = Table(box=box.SIMPLE, show_header=False)
+    table = Table(box=box.SIMPLE, show_header=_show_header)
     table.add_column("Field name", style="i")
-    table.add_column("Value type")
-    table.add_column("Default")
+    table.add_column("Type")
+    table.add_column("Description")
+    if _add_required:
+        table.add_column("Required")
+    if _add_default:
+        table.add_column("Default")
 
     for field_name, schema in fields.items():
-        d = "-- no default --" if schema.default is None else str(schema.default)
-        table.add_row(field_name, schema.type, d)  # type: ignore
+
+        row = [field_name, schema.type, schema.doc]
+
+        if _add_required:
+            req = schema.is_required()
+            if not req:
+                req_str = "no"
+            else:
+                if schema.default in [
+                    None,
+                    SpecialValue.NO_VALUE,
+                    SpecialValue.NOT_SET,
+                ]:
+                    req_str = "[b]yes[b]"
+                else:
+                    req_str = "no"
+            row.append(req_str)
+
+        if _add_default:
+            if schema.default in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
+                d = "-- no default --"
+            else:
+                d = str(schema.default)
+            row.append(d)
+
+        table.add_row(*row)
 
     return table
 
 
-def module_config_from_cli_args(*args: str) -> typing.Dict[str, typing.Any]:
+def dict_from_cli_args(*args: str) -> typing.Dict[str, typing.Any]:
 
     if not args:
         return {}
@@ -194,32 +269,17 @@ def module_config_from_cli_args(*args: str) -> typing.Dict[str, typing.Any]:
                 part_config = json.loads(arg)
                 assert isinstance(part_config, typing.Mapping)
             except Exception:
-                raise Exception(f"Could not parse argument into module config: {arg}")
+                raise Exception(f"Could not parse argument into data: {arg}")
 
         for k, v in part_config.items():
             if k in config.keys():
-                log.warning(
-                    f"Duplicate config key '{k}', overwriting old value with: {v}"
-                )
+                log.warning(f"Duplicate key '{k}', overwriting old value with: {v}")
             config[k] = v
     return config
 
 
-def get_doc_for_module_class(module_cls: typing.Type["KiaraModule"]):
-
-    from kiara import PipelineModule
-
-    if module_cls == PipelineModule or not module_cls.is_pipeline():
-
-        doc = module_cls.__doc__
-        if not doc:
-            doc = "-- n/a --"
-        else:
-            doc = inspect.cleandoc(doc)
-    else:
-        bpc: "PipelineModuleConfig" = module_cls._base_pipeline_config  # type: ignore
-        doc = bpc.doc
-    return doc
+def camel_case_to_snake_case(camel_text: str, repl: str = "_"):
+    return CAMEL_TO_SNAKE_REGEX.sub(repl, camel_text).lower()
 
 
 class StringYAML(YAML):

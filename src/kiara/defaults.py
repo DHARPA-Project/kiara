@@ -2,6 +2,7 @@
 import os
 import sys
 from appdirs import AppDirs
+from enum import Enum
 
 kiara_app_dirs = AppDirs("kiara", "DHARPA")
 
@@ -14,6 +15,10 @@ else:
 
 KIARA_RESOURCES_FOLDER = os.path.join(KIARA_MODULE_BASE_FOLDER, "resources")
 """Default resources folder for this package."""
+
+USER_PIPELINES_FOLDER = os.path.join(kiara_app_dirs.user_config_dir, "pipelines")
+
+RELATIVE_PIPELINES_PATH = os.path.join("resources", "pipelines")
 
 MODULE_TYPE_KEY = "module_type"
 """The key to specify the type of a module."""
@@ -35,3 +40,14 @@ VALID_PIPELINE_FILE_EXTENSIONS = ["yaml", "yml", "json"]
 
 MODULE_TYPE_NAME_KEY = "module_type_name"
 """The string for the module type name in a module configuration dict."""
+
+DEFAULT_PIPELINE_PARENT_ID = "__kiara__"
+"""Default parent id for pipeline objects that are not associated with a workflow."""
+
+DEFAULT_NO_DESC_VALUE = "-- n/a --"
+
+
+class SpecialValue(Enum):
+
+    NOT_SET = "__not_set__"
+    NO_VALUE = "__no_value__"

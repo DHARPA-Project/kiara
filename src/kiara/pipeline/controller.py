@@ -13,7 +13,7 @@ if typing.TYPE_CHECKING:
         StepInputEvent,
         StepOutputEvent,
     )
-    from kiara.pipeline.pipeline import Pipeline, PipelineState
+    from kiara.pipeline.pipeline import Pipeline, PipelineState, StepStatus
 
 log = logging.getLogger("kiara")
 
@@ -56,6 +56,10 @@ class PipelineController(abc.ABC):
         if self._pipeline is None:
             raise Exception("Pipeline not set yet.")
         return self._pipeline
+
+    @property
+    def pipeline_status(self) -> "StepStatus":
+        return self.pipeline.status
 
     def set_pipeline(self, pipeline: "Pipeline"):
         """Set the pipeline object for this controller.
@@ -144,6 +148,28 @@ class PipelineController(abc.ABC):
 
         return self.pipeline._pipeline_outputs
 
+    def can_be_processed(self, step_id: str) -> bool:
+        """Check whether the step with the provided id is ready to be processed."""
+
+        result = True
+        for input_name, value in self.get_step_inputs(step_id=step_id).items():
+
+            if not value.item_is_valid():
+                result = False
+                break
+
+        return result
+
+    def can_be_skipped(self, step_id: str) -> bool:
+        """Check whether the processing of a step can be skipped."""
+
+        result = True
+        step = self.get_step(step_id)
+        if step.required:
+            result = self.can_be_processed(step_id)
+
+        return result
+
     def process_step(self, step_id: str):
         """Kick off processing for the step with the provided id.
 
@@ -154,7 +180,7 @@ class PipelineController(abc.ABC):
         step_inputs = self.get_step_inputs(step_id)
 
         # if the inputs are not valid, ignore this step
-        if not step_inputs.items_are_valid:
+        if not step_inputs.items_are_valid():
             raise Exception(
                 f"Can't execute step '{step_id}': it does not have valid input set."
             )
@@ -182,9 +208,9 @@ class PipelineController(abc.ABC):
         Returns:
             whether the step is ready (``True``) or not (``False``)
         """
-        return self.get_step_inputs(step_id).items_are_valid
+        return self.get_step_inputs(step_id).items_are_valid()
 
-    def step_is_valid(self, step_id: str) -> bool:
+    def step_is_finished(self, step_id: str) -> bool:
         """Return whether the step with the provided id has been processed successfully.
 
         A ``True`` result means that all output fields are currently set with valid values, and the inputs haven't changed
@@ -197,7 +223,7 @@ class PipelineController(abc.ABC):
               whether the step result is valid (``True``) or not (``False``)
         """
 
-        return self.get_step_outputs(step_id).items_are_valid
+        return self.get_step_outputs(step_id).items_are_valid()
 
     def pipeline_is_ready(self) -> bool:
         """Return whether the pipeline is ready to be processed.
@@ -208,9 +234,10 @@ class PipelineController(abc.ABC):
         Returns:
             whether the pipeline can be processed as a whole (``True``) or not (``False``)
         """
-        return self.pipeline.inputs.items_are_valid
 
-    def pipeline_is_valid(self) -> bool:
+        return self.pipeline.inputs.items_are_valid()
+
+    def pipeline_is_finished(self) -> bool:
         """Return whether the pipeline has been processed successfully.
 
         A ``True`` result means that every step of the pipeline has been processed successfully, and no pipeline input
@@ -219,7 +246,7 @@ class PipelineController(abc.ABC):
         Returns:
             whether the pipeline was processed successfully (``True``) or not (``False``)
         """
-        return self.pipeline.outputs.items_are_valid
+        return self.pipeline.outputs.items_are_valid()
 
     def set_pipeline_inputs(self, **inputs: typing.Any):
         """Set one, several or all inputs for this pipeline.
@@ -278,12 +305,57 @@ class BatchController(PipelineController):
 
     This is the default implementation of a ``PipelineController``, and probably the most simple implementation of one.
     It waits until all inputs are set, after which it executes all pipeline steps in the required order.
+
+    Arguments:
+        pipeline: the pipeline to control
+        auto_process: whether to automatically start processing the pipeline as soon as the input set is valid
     """
 
-    def __init__(self, pipeline: typing.Optional["Pipeline"] = None):
+    def __init__(
+        self, pipeline: typing.Optional["Pipeline"] = None, auto_process: bool = True
+    ):
 
+        self._auto_process: bool = auto_process
         self._is_running: bool = False
         super().__init__(pipeline=pipeline)
+
+    @property
+    def auto_process(self) -> bool:
+        return self._auto_process
+
+    @auto_process.setter
+    def auto_process(self, auto_process: bool):
+        self._auto_process = auto_process
+
+    def process_pipeline(self) -> bool:
+
+        if self._is_running:
+            log.debug("Pipeline running, doing nothing.")
+            return False
+
+        self._is_running = True
+        try:
+            for stage in self.processing_stages:
+
+                for step_id in stage:
+                    if not self.can_be_processed(step_id):
+                        if self.can_be_skipped(step_id):
+                            continue
+                        else:
+                            raise Exception(
+                                f"Required pipeline step '{step_id}' can't be processed, inputs not ready yet."
+                            )
+                    try:
+                        self.process_step(step_id)
+                    except Exception as e:
+                        log.error(
+                            f"Processing of step '{step_id}' from pipeline '{self.pipeline.structure.pipeline_id}' failed: {e}"
+                        )
+                        return False
+        finally:
+            self._is_running = False
+
+        return True
 
     def step_inputs_changed(self, event: "StepInputEvent"):
 
@@ -295,15 +367,11 @@ class BatchController(PipelineController):
             log.debug(f"Pipeline not ready after input event: {event}")
             return
 
-        self._is_running = True
-
-        for stage in self.processing_stages:
-
-            for step_id in stage:
-                self.process_step(step_id)
+        if self._auto_process:
+            self.process_pipeline()
 
     def pipeline_outputs_changed(self, event: "PipelineOutputEvent"):
 
-        if self.pipeline_is_valid():
-            # TODO: check if soemthing is running
+        if self.pipeline_is_finished():
+            # TODO: check if something is running
             self._is_running = False

@@ -6,17 +6,15 @@ from rich.console import Console, ConsoleOptions, RenderResult
 from rich.syntax import Syntax
 from rich.table import Table
 
-from kiara import Kiara
 from kiara.config import PipelineModuleConfig
 from kiara.data.values import ValueField, ValueSchema
 from kiara.module import KiaraModule, ModuleInfo, StepInputs, StepOutputs
+from kiara.pipeline.controller import BatchController, PipelineController
 from kiara.pipeline.structure import PipelineStructure
-from kiara.utils import (
-    StringYAML,
-    create_table_from_config_class,
-    get_doc_for_module_class,
-    print_ascii_graph,
-)
+from kiara.utils import StringYAML, create_table_from_config_class, print_ascii_graph
+
+if typing.TYPE_CHECKING:
+    from kiara.kiara import Kiara
 
 yaml = StringYAML()
 
@@ -25,10 +23,22 @@ class PipelineModule(KiaraModule[PipelineModuleConfig]):
     """A [KiaraModule][kiara.module.KiaraModule] that contains a collection of interconnected other modules."""
 
     _config_cls: typing.Type[PipelineModuleConfig] = PipelineModuleConfig  # type: ignore
+    _module_type_id = "pipeline"
 
     @classmethod
     def is_pipeline(cls) -> bool:
         return True
+
+    @classmethod
+    def doc(cls) -> str:
+
+        if hasattr(cls, "_base_pipeline_config"):
+            bpc: "PipelineModuleConfig" = cls._base_pipeline_config  # type: ignore
+            doc = bpc.doc
+            return doc
+        else:
+            # means its a 'raw' pipeline
+            return "-- n/a --"
 
     def __init__(
         self,
@@ -38,11 +48,25 @@ class PipelineModule(KiaraModule[PipelineModuleConfig]):
             None, PipelineModuleConfig, typing.Mapping[str, typing.Any]
         ] = None,
         meta: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+        controller: typing.Union[
+            None, PipelineController, str, typing.Type[PipelineController]
+        ] = None,
+        kiara: typing.Optional["Kiara"] = None,
     ):
 
+        if controller is not None and not isinstance(controller, PipelineController):
+            raise NotImplementedError()
+        if controller is None:
+            controller = BatchController()
+
         self._pipeline_structure: typing.Optional[PipelineStructure] = None
+        self._pipeline_controller: PipelineController = controller
         super().__init__(
-            id=id, parent_id=parent_id, module_config=module_config, meta=meta
+            id=id,
+            parent_id=parent_id,
+            module_config=module_config,
+            meta=meta,
+            kiara=kiara,
         )
 
     @property
@@ -55,6 +79,7 @@ class PipelineModule(KiaraModule[PipelineModuleConfig]):
                 steps=self._config.steps,
                 input_aliases=self._config.input_aliases,
                 output_aliases=self._config.output_aliases,
+                kiara=self._kiara,
             )
         return self._pipeline_structure
 
@@ -81,8 +106,14 @@ class PipelineModuleInfo(ModuleInfo):
         allow_mutation = False
 
     def create_structure(self) -> "PipelineStructure":
+
         base_conf: PipelineModuleConfig = self.module_cls._base_pipeline_config  # type: ignore
-        return base_conf.create_structure(parent_id=self.module_type)
+        return base_conf.create_structure(parent_id=self.module_type, kiara=self._kiara)
+
+    @property
+    def structure(self) -> "PipelineStructure":
+
+        return self.create_structure()
 
     def print_data_flow_graph(self, simplified: bool = True) -> None:
 
@@ -111,6 +142,8 @@ class PipelineModuleInfo(ModuleInfo):
         my_table.add_row(
             "class", f"{self.module_cls.__module__}.{self.module_cls.__qualname__}"
         )
+        my_table.add_row("is pipeline", "yes")
+
         my_table.add_row("doc", self.doc)
         my_table.add_row(
             "config class",
@@ -143,8 +176,8 @@ class PipelineModuleInfo(ModuleInfo):
         for nr, stage in enumerate(structure.processing_stages):
             for s_id in stage:
                 step = structure.get_step(s_id)
-                mc = Kiara.instance().get_module_class(step.module_type)
-                desc = get_doc_for_module_class(mc)
+                mc = self._kiara.get_module_class(step.module_type)
+                desc = mc.doc()
                 inputs: typing.Dict[ValueField, typing.List[str]] = {}
                 for inp in structure.steps_inputs.values():
                     if inp.step_id != s_id:

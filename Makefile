@@ -8,15 +8,18 @@ docs: ## build documentation
 	mkdocs build
 
 serve-docs: ## serve and watch documentation
-	mkdocs serve
+	mkdocs serve -a 0.0.0.0:8000
 
 clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
+
+clean-doc: ## remove doc artifacts
+	rm -fr build/site
 
 clean-build: ## remove build artifacts
 	rm -fr build/
 	rm -fr dist/
 	rm -fr .eggs/
-	find . -name '*.egg' -exec rm -f {} +
+	find . -name '*.egg' -exec rm -fr {} +
 
 clean-pyc: ## remove Python file artifacts
 	find . -name '*.pyc' -exec rm -f {} +
@@ -35,12 +38,17 @@ init: clean ## initialize a development environment (to be run in virtualenv)
 	git init
 	git checkout -b develop || true
 	pip install -U pip
+	pip install -e .
+	pip install -U git+https://github.com/DHARPA-Project/kiara_modules.default.git
 	pip install --extra-index-url https://gitlab.com/api/v4/projects/25344049/packages/pypi/simple -U -e '.[all_dev]'
 	pre-commit install
 	setup-cfg-fmt setup.cfg || true
 	git add "*" ".*"
 	pre-commit run --all-files || true
 	git add "*" ".*"
+
+update-modules:  ## update default modules dependency
+	pip install -U git+https://github.com/DHARPA-Project/kiara_modules.default.git#egg=kiara_modules.default
 
 setup-cfg-fmt: # format setup.cfg
 	setup-cfg-fmt setup.cfg || true

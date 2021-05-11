@@ -3,15 +3,17 @@
 """A command-line interface for *Kiara*.
 """
 import asyncclick as click
+import os.path
 import sys
 import typing
-from rich import print as rich_print
+from rich.panel import Panel
 
 from kiara import Kiara
-from kiara.module import ModuleInfo
+from kiara.data.values import ValuesInfo
+from kiara.interfaces import get_console
+from kiara.module import KiaraModule, ModuleInfo
 from kiara.pipeline.module import PipelineModuleInfo
-from kiara.utils import module_config_from_cli_args
-from kiara.workflow import KiaraWorkflow
+from kiara.utils import create_table_from_field_schemas, dict_from_cli_args
 
 # from importlib.metadata import entry_points
 
@@ -29,29 +31,44 @@ except Exception:
 click.anyio_backend = "asyncio"
 
 
+def rich_print(msg: typing.Any = None) -> None:
+
+    if msg is None:
+        msg = ""
+    console = get_console()
+    console.print(msg)
+
+
+def _create_module_instance(
+    ctx, module_type: str, module_config: typing.Iterable[typing.Any]
+):
+    config = dict_from_cli_args(*module_config)
+
+    kiara_obj = ctx.obj["kiara"]
+    if os.path.isfile(module_type):
+        module_type = kiara_obj.register_pipeline_description(
+            module_type, raise_exception=True
+        )
+
+    module_obj = kiara_obj.create_module(
+        id=module_type, module_type=module_type, module_config=config
+    )
+    return module_obj
+
+
 @click.group()
 @click.pass_context
 def cli(ctx):
     """Main cli entry-point, contains all the sub-commands."""
 
-    # test_pipelines_folder = os.path.abspath(
-    #     os.path.join(
-    #         os.path.dirname(__file__),
-    #         "..",
-    #         "..",
-    #         "..",
-    #         "..",
-    #         "tests/resources/pipelines",
-    #     )
-    # )
-    # test_pipeline_module_manager = PipelineModuleManager(test_pipelines_folder)
-    # Kiara.instance().add_module_manager(test_pipeline_module_manager)
+    ctx.obj = {}
+    ctx.obj["kiara"] = Kiara.instance()
 
 
 @cli.group()
 @click.pass_context
 def module(ctx):
-    pass
+    """Information about available modules, and details about them."""
 
 
 @module.command(name="list")
@@ -75,30 +92,68 @@ def list_modules(ctx, only_pipeline_modules: bool, only_core_modules: bool):
         )
         sys.exit(1)
 
+    kiara_obj: Kiara = ctx.obj["kiara"]
+
     if only_pipeline_modules:
-        m_list = Kiara.instance().available_pipeline_module_types
+        title = "Available pipeline modules"
+        m_list = kiara_obj.create_modules_list(
+            list_pipeline_modules=True, list_non_pipeline_modules=False
+        )
     elif only_core_modules:
-        m_list = Kiara.instance().available_non_pipeline_module_types
+        title = "Available core modules"
+        m_list = kiara_obj.create_modules_list(
+            list_pipeline_modules=False, list_non_pipeline_modules=True
+        )
     else:
-        m_list = Kiara.instance().available_module_types
+        title = "Available modules"
+        m_list = kiara_obj.modules_list
 
-    for name in m_list:
-        rich_print(name)
+    p = Panel(m_list, title_align="left", title=title)
+    print()
+    kiara_obj.explain(p)
 
 
-@module.command(name="describe")
+@module.command(name="describe-type")
 @click.argument("module_type", nargs=1, required=True)
 @click.pass_context
 def describe_module_type(ctx, module_type: str):
-    """Print details of a (PYthon) module."""
+    """Print details of a (Python) module."""
 
-    m_cls = Kiara.instance().get_module_class(module_type)
-    if module_type == "pipeline" or not m_cls.is_pipeline():
-        info = ModuleInfo(module_type=module_type)
+    kiara_obj: Kiara = ctx.obj["kiara"]
+
+    if os.path.isfile(module_type):
+        _module_type: str = kiara_obj.register_pipeline_description(  # type: ignore
+            module_type, raise_exception=True
+        )  # type: ignore
     else:
-        info = PipelineModuleInfo(module_type=module_type)
+        _module_type = module_type
+
+    m_cls = kiara_obj.get_module_class(_module_type)
+    if _module_type == "pipeline" or not m_cls.is_pipeline():
+        info = ModuleInfo(module_type=_module_type, _kiara=kiara_obj)
+    else:
+        info = ModuleInfo(module_type=_module_type, _kiara=kiara_obj)
     rich_print()
     rich_print(info)
+
+
+@module.command("describe-instance")
+@click.argument("module_type", nargs=1)
+@click.argument(
+    "module_config",
+    nargs=-1,
+)
+@click.pass_context
+def describe_module(ctx, module_type: str, module_config: typing.Iterable[typing.Any]):
+    """Describe a step.
+
+    A step, in this context, is basically a an instantiated module class, incl. (optional) config."""
+
+    module_obj = _create_module_instance(
+        ctx, module_type=module_type, module_config=module_config
+    )
+    rich_print()
+    rich_print(module_obj)
 
 
 @cli.group()
@@ -108,7 +163,7 @@ def pipeline(ctx):
 
 
 @pipeline.command()
-@click.argument("pipeline_module_type", nargs=1)
+@click.argument("pipeline-type", nargs=1)
 @click.option(
     "--full",
     "-f",
@@ -116,138 +171,234 @@ def pipeline(ctx):
     help="Display full data-flow graph, incl. intermediate input/output connections.",
 )
 @click.pass_context
-def data_flow_graph(ctx, pipeline_module_type: str, full: bool):
+def data_flow_graph(ctx, pipeline_type: str, full: bool):
+    """Print the data flow graph for a pipeline structure."""
 
-    m_cls = Kiara.instance().get_module_class(pipeline_module_type)
+    kiara_obj = ctx.obj["kiara"]
+    if os.path.isfile(pipeline_type):
+        pipeline_type = kiara_obj.register_pipeline_description(
+            pipeline_type, raise_exception=True
+        )
+
+    m_cls = kiara_obj.get_module_class(pipeline_type)
     if not m_cls.is_pipeline():
         rich_print()
-        rich_print(f"Module '{pipeline_module_type}' is not a pipeline-type module.")
+        rich_print(f"Module '{pipeline_type}' is not a pipeline-type module.")
         sys.exit(1)
 
-    info = PipelineModuleInfo(module_type=pipeline_module_type)
+    info = PipelineModuleInfo(module_type=pipeline_type)
 
     info.print_data_flow_graph(simplified=not full)
 
 
 @pipeline.command()
-@click.argument("pipeline_module_type", nargs=1)
+@click.argument("pipeline-type", nargs=1)
 @click.pass_context
-def execution_graph(ctx, pipeline_module_type: str):
+def execution_graph(ctx, pipeline_type: str):
+    """Print the execution graph for a pipeline structure."""
 
-    m_cls = Kiara.instance().get_module_class(pipeline_module_type)
+    kiara_obj = ctx.obj["kiara"]
+
+    if os.path.isfile(pipeline_type):
+        pipeline_type = kiara_obj.register_pipeline_description(
+            pipeline_type, raise_exception=True
+        )
+
+    m_cls = kiara_obj.get_module_class(pipeline_type)
     if not m_cls.is_pipeline():
         rich_print()
-        rich_print(f"Module '{pipeline_module_type}' is not a pipeline-type module.")
+        rich_print(f"Module '{pipeline_type}' is not a pipeline-type module.")
         sys.exit(1)
 
-    info = PipelineModuleInfo(module_type=pipeline_module_type)
+    info = PipelineModuleInfo(module_type=pipeline_type)
     info.print_execution_graph()
 
 
-@cli.group()
+@pipeline.command()
+@click.argument("pipeline-type", nargs=1)
 @click.pass_context
-def step(ctx):
-    """Display instantiated module details."""
+def structure(ctx, pipeline_type: str):
+    """Print details about a pipeline structure."""
+
+    kiara_obj = ctx.obj["kiara"]
+
+    if os.path.isfile(pipeline_type):
+        pipeline_type = kiara_obj.register_pipeline_description(
+            pipeline_type, raise_exception=True
+        )
+
+    m_cls = kiara_obj.get_module_class(pipeline_type)
+    if not m_cls.is_pipeline():
+        rich_print()
+        rich_print(f"Module '{pipeline_type}' is not a pipeline-type module.")
+        sys.exit(1)
+
+    info = PipelineModuleInfo(module_type=pipeline_type, _kiara=kiara_obj)
+    structure = info.create_structure()
+    print()
+    kiara_obj.explain(structure)
 
 
-@step.command("describe")
-@click.option("--module-type", "-t", nargs=1)
-@click.option(
-    "--config",
-    "-c",
-    multiple=True,
-    required=False,
-    help="Configuration values for module initialization.",
-)
+@pipeline.command()
+@click.argument("pipeline-type", nargs=1)
 @click.pass_context
-def describe_step(ctx, module_type: str, config: typing.Iterable[typing.Any]):
+def explain_steps(ctx, pipeline_type: str):
 
-    config = module_config_from_cli_args(*config)
+    kiara_obj = ctx.obj["kiara"]
 
-    module_obj = Kiara.instance().create_module(
-        id=module_type, module_type=module_type, module_config=config
-    )
-    rich_print()
-    rich_print(module_obj)
+    if os.path.isfile(pipeline_type):
+        pipeline_type = kiara_obj.register_pipeline_description(
+            pipeline_type, raise_exception=True
+        )
+
+    m_cls = kiara_obj.get_module_class(pipeline_type)
+    if not m_cls.is_pipeline():
+        rich_print()
+        rich_print(f"Module '{pipeline_type}' is not a pipeline-type module.")
+        sys.exit(1)
+
+    info = PipelineModuleInfo(module_type=pipeline_type)
+    structure = info.create_structure()
+    print()
+    kiara_obj.explain(structure.to_details().steps_info)
 
 
 @cli.command()
+@click.argument("module", nargs=1)
+@click.argument("inputs", nargs=-1, required=False)
+@click.option(
+    "--module-config",
+    "-c",
+    required=False,
+    help="(Optional) module configuration.",
+    multiple=True,
+)
+@click.option(
+    "--data-details",
+    "-d",
+    help="Print details/metadata about input/output data.",
+    is_flag=True,
+    default=False,
+)
+@click.option(
+    "--only-output",
+    "-o",
+    help="Only print output data. Overrides all other display options.",
+    is_flag=True,
+    default=False,
+)
 @click.pass_context
-def dev(ctx):
+async def run(ctx, module, inputs, module_config, data_details, only_output):
 
-    # main_module = "kiara"
+    if module_config:
+        raise NotImplementedError()
 
-    # md_obj: ProjectMetadata = ProjectMetadata(project_main_module=main_module)
-    #
-    # md_json = json.dumps(
-    #     md_obj.to_dict(), sort_keys=True, indent=2, separators=(",", ": ")
-    # )
-    # print(md_json)
+    display_state = True
+    display_input_values = True
+    display_input_details = False
+    display_output_values = True
+    display_output_details = False
 
-    # for entry_point_group, eps in entry_points().items():
-    #     print(entry_point_group)
-    #     print(eps)
+    if data_details:
+        display_input_details = True
+        display_output_details = True
 
-    # pc = get_data_from_file(
-    #     "/home/markus/projects/dharpa/kiara/tests/resources/workflows/logic_1.json"
-    # )
-    # wc = KiaraWorkflowConfig(module_config=pc)
+    if only_output:
+        display_state = False
+        display_input_values = False
+        display_input_details = False
 
-    # kiara = Kiara.instance()
-    # print(kiara)
+    kiara_obj: Kiara = ctx.obj["kiara"]
 
-    # wf = KiaraWorkflow(
-    #     "/home/markus/projects/dharpa/kiara/tests/resources/workflows/logic/logic_2.json"
-    # )
+    if module in kiara_obj.available_module_types:
+        module_name = module
+    elif os.path.isfile(module):
+        module_name = kiara_obj.register_pipeline_description(
+            module, raise_exception=True
+        )
+    else:
+        rich_print(
+            f"\nInvalid module name '[i]{module}[/i]'. Must be a path to a pipeline file, or one of the available modules:\n"
+        )
+        for n in kiara_obj.available_module_types:
+            rich_print(f"  - [i]{n}[/i]")
+        sys.exit(1)
 
-    # wf = KiaraWorkflow(
-    #     "/home/markus/projects/dharpa/kiara/tests/resources/workflows/dummy/dummy_1_delay.json"
-    # )
+    if not inputs:
+        print()
+        print(
+            "No inputs provided, not running the workflow. To run it, provide input following this schema:"
+        )
+        module_obj: KiaraModule = _create_module_instance(
+            ctx=ctx, module_type=module_name, module_config=module_config
+        )
+        inputs_table = create_table_from_field_schemas(
+            _show_header=True, **module_obj.input_schemas
+        )
+        rich_print(inputs_table)
+        sys.exit(0)
 
-    wf = KiaraWorkflow("xor")
+    workflow = kiara_obj.create_workflow(module_name)
 
-    # pp(wf.pipeline.get_current_state().__dict__)
-    print(wf.pipeline.get_current_state().json())
+    workflow_input = dict_from_cli_args(*inputs)
+    workflow.inputs.set_values(**workflow_input)
 
-    # wf = KiaraWorkflow("logic_1")
-    # wf = KiaraWorkflow("and")
-    # import pp
-    # pp(wf._workflow_config.__dict__)
-    # print("XXXXXXXXXXX")
-    # print(wf.structure.data_flow_graph.nodes)
-    # print(graph_to_ascii(wf.structure.data_flow_graph))
-    # pp(wf.__dict__)
+    print()
+    if display_input_values:
+        vi = ValuesInfo(workflow.inputs)
+        vt = vi.create_value_data_table(show_headers=True)
+        rich_print(Panel(vt, title_align="left", title="Workflow input data"))
+        print()
 
-    # cls = kiara.get_module_class("logic_1")
-    # print(cls)
+    if display_input_details:
+        vi = ValuesInfo(workflow.inputs)
+        vt = vi.create_value_info_table(show_headers=True)
+        rich_print(Panel(vt, title_align="left", title="Workflow input details"))
+        print()
 
-    # m = cls(id="test")
-    # print(wf.input_names)
-    # print(wf.output_names)
+    if display_state:
+        state_panel = Panel(
+            workflow.current_state,
+            title="Workflow state",
+            title_align="left",
+            padding=(1, 0, 0, 2),
+        )
+        rich_print(state_panel)
+        print()
 
-    # wc = KiaraWorkflowConfig.from_file(
-    #     "/home/markus/projects/dharpa/kiara/tests/resources/workflows/logic_2.json"
-    # )
-    # # wc = KiaraWorkflowConfig(module_type="and")
-    # wf = KiaraWorkflow(workflow_config=wc)
-    #
-    # # print_ascii_graph(wf.structure.data_flow_graph_simple)
+    if display_output_details:
+        vi = ValuesInfo(workflow.outputs)
+        vt = vi.create_value_info_table(show_headers=True)
+        rich_print(Panel(vt, title_align="left", title="Workflow output details"))
+        print()
 
-    # wf.inputs.and_1__a = True
-    # wf.inputs.and_1__b = True
-    # wf.inputs.and_2__b = True
-    # wf.inputs.and_1__a = True
-    wf.inputs.a = True
-    wf.inputs.b = False
+    if display_output_values:
+        vi = ValuesInfo(workflow.outputs)
+        vt = vi.create_value_data_table(show_headers=True)
+        rich_print(Panel(vt, title_align="left", title="Workflow output data"))
 
-    # print(wf.inputs)
-    #
-    # print(wf.state)
-    #
-    # print(wf.outputs.dict())
 
-    # print(wf.outputs.and_2__y.get_value())
-    # print(Kiara().instance().data_registry.get_stats())
+# @cli.command()
+# @click.pass_context
+# def dev(ctx):
+#     import os
+#
+#     from kiara import Kiara
+#
+#     os.environ["DEBUG"] = "true"
+#
+#     kiara = Kiara.instance()
+#
+#     module_info = kiara.get_module_info("import_local_folder")
+#     # kiara.explain(module_info)
+#
+#     workflow = kiara.create_workflow("import_local_folder")
+#     workflow.inputs.path = (
+#         "/home/markus/projects/dharpa/notebooks/TopicModelling/data_tm_workflow"
+#     )
+#
+#     # kiara.explain(workflow.outputs)
+#     kiara.explain(workflow.outputs.file_bundle)
 
 
 if __name__ == "__main__":

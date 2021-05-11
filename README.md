@@ -6,14 +6,17 @@
 
 # kiara
 
-*A workflow management and execution engine for the DHARPA project.*
+*A pipeline management and execution engine for the DHARPA project.*
 
  - Documentation: [https://dharpa.org/kiara](https://dharpa.org/kiara)
  - Code: [https://github.com/DHARPA-Project/kiara](https://github.com/DHARPA-Project/kiara)
 
 ## Description
 
-Documentation still to be done.
+*Kiara* is the data orchestration engine driving the DHARPA project application (yet to be named). It uses a modular approach
+to let users re-use tried and tested data orchestration pipelines, as well as create new ones from existing building
+blocks. It also helps you manage your research data, and augment it with automatically-, semi-automatically-, and manually-
+created metadata.
 
 ## Downloads
 
@@ -25,9 +28,9 @@ Only snapshot binaries (for now):
   - [Windows](https://github.com/DHARPA-Project/kiara/actions/workflows/build-windows.yaml)
   - [Mac OS X](https://github.com/DHARPA-Project/kiara/actions/workflows/build-darwin.yaml)
 
-# Development
+## Development
 
-## Requirements
+### Requirements
 
 - Python (version >=3.6 -- some make targets only work for Python >=3.7, but *kiara* itself should work on 3.6)
 - pip, virtualenv
@@ -36,7 +39,7 @@ Only snapshot binaries (for now):
 - [direnv](https://direnv.net/) (optional)
 
 
-## Prepare development environment
+### Prepare development environment
 
 ```console
 git clone https://github.com/DHARPA-Project/kiara.git
@@ -48,30 +51,31 @@ make init
 
 If you use [direnv](https://direnv.net/), you can alternatively do:
 
-*Note*: you might want to adjust the Python version in ``.envrc`` (should not be necessary in most cases though)
-
 ``` console
 git clone https://github.com/DHARPA-Project/kiara.git
 cd kiara
 cp .envrc.disabled .envrc
-direnv allow   # if using direnv, otherwise activate virtualenv
+direnv allow
 make init
 ```
 
-## ``make`` targets
+*Note*: you might want to adjust the Python version in ``.envrc`` (should not be necessary in most cases though)
+
+### ``make`` targets
 
 - ``init``: init development project (install project & dev dependencies into virtualenv, as well as pre-commit git hook)
+- ``update-modules``: update default kiara modules package from git
 - ``flake``: run *flake8* tests
-- ``mypy``: run mypy tests
+- ``mypy``: run *mypy* tests
 - ``test``: run unit tests
-- ``docs``: create static documentation pages
-- ``serve-docs``: serve documentation pages (incl. auto-reload)
+- ``docs``: create static documentation pages (under ``build/site``)
+- ``serve-docs``: serve documentation pages (incl. auto-reload) for getting direct feedback when working on documentation
 - ``clean``: clean build directories
 
 For details (and other, minor targets), check the ``Makefile``.
 
 
-## Running tests
+### Running tests
 
 ``` console
 > make test

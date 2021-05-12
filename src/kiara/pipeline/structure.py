@@ -976,7 +976,11 @@ class PipelineStructureDesc(BaseModel):
             "bright_magenta",
             "dark_red",
             "gold3",
-            "spring_green_4",
+            "cyan",
+            "orange1",
+            "light_yellow3",
+            "light_slate_grey",
+            "deep_pink4",
         ]
 
         step_color_map = {}
@@ -1038,7 +1042,7 @@ def create_step_table(
     max_source_len = 0
     for source, targets in step_desc.input_connections.items():
         source_type = step_desc.step.module.input_schemas[source].type
-        source = f"{source} ([i]{source_type}[/i])"
+        source = f"{source} ([i]type: {source_type}[/i])"
         source_len = len(source)
         if source_len > max_source_len:
             max_source_len = source_len
@@ -1048,12 +1052,17 @@ def create_step_table(
             else:
                 input_links.append((None, target))
 
+    last_source = None
     for i, il in enumerate(input_links):
         source = il[0]
         if source is None:
-            source_str = " " * max_source_len + "    "
+            padding = (
+                len(last_source) - 6
+            ) * " "  # calculate without the [i]..[/i] markers
+            source_str = padding + "  "
         else:
-            source_str = source.ljust(max_source_len) + " ← "
+            last_source = source.ljust(max_source_len)
+            source_str = last_source + " ← "
         target = il[1]
         tokens = target.split(".")
         assert len(tokens) == 2
@@ -1077,7 +1086,7 @@ def create_step_table(
     max_source_len = 0
     for source, targets in step_desc.output_connections.items():
         target_type = step_desc.step.module.output_schemas[source].type
-        source = f"{source} ([i]{target_type}[/i])"
+        source = f"{source} ([i]type: {target_type}[/i])"
         source_len = len(source)
         if source_len > max_source_len:
             max_source_len = source_len
@@ -1087,12 +1096,17 @@ def create_step_table(
             else:
                 output_links.append((None, target))
 
+    last_source = None
     for i, il in enumerate(output_links):
         source = il[0]
         if source is None:
-            source_str = " " * max_source_len + "    "
+            padding = (
+                len(last_source) - 6
+            ) * " "  # calculate without the [i]..[/i] markers
+            source_str = padding + "  "
         else:
-            source_str = source.ljust(max_source_len) + " → "
+            last_source = source.ljust(max_source_len)
+            source_str = last_source + " → "
         target = il[1]
         tokens = target.split(".")
         assert len(tokens) == 2

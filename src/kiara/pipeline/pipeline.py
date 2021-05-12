@@ -606,7 +606,7 @@ def create_pipeline_step_table(
                 status_str = "[green]-- not set (not required) --[/green]"
             else:
                 status_str = "[red]-- not set --[/red]"
-        name = f"[b]{field_name}[/b] [i]({details.value_schema.type})[/i]"
+        name = f"[b]{field_name}[/b] [i](type: {details.value_schema.type})[/i]"
         if len(name) > max_field_name_len:
             max_field_name_len = len(name)
         in_fields.append((name, status_str))
@@ -625,7 +625,7 @@ def create_pipeline_step_table(
                 status_str = "[green]-- not set (not required) --[/green]"
             else:
                 status_str = "[red]-- not set --[/red]"
-        name = f"[b]{field_name}[/b] [i]({details.value_schema.type})[/i]"
+        name = f"[b]{field_name}[/b] [i](type: {details.value_schema.type})[/i]"
         if len(name) > max_field_name_len:
             max_field_name_len = len(name)
         out_fields.append((name, status_str))

@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+import datetime
 import networkx
 import networkx as nx
 import pyarrow
 import typing
+from dateutil import parser
 from faker import Faker
 from networkx import DiGraph
-from pyarrow import Array
 from rich.console import Console, ConsoleOptions, RenderResult
 
 from kiara.utils import camel_case_to_snake_case
@@ -26,10 +27,19 @@ class ValueType(object):
 
         self._type_config: typing.Mapping[str, typing.Any] = type_config
 
-    def parse_value(self, value: typing.Any) -> typing.Mapping[str, typing.Any]:
-        self.validate(value)
-        value_metadata = self.extract_metadata(value)
-        return value_metadata
+    def import_value(
+        self, value: typing.Any
+    ) -> typing.Tuple[typing.Any, typing.Mapping[str, typing.Any]]:
+
+        assert value is not None
+
+        parsed = self.parse_value(value)
+        if parsed is None:
+            parsed = value
+        self.validate(parsed)
+        value_metadata = self.extract_type_metadata(parsed)
+        metadata = {"type": value_metadata, "python": {"cls": get_type_name(parsed)}}
+        return (parsed, metadata)
 
     @classmethod
     def type_name(cls):
@@ -41,10 +51,25 @@ class ValueType(object):
         type_name = camel_case_to_snake_case(cls_name)
         return type_name
 
+    def parse_value(self, v: typing.Any) -> typing.Any:
+        """Parse a value into a supported python type.
+
+        This exists to make it easier to do trivial conversions (e.g. from a date string to a datetime object).
+        If you choose to overwrite this method, make 100% sure that you don't change the meaning of the value, and try to
+        avoid adding or removing information from the data (e.g. by changing the resolution of a date).
+
+        Arguments:
+            v: the value
+
+        Returns:
+            'None', if no parsing was done and the original value should be used, otherwise return the parsed Python object
+        """
+        return None
+
     def validate(cls, v: typing.Any) -> None:
         pass
 
-    def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
+    def extract_type_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
         return {}
 
     def serialize(cls, object: typing.Any):
@@ -64,9 +89,8 @@ class ValueType(object):
 
 
 class AnyType(ValueType):
-    def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
 
-        return {"python_cls": get_type_name(v)}
+    pass
 
 
 class StringType(ValueType):
@@ -74,9 +98,6 @@ class StringType(ValueType):
 
         if not isinstance(v, str):
             raise ValueError(f"Invalid type '{type(v)}': string required")
-
-    def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
-        return {"python_cls": get_type_name(v)}
 
 
 class BooleanType(ValueType):
@@ -92,12 +113,11 @@ class BooleanType(ValueType):
             # else:
             raise ValueError(f"Invalid type '{type(v)}' for boolean: {v}")
 
-    def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
-        return {"python_cls": get_type_name(v)}
-
 
 class IntegerType(ValueType):
-    def validate(cls, v: typing.Any) -> typing.Any:
+    """An integer."""
+
+    def validate(cls, v: typing.Any) -> None:
 
         if not isinstance(v, int):
             #     if isinstance(v, str):
@@ -108,19 +128,20 @@ class IntegerType(ValueType):
             # else:
             raise ValueError(f"Invalid type '{type(v)}' for integer: {v}")
 
-    def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
-        return {"python_cls": get_type_name(v)}
-
 
 class DictType(ValueType):
-    def validate(cls, v: typing.Any) -> typing.Any:
+    """A dict-like object."""
+
+    def validate(cls, v: typing.Any) -> None:
 
         if not isinstance(v, typing.Mapping):
             raise ValueError(f"Invalid type '{type(v)}', not a mapping.")
 
-    def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
-
-        result = {"keys": list(v.keys()), "python_cls": get_type_name(v)}
+    def extract_type_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
+        value_types = set()
+        for val in v.values():
+            value_types.add(get_type_name(val))
+        result = {"keys": list(v.keys()), "value_types": list(value_types)}
         return result
 
 
@@ -130,35 +151,51 @@ class FloatType(ValueType):
         if not isinstance(v, float):
             raise ValueError(f"Invalid type '{type(v)}' for float: {v}")
 
-    def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
-        return {"python_cls": get_type_name(v)}
+
+class ListType(ValueType):
+    """A list-like object."""
+
+    def validate(cls, v: typing.Any) -> None:
+
+        assert isinstance(v, typing.Iterable)
+
+    def extract_type_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
+
+        metadata = {"length": len(v)}
+        return metadata
 
 
 class ArrayType(ValueType):
-    def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
+    """An Apache arrow array."""
 
-        a: Array = v
+    def extract_type_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
 
-        metadata = {"type": str(v.type), "arrow_type_id": v.type.id, "length": len(v)}
-
-        metadata["python_cls"] = get_type_name(a)
+        metadata = {
+            "item_type": str(v.type),
+            "arrow_type_id": v.type.id,
+            "length": len(v),
+        }
         return metadata
 
 
 class DateType(ValueType):
-    def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
+    def parse_value(self, v: typing.Any) -> typing.Any:
 
-        result = {}
-        result["python_cls"] = get_type_name(v)
+        if isinstance(v, str):
+            d = parser.parse(v)
+            return d
 
-        return result
+        return None
+
+    def validate(cls, v: typing.Any):
+        assert isinstance(v, datetime.datetime)
 
 
 class TableType(ValueType):
     def validate(cls, v: typing.Any) -> None:
         assert isinstance(v, pyarrow.Table)
 
-    def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
+    def extract_type_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
         table: pyarrow.Table = v
         table_schema = {}
         for name in table.schema.names:
@@ -167,14 +204,13 @@ class TableType(ValueType):
             if not md:
                 md = {}
             _type = field.type
-            _d = {"type": str(_type), "arrow_type_id": _type.id, "metadata": md}
+            _d = {"item_type": str(_type), "arrow_type_id": _type.id, "metadata": md}
             table_schema[name] = _d
 
         return {
             "column_names": table.column_names,
             "schema": table_schema,
             "rows": table.num_rows,
-            "python_cls": get_type_name(table),
         }
 
 
@@ -185,65 +221,12 @@ class NetworkGraphType(ValueType):
             raise ValueError(f"Invalid type '{type(v)}' for graph: {v}")
         return v
 
-    def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
+    def extract_type_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
 
         graph: nx.Graph = v
         return {
-            "python_cls": get_type_name(graph),
             "directed": isinstance(v, DiGraph),
             "number_of_nodes": len(graph.nodes),
             "number_of_edges": len(graph.edges),
             "density": nx.density(graph),
         }
-
-
-# class ValueTypesEnum(Enum):
-#
-#     @classmethod
-#     def list_all_types(cls):
-#         return list(map(lambda c: c.value, cls))
-#
-#     def __new__(cls, *args, **kwds):
-#         type_name = args[0].type_name()
-#         obj = object.__new__(cls)
-#         obj._value_ = type_name
-#         return obj
-#
-#     def __init__(self, cls: typing.Type[ValueType]):
-#         setattr(self, "cls", cls)
-#
-#
-
-
-# class ValueTypes(Enum):
-#     """Supported value types.
-#
-#     It's very early days, so this does not really do anything yet.
-#     """
-#
-#     def __new__(cls, *args, **kwds):
-#         value = args[0]["id"]
-#         obj = object.__new__(cls)
-#         obj._value_ = value
-#         return obj
-#
-#     def __init__(self, type_map: typing.Mapping[str, typing.Any]):
-#
-#         for k, v in type_map.items():
-#             setattr(self, k, v)
-#
-#     any = {"id": "any", "python": object, "fake_value": fake.pydict}
-#     integer = {"id": "integer", "python": int, "fake_value": fake.pyint}
-#     string = {"id": "string", "python": str, "fake_value": fake.pystr}
-#     dict = {"id": "dict", "python": dict, "fake_value": fake.pydict}
-#     boolean = {"id": "boolean", "python": bool, "fake_value": fake.pybool}
-#     table = {
-#         "id": "table",
-#         "python": typing.List[typing.Dict],
-#         "fake_value": fake.pydict,
-#     }
-#     value_items = {
-#         "id": "value_items",
-#         "python": dict,
-#         "fake_value": NotImplemented,
-#     }

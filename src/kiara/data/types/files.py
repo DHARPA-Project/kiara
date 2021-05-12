@@ -75,7 +75,7 @@ class FileModel(BaseModel):
 
 
 class FileType(ValueType):
-    def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
+    def extract_type_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
 
         assert isinstance(v, FileModel)
 
@@ -236,7 +236,7 @@ class FileBundleModel(BaseModel):
 
 
 class FileBundleType(ValueType):
-    def extract_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
+    def extract_type_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
         assert isinstance(v, FileBundleModel)
 
         # TODO: remove the exclude

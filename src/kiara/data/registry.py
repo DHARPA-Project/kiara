@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import logging
 import typing
 import uuid
@@ -472,13 +471,12 @@ class DataRegistry(object):
                 changed = False
             else:
                 if value is None or value == SpecialValue.NO_VALUE:
-                    item.metadata.pop("type", None)
+                    item.metadata.clear()
                     self._value_items[item.id].is_none = True
                     self._values[item.id] = SpecialValue.NO_VALUE
                 else:
-                    item.type_obj.validate(value)
-                    metadata = item.type_obj.extract_metadata(value)
-                    item.metadata["type"] = metadata
+                    value, metadata = item.type_obj.import_value(value)
+                    item.metadata = metadata
 
                     self._values[item.id] = value
                     self._value_items[item.id].is_none = False

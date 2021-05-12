@@ -65,7 +65,11 @@ class StepInputs(object):
 
     def get_value_data(self, input_name) -> typing.Any:
 
-        return self.__dict__["_inputs"][input_name].get_value_data()
+        value = self.__dict__["_inputs"][input_name].get_value_data()
+        if hasattr(value, "as_py"):
+            return value.as_py()
+        else:
+            return value
 
     def get_value_obj(self, input_name) -> Value:
 

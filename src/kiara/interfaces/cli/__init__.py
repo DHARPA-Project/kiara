@@ -340,7 +340,12 @@ async def run(ctx, module, inputs, module_config, data_details, only_output):
 
     workflow = kiara_obj.create_workflow(module_name)
 
-    workflow_input = dict_from_cli_args(*inputs)
+    list_keys = []
+    for name, value in workflow.inputs.items():
+        if value.value_schema.type in ["array", "list"]:
+            list_keys.append(name)
+
+    workflow_input = dict_from_cli_args(*inputs, list_keys=list_keys)
     workflow.inputs.set_values(**workflow_input)
 
     print()

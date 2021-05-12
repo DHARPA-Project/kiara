@@ -246,7 +246,9 @@ def create_table_from_field_schemas(
     return table
 
 
-def dict_from_cli_args(*args: str) -> typing.Dict[str, typing.Any]:
+def dict_from_cli_args(
+    *args: str, list_keys: typing.Optional[typing.Iterable[str]] = None
+) -> typing.Dict[str, typing.Any]:
 
     if not args:
         return {}
@@ -271,10 +273,16 @@ def dict_from_cli_args(*args: str) -> typing.Dict[str, typing.Any]:
             except Exception:
                 raise Exception(f"Could not parse argument into data: {arg}")
 
+        if list_keys is None:
+            list_keys = []
+
         for k, v in part_config.items():
-            if k in config.keys():
-                log.warning(f"Duplicate key '{k}', overwriting old value with: {v}")
-            config[k] = v
+            if k in list_keys:
+                config.setdefault(k, []).append(v)
+            else:
+                if k in config.keys():
+                    log.warning(f"Duplicate key '{k}', overwriting old value with: {v}")
+                config[k] = v
     return config
 
 

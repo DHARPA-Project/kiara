@@ -348,10 +348,16 @@ async def run(ctx, module, inputs, module_config, data_details, only_output):
     workflow_input = dict_from_cli_args(*inputs, list_keys=list_keys)
     workflow.inputs.set_values(**workflow_input)
 
+    transformer = "to_string"
+    transformer_config = {"max_lines": 6}
     print()
     if display_input_values:
         vi = ValuesInfo(workflow.inputs)
-        vt = vi.create_value_data_table(show_headers=True)
+        vt = vi.create_value_data_table(
+            show_headers=True,
+            transformer=transformer,
+            transformer_config=transformer_config,
+        )
         rich_print(Panel(vt, title_align="left", title="Workflow input data"))
         print()
 
@@ -379,7 +385,11 @@ async def run(ctx, module, inputs, module_config, data_details, only_output):
 
     if display_output_values:
         vi = ValuesInfo(workflow.outputs)
-        vt = vi.create_value_data_table(show_headers=True)
+        vt = vi.create_value_data_table(
+            show_headers=True,
+            transformer=transformer,
+            transformer_config=transformer_config,
+        )
         rich_print(Panel(vt, title_align="left", title="Workflow output data"))
 
 

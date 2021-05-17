@@ -32,9 +32,33 @@ def get_type_name(obj: typing.Any):
 
 
 class ValueType(object):
+    @classmethod
+    def type_name(cls):
+
+        cls_name = cls.__name__
+        if cls_name.lower().endswith("type"):
+            cls_name = cls_name[0:-4]
+
+        type_name = camel_case_to_snake_case(cls_name)
+        return type_name
+
+    @classmethod
+    def get_type_transformation_configs(
+        self,
+    ) -> typing.Optional[typing.Mapping[str, typing.Mapping[str, typing.Any]]]:
+        """Return a dictionary of configuration for modules that can transform this type.
+
+        The name of the transformation is the key of the result dictionary, the configuration is a module configuration
+        (dictionary wth 'module_type' and optional 'module_config', 'input_name' and 'output_name' keys).
+        """
+        return {"to_string": {"module_type": "pretty_print", "input_name": "item"}}
+
     def __init__(self, **type_config: typing.Any):
 
         self._type_config: typing.Mapping[str, typing.Any] = type_config
+        self._transformations: typing.Optional[
+            typing.Mapping[str, typing.Mapping[str, typing.Any]]
+        ] = None
 
     def import_value(
         self, value: typing.Any
@@ -73,16 +97,6 @@ class ValueType(object):
         If a hash can't be calculated, or the calculation of a type is not implemented (yet), this will return ``ValueHashMarker.NO_HASH``.
         """
         return ValueHashMarker.NO_HASH
-
-    @classmethod
-    def type_name(cls):
-
-        cls_name = cls.__name__
-        if cls_name.lower().endswith("type"):
-            cls_name = cls_name[0:-4]
-
-        type_name = camel_case_to_snake_case(cls_name)
-        return type_name
 
     def parse_value(self, value: typing.Any) -> typing.Any:
         """Parse a value into a supported python type.
@@ -315,6 +329,7 @@ class TableType(ValueType):
             "column_names": table.column_names,
             "schema": table_schema,
             "rows": table.num_rows,
+            "size_in_bytes": table.nbytes,
         }
 
 

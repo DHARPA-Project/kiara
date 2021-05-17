@@ -20,7 +20,7 @@ from rich.syntax import Syntax
 from rich.table import Table
 
 from kiara.config import KIARA_CONFIG, KiaraModuleConfig
-from kiara.data.values import Value, ValueSchema, ValueSet
+from kiara.data.values import NonRegistryValue, Value, ValueSchema, ValueSet
 from kiara.exceptions import KiaraModuleConfigException, KiaraProcessingException
 from kiara.utils import (
     StringYAML,
@@ -50,14 +50,14 @@ class StepInputs(object):
     def __init__(self, inputs: ValueSet):
         self._inputs: ValueSet = inputs
 
-    def __getattr__(self, key):
-
-        if key == "_inputs":
-            raise KeyError()
-        elif key in self.__dict__["_inputs"].keys():
-            return self.get_value_data(key)
-        else:
-            return super().__getattribute__(key)
+    # def __getattr__(self, key):
+    #
+    #     if key == "_inputs":
+    #         raise KeyError()
+    #     elif key in self.__dict__["_inputs"].keys():
+    #         return self.get_value_data(key)
+    #     else:
+    #         return super().__getattribute__(key)
 
     @property
     def field_names(self) -> typing.Iterable[str]:
@@ -76,7 +76,7 @@ class StepInputs(object):
         return self.__dict__["_inputs"][input_name]
 
     def get_all_value_data(self) -> typing.Dict[str, typing.Any]:
-        return self._inputs.dict()
+        return self._inputs.get_all_value_data()
 
 
 class StepOutputs(object):
@@ -94,37 +94,46 @@ class StepOutputs(object):
         super().__setattr__("_outputs_staging", {})
         super().__setattr__("_outputs", outputs)
 
-    def __getattr__(self, key):
+    # def __getattr__(self, key):
+    #
+    #     print("xxxx")
+    #     raise Exception()
+    #
+    #     if key == "_outputs":
+    #         raise KeyError()
+    #     elif key in self.__dict__["_outputs"].keys():
+    #         return self.get_value_data(key)
+    #     else:
+    #         return super().__getattribute__(key)
 
-        if key == "_outputs":
-            raise KeyError()
-        elif key in self.__dict__["_outputs"].keys():
-            return self.get_value_data(key)
-        else:
-            return super().__getattribute__(key)
-
-    def __setattr__(self, key, value):
-
-        self.set_values(**{key: value})
+    # def __setattr__(self, key, value):
+    #     print("XXXXXXXXXXX")
+    #     raise Exception()
+    #
+    #     self.set_values(**{key: value})
 
     @property
     def field_names(self) -> typing.Iterable[str]:
         return self.__dict__["_outputs"].keys()
 
+    def set_value(self, key: str, value: typing.Any):
+
+        self.set_values(**{key: value})
+
     def set_values(self, **values: typing.Any):
 
         wrong = []
         for key in values.keys():
-            if key not in self._outputs.keys():
+            if key not in self._outputs.keys():  # type: ignore
                 wrong.append(key)
 
         if wrong:
-            av = ", ".join(self._outputs.keys())
+            av = ", ".join(self._outputs.keys())  # type: ignore
             raise Exception(
                 f"Can't set output value(s), invalid key name(s): {', '.join(wrong)}. Available: {av}"
             )
 
-        self._outputs_staging.update(values)
+        self._outputs_staging.update(values)  # type: ignore
 
     def get_value_data(self, output_name: str) -> typing.Any:
         self._sync()
@@ -135,12 +144,16 @@ class StepOutputs(object):
         return self.__dict__["_outputs"][output_name]
 
     def _sync(self):
-        self._outputs.update(self._outputs_staging)
-        self._outputs_staging.clear()
+        self._outputs.set_values(**self._outputs_staging)  # type: ignore
+        self._outputs_staging.clear()  # type: ignore
 
     def get_all_value_data(self) -> typing.Dict[str, typing.Any]:
         self._sync()
-        return self._outputs.dict()
+        return self._outputs.get_all_value_data()  # type: ignore
+
+    def get_all_value_objects(self) -> typing.Mapping[str, Value]:
+        self._sync()
+        return self._outputs  # type: ignore
 
 
 class KiaraModule(typing.Generic[KIARA_CONFIG]):
@@ -429,7 +442,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
             outputs: the output value set
         """
 
-    def run(self, **inputs: typing.Any) -> typing.Mapping[str, typing.Any]:
+    def run(self, **inputs: typing.Any) -> ValueSet:
         """Execute the module with the provided inputs directly.
 
         TODO: make this less wasteful, currently there are lots of objects created
@@ -440,18 +453,34 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
             a map of the output values (as described by the output schema)
         """
 
+        resolved_inputs = {}
+        for k, v in inputs.items():
+            if not isinstance(v, Value):
+                schema = self.input_schemas[k]
+                v = NonRegistryValue(
+                    _init_value=v,  # type: ignore
+                    value_schema=schema,
+                    is_constant=False,
+                    kiara=self._kiara,
+                )
+            resolved_inputs[k] = v
+
         input_value_set = ValueSet.from_schemas(
-            schemas=self.input_schemas, initial_values=inputs
+            kiara=self._kiara,
+            schemas=self.input_schemas,
+            initial_values=resolved_inputs,
         )
-        output_value_set = ValueSet.from_schemas(schemas=self.output_schemas)
+        output_value_set = ValueSet.from_schemas(
+            kiara=self._kiara, schemas=self.output_schemas
+        )
 
         m_inputs = StepInputs(inputs=input_value_set)
         m_outputs = StepOutputs(outputs=output_value_set)
 
         self.process(inputs=m_inputs, outputs=m_outputs)
 
-        result = m_outputs.get_all_value_data()
-        return result
+        result = m_outputs.get_all_value_objects()
+        return ValueSet(items=result)
 
     @property
     def module_instance_hash(self) -> int:
@@ -490,7 +519,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
         return hash((self.__class__, self.full_id, self.config))
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(input_names={list(self.input_names)} output_names={list(self.output_names)})"
+        return f"{self.__class__.__name__}(id={self.id} input_names={list(self.input_names)} output_names={list(self.output_names)})"
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions

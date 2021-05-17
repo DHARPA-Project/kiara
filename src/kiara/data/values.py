@@ -19,7 +19,13 @@ import uuid
 from datetime import datetime
 from pydantic import BaseModel, Extra, Field, PrivateAttr, root_validator
 from rich import box
-from rich.console import Console, ConsoleOptions, RenderResult
+from rich.console import (
+    Console,
+    ConsoleOptions,
+    ConsoleRenderable,
+    RenderResult,
+    RichCast,
+)
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
@@ -171,6 +177,18 @@ class Value(BaseModel):
         extra = Extra.forbid
         use_enum_values = True
 
+    def __init__(self, **data):  # type: ignore
+
+        kiara = data.pop("kiara", None)
+        if kiara is None:
+            raise ValueError("No 'kiara' object provided.")
+        self._kiara = kiara
+
+        super().__init__(**data)
+
+    _kiara: "Kiara" = PrivateAttr()
+    _type_obj: ValueType = PrivateAttr(default=None)
+
     value_schema: ValueSchema = Field(description="The schema of this value.")
     is_constant: bool = Field(
         description="Whether this value is a constant.", default=False
@@ -202,6 +220,17 @@ class Value(BaseModel):
         description="Metadata relating to the actual data (size, no. of rows, etc. -- depending on data type).",
         default_factory=dict,
     )
+
+    @property
+    def type_name(self) -> str:
+        return self.value_schema.type
+
+    @property
+    def type_obj(self):
+        if self._type_obj is None:
+            cls = self._kiara.get_value_type_cls(self.value_schema.type)
+            self._type_obj = cls(**self.value_schema.type_config)
+        return self._type_obj
 
     def item_is_valid(self) -> bool:
 
@@ -247,6 +276,23 @@ class Value(BaseModel):
             table.add_row("metadata", "-- no metadata --")
 
         return table
+
+    def transform(
+        self,
+        transformation_alias: str,
+        return_data: bool = True,
+        other_inputs: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+    ) -> typing.Any:
+
+        transformed = self._kiara.transform_value(
+            transformation_alias=transformation_alias,
+            value=self,
+            other_inputs=other_inputs,
+        )
+        if not return_data:
+            return transformed
+        else:
+            return transformed.get_value_data()
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -317,9 +363,6 @@ class KiaraValue(Value, abc.ABC):
     and it might not be necessary to hold them in memory in a lot of cases.
     """
 
-    _kiara: typing.Optional["Kiara"] = PrivateAttr()
-    _type_obj: ValueType = PrivateAttr(default=None)
-
     id: str = Field(description="A unique id for this value.")
     value_fields: typing.Tuple["ValueField", ...] = Field(
         description="Value fields within a pipeline connected to this value.",
@@ -328,19 +371,8 @@ class KiaraValue(Value, abc.ABC):
 
     def __init__(self, **data):  # type: ignore
         data["stage"] = "init"
-        kiara = data.pop("kiara", None)
-        if kiara is None:
-            raise ValueError("No 'kiara' object provided.")
 
         super().__init__(**data)
-        self._kiara = kiara
-
-    @property
-    def type_obj(self):
-        if self._type_obj is None:
-            cls = self._kiara.get_value_type_cls(self.value_schema.type)
-            self._type_obj = cls(**self.value_schema.type_config)
-        return self._type_obj
 
     @property
     def registry(self) -> "DataRegistry":
@@ -501,6 +533,7 @@ class ValueSet(typing.MutableMapping[str, Value]):
     @classmethod
     def from_schemas(
         cls,
+        kiara: "Kiara",
         schemas: typing.Mapping[str, ValueSchema],
         initial_values: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         title: typing.Optional[str] = None,
@@ -512,7 +545,12 @@ class ValueSet(typing.MutableMapping[str, Value]):
 
             if initial_values and initial_values.get(field_name, None) is not None:
                 _init_value = initial_values[field_name]
-            value = NonRegistryValue(value_schema=schema, _init_value=_init_value)  # type: ignore
+
+            if not isinstance(_init_value, Value):
+                value: Value = NonRegistryValue(value_schema=schema, _init_value=_init_value, kiara=kiara)  # type: ignore
+            else:
+                value = _init_value
+
             values[field_name] = value
 
         return cls(items=values, title=title)
@@ -602,7 +640,7 @@ class ValueSet(typing.MutableMapping[str, Value]):
                 return False
         return True
 
-    def dict(self):
+    def get_all_value_data(self) -> typing.Dict[str, typing.Any]:
         result = {}
         for k, v in self._value_items.items():
             result[k] = v.get_value_data()
@@ -710,25 +748,39 @@ class ValuesInfo(object):
 
         self._value_set: ValueSet = value_set
 
-    def create_value_data_table(self, show_headers: bool = False) -> Table:
+    def create_value_data_table(
+        self,
+        show_headers: bool = False,
+        transformer: typing.Optional[str] = None,
+        transformer_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+    ) -> Table:
 
         table = Table(show_header=show_headers, box=box.SIMPLE)
         table.add_column("Field name", style="i")
         table.add_column("Value data")
 
-        for field_name, details in self._value_set.items():
-            if not details.is_set:
-                if details.item_is_valid():
+        for field_name, value in self._value_set.items():
+
+            if not value.is_set:
+                if value.item_is_valid():
                     value_str = "-- not set --"
                 else:
                     value_str = "[red]-- not set --[/red]"
-            elif details.is_none:
-                if details.item_is_valid():
+            elif value.is_none:
+                if value.item_is_valid():
                     value_str = "-- no value --"
                 else:
                     value_str = "[red]-- no value --[/red]"
             else:
-                value_str = str(details.get_value_data())
+                if not transformer:
+                    value_str = value.get_value_data()
+                else:
+                    value_str = value.transform(
+                        transformer, return_data=True, other_inputs=transformer_config
+                    )
+                if not isinstance(value_str, (ConsoleRenderable, RichCast, str)):
+                    value_str = str(value_str)
+
             table.add_row(field_name, value_str)
 
         return table

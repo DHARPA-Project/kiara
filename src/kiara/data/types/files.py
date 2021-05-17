@@ -14,8 +14,11 @@ log = logging.getLogger("kiara")
 
 
 class FileModel(BaseModel):
+    """A class to hold details and metadata about a file."""
+
     @classmethod
     def import_file(cls, source: str, target: typing.Optional[str] = None):
+        """Utility method to read metadata of a file from disk and optionally move it into a data archive location."""
 
         if not source:
             raise ValueError("No source path provided.")

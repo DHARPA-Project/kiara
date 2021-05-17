@@ -18,16 +18,6 @@ to let users re-use tried and tested data orchestration pipelines, as well as cr
 blocks. It also helps you manage your research data, and augment it with automatically-, semi-automatically-, and manually-
 created metadata.
 
-## Downloads
-
-### Binaries
-
-Only snapshot binaries (for now):
-
-  - [Linux](https://github.com/DHARPA-Project/kiara/actions/workflows/build-linux.yaml)
-  - [Windows](https://github.com/DHARPA-Project/kiara/actions/workflows/build-windows.yaml)
-  - [Mac OS X](https://github.com/DHARPA-Project/kiara/actions/workflows/build-darwin.yaml)
-
 ## Development
 
 ### Requirements

@@ -1,4 +1,24 @@
 # -*- coding: utf-8 -*-
+
+"""This is the base module that contains everything data type-related in *kiara*.
+
+I'm still not 100% sure how to best implement the *kiara* type system, there are several ways it could be done, for example
+based on Python type-hints, using JSON-schema, Avro (which is my 2nd favourite option), as well as by implementing a
+custom type-class hierarchy. Which is what I have choosen to try first. For now, it looks like it'll work out,
+but there is a chance requirements I haven't forseen will crop up that could make this become ugly.
+
+Anyway, the way it works (for now) is that *kiara* comes with a set of often used types (the standard set of: scalars,
+list, dict, table & array, etc.) which each come with 2 functions that can serialize and deserialize values of that
+type in a persistant fashion -- which could be storing as a file on disk, or as a cell/row in a database. Those functions
+will most likley be *kiara* modules themselves, with even more restricted input/output type options.
+
+In addition, packages that contain modules can implement their own, custom types, if suitable ones are not available in
+core-*kiara*. Those can either be 'serialized/deserialized' into *kiara*-native types (which in turn will serialize them
+using their own serializing functions), or will have to implement custom serializing functionality (which will probably
+be discouraged, since this might not be trivial and there are quite a few things to consider).
+
+"""
+
 import datetime
 import networkx
 import networkx as nx
@@ -7,13 +27,10 @@ import typing
 from dateutil import parser
 from deepdiff import DeepHash
 from enum import Enum
-from faker import Faker
 from networkx import DiGraph
 from rich.console import Console, ConsoleOptions, RenderResult
 
 from kiara.utils import camel_case_to_snake_case
-
-fake = Faker()
 
 
 class ValueHashMarker(Enum):
@@ -24,6 +41,7 @@ class ValueHashMarker(Enum):
 
 
 def get_type_name(obj: typing.Any):
+    """Utility function to get a pretty string from the class of an object."""
 
     if obj.__class__.__module__ == "builtins":
         return obj.__class__.__name__
@@ -32,8 +50,32 @@ def get_type_name(obj: typing.Any):
 
 
 class ValueType(object):
+    """Base class that all *kiara* types must inherit from.
+
+    *kiara* types have 3 main responsibilities:
+
+     - serialize into / deserialize from persistent state
+     - data validation
+     -  metadata extraction
+
+     Serializing being the arguably most important of those, because without most of the data management features of
+     *kiara* would be impossible. Validation should not require any explanation. Metadata extraction is important, because
+     that metadata will be available to other components of *kiara* (or frontends for it), without them having to request
+     the actual data. That will hopefully make *kiara* very efficient in terms of memory management, as well as data
+     transfer and I/O. Ideally, the actual data (bytes) will only be requested at the last possible moment. For example when a
+     module needs the input data to do processing on it -- and even then it might be that it only requests a part of the
+     data, say a single column of a table. Or when a frontend needs to display/visualize the data.
+    """
+
     @classmethod
     def type_name(cls):
+        """Return the name/alias of this type.
+
+        This is the name modules will use in the 'type' field when they create their input/output schemas.
+
+        Returns:
+            the type alias
+        """
 
         cls_name = cls.__name__
         if cls_name.lower().endswith("type"):

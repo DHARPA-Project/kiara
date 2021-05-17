@@ -75,11 +75,13 @@ class FileModel(BaseModel):
 
 
 class FileType(ValueType):
-    def extract_type_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
+    def extract_type_metadata(
+        cls, value: typing.Any
+    ) -> typing.Mapping[str, typing.Any]:
 
-        assert isinstance(v, FileModel)
+        assert isinstance(value, FileModel)
 
-        md = v.dict()
+        md = value.dict()
         md["python_cls"] = FileModel.__name__
         return md
 
@@ -236,10 +238,12 @@ class FileBundleModel(BaseModel):
 
 
 class FileBundleType(ValueType):
-    def extract_type_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
-        assert isinstance(v, FileBundleModel)
+    def extract_type_metadata(
+        cls, value: typing.Any
+    ) -> typing.Mapping[str, typing.Any]:
+        assert isinstance(value, FileBundleModel)
 
         # TODO: remove the exclude
-        md = v.dict(exclude={"included_files"})
+        md = value.dict(exclude={"included_files"})
         md["python_cls"] = FileBundleModel.__name__
         return md

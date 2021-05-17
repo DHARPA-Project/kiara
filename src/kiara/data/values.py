@@ -24,7 +24,7 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
 
-from kiara.data.types import ValueType
+from kiara.data.types import ValueHashMarker, ValueType
 from kiara.defaults import INVALID_VALUE_NAMES, PIPELINE_PARENT_MARKER, SpecialValue
 from kiara.utils import StringYAML, camel_case_to_snake_case
 
@@ -191,6 +191,10 @@ class Value(BaseModel):
     )
     is_none: bool = Field(description="Whether the value is 'None'.", default=True)
 
+    value_hash: typing.Union[int, ValueHashMarker] = Field(
+        description="The hash of the current value.", default=ValueHashMarker.NO_VALUE
+    )
+
     # is_valid: bool = Field(
     #     description="Whether the value is set and valid.", default=False
     # )
@@ -213,6 +217,10 @@ class Value(BaseModel):
         """
         raise NotImplementedError()
 
+    def get_value_hash(self) -> str:
+
+        raise NotImplementedError()
+
     def _create_value_table(self) -> Table:
 
         table = Table(box=box.SIMPLE, show_header=False)
@@ -226,6 +234,11 @@ class Value(BaseModel):
         table.add_row("is set", "yes" if self.item_is_valid() else "no")
         table.add_row("is constant", "yes" if self.is_constant else "no")
 
+        if isinstance(self.value_hash, int):
+            vh = str(self.value_hash)
+        else:
+            vh = self.value_hash.value
+        table.add_row("hash", vh)
         if self.metadata:
             json_string = json.dumps(self.metadata, indent=2)
             metadata = Syntax(json_string, "json")
@@ -341,6 +354,16 @@ class KiaraValue(Value, abc.ABC):
         assert self._kiara is not None
         self._kiara.data_registry.register_callback(callback, self)
 
+    def get_value_data(self) -> typing.Any:
+        return self.registry.get_value_data(self)
+
+    def get_value_hash(self) -> typing.Any:
+
+        if self.value_hash == ValueHashMarker.DEFERRED:
+            return self.registry.get_value_hash(self)
+        else:
+            return self.value_hash
+
     def __eq__(self, other):
 
         # TODO: compare all attributes if id is equal, just to make sure...
@@ -414,9 +437,6 @@ class DataValue(KiaraValue):
 
         return values
 
-    def get_value_data(self) -> typing.Any:
-        return self.registry.get_value_data(self)
-
     def set_value_data(self, value: typing.Any) -> bool:
 
         # TODO: validate against schema
@@ -470,9 +490,6 @@ class LinkedValue(KiaraValue):
         values["is_constant"] = False
 
         return values
-
-    def get_value_data(self) -> typing.Any:
-        return self.registry.get_value_data(self)
 
     def set_value_data(self, value: typing.Any) -> bool:
         raise Exception("Linked values can't be set.")
@@ -754,6 +771,7 @@ class PipelineValue(BaseModel):
             is_constant=value.is_constant,
             origin=value.origin,
             last_update=value.last_update,
+            value_hash=value.value_hash,
             is_streaming=value.is_streaming,
             metadata=value.metadata,
         )
@@ -776,6 +794,9 @@ class PipelineValue(BaseModel):
     )
     last_update: datetime = Field(
         default=None, description="The time the last update to this value happened."
+    )
+    value_hash: typing.Union[ValueHashMarker, int] = Field(
+        description="The hash of the current value."
     )
     is_streaming: bool = Field(
         default=False,

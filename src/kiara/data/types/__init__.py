@@ -5,6 +5,8 @@ import networkx as nx
 import pyarrow
 import typing
 from dateutil import parser
+from deepdiff import DeepHash
+from enum import Enum
 from faker import Faker
 from networkx import DiGraph
 from rich.console import Console, ConsoleOptions, RenderResult
@@ -12,6 +14,13 @@ from rich.console import Console, ConsoleOptions, RenderResult
 from kiara.utils import camel_case_to_snake_case
 
 fake = Faker()
+
+
+class ValueHashMarker(Enum):
+
+    NO_VALUE = "-- no_value --"
+    DEFERRED = "-- deferred --"
+    NO_HASH = "-- no_hash --"
 
 
 def get_type_name(obj: typing.Any):
@@ -29,7 +38,9 @@ class ValueType(object):
 
     def import_value(
         self, value: typing.Any
-    ) -> typing.Tuple[typing.Any, typing.Mapping[str, typing.Any]]:
+    ) -> typing.Tuple[
+        typing.Any, typing.Mapping[str, typing.Any], typing.Union[ValueHashMarker, int]
+    ]:
 
         assert value is not None
 
@@ -38,8 +49,30 @@ class ValueType(object):
             parsed = value
         self.validate(parsed)
         value_metadata = self.extract_type_metadata(parsed)
+        if self.defer_hash_calc():
+            _hash: typing.Union[ValueHashMarker, int] = ValueHashMarker.DEFERRED
+        else:
+            _hash = self.calculate_value_hash(value)
         metadata = {"type": value_metadata, "python": {"cls": get_type_name(parsed)}}
-        return (parsed, metadata)
+        return (parsed, metadata, _hash)
+
+    def defer_hash_calc(self) -> bool:
+        """Return a recommendation whether to defer the calculation of the hash of a value of this type.
+
+        This is useful to distinguish between types where calculating the hash is trivial, and the overhead of a
+        round-trip to the data registry would be more expensive than just calculating the hash on the spot and store
+        it in the value metadata right now.
+        """
+        return True
+
+    def calculate_value_hash(
+        self, value: typing.Any
+    ) -> typing.Union[int, ValueHashMarker]:
+        """Calculate the hash of this value.
+
+        If a hash can't be calculated, or the calculation of a type is not implemented (yet), this will return ``ValueHashMarker.NO_HASH``.
+        """
+        return ValueHashMarker.NO_HASH
 
     @classmethod
     def type_name(cls):
@@ -51,7 +84,7 @@ class ValueType(object):
         type_name = camel_case_to_snake_case(cls_name)
         return type_name
 
-    def parse_value(self, v: typing.Any) -> typing.Any:
+    def parse_value(self, value: typing.Any) -> typing.Any:
         """Parse a value into a supported python type.
 
         This exists to make it easier to do trivial conversions (e.g. from a date string to a datetime object).
@@ -66,18 +99,20 @@ class ValueType(object):
         """
         return None
 
-    def validate(cls, v: typing.Any) -> None:
+    def validate(cls, value: typing.Any) -> None:
         pass
 
-    def extract_type_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
+    def extract_type_metadata(
+        cls, value: typing.Any
+    ) -> typing.Mapping[str, typing.Any]:
         return {}
 
-    def serialize(cls, object: typing.Any):
+    def serialize(cls, value: typing.Any):
         raise NotImplementedError(
             f"Type class '{cls}' missing implementation of 'serialize' class method. This is a bug."
         )
 
-    def deserialize(cls, object: typing.Any):
+    def deserialize(cls, value: typing.Any):
         raise NotImplementedError(
             f"Type class '{cls}' missing implementation of 'deserialize' class method. This is a bug."
         )
@@ -94,15 +129,31 @@ class AnyType(ValueType):
 
 
 class StringType(ValueType):
-    def validate(cls, v: typing.Any) -> None:
+    def defer_hash_calc(self) -> bool:
+        return False
 
-        if not isinstance(v, str):
-            raise ValueError(f"Invalid type '{type(v)}': string required")
+    def calculate_value_hash(
+        self, value: typing.Any
+    ) -> typing.Union[int, ValueHashMarker]:
+        return hash(value)
+
+    def validate(cls, value: typing.Any) -> None:
+
+        if not isinstance(value, str):
+            raise ValueError(f"Invalid type '{type(value)}': string required")
 
 
 class BooleanType(ValueType):
-    def validate(cls, v: typing.Any):
-        if not isinstance(v, bool):
+    def defer_hash_calc(self) -> bool:
+        return False
+
+    def calculate_value_hash(
+        self, value: typing.Any
+    ) -> typing.Union[int, ValueHashMarker]:
+        return hash(value)
+
+    def validate(cls, value: typing.Any):
+        if not isinstance(value, bool):
             # if isinstance(v, str):
             #     if v.lower() in ["true", "yes"]:
             #         v = True
@@ -111,74 +162,125 @@ class BooleanType(ValueType):
             #     else:
             #         raise ValueError(f"Can't parse string into boolean: {v}")
             # else:
-            raise ValueError(f"Invalid type '{type(v)}' for boolean: {v}")
+            raise ValueError(f"Invalid type '{type(value)}' for boolean: {value}")
 
 
 class IntegerType(ValueType):
     """An integer."""
 
-    def validate(cls, v: typing.Any) -> None:
+    def defer_hash_calc(self) -> bool:
+        return False
 
-        if not isinstance(v, int):
+    def calculate_value_hash(
+        self, value: typing.Any
+    ) -> typing.Union[int, ValueHashMarker]:
+        return hash(value)
+
+    def validate(cls, value: typing.Any) -> None:
+
+        if not isinstance(value, int):
             #     if isinstance(v, str):
             #         try:
             #             v = int(v)
             #         except Exception:
             #             raise ValueError(f"Can't parse string into integer: {v}")
             # else:
-            raise ValueError(f"Invalid type '{type(v)}' for integer: {v}")
+            raise ValueError(f"Invalid type '{type(value)}' for integer: {value}")
+
+
+class FloatType(ValueType):
+    def defer_hash_calc(self) -> bool:
+        return False
+
+    def calculate_value_hash(
+        self, value: typing.Any
+    ) -> typing.Union[int, ValueHashMarker]:
+        return hash(value)
+
+    def validate(cls, value: typing.Any) -> typing.Any:
+
+        if not isinstance(value, float):
+            raise ValueError(f"Invalid type '{type(value)}' for float: {value}")
 
 
 class DictType(ValueType):
     """A dict-like object."""
 
-    def validate(cls, v: typing.Any) -> None:
+    def defer_hash_calc(self) -> bool:
+        return True
 
-        if not isinstance(v, typing.Mapping):
-            raise ValueError(f"Invalid type '{type(v)}', not a mapping.")
+    def calculate_value_hash(
+        self, value: typing.Any
+    ) -> typing.Union[int, ValueHashMarker]:
 
-    def extract_type_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
+        dh = DeepHash(value)
+        return dh[value]
+
+    def validate(cls, value: typing.Any) -> None:
+
+        if not isinstance(value, typing.Mapping):
+            raise ValueError(f"Invalid type '{type(value)}', not a mapping.")
+
+    def extract_type_metadata(
+        cls, value: typing.Any
+    ) -> typing.Mapping[str, typing.Any]:
         value_types = set()
-        for val in v.values():
+        for val in value.values():
             value_types.add(get_type_name(val))
-        result = {"keys": list(v.keys()), "value_types": list(value_types)}
+        result = {"keys": list(value.keys()), "value_types": list(value_types)}
         return result
-
-
-class FloatType(ValueType):
-    def validate(cls, v: typing.Any) -> typing.Any:
-
-        if not isinstance(v, float):
-            raise ValueError(f"Invalid type '{type(v)}' for float: {v}")
 
 
 class ListType(ValueType):
     """A list-like object."""
 
-    def validate(cls, v: typing.Any) -> None:
+    def defer_hash_calc(self) -> bool:
+        return True
 
-        assert isinstance(v, typing.Iterable)
+    def calculate_value_hash(
+        self, value: typing.Any
+    ) -> typing.Union[int, ValueHashMarker]:
 
-    def extract_type_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
+        dh = DeepHash(value)
+        return dh[value]
 
-        metadata = {"length": len(v)}
+    def validate(cls, value: typing.Any) -> None:
+
+        assert isinstance(value, typing.Iterable)
+
+    def extract_type_metadata(
+        cls, value: typing.Any
+    ) -> typing.Mapping[str, typing.Any]:
+
+        metadata = {"length": len(value)}
         return metadata
 
 
 class ArrayType(ValueType):
     """An Apache arrow array."""
 
-    def extract_type_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
+    def extract_type_metadata(
+        cls, value: typing.Any
+    ) -> typing.Mapping[str, typing.Any]:
 
         metadata = {
-            "item_type": str(v.type),
-            "arrow_type_id": v.type.id,
-            "length": len(v),
+            "item_type": str(value.type),
+            "arrow_type_id": value.type.id,
+            "length": len(value),
         }
         return metadata
 
 
 class DateType(ValueType):
+    def defer_hash_calc(self) -> bool:
+        return False
+
+    def calculate_value_hash(
+        self, value: typing.Any
+    ) -> typing.Union[int, ValueHashMarker]:
+
+        return hash(value)
+
     def parse_value(self, v: typing.Any) -> typing.Any:
 
         if isinstance(v, str):
@@ -187,16 +289,18 @@ class DateType(ValueType):
 
         return None
 
-    def validate(cls, v: typing.Any):
-        assert isinstance(v, datetime.datetime)
+    def validate(cls, value: typing.Any):
+        assert isinstance(value, datetime.datetime)
 
 
 class TableType(ValueType):
-    def validate(cls, v: typing.Any) -> None:
-        assert isinstance(v, pyarrow.Table)
+    def validate(cls, value: typing.Any) -> None:
+        assert isinstance(value, pyarrow.Table)
 
-    def extract_type_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
-        table: pyarrow.Table = v
+    def extract_type_metadata(
+        cls, value: typing.Any
+    ) -> typing.Mapping[str, typing.Any]:
+        table: pyarrow.Table = value
         table_schema = {}
         for name in table.schema.names:
             field = table.schema.field(name)
@@ -215,17 +319,19 @@ class TableType(ValueType):
 
 
 class NetworkGraphType(ValueType):
-    def validate(cls, v: typing.Any) -> typing.Any:
+    def validate(cls, value: typing.Any) -> typing.Any:
 
-        if not isinstance(v, networkx.Graph):
-            raise ValueError(f"Invalid type '{type(v)}' for graph: {v}")
-        return v
+        if not isinstance(value, networkx.Graph):
+            raise ValueError(f"Invalid type '{type(value)}' for graph: {value}")
+        return value
 
-    def extract_type_metadata(cls, v: typing.Any) -> typing.Mapping[str, typing.Any]:
+    def extract_type_metadata(
+        cls, value: typing.Any
+    ) -> typing.Mapping[str, typing.Any]:
 
-        graph: nx.Graph = v
+        graph: nx.Graph = value
         return {
-            "directed": isinstance(v, DiGraph),
+            "directed": isinstance(value, DiGraph),
             "number_of_nodes": len(graph.nodes),
             "number_of_edges": len(graph.edges),
             "density": nx.density(graph),

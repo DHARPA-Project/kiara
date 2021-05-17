@@ -276,7 +276,9 @@ class Kiara(object):
 
         mm = self._modules.get(module_type, None)
         if mm is None:
-            raise Exception(f"No module '{module_type}' available.")
+            raise Exception(
+                f"No module '{module_type}' registered. Available modules: {', '.join(self.available_module_types)}"
+            )
 
         _ = self.get_module_class(
             module_type

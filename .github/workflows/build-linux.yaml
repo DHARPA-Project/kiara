@@ -1,4 +1,4 @@
-name: "linux tests, binary- and documentation builds for 'kiara'"
+name: "linux tests and documentation build for 'kiara'"
 # This workflow is triggered on pushes to the repository.
 on: [push]
 
@@ -92,28 +92,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
           FOLDER: build/site
-
-#  build-linux:
-#    name: build linux binary
-#    runs-on: ubuntu-16.04
-#    needs:
-#      - test-linux
-#      - mypy-linux
-#      - flake8-linux
-#    steps:
-#      - uses: actions/cache@v2
-#        with:
-#          path: ~/.pyenv/
-#          key: ${{ runner.os }}-target-ubuntu-kiara-python-build
-#      - uses: actions/checkout@v2
-#      - name: download build script
-#        run: wget https://gitlab.com/frkl/frkl.project/-/raw/develop/scripts/build-binary/build.sh && chmod +x build.sh
-#      - name: download spec file
-#        run: wget https://gitlab.com/frkl/frkl.project/-/raw/develop/scripts/build-binary/onefile.spec
-#      - name: build_binary
-#        run: "PATH=\"$(echo $PATH | tr : '\n' | grep -v linuxbrew | paste -s -d:)\" ./build.sh --python-type pyenv --requirements ci/build/requirements.txt"
-#      - name: Archive Linux binary
-#        uses: actions/upload-artifact@v1
-#        with:
-#          name: kiara
-#          path: dist/linux-gnu/kiara

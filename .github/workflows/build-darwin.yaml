@@ -1,4 +1,4 @@
-name: "darwin tests & binary build for 'kiara'"
+name: "darwin tests for 'kiara'"
 # This workflow is triggered on pushes to the repository.
 on: [push]
 env:
@@ -66,37 +66,3 @@ jobs:
         run: pip install -U -e '.[dev_testing,all]'
       - name: Test with flake8
         run: make flake
-
-#  build-darwin:
-#    name: build darwin binary
-#    runs-on: macos-10.15
-#    needs:
-#      - test-darwin
-#      - mypy-darwin
-#      - flake8-darwin
-#    steps:
-#      - uses: actions/cache@v2
-#        with:
-#          path: ~/.pyenv/
-#          key: ${{ runner.os }}-target-darwin-10.13-kiara-python-build
-#      - run: brew install readline xz bzip2 lbzip2 lzlib openssl zlib
-#      - uses: actions/checkout@v2
-#      - name: download build script
-#        run: wget https://gitlab.com/frkl/frkl.project/-/raw/develop/scripts/build-binary/build.sh && chmod +x build.sh
-#      - name: download spec file
-#        run: wget https://gitlab.com/frkl/frkl.project/-/raw/develop/scripts/build-binary/onefile.spec
-#      - name: build_binary
-#        run: ./build.sh --python-type pyenv --requirements ci/build/requirements.txt
-##      # uncomment to sign binary (needs certificate data in env)
-##      - name: Add MacOS certs
-##        run: chmod +x ./scripts/build-binary/add-osx-cert.sh && ./scripts/build-binary/add-osx-cert.sh
-##        env:
-##          CERTIFICATE_OSX_APPLICATION: ${{ secrets.CERTIFICATE_OSX_APPLICATION }}
-##          CERTIFICATE_PASSWORD: ${{ secrets.CERTIFICATE_PASSWORD }}
-##      - name: sign binary
-##        run: "codesign -f -s 'Developer ID Application: Markus Binsteiner (4Q559SZWTL)' dist/darwin19/kiara"
-#      - name: Archive Mac OS X binary
-#        uses: actions/upload-artifact@v1
-#        with:
-#          name: kiara
-#          path: dist/darwin19/kiara

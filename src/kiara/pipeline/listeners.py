@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import abc
-from pprint import pp
 
 from kiara.events import (
     PipelineInputEvent,
@@ -44,19 +43,19 @@ class PipelineListener(abc.ABC):
         """
 
 
-class DebugListener(PipelineListener):
-    def step_inputs_changed(self, event: StepInputEvent):
-
-        pp(event.dict())
-
-    def step_outputs_changed(self, event: StepOutputEvent):
-
-        pp(event.dict())
-
-    def pipeline_inputs_changed(self, event: PipelineInputEvent):
-
-        pp(event.dict())
-
-    def pipeline_outputs_changed(self, event: PipelineOutputEvent):
-
-        pp(event.dict())
+# class DebugListener(PipelineListener):
+#     def step_inputs_changed(self, event: StepInputEvent):
+#
+#         pp(event.dict())
+#
+#     def step_outputs_changed(self, event: StepOutputEvent):
+#
+#         pp(event.dict())
+#
+#     def pipeline_inputs_changed(self, event: PipelineInputEvent):
+#
+#         pp(event.dict())
+#
+#     def pipeline_outputs_changed(self, event: PipelineOutputEvent):
+#
+#         pp(event.dict())

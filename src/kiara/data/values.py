@@ -552,8 +552,18 @@ class ValueSet(abc.ABC):
     def get_metadata(self) -> typing.Mapping[str, typing.Any]:
         return {}
 
-    @abc.abstractmethod
+    def is_read_only(self) -> bool:
+        return True
+
     def set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:
+
+        if self.is_read_only():
+            raise Exception("Can't set values: this value set is read-only.")
+
+        return self._set_values(**values)
+
+    @abc.abstractmethod
+    def _set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:
         """Set one or several values.
 
         Arguments:
@@ -641,6 +651,7 @@ class ValueSetImpl(ValueSet, typing.MutableMapping[str, Value]):
         cls,
         kiara: "Kiara",
         schemas: typing.Mapping[str, ValueSchema],
+        read_only: bool,
         initial_values: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         title: typing.Optional[str] = None,
     ):
@@ -659,10 +670,13 @@ class ValueSetImpl(ValueSet, typing.MutableMapping[str, Value]):
 
             values[field_name] = value
 
-        return cls(items=values, title=title)
+        return cls(items=values, title=title, read_only=read_only)
 
     def __init__(
-        self, items: typing.Mapping[str, Value], title: typing.Optional[str] = None
+        self,
+        items: typing.Mapping[str, Value],
+        read_only: bool,
+        title: typing.Optional[str] = None,
     ):
 
         if not items:
@@ -685,6 +699,7 @@ class ValueSetImpl(ValueSet, typing.MutableMapping[str, Value]):
         # TODO: validate schema types
         schema = ValueSchema(type="any", default=None, doc="-- n/a --")
         self._schema = schema
+        self._read_only: bool = read_only
         if title is None:
             title = "-- n/a --"
         self._title = title
@@ -759,7 +774,7 @@ class ValueSetImpl(ValueSet, typing.MutableMapping[str, Value]):
             result[k] = v.get_value_data()
         return result
 
-    def set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:
+    def _set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:
 
         invalid: typing.List[str] = []
         registries: typing.Dict[DataRegistry, typing.Dict[Value, typing.Any]] = {}
@@ -792,6 +807,9 @@ class ValueSetImpl(ValueSet, typing.MutableMapping[str, Value]):
             result[val_obj] = val_obj.set_value_data(v)  # type: ignore
 
         return result
+
+    def is_read_only(self):
+        return self._read_only
 
     def get_metadata(self):
         return {"title": self._title}

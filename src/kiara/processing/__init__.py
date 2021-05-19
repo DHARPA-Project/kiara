@@ -152,7 +152,7 @@ class ModuleProcessor(abc.ABC):
                 job.error = status
             elif isinstance(status, Exception):
                 job.error = str(status)
-            job = self._finished_jobs.pop(job_id)
+            job = self._active_jobs.pop(job_id)
             self._finished_jobs[job_id] = job
             self._socket.send_string(Job.create_event_msg(job))
         elif status in [0, JobStatus.STARTED]:

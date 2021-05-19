@@ -290,6 +290,7 @@ class Pipeline(object):
             )
         self._pipeline_inputs = ValueSetImpl(
             items=pipeline_inputs,
+            read_only=False,
             title=f"Inputs for pipeline '{self.structure.pipeline_id}'",
         )
         if not pipeline_outputs:
@@ -299,17 +300,20 @@ class Pipeline(object):
 
         self._pipeline_outputs = ValueSetImpl(
             items=pipeline_outputs,
+            read_only=True,
             title=f"Outputs for pipeline '{self.structure.pipeline_id}'",
         )
         self._step_inputs = {}
         for step_id, inputs in all_step_inputs.items():
             self._step_inputs[step_id] = ValueSetImpl(
                 items=inputs,
+                read_only=True,
                 title=f"Inputs for step '{step_id}' of pipeline '{self.structure.pipeline_id}",
             )
         self._step_outputs = {}
         for step_id, outputs in all_step_outputs.items():
             self._step_outputs[step_id] = ValueSetImpl(
+                read_only=False,
                 items=outputs,
                 title=f"Outputs for step '{step_id}' of pipeline '{self.structure.pipeline_id}'",
             )

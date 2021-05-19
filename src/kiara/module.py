@@ -459,8 +459,16 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
             a map of the output values (as described by the output schema)
         """
 
+        # TODO: find a generic way to do this kind of stuff
+        def clean_value(v: typing.Any) -> typing.Any:
+            if hasattr(v, "as_py"):
+                return v.as_py()  # type: ignore
+            else:
+                return v
+
         resolved_inputs = {}
         for k, v in inputs.items():
+            v = clean_value(v)
             if not isinstance(v, Value):
                 schema = self.input_schemas[k]
                 v = NonRegistryValue(
@@ -474,19 +482,20 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
         input_value_set = ValueSetImpl.from_schemas(
             kiara=self._kiara,
             schemas=self.input_schemas,
+            read_only=True,
             initial_values=resolved_inputs,
         )
         output_value_set = ValueSetImpl.from_schemas(
-            kiara=self._kiara, schemas=self.output_schemas
+            kiara=self._kiara, schemas=self.output_schemas, read_only=False
         )
 
-        m_inputs = StepInputs(inputs=input_value_set)
-        m_outputs = StepOutputs(outputs=output_value_set)
+        # m_inputs = StepInputs(inputs=input_value_set)
+        # m_outputs = StepOutputs(outputs=output_value_set)
 
-        self.process(inputs=m_inputs, outputs=m_outputs)
+        self.process(inputs=input_value_set, outputs=output_value_set)
 
-        result = m_outputs.get_all_value_objects()
-        return ValueSetImpl(items=result)
+        result = output_value_set.get_all_value_objects()
+        return ValueSetImpl(items=result, read_only=True)
 
     @property
     def module_instance_hash(self) -> int:

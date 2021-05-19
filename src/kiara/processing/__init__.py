@@ -169,3 +169,8 @@ class ModuleProcessor(abc.ABC):
         self, job_id: str, module: "KiaraModule", inputs: ValueSet, outputs: ValueSet
     ) -> str:
         pass
+
+    @abc.abstractmethod
+    def wait_for(self, *job_ids: str):
+
+        pass

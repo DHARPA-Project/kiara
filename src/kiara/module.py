@@ -84,8 +84,11 @@ class StepInputs(ValueSet):
 
         return self.__dict__["_inputs"][input_name]
 
-    def set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:
+    def _set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:
         raise Exception("Inputs are read-only.")
+
+    def is_read_only(self) -> bool:
+        return True
 
 
 class StepOutputs(ValueSet):
@@ -124,7 +127,7 @@ class StepOutputs(ValueSet):
     def get_all_field_names(self) -> typing.Iterable[str]:
         return self.__dict__["_outputs"].keys()
 
-    def set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:
+    def _set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:
 
         wrong = []
         for key in values.keys():
@@ -154,7 +157,7 @@ class StepOutputs(ValueSet):
     def get_value_data_for_fields(
         self, *field_names: str
     ) -> typing.Dict[str, typing.Any]:
-        self._sync()
+        self.sync()
         result = {}
         for output_name in field_names:
             data = self.__dict__["_outputs"][field_names].get_value_data()
@@ -162,10 +165,13 @@ class StepOutputs(ValueSet):
         return result
 
     def get_value_obj(self, output_name):
-        self._sync()
+        self.sync()
         return self.__dict__["_outputs"][output_name]
 
-    def _sync(self):
+    def is_read_only(self) -> bool:
+        return False
+
+    def sync(self):
         self._outputs.set_values(**self._outputs_staging)  # type: ignore
         self._outputs_staging.clear()  # type: ignore
 

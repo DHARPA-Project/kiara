@@ -14,6 +14,7 @@ from kiara.interfaces import get_console
 from kiara.module import KiaraModule, ModuleInfo
 from kiara.pipeline.controller import BatchController
 from kiara.pipeline.module import PipelineModuleInfo
+from kiara.processing.parallel import ThreadPoolProcessor
 from kiara.utils import create_table_from_field_schemas, dict_from_cli_args
 
 # from importlib.metadata import entry_points
@@ -339,7 +340,9 @@ async def run(ctx, module, inputs, module_config, data_details, only_output):
         rich_print(inputs_table)
         sys.exit(0)
 
-    controller = BatchController()
+    processor = ThreadPoolProcessor()
+    processor = None
+    controller = BatchController(processor=processor)
 
     workflow = kiara_obj.create_workflow(module_name, controller=controller)
 

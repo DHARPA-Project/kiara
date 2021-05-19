@@ -16,3 +16,8 @@ class SynchronousProcessor(ModuleProcessor):
             self.job_status_updated(job_id=job_id, status=100)
         except Exception as e:
             self.job_status_updated(job_id=job_id, status=e)
+
+    def wait_for(self, *job_ids: str):
+
+        # jobs will always be finished, since we were waiting for them in the 'process' method
+        return

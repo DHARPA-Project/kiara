@@ -177,7 +177,7 @@ class PipelineController(PipelineListener):
 
         return result
 
-    def process_step(self, step_id: str):
+    def process_step(self, step_id: str) -> str:
         """Kick off processing for the step with the provided id.
 
         Arguments:
@@ -197,7 +197,7 @@ class PipelineController(PipelineListener):
         # get the module object that holds the code that will do the processing
         step = self.get_step(step_id)
 
-        job_ref = self._processor.start(
+        job_id = self._processor.start(
             pipeline_id=self.pipeline.id,
             pipeline_name=self.pipeline.structure.pipeline_id,
             step_id=step_id,
@@ -205,7 +205,7 @@ class PipelineController(PipelineListener):
             inputs=step_inputs,
             outputs=step_outputs,
         )
-        return job_ref
+        return job_id
 
     def step_is_ready(self, step_id: str) -> bool:
         """Return whether the step with the provided id is ready to be processed.
@@ -317,7 +317,7 @@ class BatchController(PipelineController):
         self._is_running = True
         try:
             for stage in self.processing_stages:
-
+                job_ids = []
                 for step_id in stage:
                     if not self.can_be_processed(step_id):
                         if self.can_be_skipped(step_id):
@@ -327,12 +327,15 @@ class BatchController(PipelineController):
                                 f"Required pipeline step '{step_id}' can't be processed, inputs not ready yet."
                             )
                     try:
-                        self.process_step(step_id)
+                        job_id = self.process_step(step_id)
+                        job_ids.append(job_id)
                     except Exception as e:
+                        # TODO: cancel running jobs?
                         log.error(
                             f"Processing of step '{step_id}' from pipeline '{self.pipeline.structure.pipeline_id}' failed: {e}"
                         )
                         return False
+                self._processor.wait_for(*job_ids)
         finally:
             self._is_running = False
 

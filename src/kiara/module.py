@@ -21,7 +21,7 @@ from rich.table import Table
 
 from kiara.config import KIARA_CONFIG, KiaraModuleConfig
 from kiara.data.values import NonRegistryValue, Value, ValueSchema, ValueSet
-from kiara.exceptions import KiaraModuleConfigException, KiaraProcessingException
+from kiara.exceptions import KiaraModuleConfigException
 from kiara.utils import (
     StringYAML,
     create_table_from_config_class,
@@ -278,6 +278,10 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
         return self._id
 
     @property
+    def type_name(self) -> str:
+        return self._module_type_id  # type:ignore
+
+    @property
     def parent_id(self) -> typing.Optional[str]:
         """The id of the parent of this module (if part of a pipeline)."""
         return self._parent_id
@@ -400,7 +404,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
         """A list of output field names for this module."""
         return self.output_schemas.keys()
 
-    def process_step(self, inputs: ValueSet, outputs: ValueSet) -> None:
+    def process_step(self, inputs: StepInputs, outputs: StepOutputs) -> None:
         """Kick off processing for a specific set of input/outputs.
 
         This method calls the implemented [process][kiara.module.KiaraModule.process] method of the inheriting class,
@@ -411,11 +415,8 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
             outputs: the output value set
         """
 
-        input_wrap: StepInputs = StepInputs(inputs=inputs)
-        output_wrap: StepOutputs = StepOutputs(outputs=outputs)
-
         try:
-            self.process(inputs=input_wrap, outputs=output_wrap)
+            self.process(inputs=inputs, outputs=outputs)
         except Exception as e:
             if is_debug():
                 try:
@@ -424,14 +425,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
                     traceback.print_exc()
                 except Exception:
                     pass
-            if isinstance(e, KiaraProcessingException):
-                e._module = self
-                e._inputs = input_wrap
-                raise e
-            else:
-                raise KiaraProcessingException(e, module=self, inputs=input_wrap)
-
-        output_wrap._sync()
+            raise e
 
     @abstractmethod
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
@@ -444,8 +438,6 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
 
     def run(self, **inputs: typing.Any) -> ValueSet:
         """Execute the module with the provided inputs directly.
-
-        TODO: make this less wasteful, currently there are lots of objects created
 
         Arguments:
             inputs: a map of the input values (as described by the input schema

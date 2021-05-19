@@ -23,10 +23,12 @@ from kiara.data.values import (
 from kiara.events import (
     PipelineInputEvent,
     PipelineOutputEvent,
+    StepEvent,
     StepInputEvent,
     StepOutputEvent,
 )
 from kiara.pipeline.controller import BatchController, PipelineController
+from kiara.pipeline.listeners import PipelineListener
 from kiara.pipeline.structure import (
     PipelineStep,
     PipelineStructure,
@@ -86,6 +88,8 @@ class Pipeline(object):
             controller.set_pipeline(self)
         self._controller: PipelineController = controller
 
+        self._listeners: typing.List[PipelineListener] = []
+
         self._update_status()
 
     def __eq__(self, other):
@@ -126,6 +130,9 @@ class Pipeline(object):
 
     def get_step_outputs(self, step_id: str) -> ValueSet:
         return self._step_outputs[step_id]
+
+    def add_listener(self, listener: PipelineListener) -> None:
+        self._listeners.append(listener)
 
     @property
     def status(self) -> StepStatus:
@@ -346,6 +353,7 @@ class Pipeline(object):
                 updated_pipeline_inputs=updated_pipeline_inputs,
             )
             self._controller.pipeline_inputs_changed(event_pi)
+            self._notify_pipeline_listeners(event_pi)
 
         if updated_outputs:
             event_so = StepOutputEvent(
@@ -353,6 +361,7 @@ class Pipeline(object):
                 updated_step_outputs=updated_outputs,
             )
             self._controller.step_outputs_changed(event_so)
+            self._notify_pipeline_listeners(event_so)
 
         if updated_inputs:
             event_si = StepInputEvent(
@@ -360,6 +369,7 @@ class Pipeline(object):
                 updated_step_inputs=updated_inputs,
             )
             self._controller.step_inputs_changed(event_si)
+            self._notify_pipeline_listeners(event_si)
 
         if updated_pipeline_outputs:
             event_po = PipelineOutputEvent(
@@ -367,6 +377,21 @@ class Pipeline(object):
                 updated_pipeline_outputs=updated_pipeline_outputs,
             )
             self._controller.pipeline_outputs_changed(event_po)
+            self._notify_pipeline_listeners(event_po)
+
+    def _notify_pipeline_listeners(self, event: StepEvent):
+
+        for listener in self._listeners:
+            if event.type == "step_input":  # type: ignore
+                listener.step_inputs_changed(event)  # type: ignore
+            elif event.type == "step_output":  # type: ignore
+                listener.step_outputs_changed(event)  # type: ignore
+            elif event.type == "pipeline_input":  # type: ignore
+                listener.pipeline_inputs_changed(event)  # type: ignore
+            elif event.type == "pipeline_output":  # type: ignore
+                listener.pipeline_outputs_changed(event)  # type: ignore
+            else:
+                raise Exception(f"Unsupported type: {event.type}")  # type: ignore
 
     def get_current_state(self) -> "PipelineState":
 

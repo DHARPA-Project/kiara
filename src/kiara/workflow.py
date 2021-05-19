@@ -77,6 +77,10 @@ class KiaraWorkflow(object):
     def inputs(self) -> ValueSet:
         return self.pipeline.inputs
 
+    @property
+    def outputs(self) -> ValueSet:
+        return self.pipeline.outputs
+
     def get_current_state(self) -> PipelineState:
         return self.pipeline.get_current_state()
 
@@ -87,10 +91,6 @@ class KiaraWorkflow(object):
     # @inputs.setter
     # def inputs(self, inputs: typing.Mapping[str, typing.Any]):
     #     self.pipeline.set_pipeline_inputs(**inputs)
-
-    @property
-    def outputs(self) -> ValueSet:
-        return self.pipeline.outputs
 
     @property
     def input_names(self) -> typing.List[str]:

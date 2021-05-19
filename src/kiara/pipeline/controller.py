@@ -1,24 +1,21 @@
 # -*- coding: utf-8 -*-
-import abc
 import logging
 import typing
 
 from kiara.data import Value, ValueSet
+from kiara.pipeline.listeners import PipelineListener
 from kiara.pipeline.structure import PipelineStep
+from kiara.processing import ModuleProcessor
+from kiara.processing.synchronous import SynchronousProcessor
 
 if typing.TYPE_CHECKING:
-    from kiara.events import (
-        PipelineInputEvent,
-        PipelineOutputEvent,
-        StepInputEvent,
-        StepOutputEvent,
-    )
+    from kiara.events import PipelineOutputEvent, StepInputEvent
     from kiara.pipeline.pipeline import Pipeline, PipelineState, StepStatus
 
 log = logging.getLogger("kiara")
 
 
-class PipelineController(abc.ABC):
+class PipelineController(PipelineListener):
     """An object that controls how a [Pipeline][kiara.pipeline.pipeline.Pipeline] should react to events related to it's inputs/outputs.
 
     This is the base for the central controller class that needs to be implemented by a *Kiara* frontend. The default implementation
@@ -41,8 +38,15 @@ class PipelineController(abc.ABC):
 
     """
 
-    def __init__(self, pipeline: typing.Optional["Pipeline"] = None):
+    def __init__(
+        self,
+        pipeline: typing.Optional["Pipeline"] = None,
+        processor: typing.Optional[ModuleProcessor] = None,
+    ):
         self._pipeline: typing.Optional[Pipeline] = None
+        if processor is None:
+            processor = SynchronousProcessor()
+        self._processor: ModuleProcessor = processor
         self._running_steps: typing.Mapping[str, str] = {}
         """A map of all currently running steps, and their job id."""
 
@@ -190,12 +194,15 @@ class PipelineController(abc.ABC):
         # get the module object that holds the code that will do the processing
         step = self.get_step(step_id)
 
-        # finally, kick off processing
-        # print('========')
-        # print(step_inputs)
-        # print('-')
-        # print(step_outputs)
-        step.module.process_step(inputs=step_inputs, outputs=step_outputs)
+        job_ref = self._processor.start(
+            pipeline_id=self.pipeline.id,
+            pipeline_name=self.pipeline.structure.pipeline_id,
+            step_id=step_id,
+            module=step.module,
+            inputs=step_inputs,
+            outputs=step_outputs,
+        )
+        return job_ref
 
     def step_is_ready(self, step_id: str) -> bool:
         """Return whether the step with the provided id is ready to be processed.
@@ -267,38 +274,6 @@ class PipelineController(abc.ABC):
         log.debug(f"Inputs for pipeline '{self.pipeline.id}' set: {inputs}")
         return inputs
 
-    def step_inputs_changed(self, event: "StepInputEvent"):
-        """Method to override if the implementing controller needs to react to events where one or several step inputs have changed.
-
-        Arguments:
-            event: the step input event
-        """
-
-    def step_outputs_changed(self, event: "StepOutputEvent"):
-        """Method to override if the implementing controller needs to react to events where one or several step outputs have changed.
-
-        Arguments:
-            event: the step output event
-        """
-
-    def pipeline_inputs_changed(self, event: "PipelineInputEvent"):
-        """Method to override if the implementing controller needs to react to events where one or several pipeline inputs have changed.
-
-        !!! note
-        Whenever pipeline inputs change, the connected step inputs also change and an (extra) event will be fired for those. Which means
-        you can choose to only implement the ``step_inputs_changed`` method if you want to. This behaviour might change in the future.
-
-        Arguments:
-            event: the pipeline input event
-        """
-
-    def pipeline_outputs_changed(self, event: "PipelineOutputEvent"):
-        """Method to override if the implementing controller needs to react to events where one or several pipeline outputs have changed.
-
-        Arguments:
-            event: the pipeline output event
-        """
-
 
 class BatchController(PipelineController):
     """A [PipelineController][kiara.pipeline.controller.PipelineController] that executes all pipeline steps non-interactively.
@@ -312,12 +287,15 @@ class BatchController(PipelineController):
     """
 
     def __init__(
-        self, pipeline: typing.Optional["Pipeline"] = None, auto_process: bool = True
+        self,
+        pipeline: typing.Optional["Pipeline"] = None,
+        auto_process: bool = True,
+        processor: typing.Optional[ModuleProcessor] = None,
     ):
 
         self._auto_process: bool = auto_process
         self._is_running: bool = False
-        super().__init__(pipeline=pipeline)
+        super().__init__(pipeline=pipeline, processor=processor)
 
     @property
     def auto_process(self) -> bool:

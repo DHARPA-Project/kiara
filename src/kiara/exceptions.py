@@ -3,7 +3,7 @@ import typing
 
 if typing.TYPE_CHECKING:
     from kiara import KiaraModule
-    from kiara.module import StepInputs
+    from kiara.data.values import ValueSet
 
 
 class KiaraException(Exception):
@@ -37,10 +37,10 @@ class KiaraProcessingException(Exception):
         self,
         msg: typing.Union[str, Exception],
         module: typing.Optional["KiaraModule"] = None,
-        inputs: typing.Optional["StepInputs"] = None,
+        inputs: typing.Optional["ValueSet"] = None,
     ):
         self._module: typing.Optional["KiaraModule"] = module
-        self._inputs: typing.Optional["StepInputs"] = inputs
+        self._inputs: typing.Optional["ValueSet"] = inputs
         if isinstance(msg, Exception):
             self._parent: typing.Optional[Exception] = msg
             _msg = str(msg)
@@ -54,7 +54,7 @@ class KiaraProcessingException(Exception):
         return self._module  # type: ignore
 
     @property
-    def inputs(self) -> "KiaraModule":
+    def inputs(self) -> "ValueSet":
         return self._inputs  # type: ignore
 
     @property

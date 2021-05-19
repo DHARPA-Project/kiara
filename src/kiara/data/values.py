@@ -347,10 +347,10 @@ class NonRegistryValue(Value):
 
         if not isinstance(other, NonRegistryValue):
             return False
-        return self._id == other._id
+        return self.id == other.id
 
     def __hash__(self):
-        return hash(self._id)
+        return hash(self.id)
 
 
 class KiaraValue(Value, abc.ABC):

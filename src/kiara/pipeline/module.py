@@ -7,8 +7,8 @@ from rich.syntax import Syntax
 from rich.table import Table
 
 from kiara.config import PipelineModuleConfig
-from kiara.data.values import ValueField, ValueSchema
-from kiara.module import KiaraModule, ModuleInfo, StepInputs, StepOutputs
+from kiara.data.values import ValueField, ValueSchema, ValueSet
+from kiara.module import KiaraModule, ModuleInfo
 from kiara.pipeline.controller import BatchController, PipelineController
 from kiara.pipeline.structure import PipelineStructure
 from kiara.utils import StringYAML, create_table_from_config_class, print_ascii_graph
@@ -89,15 +89,18 @@ class PipelineModule(KiaraModule[PipelineModuleConfig]):
     def create_output_schema(self) -> typing.Mapping[str, ValueSchema]:
         return self.structure.pipeline_output_schema
 
-    def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
+    def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
 
         from kiara import Pipeline
 
-        pipeline = Pipeline(structure=self.structure)
-        inps = inputs._inputs
-        pipeline.inputs.set_values(**inps.dict())
+        raise NotImplementedError()
 
-        outputs.set_values(**pipeline.outputs.dict())
+        # TODO: check for Value objects
+        pipeline = Pipeline(structure=self.structure)
+        inps = inputs.get_all_value_data()
+        pipeline.inputs.set_values(**inps)
+
+        outputs.set_values(**pipeline.outputs.get_all_value_data())
 
 
 class PipelineModuleInfo(ModuleInfo):

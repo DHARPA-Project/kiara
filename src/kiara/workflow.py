@@ -94,11 +94,11 @@ class KiaraWorkflow(object):
 
     @property
     def input_names(self) -> typing.List[str]:
-        return list(self.inputs.keys())
+        return list(self.inputs.get_all_field_names())
 
     @property
     def output_names(self) -> typing.List[str]:
-        return list(self.outputs.keys())
+        return list(self.outputs.get_all_field_names())
 
     @property
     def workflow_id(self) -> str:

@@ -285,7 +285,7 @@ class Kiara(object):
         result = module.run(**inputs)
         output_name = config["transformation_config"]["output_name"]
 
-        result_value = result[output_name]
+        result_value = result.get_value_obj(output_name)
         return result_value
 
     def add_module_manager(self, module_manager: ModuleManager):

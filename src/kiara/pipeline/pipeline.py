@@ -19,6 +19,7 @@ from kiara.data.values import (
     StepOutputField,
     Value,
     ValueSet,
+    ValueSetImpl,
 )
 from kiara.events import (
     PipelineInputEvent,
@@ -287,7 +288,7 @@ class Pipeline(object):
             raise Exception(
                 f"Can't init pipeline '{self.structure.pipeline_id}': no pipeline inputs"
             )
-        self._pipeline_inputs = ValueSet(
+        self._pipeline_inputs = ValueSetImpl(
             items=pipeline_inputs,
             title=f"Inputs for pipeline '{self.structure.pipeline_id}'",
         )
@@ -296,19 +297,19 @@ class Pipeline(object):
                 f"Can't init pipeline '{self.structure.pipeline_id}': no pipeline outputs"
             )
 
-        self._pipeline_outputs = ValueSet(
+        self._pipeline_outputs = ValueSetImpl(
             items=pipeline_outputs,
             title=f"Outputs for pipeline '{self.structure.pipeline_id}'",
         )
         self._step_inputs = {}
         for step_id, inputs in all_step_inputs.items():
-            self._step_inputs[step_id] = ValueSet(
+            self._step_inputs[step_id] = ValueSetImpl(
                 items=inputs,
                 title=f"Inputs for step '{step_id}' of pipeline '{self.structure.pipeline_id}",
             )
         self._step_outputs = {}
         for step_id, outputs in all_step_outputs.items():
-            self._step_outputs[step_id] = ValueSet(
+            self._step_outputs[step_id] = ValueSetImpl(
                 items=outputs,
                 title=f"Outputs for step '{step_id}' of pipeline '{self.structure.pipeline_id}'",
             )

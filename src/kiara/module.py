@@ -20,7 +20,13 @@ from rich.syntax import Syntax
 from rich.table import Table
 
 from kiara.config import KIARA_CONFIG, KiaraModuleConfig
-from kiara.data.values import NonRegistryValue, Value, ValueSchema, ValueSet
+from kiara.data.values import (
+    NonRegistryValue,
+    Value,
+    ValueSchema,
+    ValueSet,
+    ValueSetImpl,
+)
 from kiara.exceptions import KiaraModuleConfigException
 from kiara.utils import (
     StringYAML,
@@ -36,7 +42,7 @@ if typing.TYPE_CHECKING:
 yaml = StringYAML()
 
 
-class StepInputs(object):
+class StepInputs(ValueSet):
     """Wrapper class to hold a set of inputs for a pipeline processing step.
 
     This is necessary because we can't assume the processing will be done on the same machine (or in the same process)
@@ -59,27 +65,30 @@ class StepInputs(object):
     #     else:
     #         return super().__getattribute__(key)
 
-    @property
-    def field_names(self) -> typing.Iterable[str]:
+    def get_all_field_names(self) -> typing.Iterable[str]:
         return self.__dict__["_inputs"].keys()
 
-    def get_value_data(self, input_name) -> typing.Any:
+    def get_value_data_for_fields(self, *field_names) -> typing.Dict[str, typing.Any]:
 
-        value = self.__dict__["_inputs"][input_name].get_value_data()
-        if hasattr(value, "as_py"):
-            return value.as_py()
-        else:
-            return value
+        result = {}
+
+        for input_name in field_names:
+            value = self.__dict__["_inputs"][input_name].get_value_data()
+            if hasattr(value, "as_py"):
+                result[input_name] = value.as_py()
+            else:
+                result[input_name] = value
+        return result
 
     def get_value_obj(self, input_name) -> Value:
 
         return self.__dict__["_inputs"][input_name]
 
-    def get_all_value_data(self) -> typing.Dict[str, typing.Any]:
-        return self._inputs.get_all_value_data()
+    def set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:
+        raise Exception("Inputs are read-only.")
 
 
-class StepOutputs(object):
+class StepOutputs(ValueSet):
     """Wrapper class to hold a set of outputs for a pipeline processing step.
 
     This is necessary because we can't assume the processing will be done on the same machine (or in the same process)
@@ -112,15 +121,10 @@ class StepOutputs(object):
     #
     #     self.set_values(**{key: value})
 
-    @property
-    def field_names(self) -> typing.Iterable[str]:
+    def get_all_field_names(self) -> typing.Iterable[str]:
         return self.__dict__["_outputs"].keys()
 
-    def set_value(self, key: str, value: typing.Any):
-
-        self.set_values(**{key: value})
-
-    def set_values(self, **values: typing.Any):
+    def set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:
 
         wrong = []
         for key in values.keys():
@@ -133,11 +137,29 @@ class StepOutputs(object):
                 f"Can't set output value(s), invalid key name(s): {', '.join(wrong)}. Available: {av}"
             )
 
-        self._outputs_staging.update(values)  # type: ignore
+        result = {}
+        for output_name, value in values.items():
+            value_obj = self.__dict__["_outputs"][output_name]
+            if (
+                output_name not in self._outputs_staging.keys()  # type: ignore
+                or value != self._outputs_staging[output_name]  # type: ignore
+            ):
+                result[value_obj] = True
+                self._outputs_staging[output_name] = value  # type: ignore
+            else:
+                result[value_obj] = False
 
-    def get_value_data(self, output_name: str) -> typing.Any:
+        return result
+
+    def get_value_data_for_fields(
+        self, *field_names: str
+    ) -> typing.Dict[str, typing.Any]:
         self._sync()
-        return self.__dict__["_outputs"][output_name].get_value_data()
+        result = {}
+        for output_name in field_names:
+            data = self.__dict__["_outputs"][field_names].get_value_data()
+            result[output_name] = data
+        return result
 
     def get_value_obj(self, output_name):
         self._sync()
@@ -146,14 +168,6 @@ class StepOutputs(object):
     def _sync(self):
         self._outputs.set_values(**self._outputs_staging)  # type: ignore
         self._outputs_staging.clear()  # type: ignore
-
-    def get_all_value_data(self) -> typing.Dict[str, typing.Any]:
-        self._sync()
-        return self._outputs.get_all_value_data()  # type: ignore
-
-    def get_all_value_objects(self) -> typing.Mapping[str, Value]:
-        self._sync()
-        return self._outputs  # type: ignore
 
 
 class KiaraModule(typing.Generic[KIARA_CONFIG]):
@@ -404,7 +418,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
         """A list of output field names for this module."""
         return self.output_schemas.keys()
 
-    def process_step(self, inputs: StepInputs, outputs: StepOutputs) -> None:
+    def process_step(self, inputs: ValueSet, outputs: ValueSet) -> None:
         """Kick off processing for a specific set of input/outputs.
 
         This method calls the implemented [process][kiara.module.KiaraModule.process] method of the inheriting class,
@@ -428,7 +442,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
             raise e
 
     @abstractmethod
-    def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
+    def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
         """Abstract method to implement by child classes, should be a pure, idempotent function that uses the values from ``inputs``, and stores results in the provided ``outputs`` object.
 
         Arguments:
@@ -457,12 +471,12 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
                 )
             resolved_inputs[k] = v
 
-        input_value_set = ValueSet.from_schemas(
+        input_value_set = ValueSetImpl.from_schemas(
             kiara=self._kiara,
             schemas=self.input_schemas,
             initial_values=resolved_inputs,
         )
-        output_value_set = ValueSet.from_schemas(
+        output_value_set = ValueSetImpl.from_schemas(
             kiara=self._kiara, schemas=self.output_schemas
         )
 
@@ -472,7 +486,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
         self.process(inputs=m_inputs, outputs=m_outputs)
 
         result = m_outputs.get_all_value_objects()
-        return ValueSet(items=result)
+        return ValueSetImpl(items=result)
 
     @property
     def module_instance_hash(self) -> int:

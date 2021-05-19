@@ -111,14 +111,14 @@ class PipelineController(PipelineListener):
     def get_step_input(self, step_id: str, input_name: str) -> Value:
         """Get the (current) input value for a specified step and input field name."""
 
-        item = self.get_step_inputs(step_id).get(input_name)
+        item = self.get_step_inputs(step_id).get_value_obj(input_name)
         assert item is not None
         return item
 
     def get_step_output(self, step_id: str, output_name: str) -> Value:
         """Get the (current) output value for a specified step and output field name."""
 
-        item = self.get_step_outputs(step_id).get(output_name)
+        item = self.get_step_outputs(step_id).get_value_obj(output_name)
         assert item is not None
         return item
 
@@ -156,7 +156,10 @@ class PipelineController(PipelineListener):
         """Check whether the step with the provided id is ready to be processed."""
 
         result = True
-        for input_name, value in self.get_step_inputs(step_id=step_id).items():
+        step_inputs = self.get_step_inputs(step_id=step_id)
+        for input_name in step_inputs.get_all_field_names():
+
+            value = step_inputs.get_value_obj(input_name)
 
             if not value.item_is_valid():
                 result = False

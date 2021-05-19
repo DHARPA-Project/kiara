@@ -1,24 +1,21 @@
 # -*- coding: utf-8 -*-
-import abc
 import logging
 import typing
 
 from kiara.data import Value, ValueSet
+from kiara.pipeline.listeners import PipelineListener
 from kiara.pipeline.structure import PipelineStep
+from kiara.processing import ModuleProcessor
+from kiara.processing.synchronous import SynchronousProcessor
 
 if typing.TYPE_CHECKING:
-    from kiara.events import (
-        PipelineInputEvent,
-        PipelineOutputEvent,
-        StepInputEvent,
-        StepOutputEvent,
-    )
+    from kiara.events import PipelineOutputEvent, StepInputEvent
     from kiara.pipeline.pipeline import Pipeline, PipelineState, StepStatus
 
 log = logging.getLogger("kiara")
 
 
-class PipelineController(abc.ABC):
+class PipelineController(PipelineListener):
     """An object that controls how a [Pipeline][kiara.pipeline.pipeline.Pipeline] should react to events related to it's inputs/outputs.
 
     This is the base for the central controller class that needs to be implemented by a *Kiara* frontend. The default implementation
@@ -41,8 +38,15 @@ class PipelineController(abc.ABC):
 
     """
 
-    def __init__(self, pipeline: typing.Optional["Pipeline"] = None):
+    def __init__(
+        self,
+        pipeline: typing.Optional["Pipeline"] = None,
+        processor: typing.Optional[ModuleProcessor] = None,
+    ):
         self._pipeline: typing.Optional[Pipeline] = None
+        if processor is None:
+            processor = SynchronousProcessor()
+        self._processor: ModuleProcessor = processor
         self._running_steps: typing.Mapping[str, str] = {}
         """A map of all currently running steps, and their job id."""
 
@@ -107,14 +111,14 @@ class PipelineController(abc.ABC):
     def get_step_input(self, step_id: str, input_name: str) -> Value:
         """Get the (current) input value for a specified step and input field name."""
 
-        item = self.get_step_inputs(step_id).get(input_name)
+        item = self.get_step_inputs(step_id).get_value_obj(input_name)
         assert item is not None
         return item
 
     def get_step_output(self, step_id: str, output_name: str) -> Value:
         """Get the (current) output value for a specified step and output field name."""
 
-        item = self.get_step_outputs(step_id).get(output_name)
+        item = self.get_step_outputs(step_id).get_value_obj(output_name)
         assert item is not None
         return item
 
@@ -152,7 +156,10 @@ class PipelineController(abc.ABC):
         """Check whether the step with the provided id is ready to be processed."""
 
         result = True
-        for input_name, value in self.get_step_inputs(step_id=step_id).items():
+        step_inputs = self.get_step_inputs(step_id=step_id)
+        for input_name in step_inputs.get_all_field_names():
+
+            value = step_inputs.get_value_obj(input_name)
 
             if not value.item_is_valid():
                 result = False
@@ -170,7 +177,7 @@ class PipelineController(abc.ABC):
 
         return result
 
-    def process_step(self, step_id: str):
+    def process_step(self, step_id: str) -> str:
         """Kick off processing for the step with the provided id.
 
         Arguments:
@@ -190,12 +197,15 @@ class PipelineController(abc.ABC):
         # get the module object that holds the code that will do the processing
         step = self.get_step(step_id)
 
-        # finally, kick off processing
-        # print('========')
-        # print(step_inputs)
-        # print('-')
-        # print(step_outputs)
-        step.module.process_step(inputs=step_inputs, outputs=step_outputs)
+        job_id = self._processor.start(
+            pipeline_id=self.pipeline.id,
+            pipeline_name=self.pipeline.structure.pipeline_id,
+            step_id=step_id,
+            module=step.module,
+            inputs=step_inputs,
+            outputs=step_outputs,
+        )
+        return job_id
 
     def step_is_ready(self, step_id: str) -> bool:
         """Return whether the step with the provided id is ready to be processed.
@@ -267,38 +277,6 @@ class PipelineController(abc.ABC):
         log.debug(f"Inputs for pipeline '{self.pipeline.id}' set: {inputs}")
         return inputs
 
-    def step_inputs_changed(self, event: "StepInputEvent"):
-        """Method to override if the implementing controller needs to react to events where one or several step inputs have changed.
-
-        Arguments:
-            event: the step input event
-        """
-
-    def step_outputs_changed(self, event: "StepOutputEvent"):
-        """Method to override if the implementing controller needs to react to events where one or several step outputs have changed.
-
-        Arguments:
-            event: the step output event
-        """
-
-    def pipeline_inputs_changed(self, event: "PipelineInputEvent"):
-        """Method to override if the implementing controller needs to react to events where one or several pipeline inputs have changed.
-
-        !!! note
-        Whenever pipeline inputs change, the connected step inputs also change and an (extra) event will be fired for those. Which means
-        you can choose to only implement the ``step_inputs_changed`` method if you want to. This behaviour might change in the future.
-
-        Arguments:
-            event: the pipeline input event
-        """
-
-    def pipeline_outputs_changed(self, event: "PipelineOutputEvent"):
-        """Method to override if the implementing controller needs to react to events where one or several pipeline outputs have changed.
-
-        Arguments:
-            event: the pipeline output event
-        """
-
 
 class BatchController(PipelineController):
     """A [PipelineController][kiara.pipeline.controller.PipelineController] that executes all pipeline steps non-interactively.
@@ -312,12 +290,15 @@ class BatchController(PipelineController):
     """
 
     def __init__(
-        self, pipeline: typing.Optional["Pipeline"] = None, auto_process: bool = True
+        self,
+        pipeline: typing.Optional["Pipeline"] = None,
+        auto_process: bool = True,
+        processor: typing.Optional[ModuleProcessor] = None,
     ):
 
         self._auto_process: bool = auto_process
         self._is_running: bool = False
-        super().__init__(pipeline=pipeline)
+        super().__init__(pipeline=pipeline, processor=processor)
 
     @property
     def auto_process(self) -> bool:
@@ -336,7 +317,7 @@ class BatchController(PipelineController):
         self._is_running = True
         try:
             for stage in self.processing_stages:
-
+                job_ids = []
                 for step_id in stage:
                     if not self.can_be_processed(step_id):
                         if self.can_be_skipped(step_id):
@@ -346,12 +327,15 @@ class BatchController(PipelineController):
                                 f"Required pipeline step '{step_id}' can't be processed, inputs not ready yet."
                             )
                     try:
-                        self.process_step(step_id)
+                        job_id = self.process_step(step_id)
+                        job_ids.append(job_id)
                     except Exception as e:
+                        # TODO: cancel running jobs?
                         log.error(
                             f"Processing of step '{step_id}' from pipeline '{self.pipeline.structure.pipeline_id}' failed: {e}"
                         )
                         return False
+                self._processor.wait_for(*job_ids)
         finally:
             self._is_running = False
 

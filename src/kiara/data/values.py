@@ -189,6 +189,7 @@ class Value(BaseModel):
     _kiara: "Kiara" = PrivateAttr()
     _type_obj: ValueType = PrivateAttr(default=None)
 
+    id: str = Field(description="A unique id for this value.")
     value_schema: ValueSchema = Field(description="The schema of this value.")
     is_constant: bool = Field(
         description="Whether this value is a constant.", default=False
@@ -256,8 +257,7 @@ class Value(BaseModel):
         table.add_column("property", style="i")
         table.add_column("value")
 
-        if hasattr(self, "id"):
-            table.add_row("id", self.id)  # type: ignore
+        table.add_row("id", self.id)  # type: ignore
         table.add_row("type", self.value_schema.type)
         table.add_row("desc", self.value_schema.doc)
         table.add_row("is set", "yes" if self.item_is_valid() else "no")
@@ -311,11 +311,10 @@ class Value(BaseModel):
 class NonRegistryValue(Value):
 
     _value: typing.Any = PrivateAttr()
-    _id: str = PrivateAttr()
 
     def __init__(self, _init_value: typing.Any, **kwargs):  # type: ignore
 
-        self._id: str = str(uuid.uuid4())
+        _id: str = str(uuid.uuid4())
         self._value: typing.Any = _init_value
 
         if _init_value is None:
@@ -328,7 +327,7 @@ class NonRegistryValue(Value):
         kwargs["is_set"] = is_set
         kwargs["is_none"] = is_none
 
-        super().__init__(**kwargs)
+        super().__init__(id=_id, **kwargs)
 
     def get_value_data(self) -> typing.Any:
 
@@ -348,10 +347,10 @@ class NonRegistryValue(Value):
 
         if not isinstance(other, NonRegistryValue):
             return False
-        return self._id == other._id
+        return self.id == other.id
 
     def __hash__(self):
-        return hash(self._id)
+        return hash(self.id)
 
 
 class KiaraValue(Value, abc.ABC):
@@ -363,7 +362,6 @@ class KiaraValue(Value, abc.ABC):
     and it might not be necessary to hold them in memory in a lot of cases.
     """
 
-    id: str = Field(description="A unique id for this value.")
     value_fields: typing.Tuple["ValueField", ...] = Field(
         description="Value fields within a pipeline connected to this value.",
         default_factory=set,
@@ -527,7 +525,125 @@ class LinkedValue(KiaraValue):
         raise Exception("Linked values can't be set.")
 
 
-class ValueSet(typing.MutableMapping[str, Value]):
+class ValueSet(abc.ABC):
+    @abc.abstractmethod
+    def get_all_field_names(self) -> typing.Iterable[str]:
+        pass
+
+    @abc.abstractmethod
+    def get_value_obj(self, field_name: str) -> Value:
+        pass
+
+    def get_all_value_objects(self) -> typing.Mapping[str, typing.Any]:
+        return {fn: self.get_value_obj(fn) for fn in self.get_all_field_names()}
+
+    @abc.abstractmethod
+    def get_value_data_for_fields(
+        self, *field_names: str
+    ) -> typing.Dict[str, typing.Any]:
+        pass
+
+    def get_value_data(self, field_name: str):
+        return self.get_value_data_for_fields(field_name)[field_name]
+
+    def get_all_value_data(self) -> typing.Dict[str, typing.Any]:
+        return self.get_value_data_for_fields(*self.get_all_field_names())
+
+    def get_metadata(self) -> typing.Mapping[str, typing.Any]:
+        return {}
+
+    def is_read_only(self) -> bool:
+        return True
+
+    def set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:
+
+        if self.is_read_only():
+            raise Exception("Can't set values: this value set is read-only.")
+
+        return self._set_values(**values)
+
+    @abc.abstractmethod
+    def _set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:
+        """Set one or several values.
+
+        Arguments:
+            **values: the values to set (key: field_name, value: the data)
+
+        Returns:
+            a dictionary with each value item that was attempted to be set, and a boolean indicating whether it was updated (``True``), or the value remains unchanged (``False``)
+        """
+
+    def set_value(self, key: str, value: typing.Any) -> bool:
+
+        r = self.set_values(**{key: value})
+        assert len(r) == 1
+        return next(iter(r.values()))
+
+    def items_are_valid(self) -> bool:
+
+        for field_name in self.get_all_field_names():
+            item = self.get_value_obj(field_name)
+            if not item.item_is_valid():
+                return False
+        return True
+
+    def to_details(self) -> "PipelineValues":
+
+        result = {}
+        for name in self.get_all_field_names():
+            item = self.get_value_obj(name)
+            result[name] = PipelineValue.from_value_obj(item)
+
+        return PipelineValues(values=result)
+
+    def _create_rich_table(self, show_headers: bool = True) -> Table:
+
+        table = Table(box=box.SIMPLE, show_header=show_headers)
+        table.add_column("Field name", style="i")
+        table.add_column("Type")
+        table.add_column("Description")
+        table.add_column("Required")
+        table.add_column("Is set")
+
+        for k in self.get_all_field_names():
+            v = self.get_value_obj(k)
+            t = v.value_schema.type
+            desc = v.value_schema.doc
+            if not v.value_schema.is_required():
+                req = "no"
+            else:
+                if (
+                    v.value_schema.default
+                    and v.value_schema.default != SpecialValue.NO_VALUE
+                    and v.value_schema.default != SpecialValue.NOT_SET
+                ):
+                    req = "no"
+                else:
+                    req = "[red]yes[/red]"
+            is_set = "yes" if v.item_is_valid() else "no"
+            table.add_row(k, t, desc, req, is_set)
+
+        return table
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+
+        title = self.get_metadata().get("title", None)
+        if title:
+            postfix = f" [b]{title}[/b]"
+        else:
+            postfix = ""
+
+        yield Panel(
+            self._create_rich_table(show_headers=True),
+            box=box.ROUNDED,
+            title_align="left",
+            title=f"Value-Set:{postfix}",
+        )
+
+
+class ValueSetImpl(ValueSet, typing.MutableMapping[str, Value]):
     """A dict-like object that contains a set of value fields that belong together in some way (for example outputs of a step or pipeline)."""
 
     @classmethod
@@ -535,6 +651,7 @@ class ValueSet(typing.MutableMapping[str, Value]):
         cls,
         kiara: "Kiara",
         schemas: typing.Mapping[str, ValueSchema],
+        read_only: bool,
         initial_values: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         title: typing.Optional[str] = None,
     ):
@@ -553,10 +670,13 @@ class ValueSet(typing.MutableMapping[str, Value]):
 
             values[field_name] = value
 
-        return cls(items=values, title=title)
+        return cls(items=values, title=title, read_only=read_only)
 
     def __init__(
-        self, items: typing.Mapping[str, Value], title: typing.Optional[str] = None
+        self,
+        items: typing.Mapping[str, Value],
+        read_only: bool,
+        title: typing.Optional[str] = None,
     ):
 
         if not items:
@@ -579,6 +699,7 @@ class ValueSet(typing.MutableMapping[str, Value]):
         # TODO: validate schema types
         schema = ValueSchema(type="any", default=None, doc="-- n/a --")
         self._schema = schema
+        self._read_only: bool = read_only
         if title is None:
             title = "-- n/a --"
         self._title = title
@@ -633,20 +754,27 @@ class ValueSet(typing.MutableMapping[str, Value]):
     def __len__(self):
         return len(self._value_items)
 
-    def items_are_valid(self) -> bool:
+    def get_all_field_names(self) -> typing.Iterable[str]:
+        return self._value_items.keys()
 
-        for item in self._value_items.values():
-            if not item.item_is_valid():
-                return False
-        return True
+    def get_value_obj(self, field_name: str) -> Value:
 
-    def get_all_value_data(self) -> typing.Dict[str, typing.Any]:
+        if field_name not in list(self.get_all_field_names()):
+            raise KeyError(
+                f"Field '{field_name}' not available in value set. Available fields: {', '.join(self.get_all_field_names())}"
+            )
+        return self._value_items[field_name]
+
+    def get_value_data_for_fields(
+        self, *field_names: str
+    ) -> typing.Dict[str, typing.Any]:
         result = {}
-        for k, v in self._value_items.items():
+        for k in field_names:
+            v = self.get_value_obj(k)
             result[k] = v.get_value_data()
         return result
 
-    def set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:
+    def _set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:
 
         invalid: typing.List[str] = []
         registries: typing.Dict[DataRegistry, typing.Dict[Value, typing.Any]] = {}
@@ -680,13 +808,11 @@ class ValueSet(typing.MutableMapping[str, Value]):
 
         return result
 
-    def to_details(self) -> "PipelineValues":
+    def is_read_only(self):
+        return self._read_only
 
-        result = {}
-        for name, item in self._value_items.items():
-            result[name] = PipelineValue.from_value_obj(item)
-
-        return PipelineValues(values=result)
+    def get_metadata(self):
+        return {"title": self._title}
 
     def to_dict(self) -> typing.Dict[str, typing.Any]:
 
@@ -699,45 +825,6 @@ class ValueSet(typing.MutableMapping[str, Value]):
     def __repr__(self):
 
         return f"ValueItems(values={self._value_items} valid={self.items_are_valid()})"
-
-    def _create_rich_table(self, show_headers: bool = True) -> Table:
-
-        table = Table(box=box.SIMPLE, show_header=show_headers)
-        table.add_column("Field name", style="i")
-        table.add_column("Type")
-        table.add_column("Description")
-        table.add_column("Required")
-        table.add_column("Is set")
-
-        for k, v in self.items():
-            t = v.value_schema.type
-            desc = v.value_schema.doc
-            if not v.value_schema.is_required():
-                req = "no"
-            else:
-                if (
-                    v.value_schema.default
-                    and v.value_schema.default != SpecialValue.NO_VALUE
-                    and v.value_schema.default != SpecialValue.NOT_SET
-                ):
-                    req = "no"
-                else:
-                    req = "[red]yes[/red]"
-            is_set = "yes" if v.item_is_valid() else "no"
-            table.add_row(k, t, desc, req, is_set)
-
-        return table
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-
-        yield Panel(
-            self._create_rich_table(show_headers=True),
-            box=box.ROUNDED,
-            title_align="left",
-            title=f"Value-Set: [b]{self._title}[/b]",
-        )
 
 
 ValueSchema.update_forward_refs()
@@ -759,7 +846,8 @@ class ValuesInfo(object):
         table.add_column("Field name", style="i")
         table.add_column("Value data")
 
-        for field_name, value in self._value_set.items():
+        for field_name in self._value_set.get_all_field_names():
+            value = self._value_set.get_value_obj(field_name)
 
             if not value.is_set:
                 if value.item_is_valid():
@@ -791,7 +879,8 @@ class ValuesInfo(object):
         table.add_column("Field name", style="i")
         table.add_column("Value info")
 
-        for field_name, details in self._value_set.items():
+        for field_name in self._value_set.get_all_field_names():
+            details = self._value_set.get_value_obj(field_name)
             if not details.is_set:
                 if details.item_is_valid():
                     value_info: typing.Union[str, Table] = "-- not set --"
@@ -813,7 +902,7 @@ class PipelineValue(BaseModel):
     """Convenience wrapper to make the [PipelineState][kiara.pipeline.pipeline.PipelineState] json/dict export prettier."""
 
     @classmethod
-    def from_value_obj(cls, value: KiaraValue):
+    def from_value_obj(cls, value: Value):
 
         return PipelineValue(
             id=value.id,
@@ -871,7 +960,8 @@ class PipelineValues(BaseModel):
     def from_value_set(cls, value_set: ValueSet):
 
         values: typing.Dict[str, PipelineValue] = {}
-        for k, v in value_set.items():
+        for k in value_set.get_all_field_names():
+            v = value_set.get_value_obj(k)
             if not isinstance(v, KiaraValue):
                 raise TypeError(f"Invalid type of value: {type(v)}")
             values[k] = PipelineValue.from_value_obj(v)

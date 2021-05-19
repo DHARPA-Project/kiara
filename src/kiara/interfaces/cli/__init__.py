@@ -12,7 +12,9 @@ from kiara import Kiara
 from kiara.data.values import ValuesInfo
 from kiara.interfaces import get_console
 from kiara.module import KiaraModule, ModuleInfo
+from kiara.pipeline.controller import BatchController
 from kiara.pipeline.module import PipelineModuleInfo
+from kiara.processing.parallel import ThreadPoolProcessor
 from kiara.utils import create_table_from_field_schemas, dict_from_cli_args
 
 # from importlib.metadata import entry_points
@@ -338,7 +340,14 @@ async def run(ctx, module, inputs, module_config, data_details, only_output):
         rich_print(inputs_table)
         sys.exit(0)
 
-    workflow = kiara_obj.create_workflow(module_name)
+    processor = ThreadPoolProcessor()
+    processor = None
+    controller = BatchController(processor=processor)
+
+    workflow = kiara_obj.create_workflow(module_name, controller=controller)
+
+    # l = DebugListener()
+    # workflow.pipeline.add_listener(l)
 
     list_keys = []
     for name, value in workflow.inputs.items():
@@ -398,11 +407,51 @@ async def run(ctx, module, inputs, module_config, data_details, only_output):
 # def dev(ctx):
 #     import os
 #
-#     from kiara import Kiara
+#     os.environ["DEBUG"] = "true"
+#
+#     # kiara = Kiara.instance()
+#
+#     ctx = Context.instance()
+#
+#     sub = ctx.socket(zmq.SUB)
+#     sub.setsockopt_string(zmq.SUBSCRIBE, "")
+#     sub.connect("tcp://127.0.0.1:5556")
+#     while True:
+#         message = sub.recv()
+#         print("Received request: %s" % message)
+#         # socket.send(b"World")
+#
+#     module_info = kiara.get_module_info("import_local_folder")
+#     # kiara.explain(module_info)
+#
+#     workflow = kiara.create_workflow("import_local_folder")
+#     workflow.inputs.path = (
+#         "/home/markus/projects/dharpa/notebooks/TopicModelling/data_tm_workflow"
+#     )
+#
+#     # kiara.explain(workflow.outputs)
+#     kiara.explain(workflow.outputs.file_bundle)
+#
+
+# @cli.command()
+# @click.pass_context
+# def dev2(ctx):
+#     import os
 #
 #     os.environ["DEBUG"] = "true"
 #
-#     kiara = Kiara.instance()
+#     # kiara = Kiara.instance()
+#
+#     ctx = Context.instance()
+#
+#     pub = ctx.socket(zmq.PUB)
+#     pub.connect("tcp://127.0.0.1:5555")
+#     while True:
+#         topic = random.randrange(9999, 10005)
+#         messagedata = random.randrange(1, 215) - 80
+#         print("%d %d" % (topic, messagedata))
+#         pub.send_string("%d %d" % (topic, messagedata))
+#         time.sleep(1)
 #
 #     module_info = kiara.get_module_info("import_local_folder")
 #     # kiara.explain(module_info)

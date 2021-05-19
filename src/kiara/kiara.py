@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
 """Main module."""
-
 import logging
 import os
 import typing
+import zmq
 from pathlib import Path
+from threading import Thread
+from zmq import Context
+from zmq.devices import ThreadDevice
 
 from kiara.config import KiaraWorkflowConfig, PipelineModuleConfig
 from kiara.data import Value
@@ -15,7 +18,8 @@ from kiara.interfaces import get_console
 from kiara.mgmt import ModuleManager, PipelineModuleManager, PythonModuleManager
 from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.pipeline import Pipeline
-from kiara.utils import get_auto_workflow_alias, get_data_from_file
+from kiara.processing import Job
+from kiara.utils import get_auto_workflow_alias, get_data_from_file, is_debug
 from kiara.workflow import KiaraWorkflow
 
 if typing.TYPE_CHECKING:
@@ -52,9 +56,13 @@ class Kiara(object):
         self, module_managers: typing.Optional[typing.Iterable[ModuleManager]] = None
     ):
 
+        self._zmq_context: Context = Context.instance()
         self._default_python_mgr = PythonModuleManager()
         self._default_pipeline_mgr = PipelineModuleManager(folders=None)
         self._custom_pipelines_mgr = PipelineModuleManager(folders=[])
+
+        self.start_zmq_device()
+        self.start_log_thread()
 
         _mms = [
             self._default_python_mgr,
@@ -80,6 +88,45 @@ class Kiara(object):
 
         for mm in _mms:
             self.add_module_manager(mm)
+
+    def start_zmq_device(self):
+
+        pd = ThreadDevice(zmq.QUEUE, zmq.SUB, zmq.PUB)
+        pd.bind_in("inproc://kiara_in")
+        pd.bind_out("inproc://kiara_out")
+        pd.setsockopt_in(zmq.SUBSCRIBE, b"")
+        pd.setsockopt_in(zmq.IDENTITY, b"SUB")
+        pd.setsockopt_out(zmq.IDENTITY, b"PUB")
+        pd.start()
+
+    def start_log_thread(self):
+        def log_messages():
+            socket = self._zmq_context.socket(zmq.SUB)
+            socket.setsockopt_string(zmq.SUBSCRIBE, "")
+            socket.connect("inproc://kiara_out")
+
+            debug = is_debug()
+
+            while True:
+                message = socket.recv()
+                topic, details = message.decode().split(" ", maxsplit=1)
+                try:
+                    job = Job.parse_raw(details)
+                    if debug:
+                        print(f"{topic}: {job.pipeline_name}.{job.step_id}")
+                    else:
+                        log.debug(f"{topic}: {job.pipeline_name}.{job.step_id}")
+
+                except Exception as e:
+                    if debug:
+                        import traceback
+
+                        traceback.print_exception()
+                    else:
+                        log.debug(e)
+
+        t = Thread(target=log_messages, daemon=True)
+        t.start()
 
     def explain(self, item: typing.Any):
 
@@ -238,7 +285,7 @@ class Kiara(object):
         result = module.run(**inputs)
         output_name = config["transformation_config"]["output_name"]
 
-        result_value = result[output_name]
+        result_value = result.get_value_obj(output_name)
         return result_value
 
     def add_module_manager(self, module_manager: ModuleManager):

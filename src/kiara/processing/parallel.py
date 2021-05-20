@@ -1,10 +1,23 @@
 # -*- coding: utf-8 -*-
 import typing
 from concurrent.futures import Future, ThreadPoolExecutor
+from pydantic import Field
 
 from kiara.data import ValueSet
 from kiara.module import KiaraModule, StepInputs, StepOutputs
-from kiara.processing import ModuleProcessor
+from kiara.processing import ModuleProcessor, ProcessorConfig
+
+try:
+    pass
+except Exception:
+    pass
+
+
+class ThreadPoolProcessorConfig(ProcessorConfig):
+
+    max_workers: typing.Optional[int] = Field(
+        description="The max mount of workers for the thread pool.", default=None
+    )
 
 
 class ThreadPoolProcessor(ModuleProcessor):

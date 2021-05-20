@@ -1,7 +1,19 @@
 # -*- coding: utf-8 -*-
+
+
 from kiara.data import ValueSet
 from kiara.module import KiaraModule
-from kiara.processing import ModuleProcessor
+from kiara.processing import ModuleProcessor, ProcessorConfig
+
+try:
+    pass
+except Exception:
+    pass
+
+
+class SynchronousProcessorConfig(ProcessorConfig):
+
+    pass
 
 
 class SynchronousProcessor(ModuleProcessor):

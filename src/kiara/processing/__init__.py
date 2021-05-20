@@ -5,15 +5,25 @@ import uuid
 import zmq
 from datetime import datetime
 from enum import Enum
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, BaseSettings, Field, validator
 from zmq import Context, Socket
 
 from kiara.data import PipelineValues, ValueSet
 from kiara.exceptions import KiaraProcessingException
 from kiara.utils import is_debug
 
+try:
+    from typing import Literal
+except Exception:
+    from typing_extensions import Literal  # type: ignore
+
 if typing.TYPE_CHECKING:
     from kiara import KiaraModule
+
+
+class ProcessorConfig(BaseSettings):
+
+    module_processor_type: Literal["synchronous", "multi-threaded"] = "synchronous"
 
 
 class JobStatus(Enum):
@@ -77,6 +87,41 @@ class Job(BaseModel):
 
 
 class ModuleProcessor(abc.ABC):
+    @classmethod
+    def from_config(
+        cls,
+        config: typing.Union[None, typing.Mapping[str, typing.Any], ProcessorConfig],
+    ) -> "ModuleProcessor":
+
+        from kiara.processing.parallel import ThreadPoolProcessorConfig
+        from kiara.processing.synchronous import SynchronousProcessorConfig
+
+        if not config:
+            config = SynchronousProcessorConfig(module_processor_type="synchronous")
+        if isinstance(config, typing.Mapping):
+            processor_type = config.get("module_processor_type", None)
+            if not processor_type:
+                raise ValueError("No 'module_processor_type' provided: {config}")
+            if processor_type == "synchronous":
+                config = SynchronousProcessorConfig(**config)
+            elif processor_type == "multi-threaded":
+                config = ThreadPoolProcessorConfig()
+            else:
+                raise ValueError(f"Invalid processor type: {processor_type}")
+
+        if isinstance(config, SynchronousProcessorConfig):
+            from kiara.processing.synchronous import SynchronousProcessor
+
+            proc: ModuleProcessor = SynchronousProcessor(
+                **config.dict(exclude={"module_processor_type"})
+            )
+        elif isinstance(config, ThreadPoolProcessorConfig):
+            from kiara.processing.parallel import ThreadPoolProcessor
+
+            proc = ThreadPoolProcessor(**config.dict(exclude={"module_processor_type"}))
+
+        return proc
+
     def __init__(self, zmq_context: typing.Optional[Context] = None):
 
         if zmq_context is None:

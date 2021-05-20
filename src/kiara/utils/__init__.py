@@ -40,21 +40,26 @@ def is_debug() -> bool:
         return False
 
 
-def get_data_from_file(path: Union[str, Path]) -> typing.Any:
+def get_data_from_file(
+    path: Union[str, Path], content_type: typing.Optional[str] = None
+) -> typing.Any:
 
     if isinstance(path, str):
         path = Path(os.path.expanduser(path))
 
     content = path.read_text()
 
-    if path.name.endswith(".json"):
-        content_type = "json\n"
-    elif path.name.endswith(".yaml") or path.name.endswith(".yml"):
-        content_type = "yaml\n"
+    if content_type:
+        assert content_type in ["json", "yaml"]
     else:
-        raise ValueError(
-            "Invalid data format, only 'json' or 'yaml' are supported currently."
-        )
+        if path.name.endswith(".json"):
+            content_type = "json"
+        elif path.name.endswith(".yaml") or path.name.endswith(".yml"):
+            content_type = "yaml"
+        else:
+            raise ValueError(
+                "Invalid data format, only 'json' or 'yaml' are supported currently."
+            )
 
     if content_type == "json":
         data = json.loads(content)

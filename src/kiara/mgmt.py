@@ -4,6 +4,7 @@ import logging
 import os
 import typing
 from pathlib import Path
+from pydantic import BaseModel, Field, validator
 
 from kiara.defaults import (
     DEFAULT_EXCLUDE_DIRS,
@@ -19,10 +20,14 @@ from kiara.utils import (
 )
 
 if typing.TYPE_CHECKING:
-    from kiara import Kiara
-    from kiara.module import KiaraModule
+    from kiara import Kiara, KiaraModule
     from kiara.module_config import KiaraModuleConfig
     from kiara.pipeline.module import PipelineModule
+
+try:
+    from typing import Literal
+except Exception:
+    from typing_extensions import Literal  # type: ignore
 
 log = logging.getLogger("kiara")
 
@@ -31,7 +36,95 @@ log = logging.getLogger("kiara")
 # ------------------------------------------------------------------------
 
 
+class PythonModuleManagerConfig(BaseModel):
+
+    module_manager_type: Literal["python"]
+    module_classes: typing.Dict[str, typing.Type["KiaraModule"]] = Field(
+        description="The module classes this manager should hold."
+    )
+
+    @validator("module_classes", pre=True)
+    def _ensure_module_class_types(cls, v):
+
+        _classes = []
+        if v:
+            for _cls in v:
+                if isinstance(_cls, str):
+                    try:
+                        module_name, cls_name = _cls.rsplit(".", maxsplit=1)
+                        module = __import__(module_name)
+                        _cls = getattr(module, cls_name)
+                    except Exception:
+                        raise ValueError(
+                            f"Can't parse value '{_cls}' into KiaraModule class."
+                        )
+
+                from kiara import KiaraModule  # noqa
+
+                if not issubclass(_cls, KiaraModule):
+                    raise ValueError(f"Not a KiaraModule sub-class: {_cls}")
+                _classes.append(_cls)
+
+        return _classes
+
+
+class PipelineModuleManagerConfig(BaseModel):
+
+    module_manager_type: Literal["pipeline"]
+    folders: typing.List[str] = Field(
+        description="A list of folders that contain pipeline descriptions.",
+        default_factory=list,
+    )
+
+    @validator("folders", pre=True)
+    def _validate_folders(cls, v):
+
+        if isinstance(v, str):
+            v = [v]
+
+        assert isinstance(v, typing.Iterable)
+
+        result = []
+        for item in v:
+            if isinstance(v, Path):
+                item = v.as_posix()
+            assert isinstance(item, str)
+            result.append(item)
+
+        return result
+
+
 class ModuleManager(abc.ABC):
+    @classmethod
+    def from_config(
+        cls,
+        config: typing.Union[
+            typing.Mapping[str, typing.Any],
+            PipelineModuleManagerConfig,
+            PythonModuleManagerConfig,
+        ],
+    ) -> "ModuleManager":
+
+        if isinstance(config, typing.Mapping):
+            mm_type = config.get("module_manager_type", None)
+            if not mm_type:
+                raise ValueError(f"No module manager type provided in config: {config}")
+            if mm_type == "python":
+                config = PythonModuleManagerConfig(**config)
+            elif mm_type == "pipeline":
+                config = PipelineModuleManagerConfig(**config)
+            else:
+                raise ValueError(f"Invalid module manager type: {mm_type}")
+
+        if config.module_manager_type == "python":
+            mm: ModuleManager = PythonModuleManager(
+                **config.dict(exclude={"module_manager_type"})
+            )
+        elif config.module_manager_type == "pipeline":
+            mm = PipelineModuleManager(**config.dict(exclude={"module_manager_type"}))
+
+        return mm
+
     @abc.abstractmethod
     def get_module_types(self) -> typing.Iterable[str]:
         pass
@@ -67,7 +160,12 @@ class ModuleManager(abc.ABC):
 
 
 class PythonModuleManager(ModuleManager):
-    def __init__(self, **module_classes: typing.Type["KiaraModule"]):
+    def __init__(
+        self,
+        module_classes: typing.Optional[
+            typing.Mapping[str, typing.Type["KiaraModule"]]
+        ] = None,
+    ):
 
         if not module_classes:
             module_classes = find_kiara_modules()

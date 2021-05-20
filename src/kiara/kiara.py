@@ -10,6 +10,7 @@ from threading import Thread
 from zmq import Context
 from zmq.devices import ThreadDevice
 
+from kiara.config import KiaraConfig
 from kiara.data import Value
 from kiara.data.registry import DataRegistry
 from kiara.data.types import ValueType
@@ -18,7 +19,7 @@ from kiara.mgmt import ModuleManager, PipelineModuleManager, PythonModuleManager
 from kiara.module_config import KiaraWorkflowConfig, PipelineModuleConfig
 from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.pipeline import Pipeline
-from kiara.processing import Job
+from kiara.processing import Job, ModuleProcessor
 from kiara.utils import get_auto_workflow_alias, get_data_from_file, is_debug
 from kiara.workflow import KiaraWorkflow
 
@@ -52,9 +53,12 @@ class Kiara(object):
             cls._instance = Kiara()
         return cls._instance
 
-    def __init__(
-        self, module_managers: typing.Optional[typing.Iterable[ModuleManager]] = None
-    ):
+    def __init__(self, config: typing.Optional[KiaraConfig] = None):
+
+        if not config:
+            config = KiaraConfig()
+
+        self._config: KiaraConfig = config
 
         self._zmq_context: Context = Context.instance()
         self._default_python_mgr = PythonModuleManager()
@@ -69,14 +73,22 @@ class Kiara(object):
             self._default_pipeline_mgr,
             self._custom_pipelines_mgr,
         ]
-        if module_managers:
-            _mms.extend(module_managers)
+        if config.module_managers:
+            for mmc in config.module_managers:
+                mm = ModuleManager.from_config(mmc)
+                _mms.append(mm)
 
         self._module_mgrs: typing.List[ModuleManager] = [
             self._default_python_mgr,
             self._default_pipeline_mgr,
         ]
+
+        self._default_processor: ModuleProcessor = ModuleProcessor.from_config(
+            config.default_processor
+        )
+
         self._modules: typing.Dict[str, ModuleManager] = {}
+
         self._value_types: typing.Optional[
             typing.Dict[str, typing.Type[ValueType]]
         ] = None
@@ -88,6 +100,10 @@ class Kiara(object):
 
         for mm in _mms:
             self.add_module_manager(mm)
+
+    @property
+    def default_processor(self) -> "ModuleProcessor":
+        return self._default_processor
 
     def start_zmq_device(self):
 

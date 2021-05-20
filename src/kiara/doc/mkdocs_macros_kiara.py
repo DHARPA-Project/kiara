@@ -5,7 +5,6 @@ from pydantic import BaseModel, typing
 from pydoc import locate
 
 from kiara import Kiara
-from kiara.config import KiaraModuleConfig, KiaraWorkflowConfig, PipelineModuleConfig
 from kiara.data.values import (
     PipelineInputField,
     PipelineOutputField,
@@ -19,6 +18,11 @@ from kiara.data.values import (
 )
 from kiara.mgmt import PipelineModuleManager
 from kiara.module import ModuleInfo
+from kiara.module_config import (
+    KiaraModuleConfig,
+    KiaraWorkflowConfig,
+    PipelineModuleConfig,
+)
 from kiara.pipeline.pipeline import (
     PipelineInputEvent,
     PipelineOutputEvent,

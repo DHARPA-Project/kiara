@@ -23,9 +23,9 @@ from typing import Union
 from kiara.defaults import RELATIVE_PIPELINES_PATH, SpecialValue
 
 if typing.TYPE_CHECKING:
-    from kiara.config import KiaraModuleConfig
     from kiara.data.values import ValueSchema
     from kiara.module import KiaraModule
+    from kiara.module_config import KiaraModuleConfig
 
 log = logging.getLogger("kiara")
 CAMEL_TO_SNAKE_REGEX = re.compile(r"(?<!^)(?=[A-Z])")

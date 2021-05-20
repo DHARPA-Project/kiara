@@ -4,8 +4,8 @@ from rich import box
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.table import Table
 
-from kiara.config import KiaraWorkflowConfig
 from kiara.data.values import ValueSet
+from kiara.module_config import KiaraWorkflowConfig
 from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.module import PipelineModule
 from kiara.pipeline.pipeline import Pipeline, PipelineState, StepStatus

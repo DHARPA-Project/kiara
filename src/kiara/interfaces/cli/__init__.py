@@ -341,7 +341,7 @@ async def run(ctx, module, inputs, module_config, data_details, only_output):
         sys.exit(0)
 
     processor = ThreadPoolProcessor()
-    processor = None
+    # processor = None
     controller = BatchController(processor=processor)
 
     workflow = kiara_obj.create_workflow(module_name, controller=controller)

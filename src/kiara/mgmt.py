@@ -20,8 +20,8 @@ from kiara.utils import (
 
 if typing.TYPE_CHECKING:
     from kiara import Kiara
-    from kiara.config import KiaraModuleConfig
     from kiara.module import KiaraModule
+    from kiara.module_config import KiaraModuleConfig
     from kiara.pipeline.module import PipelineModule
 
 log = logging.getLogger("kiara")

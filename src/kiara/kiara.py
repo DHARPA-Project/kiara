@@ -10,12 +10,12 @@ from threading import Thread
 from zmq import Context
 from zmq.devices import ThreadDevice
 
-from kiara.config import KiaraWorkflowConfig, PipelineModuleConfig
 from kiara.data import Value
 from kiara.data.registry import DataRegistry
 from kiara.data.types import ValueType
 from kiara.interfaces import get_console
 from kiara.mgmt import ModuleManager, PipelineModuleManager, PythonModuleManager
+from kiara.module_config import KiaraWorkflowConfig, PipelineModuleConfig
 from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.pipeline import Pipeline
 from kiara.processing import Job
@@ -466,6 +466,17 @@ class Kiara(object):
             module_config=module_config,
             kiara=self,
         )
+
+    def get_module_doc(
+        self,
+        module_type: str,
+        module_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+    ):
+
+        m = self.create_module(
+            id="_", module_type=module_type, module_config=module_config
+        )
+        return m.doc()
 
     def create_pipeline(
         self,

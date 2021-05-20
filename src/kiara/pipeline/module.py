@@ -6,9 +6,9 @@ from rich.console import Console, ConsoleOptions, RenderResult
 from rich.syntax import Syntax
 from rich.table import Table
 
-from kiara.config import PipelineModuleConfig
 from kiara.data.values import ValueField, ValueSchema, ValueSet
 from kiara.module import KiaraModule, ModuleInfo
+from kiara.module_config import PipelineModuleConfig
 from kiara.pipeline.controller import BatchController, PipelineController
 from kiara.pipeline.structure import PipelineStructure
 from kiara.utils import StringYAML, create_table_from_config_class, print_ascii_graph

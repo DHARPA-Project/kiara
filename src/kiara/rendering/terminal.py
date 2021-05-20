@@ -2,7 +2,7 @@
 import typing
 
 from kiara import Kiara, PipelineController
-from kiara.config import KiaraWorkflowConfig
+from kiara.module_config import KiaraWorkflowConfig
 from kiara.rendering import WorkflowRenderer
 
 

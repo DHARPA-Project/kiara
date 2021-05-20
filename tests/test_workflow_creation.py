@@ -2,7 +2,7 @@
 import typing
 
 from kiara import PipelineModule
-from kiara.config import PipelineModuleConfig
+from kiara.module_config import PipelineModuleConfig
 from kiara.pipeline.structure import PipelineStep
 
 

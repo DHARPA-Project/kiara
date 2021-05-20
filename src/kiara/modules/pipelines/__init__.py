@@ -12,7 +12,7 @@ def create_pipeline_class(
     cls_name: str, pipeline_desc: typing.Mapping[str, typing.Any]
 ):
 
-    from kiara.config import PipelineModuleConfig
+    from kiara.module_config import PipelineModuleConfig
     from kiara.pipeline.module import PipelineModule
 
     pmc = PipelineModuleConfig(**pipeline_desc)

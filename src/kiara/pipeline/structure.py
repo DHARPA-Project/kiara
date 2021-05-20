@@ -7,6 +7,7 @@ from networkx import NetworkXNoPath, NodeNotFound
 from pydantic import BaseModel, Extra, Field, PrivateAttr
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderGroup, RenderResult
+from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
 
@@ -23,8 +24,8 @@ from kiara.defaults import DEFAULT_NO_DESC_VALUE, PIPELINE_PARENT_MARKER, Specia
 from kiara.module import KiaraModule
 
 if typing.TYPE_CHECKING:
-    from kiara.config import PipelineStepConfig
     from kiara.kiara import Kiara
+    from kiara.module_config import PipelineStepConfig
 
 
 class PipelineStep(BaseModel):
@@ -829,6 +830,51 @@ class StepsInfo(BaseModel):
     )
 
     def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+
+        table = Table(box=box.SIMPLE, show_lines=True)
+        table.add_column("Stage", justify="center")
+        table.add_column("Step Id")
+        table.add_column("Module type", style="i")
+        table.add_column("Description")
+
+        for nr, stage in enumerate(self.processing_stages):
+
+            for i, step_id in enumerate(stage):
+                step: StepDesc = self.steps[step_id]
+                if step.required:
+                    title = f"[b]{step_id}[/b]"
+                else:
+                    title = f"[b]{step_id}[/b] [i](optional)[/i]"
+
+                if hasattr(step.step.module, "instance_doc"):
+                    doc = step.step.module.module_instance_doc
+                else:
+                    doc = step.step.module.doc()
+                row: typing.List[typing.Any] = []
+                if i == 0:
+                    row.append(str(nr))
+                else:
+                    row.append("")
+                row.append(title)
+
+                module_link = step.step.module.source_link()
+                if module_link:
+                    module_str = f"[link={module_link}]{step.step.module_type}[/link]"
+                else:
+                    module_str = step.step.module_type
+                row.append(module_str)
+                if doc and doc != "-- n/a --":
+                    m = Markdown(doc + "\n\n---\n")
+                    row.append(m)
+                else:
+                    row.append("")
+                table.add_row(*row)
+
+        yield Panel(table, title_align="left", title="Processing stages")
+
+    def __rich_console_old__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
 

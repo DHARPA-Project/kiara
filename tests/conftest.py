@@ -12,7 +12,7 @@ import pytest
 import os
 import typing
 
-from kiara.config import PipelineModuleConfig
+from kiara.module_config import PipelineModuleConfig
 
 from .utils import PIPELINES_FOLDER
 

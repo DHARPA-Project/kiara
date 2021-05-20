@@ -8,6 +8,7 @@
 - change all input and output data access within modules to use ``ValueSet.get_value_data()``  ``ValueSet.set_value(s)`` instead of direct attribute access -- for now, direct attribute access is removed because it's not clear whether the access should be for the value object, or the data itself
 - 'dict' attribute in ValueData class renamed to 'get_all_value_data'
 - add 'ModuleProcessor' class, to be able to implement different module execution strategies (multithreaded, multiprocess, ...)
+- renamed ``kiara.config`` module to ``kiara.module_config``
 
 ## Version 0.0.1
 

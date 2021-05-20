@@ -19,7 +19,6 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
 
-from kiara.config import KIARA_CONFIG, KiaraModuleConfig
 from kiara.data.values import (
     NonRegistryValue,
     Value,
@@ -28,6 +27,7 @@ from kiara.data.values import (
     ValueSetImpl,
 )
 from kiara.exceptions import KiaraModuleConfigException
+from kiara.module_config import KIARA_CONFIG, KiaraModuleConfig
 from kiara.utils import (
     StringYAML,
     create_table_from_config_class,
@@ -208,7 +208,8 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
             doc = "-- n/a --"
         else:
             doc = inspect.cleandoc(doc)
-        return doc
+
+        return doc.strip()
 
     @classmethod
     def is_pipeline(cls) -> bool:
@@ -502,6 +503,15 @@ class KiaraModule(typing.Generic[KIARA_CONFIG]):
 
         result = output_value_set.get_all_value_objects()
         return ValueSetImpl(items=result, read_only=True)
+
+    @property
+    def module_instance_doc(self) -> str:
+        """Return documentation for this instance of the module.
+
+        If not overwritten, will return this class' method ``doc()``.
+        """
+
+        return self.doc()
 
     @property
     def module_instance_hash(self) -> int:

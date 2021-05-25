@@ -44,10 +44,11 @@ def get_extra_requires(add_all=True, add_all_dev=True, add_all_modules=True):
         extras[extra_name] = deps
 
     if add_all:
-        all = set("modules_core")
+        all = set()
         for e_n, deps in extras.items():
             if not e_n.startswith("dev_") and not e_n.startswith("modules_"):
                 all.update(deps)
+        all.add("modules_core")
         extras["all"] = all
 
     if add_all_modules:

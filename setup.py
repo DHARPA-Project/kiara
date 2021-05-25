@@ -48,7 +48,7 @@ def get_extra_requires(add_all=True, add_all_dev=True, add_all_modules=True):
         for e_n, deps in extras.items():
             if not e_n.startswith("dev_") and not e_n.startswith("modules_"):
                 all.update(deps)
-        all.add("modules_core")
+        all.add("kiara_modules.core")
         extras["all"] = all
 
     if add_all_modules:

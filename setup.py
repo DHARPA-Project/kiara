@@ -67,5 +67,6 @@ def get_extra_requires(add_all=True, add_all_dev=True, add_all_modules=True):
 if __name__ in ["__main__", "builtins", "__builtin__"]:
     setup(
         use_scm_version={"write_to": "src/kiara/version.txt"},
+        setup_requires=["setuptools_scm", "setuptools_scm_git_archive"],
         extras_require=get_extra_requires(),
     )

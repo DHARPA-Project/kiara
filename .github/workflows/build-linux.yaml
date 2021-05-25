@@ -93,6 +93,8 @@ jobs:
         with:
           python-version: 3.9.1
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: update pip
         run: pip install -U pip
       - name: install kiara

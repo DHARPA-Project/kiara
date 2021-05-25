@@ -9,6 +9,7 @@
 - 'dict' attribute in ValueData class renamed to 'get_all_value_data'
 - add 'ModuleProcessor' class, to be able to implement different module execution strategies (multithreaded, multiprocess, ...)
 - renamed ``kiara.config`` module to ``kiara.module_config``
+- modules are not split up into several packages: ``kiara_modules.core`` being the most important one, others are topic specific (``language_processing``, ``network_analysis``, ...)
 
 ## Version 0.0.1
 

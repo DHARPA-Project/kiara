@@ -21,7 +21,7 @@ except VersionConflict:
     sys.exit(1)
 
 
-def get_extra_requires(add_all=True, add_all_dev=True):
+def get_extra_requires(add_all=True, add_all_dev=True, add_all_modules=True):
 
     from distutils.dist import Distribution
 
@@ -46,14 +46,20 @@ def get_extra_requires(add_all=True, add_all_dev=True):
     if add_all:
         all = set()
         for e_n, deps in extras.items():
-            if not e_n.startswith("dev_"):
+            if not e_n.startswith("dev_") and not e_n.startswith("modules_"):
                 all.update(deps)
         extras["all"] = all
+
+    if add_all_modules:
+        all_modules = set()
+        for e_n, deps in extras.items():
+            if not e_n.startswith("dev_"):
+                all_modules.update(deps)
+        extras["all_modules"] = all_modules
 
     # add tag `all` at the end
     if add_all_dev:
         extras["all_dev"] = set(vv for v in extras.values() for vv in v)
-        extras["dev_all"] = extras["all_dev"]
 
     return extras
 

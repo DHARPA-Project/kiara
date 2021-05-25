@@ -24,7 +24,6 @@ markdown_extensions:
     toc_depth: 3
 - pymdownx.snippets:
     base_path: docs
-#- mkdocs-click
 - pymdownx.highlight
 - pymdownx.superfences
 
@@ -79,4 +78,3 @@ plugins:
 - gen-files:
     scripts:
       - scripts/documentation/gen_schemas.py
-#      - scripts/documentation/gen_module_doc.py

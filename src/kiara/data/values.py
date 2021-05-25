@@ -251,9 +251,9 @@ class Value(BaseModel):
 
         raise NotImplementedError()
 
-    def _create_value_table(self) -> Table:
+    def _create_value_table(self, padding=(0, 1)) -> Table:
 
-        table = Table(box=box.SIMPLE, show_header=False)
+        table = Table(box=box.SIMPLE, show_header=False, padding=padding)
         table.add_column("property", style="i")
         table.add_column("value")
 
@@ -883,7 +883,9 @@ class ValuesInfo(object):
             details = self._value_set.get_value_obj(field_name)
             if not details.is_set:
                 if details.item_is_valid():
-                    value_info: typing.Union[str, Table] = "-- not set --"
+                    value_info: typing.Union[
+                        str, Table
+                    ] = "[green]-- not set --[/green]"
                 else:
                     value_info = "[red]-- not set --[/red]"
             elif details.is_none:

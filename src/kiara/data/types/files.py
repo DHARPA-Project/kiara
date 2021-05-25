@@ -213,14 +213,14 @@ class FileBundleModel(BaseModel):
 
     def read_text_file_contents(self) -> typing.Mapping[str, str]:
 
-        content_dict = {}
+        content_dict: typing.Dict[str, str] = {}
 
         with start_blocking_portal() as portal:
 
             async def read_file(rel_path: str, fm: FileModel):
                 async with await open_file(fm.path) as f:
                     content = await f.read()
-                    content_dict[rel_path] = content
+                    content_dict[rel_path] = content  # type: ignore
 
             async def read_files():
 

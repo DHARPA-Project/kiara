@@ -236,12 +236,14 @@ class Pipeline(object):
 
                         pipeline_inputs[connected_pipeline_input_name] = pipeline_input
                         # TODO: create input field value
-                    else:
-                        # TODO: compare schemas of multiple inputs
-                        log.warning(
-                            "WARNING: not comparing schemas of pipeline inputs with links to more than one step input currently, but this will be implemented in the future"
-                        )
-                        # raise NotImplementedError()
+                    # else:
+                    #     # TODO: compare schemas of multiple inputs
+                    #     log.warning(
+                    #         "WARNING: not comparing schemas of pipeline inputs with links to more than one step input currently, but this will be implemented in the future"
+                    #     )
+                    #     # raise NotImplementedError()
+                    #     import pp
+                    #     pp(pipeline_inputs)
 
                     step_input = self._data_registry.register_linked_value(
                         linked_values=pipeline_input,

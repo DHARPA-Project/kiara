@@ -93,8 +93,6 @@ class PipelineModule(KiaraModule[PipelineModuleConfig]):
 
         from kiara import Pipeline
 
-        raise NotImplementedError()
-
         # TODO: check for Value objects
         pipeline = Pipeline(structure=self.structure)
         inps = inputs.get_all_value_data()

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import abc
 import deepdiff
 import inspect
 import json
@@ -176,7 +177,7 @@ class StepOutputs(ValueSet):
         self._outputs_staging.clear()  # type: ignore
 
 
-class KiaraModule(typing.Generic[KIARA_CONFIG]):
+class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
     """The base class that every custom module in *Kiara* needs to inherit from.
 
     The core of every ``KiaraModule`` is the [``process``][kiara.module.KiaraModule.process] method, which needs to be

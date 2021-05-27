@@ -113,6 +113,12 @@ class Pipeline(object):
         return self._structure
 
     @property
+    def controller(self) -> PipelineController:
+        if self._controller is None:
+            raise Exception("No controller set (yet).")
+        return self._controller
+
+    @property
     def inputs(self) -> ValueSet:
         return self._pipeline_inputs
 

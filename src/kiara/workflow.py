@@ -70,6 +70,10 @@ class KiaraWorkflow(object):
         return self._pipeline
 
     @property
+    def controller(self) -> PipelineController:
+        return self.pipeline.controller
+
+    @property
     def status(self) -> StepStatus:
         return self.pipeline.status
 

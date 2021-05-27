@@ -1,7 +1,7 @@
 {
   "steps": [
     {
-      "module_type": "dummy",
+      "module_type": "dev.dummy",
       "step_id": "and_1",
       "module_config": {
         "input_schema": {

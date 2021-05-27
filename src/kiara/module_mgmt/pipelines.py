@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import abc
-import logging
 import os
 import typing
 from pathlib import Path
@@ -12,60 +10,17 @@ from kiara.defaults import (
     USER_PIPELINES_FOLDER,
     VALID_PIPELINE_FILE_EXTENSIONS,
 )
+from kiara.module_mgmt import ModuleManager, log
 from kiara.modules.pipelines import create_pipeline_class
-from kiara.utils import (
-    find_kiara_modules,
-    find_kiara_pipeline_folders,
-    get_data_from_file,
-)
+from kiara.utils import get_data_from_file
 
 if typing.TYPE_CHECKING:
-    from kiara import Kiara, KiaraModule
-    from kiara.module_config import KiaraModuleConfig
-    from kiara.pipeline.module import PipelineModule
+    from kiara import PipelineModule
 
 try:
     from typing import Literal
 except Exception:
     from typing_extensions import Literal  # type: ignore
-
-log = logging.getLogger("kiara")
-
-
-# extensions
-# ------------------------------------------------------------------------
-
-
-class PythonModuleManagerConfig(BaseModel):
-
-    module_manager_type: Literal["python"]
-    module_classes: typing.Dict[str, typing.Type["KiaraModule"]] = Field(
-        description="The module classes this manager should hold."
-    )
-
-    @validator("module_classes", pre=True)
-    def _ensure_module_class_types(cls, v):
-
-        _classes = []
-        if v:
-            for _cls in v:
-                if isinstance(_cls, str):
-                    try:
-                        module_name, cls_name = _cls.rsplit(".", maxsplit=1)
-                        module = __import__(module_name)
-                        _cls = getattr(module, cls_name)
-                    except Exception:
-                        raise ValueError(
-                            f"Can't parse value '{_cls}' into KiaraModule class."
-                        )
-
-                from kiara import KiaraModule  # noqa
-
-                if not issubclass(_cls, KiaraModule):
-                    raise ValueError(f"Not a KiaraModule sub-class: {_cls}")
-                _classes.append(_cls)
-
-        return _classes
 
 
 class PipelineModuleManagerConfig(BaseModel):
@@ -94,113 +49,39 @@ class PipelineModuleManagerConfig(BaseModel):
         return result
 
 
-class ModuleManager(abc.ABC):
-    @classmethod
-    def from_config(
-        cls,
-        config: typing.Union[
-            typing.Mapping[str, typing.Any],
-            PipelineModuleManagerConfig,
-            PythonModuleManagerConfig,
-        ],
-    ) -> "ModuleManager":
-
-        if isinstance(config, typing.Mapping):
-            mm_type = config.get("module_manager_type", None)
-            if not mm_type:
-                raise ValueError(f"No module manager type provided in config: {config}")
-            if mm_type == "python":
-                config = PythonModuleManagerConfig(**config)
-            elif mm_type == "pipeline":
-                config = PipelineModuleManagerConfig(**config)
-            else:
-                raise ValueError(f"Invalid module manager type: {mm_type}")
-
-        if config.module_manager_type == "python":
-            mm: ModuleManager = PythonModuleManager(
-                **config.dict(exclude={"module_manager_type"})
-            )
-        elif config.module_manager_type == "pipeline":
-            mm = PipelineModuleManager(**config.dict(exclude={"module_manager_type"}))
-
-        return mm
-
-    @abc.abstractmethod
-    def get_module_types(self) -> typing.Iterable[str]:
-        pass
-
-    @abc.abstractmethod
-    def get_module_class(self, module_type: str) -> typing.Type["KiaraModule"]:
-        pass
-
-    def create_module_config(
-        self, module_type: str, module_config: typing.Mapping[str, typing.Any]
-    ) -> "KiaraModuleConfig":
-
-        cls = self.get_module_class(module_type)
-        config = cls._config_cls(**module_config)
-
-        return config
-
-    def create_module(
-        self,
-        kiara: "Kiara",
-        id: str,
-        module_type: str,
-        module_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
-        parent_id: typing.Optional[str] = None,
-    ) -> "KiaraModule":
-
-        module_cls = self.get_module_class(module_type)
-
-        module = module_cls(
-            id=id, parent_id=parent_id, module_config=module_config, kiara=kiara
-        )
-        return module
-
-
-class PythonModuleManager(ModuleManager):
+class PipelineModuleManager(ModuleManager):
     def __init__(
         self,
-        module_classes: typing.Optional[
-            typing.Mapping[str, typing.Type["KiaraModule"]]
+        folders: typing.Optional[
+            typing.Mapping[
+                str, typing.Union[str, Path, typing.Iterable[typing.Union[str, Path]]]
+            ]
         ] = None,
     ):
 
-        if not module_classes:
-            module_classes = find_kiara_modules()
-
-        self._module_classes: typing.Mapping[
-            str, typing.Type[KiaraModule]
-        ] = module_classes
-
-    def get_module_class(self, module_type: str) -> typing.Type["KiaraModule"]:
-
-        cls = self._module_classes.get(module_type, None)
-        if cls is None:
-            raise ValueError(f"No module of type '{module_type}' available.")
-        return cls
-
-    def get_module_types(self) -> typing.Iterable[str]:
-        return self._module_classes.keys()
-
-
-class PipelineModuleManager(ModuleManager):
-    def __init__(
-        self, folders: typing.Optional[typing.Iterable[typing.Union[str, Path]]] = None
-    ):
-
         if folders is None:
-            folders = list(find_kiara_pipeline_folders().values())
+            from kiara.utils.class_loading import find_all_kiara_pipeline_paths
+
+            folders_map: typing.Dict[
+                str, typing.List[str]
+            ] = find_all_kiara_pipeline_paths()
             if os.path.exists(USER_PIPELINES_FOLDER):
-                folders.append(USER_PIPELINES_FOLDER)
+                folders_map["user"] = [USER_PIPELINES_FOLDER]
+        elif not folders:
+            folders_map = {}
+        else:
+            assert isinstance(folders, typing.Mapping)
+            assert "user" not in folders.keys()
+            folders_map = folders  # type: ignore
+            raise NotImplementedError()
 
         self._pipeline_desc_folders: typing.List[Path] = []
         self._pipeline_descs: typing.Dict[str, typing.Mapping[str, typing.Any]] = {}
         self._cached_classes: typing.Dict[str, typing.Type[PipelineModule]] = {}
 
-        for folder in folders:
-            self.add_pipelines_path(folder)
+        for ns, paths in folders_map.items():
+            for path in paths:
+                self.add_pipelines_path(ns, path)
 
     def _get_pipeline_details_from_path(
         self,
@@ -241,6 +122,7 @@ class PipelineModuleManager(ModuleManager):
         self,
         data: typing.Union[str, Path, typing.Mapping[str, typing.Any]],
         module_type_name: typing.Optional[str] = None,
+        namespace: typing.Optional[str] = None,
     ) -> str:
         """Register a pipeline description to the pipeline pool.
 
@@ -249,6 +131,7 @@ class PipelineModuleManager(ModuleManager):
             module_type_name: the type name this pipeline should be registered as
         """
 
+        # TODO: verify that there is no conflict with module_type_name
         if isinstance(data, str):
             data = Path(os.path.expanduser(data))
 
@@ -271,19 +154,28 @@ class PipelineModuleManager(ModuleManager):
                 f"Can't register pipeline, must be dict-like data, not {type(data)}"
             )
 
-        if _name in self._pipeline_descs.keys():
+        if not namespace:
+            full_name = _name
+        else:
+            full_name = f"{namespace}.{_name}"
+        if full_name.startswith("core."):
+            full_name = full_name[5:]
+        if full_name in self._pipeline_descs.keys():
             raise Exception(
                 f"Can't register pipeline: duplicate workflow name '{_name}'"
             )
 
-        self._pipeline_descs[_name] = _data
+        self._pipeline_descs[full_name] = _data
 
-        return _name
+        return full_name
 
-    def add_pipelines_path(self, path: typing.Union[str, Path]) -> typing.Iterable[str]:
+    def add_pipelines_path(
+        self, namespace: str, path: typing.Union[str, Path]
+    ) -> typing.Iterable[str]:
         """Add a pipeline description file or folder containing some to this manager.
 
         Arguments:
+            namespace: the namespace the pipeline modules found under this path will be part of
             path: the path to a pipeline description file, or folder which contains some
         Returns:
             a list of module type names that were added
@@ -291,6 +183,8 @@ class PipelineModuleManager(ModuleManager):
 
         if isinstance(path, str):
             path = Path(os.path.expanduser(path))
+        elif isinstance(path, typing.Iterable):
+            raise TypeError(f"Invalid type for path: {path}")
 
         if not path.exists():
             log.warning(f"Can't add pipeline path '{path}': path does not exist")
@@ -313,11 +207,19 @@ class PipelineModuleManager(ModuleManager):
                     try:
 
                         full_path = os.path.join(root, filename)
-                        name, data = self._get_pipeline_details_from_path(full_path)
-                        if name in files.keys():
-                            raise Exception(f"Duplicate workflow name: {name}")
 
-                        files[name] = data
+                        name, data = self._get_pipeline_details_from_path(full_path)
+                        rel_path = os.path.relpath(os.path.dirname(full_path), path)
+                        if not rel_path or rel_path == ".":
+                            ns_name = name
+                        else:
+                            ns_name = f"{rel_path}.{name}"
+                        if ns_name in files.keys():
+                            raise Exception(
+                                f"Duplicate workflow name in namespace '{namespace}': {ns_name}"
+                            )
+
+                        files[ns_name] = data
                     except Exception as e:
                         log.warning(
                             f"Ignoring invalid pipeline file '{full_path}': {e}"
@@ -326,12 +228,17 @@ class PipelineModuleManager(ModuleManager):
             name, data = self._get_pipeline_details_from_path(path)
             files = {name: data}
 
-        for name in files.keys():
-            if name in self._pipeline_descs.keys():
+        result = {}
+        for k, v in files.items():
+            full_name = f"{namespace}.{k}"
+            if full_name.startswith("core."):
+                full_name = full_name[5:]
+            if full_name in self._pipeline_descs.keys():
                 raise Exception(f"Duplicate workflow name: {name}")
+            result[full_name] = v
 
-        self._pipeline_descs.update(files)
-        return files.keys()
+        self._pipeline_descs.update(result)
+        return result.keys()
 
     @property
     def pipeline_descs(self) -> typing.Mapping[str, typing.Mapping[str, typing.Any]]:
@@ -348,24 +255,9 @@ class PipelineModuleManager(ModuleManager):
 
         cls_name = "".join(x.capitalize() or "_" for x in module_type.split("_"))
         cls = create_pipeline_class(cls_name, desc["data"])
-
+        setattr(cls, "_module_type_name", module_type)
         self._cached_classes[module_type] = cls
         return self._cached_classes[module_type]
 
     def get_module_types(self) -> typing.Iterable[str]:
         return self._pipeline_descs.keys()
-
-
-class WorkflowManager(object):
-    def __init__(self, module_manager: PythonModuleManager):
-
-        self._module_mgr: PythonModuleManager = module_manager
-
-    def create_workflow(
-        self,
-        workflow_id: str,
-        config: typing.Union[str, typing.Mapping[str, typing.Any]],
-    ):
-
-        if isinstance(config, typing.Mapping):
-            raise NotImplementedError()

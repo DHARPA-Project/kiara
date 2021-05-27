@@ -3,7 +3,8 @@ import networkx as nx
 from IPython.core.display import Image
 
 
-def graph_to_image(graph: nx.Graph):
+def create_image(graph: nx.Graph):
+
     try:
         import pygraphviz as pgv  # noqa
     except:  # noqa
@@ -17,4 +18,16 @@ def graph_to_image(graph: nx.Graph):
     G.layout(prog="dot")
 
     b = G.draw(format="png")
+    return b
+
+
+def save_image(graph: nx.Graph, path: str):
+
+    graph_b = create_image(graph=graph)
+    with open(path, "wb") as f:
+        f.write(graph_b)
+
+
+def graph_to_image(graph: nx.Graph):
+    b = create_image(graph=graph)
     return Image(b)

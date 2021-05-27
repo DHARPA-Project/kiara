@@ -1,6 +1,20 @@
 # -*- coding: utf-8 -*-
 # isort: skip_file
 
+__all__ = [
+    "Kiara",
+    "explain",
+    "KiaraModule",
+    "Pipeline",
+    "PipelineStructure",
+    "PipelineController",
+    "PipelineModule",
+    "DataRegistry",
+    "find_kiara_modules_under",
+    "find_kiara_pipelines_under",
+    "KiaraEntryPointItem",
+    "get_version",
+]
 import os
 
 from .kiara import Kiara, explain  # noqa
@@ -10,6 +24,11 @@ from .pipeline.structure import PipelineStructure  # noqa
 from .pipeline.controller import PipelineController  # noqa
 from .pipeline.module import PipelineModule  # noqa
 from .data.registry import DataRegistry  # noqa
+from .utils.class_loading import (
+    find_kiara_modules_under,
+    find_kiara_pipelines_under,
+    KiaraEntryPointItem,
+)
 
 """Top-level package for kiara."""
 

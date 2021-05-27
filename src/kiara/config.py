@@ -4,11 +4,9 @@ import typing
 from pydantic import BaseSettings, Extra, Field, validator
 
 from kiara.defaults import kiara_app_dirs
-from kiara.mgmt import (
-    ModuleManager,
-    PipelineModuleManagerConfig,
-    PythonModuleManagerConfig,
-)
+from kiara.module_mgmt import ModuleManager
+from kiara.module_mgmt.pipelines import PipelineModuleManagerConfig
+from kiara.module_mgmt.python_classes import PythonModuleManagerConfig
 from kiara.processing.parallel import ThreadPoolProcessorConfig
 from kiara.processing.synchronous import SynchronousProcessorConfig
 from kiara.utils import get_data_from_file

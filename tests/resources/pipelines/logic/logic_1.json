@@ -1,7 +1,7 @@
 {
   "steps": [
     {
-      "module_type": "and",
+      "module_type": "logic.and",
       "step_id": "and_1"
     }
   ],

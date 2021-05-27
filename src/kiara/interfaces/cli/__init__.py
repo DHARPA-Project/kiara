@@ -314,6 +314,8 @@ async def run(ctx, module, inputs, module_config, data_details, only_output):
 
     if module in kiara_obj.available_module_types:
         module_name = module
+    elif f"core.{module}" in kiara_obj.available_module_types:
+        module_name = f"core.{module}"
     elif os.path.isfile(module):
         module_name = kiara_obj.register_pipeline_description(
             module, raise_exception=True
@@ -327,18 +329,28 @@ async def run(ctx, module, inputs, module_config, data_details, only_output):
         sys.exit(1)
 
     if not inputs:
-        print()
-        print(
-            "No inputs provided, not running the workflow. To run it, provide input following this schema:"
-        )
+
         module_obj: KiaraModule = _create_module_instance(
             ctx=ctx, module_type=module_name, module_config=module_config
         )
-        inputs_table = create_table_from_field_schemas(
-            _show_header=True, **module_obj.input_schemas
-        )
-        rich_print(inputs_table)
-        sys.exit(0)
+
+        one_required = False
+        for schema in module_obj.input_schemas.values():
+            if schema.is_required():
+                one_required = True
+                break
+
+        if one_required:
+
+            inputs_table = create_table_from_field_schemas(
+                _show_header=True, **module_obj.input_schemas
+            )
+            print()
+            print(
+                "No inputs provided, not running the workflow. To run it, provide input following this schema:"
+            )
+            rich_print(inputs_table)
+            sys.exit(0)
 
     processor = ThreadPoolProcessor()
     # processor = None
@@ -350,16 +362,21 @@ async def run(ctx, module, inputs, module_config, data_details, only_output):
     # workflow.pipeline.add_listener(l)
 
     list_keys = []
+
     for name, value in workflow.inputs.items():
         if value.value_schema.type in ["array", "list"]:
             list_keys.append(name)
 
     workflow_input = dict_from_cli_args(*inputs, list_keys=list_keys)
-    workflow.inputs.set_values(**workflow_input)
+
+    if workflow_input:
+        workflow.inputs.set_values(**workflow_input)
+    else:
+        workflow.controller.process_pipeline()
 
     transformer = "to_string"
     transformer_config = {"max_lines": 6}
-    print()
+
     if display_input_values:
         vi = ValuesInfo(workflow.inputs)
         vt = vi.create_value_data_table(

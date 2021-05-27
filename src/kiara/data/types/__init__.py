@@ -93,7 +93,9 @@ class ValueType(object):
         The name of the transformation is the key of the result dictionary, the configuration is a module configuration
         (dictionary wth 'module_type' and optional 'module_config', 'input_name' and 'output_name' keys).
         """
-        return {"to_string": {"module_type": "pretty_print", "input_name": "item"}}
+        return {
+            "to_string": {"module_type": "strings.pretty_print", "input_name": "item"}
+        }
 
     def __init__(self, **type_config: typing.Any):
 
@@ -356,6 +358,7 @@ class TableType(ValueType):
     def extract_type_metadata(
         cls, value: typing.Any
     ) -> typing.Mapping[str, typing.Any]:
+
         table: pyarrow.Table = value
         table_schema = {}
         for name in table.schema.names:

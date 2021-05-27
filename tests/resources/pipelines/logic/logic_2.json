@@ -1,11 +1,11 @@
 {
   "steps": [
     {
-      "module_type": "and",
+      "module_type": "logic.and",
       "step_id": "and_1"
     },
     {
-      "module_type": "and",
+      "module_type": "logic.and",
       "step_id": "and_2",
       "input_links": {
         "a": "and_1.y"

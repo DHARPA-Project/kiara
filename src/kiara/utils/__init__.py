@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
+import importlib
 import json
 import logging
 import os
 import re
-import sys
 import typing
 import yaml
 from io import StringIO
 from networkx import Graph
 from pathlib import Path
+from pkgutil import iter_modules
 from pydantic.schema import (
     get_flat_models_from_model,
     get_model_name_map,
@@ -17,14 +18,13 @@ from pydantic.schema import (
 from rich import box
 from rich.table import Table
 from ruamel.yaml import YAML
-from stevedore import ExtensionManager
+from types import ModuleType
 from typing import Union
 
-from kiara.defaults import RELATIVE_PIPELINES_PATH, SpecialValue
+from kiara.defaults import SpecialValue
 
 if typing.TYPE_CHECKING:
     from kiara.data.values import ValueSchema
-    from kiara.module import KiaraModule
     from kiara.module_config import KiaraModuleConfig
 
 log = logging.getLogger("kiara")
@@ -38,6 +38,14 @@ def is_debug() -> bool:
         return True
     else:
         return False
+
+
+def log_message(msg: str):
+
+    if is_debug():
+        log.warning(msg)
+    else:
+        log.debug(msg)
 
 
 def get_data_from_file(
@@ -116,62 +124,6 @@ def get_auto_workflow_alias(module_type: str, use_incremental_ids: bool = False)
     _AUTO_MODULE_ID[module_type] = nr + 1
 
     return f"{module_type}_{nr}"
-
-
-def find_kiara_modules() -> typing.Dict[str, typing.Type["KiaraModule"]]:
-
-    log2 = logging.getLogger("stevedore")
-    out_hdlr = logging.StreamHandler(sys.stdout)
-    out_hdlr.setFormatter(logging.Formatter("kiara module plugin error -> %(message)s"))
-    out_hdlr.setLevel(logging.INFO)
-    log2.addHandler(out_hdlr)
-    log2.setLevel(logging.INFO)
-
-    log.debug("Loading kiara modules...")
-
-    mgr = ExtensionManager(
-        namespace="kiara.modules", invoke_on_load=False, propagate_map_exceptions=True
-    )
-
-    result = {}
-    for plugin in mgr:
-        name = plugin.name
-        ep = plugin.entry_point
-        module_cls = ep.load()
-        result[name] = module_cls
-
-    return result
-
-
-def find_kiara_pipeline_folders() -> typing.Dict[str, str]:
-
-    log2 = logging.getLogger("stevedore")
-    out_hdlr = logging.StreamHandler(sys.stdout)
-    out_hdlr.setFormatter(
-        logging.Formatter("kiara pipeline plugin error -> %(message)s")
-    )
-    out_hdlr.setLevel(logging.INFO)
-    log2.addHandler(out_hdlr)
-    log2.setLevel(logging.INFO)
-
-    log.debug("Loading kiara pipelines...")
-
-    mgr = ExtensionManager(
-        namespace="kiara.pipelines", invoke_on_load=False, propagate_map_exceptions=True
-    )
-
-    result = {}
-    # TODO: make sure we load 'default' first?
-    for plugin in mgr:
-        name = plugin.name
-        ep = plugin.entry_point
-        module_cls = ep.load()
-        path = os.path.join(
-            os.path.dirname(module_cls.__file__), RELATIVE_PIPELINES_PATH
-        )
-        result[name] = path
-
-    return result
 
 
 def create_table_from_config_class(
@@ -304,3 +256,25 @@ class StringYAML(YAML):
         YAML.dump(self, data, stream, **kw)
         if inefficient:
             return stream.getvalue()
+
+
+def _get_all_subclasses(cls: typing.Type) -> typing.Iterable[typing.Type]:
+
+    result = []
+    for subclass in cls.__subclasses__():
+        result.append(subclass)
+        result.extend(_get_all_subclasses(subclass))
+
+    return result
+
+
+def _import_modules_recursively(module: ModuleType):
+
+    if not hasattr(module, "__path__"):
+        return
+
+    for submodule in iter_modules(module.__path__):  # type: ignore
+
+        submodule_mod = importlib.import_module(f"{module.__name__}.{submodule.name}")
+        if hasattr(submodule_mod, "__path__"):
+            _import_modules_recursively(submodule_mod)

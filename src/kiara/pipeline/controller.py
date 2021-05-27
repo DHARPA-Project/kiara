@@ -277,6 +277,15 @@ class PipelineController(PipelineListener):
         log.debug(f"Inputs for pipeline '{self.pipeline.id}' set: {inputs}")
         return inputs
 
+    def process_pipeline(self):
+        """Execute the connected pipeline end-to-end.
+
+        Controllers can elect to overwrite this method, but this is optional.
+
+        Returns:
+        """
+        raise NotImplementedError()
+
 
 class BatchController(PipelineController):
     """A [PipelineController][kiara.pipeline.controller.PipelineController] that executes all pipeline steps non-interactively.
@@ -308,11 +317,11 @@ class BatchController(PipelineController):
     def auto_process(self, auto_process: bool):
         self._auto_process = auto_process
 
-    def process_pipeline(self) -> bool:
+    def process_pipeline(self):
 
         if self._is_running:
             log.debug("Pipeline running, doing nothing.")
-            return False
+            raise Exception("Pipeline already running.")
 
         self._is_running = True
         try:
@@ -338,8 +347,6 @@ class BatchController(PipelineController):
                 self._processor.wait_for(*job_ids)
         finally:
             self._is_running = False
-
-        return True
 
     def step_inputs_changed(self, event: "StepInputEvent"):
 

@@ -16,13 +16,13 @@ from kiara.data.values import (
     Value,
     ValueSchema,
 )
-from kiara.mgmt import PipelineModuleManager
 from kiara.module import ModuleInfo
 from kiara.module_config import (
     KiaraModuleConfig,
     KiaraWorkflowConfig,
     PipelineModuleConfig,
 )
+from kiara.module_mgmt.pipelines import PipelineModuleManager
 from kiara.pipeline.pipeline import (
     PipelineInputEvent,
     PipelineOutputEvent,

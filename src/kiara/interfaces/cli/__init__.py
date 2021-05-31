@@ -471,7 +471,7 @@ async def run(ctx, module, inputs, module_config, output, workflow_details):
                 target_type=format,
                 config=config,
             )
-            transformed_value = transformed.get_value_data("target_value")
+            transformed_value = transformed.get_value_data()
 
             target_file.parent.mkdir(parents=True, exist_ok=True)
             # TODO: check whether to write text or bytes

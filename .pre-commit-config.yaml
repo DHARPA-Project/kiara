@@ -44,7 +44,7 @@ repos:
     files: "^src/"
     pass_filenames: true
     args: ["--config-file", "setup.cfg"]
-    additional_dependencies: [pydantic>=1.8.0, rich>=10.0.0, ruamel.yaml, anyio>=3.0.0, pyzmq>=22.0.3]
+    additional_dependencies: [pydantic>=1.8.0, rich>=10.0.0, ruamel.yaml, anyio>=3.0.0, pyzmq>=22.0.3, bidict]
 
 
 - repo: git://github.com/pre-commit/pre-commit-hooks

@@ -362,6 +362,33 @@ class DataRegistry(object):
 
         return value
 
+    def get_value_metadata(
+        self,
+        value: typing.Union[KiaraValue, str],
+        *metadata_keys: str,
+        also_return_schema: bool = False,
+    ):
+
+        value = self.get_value_item(value)
+        result = {}
+        missing = set()
+        for metadata_key in metadata_keys:
+            if metadata_keys in value.metadata.keys():
+                result[metadata_key] = value.metadata[metadata_key]["metadata"]
+            else:
+                missing.add(metadata_key)
+
+        if not missing:
+            return result
+
+        _md = self._kiara.get_value_metadata(value, metadata_keys=missing)
+        result.update(_md)
+
+        if also_return_schema:
+            return result
+        else:
+            return {k: v["metadata"] for k, v in result.items()}
+
     def get_value_hash(
         self, item: typing.Union[str, KiaraValue]
     ) -> typing.Union[int, ValueHashMarker]:

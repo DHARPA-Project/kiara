@@ -185,6 +185,7 @@ def find_all_kiara_modules() -> typing.Dict[str, typing.Type["KiaraModule"]]:
         if isinstance(plugin.plugin, type) and issubclass(plugin.plugin, KiaraModule):
             ep = plugin.entry_point
             module_cls = ep.load()
+            setattr(module_cls, "_module_type_name", name)
             result_entrypoints[name] = module_cls
         elif (
             isinstance(plugin.plugin, tuple)

@@ -6,22 +6,21 @@ import asyncclick as click
 import os.path
 import sys
 import typing
+from kiara_modules.core.json import DEFAULT_TO_JSON_CONFIG
+from pathlib import Path
+from rich import box
+from rich.console import Console, RenderGroup
 from rich.panel import Panel
+from rich.syntax import Syntax
 
 from kiara import Kiara
-from kiara.data.values import ValuesInfo
 from kiara.interfaces import get_console
 from kiara.module import KiaraModule, ModuleInfo
 from kiara.pipeline.controller import BatchController
 from kiara.pipeline.module import PipelineModuleInfo
 from kiara.processing.parallel import ThreadPoolProcessor
 from kiara.utils import create_table_from_field_schemas, dict_from_cli_args
-
-# from importlib.metadata import entry_points
-
-
-# from asciinet import graph_to_ascii
-
+from kiara.utils.output import OutputDetails
 
 try:
     import uvloop
@@ -43,7 +42,7 @@ def rich_print(msg: typing.Any = None) -> None:
 
 def _create_module_instance(
     ctx, module_type: str, module_config: typing.Iterable[typing.Any]
-):
+) -> KiaraModule:
     config = dict_from_cli_args(*module_config)
 
     kiara_obj = ctx.obj["kiara"]
@@ -115,10 +114,10 @@ def list_modules(ctx, only_pipeline_modules: bool, only_core_modules: bool):
     kiara_obj.explain(p)
 
 
-@module.command(name="describe-type")
+@module.command(name="explain-type")
 @click.argument("module_type", nargs=1, required=True)
 @click.pass_context
-def describe_module_type(ctx, module_type: str):
+def explain_module_type(ctx, module_type: str):
     """Print details of a (Python) module."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
@@ -139,14 +138,14 @@ def describe_module_type(ctx, module_type: str):
     rich_print(info)
 
 
-@module.command("describe-instance")
+@module.command("explain-instance")
 @click.argument("module_type", nargs=1)
 @click.argument(
     "module_config",
     nargs=-1,
 )
 @click.pass_context
-def describe_module(ctx, module_type: str, module_config: typing.Iterable[typing.Any]):
+def explain_module(ctx, module_type: str, module_config: typing.Iterable[typing.Any]):
     """Describe a step.
 
     A step, in this context, is basically a an instantiated module class, incl. (optional) config."""
@@ -265,6 +264,23 @@ def explain_steps(ctx, pipeline_type: str):
     kiara_obj.explain(structure.to_details().steps_info)
 
 
+@cli.group(name="type")
+@click.pass_context
+def type_group(ctx):
+    """Information about available modules, and details about them."""
+
+
+@type_group.command(name="list")
+@click.pass_context
+def list_types(ctx):
+
+    kiara_obj: Kiara = ctx.obj["kiara"]
+
+    print()
+    for type_name, type in kiara_obj.value_types.items():
+        rich_print(f"{type_name}: {type}")
+
+
 @cli.command()
 @click.argument("module", nargs=1)
 @click.argument("inputs", nargs=-1, required=False)
@@ -276,39 +292,19 @@ def explain_steps(ctx, pipeline_type: str):
     multiple=True,
 )
 @click.option(
-    "--data-details",
+    "--workflow-details",
     "-d",
-    help="Print details/metadata about input/output data.",
+    help="Display additional workflow details.",
     is_flag=True,
-    default=False,
 )
 @click.option(
-    "--only-output",
-    "-o",
-    help="Only print output data. Overrides all other display options.",
-    is_flag=True,
-    default=False,
+    "--output", "-o", help="The output format and configuration.", multiple=True
 )
 @click.pass_context
-async def run(ctx, module, inputs, module_config, data_details, only_output):
+async def run(ctx, module, inputs, module_config, output, workflow_details):
 
     if module_config:
         raise NotImplementedError()
-
-    display_state = True
-    display_input_values = True
-    display_input_details = False
-    display_output_values = True
-    display_output_details = False
-
-    if data_details:
-        display_input_details = True
-        display_output_details = True
-
-    if only_output:
-        display_state = False
-        display_input_values = False
-        display_input_details = False
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
@@ -335,8 +331,8 @@ async def run(ctx, module, inputs, module_config, data_details, only_output):
         )
 
         one_required = False
-        for schema in module_obj.input_schemas.values():
-            if schema.is_required():
+        for input_name in module_obj.input_names:
+            if module_obj.input_required(input_name):
                 one_required = True
                 break
 
@@ -350,17 +346,41 @@ async def run(ctx, module, inputs, module_config, data_details, only_output):
                 "No inputs provided, not running the workflow. To run it, provide input following this schema:"
             )
             rich_print(inputs_table)
-            sys.exit(0)
+            sys.exit(1)
+
+    output_details = OutputDetails.from_data(output)
+    if output_details.format != "terminal":
+        pass
+
+    force_overwrite = output_details.config.get("force", False)
+
+    # SUPPORTED_TARGETS = ["terminal", "file"]
+    # if output_details.target not in SUPPORTED_TARGETS:
+    #     print()
+    #     rich_print(f"Invalid output target '{output_details.target}', must be one of: [i]{', '.join(SUPPORTED_TARGETS)}[/i]")
+    #     sys.exit(1)
+
+    target_file: typing.Optional[Path] = None
+    if output_details.target != "terminal":
+        if output_details.target == "file":
+            target_dir = Path.cwd()
+            target_file = target_dir / f"{module_name}.{output_details.format}"
+        else:
+            target_file = Path(
+                os.path.realpath(os.path.expanduser(output_details.target))
+            )
+
+        if target_file.exists() and not force_overwrite:
+            print()
+            print(
+                f"Can't run workflow, the target files already exist, and '--output force=true' not specified: {target_file}"
+            )
+            sys.exit(1)
 
     processor = ThreadPoolProcessor()
     # processor = None
     controller = BatchController(processor=processor)
-
     workflow = kiara_obj.create_workflow(module_name, controller=controller)
-
-    # l = DebugListener()
-    # workflow.pipeline.add_listener(l)
-
     list_keys = []
 
     for name, value in workflow.inputs.items():
@@ -374,49 +394,88 @@ async def run(ctx, module, inputs, module_config, data_details, only_output):
     else:
         workflow.controller.process_pipeline()
 
-    transformer = "to_string"
-    transformer_config = {"max_lines": 6}
+    if workflow_details:
+        kiara_obj.explain(workflow.current_state)
 
-    if display_input_values:
-        vi = ValuesInfo(workflow.inputs)
-        vt = vi.create_value_data_table(
-            show_headers=True,
-            transformer=transformer,
-            transformer_config=transformer_config,
-        )
-        rich_print(Panel(vt, title_align="left", title="Workflow input data"))
-        print()
+    if output_details.target == "terminal":
+        if output_details.format == "terminal":
+            print()
+            pretty_print = kiara_obj.create_workflow("strings.pretty_print")
+            pretty_print.inputs.set_value("item", workflow.outputs)
 
-    if display_input_details:
-        vi = ValuesInfo(workflow.inputs)
-        vt = vi.create_value_info_table(show_headers=True)
-        rich_print(Panel(vt, title_align="left", title="Workflow input details"))
-        print()
+            renderables = pretty_print.outputs.get_value_data("renderables")
+            output = Panel(RenderGroup(*renderables), box=box.SIMPLE)
+            rich_print("[b]Output data[/b]")
+            rich_print(output)
+        else:
 
-    if display_state:
-        state_panel = Panel(
-            workflow.current_state,
-            title="Workflow state",
-            title_align="left",
-            padding=(1, 0, 0, 2),
-        )
-        rich_print(state_panel)
-        print()
+            format = output_details.format
+            available_formats = kiara_obj.get_convert_target_types(
+                source_type="value_set"
+            )
+            if format not in available_formats:
+                print()
+                print(
+                    f"Can't convert to output format '{format}', this format is not supported. Available formats: {', '.join(available_formats)}."
+                )
+                sys.exit(1)
 
-    if display_output_details:
-        vi = ValuesInfo(workflow.outputs)
-        vt = vi.create_value_info_table(show_headers=True)
-        rich_print(Panel(vt, title_align="left", title="Workflow output details"))
-        print()
+            config = {}
+            config.update(DEFAULT_TO_JSON_CONFIG)
 
-    if display_output_values:
-        vi = ValuesInfo(workflow.outputs)
-        vt = vi.create_value_data_table(
-            show_headers=True,
-            transformer=transformer,
-            transformer_config=transformer_config,
-        )
-        rich_print(Panel(vt, title_align="left", title="Workflow output data"))
+            transformed = kiara_obj.transform_data(
+                workflow.outputs,
+                source_type="value_set",
+                target_type=format,
+                config=config,
+            )
+            transformed_value = transformed.get_value_data("target_value")
+
+            if format in ["json", "yaml"]:
+                transformed_str = Syntax(
+                    transformed_value, lexer_name=format, background_color="default"
+                )
+                rich_print(transformed_str)
+            else:
+                print(transformed_value)
+
+    else:
+        if output_details.format == "terminal":
+            pretty_print = kiara_obj.create_workflow("strings.pretty_print")
+            pretty_print.inputs.set_value("item", workflow.outputs)
+
+            renderables = pretty_print.outputs.get_value_data("renderables")
+            output = Panel(RenderGroup(*renderables), box=box.SIMPLE)
+            with open(target_file, "wt") as f:
+                console = Console(record=True, file=f)
+                console.print(output)
+        else:
+
+            format = output_details.format
+            available_formats = kiara_obj.get_convert_target_types(
+                source_type="value_set"
+            )
+            if format not in available_formats:
+                print()
+                print(
+                    f"Can't convert to output format '{format}', this format is not supported. Available formats: {', '.join(available_formats)}."
+                )
+                sys.exit(1)
+
+            config = {}
+            config.update(DEFAULT_TO_JSON_CONFIG)
+
+            transformed = kiara_obj.transform_data(
+                workflow.outputs,
+                source_type="value_set",
+                target_type=format,
+                config=config,
+            )
+            transformed_value = transformed.get_value_data("target_value")
+
+            target_file.parent.mkdir(parents=True, exist_ok=True)
+            # TODO: check whether to write text or bytes
+            target_file.write_text(transformed_value)
 
 
 # @cli.command()
@@ -426,60 +485,34 @@ async def run(ctx, module, inputs, module_config, data_details, only_output):
 #
 #     os.environ["DEBUG"] = "true"
 #
-#     # kiara = Kiara.instance()
+#     kiara = Kiara.instance()
 #
-#     ctx = Context.instance()
+#     workflow = kiara.create_workflow("onboarding.import_local_folder")
 #
-#     sub = ctx.socket(zmq.SUB)
-#     sub.setsockopt_string(zmq.SUBSCRIBE, "")
-#     sub.connect("tcp://127.0.0.1:5556")
-#     while True:
-#         message = sub.recv()
-#         print("Received request: %s" % message)
-#         # socket.send(b"World")
+#     extended = {
+#         "steps": [
+#             {
+#                 "module_type": "tabular.create_table_from_text_files",
+#                 "module_config": {
+#                     "columns": ["id", "rel_path", "file_name", "content"]
+#                 },
+#                 "step_id": "create_table_from_files",
+#             }
+#         ],
+#         "input_aliases": {"create_table_from_files__files": "file_bundle"},
+#     }
 #
-#     module_info = kiara.get_module_info("import_local_folder")
-#     # kiara.explain(module_info)
+#     structure = workflow.structure
+#     new_structure = structure.extend(extended)
 #
-#     workflow = kiara.create_workflow("import_local_folder")
-#     workflow.inputs.path = (
-#         "/home/markus/projects/dharpa/notebooks/TopicModelling/data_tm_workflow"
-#     )
+#     workflow = kiara.create_workflow("tabular.import_table_from_folder")
+#     workflow.inputs.set_value("path", "/home/markus/projects/dharpa/data/csvs")
 #
-#     # kiara.explain(workflow.outputs)
-#     kiara.explain(workflow.outputs.file_bundle)
+#     import pp
 #
-
-# @cli.command()
-# @click.pass_context
-# def dev2(ctx):
-#     import os
-#
-#     os.environ["DEBUG"] = "true"
-#
-#     # kiara = Kiara.instance()
-#
-#     ctx = Context.instance()
-#
-#     pub = ctx.socket(zmq.PUB)
-#     pub.connect("tcp://127.0.0.1:5555")
-#     while True:
-#         topic = random.randrange(9999, 10005)
-#         messagedata = random.randrange(1, 215) - 80
-#         print("%d %d" % (topic, messagedata))
-#         pub.send_string("%d %d" % (topic, messagedata))
-#         time.sleep(1)
-#
-#     module_info = kiara.get_module_info("import_local_folder")
-#     # kiara.explain(module_info)
-#
-#     workflow = kiara.create_workflow("import_local_folder")
-#     workflow.inputs.path = (
-#         "/home/markus/projects/dharpa/notebooks/TopicModelling/data_tm_workflow"
-#     )
-#
-#     # kiara.explain(workflow.outputs)
-#     kiara.explain(workflow.outputs.file_bundle)
+#     table = workflow.outputs.get_value_obj("table")
+#     md = table.get_metadata()
+#     pp(md)
 
 
 if __name__ == "__main__":

@@ -14,6 +14,7 @@ from kiara.config import KiaraConfig
 from kiara.data import Value
 from kiara.data.registry import DataRegistry
 from kiara.data.types import ValueType
+from kiara.data.types.type_mgmt import TypeMgmt
 from kiara.interfaces import get_console
 from kiara.module_config import KiaraWorkflowConfig, PipelineModuleConfig
 from kiara.module_mgmt import ModuleManager
@@ -22,6 +23,7 @@ from kiara.module_mgmt.python_classes import PythonModuleManager
 from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.pipeline import Pipeline
 from kiara.processing import Job, ModuleProcessor
+from kiara.profiles import ModuleProfileMgmt
 from kiara.utils import get_auto_workflow_alias, get_data_from_file, is_debug
 from kiara.workflow import KiaraWorkflow
 
@@ -67,6 +69,8 @@ class Kiara(object):
         self._default_pipeline_mgr = PipelineModuleManager(folders=None)
         self._custom_pipelines_mgr = PipelineModuleManager(folders={})
 
+        self._profile_mgmt = ModuleProfileMgmt(kiara=self)
+
         self.start_zmq_device()
         self.start_log_thread()
 
@@ -91,12 +95,7 @@ class Kiara(object):
 
         self._modules: typing.Dict[str, ModuleManager] = {}
 
-        self._value_types: typing.Optional[
-            typing.Dict[str, typing.Type[ValueType]]
-        ] = None
-        self._value_type_transformations: typing.Dict[
-            str, typing.Dict[str, typing.Any]
-        ] = {}
+        self._type_mgmt: TypeMgmt = TypeMgmt(self)
 
         self._data_registry: DataRegistry = DataRegistry(self)
 
@@ -152,159 +151,93 @@ class Kiara(object):
 
     @property
     def value_types(self) -> typing.Mapping[str, typing.Type[ValueType]]:
-
-        if self._value_types is not None:
-            return self._value_types
-
-        all_value_type_classes = ValueType.__subclasses__()
-        value_type_dict: typing.Dict[str, typing.Type[ValueType]] = {}
-        for cls in all_value_type_classes:
-            type_name = cls.type_name()
-            if type_name in value_type_dict.keys():
-                raise Exception(
-                    f"Can't initiate types: duplicate type name '{type_name}'"
-                )
-            value_type_dict[type_name] = cls
-
-        self._value_types = value_type_dict
-        return self._value_types
+        return self._type_mgmt.value_types
 
     @property
     def value_type_names(self) -> typing.List[str]:
-        return list(self.value_types.keys())
+        return self._type_mgmt.value_type_names
+
+    def determine_type(self, data: typing.Any) -> typing.Optional[ValueType]:
+
+        return self._type_mgmt.determine_type(data)
+
+    def get_value_metadata(
+        self,
+        value: Value,
+        metadata_keys: typing.Union[None, str, typing.Iterable[str]] = None,
+    ):
+
+        value_type = value.value_schema.type
+        # TODO: validate type exists
+
+        all_profiles_for_type = self._profile_mgmt.extract_metadata_profiles.get(
+            value_type, None
+        )
+        if all_profiles_for_type is None:
+            all_profiles_for_type = {}
+
+        if not metadata_keys:
+            metadata_keys = all_profiles_for_type.keys()
+        elif isinstance(metadata_keys, str):
+            metadata_keys = [metadata_keys]
+
+        result = {}
+
+        for mk in metadata_keys:
+            if not all_profiles_for_type or mk not in all_profiles_for_type:
+                raise Exception(
+                    f"Can't extract metadata profile '{mk}' for type '{value_type}': metadata profile does not exist (for this type, anyway)."
+                )
+            profile = all_profiles_for_type[mk]
+            module = profile.create_module(kiara=self)
+            metadata_result = module.run(value=value)
+            result[mk] = metadata_result.get_all_value_data()
+
+        return result
 
     def get_value_type_cls(self, type_name: str) -> typing.Type[ValueType]:
 
-        t = self.value_types.get(type_name, None)
-        if t is None:
-            raise Exception(
-                f"No value type '{type_name}', available types: {', '.join(self.value_types.keys())}"
-            )
-        return t
+        return self._type_mgmt.get_value_type_cls(type_name=type_name)
 
-    def get_value_type_transformations(
-        self, value_type_name: str
-    ) -> typing.Mapping[str, typing.Mapping[str, typing.Any]]:
-        """Return available transform pipelines for value types."""
-
-        if value_type_name in self._value_type_transformations.keys():
-            return self._value_type_transformations[value_type_name]
-
-        type_cls = self.get_value_type_cls(type_name=value_type_name)
-        _configs = type_cls.get_type_transformation_configs()
-        if _configs is None:
-            configs = {}
-        else:
-            configs = dict(_configs)
-        for base in type_cls.__bases__:
-            if hasattr(base, "get_type_transformation_configs"):
-                _b_configs = base.get_type_transformation_configs()  # type: ignore
-                if not _b_configs:
-                    continue
-                for k, v in _b_configs.items():
-                    if k not in configs.keys():
-                        configs[k] = v
-
-        # TODO: check input type compatibility?
-        result: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
-        for name, config in configs.items():
-            config = dict(config)
-            module_type = config.pop("module_type", None)
-            if not module_type:
-                raise Exception(
-                    f"Can't create transformation '{name}' for type '{value_type_name}', no module type specified in config: {config}"
-                )
-            module_config = config.pop("module_config", {})
-            module = self.create_module(
-                f"_transform_{value_type_name}_{name}",
-                module_type=module_type,
-                module_config=module_config,
-            )
-
-            if "input_name" not in config.keys():
-
-                if len(module.input_schemas) == 1:
-                    config["input_name"] = next(iter(module.input_schemas.keys()))
-                else:
-                    required_inputs = [
-                        inp
-                        for inp, schema in module.input_schemas.items()
-                        if schema.is_required()
-                    ]
-                    if len(required_inputs) == 1:
-                        config["input_name"] = required_inputs[0]
-                    else:
-                        raise Exception(
-                            f"Can't create transformation '{name}' for type '{value_type_name}': can't determine input name between those options: '{', '.join(required_inputs)}'"
-                        )
-
-            if "output_name" not in config.keys():
-
-                if len(module.input_schemas) == 1:
-                    config["output_name"] = next(iter(module.output_schemas.keys()))
-                else:
-                    required_outputs = [
-                        inp
-                        for inp, schema in module.output_schemas.items()
-                        if schema.is_required()
-                    ]
-                    if len(required_outputs) == 1:
-                        config["output_name"] = required_outputs[0]
-                    else:
-                        raise Exception(
-                            f"Can't create transformation '{name}' for type '{value_type_name}': can't determine output name between those options: '{', '.join(required_outputs)}'"
-                        )
-
-            result[name] = {
-                "module": module,
-                "module_type": module_type,
-                "module_config": module_config,
-                "transformation_config": config,
-            }
-
-        self._value_type_transformations[value_type_name] = result
-        return self._value_type_transformations[value_type_name]
-
-    def get_available_transformations_for_type(
-        self, value_type_name: str
-    ) -> typing.Iterable[str]:
-
-        return self.get_value_type_transformations(value_type_name=value_type_name)
-
-    def transform_value(
+    def transform_data(
         self,
-        transformation_alias: str,
-        value: Value,
-        other_inputs: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+        data: typing.Any,
+        target_type: str,
+        source_type: typing.Optional[str] = None,
+        config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+        register_result: bool = False,
     ) -> Value:
 
-        transformations = self.get_value_type_transformations(value.value_schema.type)
-        if transformation_alias not in transformations.keys():
-            raise Exception(
-                f"Can't transform value of type '{value.value_schema.type}', transformation '{transformation_alias}' not available for this type. Available: {', '.join(transformations.keys())}"
-            )
+        if register_result:
+            raise NotImplementedError()
 
-        config = transformations[transformation_alias]
-        input_name = config["transformation_config"]["input_name"]
+        if not source_type:
+            if isinstance(data, Value):
+                source_type = data.type_name
+            else:
+                _source_type = self._type_mgmt.determine_type(data)
+                if not _source_type:
+                    raise Exception(
+                        f"Can't transform data to '{target_type}': can not determine source type."
+                    )
+                source_type = _source_type.type_name()
 
-        module: KiaraModule = config["module"]
+        module = self._profile_mgmt.get_type_conversion_module(
+            source_type=source_type, target_type=target_type  # type: ignore
+        )
+        from kiara.modules.type_conversion import TypeConversionModule
 
-        if other_inputs is None:
-            inputs = {}
+        if isinstance(module, TypeConversionModule):
+
+            result = module.run(source_value=data, config=config)
+            return result.get_value_obj("target_value")
+
         else:
-            inputs = dict(other_inputs)
-            if input_name in other_inputs.keys():
-                raise Exception(
-                    f"Invalid value for 'other_inputs' in transform arguments, can't contain the main input key '{input_name}'."
-                )
+            raise NotImplementedError()
 
-        inputs[input_name] = value
+    def get_convert_target_types(self, source_type: str) -> typing.Iterable[str]:
 
-        result = module.run(**inputs)
-        output_name = config["transformation_config"]["output_name"]
-
-        result_value = result.get_value_obj(output_name)
-        return result_value
+        return self._profile_mgmt.type_convert_profiles.get(source_type, [])
 
     def add_module_manager(self, module_manager: ModuleManager):
 

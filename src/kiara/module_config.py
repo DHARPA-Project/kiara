@@ -21,16 +21,20 @@ if typing.TYPE_CHECKING:
 
 def create_step_value_address(
     value_address_config: typing.Union[str, typing.Mapping[str, typing.Any]],
-    field_name: str,
+    default_field_name: str,
 ) -> StepValueAddress:
 
+    if isinstance(value_address_config, StepValueAddress):
+        return value_address_config
+
     sub_value: typing.Optional[typing.Mapping[str, typing.Any]] = None
+
     if isinstance(value_address_config, str):
 
         tokens = value_address_config.split(".")
         if len(tokens) == 1:
             step_id = value_address_config
-            output_name = field_name
+            output_name = default_field_name
         elif len(tokens) == 2:
             step_id = tokens[0]
             output_name = tokens[1]
@@ -45,6 +49,10 @@ def create_step_value_address(
         step_id = value_address_config["step_id"]
         output_name = value_address_config["output_name"]
         sub_value = value_address_config.get("sub_value", None)
+    else:
+        raise TypeError(
+            f"Invalid type for creating step value address: {type(value_address_config)}"
+        )
 
     if sub_value is not None and not isinstance(sub_value, typing.Mapping):
         raise ValueError(
@@ -55,6 +63,30 @@ def create_step_value_address(
         step_id=step_id, value_name=output_name, sub_value=sub_value
     )
     return input_link
+
+
+def ensure_step_value_addresses(
+    link: typing.Union[str, typing.Mapping, typing.Iterable], default_field_name: str
+) -> typing.List[StepValueAddress]:
+
+    if isinstance(link, (str, typing.Mapping)):
+        input_links: typing.List[StepValueAddress] = [
+            create_step_value_address(
+                value_address_config=link, default_field_name=default_field_name
+            )
+        ]
+
+    elif isinstance(link, typing.Iterable):
+        input_links = []
+        for o in link:
+            il = create_step_value_address(
+                value_address_config=o, default_field_name=default_field_name
+            )
+            input_links.append(il)
+    else:
+        raise TypeError(f"Can't parse input map, invalid type for output: {link}")
+
+    return input_links
 
 
 class PipelineStepConfig(BaseModel):
@@ -81,41 +113,44 @@ class PipelineStepConfig(BaseModel):
         result = {}
         for input_name, output in v.items():
 
-            if isinstance(output, (str, typing.Mapping)):
-                input_links = [
-                    create_step_value_address(
-                        value_address_config=output, field_name=input_name
-                    )
-                ]
-
-            elif isinstance(output, collections.abc.Sequence):
-                input_links = []
-                for o in output:
-                    il = create_step_value_address(
-                        value_address_config=o, field_name=input_name
-                    )
-                    input_links.append(il)
-            else:
-                raise TypeError(
-                    f"Can't parse input map, invalid type for output: {output}"
-                )
-
+            input_links = ensure_step_value_addresses(
+                default_field_name=input_name, link=output
+            )
             result[input_name] = input_links
 
         return result
 
 
+class PipelineStructureConfig(BaseModel):
+
+    parent_id: str = Field(description="The id of the parent of this structure.")
+    steps: typing.List[PipelineStepConfig]
+    input_aliases: typing.Union[None, str, typing.Dict[str, str]] = None
+    output_aliases: typing.Union[None, str, typing.Dict[str, str]] = None
+
+
 class KiaraModuleConfig(BaseModel):
-    """Base class that describes the configuration a [KiaraModule][kiara.module.KiaraModule] class accepts.
+    """Base class that describes the configuration a [``KiaraModule``][kiara.module.KiaraModule] class accepts.
 
     This is stored in the ``_config_cls`` class attribute in each ``KiaraModule`` class. By default,
     such a ``KiaraModule`` is not configurable.
 
+    There are two config options every ``KiaraModule`` supports:
+
+     - ``constants``, and
+     - ``defaults``
+
+     Constants are pre-set inputs, and users can't change them and an error is thrown if they try. Defaults are default
+     values that override the schema defaults, and those can be overwritten by users. If both a constant and a default
+     value is set for an input field, an error is thrown.
     """
 
     _config_hash: str = PrivateAttr(default=None)
     constants: typing.Dict[str, typing.Any] = Field(
         default_factory=dict, description="Value constants for this module."
+    )
+    defaults: typing.Dict[str, typing.Any] = Field(
+        default_factory=dict, description="Value defaults for this module."
     )
 
     class Config:
@@ -267,9 +302,7 @@ class PipelineModuleConfig(KiaraModuleConfig):
 
         ps = PipelineStructure(
             parent_id=parent_id,
-            steps=self.steps,
-            input_aliases=self.input_aliases,
-            output_aliases=self.output_aliases,
+            config=self,
             kiara=kiara,
         )
         return ps
@@ -277,7 +310,6 @@ class PipelineModuleConfig(KiaraModuleConfig):
     def create_pipeline(
         self,
         parent_id: typing.Optional[str] = None,
-        constants: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         controller: typing.Optional["PipelineController"] = None,
         kiara: typing.Optional["Kiara"] = None,
     ):
@@ -290,7 +322,6 @@ class PipelineModuleConfig(KiaraModuleConfig):
 
         pipeline = Pipeline(
             structure=structure,
-            constants=constants,
             controller=controller,
         )
         return pipeline

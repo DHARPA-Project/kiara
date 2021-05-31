@@ -326,6 +326,19 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         """
         return self._config
 
+    def input_required(self, input_name: str):
+
+        if input_name not in self._input_schemas.keys():
+            raise Exception(f"No input '{input_name}' for module '{self.id}'.")
+
+        if not self._input_schemas[input_name].is_required():
+            return False
+
+        if input_name in self.get_config_value("constants"):
+            return False
+        else:
+            return True
+
     def get_config_value(self, key: str) -> typing.Any:
         """Retrieve the value for a specific configuration option.
 
@@ -370,6 +383,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
 
         result = {}
         for k, v in _input_schemas.items():
+
             if isinstance(v, ValueSchema):
                 result[k] = v
             elif isinstance(v, typing.Mapping):
@@ -380,6 +394,23 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
                 raise Exception(
                     f"Invalid return type when tryping to create schema for '{self.id}': {type(v)}"
                 )
+            default_value = self.config.defaults.get(k, None)
+            constant_value = self.config.constants.get(k, None)
+
+            # value_to_test = None
+            if default_value is not None and constant_value is not None:
+                raise Exception(
+                    f"Module configuration error. Value '{k}' set in both 'constants' and 'defaults', this is not allowed."
+                )
+            # elif default_value is not None:
+            #     value_to_test = default_value
+            # elif constant_value is not None:
+            #     value_to_test = constant_value
+
+            # TODO: perform validation for constants/defaults
+
+            if default_value is not None:
+                result[k].default = default_value
 
         self._input_schemas = result
 
@@ -478,6 +509,10 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         for k, v in inputs.items():
             v = clean_value(v)
             if not isinstance(v, Value):
+                if k not in self.input_schemas.keys():
+                    raise Exception(
+                        f"Invalid input name '{k}. Not part of the schema, allowed input names: {', '.join(self.input_names)}"
+                    )
                 schema = self.input_schemas[k]
                 v = NonRegistryValue(
                     _init_value=v,  # type: ignore
@@ -590,8 +625,11 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         config_str = json.dumps(config, indent=2)
         c = Syntax(config_str, "json", background_color="default")
         table.add_row("config", c)
+
+        constants = self.config.get("constants")
+
         inputs_table = create_table_from_field_schemas(
-            _show_header=True, **self.input_schemas
+            _show_header=True, _constants=constants, **self.input_schemas
         )
         table.add_row("inputs", inputs_table)
         outputs_table = create_table_from_field_schemas(

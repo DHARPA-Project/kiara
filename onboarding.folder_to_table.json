@@ -1,0 +1,20 @@
+{
+  "table": {
+    "id": [
+      0,
+      1
+    ],
+    "rel_path": [
+      "csv_1.csv",
+      "csv_2.csv"
+    ],
+    "file_name": [
+      "csv_1.csv",
+      "csv_2.csv"
+    ],
+    "content": [
+      "a,b,c\nd,e,f\n",
+      "a,b,c\nd,e,f\n"
+    ]
+  }
+}

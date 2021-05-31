@@ -2,9 +2,10 @@
 import networkx as nx
 import typing
 import uuid
+from bidict import frozenbidict
 from functools import lru_cache
 from networkx import NetworkXNoPath, NodeNotFound
-from pydantic import BaseModel, Extra, Field, PrivateAttr
+from pydantic import BaseModel, Extra, Field, PrivateAttr, validator
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderGroup, RenderResult
 from rich.markdown import Markdown
@@ -22,10 +23,12 @@ from kiara.data.values import (
 )
 from kiara.defaults import DEFAULT_NO_DESC_VALUE, PIPELINE_PARENT_MARKER, SpecialValue
 from kiara.module import KiaraModule
+from kiara.pipeline.utils import create_pipeline_structure_desc, extend_pipeline
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
-    from kiara.module_config import PipelineStepConfig
+    from kiara.module_config import PipelineModuleConfig, PipelineStepConfig
+    from kiara.pipeline.pipeline import Pipeline
 
 
 class PipelineStep(BaseModel):
@@ -61,6 +64,15 @@ class PipelineStep(BaseModel):
         return result
 
     _module: typing.Optional[KiaraModule] = PrivateAttr(default=None)
+
+    @validator("step_id")
+    def _validate_step_id(cls, v):
+
+        assert isinstance(v, str)
+        if "." in v:
+            raise ValueError("Step ids can't contain '.' characters.")
+
+        return v
 
     step_id: str
     parent_id: str
@@ -235,12 +247,15 @@ class PipelineStructure(object):
     def __init__(
         self,
         parent_id: str,
-        steps: typing.Iterable["PipelineStepConfig"],
-        input_aliases: typing.Union[str, typing.Mapping[str, str]] = None,
-        output_aliases: typing.Union[str, typing.Mapping[str, str]] = None,
-        add_all_workflow_outputs: bool = False,
+        config: "PipelineModuleConfig",
         kiara: typing.Optional["Kiara"] = None,
     ):
+
+        self._structure_config: "PipelineModuleConfig" = config
+
+        steps = self._structure_config.steps
+        input_aliases = self._structure_config.input_aliases
+        output_aliases = self._structure_config.output_aliases
 
         if not steps:
             raise Exception("No steps provided.")
@@ -276,12 +291,16 @@ class PipelineStructure(object):
                 self._steps, output_aliases, "outputs"
             )
 
-        self._input_aliases: typing.Mapping[str, str] = input_aliases  # type: ignore
+        self._input_aliases: frozenbidict[str, str] = frozenbidict(input_aliases)  # type: ignore
         if output_aliases is None:
             output_aliases = {}
-        self._output_aliases: typing.Mapping[str, str] = output_aliases  # type: ignore
+        self._output_aliases: frozenbidict[str, str] = frozenbidict(output_aliases)  # type: ignore
 
-        self._add_all_workflow_outputs: bool = add_all_workflow_outputs
+        # this is hardcoded for now
+        self._add_all_workflow_outputs: bool = False
+
+        self._constants: typing.Dict[str, typing.Any] = None  # type: ignore
+        self._defaults: typing.Dict[str, typing.Any] = None  # type: ignore
 
         self._execution_graph: nx.DiGraph = None  # type: ignore
         self._data_flow_graph: nx.DiGraph = None  # type: ignore
@@ -295,6 +314,10 @@ class PipelineStructure(object):
     @property
     def pipeline_id(self) -> str:
         return self._pipeline_id
+
+    @property
+    def structure_config(self) -> "PipelineModuleConfig":
+        return self._structure_config
 
     @property
     def steps(self) -> typing.Iterable[PipelineStep]:
@@ -316,6 +339,20 @@ class PipelineStructure(object):
         if self._steps_details is None:
             self._process_steps()
         return self._steps_details.keys()
+
+    @property
+    def constants(self) -> typing.Mapping[str, typing.Any]:
+
+        if self._constants is None:
+            self._process_steps()
+        return self._constants
+
+    @property
+    def defaults(self) -> typing.Mapping[str, typing.Any]:
+
+        if self._defaults is None:
+            self._process_steps()
+        return self._defaults
 
     def get_step(self, step_id: str) -> PipelineStep:
 
@@ -436,6 +473,8 @@ class PipelineStructure(object):
         data_flow_graph = nx.DiGraph()
         data_flow_graph_simple = nx.DiGraph()
         processing_stages = []
+        constants = {}
+        structure_defaults = {}
 
         # temp variable, to hold all outputs
         outputs: typing.Dict[str, StepOutputField] = {}
@@ -518,9 +557,16 @@ class PipelineStructure(object):
             other_step_dependency: typing.Set = set()
             # go through all the inputs of a module, create input points and connect them to either
             # other module outputs, or pipeline inputs (which need to be created)
+
+            module_constants: typing.Mapping[
+                str, typing.Any
+            ] = step.module.get_config_value("constants")
+
             for input_name, schema in step.module.input_schemas.items():
 
                 matching_input_links: typing.List[StepValueAddress] = []
+                is_constant = input_name in module_constants.keys()
+
                 for value_name, input_links in step.input_links.items():
                     if value_name == input_name:
                         for input_link in input_links:
@@ -541,7 +587,7 @@ class PipelineStructure(object):
 
                         if output_id not in outputs.keys():
                             raise Exception(
-                                f"Can't connect input '{input_name}' for step '{step.step_id}': no output '{output_id}' available."
+                                f"Can't connect input '{input_name}' for step '{step.step_id}': no output '{output_id}' available. Available output names: {', '.join(outputs.keys())}"
                             )
                         connected_output_points.append(outputs[output_id])
                         connected_outputs.append(input_link)
@@ -553,6 +599,7 @@ class PipelineStructure(object):
                         pipeline_id=self._pipeline_id,
                         value_name=input_name,
                         value_schema=schema,
+                        is_constant=is_constant,
                         connected_pipeline_input=None,
                         connected_outputs=connected_outputs,
                     )
@@ -572,6 +619,7 @@ class PipelineStructure(object):
                     pipeline_input_name = generate_pipeline_endpoint_name(
                         step_id=step.step_id, value_name=input_name
                     )
+                    # check whether this input has an alias associated with it
                     if self._input_aliases:
                         if pipeline_input_name in self._input_aliases.keys():
                             # this means we use the pipeline alias
@@ -585,12 +633,14 @@ class PipelineStructure(object):
                         connected_pipeline_input = existing_pipeline_input_points[
                             pipeline_input_name
                         ]
+                        assert connected_pipeline_input.is_constant == is_constant
                     else:
                         # we need to create the pipeline input
                         connected_pipeline_input = PipelineInputField(
                             value_name=pipeline_input_name,
                             value_schema=schema,
                             pipeline_id=self._pipeline_id,
+                            is_constant=is_constant,
                         )
 
                         existing_pipeline_input_points[
@@ -603,6 +653,20 @@ class PipelineStructure(object):
                         data_flow_graph_simple.add_node(
                             connected_pipeline_input, type=PipelineInputField.__name__
                         )
+                        if is_constant:
+                            constants[
+                                pipeline_input_name
+                            ] = step.module.get_config_value("constants")[input_name]
+
+                        default_val = step.module.get_config_value("defaults").get(
+                            input_name, None
+                        )
+                        if is_constant and default_val is not None:
+                            raise Exception(
+                                f"Module config invalid for step '{step.step_id}': both default value and constant provided for input '{input_name}'."
+                            )
+                        elif default_val is not None:
+                            structure_defaults[pipeline_input_name] = default_val
 
                     step_input_point = StepInputField(
                         step_id=step.step_id,
@@ -652,6 +716,8 @@ class PipelineStructure(object):
                 steps_details[_step_id]["processing_stage"] = i
                 steps_details[_step_id]["step"].processing_stage = i
 
+        self._constants = constants
+        self._defaults = structure_defaults
         self._steps_details = steps_details
         self._execution_graph = execution_graph
         self._data_flow_graph = data_flow_graph
@@ -716,64 +782,24 @@ class PipelineStructure(object):
             if optional:
                 inp.value_schema.optional = True
 
+    def extend(
+        self,
+        other: typing.Union[
+            "Pipeline",
+            "PipelineStructure",
+            "PipelineModuleConfig",
+            typing.Mapping[str, typing.Any],
+        ],
+        input_links: typing.Optional[
+            typing.Mapping[str, typing.Iterable[StepValueAddress]]
+        ] = None,
+    ) -> "PipelineStructure":
+
+        return extend_pipeline(self, other)
+
     def to_details(self) -> "PipelineStructureDesc":
 
-        steps = {}
-        workflow_inputs: typing.Dict[str, typing.List[str]] = {}
-        workflow_outputs: typing.Dict[str, str] = {}
-
-        for m_id, details in self.steps_details.items():
-
-            step = details["step"]
-
-            input_connections: typing.Dict[str, typing.List[str]] = {}
-            for k, v in details["inputs"].items():
-
-                if v.connected_pipeline_input is not None:
-                    connected_item = v.connected_pipeline_input
-                    input_connections[k] = [
-                        generate_step_alias(PIPELINE_PARENT_MARKER, connected_item)
-                    ]
-                    workflow_inputs.setdefault(f"{connected_item}", []).append(v.alias)
-                elif v.connected_outputs is not None:
-                    assert len(v.connected_outputs) > 0
-                    for co in v.connected_outputs:
-                        input_connections.setdefault(k, []).append(co.alias)
-                else:
-                    raise TypeError(f"Invalid connection type: {type(connected_item)}")
-
-            output_connections: typing.Dict[str, typing.Any] = {}
-            for k, v in details["outputs"].items():
-                for connected_item in v.connected_inputs:
-
-                    output_connections.setdefault(k, []).append(
-                        generate_step_alias(
-                            connected_item.step_id, connected_item.value_name
-                        )
-                    )
-                if v.pipeline_output:
-                    output_connections.setdefault(k, []).append(
-                        generate_step_alias(PIPELINE_PARENT_MARKER, v.pipeline_output)
-                    )
-                    workflow_outputs[v.pipeline_output] = v.alias
-
-            steps[step.step_id] = StepDesc(
-                step=step,
-                processing_stage=details["processing_stage"],
-                input_connections=input_connections,
-                output_connections=output_connections,
-                required=step.required,
-            )
-
-        return PipelineStructureDesc(
-            pipeline_id=self._pipeline_id,
-            steps=steps,
-            processing_stages=self.processing_stages,
-            pipeline_input_connections=workflow_inputs,
-            pipeline_output_connections=workflow_outputs,
-            pipeline_inputs=self.pipeline_inputs,
-            pipeline_outputs=self.pipeline_outputs,
-        )
+        return create_pipeline_structure_desc(self)
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions

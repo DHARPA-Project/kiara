@@ -3,6 +3,7 @@ import typing
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.table import Table
+from slugify import slugify
 
 from kiara.data.values import ValueSet
 from kiara.module_config import KiaraWorkflowConfig
@@ -45,7 +46,9 @@ class KiaraWorkflow(object):
                 "steps": [
                     {
                         "module_type": self._workflow_config.module_type,
-                        "step_id": self._workflow_config.module_type,
+                        "step_id": slugify(
+                            self._workflow_config.module_type, separator="_"
+                        ),
                         "module_config": self._workflow_config.module_config,
                     }
                 ],

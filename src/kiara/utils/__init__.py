@@ -16,6 +16,7 @@ from pydantic.schema import (
     model_process_schema,
 )
 from rich import box
+from rich.console import ConsoleRenderable, RichCast
 from rich.table import Table
 from ruamel.yaml import YAML
 from types import ModuleType
@@ -46,6 +47,10 @@ def log_message(msg: str):
         log.warning(msg)
     else:
         log.debug(msg)
+
+
+def is_rich_renderable(item: typing.Any):
+    return isinstance(item, (ConsoleRenderable, RichCast, str))
 
 
 def get_data_from_file(
@@ -160,6 +165,7 @@ def create_table_from_field_schemas(
     _add_default: bool = True,
     _add_required: bool = True,
     _show_header: bool = False,
+    _constants: typing.Optional[typing.Mapping[str, typing.Any]] = None,
     **fields: "ValueSchema",
 ):
 
@@ -167,10 +173,14 @@ def create_table_from_field_schemas(
     table.add_column("Field name", style="i")
     table.add_column("Type")
     table.add_column("Description")
+
     if _add_required:
         table.add_column("Required")
     if _add_default:
-        table.add_column("Default")
+        if _constants:
+            table.add_column("Default / Constant")
+        else:
+            table.add_column("Default")
 
     for field_name, schema in fields.items():
 
@@ -192,10 +202,17 @@ def create_table_from_field_schemas(
             row.append(req_str)
 
         if _add_default:
-            if schema.default in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
-                d = "-- no default --"
+            if _constants and field_name in _constants.keys():
+                d = f"[b]{_constants[field_name]}[/b] (constant)"
             else:
-                d = str(schema.default)
+                if schema.default in [
+                    None,
+                    SpecialValue.NO_VALUE,
+                    SpecialValue.NOT_SET,
+                ]:
+                    d = "-- no default --"
+                else:
+                    d = str(schema.default)
             row.append(d)
 
         table.add_row(*row)

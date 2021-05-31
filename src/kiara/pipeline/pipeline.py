@@ -58,7 +58,7 @@ class Pipeline(object):
     def __init__(
         self,
         structure: PipelineStructure,
-        constants: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+        # constants: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         controller: typing.Optional[PipelineController] = None,
     ):
 
@@ -74,10 +74,6 @@ class Pipeline(object):
         self._status: StepStatus = StepStatus.STALE
 
         self._kiara: Kiara = self._structure._kiara
-
-        if constants is None:
-            constants = {}
-        self._constants: typing.Mapping[str, typing.Any] = constants
 
         self._data_registry: DataRegistry = self._kiara.data_registry
 
@@ -226,15 +222,26 @@ class Pipeline(object):
                         # if the pipeline input wasn't created by another step input before,
                         # we need to take care of it here
 
-                        constant = self._constants.get(
-                            connected_pipeline_input_name, None
-                        )
+                        if pipeline_input_field.is_constant:
+                            init_value = self.structure.constants[
+                                pipeline_input_field.value_name
+                            ]
+                            origin = f"pipeline_input:{self.structure.pipeline_id}.{input_name} (constant)"
+                        else:
+                            init_value = self.structure.defaults.get(
+                                pipeline_input_field.value_name, None
+                            )
+                            if init_value is not None:
+                                origin = f"pipeline_input:{self.structure.pipeline_id}.{input_name} (default)"
+                            else:
+                                origin = f"pipeline_input:{self.structure.pipeline_id}.{input_name}"
+
                         pipeline_input = self._data_registry.register_value(
                             value_schema=pipeline_input_field.value_schema,
                             value_fields=pipeline_input_field,
-                            is_constant=False if constant is None else True,
-                            initial_value=constant,
-                            origin=f"pipeline_input:{self.structure.pipeline_id}.{input_name}",
+                            is_constant=pipeline_input_field.is_constant,
+                            initial_value=init_value,
+                            origin=origin,
                         )
                         self._data_registry.register_callback(
                             self.values_updated, pipeline_input

@@ -23,11 +23,11 @@ Display information about a modules, like description, configuration schema, sou
 
 #### ...for a core module
 
-{{ cli("kiara", "module", "describe-type", "and") }}
+{{ cli("kiara", "module", "explain-type", "and") }}
 
 #### ...for a pipeline module
 
-{{ cli("kiara", "module", "describe-type", "nand") }}
+{{ cli("kiara", "module", "explain-type", "nand") }}
 
 ### get properties of an instantiated module
 
@@ -38,11 +38,11 @@ This command also can take module configuration, in different forms. This will b
 
 #### ...for a core module
 
-{{ cli("kiara", "module", "describe-instance", "and") }}
+{{ cli("kiara", "module", "explain-instance", "and") }}
 
 #### ...for a pipeline module
 
-{{ cli("kiara", "module", "describe-instance", "nand") }}
+{{ cli("kiara", "module", "explain-instance", "nand") }}
 
 ## pipeline-specific sub-commands
 

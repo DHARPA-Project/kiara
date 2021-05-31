@@ -277,17 +277,25 @@ class Value(BaseModel):
 
         return table
 
+    def get_metadata(
+        self, *metadata_keys: str, also_return_schema: bool = False
+    ) -> typing.Mapping[str, typing.Mapping[str, typing.Any]]:
+
+        raise NotImplementedError()
+
     def transform(
         self,
-        transformation_alias: str,
+        target_type: str,
         return_data: bool = True,
-        other_inputs: typing.Optional[typing.Mapping[str, typing.Any]] = None,
-    ) -> typing.Any:
+        config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+        register_result: bool = False,
+    ) -> typing.Union[typing.Mapping[str, typing.Any], "Value"]:
 
-        transformed = self._kiara.transform_value(
-            transformation_alias=transformation_alias,
-            value=self,
-            other_inputs=other_inputs,
+        transformed = self._kiara.transform_data(
+            data=self,
+            target_type=target_type,
+            config=config,
+            register_result=register_result,
         )
         if not return_data:
             return transformed
@@ -393,6 +401,27 @@ class KiaraValue(Value, abc.ABC):
             return self.registry.get_value_hash(self)
         else:
             return self.value_hash
+
+    def get_metadata(
+        self, *metadata_keys: str, also_return_schema: bool = False
+    ) -> typing.Mapping[str, typing.Mapping[str, typing.Any]]:
+
+        result = {}
+        missing = set()
+        for metadata_key in metadata_keys:
+            if metadata_keys in self.metadata.keys():
+                if also_return_schema:
+                    result[metadata_key] = self.metadata[metadata_key]
+                else:
+                    result[metadata_key] = self.metadata[metadata_key]["metadata"]
+            else:
+                missing.add(metadata_key)
+
+        if not missing:
+            return result
+        _md = self.registry.get_value_metadata(self, *missing)
+        result.update(_md)
+        return result
 
     def __eq__(self, other):
 
@@ -834,12 +863,13 @@ class ValuesInfo(object):
     def __init__(self, value_set: ValueSet, title: typing.Optional[str] = None):
 
         self._value_set: ValueSet = value_set
+        self._title: typing.Optional[str] = title
 
     def create_value_data_table(
         self,
         show_headers: bool = False,
-        transformer: typing.Optional[str] = None,
-        transformer_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+        convert_module_type: typing.Optional[str] = None,
+        convert_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
     ) -> Table:
 
         table = Table(show_header=show_headers, box=box.SIMPLE)
@@ -851,7 +881,9 @@ class ValuesInfo(object):
 
             if not value.is_set:
                 if value.item_is_valid():
-                    value_str = "-- not set --"
+                    value_str: typing.Union[
+                        ConsoleRenderable, RichCast, str
+                    ] = "-- not set --"
                 else:
                     value_str = "[red]-- not set --[/red]"
             elif value.is_none:
@@ -860,13 +892,14 @@ class ValuesInfo(object):
                 else:
                     value_str = "[red]-- no value --[/red]"
             else:
-                if not transformer:
+                if not convert_module_type:
                     value_str = value.get_value_data()
                 else:
-                    value_str = value.transform(
-                        transformer, return_data=True, other_inputs=transformer_config
+                    _value_str = value.transform(
+                        convert_module_type, return_data=True, config=convert_config
                     )
-                if not isinstance(value_str, (ConsoleRenderable, RichCast, str)):
+
+                if not isinstance(_value_str, (ConsoleRenderable, RichCast, str)):
                     value_str = str(value_str)
 
             table.add_row(field_name, value_str)
@@ -1042,6 +1075,9 @@ class StepInputField(ValueField):
     connected_pipeline_input: typing.Optional[str] = Field(
         default=None, description="A potential pipeline input."
     )
+    is_constant: bool = Field(
+        "Whether this input is a constant and can't be changed by the user."
+    )
 
     @root_validator(pre=True)
     def ensure_single_connected_item(cls, values):
@@ -1101,6 +1137,9 @@ class PipelineInputField(ValueField):
         description="The step inputs that are connected to this pipeline input",
         default_factory=list,
     )
+    is_constant: bool = Field(
+        "Whether this input is a constant and can't be changed by the user."
+    )
 
     @property
     def alias(self) -> str:
@@ -1115,6 +1154,23 @@ class PipelineOutputField(ValueField):
     @property
     def alias(self) -> str:
         return generate_step_alias(PIPELINE_PARENT_MARKER, self.value_name)
+
+
+class ValueSetType(ValueType):
+    def validate(cls, value: typing.Any) -> None:
+        assert isinstance(value, ValueSet)
+
+    @classmethod
+    def check_data_type(cls, data: typing.Any) -> typing.Optional[ValueType]:
+
+        if isinstance(data, ValueSet):
+            return ValueSetType()
+        else:
+            return None
+
+    @classmethod
+    def relevant_python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
+        return [ValueSet]
 
 
 Value.update_forward_refs()

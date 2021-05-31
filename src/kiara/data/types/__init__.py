@@ -20,17 +20,16 @@ be discouraged, since this might not be trivial and there are quite a few things
 """
 
 import datetime
-import networkx
-import networkx as nx
-import pyarrow
 import typing
 from dateutil import parser
 from deepdiff import DeepHash
 from enum import Enum
-from networkx import DiGraph
 from rich.console import Console, ConsoleOptions, RenderResult
 
 from kiara.utils import camel_case_to_snake_case
+
+if typing.TYPE_CHECKING:
+    from kiara.data.values import Value
 
 
 class ValueHashMarker(Enum):
@@ -93,9 +92,19 @@ class ValueType(object):
         The name of the transformation is the key of the result dictionary, the configuration is a module configuration
         (dictionary wth 'module_type' and optional 'module_config', 'input_name' and 'output_name' keys).
         """
-        return {
-            "to_string": {"module_type": "strings.pretty_print", "input_name": "item"}
-        }
+        return {"string": {"module_type": "strings.pretty_print", "input_name": "item"}}
+
+    @classmethod
+    def check_value_type(cls, value: "Value") -> typing.Optional["ValueType"]:
+        return cls.check_data_type(value.get_value_data())
+
+    @classmethod
+    def check_data_type(cls, data: typing.Any) -> typing.Optional["ValueType"]:
+        return None
+
+    @classmethod
+    def relevant_python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
+        return None
 
     def __init__(self, **type_config: typing.Any):
 
@@ -349,50 +358,3 @@ class DateType(ValueType):
 
     def validate(cls, value: typing.Any):
         assert isinstance(value, datetime.datetime)
-
-
-class TableType(ValueType):
-    def validate(cls, value: typing.Any) -> None:
-        assert isinstance(value, pyarrow.Table)
-
-    def extract_type_metadata(
-        cls, value: typing.Any
-    ) -> typing.Mapping[str, typing.Any]:
-
-        table: pyarrow.Table = value
-        table_schema = {}
-        for name in table.schema.names:
-            field = table.schema.field(name)
-            md = field.metadata
-            if not md:
-                md = {}
-            _type = field.type
-            _d = {"item_type": str(_type), "arrow_type_id": _type.id, "metadata": md}
-            table_schema[name] = _d
-
-        return {
-            "column_names": table.column_names,
-            "schema": table_schema,
-            "rows": table.num_rows,
-            "size_in_bytes": table.nbytes,
-        }
-
-
-class NetworkGraphType(ValueType):
-    def validate(cls, value: typing.Any) -> typing.Any:
-
-        if not isinstance(value, networkx.Graph):
-            raise ValueError(f"Invalid type '{type(value)}' for graph: {value}")
-        return value
-
-    def extract_type_metadata(
-        cls, value: typing.Any
-    ) -> typing.Mapping[str, typing.Any]:
-
-        graph: nx.Graph = value
-        return {
-            "directed": isinstance(value, DiGraph),
-            "number_of_nodes": len(graph.nodes),
-            "number_of_edges": len(graph.edges),
-            "density": nx.density(graph),
-        }

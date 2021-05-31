@@ -59,7 +59,6 @@ class PipelineModule(KiaraModule[PipelineModuleConfig]):
         if controller is None:
             controller = BatchController()
 
-        self._pipeline_structure: typing.Optional[PipelineStructure] = None
         self._pipeline_controller: PipelineController = controller
         super().__init__(
             id=id,
@@ -68,20 +67,22 @@ class PipelineModule(KiaraModule[PipelineModuleConfig]):
             meta=meta,
             kiara=kiara,
         )
+        self._pipeline_structure: PipelineStructure = self._create_structure()
+        assert not self._config.constants
+        self._config.constants = dict(self._pipeline_structure.constants)
 
     @property
     def structure(self) -> PipelineStructure:
         """The ``PipelineStructure`` of this module."""
 
-        if self._pipeline_structure is None:
-            self._pipeline_structure = PipelineStructure(
-                parent_id=self.full_id,
-                steps=self._config.steps,
-                input_aliases=self._config.input_aliases,
-                output_aliases=self._config.output_aliases,
-                kiara=self._kiara,
-            )
         return self._pipeline_structure
+
+    def _create_structure(self) -> PipelineStructure:
+
+        pipeline_structure = PipelineStructure(
+            parent_id=self.full_id, config=self.config, kiara=self._kiara
+        )
+        return pipeline_structure
 
     def create_input_schema(self) -> typing.Mapping[str, ValueSchema]:
         return self.structure.pipeline_input_schema

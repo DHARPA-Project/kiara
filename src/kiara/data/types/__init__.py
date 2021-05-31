@@ -115,9 +115,7 @@ class ValueType(object):
 
     def import_value(
         self, value: typing.Any
-    ) -> typing.Tuple[
-        typing.Any, typing.Mapping[str, typing.Any], typing.Union[ValueHashMarker, int]
-    ]:
+    ) -> typing.Tuple[typing.Any, typing.Union[ValueHashMarker, int]]:
 
         assert value is not None
 
@@ -125,13 +123,12 @@ class ValueType(object):
         if parsed is None:
             parsed = value
         self.validate(parsed)
-        value_metadata = self.extract_type_metadata(parsed)
         if self.defer_hash_calc():
             _hash: typing.Union[ValueHashMarker, int] = ValueHashMarker.DEFERRED
         else:
             _hash = self.calculate_value_hash(value)
-        metadata = {"type": value_metadata, "python": {"cls": get_type_name(parsed)}}
-        return (parsed, metadata, _hash)
+
+        return (parsed, _hash)
 
     def defer_hash_calc(self) -> bool:
         """Return a recommendation whether to defer the calculation of the hash of a value of this type.

@@ -217,7 +217,7 @@ class Value(BaseModel):
     # is_valid: bool = Field(
     #     description="Whether the value is set and valid.", default=False
     # )
-    metadata: typing.Dict[str, typing.Any] = Field(
+    metadata: typing.Dict[str, typing.Dict[str, typing.Any]] = Field(
         description="Metadata relating to the actual data (size, no. of rows, etc. -- depending on data type).",
         default_factory=dict,
     )
@@ -269,7 +269,7 @@ class Value(BaseModel):
             vh = self.value_hash.value
         table.add_row("hash", vh)
         if self.metadata:
-            json_string = json.dumps(self.metadata, indent=2)
+            json_string = json.dumps(self.get_metadata(), indent=2)
             metadata = Syntax(json_string, "json")
             table.add_row("metadata", metadata)
         else:

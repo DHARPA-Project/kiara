@@ -433,7 +433,8 @@ class DataRegistry(object):
             raise NotImplementedError()
 
         column_name = subvalue["config"]
-        column_names = linked_obj.metadata["type"]["column_names"]
+        table_metadata = self.get_value_metadata(linked_obj, "table")
+        column_names = table_metadata["table"]["column_names"]
         if column_name not in column_names:
             raise Exception(
                 f"Can't retrieve subvalue column '{column_name}'. Table does not contain a column with that name. Available column names: {', '.join(column_names)}"
@@ -542,10 +543,10 @@ class DataRegistry(object):
                     self._value_items[item.id].is_none = True
                     self._values[item.id] = SpecialValue.NO_VALUE
                 else:
-                    value, metadata, _hash = item.type_obj.import_value(value)
+                    value, _hash = item.type_obj.import_value(value)
+                    item.metadata.clear()
                     if _hash == ValueHashMarker.DEFERRED and always_calculate_hashes:
                         _hash = item.type_obj.calculate_value_hash(value)
-                    item.metadata = metadata
                     item.value_hash = _hash
 
                     self._values[item.id] = value
@@ -596,8 +597,8 @@ class DataRegistry(object):
             item.is_none = linked_item.is_none
             item.value_hash = linked_item.value_hash
 
-            if "type" in linked_item.metadata:
-                item.metadata["type"] = linked_item.metadata["type"]
+            item.metadata = linked_item.metadata
+
         else:
 
             is_set = True

@@ -64,7 +64,7 @@ class DataRegistry(object):
         self._values: typing.Dict[str, typing.Any] = {}
         self._callbacks: typing.Dict[str, typing.List[ValueUpdateHandler]] = {}
 
-    def get_value_item(self, item: typing.Union[str, KiaraValue]) -> KiaraValue:
+    def get_value_item(self, item: typing.Union[str, Value]) -> Value:
         """Get the [Value][kiara.data.values.Value] object for an id.
 
         If a string is provided, it is interpreted as value id. If a ``Value`` object is provided, the registry will check whether its id is registered with it, and return the object that is registered with it.
@@ -91,13 +91,11 @@ class DataRegistry(object):
         elif value_id in self._linked_value_items.keys():
             return self._linked_value_items[value_id]
         elif value_id in self._persisted_values.keys():
-            raise NotImplementedError()
-            # return self._persisted_values[value_id]
+            return self._persisted_values[value_id]
         elif value_id in self._persistence.value_ids:
-            raise NotImplementedError()
-            # value = self._persistence.load_value(value_id=value_id)
-            # self._persisted_values[value_id] = value
-            # return self._persisted_values[value_id]
+            value = self._persistence.load_value(value_id=value_id)
+            self._persisted_values[value_id] = value
+            return self._persisted_values[value_id]
         else:
             raise Exception(f"No value with id: {value_id}")
 
@@ -322,7 +320,7 @@ class DataRegistry(object):
         return self._linked_value_items[value_id]
 
     def register_callback(
-        self, callback: ValueUpdateHandler, *items: typing.Union[str, KiaraValue]
+        self, callback: ValueUpdateHandler, *items: typing.Union[str, Value]
     ):
         """Register a callback function that is called when one or several of the provided data items were changed.
 
@@ -337,9 +335,11 @@ class DataRegistry(object):
 
         for item in items:
             item = self.get_value_item(item)
+            if not isinstance(item, KiaraValue):
+                raise Exception("Can't register callback on non-kiara value.")
             self._callbacks.setdefault(item.id, []).append(callback)
 
-    def get_value_data(self, item: typing.Union[str, KiaraValue]) -> typing.Any:
+    def get_value_data(self, item: typing.Union[str, Value]) -> typing.Any:
         """Request the actual data for a value item or its id.
 
         Arguments:
@@ -380,7 +380,7 @@ class DataRegistry(object):
         return value
 
     def get_value_hash(
-        self, item: typing.Union[str, KiaraValue]
+        self, item: typing.Union[str, Value]
     ) -> typing.Union[int, ValueHashMarker]:
         """Request the hash for the current data of this value.
 
@@ -448,7 +448,7 @@ class DataRegistry(object):
 
         return result
 
-    def set_value(self, item: typing.Union[str, KiaraValue], value: typing.Any) -> bool:
+    def set_value(self, item: typing.Union[str, Value], value: typing.Any) -> bool:
         """Set a single value.
 
         In most cases, the [set_values][kiara.data.registry.DataRegistry.set_values] method will be used, which is
@@ -473,7 +473,7 @@ class DataRegistry(object):
 
     def set_values(
         self,
-        values: typing.Mapping[typing.Union[str, DataValue], typing.Any],
+        values: typing.Mapping[typing.Union[str, Value], typing.Any],
         always_calculate_hashes: bool = False,
     ) -> typing.Dict[Value, bool]:
         """Set data on values.
@@ -519,12 +519,11 @@ class DataRegistry(object):
 
             if isinstance(value, str) and value.startswith("value:"):
                 value_id = value.split(":", maxsplit=1)[1]
-                value = self.get_value_item(value_id)
-                print("===")
-                print(value.get_value_data())
-                raise NotImplementedError()
+                value_obj = self.get_value_item(value_id)
+                # TODO: make this smarter/more efficient
+                value = value_obj.get_value_data()
 
-            if isinstance(value, KiaraValue):
+            if isinstance(value, Value):
                 # TODO: make this smarter/more efficient
                 value = self.get_value_data(value)
 

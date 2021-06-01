@@ -3,6 +3,7 @@
 """A command-line interface for *Kiara*.
 """
 import asyncclick as click
+import json
 import os.path
 import sys
 import typing
@@ -303,8 +304,11 @@ def list_types(ctx):
 @click.option(
     "--output", "-o", help="The output format and configuration.", multiple=True
 )
+@click.option(
+    "--save", "-s", help="Save the outputs into the kiara data store.", is_flag=True
+)
 @click.pass_context
-async def run(ctx, module, inputs, module_config, output, workflow_details):
+async def run(ctx, module, inputs, module_config, output, workflow_details, save):
 
     if module_config:
         raise NotImplementedError()
@@ -495,6 +499,17 @@ async def run(ctx, module, inputs, module_config, output, workflow_details):
             # TODO: check whether to write text or bytes
             target_file.write_text(transformed_value)
 
+    if save:
+        for field, value in workflow.outputs.items():
+            print(f"Saving '{field}'...")
+            try:
+                value_id = value.save()
+                print(f"   -> done, id: {value_id}")
+
+            except Exception as e:
+                print(f"   -> failed: {e}")
+            print()
+
 
 @cli.group()
 @click.pass_context
@@ -503,14 +518,22 @@ def data(ctx):
 
 
 @data.command(name="list")
+@click.option("--details", "-d", help="Display data item details.", is_flag=True)
 @click.pass_context
-def list_values(ctx):
+def list_values(ctx, details):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     print()
-    for id, details in kiara_obj.persitence.values_metadata.items():
-        rich_print(f"  - {id}: {details['type']}")
+    for id, d in kiara_obj.persitence.values_metadata.items():
+        if not details:
+            rich_print(f"  - [b]{id}[/b]: {d['type']}")
+        else:
+            rich_print(f"[b]{id}[/b]: {d['type']}\n")
+            md = kiara_obj.persitence.get_value_metadata(value_id=id)
+            s = Syntax(json.dumps(md, indent=2), "json")
+            rich_print(s)
+            print()
 
 
 @data.command(name="explain")

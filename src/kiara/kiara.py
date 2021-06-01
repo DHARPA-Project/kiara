@@ -235,7 +235,7 @@ class Kiara(object):
 
         return self.type_mgmt.get_value_type_cls(type_name=type_name)
 
-    def save_value(self, value: Value) -> typing.Dict[str, typing.Any]:
+    def save_value(self, value: Value) -> str:
         return self._persistence_mgmt.save_value(value)
 
     def transform_data(

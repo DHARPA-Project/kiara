@@ -316,7 +316,7 @@ class Value(BaseModel):
                 result[k] = v["metadata"]
         return result
 
-    def save(self) -> typing.Dict[str, typing.Any]:
+    def save(self) -> str:
 
         return self._kiara.save_value(self)
 

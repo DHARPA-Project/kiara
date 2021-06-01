@@ -51,7 +51,7 @@ class PersistanceMgmt(object):
             typing.Dict[str, typing.Optional[typing.Dict[str, typing.Any]]]
         ] = None
 
-    def save_value(self, value: "Value") -> typing.Dict[str, typing.Any]:
+    def save_value(self, value: "Value") -> str:
 
         value_type = value.type_obj
         _save_config = value_type.save_config()
@@ -141,11 +141,13 @@ class PersistanceMgmt(object):
         # with open(load_config_file, 'w') as f:
         #     f.write(json.dumps(load_config))
 
-        return {
-            "target_path": target_path,
-            "metadata_path": metadata_path,
-            "metadata": metadata,
-        }
+        # result = {
+        #     "target_path": target_path,
+        #     "metadata_path": metadata_path,
+        #     "metadata": metadata,
+        # }
+
+        return ssmd.value_id
 
     @property
     def values_metadata(

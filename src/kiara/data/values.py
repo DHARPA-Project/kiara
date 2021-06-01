@@ -251,7 +251,12 @@ class Value(BaseModel):
 
         raise NotImplementedError()
 
-    def _create_value_table(self, padding=(0, 1)) -> Table:
+    def _create_value_table(
+        self, padding=(0, 1), ensure_metadata: bool = False
+    ) -> Table:
+
+        if ensure_metadata:
+            self.get_metadata()
 
         table = Table(box=box.SIMPLE, show_header=False, padding=padding)
         table.add_column("property", style="i")
@@ -281,7 +286,39 @@ class Value(BaseModel):
         self, *metadata_keys: str, also_return_schema: bool = False
     ) -> typing.Mapping[str, typing.Mapping[str, typing.Any]]:
 
-        raise NotImplementedError()
+        if not metadata_keys:
+            _metadata_keys = set(self._kiara.get_metadata_keys_for_type(self.type_name))
+            for key in self.metadata.keys():
+                _metadata_keys.add(key)
+        else:
+            _metadata_keys = set(metadata_keys)
+
+        result = {}
+        missing = set()
+        for metadata_key in _metadata_keys:
+            if metadata_key in self.metadata.keys():
+                if also_return_schema:
+                    result[metadata_key] = self.metadata[metadata_key]
+                else:
+                    result[metadata_key] = self.metadata[metadata_key]["metadata"]
+            else:
+                missing.add(metadata_key)
+
+        if not missing:
+            return result
+
+        _md = self._kiara.get_value_metadata(self, *missing, also_return_schema=True)
+        for k, v in _md.items():
+            self.metadata[k] = v
+            if also_return_schema:
+                result[k] = v
+            else:
+                result[k] = v["metadata"]
+        return result
+
+    def save(self) -> typing.Dict[str, typing.Any]:
+
+        return self._kiara.save_value(self)
 
     def transform(
         self,
@@ -401,27 +438,6 @@ class KiaraValue(Value, abc.ABC):
             return self.registry.get_value_hash(self)
         else:
             return self.value_hash
-
-    def get_metadata(
-        self, *metadata_keys: str, also_return_schema: bool = False
-    ) -> typing.Mapping[str, typing.Mapping[str, typing.Any]]:
-
-        result = {}
-        missing = set()
-        for metadata_key in metadata_keys:
-            if metadata_keys in self.metadata.keys():
-                if also_return_schema:
-                    result[metadata_key] = self.metadata[metadata_key]
-                else:
-                    result[metadata_key] = self.metadata[metadata_key]["metadata"]
-            else:
-                missing.add(metadata_key)
-
-        if not missing:
-            return result
-        _md = self.registry.get_value_metadata(self, *missing)
-        result.update(_md)
-        return result
 
     def __eq__(self, other):
 
@@ -560,7 +576,11 @@ class ValueSet(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_value_obj(self, field_name: str) -> Value:
+    def get_value_obj(
+        self,
+        field_name: str,
+        ensure_metadata: typing.Union[bool, typing.Iterable[str], str] = False,
+    ) -> Value:
         pass
 
     def get_all_value_objects(self) -> typing.Mapping[str, typing.Any]:
@@ -616,16 +636,20 @@ class ValueSet(abc.ABC):
                 return False
         return True
 
-    def to_details(self) -> "PipelineValues":
+    def to_details(self, ensure_metadata: bool = False) -> "PipelineValues":
 
         result = {}
         for name in self.get_all_field_names():
             item = self.get_value_obj(name)
-            result[name] = PipelineValue.from_value_obj(item)
+            result[name] = PipelineValue.from_value_obj(
+                item, ensure_metadata=ensure_metadata
+            )
 
         return PipelineValues(values=result)
 
-    def _create_rich_table(self, show_headers: bool = True) -> Table:
+    def _create_rich_table(
+        self, show_headers: bool = True, ensure_metadata: bool = False
+    ) -> Table:
 
         table = Table(box=box.SIMPLE, show_header=show_headers)
         table.add_column("Field name", style="i")
@@ -635,7 +659,7 @@ class ValueSet(abc.ABC):
         table.add_column("Is set")
 
         for k in self.get_all_field_names():
-            v = self.get_value_obj(k)
+            v = self.get_value_obj(k, ensure_metadata=ensure_metadata)
             t = v.value_schema.type
             desc = v.value_schema.doc
             if not v.value_schema.is_required():
@@ -786,13 +810,31 @@ class ValueSetImpl(ValueSet, typing.MutableMapping[str, Value]):
     def get_all_field_names(self) -> typing.Iterable[str]:
         return self._value_items.keys()
 
-    def get_value_obj(self, field_name: str) -> Value:
+    def get_value_obj(
+        self,
+        field_name: str,
+        ensure_metadata: typing.Union[bool, typing.Iterable[str], str] = False,
+    ) -> Value:
 
         if field_name not in list(self.get_all_field_names()):
             raise KeyError(
                 f"Field '{field_name}' not available in value set. Available fields: {', '.join(self.get_all_field_names())}"
             )
-        return self._value_items[field_name]
+        obj: Value = self._value_items[field_name]
+
+        if ensure_metadata:
+            if isinstance(ensure_metadata, bool):
+                obj.get_metadata()
+            elif isinstance(ensure_metadata, str):
+                obj.get_metadata(ensure_metadata)
+            elif isinstance(ensure_metadata, typing.Iterable):
+                obj.get_metadata(*ensure_metadata)
+            else:
+                raise ValueError(
+                    f"Invalid type '{type(ensure_metadata)}' for 'ensure_metadata' argument."
+                )
+
+        return obj
 
     def get_value_data_for_fields(
         self, *field_names: str
@@ -906,7 +948,9 @@ class ValuesInfo(object):
 
         return table
 
-    def create_value_info_table(self, show_headers: bool = False) -> Table:
+    def create_value_info_table(
+        self, show_headers: bool = False, ensure_metadata: bool = False
+    ) -> Table:
 
         table = Table(show_header=show_headers, box=box.SIMPLE)
         table.add_column("Field name", style="i")
@@ -927,6 +971,9 @@ class ValuesInfo(object):
                 else:
                     value_info = "[red]-- no value --[/red]"
             else:
+                if ensure_metadata:
+                    details.get_metadata()
+
                 value_info = details._create_value_table()
             table.add_row(field_name, value_info)
 
@@ -937,7 +984,10 @@ class PipelineValue(BaseModel):
     """Convenience wrapper to make the [PipelineState][kiara.pipeline.pipeline.PipelineState] json/dict export prettier."""
 
     @classmethod
-    def from_value_obj(cls, value: Value):
+    def from_value_obj(cls, value: Value, ensure_metadata: bool = False):
+
+        if ensure_metadata:
+            value.get_metadata()
 
         return PipelineValue(
             id=value.id,
@@ -992,14 +1042,14 @@ class PipelineValues(BaseModel):
     """
 
     @classmethod
-    def from_value_set(cls, value_set: ValueSet):
+    def from_value_set(cls, value_set: ValueSet, ensure_metadata: bool = False):
 
         values: typing.Dict[str, PipelineValue] = {}
         for k in value_set.get_all_field_names():
-            v = value_set.get_value_obj(k)
+            v = value_set.get_value_obj(k, ensure_metadata=ensure_metadata)
             if not isinstance(v, KiaraValue):
                 raise TypeError(f"Invalid type of value: {type(v)}")
-            values[k] = PipelineValue.from_value_obj(v)
+            values[k] = PipelineValue.from_value_obj(v, ensure_metadata=ensure_metadata)
 
         return PipelineValues(values=values)
 
@@ -1161,7 +1211,7 @@ class ValueSetType(ValueType):
         assert isinstance(value, ValueSet)
 
     @classmethod
-    def check_data_type(cls, data: typing.Any) -> typing.Optional[ValueType]:
+    def check_data(cls, data: typing.Any) -> typing.Optional[ValueType]:
 
         if isinstance(data, ValueSet):
             return ValueSetType()
@@ -1169,7 +1219,7 @@ class ValueSetType(ValueType):
             return None
 
     @classmethod
-    def relevant_python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
+    def python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
         return [ValueSet]
 
 

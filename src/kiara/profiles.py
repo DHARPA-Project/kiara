@@ -74,8 +74,9 @@ class ModuleProfileMgmt(object):
 
             if issubclass(cls, ExtractMetadataModule):
                 value_types = cls.get_supported_value_types()
+
                 if "*" in value_types:
-                    value_types = self._kiara._type_mgmt.value_type_names
+                    value_types = self._kiara.type_mgmt.value_type_names
                 metadata_key = cls.get_metadata_key()
 
                 for value_type in value_types:
@@ -133,7 +134,7 @@ class ModuleProfileMgmt(object):
             if issubclass(cls, TypeConversionModule):
                 source_types = cls.get_supported_source_types()
                 if "*" in source_types:
-                    source_types = self._kiara._type_mgmt.value_type_names
+                    source_types = self._kiara.type_mgmt.value_type_names
                 target_types = cls.get_supported_target_types()
 
                 for source_type in source_types:

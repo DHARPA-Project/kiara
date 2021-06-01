@@ -11,7 +11,8 @@ from zmq import Context
 from zmq.devices import ThreadDevice
 
 from kiara.config import KiaraConfig
-from kiara.data import Value
+from kiara.data import Value, ValueSet
+from kiara.data.persistence import PersistanceMgmt
 from kiara.data.registry import DataRegistry
 from kiara.data.types import ValueType
 from kiara.data.types.type_mgmt import TypeMgmt
@@ -43,6 +44,8 @@ def explain(item: typing.Any, kiara: typing.Optional["Kiara"] = None):
 
         if issubclass(item, KiaraModule):
             item = ModuleInfo(module_type=item._module_type_id, _kiara=kiara)  # type: ignore
+    elif isinstance(item, Value):
+        item.get_metadata()
 
     console = get_console()
     console.print(item)
@@ -71,6 +74,8 @@ class Kiara(object):
 
         self._profile_mgmt = ModuleProfileMgmt(kiara=self)
 
+        self._persistence_mgmt = PersistanceMgmt(kiara=self)
+
         self.start_zmq_device()
         self.start_log_thread()
 
@@ -95,7 +100,7 @@ class Kiara(object):
 
         self._modules: typing.Dict[str, ModuleManager] = {}
 
-        self._type_mgmt: TypeMgmt = TypeMgmt(self)
+        self._type_mgmt_obj: TypeMgmt = TypeMgmt(self)
 
         self._data_registry: DataRegistry = DataRegistry(self)
 
@@ -150,21 +155,38 @@ class Kiara(object):
         explain(item, kiara=self)
 
     @property
+    def type_mgmt(self) -> TypeMgmt:
+
+        return self._type_mgmt_obj
+
+    @property
+    def persitence(self) -> PersistanceMgmt:
+        return self._persistence_mgmt
+
+    @property
     def value_types(self) -> typing.Mapping[str, typing.Type[ValueType]]:
-        return self._type_mgmt.value_types
+        return self.type_mgmt.value_types
 
     @property
     def value_type_names(self) -> typing.List[str]:
-        return self._type_mgmt.value_type_names
+        return self.type_mgmt.value_type_names
 
     def determine_type(self, data: typing.Any) -> typing.Optional[ValueType]:
 
-        return self._type_mgmt.determine_type(data)
+        return self.type_mgmt.determine_type(data)
+
+    def get_metadata_keys_for_type(self, value_type: str) -> typing.Iterable[str]:
+
+        all_profiles_for_type = self._profile_mgmt.extract_metadata_profiles.get(
+            value_type, None
+        )
+        if not all_profiles_for_type:
+            return []
+        else:
+            return all_profiles_for_type.keys()
 
     def get_value_metadata(
-        self,
-        value: Value,
-        metadata_keys: typing.Union[None, str, typing.Iterable[str]] = None,
+        self, value: Value, *metadata_keys: str, also_return_schema: bool = False
     ):
 
         value_type = value.value_schema.type
@@ -177,13 +199,24 @@ class Kiara(object):
             all_profiles_for_type = {}
 
         if not metadata_keys:
-            metadata_keys = all_profiles_for_type.keys()
+            _metadata_keys = set(all_profiles_for_type.keys())
+            for key in value.metadata.keys():
+                _metadata_keys.add(key)
         elif isinstance(metadata_keys, str):
-            metadata_keys = [metadata_keys]
+            _metadata_keys = set(metadata_keys)
+        else:
+            _metadata_keys = set(metadata_keys)
 
         result = {}
+        missing = []
 
-        for mk in metadata_keys:
+        for md_key in _metadata_keys:
+            if md_key not in value.metadata.keys():
+                missing.append(md_key)
+            else:
+                result[md_key] = value.metadata[md_key]
+
+        for mk in missing:
             if not all_profiles_for_type or mk not in all_profiles_for_type:
                 raise Exception(
                     f"Can't extract metadata profile '{mk}' for type '{value_type}': metadata profile does not exist (for this type, anyway)."
@@ -193,11 +226,17 @@ class Kiara(object):
             metadata_result = module.run(value=value)
             result[mk] = metadata_result.get_all_value_data()
 
-        return result
+        if also_return_schema:
+            return result
+        else:
+            return {k: v["metadata"] for k, v in result.items()}
 
     def get_value_type_cls(self, type_name: str) -> typing.Type[ValueType]:
 
-        return self._type_mgmt.get_value_type_cls(type_name=type_name)
+        return self.type_mgmt.get_value_type_cls(type_name=type_name)
+
+    def save_value(self, value: Value) -> typing.Dict[str, typing.Any]:
+        return self._persistence_mgmt.save_value(value)
 
     def transform_data(
         self,
@@ -215,7 +254,7 @@ class Kiara(object):
             if isinstance(data, Value):
                 source_type = data.type_name
             else:
-                _source_type = self._type_mgmt.determine_type(data)
+                _source_type = self.type_mgmt.determine_type(data)
                 if not _source_type:
                     raise Exception(
                         f"Can't transform data to '{target_type}': can not determine source type."
@@ -437,6 +476,25 @@ class Kiara(object):
             id="_", module_type=module_type, module_config=module_config
         )
         return m.doc()
+
+    def run(
+        self,
+        module_type: str,
+        module_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+        inputs: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+        output_name: typing.Optional[str] = None,
+    ) -> typing.Union[ValueSet, Value]:
+
+        module = self.create_module(
+            "_", module_type=module_type, module_config=module_config
+        )
+        if inputs is None:
+            inputs = {}
+        result = module.run(**inputs)
+        if output_name is not None:
+            return result.get_value_obj(output_name)
+        else:
+            return result
 
     def create_pipeline(
         self,

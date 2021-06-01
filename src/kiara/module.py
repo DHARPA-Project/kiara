@@ -81,9 +81,16 @@ class StepInputs(ValueSet):
                 result[input_name] = value
         return result
 
-    def get_value_obj(self, input_name) -> Value:
+    def get_value_obj(
+        self,
+        field_name: str,
+        ensure_metadata: typing.Union[bool, typing.Iterable[str], str] = False,
+    ) -> Value:
 
-        return self.__dict__["_inputs"][input_name]
+        if ensure_metadata:
+            raise NotImplementedError()
+
+        return self.__dict__["_inputs"][field_name]
 
     def _set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:
         raise Exception("Inputs are read-only.")

@@ -26,6 +26,7 @@ from deepdiff import DeepHash
 from enum import Enum
 from rich.console import Console, ConsoleOptions, RenderResult
 
+from kiara.data.persistence import LoadConfig
 from kiara.utils import camel_case_to_snake_case
 
 if typing.TYPE_CHECKING:
@@ -84,7 +85,7 @@ class ValueType(object):
         return type_name
 
     @classmethod
-    def get_type_transformation_configs(
+    def conversions(
         self,
     ) -> typing.Optional[typing.Mapping[str, typing.Mapping[str, typing.Any]]]:
         """Return a dictionary of configuration for modules that can transform this type.
@@ -92,18 +93,19 @@ class ValueType(object):
         The name of the transformation is the key of the result dictionary, the configuration is a module configuration
         (dictionary wth 'module_type' and optional 'module_config', 'input_name' and 'output_name' keys).
         """
+
         return {"string": {"module_type": "strings.pretty_print", "input_name": "item"}}
 
     @classmethod
-    def check_value_type(cls, value: "Value") -> typing.Optional["ValueType"]:
-        return cls.check_data_type(value.get_value_data())
-
-    @classmethod
-    def check_data_type(cls, data: typing.Any) -> typing.Optional["ValueType"]:
+    def check_data(cls, data: typing.Any) -> typing.Optional["ValueType"]:
         return None
 
     @classmethod
-    def relevant_python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
+    def python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
+        return None
+
+    @classmethod
+    def save_config(cls) -> typing.Optional[typing.Mapping[str, typing.Any]]:
         return None
 
     def __init__(self, **type_config: typing.Any):
@@ -171,15 +173,12 @@ class ValueType(object):
     ) -> typing.Mapping[str, typing.Any]:
         return {}
 
-    def serialize(cls, value: typing.Any):
-        raise NotImplementedError(
-            f"Type class '{cls}' missing implementation of 'serialize' class method. This is a bug."
-        )
-
-    def deserialize(cls, value: typing.Any):
-        raise NotImplementedError(
-            f"Type class '{cls}' missing implementation of 'deserialize' class method. This is a bug."
-        )
+    def save(
+        self,
+        value: "Value",
+        write_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+    ):
+        raise NotImplementedError()
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -355,3 +354,21 @@ class DateType(ValueType):
 
     def validate(cls, value: typing.Any):
         assert isinstance(value, datetime.datetime)
+
+
+class ValueLoadConfig(ValueType):
+    @classmethod
+    def python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
+        return [typing.Mapping, LoadConfig]
+
+    @classmethod
+    def type_name(cls):
+        return "load_config"
+
+    def validate(cls, value: typing.Any) -> None:
+
+        if isinstance(value, typing.Mapping):
+            _value = LoadConfig(**value)
+
+        if not isinstance(_value, LoadConfig):
+            raise Exception(f"Invalid type for load config: {type(value)}.")

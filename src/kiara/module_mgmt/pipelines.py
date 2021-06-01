@@ -253,8 +253,13 @@ class PipelineModuleManager(ModuleManager):
         if desc is None:
             raise Exception(f"No pipeline with name '{module_type}' available.")
 
-        cls_name = "".join(x.capitalize() or "_" for x in module_type.split("_"))
-        cls = create_pipeline_class(cls_name, desc["data"])
+        tokens = module_type.split(".")
+        cls_name = "".join(x.capitalize() or "_" for x in tokens[-1].split("_"))
+        if len(tokens) != 1:
+            full_name = ".".join(tokens[0:-1] + [cls_name])
+        else:
+            full_name = cls_name
+        cls = create_pipeline_class(full_name, desc["data"])
         setattr(cls, "_module_type_name", module_type)
         self._cached_classes[module_type] = cls
         return self._cached_classes[module_type]

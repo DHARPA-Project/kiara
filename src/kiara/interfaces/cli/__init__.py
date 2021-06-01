@@ -14,10 +14,13 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 
 from kiara import Kiara
+from kiara.data.persistence import LoadConfig
+from kiara.data.values import ValuesInfo
 from kiara.interfaces import get_console
 from kiara.module import KiaraModule, ModuleInfo
 from kiara.pipeline.controller import BatchController
 from kiara.pipeline.module import PipelineModuleInfo
+from kiara.pipeline.pipeline import StepStatus
 from kiara.processing.parallel import ThreadPoolProcessor
 from kiara.utils import create_table_from_field_schemas, dict_from_cli_args
 from kiara.utils.output import OutputDetails
@@ -395,7 +398,17 @@ async def run(ctx, module, inputs, module_config, output, workflow_details):
         workflow.controller.process_pipeline()
 
     if workflow_details:
+        print()
         kiara_obj.explain(workflow.current_state)
+
+        if workflow.status == StepStatus.RESULTS_READY:
+            vi = ValuesInfo(workflow.outputs)
+            vi_table = vi.create_value_info_table(
+                ensure_metadata=True, show_headers=True
+            )
+            panel = Panel(Panel(vi_table), box=box.SIMPLE)
+            rich_print("[b]Output data details[/b]")
+            rich_print(panel)
 
     if output_details.target == "terminal":
         if output_details.format == "terminal":
@@ -423,21 +436,26 @@ async def run(ctx, module, inputs, module_config, output, workflow_details):
             config = {}
             config.update(DEFAULT_TO_JSON_CONFIG)
 
-            transformed = kiara_obj.transform_data(
-                workflow.outputs,
-                source_type="value_set",
-                target_type=format,
-                config=config,
-            )
-            transformed_value = transformed.get_value_data("target_value")
-
-            if format in ["json", "yaml"]:
-                transformed_str = Syntax(
-                    transformed_value, lexer_name=format, background_color="default"
+            try:
+                transformed = kiara_obj.transform_data(
+                    workflow.outputs,
+                    source_type="value_set",
+                    target_type=format,
+                    config=config,
                 )
-                rich_print(transformed_str)
-            else:
-                print(transformed_value)
+                transformed_value = transformed.get_value_data("target_value")
+
+                if format in ["json", "yaml"]:
+                    transformed_str = Syntax(
+                        transformed_value, lexer_name=format, background_color="default"
+                    )
+                    rich_print(transformed_str)
+                else:
+                    print(transformed_value)
+            except Exception as e:
+                print()
+                rich_print(f"Can't transform outputs into '{format}': {e}")
+                sys.exit(1)
 
     else:
         if output_details.format == "terminal":
@@ -478,41 +496,81 @@ async def run(ctx, module, inputs, module_config, output, workflow_details):
             target_file.write_text(transformed_value)
 
 
-# @cli.command()
-# @click.pass_context
-# def dev(ctx):
-#     import os
-#
-#     os.environ["DEBUG"] = "true"
-#
-#     kiara = Kiara.instance()
-#
-#     workflow = kiara.create_workflow("onboarding.import_local_folder")
-#
-#     extended = {
-#         "steps": [
-#             {
-#                 "module_type": "tabular.create_table_from_text_files",
-#                 "module_config": {
-#                     "columns": ["id", "rel_path", "file_name", "content"]
-#                 },
-#                 "step_id": "create_table_from_files",
-#             }
-#         ],
-#         "input_aliases": {"create_table_from_files__files": "file_bundle"},
-#     }
-#
-#     structure = workflow.structure
-#     new_structure = structure.extend(extended)
-#
-#     workflow = kiara.create_workflow("tabular.import_table_from_folder")
-#     workflow.inputs.set_value("path", "/home/markus/projects/dharpa/data/csvs")
-#
-#     import pp
-#
-#     table = workflow.outputs.get_value_obj("table")
-#     md = table.get_metadata()
-#     pp(md)
+@cli.group()
+@click.pass_context
+def data(ctx):
+    pass
+
+
+@data.command(name="list")
+@click.pass_context
+def list_values(ctx):
+
+    kiara_obj: Kiara = ctx.obj["kiara"]
+
+    print()
+    for id, details in kiara_obj.persitence.values_metadata.items():
+        rich_print(f"  - {id}: {details['type']}")
+
+
+@data.command(name="explain")
+@click.argument("value_id", nargs=1, required=True)
+@click.pass_context
+def explain_value(ctx, value_id: str):
+
+    kiara_obj: Kiara = ctx.obj["kiara"]
+
+    print()
+    md = kiara_obj.persitence.get_value_metadata(value_id)
+    rich_print(md)
+
+
+@data.command(name="load")
+@click.argument("value_id", nargs=1, required=True)
+@click.pass_context
+def load_value(ctx, value_id: str):
+
+    kiara_obj: Kiara = ctx.obj["kiara"]
+
+    print()
+    value = kiara_obj.persitence.load_value(value_id=value_id)
+    rich_print(value)
+
+
+@cli.command()
+@click.pass_context
+def dev(ctx):
+    import os
+
+    os.environ["DEBUG"] = "true"
+
+    kiara = Kiara.instance()
+
+    workflow = kiara.create_workflow("network.graphs.import_network_graph")
+
+    workflow.inputs.set_values(
+        edges_path="/home/markus/projects/dharpa/notebooks/NetworkXAnalysis/JournalEdges1902.csv",
+        source_column="Source",
+        target_column="Target",
+    )
+
+    graph = workflow.outputs.get_value_obj("graph")
+
+    result = graph.save()
+    load_config = result["metadata"]["load_config"]["metadata"]
+    lc = LoadConfig(**load_config)
+
+    r2 = kiara.run(**lc.dict())
+
+    kiara.explain(r2)
+
+    # inputs = result.pop("inputs")
+    # wf = kiara.create_workflow(config=result)
+    #
+    # wf.inputs.set_values(**inputs)
+    # kiara.explain(wf.current_state)
+    #
+    # print(wf.outputs.get_all_value_data())
 
 
 if __name__ == "__main__":

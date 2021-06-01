@@ -177,6 +177,19 @@ class PipelineController(PipelineListener):
 
         return result
 
+    def invalid_inputs(self, step_id: str) -> typing.List[str]:
+
+        invalid = []
+        step_inputs = self.get_step_inputs(step_id=step_id)
+        for input_name in step_inputs.get_all_field_names():
+
+            value = step_inputs.get_value_obj(input_name)
+
+            if not value.item_is_valid():
+                invalid.append(input_name)
+
+        return invalid
+
     def process_step(self, step_id: str) -> str:
         """Kick off processing for the step with the provided id.
 
@@ -333,7 +346,7 @@ class BatchController(PipelineController):
                             continue
                         else:
                             raise Exception(
-                                f"Required pipeline step '{step_id}' can't be processed, inputs not ready yet."
+                                f"Required pipeline step '{step_id}' can't be processed, inputs not ready yet: {', '.join(self.invalid_inputs(step_id))}"
                             )
                     try:
                         job_id = self.process_step(step_id)

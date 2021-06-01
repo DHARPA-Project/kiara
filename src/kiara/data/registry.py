@@ -4,6 +4,7 @@ import typing
 import uuid
 from pyarrow import Table
 
+from kiara.data.persistence import PersistanceMgmt
 from kiara.data.types import ValueHashMarker
 from kiara.data.values import (
     DataValue,
@@ -45,13 +46,21 @@ class DataRegistry(object):
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
+        self._persistence: PersistanceMgmt = self._kiara.persitence
 
         self._id: str = str(uuid.uuid4())
+
         self._value_items: typing.Dict[str, DataValue] = {}
         """PipelineValues that have a actual data associated to it. key is the value id, value is the value wrapper object."""
+
         self._linked_value_items: typing.Dict[str, LinkedValue] = {}
         """PipelineValues that track one or several other values. key is the value id, value is a dictionary with the tracked value id as key and an optional sub-value query string as value (if not the whole value is used)."""
         self._linked_value_items_reverse: typing.Dict[str, typing.List[str]] = {}
+        """Lookup dict for linked values."""
+
+        self._persisted_values: typing.Dict[str, Value] = {}
+        """Persisted values."""
+
         self._values: typing.Dict[str, typing.Any] = {}
         self._callbacks: typing.Dict[str, typing.List[ValueUpdateHandler]] = {}
 
@@ -81,6 +90,14 @@ class DataRegistry(object):
             return self._value_items[value_id]
         elif value_id in self._linked_value_items.keys():
             return self._linked_value_items[value_id]
+        elif value_id in self._persisted_values.keys():
+            raise NotImplementedError()
+            # return self._persisted_values[value_id]
+        elif value_id in self._persistence.value_ids:
+            raise NotImplementedError()
+            # value = self._persistence.load_value(value_id=value_id)
+            # self._persisted_values[value_id] = value
+            # return self._persisted_values[value_id]
         else:
             raise Exception(f"No value with id: {value_id}")
 
@@ -362,33 +379,6 @@ class DataRegistry(object):
 
         return value
 
-    def get_value_metadata(
-        self,
-        value: typing.Union[KiaraValue, str],
-        *metadata_keys: str,
-        also_return_schema: bool = False,
-    ):
-
-        value = self.get_value_item(value)
-        result = {}
-        missing = set()
-        for metadata_key in metadata_keys:
-            if metadata_keys in value.metadata.keys():
-                result[metadata_key] = value.metadata[metadata_key]["metadata"]
-            else:
-                missing.add(metadata_key)
-
-        if not missing:
-            return result
-
-        _md = self._kiara.get_value_metadata(value, metadata_keys=missing)
-        result.update(_md)
-
-        if also_return_schema:
-            return result
-        else:
-            return {k: v["metadata"] for k, v in result.items()}
-
     def get_value_hash(
         self, item: typing.Union[str, KiaraValue]
     ) -> typing.Union[int, ValueHashMarker]:
@@ -433,7 +423,7 @@ class DataRegistry(object):
             raise NotImplementedError()
 
         column_name = subvalue["config"]
-        table_metadata = self.get_value_metadata(linked_obj, "table")
+        table_metadata = self._kiara.get_value_metadata(linked_obj, "table")
         column_names = table_metadata["table"]["column_names"]
         if column_name not in column_names:
             raise Exception(
@@ -489,7 +479,7 @@ class DataRegistry(object):
         """Set data on values.
 
         Args:
-            values: a dict where the key is the value to set (or it's id), and the value is the data to set
+            values: a dict where the key is the value to set (or its id), and the value is the data to set
 
         Returns:
             a dict where the key is the value and the value a bool that indicates whether the
@@ -526,6 +516,13 @@ class DataRegistry(object):
         for _item, value in values.items():
 
             item: DataValue = self.get_value_item(_item)  # type:ignore
+
+            if isinstance(value, str) and value.startswith("value:"):
+                value_id = value.split(":", maxsplit=1)[1]
+                value = self.get_value_item(value_id)
+                print("===")
+                print(value.get_value_data())
+                raise NotImplementedError()
 
             if isinstance(value, KiaraValue):
                 # TODO: make this smarter/more efficient

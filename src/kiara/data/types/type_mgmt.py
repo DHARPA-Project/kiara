@@ -53,7 +53,7 @@ class TypeMgmt(object):
 
         registered_types = {}
         for name, v_type in self.value_types.items():
-            rel = v_type.relevant_python_types()
+            rel = v_type.python_types()
             if rel:
                 for cls in rel:
                     registered_types.setdefault(cls, []).append(name)
@@ -77,7 +77,7 @@ class TypeMgmt(object):
         if registered_types:
             for rt in registered_types:
                 _cls: typing.Type[ValueType] = self.get_value_type_cls(rt)
-                match = _cls.check_data_type(data)
+                match = _cls.check_data(data)
                 if match:
                     result.append(match)
 
@@ -111,14 +111,14 @@ class TypeMgmt(object):
             return self._value_type_transformations[value_type_name]
 
         type_cls = self.get_value_type_cls(type_name=value_type_name)
-        _configs = type_cls.get_type_transformation_configs()
+        _configs = type_cls.conversions()
         if _configs is None:
             configs = {}
         else:
             configs = dict(_configs)
         for base in type_cls.__bases__:
-            if hasattr(base, "get_type_transformation_configs"):
-                _b_configs = base.get_type_transformation_configs()  # type: ignore
+            if hasattr(base, "conversions"):
+                _b_configs = base.conversions()  # type: ignore
                 if not _b_configs:
                     continue
                 for k, v in _b_configs.items():

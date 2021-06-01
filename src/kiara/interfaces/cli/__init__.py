@@ -16,7 +16,7 @@ from rich.syntax import Syntax
 
 from kiara import Kiara
 from kiara.data.persistence import LoadConfig
-from kiara.data.values import ValuesInfo
+from kiara.data.values import Value, ValuesInfo
 from kiara.interfaces import get_console
 from kiara.module import KiaraModule, ModuleInfo
 from kiara.pipeline.controller import BatchController
@@ -544,8 +544,8 @@ def explain_value(ctx, value_id: str):
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     print()
-    md = kiara_obj.persitence.get_value_metadata(value_id)
-    rich_print(md)
+    value = kiara_obj.persitence.load_value(value_id=value_id)
+    rich_print(value)
 
 
 @data.command(name="load")
@@ -557,7 +557,11 @@ def load_value(ctx, value_id: str):
 
     print()
     value = kiara_obj.persitence.load_value(value_id=value_id)
-    rich_print(value)
+
+    renderables: Value = kiara_obj.run(  # type: ignore
+        "strings.pretty_print", inputs={"item": value}, output_name="renderables"
+    )
+    rich_print(*renderables.get_value_data())
 
 
 @cli.command()

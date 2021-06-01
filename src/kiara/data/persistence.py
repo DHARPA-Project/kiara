@@ -169,7 +169,6 @@ class PersistanceMgmt(object):
 
                 split = filename.split(".")
                 result[split[0]] = {"type": split[1]}
-
         self._value_id_cache = result  # type: ignore
         return self._value_id_cache  # type: ignore
 

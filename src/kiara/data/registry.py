@@ -93,7 +93,7 @@ class DataRegistry(object):
             return self._linked_value_items[value_id]
         elif value_id in self._persisted_values.keys():
             return self._persisted_values[value_id]
-        elif value_id in self._persistence.value_ids:
+        elif value_id in self._persistence.available_ids:
             value = self._persistence.load_value(value_id=value_id)
             self._persisted_values[value_id] = value
             return self._persisted_values[value_id]

@@ -217,6 +217,13 @@ class PersistanceMgmt(object):
         return self.values_metadata.keys()
 
     @property
+    def available_ids(self) -> typing.Set[str]:
+
+        result = set(self.value_ids)
+        result.update(self.aliases.keys())
+        return result
+
+    @property
     def aliases(self):
 
         if self._aliases is not None:

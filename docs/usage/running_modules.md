@@ -14,7 +14,7 @@ the command let's you costumize a few things:
 
 ``--module_config``
 :    This option allows to provide configuration for a module. In most cases this won't be necessary, so we won't go into
-     it here. The format of the configuration is explained [here](/usage/#complex-inputs).
+     it here. The format of the configuration is explained [here](../../usage/#complex-inputs).
 
 ``--explain``
 :    If this flag is set, *kiara* will print out information about the state of the workflow and its inputs/outputs.
@@ -36,7 +36,7 @@ what we need:
 {{ cli("kiara", "run", "logic.xor") }}
 
 Here we are tols we need to inputs: ``a`` and ``b``, both booleans. How to provide inputs for a *kiara* run command can
-be a bit tricky if more complex input data types are required (e.g dicts). How to do this is explained [here](/usage/#complex-inputs).
+be a bit tricky if more complex input data types are required (e.g dicts). How to do this is explained [here](../..//usage/#complex-inputs).
 
 For now, we don't need to worry about it because we only need booleans, which can be provided as ``true`` and ``false`` strings:
 

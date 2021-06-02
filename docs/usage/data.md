@@ -1,8 +1,8 @@
 # Data-related subcommands
 
-## list all data items
+## list all data item ids
 
-{{ cli('kiara', 'data', 'list') }}
+{{ cli('kiara', 'data', 'list', '--ids') }}
 
 ## get information about a data item
 

@@ -444,9 +444,12 @@ async def run(ctx, module, inputs, module_config, output, explain, save, id):
                 pretty_print.inputs.set_value("item", workflow.outputs)
 
                 renderables = pretty_print.outputs.get_value_data("renderables")
-                output = Panel(RenderGroup(*renderables), box=box.SIMPLE)
-                rich_print("[b]Output data[/b]")
-                rich_print(output)
+                if renderables:
+                    output = Panel(RenderGroup(*renderables), box=box.SIMPLE)
+                    rich_print("[b]Output data[/b]")
+                    rich_print(output)
+                else:
+                    rich_print("No output.")
             else:
 
                 format = output_details.format
@@ -526,17 +529,17 @@ async def run(ctx, module, inputs, module_config, output, explain, save, id):
 
     if save:
         for field, value in workflow.outputs.items():
-            print(f"Saving '{field}'...")
+            rich_print(f"Saving '[i]{field}[/i]'...")
             try:
                 value_id = value.save()
-                print(f"   -> done, id: {value_id}")
+                rich_print(f"   -> done, id: [i]{value_id}[/i]")
 
             except Exception as e:
                 if is_debug():
                     import traceback
 
                     traceback.print_exc()
-                print(f"   -> failed: {e}")
+                rich_print(f"   -> failed: [red]{e}[/red]")
             print()
 
 

@@ -23,7 +23,6 @@ class FileModel(BaseModel):
         if not source:
             raise ValueError("No source path provided.")
 
-        print(os.getcwd())
         if not os.path.exists(os.path.realpath(source)):
             raise ValueError(f"Path does not exist: {source}")
 

@@ -1,0 +1,11 @@
+{
+  df(where: {
+    Language: {_eq: "German"}
+  } ) {
+
+    row(limit: 10) {
+      Label
+      City
+    }
+  }
+}

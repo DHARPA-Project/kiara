@@ -1,8 +1,12 @@
 # Changelog
 
-## Version 0.0.3 (Upcoming)
+## Version 0.0.4 (Upcoming)
 
+## Version 0.0.3
 
+- new way of discovering modules and pipelines -- still to be properly documented
+- inital support for persisting values via the *kiara* data store
+- module namespaces: modules type names are now namespaces strings
 
 ## Version 0.0.2
 

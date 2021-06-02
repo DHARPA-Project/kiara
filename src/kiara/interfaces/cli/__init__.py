@@ -23,7 +23,7 @@ from kiara.pipeline.controller import BatchController
 from kiara.pipeline.module import PipelineModuleInfo
 from kiara.pipeline.pipeline import StepStatus
 from kiara.processing.parallel import ThreadPoolProcessor
-from kiara.utils import create_table_from_field_schemas, dict_from_cli_args
+from kiara.utils import create_table_from_field_schemas, dict_from_cli_args, is_debug
 from kiara.utils.output import OutputDetails
 
 try:
@@ -288,6 +288,7 @@ def list_types(ctx):
 @cli.command()
 @click.argument("module", nargs=1)
 @click.argument("inputs", nargs=-1, required=False)
+@click.option("--id", "-i", help="Set workflow id.", required=False)
 @click.option(
     "--module-config",
     "-c",
@@ -296,8 +297,8 @@ def list_types(ctx):
     multiple=True,
 )
 @click.option(
-    "--workflow-details",
-    "-d",
+    "--explain",
+    "-e",
     help="Display additional workflow details.",
     is_flag=True,
 )
@@ -308,7 +309,7 @@ def list_types(ctx):
     "--save", "-s", help="Save the outputs into the kiara data store.", is_flag=True
 )
 @click.pass_context
-async def run(ctx, module, inputs, module_config, output, workflow_details, save):
+async def run(ctx, module, inputs, module_config, output, explain, save, id):
 
     if module_config:
         raise NotImplementedError()
@@ -387,7 +388,29 @@ async def run(ctx, module, inputs, module_config, output, workflow_details, save
     processor = ThreadPoolProcessor()
     # processor = None
     controller = BatchController(processor=processor)
-    workflow = kiara_obj.create_workflow(module_name, controller=controller)
+
+    workflow_id = id
+    if workflow_id is None:
+        workflow_id = f"{module_name}_0"
+
+    workflow = kiara_obj.create_workflow(
+        module_name, workflow_id=workflow_id, controller=controller
+    )
+
+    if save:
+
+        invalid = set()
+        for ov in workflow.outputs.values():
+            existing = kiara_obj.persitence.check_existing_aliases(*ov.aliases)
+            invalid.update(existing)
+
+        if invalid:
+            print()
+            print(
+                f"Can't run workflow, value aliases for saving already exist: {', '.join(invalid)}. Set another workflow id?"
+            )
+            sys.exit(1)
+
     list_keys = []
 
     for name, value in workflow.inputs.items():
@@ -401,7 +424,7 @@ async def run(ctx, module, inputs, module_config, output, workflow_details, save
     else:
         workflow.controller.process_pipeline()
 
-    if workflow_details:
+    if explain:
         print()
         kiara_obj.explain(workflow.current_state)
 
@@ -507,6 +530,10 @@ async def run(ctx, module, inputs, module_config, output, workflow_details, save
                 print(f"   -> done, id: {value_id}")
 
             except Exception as e:
+                if is_debug():
+                    import traceback
+
+                    traceback.print_exc()
                 print(f"   -> failed: {e}")
             print()
 
@@ -519,21 +546,34 @@ def data(ctx):
 
 @data.command(name="list")
 @click.option("--details", "-d", help="Display data item details.", is_flag=True)
+@click.option("--ids", "-i", help="List value ids instead of aliases.", is_flag=True)
 @click.pass_context
-def list_values(ctx, details):
+def list_values(ctx, details, ids):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     print()
-    for id, d in kiara_obj.persitence.values_metadata.items():
-        if not details:
-            rich_print(f"  - [b]{id}[/b]: {d['type']}")
-        else:
-            rich_print(f"[b]{id}[/b]: {d['type']}\n")
-            md = kiara_obj.persitence.get_value_metadata(value_id=id)
-            s = Syntax(json.dumps(md, indent=2), "json")
-            rich_print(s)
-            print()
+    if ids:
+        for id, d in kiara_obj.persitence.values_metadata.items():
+            if not details:
+                rich_print(f"  - [b]{id}[/b]: {d['type']}")
+            else:
+                rich_print(f"[b]{id}[/b]: {d['type']}\n")
+                md = kiara_obj.persitence.get_value_metadata(value_id=id)
+                s = Syntax(json.dumps(md, indent=2), "json")
+                rich_print(s)
+                print()
+    else:
+        for alias, v_id in kiara_obj.persitence.aliases.items():
+            v_type = kiara_obj.persitence.get_value_type(v_id)
+            if not details:
+                rich_print(f"  - [b]{alias}[/b]: {v_type}")
+            else:
+                rich_print(f"[b]{alias}[/b]: {v_type}\n")
+                md = kiara_obj.persitence.get_value_metadata(value_id=v_id)
+                s = Syntax(json.dumps(md, indent=2), "json")
+                rich_print(s)
+                print()
 
 
 @data.command(name="explain")

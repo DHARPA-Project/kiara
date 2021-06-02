@@ -166,6 +166,13 @@ class ValueSchema(BaseModel):
         return hash((self.type, self.default))
 
 
+class ValueMetadata(BaseModel):
+
+    origin: typing.Optional[str] = Field(
+        description="Description of how/where the value was set.", default="n/a"
+    )
+
+
 class Value(BaseModel):
     """The underlying base class for all values.
 
@@ -190,12 +197,12 @@ class Value(BaseModel):
     _type_obj: ValueType = PrivateAttr(default=None)
 
     id: str = Field(description="A unique id for this value.")
+    aliases: typing.List[str] = Field(
+        description="Aliases for this value", default_factory=list
+    )
     value_schema: ValueSchema = Field(description="The schema of this value.")
     is_constant: bool = Field(
         description="Whether this value is a constant.", default=False
-    )
-    origin: typing.Optional[str] = Field(
-        description="Description of how/where the value was set.", default="n/a"
     )
     last_update: typing.Optional[datetime] = Field(
         default=None, description="The time the last update to this value happened."
@@ -217,6 +224,9 @@ class Value(BaseModel):
     # is_valid: bool = Field(
     #     description="Whether the value is set and valid.", default=False
     # )
+    value_metadata: ValueMetadata = Field(
+        description="Base value metadata.", default_factory=ValueMetadata
+    )
     metadata: typing.Dict[str, typing.Dict[str, typing.Any]] = Field(
         description="Metadata relating to the actual data (size, no. of rows, etc. -- depending on data type).",
         default_factory=dict,
@@ -232,6 +242,10 @@ class Value(BaseModel):
             cls = self._kiara.get_value_type_cls(self.value_schema.type)
             self._type_obj = cls(**self.value_schema.type_config)
         return self._type_obj
+
+    def add_alias(self, alias):
+        if alias not in self.aliases:
+            self.aliases.append(alias)
 
     def item_is_valid(self) -> bool:
 
@@ -345,12 +359,13 @@ class Value(BaseModel):
 
         table = self._create_value_table()
 
-        yield Panel(
-            table,
-            box=box.ROUNDED,
-            title_align="left",
-            title=f"Value: [b]{self.origin}[/b]",
-        )
+        origin = self.value_metadata.origin
+        if not origin:
+            title = "Value"
+        else:
+            title = f"Value: [b]{origin}[/b]"
+
+        yield Panel(table, box=box.ROUNDED, title_align="left", title=title)
 
 
 class NonRegistryValue(Value):
@@ -504,9 +519,6 @@ class DataValue(KiaraValue):
         else:
             if not isinstance(is_constant, bool):
                 raise TypeError(f"Invalid type for 'is_constant': {type(is_constant)}")
-
-        if is_constant:
-            values["origin"] = "constant"
 
         values["last_update"] = datetime.now()
 
@@ -995,7 +1007,8 @@ class PipelineValue(BaseModel):
             is_valid=value.item_is_valid(),
             is_set=value.is_set,
             is_constant=value.is_constant,
-            origin=value.origin,
+            value_metadata=value.value_metadata,
+            aliases=value.aliases,
             last_update=value.last_update,
             value_hash=value.value_hash,
             is_streaming=value.is_streaming,
@@ -1015,9 +1028,10 @@ class PipelineValue(BaseModel):
     is_constant: bool = Field(
         description="Whether this value is a constant.", default=False
     )
-    origin: typing.Optional[str] = Field(
-        description="Description of how/where the value was set.", default="n/a"
+    value_metadata: ValueMetadata = Field(
+        description="The metadata of the value itself (not the actual data)."
     )
+    aliases: typing.List[str] = Field(description="Aliases for this value.")
     last_update: datetime = Field(
         default=None, description="The time the last update to this value happened."
     )

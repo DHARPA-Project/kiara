@@ -12,6 +12,7 @@ from kiara.data.values import (
     LinkedValue,
     Value,
     ValueField,
+    ValueMetadata,
     ValueSchema,
     ValueUpdateHandler,
 )
@@ -108,8 +109,11 @@ class DataRegistry(object):
         value_id: typing.Optional[str] = None,
         callbacks: typing.Optional[typing.Iterable[ValueUpdateHandler]] = None,
         initial_value: typing.Any = SpecialValue.NOT_SET,
-        origin: typing.Optional[str] = None,
         is_constant: bool = False,
+        aliases: typing.Optional[typing.Iterable[str]] = None,
+        value_metadata: typing.Union[
+            None, typing.Mapping[str, typing.Any], ValueMetadata
+        ] = None,
     ) -> DataValue:
         """Register a value in this registry.
 
@@ -122,8 +126,9 @@ class DataRegistry(object):
              value_id: the (unique) id for this value, if not provided one will be generated
              callbacks: the callbacks to register for this value (can be added later too)
              initial_value: if provided, this value will be set
-             origin: a string describing the type of field the value is coming from (e.g. user input, step output, ...)
              is_constant: whether this value is a constant or not
+             aliases: a list of (optional) aliases for the value
+            value_metadata: value metadata (not related to the actual data)
 
         Returns:
             the newly created value object
@@ -161,16 +166,28 @@ class DataRegistry(object):
                 f"Invalid type for 'value_fields' argument: {type(value_fields)}"
             )
 
+        if aliases is None:
+            aliases = []
+        if isinstance(aliases, str):
+            aliases = [aliases]
+
+        if not value_metadata:
+            value_metadata = ValueMetadata()
+        elif not isinstance(value_metadata, ValueMetadata):
+            value_metadata = ValueMetadata(**value_metadata)
+
         value_item = DataValue(  # type: ignore
             id=value_id,
             value_schema=value_schema,
             value_fields=_value_fields,
             kiara=self._kiara,  # type: ignore
-            origin=origin,
+            aliases=aliases,
+            value_metadata=value_metadata,
             is_constant=is_constant,
         )
 
         self._value_items[value_id] = value_item
+
         self._values[value_id] = None
 
         if callbacks:
@@ -196,7 +213,10 @@ class DataRegistry(object):
         ] = None,
         value_id: typing.Optional[str] = None,
         callbacks: typing.Optional[typing.Iterable[ValueUpdateHandler]] = None,
-        origin: typing.Optional[str] = None,
+        aliases: typing.Optional[typing.Iterable[str]] = None,
+        value_metadata: typing.Union[
+            None, typing.Mapping[str, typing.Any], ValueMetadata
+        ] = None,
     ) -> LinkedValue:
         """Register a linked value in this registry.
 
@@ -211,7 +231,8 @@ class DataRegistry(object):
              value_fields: field(s) within a [PipelineStructure][kiara.pipeline.structure.PipelineStructure] that is associated with this value
              value_id: the (unique) id for this value, if not provided one will be generated
              callbacks: the callbacks to register for this value (can be added later too)
-             origin: a string describing the type of field the value is coming from (e.g. user input, step output, ...)
+             aliases: an (optional) list of aliases for the value
+             value_metadata: value metadata (not related to the actual data)
 
         Returns:
             the newly created value object
@@ -295,13 +316,24 @@ class DataRegistry(object):
         #     schema = ValueSchema(type="any", doc=doc)
         #     schema.validate_types(self._kiara)
 
+        if not value_metadata:
+            value_metadata = ValueMetadata()
+        elif not isinstance(value_metadata, ValueMetadata):
+            value_metadata = ValueMetadata(**value_metadata)
+
+        if aliases is None:
+            aliases = []
+        if isinstance(aliases, str):
+            aliases = [aliases]
+
         value_item = LinkedValue(  # type: ignore
             id=value_id,
             value_schema=value_schema,
             value_fields=_value_fields,
             kiara=self._kiara,  # type: ignore
-            origin=origin,
+            aliases=aliases,
             links=_linked_values,
+            value_metadata=value_metadata,
         )
 
         self._update_linked_value(
@@ -318,6 +350,34 @@ class DataRegistry(object):
                 self.register_callback(cb, value_item)
 
         return self._linked_value_items[value_id]
+
+    def add_metadata_to_value(
+        self,
+        value: typing.Union[str, Value],
+        metadata_key: str,
+        metadata: typing.Mapping[str, typing.Any],
+    ):
+
+        value = self.get_value_item(value)
+        if metadata_key in self._kiara.get_metadata_keys_for_type(value.type_name):
+            raise Exception(
+                f"Can't add metadata for auto-generated key '{metadata_key}'."
+            )
+
+        existing = value.metadata.get(metadata_key)
+
+        if not existing:
+            raise NotImplementedError()
+            # if metadata_key == "value":
+            #     vmd = ValueMetadata(metadata)
+            #     md = {
+            #         "metadata": vmd.dict(),
+            #         "metadata_schema": vmd.schema_json()
+            #     }
+            #     value.metadata[value] = md
+            # else:
+            #     raise NotImplementedError()
+        existing.update(metadata)
 
     def register_callback(
         self, callback: ValueUpdateHandler, *items: typing.Union[str, Value]
@@ -593,7 +653,7 @@ class DataRegistry(object):
             item.is_none = linked_item.is_none
             item.value_hash = linked_item.value_hash
 
-            item.metadata = linked_item.metadata
+            # item.metadata = linked_item.metadata
 
         else:
 

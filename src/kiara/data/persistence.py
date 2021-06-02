@@ -7,7 +7,11 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 from tzlocal import get_localzone
 
-from kiara.defaults import KIARA_DATA_STORE, KIARA_METADATA_STORE
+from kiara.defaults import (
+    KIARA_ALIAS_VALUE_FOLDER,
+    KIARA_DATA_STORE,
+    KIARA_METADATA_STORE,
+)
 from kiara.profiles import ModuleProfileConfig
 
 if typing.TYPE_CHECKING:
@@ -46,10 +50,28 @@ class PersistanceMgmt(object):
         self._kiara: Kiara = kiara
         self._data_store: Path = Path(KIARA_DATA_STORE)
         self._metadata_store: Path = Path(KIARA_METADATA_STORE)
+        self._alias_folder: Path = Path(KIARA_ALIAS_VALUE_FOLDER)
+
         os.makedirs(self._metadata_store, exist_ok=True)
+        os.makedirs(self._alias_folder, exist_ok=True)
+        self._aliases: typing.Optional[typing.Dict[str, str]] = None
         self._value_id_cache: typing.Optional[
             typing.Dict[str, typing.Optional[typing.Dict[str, typing.Any]]]
         ] = None
+
+    def alias_available(self, alias: str):
+        if alias in self.aliases.keys() or alias in self.value_ids:
+            return False
+        else:
+            return True
+
+    def check_existing_aliases(self, *aliases: str) -> typing.List[str]:
+
+        invalid = []
+        for alias in aliases:
+            if not self.alias_available(alias):
+                invalid.append(alias)
+        return invalid
 
     def save_value(self, value: "Value") -> str:
 
@@ -58,6 +80,13 @@ class PersistanceMgmt(object):
 
         if not _save_config:
             raise Exception(f"Saving not supported for type '{value.type_name}'.")
+
+        invalid = self.check_existing_aliases(*value.aliases)
+
+        if invalid:
+            raise Exception(
+                f"Can't save value, alias(es) already registered: {', '.join(invalid)}"
+            )
 
         save_config = SaveConfig(**_save_config)
 
@@ -122,6 +151,10 @@ class PersistanceMgmt(object):
         with open(metadata_path, "w") as f:
             f.write(json.dumps(metadata))
 
+        for alias in value.aliases:
+            alias_file = os.path.join(self._alias_folder, f"{alias}.metadata.json")
+            os.symlink(metadata_path, alias_file)
+
         # metadata_columns = {
         #     "key": [],
         #     "metadata": [],
@@ -176,7 +209,40 @@ class PersistanceMgmt(object):
     def value_ids(self) -> typing.Iterable[str]:
         return self.values_metadata.keys()
 
+    @property
+    def aliases(self):
+
+        if self._aliases is not None:
+            return self._aliases
+
+        result = {}
+        for root, dirnames, filenames in os.walk(self._alias_folder, topdown=True):
+
+            for filename in [
+                f
+                for f in filenames
+                if os.path.islink(os.path.join(root, f))
+                and f.endswith(".metadata.json")
+            ]:
+
+                full_path = os.path.join(root, filename)
+                alias = filename[0:-14]
+                linked = os.path.realpath(full_path)
+                value_id = os.path.basename(linked).split(".")[0]
+                result[alias] = value_id
+        self._aliases = result  # type: ignore
+        return self._aliases
+
+    def get_value_id(self, value_id_or_alias: str):
+        if value_id_or_alias in self.aliases.keys():
+            return self.aliases[value_id_or_alias]
+        elif value_id_or_alias in self.value_ids:
+            return value_id_or_alias
+        else:
+            raise Exception(f"Not a valid value id or alias: {value_id_or_alias}")
+
     def get_value_type(self, value_id: str) -> str:
+        value_id = self.get_value_id(value_id)
         if value_id not in self.values_metadata.keys():
             raise Exception(f"Invalid value id: {value_id}")
 
@@ -189,6 +255,8 @@ class PersistanceMgmt(object):
         metadata_key: typing.Optional[str] = None,
         also_return_schema: bool = False,
     ) -> typing.Mapping[str, typing.Any]:
+
+        value_id = self.get_value_id(value_id)
 
         v_type = self.get_value_type(value_id)
 
@@ -220,11 +288,15 @@ class PersistanceMgmt(object):
 
     def get_load_config(self, value_id: str) -> LoadConfig:
 
+        value_id = self.get_value_id(value_id)
+
         lc = self.get_value_metadata(value_id=value_id, metadata_key="load_config")
         load_config = LoadConfig(**lc)
         return load_config
 
     def load_value(self, value_id: str) -> "Value":
+
+        value_id = self.get_value_id(value_id)
 
         load_config = self.get_load_config(value_id=value_id)
 

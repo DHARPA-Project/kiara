@@ -18,6 +18,7 @@ from kiara.data.values import (
     StepInputField,
     StepOutputField,
     Value,
+    ValueMetadata,
     ValueSet,
     ValueSetImpl,
 )
@@ -178,7 +179,6 @@ class Pipeline(object):
                 output_value_item = self._data_registry.register_value(
                     value_schema=output_point.value_schema,
                     value_fields=output_point,
-                    origin=f"step_output:{self.structure.pipeline_id}.{output_point.alias}",
                     is_constant=False,
                 )
                 self._data_registry.register_callback(
@@ -191,11 +191,18 @@ class Pipeline(object):
                 # not all step outputs necessarily need to be connected to a pipeline output
                 if output_point.pipeline_output:
                     po = self._structure.pipeline_outputs[output_point.pipeline_output]
+
+                    vm = ValueMetadata(
+                        origin=f"{self._structure.pipeline_id}.steps.{step_id}.outputs.{output_name}"
+                    )
+                    alias = f"{self._structure.pipeline_id}.{po.value_name}"
+
                     pv = self._data_registry.register_linked_value(
                         output_value_item,
                         value_fields=po,
                         value_schema=po.value_schema,
-                        origin=f"step_output:{self.structure.pipeline_id}.{step_id}.{output_name}",
+                        value_metadata=vm,
+                        aliases=[alias],
                     )
                     self._data_registry.register_callback(self.values_updated, pv)
                     pipeline_outputs[output_point.pipeline_output] = pv
@@ -209,6 +216,9 @@ class Pipeline(object):
 
                 # if this step input gets fed from a pipeline_input (meaning user input in most cases),
                 # we need to create a DataValue for that pipeline input
+                vm = ValueMetadata(
+                    origin=f"{self.structure.pipeline_id}.steps.{step_id}.inputs.{input_point.value_name}"
+                )
                 if input_point.connected_pipeline_input:
                     connected_pipeline_input_name = input_point.connected_pipeline_input
                     pipeline_input_field: PipelineInputField = (
@@ -226,22 +236,23 @@ class Pipeline(object):
                             init_value = self.structure.constants[
                                 pipeline_input_field.value_name
                             ]
-                            origin = f"pipeline_input:{self.structure.pipeline_id}.{input_name} (constant)"
                         else:
                             init_value = self.structure.defaults.get(
                                 pipeline_input_field.value_name, None
                             )
-                            if init_value is not None:
-                                origin = f"pipeline_input:{self.structure.pipeline_id}.{input_name} (default)"
-                            else:
-                                origin = f"pipeline_input:{self.structure.pipeline_id}.{input_name}"
+
+                        alias = (
+                            f"{self._structure}.inputs.{connected_pipeline_input_name}"
+                        )
+                        p_vm = ValueMetadata(origin=alias)
 
                         pipeline_input = self._data_registry.register_value(
                             value_schema=pipeline_input_field.value_schema,
                             value_fields=pipeline_input_field,
                             is_constant=pipeline_input_field.is_constant,
                             initial_value=init_value,
-                            origin=origin,
+                            value_metadata=p_vm,
+                            aliases=[alias],
                         )
                         self._data_registry.register_callback(
                             self.values_updated, pipeline_input
@@ -262,7 +273,7 @@ class Pipeline(object):
                         linked_values=pipeline_input,
                         value_schema=input_point.value_schema,
                         value_fields=input_point,
-                        origin=f"step_input:{self.structure.pipeline_id}.{input_point.alias}",
+                        value_metadata=vm,
                     )
                     self._data_registry.register_callback(
                         self.values_updated, step_input
@@ -285,7 +296,7 @@ class Pipeline(object):
                         linked_values=linked_values,
                         value_schema=input_point.value_schema,
                         value_fields=input_point,
-                        origin=f"step_input:{self.structure.pipeline_id}.{input_point.alias}",
+                        value_metadata=vm,
                     )
                     self._data_registry.register_callback(
                         self.values_updated, step_input

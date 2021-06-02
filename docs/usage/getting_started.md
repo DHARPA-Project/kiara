@@ -4,7 +4,7 @@ This guide walks through some of the important (and some of the lesser important
 new users to the overall framework, so they can get a feeling for what it can do, and whether it might be useful for their
 own usage scenarios.
 
-As example data, we'll be using two csv files that were created by my colleague [Lena Jaskov](https://github.com/yaslena): https://github.com/DHARPA-Project/kiara_modules.playground/tree/develop/examples/data/journals
+As example data, we'll be using two csv files that were created by my colleague [Lena Jaskov](https://github.com/yaslena): [source](https://github.com/DHARPA-Project/kiara_modules.playground/tree/develop/examples/data/journals)
 
 The files contain information about connection (edges) between medical journals (``JournalEdges1902.csv``), as well as additional metadata for the journals themselves. We'll use that data to create table and graph structures with *kiara*.
 
@@ -41,7 +41,7 @@ Why Arrow tables are better than others is a topic for another time, plus, in pr
 of the data structures that are used by *kiara* will be transparent to most users anyway.
 
 A depressingly large amount of data comes in csv files, which is why we'll use one as an example here. Specifically, we will
-use [``JournalNodes1902.csv``](https://github.com/DHARPA-Project/kiara_modules.playground/blob/develop/examples/data/journals/JournalNodes1902.csv). This file contains a information about historical medical
+use [``JournalNodes1902.csv``](https://github.com/DHARPA-Project/kiara_modules.playground/blob/develop/examples/data/journals/JournalNodes1902.csv). This file contains information about historical medical
 journals (name, type, where it was from, etc.). We want to convert this file into a 'proper' table structure, because
 that will make subsequent processing faster, and also simpler in a lot of cases.
 
@@ -76,10 +76,10 @@ We can also look at the metadata *kiara* stored for this specific item:
 
 {{ cli("kiara", "data", "explain", "getting_started_example.table", max_height=320) }}
 
-This metadata is useful internally, because it means that for some things that *kiara* might need to know about an item
-of data, it does not have to load it into memory. Which becomes important for larger data sets.
+This metadata is useful internally, because it enables *kiara* to be very selective about which parts of a dataset
+it actually loads into memory, if any.
 
-One thing that is noteworthy is the ``load_config`` section in the metadata. When saving the value, *kiara* automatically
+One thing that is noteworthy here is the ``load_config`` section in the metadata. When saving the value, *kiara* automatically
 generated this configuration, and it can be used later to load and use the exact same table file, in another workflow.
 
 ## Querying the table data

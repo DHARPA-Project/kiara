@@ -1,6 +1,6 @@
 # Getting started
 
-This guide is a walk-through to some important (and some lesser important) features of *kiara*, the goal is to introduce
+This guide walks through some of the important (and some of the lesser important) features of *kiara*, the goal is to introduce
 new users to the overall framework, so they can get a feeling for what it can do, and whether it might be useful for their
 own usage scenarios.
 

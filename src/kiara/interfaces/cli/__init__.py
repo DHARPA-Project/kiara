@@ -391,7 +391,7 @@ async def run(ctx, module, inputs, module_config, output, explain, save, id):
 
         invalid = set()
         for ov in workflow.outputs.values():
-            existing = kiara_obj.persitence.check_existing_aliases(*ov.aliases)
+            existing = kiara_obj.data_store.check_existing_aliases(*ov.aliases)
             invalid.update(existing)
 
         if invalid:
@@ -559,23 +559,23 @@ def list_values(ctx, details, ids):
 
     print()
     if ids:
-        for id, d in kiara_obj.persitence.values_metadata.items():
+        for id, d in kiara_obj.data_store.values_metadata.items():
             if not details:
                 rich_print(f"  - [b]{id}[/b]: {d['type']}")
             else:
                 rich_print(f"[b]{id}[/b]: {d['type']}\n")
-                md = kiara_obj.persitence.get_value_metadata(value_id=id)
+                md = kiara_obj.data_store.get_value_metadata(value_id=id)
                 s = Syntax(json.dumps(md, indent=2), "json")
                 rich_print(s)
                 print()
     else:
-        for alias, v_id in kiara_obj.persitence.aliases.items():
-            v_type = kiara_obj.persitence.get_value_type(v_id)
+        for alias, v_id in kiara_obj.data_store.aliases.items():
+            v_type = kiara_obj.data_store.get_value_type(v_id)
             if not details:
                 rich_print(f"  - [b]{alias}[/b]: {v_type}")
             else:
                 rich_print(f"[b]{alias}[/b]: {v_type}\n")
-                md = kiara_obj.persitence.get_value_metadata(value_id=v_id)
+                md = kiara_obj.data_store.get_value_metadata(value_id=v_id)
                 s = Syntax(json.dumps(md, indent=2), "json")
                 rich_print(s)
                 print()
@@ -589,7 +589,7 @@ def explain_value(ctx, value_id: str):
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     print()
-    value = kiara_obj.persitence.load_value(value_id=value_id)
+    value = kiara_obj.data_store.load_value(value_id=value_id)
     rich_print(value)
 
 
@@ -601,7 +601,7 @@ def load_value(ctx, value_id: str):
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     print()
-    value = kiara_obj.persitence.load_value(value_id=value_id)
+    value = kiara_obj.data_store.load_value(value_id=value_id)
 
     renderables: Value = kiara_obj.run(  # type: ignore
         "strings.pretty_print", inputs={"item": value}, output_name="renderables"

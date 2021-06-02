@@ -120,7 +120,7 @@ Example for ``table``:
 ## ``generate_load_inputs``
 
     @classmethod
-    def generate_load_inputs(self, value_id: str, persistance_mgmt: PersistanceMgmt):
+    def generate_load_inputs(self, value_id: str, persistance_mgmt: DataStore):
 
         path = persistance_mgmt.get_path(value_id=value_id) / "table.feather"
         return {
@@ -130,7 +130,7 @@ Example for ``table``:
 ## ``generate_save_inputs``
 
     @classmethod
-    def generate_save_inputs(self, value: Value, persistance_mgmt: PersistanceMgmt):
+    def generate_save_inputs(self, value: Value, persistance_mgmt: DataStore):
 
         path = persistance_mgmt.get_path(value_id=value.id) / "table.feather"
         return {

@@ -12,7 +12,7 @@ from zmq.devices import ThreadDevice
 
 from kiara.config import KiaraConfig
 from kiara.data import Value, ValueSet
-from kiara.data.persistence import PersistanceMgmt
+from kiara.data.persistence import DataStore
 from kiara.data.registry import DataRegistry
 from kiara.data.types import ValueType
 from kiara.data.types.type_mgmt import TypeMgmt
@@ -74,7 +74,7 @@ class Kiara(object):
 
         self._profile_mgmt = ModuleProfileMgmt(kiara=self)
 
-        self._persistence_mgmt = PersistanceMgmt(kiara=self)
+        self._data_store = DataStore(kiara=self)
 
         self.start_zmq_device()
         self.start_log_thread()
@@ -160,8 +160,8 @@ class Kiara(object):
         return self._type_mgmt_obj
 
     @property
-    def persitence(self) -> PersistanceMgmt:
-        return self._persistence_mgmt
+    def data_store(self) -> DataStore:
+        return self._data_store
 
     @property
     def value_types(self) -> typing.Mapping[str, typing.Type[ValueType]]:
@@ -236,7 +236,7 @@ class Kiara(object):
         return self.type_mgmt.get_value_type_cls(type_name=type_name)
 
     def save_value(self, value: Value) -> str:
-        return self._persistence_mgmt.save_value(value)
+        return self._data_store.save_value(value)
 
     def transform_data(
         self,

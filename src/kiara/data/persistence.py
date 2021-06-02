@@ -45,7 +45,7 @@ class LoadConfig(ModuleProfileConfig):
     output_name: str = Field(description="The name of the output field for the value.")
 
 
-class PersistanceMgmt(object):
+class DataStore(object):
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara

@@ -4,7 +4,7 @@ import typing
 import uuid
 from pyarrow import Table
 
-from kiara.data.persistence import PersistanceMgmt
+from kiara.data.persistence import DataStore
 from kiara.data.types import ValueHashMarker
 from kiara.data.values import (
     DataValue,
@@ -47,7 +47,7 @@ class DataRegistry(object):
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
-        self._persistence: PersistanceMgmt = self._kiara.persitence
+        self._data_store: DataStore = self._kiara.data_store
 
         self._id: str = str(uuid.uuid4())
 
@@ -93,8 +93,8 @@ class DataRegistry(object):
             return self._linked_value_items[value_id]
         elif value_id in self._persisted_values.keys():
             return self._persisted_values[value_id]
-        elif value_id in self._persistence.available_ids:
-            value = self._persistence.load_value(value_id=value_id)
+        elif value_id in self._data_store.available_ids:
+            value = self._data_store.load_value(value_id=value_id)
             self._persisted_values[value_id] = value
             return self._persisted_values[value_id]
         else:

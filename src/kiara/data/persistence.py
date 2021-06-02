@@ -2,6 +2,7 @@
 import json
 import os
 import typing
+import uuid
 from datetime import datetime
 from pathlib import Path
 from pydantic import BaseModel, Field
@@ -77,6 +78,7 @@ class PersistanceMgmt(object):
 
         value_type = value.type_obj
         _save_config = value_type.save_config()
+        new_value_id = str(uuid.uuid4())
 
         if not _save_config:
             raise Exception(f"Saving not supported for type '{value.type_name}'.")
@@ -100,9 +102,9 @@ class PersistanceMgmt(object):
                 )
             inputs[k] = v
 
-        target_path = os.path.join(self._data_store, value.id)
+        target_path = os.path.join(self._data_store, new_value_id)
         metadata_path = os.path.join(
-            self._metadata_store, f"{value.id}.{value.type_name}.metadata.json"
+            self._metadata_store, f"{new_value_id}.{value.type_name}.metadata.json"
         )
         if os.path.exists(metadata_path):
             raise Exception(
@@ -129,12 +131,13 @@ class PersistanceMgmt(object):
         )
         assert "snapshot" not in metadata.keys()
         assert "load_config" not in metadata.keys()
+        assert "value" not in metadata.keys()
         tz = get_localzone()
         local_dt = tz.localize(datetime.now(), is_dst=None)
 
         ssmd = SnapshotMetadata(
             value_type=value.type_name,
-            value_id=value.id,
+            value_id=new_value_id,
             value_id_orig=value.id,
             snapshot_time=str(local_dt),
         )
@@ -146,6 +149,10 @@ class PersistanceMgmt(object):
         metadata["load_config"] = {
             "metadata": load_config,
             "metadata_schema": LoadConfig.schema_json(),
+        }
+        metadata["value"] = {
+            "metadata": value.value_metadata.dict(),
+            "metadata_schema": value.value_metadata.schema_json(),
         }
 
         with open(metadata_path, "w") as f:
@@ -301,6 +308,7 @@ class PersistanceMgmt(object):
         load_config = self.get_load_config(value_id=value_id)
 
         value: Value = self._kiara.run(**load_config.dict())  # type: ignore
+        value.id = value_id
 
         md = self.get_value_metadata(value_id, also_return_schema=True)
         value.metadata = md  # type: ignore

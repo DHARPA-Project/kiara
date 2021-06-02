@@ -15,7 +15,6 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 
 from kiara import Kiara
-from kiara.data.persistence import LoadConfig
 from kiara.data.values import Value, ValuesInfo
 from kiara.interfaces import get_console
 from kiara.module import KiaraModule, ModuleInfo
@@ -88,7 +87,7 @@ def module(ctx):
 )
 @click.pass_context
 def list_modules(ctx, only_pipeline_modules: bool, only_core_modules: bool):
-    """List available (Python) module types."""
+    """List available module types."""
 
     if only_pipeline_modules and only_core_modules:
         rich_print()
@@ -122,7 +121,12 @@ def list_modules(ctx, only_pipeline_modules: bool, only_core_modules: bool):
 @click.argument("module_type", nargs=1, required=True)
 @click.pass_context
 def explain_module_type(ctx, module_type: str):
-    """Print details of a (Python) module."""
+    """Print details of a module type.
+
+    This is different to the 'explain-instance' command, because module types need to be
+    instantiated with configuration, before we can query all their properties (like
+    input/output types).
+    """
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
@@ -150,9 +154,10 @@ def explain_module_type(ctx, module_type: str):
 )
 @click.pass_context
 def explain_module(ctx, module_type: str, module_config: typing.Iterable[typing.Any]):
-    """Describe a step.
+    """Describe a module instance.
 
-    A step, in this context, is basically a an instantiated module class, incl. (optional) config."""
+    This command shows information and metadata about an instantiated *kiara* module.
+    """
 
     module_obj = _create_module_instance(
         ctx, module_type=module_type, module_config=module_config
@@ -268,23 +273,6 @@ def explain_steps(ctx, pipeline_type: str):
     kiara_obj.explain(structure.to_details().steps_info)
 
 
-@cli.group(name="type")
-@click.pass_context
-def type_group(ctx):
-    """Information about available modules, and details about them."""
-
-
-@type_group.command(name="list")
-@click.pass_context
-def list_types(ctx):
-
-    kiara_obj: Kiara = ctx.obj["kiara"]
-
-    print()
-    for type_name, type in kiara_obj.value_types.items():
-        rich_print(f"{type_name}: {type}")
-
-
 @cli.command()
 @click.argument("module", nargs=1)
 @click.argument("inputs", nargs=-1, required=False)
@@ -310,6 +298,7 @@ def list_types(ctx):
 )
 @click.pass_context
 async def run(ctx, module, inputs, module_config, output, explain, save, id):
+    """Execute a workflow run."""
 
     if module_config:
         raise NotImplementedError()
@@ -354,11 +343,12 @@ async def run(ctx, module, inputs, module_config, output, explain, save, id):
                 "No inputs provided, not running the workflow. To run it, provide input following this schema:"
             )
             rich_print(inputs_table)
-            sys.exit(1)
+            sys.exit(0)
 
     output_details = OutputDetails.from_data(output)
-    if output_details.format != "terminal":
-        pass
+    silent = False
+    if output_details.format == "silent":
+        silent = True
 
     force_overwrite = output_details.config.get("force", False)
 
@@ -386,7 +376,7 @@ async def run(ctx, module, inputs, module_config, output, explain, save, id):
             sys.exit(1)
 
     processor = ThreadPoolProcessor()
-    # processor = None
+    processor = None
     controller = BatchController(processor=processor)
 
     workflow_id = id
@@ -418,11 +408,16 @@ async def run(ctx, module, inputs, module_config, output, explain, save, id):
             list_keys.append(name)
 
     workflow_input = dict_from_cli_args(*inputs, list_keys=list_keys)
-
-    if workflow_input:
-        workflow.inputs.set_values(**workflow_input)
-    else:
-        workflow.controller.process_pipeline()
+    failed = False
+    try:
+        if workflow_input:
+            workflow.inputs.set_values(**workflow_input)
+        else:
+            workflow.controller.process_pipeline()
+    except Exception as e:
+        print()
+        print(e)
+        failed = True
 
     if explain:
         print()
@@ -437,90 +432,97 @@ async def run(ctx, module, inputs, module_config, output, explain, save, id):
             rich_print("[b]Output data details[/b]")
             rich_print(panel)
 
-    if output_details.target == "terminal":
-        if output_details.format == "terminal":
-            print()
-            pretty_print = kiara_obj.create_workflow("strings.pretty_print")
-            pretty_print.inputs.set_value("item", workflow.outputs)
+    if failed:
+        sys.exit(1)
 
-            renderables = pretty_print.outputs.get_value_data("renderables")
-            output = Panel(RenderGroup(*renderables), box=box.SIMPLE)
-            rich_print("[b]Output data[/b]")
-            rich_print(output)
-        else:
+    if not silent:
 
-            format = output_details.format
-            available_formats = kiara_obj.get_convert_target_types(
-                source_type="value_set"
-            )
-            if format not in available_formats:
+        if output_details.target == "terminal":
+            if output_details.format == "terminal":
                 print()
-                print(
-                    f"Can't convert to output format '{format}', this format is not supported. Available formats: {', '.join(available_formats)}."
+                pretty_print = kiara_obj.create_workflow("strings.pretty_print")
+                pretty_print.inputs.set_value("item", workflow.outputs)
+
+                renderables = pretty_print.outputs.get_value_data("renderables")
+                output = Panel(RenderGroup(*renderables), box=box.SIMPLE)
+                rich_print("[b]Output data[/b]")
+                rich_print(output)
+            else:
+
+                format = output_details.format
+                available_formats = kiara_obj.get_convert_target_types(
+                    source_type="value_set"
                 )
-                sys.exit(1)
+                if format not in available_formats:
+                    print()
+                    print(
+                        f"Can't convert to output format '{format}', this format is not supported. Available formats: {', '.join(available_formats)}."
+                    )
+                    sys.exit(1)
 
-            config = {}
-            config.update(DEFAULT_TO_JSON_CONFIG)
+                config = {}
+                config.update(DEFAULT_TO_JSON_CONFIG)
 
-            try:
+                try:
+                    transformed = kiara_obj.transform_data(
+                        workflow.outputs,
+                        source_type="value_set",
+                        target_type=format,
+                        config=config,
+                    )
+                    transformed_value = transformed.get_value_data("target_value")
+
+                    if format in ["json", "yaml"]:
+                        transformed_str = Syntax(
+                            transformed_value,
+                            lexer_name=format,
+                            background_color="default",
+                        )
+                        rich_print(transformed_str)
+                    else:
+                        print(transformed_value)
+                except Exception as e:
+                    print()
+                    rich_print(f"Can't transform outputs into '{format}': {e}")
+                    sys.exit(1)
+
+        else:
+            if output_details.format == "terminal":
+                pretty_print = kiara_obj.create_workflow("strings.pretty_print")
+                pretty_print.inputs.set_value("item", workflow.outputs)
+
+                renderables = pretty_print.outputs.get_value_data("renderables")
+                output = Panel(RenderGroup(*renderables), box=box.SIMPLE)
+                with open(target_file, "wt") as f:
+                    console = Console(record=True, file=f)
+                    console.print(output)
+            else:
+
+                format = output_details.format
+                available_formats = kiara_obj.get_convert_target_types(
+                    source_type="value_set"
+                )
+                if format not in available_formats:
+                    print()
+                    print(
+                        f"Can't convert to output format '{format}', this format is not supported. Available formats: {', '.join(available_formats)}."
+                    )
+                    sys.exit(1)
+
+                config = {}
+                config.update(DEFAULT_TO_JSON_CONFIG)
+
                 transformed = kiara_obj.transform_data(
                     workflow.outputs,
                     source_type="value_set",
                     target_type=format,
                     config=config,
                 )
-                transformed_value = transformed.get_value_data("target_value")
+                transformed_value = transformed.get_value_data()
 
-                if format in ["json", "yaml"]:
-                    transformed_str = Syntax(
-                        transformed_value, lexer_name=format, background_color="default"
-                    )
-                    rich_print(transformed_str)
-                else:
-                    print(transformed_value)
-            except Exception as e:
-                print()
-                rich_print(f"Can't transform outputs into '{format}': {e}")
-                sys.exit(1)
-
-    else:
-        if output_details.format == "terminal":
-            pretty_print = kiara_obj.create_workflow("strings.pretty_print")
-            pretty_print.inputs.set_value("item", workflow.outputs)
-
-            renderables = pretty_print.outputs.get_value_data("renderables")
-            output = Panel(RenderGroup(*renderables), box=box.SIMPLE)
-            with open(target_file, "wt") as f:
-                console = Console(record=True, file=f)
-                console.print(output)
-        else:
-
-            format = output_details.format
-            available_formats = kiara_obj.get_convert_target_types(
-                source_type="value_set"
-            )
-            if format not in available_formats:
-                print()
-                print(
-                    f"Can't convert to output format '{format}', this format is not supported. Available formats: {', '.join(available_formats)}."
-                )
-                sys.exit(1)
-
-            config = {}
-            config.update(DEFAULT_TO_JSON_CONFIG)
-
-            transformed = kiara_obj.transform_data(
-                workflow.outputs,
-                source_type="value_set",
-                target_type=format,
-                config=config,
-            )
-            transformed_value = transformed.get_value_data()
-
-            target_file.parent.mkdir(parents=True, exist_ok=True)
-            # TODO: check whether to write text or bytes
-            target_file.write_text(transformed_value)
+                target_file.parent.mkdir(parents=True, exist_ok=True)
+                # TODO: check whether to write text or bytes
+                target_file.write_text(transformed_value)
 
     if save:
         for field, value in workflow.outputs.items():
@@ -541,7 +543,7 @@ async def run(ctx, module, inputs, module_config, output, explain, save, id):
 @cli.group()
 @click.pass_context
 def data(ctx):
-    pass
+    """Data-related sub-commands."""
 
 
 @data.command(name="list")
@@ -604,40 +606,58 @@ def load_value(ctx, value_id: str):
     rich_print(*renderables.get_value_data())
 
 
-@cli.command()
+@cli.group(name="type")
 @click.pass_context
-def dev(ctx):
-    import os
+def type_group(ctx):
+    """Information about available value types, and details about them."""
 
-    os.environ["DEBUG"] = "true"
 
-    kiara = Kiara.instance()
+@type_group.command(name="list")
+@click.pass_context
+def list_types(ctx):
+    """List available types (work in progress)."""
 
-    workflow = kiara.create_workflow("network.graphs.import_network_graph")
+    kiara_obj: Kiara = ctx.obj["kiara"]
 
-    workflow.inputs.set_values(
-        edges_path="/home/markus/projects/dharpa/notebooks/NetworkXAnalysis/JournalEdges1902.csv",
-        source_column="Source",
-        target_column="Target",
-    )
+    print()
+    for type_name, type in kiara_obj.value_types.items():
+        rich_print(f"{type_name}: {type}")
 
-    graph = workflow.outputs.get_value_obj("graph")
 
-    result = graph.save()
-    load_config = result["metadata"]["load_config"]["metadata"]
-    lc = LoadConfig(**load_config)
-
-    r2 = kiara.run(**lc.dict())
-
-    kiara.explain(r2)
-
-    # inputs = result.pop("inputs")
-    # wf = kiara.create_workflow(config=result)
-    #
-    # wf.inputs.set_values(**inputs)
-    # kiara.explain(wf.current_state)
-    #
-    # print(wf.outputs.get_all_value_data())
+# @cli.command()
+# @click.pass_context
+# def dev(ctx):
+#     import os
+#
+#     os.environ["DEBUG"] = "true"
+#
+#     kiara = Kiara.instance()
+#
+#     workflow = kiara.create_workflow("network.graphs.import_network_graph")
+#
+#     workflow.inputs.set_values(
+#         edges_path="/home/markus/projects/dharpa/notebooks/NetworkXAnalysis/JournalEdges1902.csv",
+#         source_column="Source",
+#         target_column="Target",
+#     )
+#
+#     graph = workflow.outputs.get_value_obj("graph")
+#
+#     result = graph.save()
+#     load_config = result["metadata"]["load_config"]["metadata"]
+#     lc = LoadConfig(**load_config)
+#
+#     r2 = kiara.run(**lc.dict())
+#
+#     kiara.explain(r2)
+#
+#     # inputs = result.pop("inputs")
+#     # wf = kiara.create_workflow(config=result)
+#     #
+#     # wf.inputs.set_values(**inputs)
+#     # kiara.explain(wf.current_state)
+#     #
+#     # print(wf.outputs.get_all_value_data())
 
 
 if __name__ == "__main__":

@@ -2,7 +2,6 @@
 import networkx as nx
 import typing
 import uuid
-from bidict import frozenbidict
 from functools import lru_cache
 from networkx import NetworkXNoPath, NodeNotFound
 from pydantic import BaseModel, Extra, Field, PrivateAttr, validator
@@ -291,10 +290,10 @@ class PipelineStructure(object):
                 self._steps, output_aliases, "outputs"
             )
 
-        self._input_aliases: frozenbidict[str, str] = frozenbidict(input_aliases)  # type: ignore
+        self._input_aliases: typing.Dict[str, str] = dict(input_aliases)  # type: ignore
         if output_aliases is None:
             output_aliases = {}
-        self._output_aliases: frozenbidict[str, str] = frozenbidict(output_aliases)  # type: ignore
+        self._output_aliases: typing.Dict[str, str] = dict(output_aliases)  # type: ignore
 
         # this is hardcoded for now
         self._add_all_workflow_outputs: bool = False

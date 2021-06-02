@@ -281,6 +281,7 @@ class DictType(ValueType):
 
     def validate(cls, value: typing.Any) -> None:
 
+        print(type(value))
         if not isinstance(value, typing.Mapping):
             raise ValueError(f"Invalid type '{type(value)}', not a mapping.")
 

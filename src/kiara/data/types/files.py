@@ -23,6 +23,7 @@ class FileModel(BaseModel):
         if not source:
             raise ValueError("No source path provided.")
 
+        print(os.getcwd())
         if not os.path.exists(os.path.realpath(source)):
             raise ValueError(f"Path does not exist: {source}")
 
@@ -71,7 +72,7 @@ class FileModel(BaseModel):
     path: str = Field(description="The archive path of the file.")
 
     def __repr__(self):
-        return f"FileMode(name={self.file_name})"
+        return f"FileModel(name={self.file_name})"
 
     def __str__(self):
         return self.__repr__()

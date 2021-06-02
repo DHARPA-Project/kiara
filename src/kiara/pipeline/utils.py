@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import typing
-from bidict import bidict
 
 from kiara.data.values import StepValueAddress, generate_step_alias
 from kiara.defaults import PIPELINE_PARENT_MARKER
@@ -172,11 +171,11 @@ def extend_pipeline(
                 connected_input.value_name
             ] = output_step_address
 
-    new_input_aliases = bidict(structure._input_aliases)
+    new_input_aliases = dict(structure._input_aliases)
     if not other_structure._output_aliases:
         new_output_aliases: typing.Union[str, typing.Mapping[str, str]] = "auto"
     else:
-        new_output_aliases = bidict(other_structure._output_aliases)
+        new_output_aliases = dict(other_structure._output_aliases)
 
     config = structure.structure_config.dict(
         exclude={"input_aliases", "output_aliases", "steps"}

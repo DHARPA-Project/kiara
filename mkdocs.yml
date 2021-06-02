@@ -30,7 +30,12 @@ markdown_extensions:
 nav:
 - Home: index.md
 - Install: install.md
-- Usage: usage.md
+- Usage:
+    - Overview: usage/index.md
+    - Getting started: usage/getting_started.md
+    - Running modules: usage/running_modules.md
+    - Data: usage/data.md
+    - Modules & Pipelines: usage/module_info.md
 - Modules:
     - Overview: modules/index.md
     - Core modules: modules/core_modules.md

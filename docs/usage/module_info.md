@@ -1,13 +1,8 @@
-# Usage
+# Module & Pipeline information
 
+This group of subcommands deals with exposing information about what modules are available, and their details.
 
-## Getting help
-
-To get information for the `kiara` command, use the ``--help`` flag:
-
-{{ cli("kiara", "--help") }}
-
-## 'module'-related subcommands
+## commands for all modules
 
 {{ cli("kiara", "module", "--help") }}
 
@@ -15,7 +10,7 @@ To get information for the `kiara` command, use the ``--help`` flag:
 
 List all available modules ([core](/modules/core_modules)- as well as as [pipeline](/modules/pipeline_modules)-ones).
 
-{{ cli("kiara", "module", "list") }}
+{{ cli("kiara", "module", "list", max_height=400) }}
 
 ### display details about a module type
 
@@ -23,11 +18,11 @@ Display information about a modules, like description, configuration schema, sou
 
 #### ...for a core module
 
-{{ cli("kiara", "module", "explain-type", "and") }}
+{{ cli("kiara", "module", "explain-type", "logic.and") }}
 
 #### ...for a pipeline module
 
-{{ cli("kiara", "module", "explain-type", "nand") }}
+{{ cli("kiara", "module", "explain-type", "logic.nand") }}
 
 ### get properties of an instantiated module
 
@@ -38,11 +33,11 @@ This command also can take module configuration, in different forms. This will b
 
 #### ...for a core module
 
-{{ cli("kiara", "module", "explain-instance", "and") }}
+{{ cli("kiara", "module", "explain-instance", "logic.and") }}
 
 #### ...for a pipeline module
 
-{{ cli("kiara", "module", "explain-instance", "nand") }}
+{{ cli("kiara", "module", "explain-instance", "logic.nand") }}
 
 ## pipeline-specific sub-commands
 
@@ -51,13 +46,13 @@ To print graphs, currently Java (JRE) needs to be installed, as well as the ``as
 
 ### list and explain pipeline steps
 
-{{ cli("kiara", "pipeline", "explain-steps", "xor") }}/similar
+{{ cli("kiara", "pipeline", "explain-steps", "logic.xor") }}
 
 ### print details about the pipeline structure
 
 This command outlines the inputs, outputs, as well as step details (how step inputs/outputs are connected) of a pipeline.
 
-{{ cli("kiara", "pipeline", "structure", "nand") }}
+{{ cli("kiara", "pipeline", "structure", "logic.nand") }}
 
 ### print the data flow graph for a pipeline
 

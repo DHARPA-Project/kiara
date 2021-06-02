@@ -38,10 +38,10 @@ about tables, we specifically talk about [Apache Arrow Tables](https://arrow.apa
 because *kiara* really likes the [Apache Arrow project](https://arrow.apache.org/docs/index.html), and thinks that
 there is a very high probability that it will become a de-facto standard in this space (if it isn't already).
 Why Arrow tables are better than others is a topic for another time, plus, in practical terms the underlying implementation
-of the data structures that are used by *kiara* will be transparent to most users.
+of the data structures that are used by *kiara* will be transparent to most users anyway.
 
 A depressingly large amount of data comes in csv files, which is why we'll use one as an example here. Specifically, we will
-use [``JournalNodes1902.csv`](https://github.com/DHARPA-Project/kiara_modules.playground/blob/develop/examples/data/journals/JournalNodes1902.csv). This file contains a information about medical
+use [``JournalNodes1902.csv``](https://github.com/DHARPA-Project/kiara_modules.playground/blob/develop/examples/data/journals/JournalNodes1902.csv). This file contains a information about historical medical
 journals (name, type, where it was from, etc.). We want to convert this file into a 'proper' table structure, because
 that will make subsequent processing faster, and also simpler in a lot of cases.
 

@@ -45,10 +45,14 @@ nav:
 - Data:
     - Overview: data/index.md
     - Data registry: data/registry.md
+    - Tables:
+        - Overview: data/tables/index.md
+        - filtering: data/tables/filtering.md
 - Development:
     - Overview: development/index.md
     - Development environment: development/environment.md
     - Module discovery: development/module_discovery.md
+    - Executing modules: development/executing_modules.md
     - Pipeline controllers: development/pipeline_controllers.md
     - Workflows: development/workflows.md
     - Entities:

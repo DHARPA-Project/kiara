@@ -1,0 +1,27 @@
+{
+  "doc": "Filter a table using a date range.",
+  "steps": [
+    {
+      "module_type": "tabular.load_table",
+      "step_id": "load_table"
+    },
+    {
+      "module_type": "tabular.cut_column",
+      "step_id": "filter_column",
+      "input_links": {
+        "table": "load_table.table"
+      }
+    },
+    {
+      "module_type": "map",
+      "module_config": {
+        "module_type": "dates.extract_date",
+        "input_name": "date"
+      },
+      "step_id": "create_mask_array",
+      "input_links": {
+        "array": "filter_column.column"
+      }
+    }
+  ]
+}

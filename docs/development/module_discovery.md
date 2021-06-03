@@ -10,7 +10,7 @@ I have decided to also use that, but with a slight twist, to make it easier for 
 
 To register a core module, *kiara* checks the entries for the ``kiara.modules`` entrypoint in the current Python environment. As a developer, you have two options to add your module:
 
-### Register the ``KiaraModule`` subclass
+### Register the ``KiaraModule`` subclass directly
 
 This is the most straight-forward way to accomplish this, and in line how entrypoints are usually used. You just use the name the module should be registered under as entry point key, and the path to the class as value, ala:
 
@@ -43,7 +43,7 @@ The variable can contain 3 types of values:
 
 In case of callables, those will be called (with arguments, if provided). The callable must returns a dictionary with the type name of a module as key, and the ``KiaraModule`` subclass as a value. The full kiara type name will be assembled by using the entry point name as prefix, and the module type name (the key in the resulting dict): ``[entry_point_name].[result_key]``.
 
-This sounds more complicated than it is, because you can just use the [``find_kiara_modules_under``](kiara.utils.class_loading.find_kiara_modules_under) helper method, like:
+This sounds more complicated than it is, because you can just use the [``find_kiara_modules_under``][kiara.utils.class_loading.find_kiara_modules_under] helper method, like:
 
 ```python
 from kiara import find_kiara_modules_under

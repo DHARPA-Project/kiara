@@ -442,7 +442,9 @@ async def run(ctx, module, inputs, module_config, output, explain, save, id):
             if output_details.format == "terminal":
                 print()
                 pretty_print = kiara_obj.create_workflow("strings.pretty_print")
-                pretty_print_inputs = {"item": workflow.outputs}
+                pretty_print_inputs: typing.Dict[str, typing.Any] = {
+                    "item": workflow.outputs
+                }
                 pretty_print_inputs.update(DEFAULT_PRETTY_PRINT_CONFIG)
 
                 pretty_print.inputs.set_values(**pretty_print_inputs)
@@ -611,7 +613,7 @@ def load_value(ctx, value_id: str):
     print()
     value = kiara_obj.data_store.load_value(value_id=value_id)
 
-    pretty_print_config = {"item": value}
+    pretty_print_config: typing.Dict[str, typing.Any] = {"item": value}
     pretty_print_config.update(DEFAULT_PRETTY_PRINT_CONFIG)
     renderables: Value = kiara_obj.run(  # type: ignore
         "strings.pretty_print", inputs=pretty_print_config, output_name="renderables"

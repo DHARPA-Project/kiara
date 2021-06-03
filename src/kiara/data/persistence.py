@@ -319,5 +319,7 @@ class DataStore(object):
 
         md = self.get_value_metadata(value_id, also_return_schema=True)
         value.metadata = md  # type: ignore
+        value.is_set = True
+        value.is_none = False
         value.is_constant = True
         return value

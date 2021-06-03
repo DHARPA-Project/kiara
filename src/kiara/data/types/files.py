@@ -70,6 +70,14 @@ class FileModel(BaseModel):
     size: int = Field(description="The size of the file.")
     path: str = Field(description="The archive path of the file.")
 
+    def save(self, target: str):
+
+        fm = FileModel.import_file(self.path, target)
+        fm.orig_path = self.orig_path
+        fm.orig_filename = (self.orig_filename,)
+        fm.import_time = self.import_time
+        return fm
+
     def __repr__(self):
         return f"FileModel(name={self.file_name})"
 
@@ -141,8 +149,6 @@ class FileBundleModel(BaseModel):
                 f"Invalid type for folder import config: {type(import_config)}."
             )
 
-        result: typing.Dict[str, typing.Any] = {}
-
         included_files: typing.Dict[str, FileModel] = {}
         exclude_dirs = _import_config.exclude_dirs
         valid_extensions = _import_config.include_files
@@ -175,16 +181,46 @@ class FileBundleModel(BaseModel):
                 sum_size = sum_size + file_model.size
                 included_files[rel_path] = file_model
 
-        result["included_files"] = included_files
-        result["orig_bundle_name"] = os.path.basename(source)
-        result["orig_path"] = source
+        orig_bundle_name = os.path.basename(source)
+        orig_path = source
         if target:
-            result["path"] = target
+            path = target
         else:
-            result["path"] = source
+            path = source
+
+        return FileBundleModel.create_from_file_models(
+            files=included_files,
+            orig_bundle_name=orig_bundle_name,
+            orig_path=orig_path,
+            path=path,
+            sum_size=sum_size,
+        )
+
+    @classmethod
+    def create_from_file_models(
+        self,
+        files: typing.Mapping[str, FileModel],
+        orig_bundle_name: str,
+        orig_path: typing.Optional[str],
+        path: str,
+        sum_size: typing.Optional[int] = None,
+    ):
+
+        result: typing.Dict[str, typing.Any] = {}
+
+        result["included_files"] = files
+
+        result["orig_path"] = orig_path
+        result["path"] = path
         result["import_time"] = datetime.datetime.now().isoformat()
-        result["number_of_files"] = len(included_files)
+        result["number_of_files"] = len(files)
         result["bundle_name"] = os.path.basename(result["path"])
+        result["orig_bundle_name"] = orig_bundle_name
+
+        if sum_size is None:
+            sum_size = 0
+            for f in files.values():
+                sum_size = sum_size + f.size
         result["size"] = sum_size
 
         return FileBundleModel(**result)
@@ -233,6 +269,26 @@ class FileBundleModel(BaseModel):
 
         return content_dict
 
+    def save(self, target_path: str) -> "FileBundleModel":
+
+        if target_path == self.path:
+            raise Exception(f"Target path and current path are the same: {target_path}")
+
+        result = {}
+        for rel_path, item in self.included_files.items():
+            _target_path = os.path.join(target_path, rel_path)
+            new_fm = item.save(_target_path)
+            result[rel_path] = new_fm
+
+        fb = FileBundleModel.create_from_file_models(
+            result,
+            orig_bundle_name=self.orig_bundle_name,
+            orig_path=self.orig_path,
+            path=target_path,
+            sum_size=self.size,
+        )
+        return fb
+
     def __repr__(self):
         return f"FileBundle(name={self.bundle_name})"
 
@@ -241,6 +297,20 @@ class FileBundleModel(BaseModel):
 
 
 class FileBundleType(ValueType):
+    @classmethod
+    def python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
+        return [FileBundleType]
+
+    @classmethod
+    def save_config(cls) -> typing.Optional[typing.Mapping[str, typing.Any]]:
+
+        return {
+            "module_type": "onboarding.save_file_bundle",
+            "input_name": "files",
+            "target_name": "target",
+            "load_config_output": "load_config",
+        }
+
     def extract_type_metadata(
         cls, value: typing.Any
     ) -> typing.Mapping[str, typing.Any]:

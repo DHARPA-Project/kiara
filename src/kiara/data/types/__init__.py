@@ -281,7 +281,6 @@ class DictType(ValueType):
 
     def validate(cls, value: typing.Any) -> None:
 
-        print(type(value))
         if not isinstance(value, typing.Mapping):
             raise ValueError(f"Invalid type '{type(value)}', not a mapping.")
 
@@ -322,6 +321,19 @@ class ListType(ValueType):
 
 class ArrayType(ValueType):
     """An Apache arrow array."""
+
+    @classmethod
+    def save_config(cls) -> typing.Optional[typing.Mapping[str, typing.Any]]:
+
+        return {
+            "module_type": "arrays.save_array",
+            "module_config": {
+                "constants": {"column_name": "arrays", "file_name": "array.feather"}
+            },
+            "input_name": "array",
+            "target_name": "folder_path",
+            "load_config_output": "load_config",
+        }
 
     def extract_type_metadata(
         cls, value: typing.Any

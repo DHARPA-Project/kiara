@@ -8,6 +8,7 @@ import os.path
 import sys
 import typing
 from kiara_modules.core.json import DEFAULT_TO_JSON_CONFIG
+from kiara_modules.core.strings import DEFAULT_PRETTY_PRINT_CONFIG
 from pathlib import Path
 from rich import box
 from rich.console import Console, RenderGroup
@@ -441,7 +442,10 @@ async def run(ctx, module, inputs, module_config, output, explain, save, id):
             if output_details.format == "terminal":
                 print()
                 pretty_print = kiara_obj.create_workflow("strings.pretty_print")
-                pretty_print.inputs.set_value("item", workflow.outputs)
+                pretty_print_inputs = {"item": workflow.outputs}
+                pretty_print_inputs.update(DEFAULT_PRETTY_PRINT_CONFIG)
+
+                pretty_print.inputs.set_values(**pretty_print_inputs)
 
                 renderables = pretty_print.outputs.get_value_data("renderables")
                 if renderables:
@@ -491,8 +495,12 @@ async def run(ctx, module, inputs, module_config, output, explain, save, id):
 
         else:
             if output_details.format == "terminal":
+
                 pretty_print = kiara_obj.create_workflow("strings.pretty_print")
-                pretty_print.inputs.set_value("item", workflow.outputs)
+
+                pretty_print_inputs = {"item": value}
+                pretty_print_inputs.update(DEFAULT_PRETTY_PRINT_CONFIG)
+                pretty_print.inputs.set_values(**pretty_print_inputs)
 
                 renderables = pretty_print.outputs.get_value_data("renderables")
                 output = Panel(RenderGroup(*renderables), box=box.SIMPLE)
@@ -603,8 +611,10 @@ def load_value(ctx, value_id: str):
     print()
     value = kiara_obj.data_store.load_value(value_id=value_id)
 
+    pretty_print_config = {"item": value}
+    pretty_print_config.update(DEFAULT_PRETTY_PRINT_CONFIG)
     renderables: Value = kiara_obj.run(  # type: ignore
-        "strings.pretty_print", inputs={"item": value}, output_name="renderables"
+        "strings.pretty_print", inputs=pretty_print_config, output_name="renderables"
     )
     rich_print(*renderables.get_value_data())
 
@@ -630,29 +640,29 @@ def list_types(ctx):
 # @cli.command()
 # @click.pass_context
 # def dev(ctx):
-#     import os
-#
-#     os.environ["DEBUG"] = "true"
-#
-#     kiara = Kiara.instance()
-#
-#     workflow = kiara.create_workflow("network.graphs.import_network_graph")
-#
-#     workflow.inputs.set_values(
-#         edges_path="/home/markus/projects/dharpa/notebooks/NetworkXAnalysis/JournalEdges1902.csv",
-#         source_column="Source",
-#         target_column="Target",
-#     )
-#
-#     graph = workflow.outputs.get_value_obj("graph")
-#
-#     result = graph.save()
-#     load_config = result["metadata"]["load_config"]["metadata"]
-#     lc = LoadConfig(**load_config)
-#
-#     r2 = kiara.run(**lc.dict())
-#
-#     kiara.explain(r2)
+#     # import os
+#     #
+#     # os.environ["DEBUG"] = "true"
+#     #
+#     # kiara = Kiara.instance()
+#     #
+#     # workflow = kiara.create_workflow("network.graphs.import_network_graph")
+#     #
+#     # workflow.inputs.set_values(
+#     #     edges_path="/home/markus/projects/dharpa/notebooks/NetworkXAnalysis/JournalEdges1902.csv",
+#     #     source_column="Source",
+#     #     target_column="Target",
+#     # )
+#     #
+#     # graph = workflow.outputs.get_value_obj("graph")
+#     #
+#     # result = graph.save()
+#     # load_config = result["metadata"]["load_config"]["metadata"]
+#     # lc = LoadConfig(**load_config)
+#     #
+#     # r2 = kiara.run(**lc.dict())
+#     #
+#     # kiara.explain(r2)
 #
 #     # inputs = result.pop("inputs")
 #     # wf = kiara.create_workflow(config=result)
@@ -661,7 +671,21 @@ def list_types(ctx):
 #     # kiara.explain(wf.current_state)
 #     #
 #     # print(wf.outputs.get_all_value_data())
-
+#     # from kiara import Kiara
+#     #
+#     # kiara = Kiara.instance()
+#     #
+#     # workflow = kiara.create_workflow("logic.or")
+#     # workflow.inputs.set_values(a=True, b=False)
+#     #
+#     # print(workflow.outputs.get_value_data("y"))
+#
+#     from kiara import Kiara
+#
+#     kiara = Kiara.instance()
+#
+#     result = kiara.run("logic.or", inputs={"a": True, "b": False}, output_name="y", resolve_result=True)
+#     print(result)
 
 if __name__ == "__main__":
     cli()

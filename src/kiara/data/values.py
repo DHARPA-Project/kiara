@@ -855,6 +855,7 @@ class ValueSetImpl(ValueSet, typing.MutableMapping[str, Value]):
         for k in field_names:
             v = self.get_value_obj(k)
             result[k] = v.get_value_data()
+
         return result
 
     def _set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:

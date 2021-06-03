@@ -382,7 +382,8 @@ class Kiara(object):
         module_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         inputs: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         output_name: typing.Optional[str] = None,
-    ) -> typing.Union[ValueSet, Value]:
+        resolve_result: bool = False,
+    ) -> typing.Union[ValueSet, Value, typing.Any]:
 
         module = self.create_module(
             "_", module_type=module_type, module_config=module_config
@@ -391,9 +392,16 @@ class Kiara(object):
             inputs = {}
         result = module.run(**inputs)
         if output_name is not None:
-            return result.get_value_obj(output_name)
+            v = result.get_value_obj(output_name)
+            if resolve_result:
+                return v.get_value_data()
+            else:
+                return v
         else:
-            return result
+            if resolve_result:
+                return result.get_all_value_data()
+            else:
+                return result
 
     def create_pipeline(
         self,

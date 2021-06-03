@@ -21,7 +21,7 @@ from kiara.utils import (
 
 log = logging.getLogger("kiara")
 
-KiaraEntryPointItem = typing.Union[str, typing.Tuple, typing.Callable]
+KiaraEntryPointItem = typing.Union[typing.Type, typing.Tuple, typing.Callable]
 KiaraEntryPointIterable = typing.Iterable[KiaraEntryPointItem]
 
 
@@ -133,6 +133,8 @@ def find_all_kiara_pipeline_paths() -> typing.Dict[str, typing.List[str]]:
             raise NotImplementedError()
         elif isinstance(plugin.plugin, typing.Iterable):
             result_entrypoints[name] = plugin.plugin
+        elif isinstance(plugin.plugin, ModuleType):
+            result_entrypoints[name] = plugin.plugin.__name__
         else:
             raise Exception(
                 f"Can't load pipelines for entrypoint '{name}': invalid type '{type(plugin.plugin)}'"

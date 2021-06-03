@@ -48,6 +48,7 @@ nav:
 - Development:
     - Overview: development/index.md
     - Development environment: development/environment.md
+    - Module discovery: development/module_discovery.md
     - Pipeline controllers: development/pipeline_controllers.md
     - Workflows: development/workflows.md
     - Entities:

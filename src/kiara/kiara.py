@@ -5,6 +5,7 @@ import logging
 import os
 import typing
 import zmq
+from pathlib import Path
 from threading import Thread
 from zmq import Context
 from zmq.devices import ThreadDevice
@@ -332,6 +333,21 @@ class Kiara(object):
     def is_pipeline_module(self, module_type: str):
 
         return self._module_mgr.is_pipeline_module(module_type=module_type)
+
+    def register_pipeline_description(
+        self,
+        data: typing.Union[Path, str, typing.Mapping[str, typing.Any]],
+        module_type_name: typing.Optional[str] = None,
+        namespace: typing.Optional[str] = None,
+        raise_exception: bool = False,
+    ) -> typing.Optional[str]:
+
+        return self._module_mgr.register_pipeline_description(
+            data=data,
+            module_type_name=module_type_name,
+            namespace=namespace,
+            raise_exception=raise_exception,
+        )
 
     def create_module(
         self,

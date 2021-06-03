@@ -5,7 +5,6 @@ import logging
 import os
 import typing
 import zmq
-from pathlib import Path
 from threading import Thread
 from zmq import Context
 from zmq.devices import ThreadDevice
@@ -19,8 +18,7 @@ from kiara.data.types.type_mgmt import TypeMgmt
 from kiara.interfaces import get_console
 from kiara.module_config import KiaraWorkflowConfig, PipelineModuleConfig
 from kiara.module_mgmt import ModuleManager
-from kiara.module_mgmt.pipelines import PipelineModuleManager
-from kiara.module_mgmt.python_classes import PythonModuleManager
+from kiara.module_mgmt.merged import MergedModuleManager
 from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.pipeline import Pipeline
 from kiara.processing import Job, ModuleProcessor
@@ -68,9 +66,6 @@ class Kiara(object):
         self._config: KiaraConfig = config
 
         self._zmq_context: Context = Context.instance()
-        self._default_python_mgr = PythonModuleManager()
-        self._default_pipeline_mgr = PipelineModuleManager(folders=None)
-        self._custom_pipelines_mgr = PipelineModuleManager(folders={})
 
         self._profile_mgmt = ModuleProfileMgmt(kiara=self)
 
@@ -79,33 +74,16 @@ class Kiara(object):
         self.start_zmq_device()
         self.start_log_thread()
 
-        _mms = [
-            self._default_python_mgr,
-            self._default_pipeline_mgr,
-            self._custom_pipelines_mgr,
-        ]
-        if config.module_managers:
-            for mmc in config.module_managers:
-                mm = ModuleManager.from_config(mmc)
-                _mms.append(mm)
-
-        self._module_mgrs: typing.List[ModuleManager] = [
-            self._default_python_mgr,
-            self._default_pipeline_mgr,
-        ]
-
         self._default_processor: ModuleProcessor = ModuleProcessor.from_config(
             config.default_processor
         )
 
-        self._modules: typing.Dict[str, ModuleManager] = {}
-
         self._type_mgmt_obj: TypeMgmt = TypeMgmt(self)
 
         self._data_registry: DataRegistry = DataRegistry(self)
-
-        for mm in _mms:
-            self.add_module_manager(mm)
+        self._module_mgr: MergedModuleManager = MergedModuleManager(
+            config.module_managers
+        )
 
     @property
     def default_processor(self) -> "ModuleProcessor":
@@ -280,89 +258,15 @@ class Kiara(object):
 
     def add_module_manager(self, module_manager: ModuleManager):
 
-        for module_type in module_manager.get_module_types():
-            if module_type in self._modules.keys():
-                log.warning(
-                    f"Duplicate module name '{module_type}'. Ignoring all but the first."
-                )
-                continue
-            self._modules[module_type] = module_manager
-
-        self._module_mgrs.append(module_manager)
-        self._value_types = None
-
-    def add_pipeline_folder(self, folder: typing.Union[Path, str]) -> typing.List[str]:
-
-        if isinstance(folder, str):
-            folder = Path(os.path.expanduser(folder))
-
-        if not folder.is_dir():
-            raise Exception(
-                f"Can't add pipeline folder '{folder.as_posix()}': not a directory"
-            )
-
-        raise NotImplementedError()
-        added = self._custom_pipelines_mgr.add_pipelines_path(folder)
-        result = []
-        for a in added:
-            if a in self._modules.keys():
-                log.warning(f"Duplicate module name '{a}'. Ignoring all but the first.")
-                continue
-            self._modules[a] = self._custom_pipelines_mgr
-            result.append(a)
-
-        return result
-
-    def register_pipeline_description(
-        self,
-        data: typing.Union[Path, str, typing.Mapping[str, typing.Any]],
-        module_type_name: typing.Optional[str] = None,
-        namespace: typing.Optional[str] = None,
-        raise_exception: bool = False,
-    ) -> typing.Optional[str]:
-
-        name = self._custom_pipelines_mgr.register_pipeline(
-            data=data, module_type_name=module_type_name, namespace=namespace
-        )
-        if name in self._modules.keys():
-            if raise_exception:
-                raise Exception(f"Duplicate module name: {name}")
-            log.warning(f"Duplicate module name '{name}'. Ignoring all but the first.")
-            return None
-        else:
-            self._modules[name] = self._custom_pipelines_mgr
-            return name
+        self._module_mgr.add_module_manager(module_manager)
+        self._type_mgmt_obj.invalidate_types()
 
     @property
     def data_registry(self) -> DataRegistry:
         return self._data_registry
 
     def get_module_class(self, module_type: str) -> typing.Type["KiaraModule"]:
-
-        if module_type == "pipeline":
-            from kiara import PipelineModule
-
-            return PipelineModule
-
-        mm = self._modules.get(module_type, None)
-        if mm is None:
-            raise Exception(f"No module '{module_type}' available.")
-
-        cls = mm.get_module_class(module_type)
-        if not hasattr(cls, "_module_type_name"):
-            raise Exception(
-                f"Class does not have a '_module_type_name' attribute: {cls}"
-            )
-
-        assert module_type.endswith(cls._module_type_name)  # type: ignore
-
-        if hasattr(cls, "_module_type_id") and cls._module_type_id != "pipeline" and cls._module_type_id != module_type:  # type: ignore
-            raise Exception(
-                f"Can't create module class '{cls}', it already has a _module_type_id attribute and it's different to the module name '{module_type}': {cls._module_type_id}"  # type: ignore
-            )
-
-        setattr(cls, "_module_type_id", module_type)
-        return cls
+        return self._module_mgr.get_module_class(module_type=module_type)
 
     def get_module_info(self, module_type: str) -> "ModuleInfo":
 
@@ -377,13 +281,13 @@ class Kiara(object):
         else:
             from kiara.module import ModuleInfo
 
-            info = ModuleInfo(module_type=module_type, _kiara=self)  # type: ignore
+            info = ModuleInfo(module_type=module_type)  # type: ignore
             return info
 
     @property
     def available_module_types(self) -> typing.List[str]:
         """Return the names of all available modules"""
-        return sorted(set(self._modules.keys()))
+        return self._module_mgr.available_module_types
 
     @property
     def modules_list(self) -> "ModulesList":
@@ -417,28 +321,17 @@ class Kiara(object):
     def available_non_pipeline_module_types(self) -> typing.List[str]:
         """Return the names of all available pipeline-type modules."""
 
-        return [
-            module_type
-            for module_type in self.available_module_types
-            if module_type != "pipeline"
-            and not self.get_module_class(module_type).is_pipeline()
-        ]
+        return self._module_mgr.available_non_pipeline_module_types
 
     @property
     def available_pipeline_module_types(self) -> typing.List[str]:
         """Return the names of all available pipeline-type modules."""
 
-        return [
-            module_type
-            for module_type in self.available_module_types
-            if module_type != "pipeline"
-            and self.get_module_class(module_type).is_pipeline()
-        ]
+        return self._module_mgr.available_pipeline_module_types
 
     def is_pipeline_module(self, module_type: str):
 
-        cls = self.get_module_class(module_type=module_type)
-        return cls.is_pipeline()
+        return self._module_mgr.is_pipeline_module(module_type=module_type)
 
     def create_module(
         self,
@@ -448,22 +341,12 @@ class Kiara(object):
         parent_id: typing.Optional[str] = None,
     ) -> "KiaraModule":
 
-        mm = self._modules.get(module_type, None)
-        if mm is None:
-            raise Exception(
-                f"No module '{module_type}' registered. Available modules: {', '.join(self.available_module_types)}"
-            )
-
-        _ = self.get_module_class(
-            module_type
-        )  # just to make sure the _module_type_id attribute is added
-
-        return mm.create_module(
+        return self._module_mgr.create_module(
+            kiara=self,
             id=id,
-            parent_id=parent_id,
             module_type=module_type,
             module_config=module_config,
-            kiara=self,
+            parent_id=parent_id,
         )
 
     def get_module_doc(
@@ -525,7 +408,6 @@ class Kiara(object):
         elif isinstance(config, PipelineModuleConfig):
             pipeline_config = config
         else:
-            # raise TypeError(f"Invalid type '{type(workflow_config)}' for workflow configuration: {workflow_config}")
             raise TypeError(
                 f"Invalid type '{type(config)}' for pipeline configuration."
             )
@@ -580,7 +462,6 @@ class Kiara(object):
             if module_config:
                 raise NotImplementedError()
         else:
-            # raise TypeError(f"Invalid type '{type(workflow_config)}' for workflow configuration: {workflow_config}")
             raise TypeError(
                 f"Invalid type '{type(config)}' for workflow configuration."
             )

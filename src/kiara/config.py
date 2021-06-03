@@ -57,7 +57,9 @@ class KiaraConfig(BaseSettings):
         typing.List[
             typing.Union[PythonModuleManagerConfig, PipelineModuleManagerConfig]
         ]
-    ] = Field(description="The module managers to use in this kiara instance.")
+    ] = Field(
+        description="The module managers to use in this kiara instance.", default=None
+    )
     default_processor: typing.Optional[
         typing.Union[SynchronousProcessorConfig, ThreadPoolProcessorConfig]
     ] = Field(

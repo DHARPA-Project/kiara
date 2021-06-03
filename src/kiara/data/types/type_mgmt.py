@@ -20,6 +20,12 @@ class TypeMgmt(object):
         ] = {}
         self._registered_python_classes: typing.Dict[typing.Type, typing.List[str]] = None  # type: ignore
 
+    def invalidate_types(self):
+
+        self._value_types = None
+        self._value_type_transformations.clear()
+        self._registered_python_classes = None
+
     @property
     def value_types(self) -> typing.Mapping[str, typing.Type[ValueType]]:
 

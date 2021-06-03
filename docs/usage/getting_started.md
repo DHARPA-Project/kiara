@@ -4,9 +4,9 @@ This guide walks through some of the important (and some of the lesser important
 new users to the overall framework, so they can get a feeling for what it can do, and whether it might be useful for their
 own usage scenarios.
 
-As example data, we'll be using two csv files that were created by my colleague [Lena Jaskov](https://github.com/yaslena): [source](https://github.com/DHARPA-Project/kiara_modules.playground/tree/develop/examples/data/journals)
+As example data, we'll be using two csv files that were created by my colleague [Lena Jaskov](https://github.com/yaslena): [files](https://github.com/DHARPA-Project/kiara_modules.playground/tree/develop/examples/data/journals)
 
-The files contain information about connection (edges) between medical journals (``JournalEdges1902.csv``), as well as additional metadata for the journals themselves. We'll use that data to create table and graph structures with *kiara*.
+The files contain information about connection (edges) between medical journals (``JournalEdges1902.csv``), as well as additional metadata for the journals themselves (``JournalNodes1902.csv``). We'll use that data to create table and graph structures with *kiara*.
 
 ## Setting up kiara
 

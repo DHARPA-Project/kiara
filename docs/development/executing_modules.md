@@ -43,3 +43,5 @@ This creates and executes the module object directly, without going through a wo
 This also means that *kiara* won't be able to optimize memory usage for the data involved: every result will always live in memory, fully.
 
 The way this method works might need to change in the future, so be aware of that when you use it now, and maybe have some sort of abstraction.
+
+In the future it will also be possible to run pipeline configurations directly like this, but that is not yet implemented.

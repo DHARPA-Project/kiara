@@ -13,3 +13,11 @@ Basically, you provide a (masking) arrow of booleans, with the same length as th
 We can come up with different ways to create such a filter array, one of the most modular ones is to use the [``[map]``](https://dharpa.org/kiara_modules.core/modules_list/#arraysmap) in combination with another module that does the actual creation of the cell value. Say we wanted to filter a table to only include rows that match a certain date range, this is how the corresponding pipeline module could look:
 
 {{ inline_file_as_codeblock('docs/data/tables/filter_pipeline_example.json', format='json') }}
+
+We could then use this filter with a table we onboarded earlier like:
+
+```
+kiara run docs/data/tables/filter_pipeline_example.json table=value:topic-modeling.table column_name=extract_date_from_file_name earliest="1918-04-01"
+...
+...
+```

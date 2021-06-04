@@ -213,12 +213,12 @@ class PipelineModuleManager(ModuleManager):
                         if not rel_path or rel_path == ".":
                             ns_name = name
                         else:
-                            ns_name = f"{rel_path}.{name}"
+                            _rel_path = rel_path.replace(os.path.sep, ".")
+                            ns_name = f"{_rel_path}.{name}"
                         if ns_name in files.keys():
                             raise Exception(
                                 f"Duplicate workflow name in namespace '{namespace}': {ns_name}"
                             )
-
                         files[ns_name] = data
                     except Exception as e:
                         log.warning(

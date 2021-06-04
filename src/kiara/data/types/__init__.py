@@ -94,7 +94,7 @@ class ValueType(object):
         (dictionary wth 'module_type' and optional 'module_config', 'input_name' and 'output_name' keys).
         """
 
-        return {"string": {"module_type": "strings.pretty_print", "input_name": "item"}}
+        return {"string": {"module_type": "string.pretty_print", "input_name": "item"}}
 
     @classmethod
     def check_data(cls, data: typing.Any) -> typing.Optional["ValueType"]:
@@ -326,9 +326,9 @@ class ArrayType(ValueType):
     def save_config(cls) -> typing.Optional[typing.Mapping[str, typing.Any]]:
 
         return {
-            "module_type": "arrays.save_array",
+            "module_type": "array.save",
             "module_config": {
-                "constants": {"column_name": "arrays", "file_name": "array.feather"}
+                "constants": {"column_name": "array", "file_name": "array.feather"}
             },
             "input_name": "array",
             "target_name": "folder_path",

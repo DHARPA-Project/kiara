@@ -8,7 +8,7 @@ import os.path
 import sys
 import typing
 from kiara_modules.core.json import DEFAULT_TO_JSON_CONFIG
-from kiara_modules.core.strings import DEFAULT_PRETTY_PRINT_CONFIG
+from kiara_modules.core.string import DEFAULT_PRETTY_PRINT_CONFIG
 from pathlib import Path
 from rich import box
 from rich.console import Console, RenderGroup
@@ -441,7 +441,7 @@ async def run(ctx, module, inputs, module_config, output, explain, save, id):
         if output_details.target == "terminal":
             if output_details.format == "terminal":
                 print()
-                pretty_print = kiara_obj.create_workflow("strings.pretty_print")
+                pretty_print = kiara_obj.create_workflow("string.pretty_print")
                 pretty_print_inputs: typing.Dict[str, typing.Any] = {
                     "item": workflow.outputs
                 }
@@ -498,7 +498,7 @@ async def run(ctx, module, inputs, module_config, output, explain, save, id):
         else:
             if output_details.format == "terminal":
 
-                pretty_print = kiara_obj.create_workflow("strings.pretty_print")
+                pretty_print = kiara_obj.create_workflow("string.pretty_print")
 
                 pretty_print_inputs = {"item": value}
                 pretty_print_inputs.update(DEFAULT_PRETTY_PRINT_CONFIG)
@@ -616,7 +616,7 @@ def load_value(ctx, value_id: str):
     pretty_print_config: typing.Dict[str, typing.Any] = {"item": value}
     pretty_print_config.update(DEFAULT_PRETTY_PRINT_CONFIG)
     renderables: Value = kiara_obj.run(  # type: ignore
-        "strings.pretty_print", inputs=pretty_print_config, output_name="renderables"
+        "string.pretty_print", inputs=pretty_print_config, output_name="renderables"
     )
     rich_print(*renderables.get_value_data())
 
@@ -648,7 +648,7 @@ def list_types(ctx):
 #     #
 #     # kiara = Kiara.instance()
 #     #
-#     # workflow = kiara.create_workflow("network.graphs.import_network_graph")
+#     # workflow = kiara.create_workflow("network.graph.import_network_graph")
 #     #
 #     # workflow.inputs.set_values(
 #     #     edges_path="/home/markus/projects/dharpa/notebooks/NetworkXAnalysis/JournalEdges1902.csv",

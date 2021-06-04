@@ -108,7 +108,7 @@ class ValueSchema(BaseModel):
     The schema contains the [ValueType][kiara.data.values.ValueType] of a value, as well as an optional default that
     will be used if no user input was given (yet) for a value.
 
-    For more complex container types like arrays, tables, unions etc, types can also be configured with values from the ``type_config`` field.
+    For more complex container types like array, tables, unions etc, types can also be configured with values from the ``type_config`` field.
     """
 
     class Config:

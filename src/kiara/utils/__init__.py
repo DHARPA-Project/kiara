@@ -99,7 +99,7 @@ def print_ascii_graph(graph: Graph):
     except Exception as e:
         print(e)
         print(
-            "\nJava is currently necessary to print ascii graphs. This might change in the future, but to use this functionality please install a JRE."
+            "\nJava is currently necessary to print ascii graph. This might change in the future, but to use this functionality please install a JRE."
         )
         return
 

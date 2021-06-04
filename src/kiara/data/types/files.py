@@ -305,7 +305,7 @@ class FileBundleType(ValueType):
     def save_config(cls) -> typing.Optional[typing.Mapping[str, typing.Any]]:
 
         return {
-            "module_type": "onboarding.save_file_bundle",
+            "module_type": "onboarding.file_bundle.save",
             "input_name": "files",
             "target_name": "target",
             "load_config_output": "load_config",

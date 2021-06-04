@@ -518,7 +518,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
             if not isinstance(v, Value):
                 if k not in self.input_schemas.keys():
                     raise Exception(
-                        f"Invalid input name '{k}. Not part of the schema, allowed input names: {', '.join(self.input_names)}"
+                        f"Invalid input name '{k} for module {self._module_type_id}. Not part of the schema, allowed input names: {', '.join(self.input_names)}"  # type: ignore
                     )
                 schema = self.input_schemas[k]
                 v = NonRegistryValue(

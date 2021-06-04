@@ -16,7 +16,10 @@ class MetadataModuleConfig(KiaraModuleConfig):
 
 
 class ExtractMetadataModule(KiaraModule):
-    """Extract metadata for the 'table' type."""
+    """Base class to use when writing a module to extract metadata from a file.
+
+    It's possible to use any arbitrary *kiara* module for this purpose, but sub-classing this makes it easier.
+    """
 
     _config_cls = MetadataModuleConfig
 
@@ -122,6 +125,10 @@ class ExtractMetadataModule(KiaraModule):
 
 
 class ExtractPythonClass(ExtractMetadataModule):
+    """Extract metadata about the Python type of this value."""
+
+    _module_type_name = "python_class"
+
     @classmethod
     def _get_supported_types(cls) -> typing.Union[str, typing.Iterable[str]]:
         return "*"

@@ -41,7 +41,6 @@ init: clean ## initialize a development environment (to be run in virtualenv)
 	git checkout -b develop || true
 	pip install -U pip
 	pip install --extra-index-url https://pypi.fury.io/dharpa/ --extra-index-url https://gitlab.com/api/v4/projects/25344049/packages/pypi/simple -U -e '.[all_dev]'
-	mypy --install-types
 	pre-commit install
 	pre-commit install --hook-type commit-msg
 	setup-cfg-fmt setup.cfg || true

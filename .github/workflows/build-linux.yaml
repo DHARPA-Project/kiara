@@ -35,6 +35,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: install kiara
         run: pip install -U --pre --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]
+      - name: Install missing mypy stub packages
+        run: mypy --install-types
       - name: Test with mypy
         run: make mypy
 

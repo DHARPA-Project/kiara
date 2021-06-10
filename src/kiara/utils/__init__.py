@@ -22,7 +22,7 @@ from ruamel.yaml import YAML
 from types import ModuleType
 from typing import Union
 
-from kiara.defaults import SpecialValue
+from kiara.defaults import INVALID_VALUE_NAMES, SpecialValue
 
 if typing.TYPE_CHECKING:
     from kiara.data.values import ValueSchema
@@ -295,3 +295,13 @@ def _import_modules_recursively(module: ModuleType):
         submodule_mod = importlib.import_module(f"{module.__name__}.{submodule.name}")
         if hasattr(submodule_mod, "__path__"):
             _import_modules_recursively(submodule_mod)
+
+
+def check_valid_field_names(*field_names) -> typing.List[str]:
+    """Check whether the provided field names are all valid.
+
+    Returns:
+        an iterable of strings with invalid field names
+    """
+
+    return [x for x in field_names if x in INVALID_VALUE_NAMES or x.startswith("_")]

@@ -183,7 +183,7 @@ class MergedModuleManager(ModuleManager):
     def create_module(
         self,
         kiara: "Kiara",
-        id: str,
+        id: typing.Optional[str],
         module_type: str,
         module_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         parent_id: typing.Optional[str] = None,

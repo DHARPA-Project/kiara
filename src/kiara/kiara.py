@@ -25,7 +25,7 @@ from kiara.pipeline.pipeline import Pipeline
 from kiara.processing import Job, ModuleProcessor
 from kiara.profiles import ModuleProfileMgmt
 from kiara.utils import get_auto_workflow_alias, get_data_from_file, is_debug
-from kiara.workflow import KiaraWorkflow
+from kiara.workflow.kiara_workflow import KiaraWorkflow
 
 if typing.TYPE_CHECKING:
     from kiara.module import KiaraModule, ModuleInfo, ModulesList
@@ -202,13 +202,13 @@ class Kiara(object):
                 )
             profile = all_profiles_for_type[mk]
             module = profile.create_module(kiara=self)
-            metadata_result = module.run(value=value)
+            metadata_result = module.run(value_item=value)
             result[mk] = metadata_result.get_all_value_data()
 
         if also_return_schema:
             return result
         else:
-            return {k: v["metadata"] for k, v in result.items()}
+            return {k: v["item_metadata"] for k, v in result.items()}
 
     def get_value_type_cls(self, type_name: str) -> typing.Type[ValueType]:
 
@@ -351,9 +351,9 @@ class Kiara(object):
 
     def create_module(
         self,
-        id: str,
         module_type: str,
         module_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+        id: str = None,
         parent_id: typing.Optional[str] = None,
     ) -> "KiaraModule":
 
@@ -371,9 +371,7 @@ class Kiara(object):
         module_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
     ):
 
-        m = self.create_module(
-            id="_", module_type=module_type, module_config=module_config
-        )
+        m = self.create_module(module_type=module_type, module_config=module_config)
         return m.doc()
 
     def run(
@@ -386,7 +384,7 @@ class Kiara(object):
     ) -> typing.Union[ValueSet, Value, typing.Any]:
 
         module = self.create_module(
-            "_", module_type=module_type, module_config=module_config
+            module_type=module_type, module_config=module_config
         )
         if inputs is None:
             inputs = {}

@@ -30,7 +30,21 @@ MODULE_TYPE_KEY = "module_type"
 STEP_ID_KEY = "step_id"
 """The key to specify the step id."""
 
-INVALID_VALUE_NAMES = ["dict", "items_are_valid", "set_values", "set_value", "ALL"]
+INVALID_VALUE_NAMES = [
+    "dict",
+    "items_are_valid",
+    "set_values",
+    "set_value",
+    "ALL",
+    "metadata",
+    "value",
+    "value_obj",
+    "items",
+    "keys",
+    "values",
+    "data",
+    "point_id",
+]
 """List of reserved names, inputs/outputs can't use those."""
 
 PIPELINE_PARENT_MARKER = "__pipeline__"

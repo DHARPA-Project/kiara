@@ -285,13 +285,13 @@ class DataStore(object):
 
         if also_return_schema:
             if metadata_key:
-                result = self.values_metadata[value_id]["metadata"][metadata_key]
+                result = self.values_metadata[value_id]["item_metadata"][metadata_key]
             else:
-                result = self.values_metadata[value_id]["metadata"]
+                result = self.values_metadata[value_id]["item_metadata"]
         else:
             r = {
                 k: v["metadata"]
-                for k, v in self.values_metadata[value_id]["metadata"].items()
+                for k, v in self.values_metadata[value_id]["item_metadata"].items()
             }
             if metadata_key:
                 result = r[metadata_key]

@@ -142,7 +142,7 @@ class TypeMgmt(object):
                 )
             module_config = config.pop("module_config", {})
             module = self._kiara.create_module(
-                f"_transform_{value_type_name}_{name}",
+                id=f"_transform_{value_type_name}_{name}",
                 module_type=module_type,
                 module_config=module_config,
             )

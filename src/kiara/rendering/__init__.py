@@ -4,7 +4,7 @@ import typing
 from kiara import Kiara, PipelineController
 from kiara.data import ValueSet
 from kiara.module_config import KiaraWorkflowConfig
-from kiara.workflow import KiaraWorkflow
+from kiara.workflow.kiara_workflow import KiaraWorkflow
 
 
 class WorkflowRenderer(object):

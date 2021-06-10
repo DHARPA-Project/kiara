@@ -156,11 +156,11 @@ To confirm our graph is stored, let's check the data store:
 
 Now we might want to have a look at some of the intrinsic properties of our graph. For that, we will use the ``network.graph.properties`` module:
 
-{{ cli("kiara", "run", "network.graph.properties", "graph=value:generate_graph_from_csvs.graph") }}
+{{ cli("kiara", "run", "network.graph.properties", "graph=value:generate_graph_from_csvs.graph" "--save) }}
 
 ## Finding the shortest path
 
-Another thing we can do is finding the shortes path between two nodes:
+Another thing we can do is finding the shortest path between two nodes:
 
 {{ cli("kiara", "run", "network.graph.find_shortest_path", "graph=value:generate_graph_from_csvs.graph", "source_node=1", "target_node=2") }}
 

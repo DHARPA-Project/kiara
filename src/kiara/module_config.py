@@ -6,13 +6,15 @@ import collections
 import deepdiff
 import typing
 from pathlib import Path
-from pydantic import BaseModel, Extra, Field, PrivateAttr, validator
+from pydantic import BaseModel, Extra, Field, PrivateAttr, root_validator, validator
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.table import Table
+from slugify import slugify
 
 from kiara.data.values import StepValueAddress
 from kiara.defaults import DEFAULT_PIPELINE_PARENT_ID
+from kiara.profiles import ModuleProfileConfig
 from kiara.utils import get_data_from_file
 
 if typing.TYPE_CHECKING:
@@ -89,26 +91,52 @@ def ensure_step_value_addresses(
     return input_links
 
 
-class PipelineStepConfig(BaseModel):
+class PipelineStepConfig(ModuleProfileConfig):
     """A class to hold the configuration of one module within a [PipelineModule][kiara.pipeline.module.PipelineModule]."""
 
     class Config:
         extra = Extra.forbid
         validate_assignment = True
 
-    module_type: str = Field(description="The name of the module type.")
     step_id: str = Field(description="The id of the step.")
-    module_config: typing.Dict = Field(
-        default_factory=dict,
-        description="The configuration for the module (module-type specific).",
-    )
     input_links: typing.Dict[str, typing.List[StepValueAddress]] = Field(
         default_factory=dict,
         description="The map with the name of an input link as key, and the connected module output name(s) as value.",
     )
 
+    @root_validator(pre=True)
+    def create_step_id(cls, values):
+
+        if "module_type" not in values:
+            raise ValueError("No 'module_type' specified.")
+        if "step_id" not in values or not values["step_id"]:
+            values["step_id"] = slugify(values["module_type"])
+
+        return values
+
+    @validator("step_id")
+    def ensure_valid_id(cls, v):
+
+        # TODO: check with regex
+        if "." in v or " " in v:
+            raise ValueError(
+                f"Step id can't contain special characters or whitespaces: {v}"
+            )
+
+        return v
+
+    @validator("module_config", pre=True)
+    def ensure_dict(cls, v):
+
+        if v is None:
+            v = {}
+        return v
+
     @validator("input_links", pre=True)
     def ensure_input_links_valid(cls, v):
+
+        if v is None:
+            v = {}
 
         result = {}
         for input_name, output in v.items():
@@ -291,6 +319,19 @@ class PipelineModuleConfig(KiaraModuleConfig):
     meta: typing.Dict[str, typing.Any] = Field(
         default_factory=dict, description="Metadata for this workflow."
     )
+
+    @validator("steps", pre=True)
+    def _validate_steps(cls, v):
+
+        steps = []
+        for step in v:
+            if isinstance(step, PipelineStepConfig):
+                steps.append(step)
+            elif isinstance(step, typing.Mapping):
+                steps.append(PipelineStepConfig(**step))
+            else:
+                raise TypeError(step)
+        return steps
 
     def create_structure(
         self, parent_id: str, kiara: typing.Optional["Kiara"] = None

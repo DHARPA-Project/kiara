@@ -126,6 +126,10 @@ class Pipeline(object):
     # def set_pipeline_inputs(self, **inputs: typing.Any):
     #     self._controller.set_pipeline_inputs(**inputs)
 
+    @property
+    def step_ids(self) -> typing.Iterable[str]:
+        return self._structure.step_ids
+
     def get_step(self, step_id: str) -> PipelineStep:
         return self._structure.get_step(step_id)
 

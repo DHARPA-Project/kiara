@@ -563,10 +563,10 @@ class DataRegistry(object):
             if value is None:
                 value = SpecialValue.NO_VALUE
 
-            if value == SpecialValue.NO_VALUE and not item.value_schema.optional:
-                raise ValueError(
-                    f"Value is required, can't be None/no_value for item: {item}"
-                )
+            # if value == SpecialValue.NO_VALUE and not item.value_schema.optional:
+            #     raise ValueError(
+            #         f"Value is required, can't be None/no_value for item: {item}"
+            #     )
 
         result: typing.Dict[Value, bool] = {}
         callbacks: typing.Dict[typing.Callable, typing.List[Value]] = {}
@@ -589,6 +589,9 @@ class DataRegistry(object):
 
             old_value = self.get_value_data(item)
             changed = True
+
+            # TODO: validate/parse new value before comparison, otherwise functually equal values
+            # will trigger an event
             if old_value == value:
                 # TODO: make sure this is enough
                 changed = False

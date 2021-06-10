@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import copy
 import networkx as nx
 import typing
 import uuid
@@ -54,8 +55,8 @@ class PipelineStep(BaseModel):
                 step_id=step.step_id,
                 parent_id=parent_id,
                 module_type=step.module_type,
-                module_config=step.module_config,
-                input_links=step.input_links,
+                module_config=copy.deepcopy(step.module_config),
+                input_links=copy.deepcopy(step.input_links),
                 _kiara=kiara,
             )
             result.append(_s)

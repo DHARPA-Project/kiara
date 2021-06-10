@@ -87,7 +87,7 @@ class ExtractMetadataModule(KiaraModule):
     ]:
 
         inputs = {
-            "value": {
+            "value_item": {
                 "type": self.value_type,
                 "doc": f"A value of type '{self.value_type}'",
                 "optional": False,
@@ -101,8 +101,11 @@ class ExtractMetadataModule(KiaraModule):
         str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
     ]:
         outputs = {
-            "metadata": {"type": "dict", "doc": "The metadata for the provided value."},
-            "metadata_schema": {
+            "item_metadata": {
+                "type": "dict",
+                "doc": "The metadata for the provided value.",
+            },
+            "item_metadata_schema": {
                 "type": "string",
                 "doc": "The (json) schema for the metadata.",
             },
@@ -112,16 +115,16 @@ class ExtractMetadataModule(KiaraModule):
 
     def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
 
-        value = inputs.get_value_obj("value")
+        value = inputs.get_value_obj("value_item")
         if value.value_schema.type != self.value_type:
             raise KiaraProcessingException(
                 f"Can't extract metadata for value of type '{value.value_schema.type}'. Expected type '{self.value_type}'."
             )
 
-        outputs.set_value("metadata_schema", self.metadata_schema)
+        outputs.set_value("item_metadata_schema", self.metadata_schema)
         metadata = self.extract_metadata(value)
         # TODO: validate metadata?
-        outputs.set_value("metadata", metadata)
+        outputs.set_value("item_metadata", metadata)
 
 
 class ExtractPythonClass(ExtractMetadataModule):

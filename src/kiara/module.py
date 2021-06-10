@@ -5,6 +5,7 @@ import inspect
 import json
 import textwrap
 import typing
+import uuid
 from abc import abstractmethod
 from pydantic import (
     BaseModel,
@@ -31,6 +32,7 @@ from kiara.exceptions import KiaraModuleConfigException
 from kiara.module_config import KIARA_CONFIG, KiaraModuleConfig
 from kiara.utils import (
     StringYAML,
+    check_valid_field_names,
     create_table_from_config_class,
     create_table_from_field_schemas,
     is_debug,
@@ -254,7 +256,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
 
     def __init__(
         self,
-        id: str,
+        id: typing.Optional[str] = None,
         parent_id: typing.Optional[str] = None,
         module_config: typing.Union[
             None, KIARA_CONFIG, typing.Mapping[str, typing.Any]
@@ -263,6 +265,8 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         kiara: typing.Optional["Kiara"] = None,
     ):
 
+        if id is None:
+            id = str(uuid.uuid4())
         self._id: str = id
         self._parent_id = parent_id
 
@@ -388,6 +392,11 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
                 f"Invalid module implementation for '{self.__class__.__name__}': empty input schema"
             )
 
+        invalid = check_valid_field_names(*_input_schemas.keys())
+        if invalid:
+            raise Exception(
+                f"Can't assemble module '{self.id}', contains invalid input field name(s): {', '.join(invalid)}"
+            )
         result = {}
         for k, v in _input_schemas.items():
 
@@ -435,6 +444,12 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         if not _output_schema:
             raise Exception(
                 f"Invalid module implementation for '{self.__class__.__name__}': empty output schema"
+            )
+
+        invalid = check_valid_field_names(*_output_schema.keys())
+        if invalid:
+            raise Exception(
+                f"Can't assemble module '{self.id}', contains invalid output field name(s): {', '.join(invalid)}"
             )
 
         result = {}

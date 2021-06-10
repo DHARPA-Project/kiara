@@ -314,7 +314,7 @@ class Value(BaseModel):
                 if also_return_schema:
                     result[metadata_key] = self.metadata[metadata_key]
                 else:
-                    result[metadata_key] = self.metadata[metadata_key]["metadata"]
+                    result[metadata_key] = self.metadata[metadata_key]["item_metadata"]
             else:
                 missing.add(metadata_key)
 
@@ -327,7 +327,7 @@ class Value(BaseModel):
             if also_return_schema:
                 result[k] = v
             else:
-                result[k] = v["metadata"]
+                result[k] = v["item_metadata"]
         return result
 
     def save(self) -> str:
@@ -609,6 +609,13 @@ class ValueSet(abc.ABC):
 
     def get_all_value_data(self) -> typing.Dict[str, typing.Any]:
         return self.get_value_data_for_fields(*self.get_all_field_names())
+
+    def invalidate(self):
+
+        inv = {}
+        for field_name in self.get_all_field_names():
+            inv[field_name] = SpecialValue.NO_VALUE
+        self.set_values(**inv)
 
     def get_metadata(self) -> typing.Mapping[str, typing.Any]:
         return {}

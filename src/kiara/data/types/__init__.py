@@ -19,9 +19,7 @@ be discouraged, since this might not be trivial and there are quite a few things
 
 """
 
-import datetime
 import typing
-from dateutil import parser
 from deepdiff import DeepHash
 from enum import Enum
 from rich.console import Console, ConsoleOptions, RenderResult
@@ -290,7 +288,7 @@ class DictType(ValueType):
         value_types = set()
         for val in value.values():
             value_types.add(get_type_name(val))
-        result = {"keys": list(value.keys()), "value_types": list(value_types)}
+        result = {"keys": list(value.keys()), "value_types.py": list(value_types)}
         return result
 
 
@@ -317,56 +315,6 @@ class ListType(ValueType):
 
         metadata = {"length": len(value)}
         return metadata
-
-
-class ArrayType(ValueType):
-    """An Apache arrow array."""
-
-    @classmethod
-    def save_config(cls) -> typing.Optional[typing.Mapping[str, typing.Any]]:
-
-        return {
-            "module_type": "array.save",
-            "module_config": {
-                "constants": {"column_name": "array", "file_name": "array.feather"}
-            },
-            "input_name": "array",
-            "target_name": "folder_path",
-            "load_config_output": "load_config",
-        }
-
-    def extract_type_metadata(
-        cls, value: typing.Any
-    ) -> typing.Mapping[str, typing.Any]:
-
-        metadata = {
-            "item_type": str(value.type),
-            "arrow_type_id": value.type.id,
-            "length": len(value),
-        }
-        return metadata
-
-
-class DateType(ValueType):
-    def defer_hash_calc(self) -> bool:
-        return False
-
-    def calculate_value_hash(
-        self, value: typing.Any
-    ) -> typing.Union[int, ValueHashMarker]:
-
-        return hash(value)
-
-    def parse_value(self, v: typing.Any) -> typing.Any:
-
-        if isinstance(v, str):
-            d = parser.parse(v)
-            return d
-
-        return None
-
-    def validate(cls, value: typing.Any):
-        assert isinstance(value, datetime.datetime)
 
 
 class ValueLoadConfig(ValueType):

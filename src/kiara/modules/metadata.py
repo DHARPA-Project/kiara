@@ -7,6 +7,7 @@ from kiara import KiaraModule
 from kiara.data import Value, ValueSet
 from kiara.data.values import ValueSchema
 from kiara.exceptions import KiaraProcessingException
+from kiara.metadata import PythonClassMetadata
 from kiara.module_config import KiaraModuleConfig
 
 
@@ -123,6 +124,9 @@ class ExtractMetadataModule(KiaraModule):
 
         outputs.set_value("item_metadata_schema", self.metadata_schema)
         metadata = self.extract_metadata(value)
+        if isinstance(metadata, BaseModel):
+            metadata = metadata.dict()
+
         # TODO: validate metadata?
         outputs.set_value("item_metadata", metadata)
 
@@ -143,14 +147,8 @@ class ExtractPythonClass(ExtractMetadataModule):
     def _get_metadata_schema(
         self, type: str
     ) -> typing.Union[str, typing.Type[BaseModel]]:
-        class PythonClassModel(BaseModel):
-            class_name: str = Field(description="The name of the Python class")
-            module_name: str = Field(
-                description="The name of the Python module this class lives in."
-            )
-            full_name: str = Field(description="The full class namespace.")
 
-        return PythonClassModel
+        return PythonClassMetadata
 
     def extract_metadata(self, value: Value) -> typing.Mapping[str, typing.Any]:
 

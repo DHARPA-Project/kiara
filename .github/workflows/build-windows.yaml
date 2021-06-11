@@ -17,6 +17,6 @@ jobs:
           python-version: "${{ matrix.python_version }}"
       - uses: actions/checkout@v2
       - name: install kiara
-        run: pip install -U --pre --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]
+        run: pip install -U --pre --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing,modules_core]
       - name: Test with pytest
         run: make test

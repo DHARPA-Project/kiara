@@ -28,6 +28,7 @@ from kiara.data.values import (
     ValueSet,
     ValueSetImpl,
 )
+from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.exceptions import KiaraModuleConfigException
 from kiara.module_config import KIARA_CONFIG, KiaraModuleConfig
 from kiara.utils import (
@@ -212,10 +213,18 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
     _config_cls: typing.Type[KIARA_CONFIG] = KiaraModuleConfig  # type: ignore
 
     @classmethod
+    def get_type_metadata(cls) -> typing.Mapping[str, typing.Mapping[str, typing.Any]]:
+
+        if not hasattr(cls, "_type_metadata"):
+            return {}
+
+        return cls._type_metadata  # type: ignore
+
+    @classmethod
     def doc(cls) -> str:
         doc = cls.__doc__
         if not doc:
-            doc = "-- n/a --"
+            doc = DEFAULT_NO_DESC_VALUE
         else:
             doc = inspect.cleandoc(doc)
 

@@ -7,7 +7,7 @@ from kiara import KiaraModule
 from kiara.data import Value, ValueSet
 from kiara.data.values import ValueSchema
 from kiara.exceptions import KiaraProcessingException
-from kiara.metadata import PythonClassMetadata
+from kiara.metadata.core_models import PythonClassMetadata
 from kiara.module_config import KiaraModuleConfig
 
 

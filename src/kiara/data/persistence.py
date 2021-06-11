@@ -142,17 +142,17 @@ class DataStore(object):
             snapshot_time=str(local_dt),
         )
         metadata["snapshot"] = {
-            "metadata": ssmd.dict(),
-            "metadata_schema": ssmd.schema_json(),
+            "item_metadata": ssmd.dict(),
+            "item_metadata_schema": ssmd.schema_json(),
         }
         load_config = details.get_value_data()
         metadata["load_config"] = {
-            "metadata": load_config,
-            "metadata_schema": LoadConfig.schema_json(),
+            "item_metadata": load_config,
+            "item_metadata_schema": LoadConfig.schema_json(),
         }
         metadata["value"] = {
-            "metadata": value.value_metadata.dict(),
-            "metadata_schema": value.value_metadata.schema_json(),
+            "item_metadata": value.value_metadata.dict(),
+            "item_metadata_schema": value.value_metadata.schema_json(),
         }
 
         with open(metadata_path, "w") as f:
@@ -285,13 +285,13 @@ class DataStore(object):
 
         if also_return_schema:
             if metadata_key:
-                result = self.values_metadata[value_id]["item_metadata"][metadata_key]
+                result = self.values_metadata[value_id]["metadata"][metadata_key]
             else:
-                result = self.values_metadata[value_id]["item_metadata"]
+                result = self.values_metadata[value_id]["metadata"]
         else:
             r = {
-                k: v["metadata"]
-                for k, v in self.values_metadata[value_id]["item_metadata"].items()
+                k: v["item_metadata"]
+                for k, v in self.values_metadata[value_id]["metadata"].items()
             }
             if metadata_key:
                 result = r[metadata_key]

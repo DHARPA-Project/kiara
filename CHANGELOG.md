@@ -1,10 +1,14 @@
 # Changelog
 
-## Version 0.0.4 (Upcoming)
+## Version 0.0.5 (Upcoming)
+
+## Version 0.0.4
+
+- refactoring of most modules names, mostly centered around the name of a modules 'main' type now
 
 ## Version 0.0.3
 
-- new way of discovering modules and pipelines -- still to be properly documented
+- new way of discovering modules and pipelines -- https://dharpa.org/kiara/development/module_discovery/
 - inital support for persisting values via the *kiara* data store
 - module namespaces: modules type names are now namespaces strings
 

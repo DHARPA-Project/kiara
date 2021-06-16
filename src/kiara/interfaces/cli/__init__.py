@@ -302,7 +302,7 @@ async def run(ctx, module, inputs, module_config, output, explain, save, id):
     """Execute a workflow run."""
 
     if module_config:
-        raise NotImplementedError()
+        module_config = dict_from_cli_args(*module_config)
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
@@ -385,7 +385,10 @@ async def run(ctx, module, inputs, module_config, output, explain, save, id):
         workflow_id = f"{module_name}_0"
 
     workflow = kiara_obj.create_workflow(
-        module_name, workflow_id=workflow_id, controller=controller
+        module_name,
+        module_config=module_config,
+        workflow_id=workflow_id,
+        controller=controller,
     )
 
     if save:

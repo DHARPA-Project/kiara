@@ -185,3 +185,11 @@ def rich_print(msg: typing.Any = None) -> None:
         msg = ""
     console = get_console()
     console.print(msg)
+
+
+def first_line(text: str):
+
+    if "\n" in text:
+        return text.split("\n")[0].strip()
+    else:
+        return text

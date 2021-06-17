@@ -17,6 +17,7 @@ from kiara.data.registry import DataRegistry
 from kiara.data.types import ValueType
 from kiara.data.types.type_mgmt import TypeMgmt
 from kiara.interfaces import get_console
+from kiara.metadata import MetadataModel, MetadataSchemaInfo
 from kiara.module_config import KiaraWorkflowConfig, PipelineModuleConfig
 from kiara.module_mgmt import ModuleManager
 from kiara.module_mgmt.merged import MergedModuleManager
@@ -43,6 +44,9 @@ def explain(item: typing.Any, kiara: typing.Optional["Kiara"] = None):
 
         if issubclass(item, KiaraModule):
             item = ModuleInfo(module_type=item._module_type_id, _kiara=kiara)  # type: ignore
+        elif issubclass(item, MetadataModel):
+            item = MetadataSchemaInfo(item)
+
     elif isinstance(item, Value):
         item.get_metadata()
 

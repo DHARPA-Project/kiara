@@ -38,6 +38,7 @@ from kiara.utils import (
     create_table_from_field_schemas,
     is_debug,
 )
+from kiara.utils.output import first_line
 
 if typing.TYPE_CHECKING:
     from kiara import Kiara
@@ -802,6 +803,7 @@ class ModulesList(object):
         self._kiara: Kiara = kiara
         self._modules: typing.Iterable[str] = modules
         self._info_map: typing.Optional[typing.Dict[str, ModuleInfo]] = None
+        self._print_only_first_line: bool = True
 
     @property
     def module_info_map(self) -> typing.Mapping[str, ModuleInfo]:
@@ -836,6 +838,9 @@ class ModulesList(object):
         table.add_column("desc", style="i")
 
         for name, details in self.module_info_map.items():
-            table.add_row(name, details.doc)
+            if self._print_only_first_line:
+                table.add_row(name, first_line(details.doc))
+            else:
+                table.add_row(name, details.doc)
 
         yield table

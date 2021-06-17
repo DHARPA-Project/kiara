@@ -10,6 +10,7 @@ from stevedore import ExtensionManager
 from types import ModuleType
 
 from kiara import KiaraModule
+from kiara.data.types import ValueType
 from kiara.defaults import RELATIVE_PIPELINES_PATH
 from kiara.metadata import MetadataModel
 from kiara.utils import (
@@ -63,7 +64,7 @@ def find_subclasses_under(
     _import_modules_recursively(module)
 
     subclasses: typing.Iterable[typing.Type[SUBCLASS_TYPE]] = _get_all_subclasses(
-        KiaraModule
+        base_class
     )
 
     result = {}
@@ -84,7 +85,10 @@ def find_subclasses_under(
         name = module_name_func(sc)
         path = sc.__module__[len(module.__name__) + 1 :]  # noqa
 
-        full_name = f"{path}.{name}"
+        if path:
+            full_name = f"{path}.{name}"
+        else:
+            full_name = name
 
         if prefix is None:
             prefix = module.__name__
@@ -144,6 +148,7 @@ def load_all_subclasses_for_entry_point(
         if isinstance(plugin.plugin, type) and issubclass(plugin.plugin, base_class):
             ep = plugin.entry_point
             module_cls = ep.load()
+
             if set_id_attribute:
                 if hasattr(module_cls, set_id_attribute):
                     if not getattr(module_cls, set_id_attribute) == name:
@@ -211,7 +216,7 @@ def find_all_metadata_schemas() -> typing.Dict[str, typing.Type["MetadataModel"]
     """
 
     return load_all_subclasses_for_entry_point(
-        entry_point_name="kiara.metadata_schema",
+        entry_point_name="kiara.metadata_schemas",
         base_class=MetadataModel,
         set_id_attribute="_metadata_key",
         remove_namespace_tokens=["core."],
@@ -244,6 +249,19 @@ def _get_and_set_metadata_model_name(module: typing.Type[KiaraModule]):
         return name
 
 
+def _get_and_set_value_type_name(module: typing.Type[KiaraModule]):
+
+    if hasattr(module, "_value_type_name"):
+        return module._metadata_key  # type: ignore
+    else:
+        name = camel_case_to_snake_case(module.__name__)
+        if name.endswith("_type"):
+            name = name[0:-5]
+        if not inspect.isabstract(module):
+            setattr(module, "_value_type_name", name)
+        return name
+
+
 def find_kiara_modules_under(
     module: typing.Union[str, ModuleType], prefix: typing.Optional[str] = ""
 ) -> typing.Mapping[str, typing.Type[KiaraModule]]:
@@ -256,12 +274,25 @@ def find_kiara_modules_under(
     )
 
 
-def find_metadata_models_under(
+def find_metadata_schemas_under(
     module: typing.Union[str, ModuleType], prefix: typing.Optional[str] = ""
 ) -> typing.Mapping[str, typing.Type[MetadataModel]]:
 
     return find_subclasses_under(
         base_class=MetadataModel,
+        module=module,
+        prefix=prefix,
+        remove_namespace_tokens=[],
+        module_name_func=_get_and_set_metadata_model_name,
+    )
+
+
+def find_value_types_under(
+    module: typing.Union[str, ModuleType], prefix: typing.Optional[str] = ""
+) -> typing.Mapping[str, typing.Type[ValueType]]:
+
+    return find_subclasses_under(
+        base_class=ValueType,
         module=module,
         prefix=prefix,
         remove_namespace_tokens=[],

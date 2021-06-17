@@ -6,6 +6,7 @@ from rich import box
 from rich.console import RenderableType
 from rich.table import Table as RichTable
 
+from kiara.interfaces import get_console
 from kiara.utils import dict_from_cli_args
 
 
@@ -176,3 +177,11 @@ def pretty_print_arrow_table(
                 rich_table.add_row(*row)
 
     return rich_table
+
+
+def rich_print(msg: typing.Any = None) -> None:
+
+    if msg is None:
+        msg = ""
+    console = get_console()
+    console.print(msg)

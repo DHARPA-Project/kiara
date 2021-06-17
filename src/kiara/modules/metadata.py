@@ -134,7 +134,7 @@ class ExtractMetadataModule(KiaraModule):
 class ExtractPythonClass(ExtractMetadataModule):
     """Extract metadata about the Python type of this value."""
 
-    _module_type_name = "python_class"
+    _module_type_name = "metadata.python_class"
 
     @classmethod
     def _get_supported_types(cls) -> typing.Union[str, typing.Iterable[str]]:

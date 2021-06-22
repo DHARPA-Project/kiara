@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+"""The 'run' subcommand for the cli."""
+
 import asyncclick as click
 import os.path
 import sys

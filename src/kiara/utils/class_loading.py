@@ -9,10 +9,10 @@ from pathlib import Path
 from stevedore import ExtensionManager
 from types import ModuleType
 
-from kiara import KiaraModule
 from kiara.data.types import ValueType
 from kiara.defaults import RELATIVE_PIPELINES_PATH
 from kiara.metadata import MetadataModel
+from kiara.module import KiaraModule
 from kiara.utils import (
     _get_all_subclasses,
     _import_modules_recursively,
@@ -26,11 +26,11 @@ log = logging.getLogger("kiara")
 KiaraEntryPointItem = typing.Union[typing.Type, typing.Tuple, typing.Callable]
 KiaraEntryPointIterable = typing.Iterable[KiaraEntryPointItem]
 
-
 SUBCLASS_TYPE = typing.TypeVar("SUBCLASS_TYPE")
 
 
-def _get_subclass_name(module: typing.Type[KiaraModule]):
+def _get_subclass_name(module: typing.Type) -> str:
+    """Utility method to auto-generate a more or less nice looking alias for a class."""
 
     name = camel_case_to_snake_case(module.__name__)
     return name
@@ -142,7 +142,6 @@ def load_all_subclasses_for_entry_point(
     result_entrypoints: typing.Dict[str, typing.Type] = {}
     result_dynamic: typing.Dict[str, typing.Type] = {}
     for plugin in mgr:
-
         name = plugin.name
 
         if isinstance(plugin.plugin, type) and issubclass(plugin.plugin, base_class):
@@ -171,7 +170,7 @@ def load_all_subclasses_for_entry_point(
                 _name = f"{name}.{k}"
                 if _name in result_dynamic.keys():
                     raise Exception(
-                        f"Duplicate module name for type {entry_point_name}: {_name}"
+                        f"Duplicate item name for type {entry_point_name}: {_name}"
                     )
                 result_dynamic[_name] = v
 
@@ -180,7 +179,7 @@ def load_all_subclasses_for_entry_point(
 
     for k, v in result_dynamic.items():
         if k in result_entrypoints.keys():
-            raise Exception(f"Duplicate module name for type {entry_point_name}: {k}")
+            raise Exception(f"Duplicate item name for type {entry_point_name}: {k}")
         result_entrypoints[k] = v
 
     result: typing.Dict[str, typing.Type[SUBCLASS_TYPE]] = {}
@@ -190,6 +189,8 @@ def load_all_subclasses_for_entry_point(
             for rnt in remove_namespace_tokens:
                 if k.startswith(rnt):
                     k = k[len(rnt) :]  # noqa
+        if k in result.keys():
+            raise Exception(f"Duplicate item name for base class {base_class}: {k}")
         result[k] = v
 
     return result
@@ -223,6 +224,20 @@ def find_all_metadata_schemas() -> typing.Dict[str, typing.Type["MetadataModel"]
     )
 
 
+def find_all_value_types() -> typing.Dict[str, typing.Type["ValueType"]]:
+    """Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.
+
+    TODO
+    """
+
+    return load_all_subclasses_for_entry_point(
+        entry_point_name="kiara.value_types",
+        base_class=ValueType,
+        set_id_attribute="_value_type_name",
+        remove_namespace_tokens=["core."],
+    )
+
+
 def _get_and_set_module_name(module: typing.Type[KiaraModule]):
 
     if hasattr(module, "_module_type_name"):
@@ -242,8 +257,8 @@ def _get_and_set_metadata_model_name(module: typing.Type[KiaraModule]):
         return module._metadata_key  # type: ignore
     else:
         name = camel_case_to_snake_case(module.__name__)
-        if name.endswith("_model"):
-            name = name[0:-6]
+        if name.endswith("_metadata"):
+            name = name[0:-9]
         if not inspect.isabstract(module):
             setattr(module, "_metadata_key", name)
         return name
@@ -252,7 +267,7 @@ def _get_and_set_metadata_model_name(module: typing.Type[KiaraModule]):
 def _get_and_set_value_type_name(module: typing.Type[KiaraModule]):
 
     if hasattr(module, "_value_type_name"):
-        return module._metadata_key  # type: ignore
+        return module._value_type_name  # type: ignore
     else:
         name = camel_case_to_snake_case(module.__name__)
         if name.endswith("_type"):
@@ -296,7 +311,7 @@ def find_value_types_under(
         module=module,
         prefix=prefix,
         remove_namespace_tokens=[],
-        module_name_func=_get_and_set_metadata_model_name,
+        module_name_func=_get_and_set_value_type_name,
     )
 
 

@@ -40,5 +40,18 @@ cli.add_command(module)
 cli.add_command(pipeline)
 
 
+@cli.command()
+@click.pass_context
+def dev(ctx):
+
+    kiara = ctx.obj["kiara"]
+
+    # from kiara.utils.global_metadata import get_metadata_for_python_module
+    # md = get_metadata_for_python_module("kiara_modules.core.onboarding")
+    # rich_print(md.json(indent=2))
+    all = kiara.metadata_mgmt.all_schemas
+    print(all)
+
+
 if __name__ == "__main__":
     cli()

@@ -64,6 +64,8 @@ DEFAULT_PIPELINE_PARENT_ID = "__kiara__"
 
 DEFAULT_NO_DESC_VALUE = "-- n/a --"
 
+KIARA_MODULE_METADATA_ATTRIBUTE = "KIARA_METADATA"
+
 
 class SpecialValue(Enum):
 

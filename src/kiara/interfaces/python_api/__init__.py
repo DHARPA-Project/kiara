@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+"""A Python API for creating workflow sessions and dynamic pipelines in *kiara*."""
+
 import abc
 import copy
 import typing

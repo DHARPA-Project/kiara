@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+"""Data-related sub-commands for the cli."""
+
 import asyncclick as click
 import json
 import typing

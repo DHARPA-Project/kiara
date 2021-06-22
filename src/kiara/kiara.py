@@ -18,6 +18,7 @@ from kiara.data.types import ValueType
 from kiara.data.types.type_mgmt import TypeMgmt
 from kiara.interfaces import get_console
 from kiara.metadata import MetadataModel, MetadataSchemaInfo
+from kiara.metadata.mgmt import MetadataMgmt
 from kiara.module_config import KiaraWorkflowConfig, PipelineModuleConfig
 from kiara.module_mgmt import ModuleManager
 from kiara.module_mgmt.merged import MergedModuleManager
@@ -73,7 +74,7 @@ class Kiara(object):
         self._zmq_context: Context = Context.instance()
 
         self._profile_mgmt = ModuleProfileMgmt(kiara=self)
-
+        self._metadata_mgmt = MetadataMgmt(kiara=self)
         self._data_store = DataStore(kiara=self)
 
         self.start_zmq_device()
@@ -145,6 +146,10 @@ class Kiara(object):
     @property
     def data_store(self) -> DataStore:
         return self._data_store
+
+    @property
+    def metadata_mgmt(self) -> MetadataMgmt:
+        return self._metadata_mgmt
 
     @property
     def value_types(self) -> typing.Mapping[str, typing.Type[ValueType]]:
@@ -242,7 +247,7 @@ class Kiara(object):
                     raise Exception(
                         f"Can't transform data to '{target_type}': can not determine source type."
                     )
-                source_type = _source_type.type_name()
+                source_type = _source_type._value_type_name  # type: ignore
 
         module = self._profile_mgmt.get_type_conversion_module(
             source_type=source_type, target_type=target_type  # type: ignore

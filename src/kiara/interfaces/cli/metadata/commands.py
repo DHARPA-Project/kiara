@@ -19,7 +19,7 @@ def list_metadata(ctx):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    schemas = find_all_metadata_schemas()
+    schemas = kiara_obj.metadata_mgmt.all_schemas
 
     info = MetadataSchemasInfo(metadata_schemas=schemas)
     kiara_obj.explain(info)
@@ -30,11 +30,12 @@ def list_metadata(ctx):
 @click.option(
     "--json-schema",
     "-j",
-    help="Print the json schema, instead of an overview.",
+    help="Only print json schema.",
     is_flag=True,
 )
+@click.option("--details", "-d", help="Print more schema details.", is_flag=True)
 @click.pass_context
-def explain_metadata(ctx, metadata_key, json_schema):
+def explain_metadata(ctx, metadata_key, json_schema, details):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
@@ -45,7 +46,7 @@ def explain_metadata(ctx, metadata_key, json_schema):
         sys.exit(1)
 
     if not json_schema:
-        info = MetadataSchemaInfo(schemas[metadata_key])
+        info = MetadataSchemaInfo(schemas[metadata_key], display_schema=details)
         print()
         kiara_obj.explain(info)
     else:

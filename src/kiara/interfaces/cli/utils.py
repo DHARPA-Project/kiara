@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+"""Shared utilties to be used by cli sub-commands."""
+
 import os.path
 import typing
 

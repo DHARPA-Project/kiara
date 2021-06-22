@@ -3,6 +3,7 @@ import typing
 
 from kiara.data import Value
 from kiara.data.types import ValueType
+from kiara.utils.class_loading import find_all_value_types
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -32,17 +33,7 @@ class TypeMgmt(object):
         if self._value_types is not None:
             return self._value_types
 
-        all_value_type_classes = ValueType.__subclasses__()
-        value_type_dict: typing.Dict[str, typing.Type[ValueType]] = {}
-        for cls in all_value_type_classes:
-            type_name = cls.type_name()
-            if type_name in value_type_dict.keys():
-                raise Exception(
-                    f"Can't initiate types: duplicate type name '{type_name}'"
-                )
-            value_type_dict[type_name] = cls
-
-        self._value_types = value_type_dict
+        self._value_types = find_all_value_types()
         return self._value_types
 
     @property
@@ -92,7 +83,7 @@ class TypeMgmt(object):
         if len(result) == 0:
             return None
         elif len(result) > 1:
-            result_str = [x.type_name() for x in result]
+            result_str = [x._value_type_name() for x in result]  # type: ignore
             raise Exception(
                 f"Multiple value types found for value: {', '.join(result_str)}."
             )

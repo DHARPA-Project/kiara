@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Module related subcommands for the cli."""
 import asyncclick as click
 import os.path
 import sys

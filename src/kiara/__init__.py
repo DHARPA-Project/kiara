@@ -11,7 +11,7 @@ __all__ = [
     "PipelineModule",
     "DataRegistry",
     "find_kiara_modules_under",
-    "find_kiara_pipelines_under",
+    "find_pipeline_base_path_for_module",
     "KiaraEntryPointItem",
     "get_version",
 ]
@@ -26,7 +26,7 @@ from .pipeline.module import PipelineModule  # noqa
 from .data.registry import DataRegistry  # noqa
 from .utils.class_loading import (
     find_kiara_modules_under,
-    find_kiara_pipelines_under,
+    find_pipeline_base_path_for_module,
     KiaraEntryPointItem,
 )
 

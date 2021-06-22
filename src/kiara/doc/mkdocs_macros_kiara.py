@@ -117,10 +117,7 @@ def define_env(env):
         try:
 
             m_cls = Kiara.instance().get_module_class(module_type)
-            if module_type == "pipeline" or not m_cls.is_pipeline():
-                info = ModuleInfo(module_type=module_type)
-            else:
-                info = ModuleInfo(module_type=module_type)
+            info = ModuleInfo.from_module_cls(module_cls=m_cls)
 
             from rich.console import Console
 

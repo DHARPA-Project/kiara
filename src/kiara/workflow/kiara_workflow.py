@@ -137,9 +137,13 @@ class KiaraWorkflow(object):
         table = Table(box=box.SIMPLE, show_header=False)
         table.add_column("property", style="i")
         table.add_column("value")
-        doc_link = self._root_module.doc_link()
+        doc_link = self._root_module.get_type_metadata().common.references.get(
+            "documentation", None
+        )
         if doc_link:
-            module_str = f"[link={doc_link}]{self._root_module._module_type_id}[/link]"  # type: ignore
+            # TODO: use direct link
+            url = doc_link.url
+            module_str = f"[link={url}]{self._root_module._module_type_id}[/link]"  # type: ignore
         else:
             module_str = self._root_module._module_type_id  # type: ignore
         table.add_row("root module", module_str)

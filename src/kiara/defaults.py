@@ -22,8 +22,6 @@ KIARA_DATA_STORE = os.path.join(kiara_app_dirs.user_data_dir, "data")
 KIARA_METADATA_STORE = os.path.join(kiara_app_dirs.user_data_dir, "metadata")
 KIARA_ALIAS_VALUE_FOLDER = os.path.join(kiara_app_dirs.user_data_dir, "aliases")
 
-RELATIVE_PIPELINES_PATH = "pipelines"
-
 MODULE_TYPE_KEY = "module_type"
 """The key to specify the type of a module."""
 

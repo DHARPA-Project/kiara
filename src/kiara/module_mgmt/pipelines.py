@@ -63,10 +63,10 @@ class PipelineModuleManager(ModuleManager):
             from kiara.utils.class_loading import find_all_kiara_pipeline_paths
 
             folders_map: typing.Dict[
-                str, typing.List[str]
+                str, typing.List[typing.Tuple[typing.Optional[str], str]]
             ] = find_all_kiara_pipeline_paths()
             if os.path.exists(USER_PIPELINES_FOLDER):
-                folders_map["user"] = [USER_PIPELINES_FOLDER]
+                folders_map["user"] = [(None, USER_PIPELINES_FOLDER)]
         elif not folders:
             folders_map = {}
         else:
@@ -80,13 +80,16 @@ class PipelineModuleManager(ModuleManager):
         self._cached_classes: typing.Dict[str, typing.Type[PipelineModule]] = {}
 
         for ns, paths in folders_map.items():
+
             for path in paths:
-                self.add_pipelines_path(ns, path)
+
+                self.add_pipelines_path(ns, path[1], path[0])
 
     def _get_pipeline_details_from_path(
         self,
         path: typing.Union[str, Path],
         module_type_name: typing.Optional[str] = None,
+        base_module: typing.Optional[str] = None,
     ):
 
         if isinstance(path, str):
@@ -116,6 +119,8 @@ class PipelineModuleManager(ModuleManager):
             name = filename.split(".", maxsplit=1)[0]
 
         result = {"data": data, "source": path.as_posix(), "source_type": "file"}
+        if base_module:
+            result["base_module"] = base_module
         return (name, result)
 
     def register_pipeline(
@@ -170,7 +175,10 @@ class PipelineModuleManager(ModuleManager):
         return full_name
 
     def add_pipelines_path(
-        self, namespace: str, path: typing.Union[str, Path]
+        self,
+        namespace: str,
+        path: typing.Union[str, Path],
+        base_module: typing.Optional[str],
     ) -> typing.Iterable[str]:
         """Add a pipeline description file or folder containing some to this manager.
 
@@ -208,7 +216,9 @@ class PipelineModuleManager(ModuleManager):
 
                         full_path = os.path.join(root, filename)
 
-                        name, data = self._get_pipeline_details_from_path(full_path)
+                        name, data = self._get_pipeline_details_from_path(
+                            path=full_path, base_module=base_module
+                        )
                         rel_path = os.path.relpath(os.path.dirname(full_path), path)
                         if not rel_path or rel_path == ".":
                             ns_name = name
@@ -225,7 +235,9 @@ class PipelineModuleManager(ModuleManager):
                             f"Ignoring invalid pipeline file '{full_path}': {e}"
                         )
         elif path.is_file():
-            name, data = self._get_pipeline_details_from_path(path)
+            name, data = self._get_pipeline_details_from_path(
+                path=path, base_module=base_module
+            )
             files = {name: data}
 
         result = {}
@@ -254,12 +266,16 @@ class PipelineModuleManager(ModuleManager):
             raise Exception(f"No pipeline with name '{module_type}' available.")
 
         tokens = module_type.split(".")
-        cls_name = "".join(x.capitalize() or "_" for x in tokens[-1].split("_"))
+        cls_name = "".join(x.capitalize() or "_" for x in tokens)
         if len(tokens) != 1:
             full_name = ".".join(tokens[0:-1] + [cls_name])
         else:
             full_name = cls_name
-        cls = create_pipeline_class(full_name, desc["data"])
+
+        base_module = desc.get("base_module", None)
+        cls = create_pipeline_class(
+            cls_name, full_name, desc["data"], base_module=base_module
+        )
         setattr(cls, "_module_type_name", module_type)
         self._cached_classes[module_type] = cls
         return self._cached_classes[module_type]

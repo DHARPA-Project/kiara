@@ -367,6 +367,12 @@ class PipelineModuleConfig(KiaraModuleConfig):
         )
         return pipeline
 
+    # def __rich_console__(
+    #     self, console: Console, options: ConsoleOptions
+    # ) -> RenderResult:
+    #
+    #     table = Table(show_header=False, box=box.SIMPLE)
+
 
 class KiaraWorkflowConfig(BaseModel):
     """The object to hold a configuration for a workflow."""

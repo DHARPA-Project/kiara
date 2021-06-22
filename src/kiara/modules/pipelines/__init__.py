@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 
 """Base module that holds [PipelineModule][kiara.pipeline.module.PipelineModule] classes that are auto-generated
-from pipeline descriptions in the ``resources/pipelines`` folder."""
-
+from pipeline descriptions in the ``pipelines`` folder."""
+import importlib
 import typing
 
 # TODO: add classloader for those classes to runtime
 
 
 def create_pipeline_class(
-    cls_name: str, pipeline_desc: typing.Mapping[str, typing.Any]
+    cls_name: str,
+    type_name: str,
+    pipeline_desc: typing.Mapping[str, typing.Any],
+    base_module: str,
 ):
 
     from kiara.module_config import PipelineModuleConfig
@@ -33,5 +36,18 @@ def create_pipeline_class(
     }
     # TODO: add pydoc
 
+    if not base_module:
+        base_module = "kiara.modules.pipelines"
+
+    _module = importlib.import_module(base_module)
+    if hasattr(_module, cls_name):
+        raise Exception(
+            f"Can't attach generated class '{cls_name}' to module '{base_module}': module already has an attribute with that name."
+        )
+    attrs["__module__"] = base_module
+
     cls = type(cls_name, (PipelineModule,), attrs)
+
+    setattr(_module, cls_name, cls)
+
     return cls

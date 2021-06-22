@@ -30,7 +30,7 @@ from kiara.utils import get_auto_workflow_alias, get_data_from_file, is_debug
 from kiara.workflow.kiara_workflow import KiaraWorkflow
 
 if typing.TYPE_CHECKING:
-    from kiara.module import KiaraModule, ModuleInfo, ModulesList
+    from kiara.module import KiaraModule, ModulesList
 
 log = logging.getLogger("kiara")
 
@@ -278,21 +278,21 @@ class Kiara(object):
     def get_module_class(self, module_type: str) -> typing.Type["KiaraModule"]:
         return self._module_mgr.get_module_class(module_type=module_type)
 
-    def get_module_info(self, module_type: str) -> "ModuleInfo":
-
-        if module_type not in self.available_module_types:
-            raise ValueError(f"Module type '{module_type}' not available.")
-
-        if module_type in self.available_pipeline_module_types:
-            from kiara.pipeline.module import PipelineModuleInfo
-
-            info = PipelineModuleInfo(module_type=module_type, _kiara=self)  # type: ignore
-            return info
-        else:
-            from kiara.module import ModuleInfo
-
-            info = ModuleInfo(module_type=module_type)  # type: ignore
-            return info
+    # def get_module_info(self, module_type: str) -> "ModuleInfo":
+    #
+    #     if module_type not in self.available_module_types:
+    #         raise ValueError(f"Module type '{module_type}' not available.")
+    #
+    #     if module_type in self.available_pipeline_module_types:
+    #         from kiara.pipeline.module import PipelineModuleInfo
+    #
+    #         info = PipelineModuleInfo(module_type=module_type, _kiara=self)  # type: ignore
+    #         return info
+    #     else:
+    #         from kiara.module import ModuleInfo
+    #
+    #         info = ModuleInfo.from_module_cls(module_cls=module_type)
+    #         return info
 
     @property
     def available_module_types(self) -> typing.List[str]:
@@ -381,7 +381,7 @@ class Kiara(object):
     ):
 
         m = self.create_module(module_type=module_type, module_config=module_config)
-        return m.doc()
+        return m.module_instance_doc
 
     def run(
         self,

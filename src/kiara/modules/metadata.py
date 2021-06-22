@@ -3,11 +3,11 @@ import abc
 import typing
 from pydantic import BaseModel, Field
 
-from kiara import KiaraModule
 from kiara.data import Value, ValueSet
 from kiara.data.values import ValueSchema
 from kiara.exceptions import KiaraProcessingException
 from kiara.metadata.core_models import PythonClassMetadata
+from kiara.module import KiaraModule
 from kiara.module_config import KiaraModuleConfig
 
 

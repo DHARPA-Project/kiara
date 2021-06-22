@@ -37,6 +37,22 @@ class MetadataModel(BaseModel):
 
         return cls(**current)
 
+    def create_table(self, **config: typing.Any) -> Table:
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("Key", style="i")
+        table.add_column("Value")
+        for k in self.__fields__.keys():
+            value_str = str(getattr(self, k))
+            table.add_row(k, value_str)
+        return table
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+
+        yield self.create_table()
+
 
 class MetadataSchemaInfo(object):
     def __init__(

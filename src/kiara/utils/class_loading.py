@@ -5,12 +5,10 @@ import logging
 import os
 import sys
 import typing
-from pathlib import Path
 from stevedore import ExtensionManager
 from types import ModuleType
 
 from kiara.data.types import ValueType
-from kiara.defaults import RELATIVE_PIPELINES_PATH
 from kiara.metadata import MetadataModel
 from kiara.module import KiaraModule
 from kiara.utils import (
@@ -315,9 +313,9 @@ def find_value_types_under(
     )
 
 
-def find_kiara_pipelines_under(
+def find_pipeline_base_path_for_module(
     module: typing.Union[str, ModuleType]
-) -> typing.List[str]:
+) -> typing.Optional[str]:
 
     if hasattr(sys, "frozen"):
         raise NotImplementedError("Pyinstaller bundling not supported yet.")
@@ -325,17 +323,18 @@ def find_kiara_pipelines_under(
     if isinstance(module, str):
         module = importlib.import_module(module)
 
-    # TODO: allow multiple pipeline folders
-    path = os.path.join(os.path.dirname(module.__file__), RELATIVE_PIPELINES_PATH)
+    path = os.path.dirname(module.__file__)
 
     if not os.path.exists:
         log_message(f"Pipelines folder '{path}' does not exist, ignoring...")
-        return []
+        return None
 
-    return [path]
+    return path
 
 
-def find_all_kiara_pipeline_paths() -> typing.Dict[str, typing.List[str]]:
+def find_all_kiara_pipeline_paths() -> typing.Dict[
+    str, typing.List[typing.Tuple[typing.Optional[str], str]]
+]:
 
     log2 = logging.getLogger("stevedore")
     out_hdlr = logging.StreamHandler(sys.stdout)
@@ -352,8 +351,8 @@ def find_all_kiara_pipeline_paths() -> typing.Dict[str, typing.List[str]]:
         namespace="kiara.pipelines", invoke_on_load=False, propagate_map_exceptions=True
     )
 
-    result_entrypoints: typing.Dict[str, typing.Iterable[typing.Union[str]]] = {}
-    result_dynamic: typing.Dict[str, typing.Iterable[typing.Union[str]]] = {}
+    result_entrypoints: typing.Dict[str, typing.Tuple[typing.Optional[str], str]] = {}
+    result_dynamic: typing.Dict[str, typing.Tuple[typing.Optional[str], str]] = {}
     # TODO: make sure we load 'core' first?
     for plugin in mgr:
 
@@ -364,46 +363,60 @@ def find_all_kiara_pipeline_paths() -> typing.Dict[str, typing.List[str]]:
             and len(plugin.plugin) >= 1
             and callable(plugin.plugin[0])
         ) or callable(plugin.plugin):
-            pipeline_paths = _find_pipeline_folders_using_callable(plugin.plugin)
+            pipeline_path_tuple = _find_pipeline_folders_using_callable(plugin.plugin)
+            result_dynamic[name] = pipeline_path_tuple
 
-            if isinstance(pipeline_paths, (str, Path)):
-                pipeline_paths = [pipeline_paths]
-
-            result_dynamic[name] = pipeline_paths
         elif isinstance(plugin.plugin, str):
-            result_entrypoints[name] = [plugin.plugin]
+            raise NotImplementedError()
+            # module_name = plugin.plugin
+            # try:
+            #     m = importlib.import_module(module_name)
+            #     pipeline_path_tuple = _find_pipeline_folders_using_callable(m)
+            # except Exception:
+            #     raise Exception(
+            #         f"Can't load pipelines for module '{module_name}': module does not exist"
+            #     )
+            # result_entrypoints[name] = pipeline_path_tuple
         elif isinstance(plugin.plugin, typing.Mapping):
             raise NotImplementedError()
         elif isinstance(plugin.plugin, typing.Iterable):
+            raise NotImplementedError()
             result_entrypoints[name] = plugin.plugin
         elif isinstance(plugin.plugin, ModuleType):
-            result_entrypoints[name] = plugin.plugin.__name__
+            raise NotImplementedError()
+            # result_entrypoints[name] = _find_pipeline_folders_using_callable(
+            #     plugin.plugin
+            # )
         else:
             raise Exception(
                 f"Can't load pipelines for entrypoint '{name}': invalid type '{type(plugin.plugin)}'"
             )
 
-    result: typing.Dict[str, typing.List] = {}
+    result: typing.Dict[str, typing.List[typing.Tuple[typing.Optional[str], str]]] = {}
 
     for k, v in result_entrypoints.items():
-        for item in v:
-            if item not in result.setdefault(k, []):
-                result[k].append(item)
+        result.setdefault(k, []).append(v)
 
     for k, v in result_dynamic.items():
-        for item in v:
-            if item not in result.setdefault(k, []):
-                result[k].append(item)
+        result.setdefault(k, []).append(v)
 
     return result
 
 
 def _find_pipeline_folders_using_callable(
     func: typing.Union[typing.Callable, typing.Tuple]
-) -> typing.List[str]:
+) -> typing.Tuple[typing.Optional[str], str]:
 
-    # TODO: typecheck?
-    return _callable_wrapper(func=func)  # type: ignore
+    if not callable(func):
+        assert len(func) >= 2
+        args = func[1]
+        assert len(args) == 1
+        module_path: typing.Optional[str] = args[0]
+    else:
+        module_path = None
+    path = _callable_wrapper(func=func)  # type: ignore
+    assert isinstance(path, str)
+    return (module_path, path)
 
 
 # def _find_kiara_modules_using_callable(

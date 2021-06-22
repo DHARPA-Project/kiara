@@ -877,7 +877,7 @@ class StepsInfo(BaseModel):
                 if hasattr(step.step.module, "instance_doc"):
                     doc = step.step.module.module_instance_doc
                 else:
-                    doc = step.step.module.doc()
+                    doc = step.step.module.get_type_metadata().doc()
                 row: typing.List[typing.Any] = []
                 if i == 0:
                     row.append(str(nr))
@@ -885,7 +885,12 @@ class StepsInfo(BaseModel):
                     row.append("")
                 row.append(title)
 
-                module_link = step.step.module.source_link()
+                # TODO; generate the right link here
+                module_link = (
+                    step.step.module.get_type_metadata().common.references.get(
+                        "sources", None
+                    )
+                )
                 if module_link:
                     module_str = f"[link={module_link}]{step.step.module_type}[/link]"
                 else:
@@ -915,7 +920,7 @@ class StepsInfo(BaseModel):
                     title = step_id
                 else:
                     title = f"{step_id} (optional)"
-                stage_details[title] = step.step.module.doc()
+                stage_details[title] = step.step.module.get_type_metadata().doc()
 
             explanation[nr + 1] = stage_details
 
@@ -924,7 +929,6 @@ class StepsInfo(BaseModel):
             lines.append(f"[bold]Processing stage {stage_nr}[/bold]:")
             lines.append("")
             for step_id, desc in stage_steps.items():
-                desc
                 if desc == DEFAULT_NO_DESC_VALUE:
                     lines.append(f"  - {step_id}")
                 else:
@@ -1096,13 +1100,19 @@ def create_step_table(
     c = step_color_map[step.step_id]
     table.add_column(f"[b {c}]{step.step_id}[/b {c}]", no_wrap=True)
 
-    doc_link = step.module.doc_link()
+    # TODO: double check
+    doc_ref = step.module.get_type_metadata().common.references.get(
+        "documentation", None
+    )
+    doc_link = None
+    if doc_ref:
+        doc_link = doc_ref.url
     if doc_link:
         module_str = f"[link={doc_link}]{step.module_type}[/link]"
     else:
         module_str = step.module_type
 
-    table.add_row("", f"\n{step.module.doc()}\n")
+    table.add_row("", f"\n{step.module.get_type_metadata().doc()}\n")
     table.add_row("type", module_str)
 
     table.add_row(

@@ -10,6 +10,7 @@ from pydantic.schema import (
     model_process_schema,
 )
 from rich import box
+from rich.console import RenderableType
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
@@ -17,7 +18,12 @@ from rich.table import Table
 from kiara.data.values import ValueSchema
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.metadata import MetadataModel
-from kiara.metadata.core_models import CommonMetadataModel, PythonClassMetadata
+from kiara.metadata.core_models import (
+    ContextMetadataModel,
+    DocumentationMetadataModel,
+    OriginMetadataModel,
+    PythonClassMetadata,
+)
 from kiara.module_config import KiaraModuleConfig, PipelineModuleConfig
 from kiara.utils import create_table_from_field_schemas
 
@@ -80,7 +86,12 @@ class KiaraModuleTypeMetadata(MetadataModel):
     @classmethod
     def from_module_class(cls, module_cls: typing.Type["KiaraModule"]):
 
-        common_metadata = CommonMetadataModel.from_class(module_cls)
+        proc_src = textwrap.dedent(inspect.getsource(module_cls.process))
+
+        origin_md = OriginMetadataModel.from_class(module_cls)
+        properties_md = ContextMetadataModel.from_class(module_cls)
+        doc = DocumentationMetadataModel.from_class_doc(module_cls)
+
         python_class = PythonClassMetadata.from_class(module_cls)
         config = KiaraModuleConfigMetadata.from_config_class(module_cls._config_cls)
         is_pipeline = module_cls.is_pipeline()
@@ -88,26 +99,17 @@ class KiaraModuleTypeMetadata(MetadataModel):
         if is_pipeline:
             pipeline_config = module_cls._base_pipeline_config  # type: ignore
 
-        proc_doc = module_cls.process.__doc__
-        if not proc_doc:
-            proc_doc = DEFAULT_NO_DESC_VALUE
-        else:
-            proc_doc = inspect.cleandoc(proc_doc)
-
-        proc_src = textwrap.dedent(inspect.getsource(module_cls.process))
-
-        doc = module_cls.__doc__
-        if not doc:
-            doc = DEFAULT_NO_DESC_VALUE
-        else:
-            doc = inspect.cleandoc(doc)
-
-        return cls(type_name=module_cls._module_type_name, module_doc=doc, common=common_metadata, python_class=python_class, config=config, is_pipeline=is_pipeline, pipeline_config=pipeline_config, process_doc=proc_doc, process_src=proc_src)  # type: ignore
+        return cls(type_name=module_cls._module_type_name, documentation=doc, origin=origin_md, context=properties_md, python_class=python_class, config=config, is_pipeline=is_pipeline, pipeline_config=pipeline_config, process_src=proc_src)  # type: ignore
 
     type_name: str = Field(description="The registered name for this module type.")
-    module_doc: str = Field(description="The module documentation.")
-    common: CommonMetadataModel = Field(
-        description="Common information about the module type (authorship, references,...)."
+    documentation: DocumentationMetadataModel = Field(
+        description="Documentation for the module."
+    )
+    origin: OriginMetadataModel = Field(
+        description="Information about authorship for the module type."
+    )
+    context: ContextMetadataModel = Field(
+        description="Generic properties of this module (description, tags, labels, references, ...)."
     )
     python_class: PythonClassMetadata = Field(
         description="Information about the Python class for this module type."
@@ -122,24 +124,27 @@ class KiaraModuleTypeMetadata(MetadataModel):
         description="If this module is a pipeline, this field contains the pipeline configuration.",
         default_factory=None,
     )
-    process_doc: str = Field(
-        description="The documentation for the process method of the module.",
-        default=DEFAULT_NO_DESC_VALUE,
-    )
     process_src: str = Field(
         description="The source code of the process method of the module."
     )
 
-    def create_table(self, **config: typing.Any) -> Table:
+    def create_renderable(self, **config: typing.Any) -> RenderableType:
 
         include_config = config.get("include_config", True)
+        include_doc = config.get("include_doc", True)
 
         table = Table(box=box.SIMPLE, show_header=False, padding=(0, 0, 0, 0))
         table.add_column("property", style="i")
         table.add_column("value")
 
-        table.add_row("Metadata", self.common.create_table())
-        table.add_row("Python class", self.python_class.create_table())
+        if include_doc:
+            table.add_row(
+                "Documentation",
+                Panel(self.documentation.create_renderable(), box=box.SIMPLE),
+            )
+        table.add_row("Origin", self.origin.create_renderable())
+        table.add_row("Context", self.context.create_renderable())
+        table.add_row("Python class", self.python_class.create_renderable())
 
         if include_config:
             if self.is_pipeline:
@@ -159,15 +164,20 @@ class KiaraModuleInstanceMetadata(MetadataModel):
     @classmethod
     def from_module_obj(cls, obj: "KiaraModule"):
 
-        pipeline_config = {}
         config = obj.config.dict()
-        for x in ["steps", "input_aliases", "output_aliases", "module_type_name"]:
-            v = config.pop(x, None)
-            if v is not None:
-                pipeline_config[x] = v
+        for x in [
+            "steps",
+            "input_aliases",
+            "output_aliases",
+            "module_type_name",
+            "doc",
+            "metadata",
+        ]:
+            config.pop(x, None)
 
+        type_metadata = KiaraModuleTypeMetadata.from_module_class(obj.__class__)
         result = KiaraModuleInstanceMetadata(
-            type_metadata=KiaraModuleTypeMetadata.from_module_class(obj.__class__),
+            type_metadata=type_metadata,
             config=config,
             inputs_schema=obj.input_schemas,
             outputs_schema=obj.output_schemas,
@@ -187,18 +197,23 @@ class KiaraModuleInstanceMetadata(MetadataModel):
         description="The schema for the module outputs."
     )
 
-    def create_table(self, **config: typing.Any):
+    def create_renderable(self, **config: typing.Any) -> RenderableType:
 
         table = Table(box=box.SIMPLE, show_header=False, show_lines=True)
         table.add_column("Property", style="i")
         table.add_column("Value")
 
-        table.add_row("Description", self.type_metadata.module_doc)
+        table.add_row("Description", self.type_metadata.documentation.description)
 
         table.add_row(
-            "Type information", self.type_metadata.create_table(include_config=False)
+            "Type information",
+            self.type_metadata.create_renderable(
+                include_config=False, include_doc=False
+            ),
         )
-        conf = Syntax(json.dumps(self.config, indent=2), "json")
+        conf = Syntax(
+            json.dumps(self.config, indent=2), "json", background_color="default"
+        )
         table.add_row("Configuration", conf)
 
         constants = self.config.get("constants")

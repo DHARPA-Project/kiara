@@ -630,7 +630,7 @@ def create_pipeline_step_table(
     table.add_column(f"[b]{step.step_id}[/b]", no_wrap=True)
     table.add_column("", no_wrap=True)
 
-    doc_link = step.module.get_type_metadata().common.references.get(
+    doc_link = step.module.get_type_metadata().context.references.get(
         "documentation", None
     )
     if doc_link:

@@ -24,7 +24,6 @@ from kiara.metadata.module_models import (
 )
 from kiara.module_config import KIARA_CONFIG, KiaraModuleConfig
 from kiara.utils import StringYAML, check_valid_field_names, is_debug
-from kiara.utils.output import first_line
 
 if typing.TYPE_CHECKING:
     from kiara import Kiara
@@ -193,7 +192,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         id (str): the id for this module (needs to be unique within a pipeline)
         parent_id (typing.Optional[str]): the id of the parent, in case this module is part of a pipeline
         module_config (typing.Any): the configuation for this module
-        meta (typing.Mapping[str, typing.Any]): metadata for this module (not implemented yet)
+        metadata (typing.Mapping[str, typing.Any]): metadata for this module (not implemented yet)
     """
 
     # TODO: not quite sure about this generic type here, mypy doesn't seem to like it
@@ -215,7 +214,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         module_config: typing.Union[
             None, KIARA_CONFIG, typing.Mapping[str, typing.Any]
         ] = None,
-        meta: typing.Mapping[str, typing.Any] = None,
+        metadata: typing.Mapping[str, typing.Any] = None,
         kiara: typing.Optional["Kiara"] = None,
     ):
 
@@ -249,9 +248,9 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
 
         self._module_hash: typing.Optional[int] = None
 
-        if meta is None:
-            meta = {}
-        self._meta = meta
+        if metadata is None:
+            metadata = {}
+        self._meta = metadata
 
         self._input_schemas: typing.Mapping[str, ValueSchema] = None  # type: ignore
         self._output_schemas: typing.Mapping[str, ValueSchema] = None  # type: ignore
@@ -524,7 +523,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         """
 
         # TODO: auto create instance doc?
-        return self.get_type_metadata().module_doc
+        return self.get_type_metadata().documentation.full_doc
 
     @property
     def module_instance_hash(self) -> int:
@@ -576,7 +575,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
 
         r_gro: typing.List[typing.Any] = []
         md = KiaraModuleInstanceMetadata.from_module_obj(self)
-        table = md.create_table()
+        table = md.create_renderable()
         r_gro.append(table)
 
         yield Panel(
@@ -610,7 +609,7 @@ class ModuleInfo(BaseModel):
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
 
-        table = self.metadata.create_table()
+        table = self.metadata.create_renderable()
         yield Panel(
             table,
             box=box.ROUNDED,
@@ -670,8 +669,8 @@ class ModulesList(object):
 
         for name, details in self.module_info_map.items():
             if self._print_only_first_line:
-                table.add_row(name, first_line(details.metadata.module_doc))
+                table.add_row(name, details.metadata.documentation.description)
             else:
-                table.add_row(name, details.metadata.module_doc)
+                table.add_row(name, details.metadata.documentation.full_doc)
 
         yield table

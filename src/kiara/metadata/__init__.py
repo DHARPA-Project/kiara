@@ -1,13 +1,19 @@
 # -*- coding: utf-8 -*-
-import dpath.util
 import typing
 from pydantic import BaseModel
 from rich import box
-from rich.console import Console, ConsoleOptions, RenderGroup, RenderResult
+from rich.console import (
+    Console,
+    ConsoleOptions,
+    RenderableType,
+    RenderGroup,
+    RenderResult,
+)
 from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
 
+from kiara.utils import merge_dicts
 from kiara.utils.doc import extract_doc_from_cls
 from kiara.utils.output import first_line
 
@@ -17,12 +23,12 @@ if typing.TYPE_CHECKING:
 
 class MetadataModel(BaseModel):
     @classmethod
-    def doc(cls) -> str:
+    def model_doc(cls) -> str:
 
         return extract_doc_from_cls(cls)
 
     @classmethod
-    def desc(cls) -> str:
+    def model_desc(cls) -> str:
         return extract_doc_from_cls(cls, only_first_line=True)
 
     @classmethod
@@ -31,13 +37,10 @@ class MetadataModel(BaseModel):
         if not dicts:
             return cls()
 
-        current: typing.Dict[str, typing.Any] = {}
-        for d in dicts:
-            dpath.util.merge(current, d)
+        merged = merge_dicts(*dicts)
+        return cls.parse_obj(merged)
 
-        return cls(**current)
-
-    def create_table(self, **config: typing.Any) -> Table:
+    def create_renderable(self, **config: typing.Any) -> RenderableType:
 
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("Key", style="i")
@@ -51,7 +54,7 @@ class MetadataModel(BaseModel):
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
 
-        yield self.create_table()
+        yield self.create_renderable()
 
 
 class MetadataSchemaInfo(object):
@@ -77,7 +80,7 @@ class MetadataSchemaInfo(object):
             info = details.field_info.description
             table.add_row(field_name, field_type, req, info)
 
-        md = Markdown(self._model_cls.doc())
+        md = Markdown(self._model_cls.model_doc())
         rg_list: typing.List[typing.Any] = [md]
 
         rg_list.append(table)
@@ -147,7 +150,7 @@ class MetadataSchemasInfo(object):
         table.add_column("Description", style="i")
 
         for name, schema in self._schemas.items():
-            table.add_row(name, first_line(schema.doc()))
+            table.add_row(name, first_line(schema.model_doc()))
 
         panel = Panel(table, title="Available schemas", title_align="left")  # type: ignore
         yield panel

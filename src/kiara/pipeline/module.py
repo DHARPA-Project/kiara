@@ -29,16 +29,16 @@ class PipelineModule(KiaraModule[PipelineModuleConfig]):
     def is_pipeline(cls) -> bool:
         return True
 
-    @classmethod
-    def doc(cls) -> str:
-
-        if hasattr(cls, "_base_pipeline_config"):
-            bpc: "PipelineModuleConfig" = cls._base_pipeline_config  # type: ignore
-            doc = bpc.doc
-            return doc
-        else:
-            # means its a 'raw' pipeline
-            return "-- n/a --"
+    # @classmethod
+    # def doc(cls) -> str:
+    #
+    #     if hasattr(cls, "_base_pipeline_config"):
+    #         bpc: "PipelineModuleConfig" = cls._base_pipeline_config  # type: ignore
+    #         doc = bpc.doc
+    #         return doc
+    #     else:
+    #         # means its a 'raw' pipeline
+    #         return "-- n/a --"
 
     def __init__(
         self,
@@ -47,7 +47,7 @@ class PipelineModule(KiaraModule[PipelineModuleConfig]):
         module_config: typing.Union[
             None, PipelineModuleConfig, typing.Mapping[str, typing.Any]
         ] = None,
-        meta: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+        metadata: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         controller: typing.Union[
             None, PipelineController, str, typing.Type[PipelineController]
         ] = None,
@@ -64,7 +64,7 @@ class PipelineModule(KiaraModule[PipelineModuleConfig]):
             id=id,
             parent_id=parent_id,
             module_config=module_config,
-            meta=meta,
+            metadata=metadata,
             kiara=kiara,
         )
         self._pipeline_structure: PipelineStructure = self._create_structure()
@@ -155,7 +155,7 @@ class PipelineModuleInfo(ModuleInfo):
         my_table.add_row("class", self.metadata.python_class.full_name)
         my_table.add_row("is pipeline", "yes")
 
-        my_table.add_row("doc", self.metadata.doc())
+        my_table.add_row("doc", self.metadata.model_doc())
         my_table.add_row("config class", self.metadata.config.python_class.full_name)
         my_table.add_row(
             "config",
@@ -186,7 +186,7 @@ class PipelineModuleInfo(ModuleInfo):
             for s_id in stage:
                 step = structure.get_step(s_id)
                 mc = self._kiara.get_module_class(step.module_type)
-                desc = mc.get_type_metadata().doc()
+                desc = mc.get_type_metadata().model_doc()
                 inputs: typing.Dict[ValueField, typing.List[str]] = {}
                 for inp in structure.steps_inputs.values():
                     if inp.step_id != s_id:

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import dpath
 import importlib
 import json
 import logging
@@ -305,3 +306,17 @@ def check_valid_field_names(*field_names) -> typing.List[str]:
     """
 
     return [x for x in field_names if x in INVALID_VALUE_NAMES or x.startswith("_")]
+
+
+def merge_dicts(
+    *dicts: typing.Mapping[str, typing.Any]
+) -> typing.Dict[str, typing.Any]:
+
+    if not dicts:
+        return {}
+
+    current: typing.Dict[str, typing.Any] = {}
+    for d in dicts:
+        dpath.util.merge(current, d)
+
+    return current

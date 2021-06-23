@@ -877,7 +877,7 @@ class StepsInfo(BaseModel):
                 if hasattr(step.step.module, "instance_doc"):
                     doc = step.step.module.module_instance_doc
                 else:
-                    doc = step.step.module.get_type_metadata().doc()
+                    doc = step.step.module.get_type_metadata().model_doc()
                 row: typing.List[typing.Any] = []
                 if i == 0:
                     row.append(str(nr))
@@ -887,7 +887,7 @@ class StepsInfo(BaseModel):
 
                 # TODO; generate the right link here
                 module_link = (
-                    step.step.module.get_type_metadata().common.references.get(
+                    step.step.module.get_type_metadata().context.references.get(
                         "sources", None
                     )
                 )
@@ -920,7 +920,7 @@ class StepsInfo(BaseModel):
                     title = step_id
                 else:
                     title = f"{step_id} (optional)"
-                stage_details[title] = step.step.module.get_type_metadata().doc()
+                stage_details[title] = step.step.module.get_type_metadata().model_doc()
 
             explanation[nr + 1] = stage_details
 
@@ -1101,7 +1101,7 @@ def create_step_table(
     table.add_column(f"[b {c}]{step.step_id}[/b {c}]", no_wrap=True)
 
     # TODO: double check
-    doc_ref = step.module.get_type_metadata().common.references.get(
+    doc_ref = step.module.get_type_metadata().context.references.get(
         "documentation", None
     )
     doc_link = None
@@ -1112,7 +1112,7 @@ def create_step_table(
     else:
         module_str = step.module_type
 
-    table.add_row("", f"\n{step.module.get_type_metadata().doc()}\n")
+    table.add_row("", f"\n{step.module.get_type_metadata().model_doc()}\n")
     table.add_row("type", module_str)
 
     table.add_row(

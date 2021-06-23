@@ -316,7 +316,7 @@ class PipelineModuleConfig(KiaraModuleConfig):
         default="-- n/a --", description="Documentation about what the pipeline does."
     )
 
-    meta: typing.Dict[str, typing.Any] = Field(
+    metadata: typing.Dict[str, typing.Any] = Field(
         default_factory=dict, description="Metadata for this workflow."
     )
 

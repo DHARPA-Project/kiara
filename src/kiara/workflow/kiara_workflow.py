@@ -6,6 +6,7 @@ from rich.table import Table
 from slugify import slugify
 
 from kiara.data import ValueSet
+from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.module_config import KiaraWorkflowConfig
 from kiara.pipeline.module import PipelineModule
 from kiara.pipeline.pipeline import (
@@ -130,14 +131,14 @@ class KiaraWorkflow(object):
 
         yield f"[b]Workflow: {self.workflow_id}"
 
-        doc = self._root_module.doc()
-        if doc and doc != "-- n/a --":
-            yield f"\n{self._root_module.doc()}\n"
+        doc = self._root_module.get_type_metadata().documentation.description
+        if doc and doc != DEFAULT_NO_DESC_VALUE:
+            yield f"\n{doc}\n"
 
         table = Table(box=box.SIMPLE, show_header=False)
         table.add_column("property", style="i")
         table.add_column("value")
-        doc_link = self._root_module.get_type_metadata().common.references.get(
+        doc_link = self._root_module.get_type_metadata().context.references.get(
             "documentation", None
         )
         if doc_link:

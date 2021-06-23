@@ -274,7 +274,10 @@ class PipelineModuleManager(ModuleManager):
 
         base_module = desc.get("base_module", None)
         cls = create_pipeline_class(
-            cls_name, full_name, desc["data"], base_module=base_module
+            f"{cls_name}PipelineModule",
+            full_name,
+            desc["data"],
+            base_module=base_module,
         )
         setattr(cls, "_module_type_name", module_type)
         self._cached_classes[module_type] = cls

@@ -26,6 +26,7 @@ from rich.console import (
     RenderResult,
     RichCast,
 )
+from rich.jupyter import JupyterMixin
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
@@ -173,7 +174,7 @@ class ValueMetadata(BaseModel):
     )
 
 
-class Value(BaseModel):
+class Value(BaseModel, JupyterMixin):
     """The underlying base class for all values.
 
     The important subclasses here are the ones inheriting from 'KiaraValue', as those are registered in the data

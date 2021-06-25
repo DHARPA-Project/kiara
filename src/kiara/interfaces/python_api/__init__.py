@@ -6,11 +6,14 @@ import copy
 import typing
 import uuid
 from rich.console import Console, ConsoleOptions, RenderResult
+from rich.jupyter import JupyterMixin
 from slugify import slugify
 
 from kiara import Kiara, KiaraModule, Pipeline, PipelineController, PipelineStructure
-from kiara.data import Value
+from kiara.data import Value, ValueSet
 from kiara.interfaces.python_api.controller import ApiController
+from kiara.metadata.core_models import DocumentationMetadataModel
+from kiara.metadata.module_models import KiaraModuleInstanceMetadata
 from kiara.module_config import PipelineModuleConfig, PipelineStepConfig
 from kiara.pipeline.pipeline import create_pipeline_step_table
 from kiara.pipeline.structure import generate_pipeline_endpoint_name
@@ -29,7 +32,7 @@ class DataPointSubValue(object):
         return f"{self._data_point.point_id}.{self._sub_value_name}"
 
 
-class DataPoint(object):
+class DataPoint(JupyterMixin):
     def __init__(self, data_points: "DataPoints", field_name: str):
 
         self._points: DataPoints = data_points
@@ -102,6 +105,11 @@ class DataPoint(object):
         else:
             _type = "output"
         return f"DataPoint(step={self._points._get_step().id} type={_type} field_name={self._field_name})"
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+        yield self.value
 
 
 class DataPoints(typing.MutableMapping[str, DataPoint]):
@@ -206,6 +214,9 @@ class InputDataPoints(DataPoints):
         self, field_name: str, data_point: DataPoint, value: typing.Any
     ) -> DataPoint:
 
+        if value is None:
+            # TODO: remote links/values?
+            return data_point
         if isinstance(value, (DataPoint, DataPoints, Step, DataPointSubValue)):
 
             if isinstance(value, (DataPoint, DataPointSubValue)):
@@ -235,9 +246,14 @@ class InputDataPoints(DataPoints):
             )
             return data_point
         else:
-            raise Exception(
-                f"Can't update data point, invalid value type: {type(value)}"
+            data_point.set_value(value)
+            self._get_step().workflow.set_input(
+                step_id=self._get_step().id, field_name=field_name, value=value
             )
+            return data_point
+            # raise Exception(
+            #     f"Can't update data point, invalid value type: {type(value)}"
+            # )
 
     def add_link(
         self, link: typing.Union[DataPoint, DataPoints, "Step", DataPointSubValue]
@@ -285,7 +301,7 @@ class OutputDataPoints(DataPoints):
         return data_point
 
 
-class Workflow(object):
+class Workflow(JupyterMixin):
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
@@ -299,6 +315,7 @@ class Workflow(object):
 
         self._inputs: typing.Dict[str, typing.Any] = {}
 
+    @property
     def id(self) -> str:
         return self._id
 
@@ -416,6 +433,18 @@ class Workflow(object):
         self._pipeline.inputs.set_values(**inputs)
         return self._pipeline
 
+    @property
+    def inputs(self):
+
+        table = self.pipeline.inputs._create_rich_table()
+        return table
+
+    @property
+    def outputs(self):
+
+        table = self.pipeline.outputs._create_rich_table()
+        return table
+
     def get_input_value(
         self, step: typing.Union[str, "Step"], field_name: str
     ) -> Value:
@@ -438,6 +467,13 @@ class Workflow(object):
             step_id=step, field_name=field_name
         )
 
+    def get_all_output_values(self) -> ValueSet:
+        return self.pipeline.controller.pipeline_outputs
+
+    def process(self):
+
+        return self.pipeline.controller.process_pipeline()
+
     def __eq__(self, other):
 
         if not isinstance(other, Workflow):
@@ -454,7 +490,7 @@ class Workflow(object):
         yield self.pipeline
 
 
-class Step(object):
+class Step(JupyterMixin):
     def __init__(
         self,
         module_type: str,
@@ -502,9 +538,22 @@ class Step(object):
 
         self._structure: typing.Optional[Workflow] = None
 
+        self._info: typing.Optional[KiaraModuleInstanceMetadata] = None
+
     @property
     def id(self) -> str:
         return self._step_id
+
+    @property
+    def info(self) -> KiaraModuleInstanceMetadata:
+        if self._info is None:
+            self._info = KiaraModuleInstanceMetadata.from_module_obj(self.module)
+        return self._info
+
+    @property
+    def doc(self) -> DocumentationMetadataModel:
+
+        return self.info.type_metadata.documentation
 
     @property
     def module_type(self) -> str:

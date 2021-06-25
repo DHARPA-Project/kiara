@@ -69,3 +69,10 @@ class SpecialValue(Enum):
 
     NOT_SET = "__not_set__"
     NO_VALUE = "__no_value__"
+
+
+DEFAULT_PRETTY_PRINT_CONFIG = {
+    "max_no_rows": 32,
+    "max_row_height": 2,
+    "max_cell_length": 80,
+}

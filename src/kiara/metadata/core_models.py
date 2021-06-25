@@ -7,6 +7,7 @@ from rich import box
 from rich.console import RenderableType
 from rich.markdown import Markdown
 from rich.table import Table
+from types import ModuleType
 
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.metadata import MetadataModel
@@ -32,8 +33,12 @@ class PythonClassMetadata(MetadataModel):
     full_name: str = Field(description="The full class namespace.")
 
     def get_class(self) -> typing.Type:
-        m = importlib.import_module(self.module_name)
+        m = self.get_module()
         return getattr(m, self.class_name)
+
+    def get_module(self) -> ModuleType:
+        m = importlib.import_module(self.module_name)
+        return m
 
 
 class LinkModel(BaseModel):
@@ -90,10 +95,32 @@ class ContextMetadataModel(MetadataModel):
         if self.references:
             references = []
             for _k, _v in self.references.items():
-                references.append(f"[i]{_k}[/i]: {_v.url}")
+                link = f"[link={_v.url}]{_v.url}[/link]"
+                references.append(f"[i]{_k}[/i]: {link}")
             table.add_row("References", "\n".join(references))
 
         return table
+
+    def add_reference(
+        self,
+        ref_type: str,
+        url: str,
+        desc: typing.Optional[str] = None,
+        force: bool = False,
+    ):
+
+        if ref_type in self.references.keys() and not force:
+            raise Exception(f"Reference of type '{ref_type}' already present.")
+        link = LinkModel(url=url, desc=desc)
+        self.references[ref_type] = link
+
+    def get_url_for_reference(self, ref: str) -> typing.Optional[str]:
+
+        link = self.references.get(ref, None)
+        if not link:
+            return None
+
+        return link.url
 
 
 class DocumentationMetadataModel(MetadataModel):

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import dpath
+import dpath.util
 import importlib
 import json
 import logging

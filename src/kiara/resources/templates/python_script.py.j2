@@ -1,0 +1,60 @@
+# %%
+{% macro print_link_assignment(link) %}step_{{ link.step_id }}.output.{{ link.value_name }}{% if link.sub_value %}.{{ link.sub_value['config'] }}{% endif %}{%  endmacro %}
+
+{% macro create_links_list(links) -%}
+{%  for link in links %}    {{ print_link_assignment(link) }},
+{%  endfor -%}{%- endmacro -%}
+
+
+{% macro add_links(step, input_links) -%}
+{%  for input_name, links in input_links.items() -%}
+{% if links |length == 1 -%}
+step_{{ step.step_id }}.input.{{ input_name }} = {{ print_link_assignment(links[0]) }}
+{% else %}
+step_{{ step.step_id }}.input.{{ input_name }} = [
+{{ create_links_list(links) }}]
+{%  endif %}
+{%  endfor -%}
+{%- endmacro %}
+
+import kiara
+from kiara.interfaces.python_api import Step
+from kiara.utils.jupyter import graph_to_image
+from kiara.utils.output import rich_print
+
+{%  for stage in structure.processing_stages %}
+{% for step_id in stage %}
+{%  set step = structure.get_step(step_id) %}
+{%  if step.module_config -%}
+step_{{ step.step_id }}_config = {{ step.module_config }}
+step_{{ step.step_id }} = Step(
+    "{{ step.module_type }}",
+    module_config=step_{{ step.step_id }}_config,
+    step_id="{{ step.step_id }}")
+{%  else -%}
+step_{{ step.step_id }} = Step("{{ step.module_type }}", step_id="{{ step.step_id }}")
+{%  endif -%}
+{% endfor -%}
+{%  endfor -%}
+
+{% set ns = namespace(last_step_id=None) %}
+{%  for stage in structure.processing_stages -%}
+{% for step_id in stage -%}
+{%  set step = structure.get_step(step_id) -%}
+{%  if step.input_links -%}
+{%  set ns.last_step_id = step_id -%}
+{{  add_links(step, step.input_links) }}
+{%  endif -%}
+{% endfor -%}
+{% endfor -%}
+
+workflow = step_{{ ns.last_step_id }}.workflow
+
+{%  for step_id, inputs in input_values.items() -%}
+{%  for name, value in inputs.items() -%}
+step_{{ step_id }}.input.{{ name }} = {{ value }}
+{% endfor -%}
+{% endfor -%}
+
+workflow.process()
+rich_print(workflow)

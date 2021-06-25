@@ -6,7 +6,6 @@ import os.path
 import sys
 import typing
 from kiara_modules.core.json import DEFAULT_TO_JSON_CONFIG
-from kiara_modules.core.string import DEFAULT_PRETTY_PRINT_CONFIG
 from pathlib import Path
 from rich import box
 from rich.console import Console, RenderGroup
@@ -15,6 +14,7 @@ from rich.syntax import Syntax
 
 from kiara import Kiara
 from kiara.data.values import ValuesInfo
+from kiara.defaults import DEFAULT_PRETTY_PRINT_CONFIG
 from kiara.interfaces.cli.utils import _create_module_instance
 from kiara.module import KiaraModule
 from kiara.pipeline.controller import BatchController

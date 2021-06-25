@@ -9,6 +9,7 @@ from rich.console import (
     RenderGroup,
     RenderResult,
 )
+from rich.jupyter import JupyterMixin
 from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
@@ -21,7 +22,7 @@ if typing.TYPE_CHECKING:
     from kiara import Kiara
 
 
-class MetadataModel(BaseModel):
+class MetadataModel(BaseModel, JupyterMixin):
     @classmethod
     def model_doc(cls) -> str:
 

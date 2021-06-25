@@ -214,7 +214,6 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         module_config: typing.Union[
             None, KIARA_CONFIG, typing.Mapping[str, typing.Any]
         ] = None,
-        metadata: typing.Mapping[str, typing.Any] = None,
         kiara: typing.Optional["Kiara"] = None,
     ):
 
@@ -247,10 +246,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
             raise TypeError(f"Invalid type for module config: {type(module_config)}")
 
         self._module_hash: typing.Optional[int] = None
-
-        if metadata is None:
-            metadata = {}
-        self._meta = metadata
+        self._info: typing.Optional[KiaraModuleInstanceMetadata] = None
 
         self._input_schemas: typing.Mapping[str, ValueSchema] = None  # type: ignore
         self._output_schemas: typing.Mapping[str, ValueSchema] = None  # type: ignore
@@ -553,6 +549,13 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
             self._module_hash = hashes[_d]
         return self._module_hash
 
+    @property
+    def info(self) -> KiaraModuleInstanceMetadata:
+
+        if self._info is None:
+            self._info = KiaraModuleInstanceMetadata.from_module_obj(self)
+        return self._info
+
     def __eq__(self, other):
         if self.__class__ != other.__class__:
             return False
@@ -574,7 +577,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
             )
 
         r_gro: typing.List[typing.Any] = []
-        md = KiaraModuleInstanceMetadata.from_module_obj(self)
+        md = self.info
         table = md.create_renderable()
         r_gro.append(table)
 

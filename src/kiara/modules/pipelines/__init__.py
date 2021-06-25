@@ -34,18 +34,18 @@ def create_pipeline_class(
 
     attrs = {
         "__init__": init,
-        "__doc__": pmc.doc,
+        "__doc__": pmc.documentation,
         "_config_cls": PipelineModuleConfig,
         "_base_pipeline_config": pmc,
     }
 
-    if pmc.metadata:
-        md = dict(pmc.metadata)
+    if pmc.context:
+        md = dict(pmc.context)
     else:
         md = {}
 
     md.setdefault("tags", []).append("pipeline")
-    md.setdefault("labels", {})["is_pipeline"] = "yes"
+    md.setdefault("labels", {})["pipeline"] = "yes"
     attrs[KIARA_MODULE_METADATA_ATTRIBUTE] = md
 
     if not base_module:

@@ -17,7 +17,7 @@ __all__ = [
 ]
 import os
 
-from .kiara import Kiara, explain  # noqa
+from .kiara import Kiara, explain, pretty_print  # noqa
 from .module import KiaraModule  # noqa
 from .pipeline.pipeline import Pipeline  # noqa
 from .pipeline.structure import PipelineStructure  # noqa

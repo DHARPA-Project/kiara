@@ -47,7 +47,6 @@ class PipelineModule(KiaraModule[PipelineModuleConfig]):
         module_config: typing.Union[
             None, PipelineModuleConfig, typing.Mapping[str, typing.Any]
         ] = None,
-        metadata: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         controller: typing.Union[
             None, PipelineController, str, typing.Type[PipelineController]
         ] = None,
@@ -64,7 +63,6 @@ class PipelineModule(KiaraModule[PipelineModuleConfig]):
             id=id,
             parent_id=parent_id,
             module_config=module_config,
-            metadata=metadata,
             kiara=kiara,
         )
         self._pipeline_structure: PipelineStructure = self._create_structure()

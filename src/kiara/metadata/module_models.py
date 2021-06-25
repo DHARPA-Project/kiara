@@ -82,6 +82,40 @@ class KiaraModuleConfigMetadata(MetadataModel):
     )
 
 
+def calculate_class_doc_url(base_url: str, module_type_name: str, pipeline: bool):
+
+    if base_url.endswith("/"):
+        base_url = base_url[0:-1]
+
+    module_type_name = module_type_name.replace(".", "")
+    if not pipeline:
+        url = f"{base_url}/modules_list.html#{module_type_name}"
+    else:
+        url = f"{base_url}/pipelines_list.html#{module_type_name}"
+
+    return url
+
+
+def calculate_class_source_url(
+    base_url: str, python_class_info: PythonClassMetadata, branch: str = "main"
+):
+
+    if base_url.endswith("/"):
+        base_url = base_url[0:-1]
+
+    m = python_class_info.get_module()
+    m_file = m.__file__
+
+    base_url = f"{base_url}/blob/{branch}/src/{python_class_info.module_name.replace('.', '/')}"
+
+    if m_file.endswith("__init__.py"):
+        url = f"{base_url}/__init__.py"
+    else:
+        url = f"{base_url}.py"
+
+    return url
+
+
 class KiaraModuleTypeMetadata(MetadataModel):
     @classmethod
     def from_module_class(cls, module_cls: typing.Type["KiaraModule"]):
@@ -89,12 +123,31 @@ class KiaraModuleTypeMetadata(MetadataModel):
         proc_src = textwrap.dedent(inspect.getsource(module_cls.process))
 
         origin_md = OriginMetadataModel.from_class(module_cls)
-        properties_md = ContextMetadataModel.from_class(module_cls)
         doc = DocumentationMetadataModel.from_class_doc(module_cls)
-
         python_class = PythonClassMetadata.from_class(module_cls)
-        config = KiaraModuleConfigMetadata.from_config_class(module_cls._config_cls)
+        properties_md = ContextMetadataModel.from_class(module_cls)
+
         is_pipeline = module_cls.is_pipeline()
+        doc_url = properties_md.get_url_for_reference("documentation")
+        if doc_url:
+            class_doc = calculate_class_doc_url(doc_url, module_cls._module_type_id, pipeline=is_pipeline)  # type: ignore
+            properties_md.add_reference(
+                "module_doc",
+                class_doc,
+                "A link to the published, auto-generated module documentation.",
+            )
+
+        if not is_pipeline:
+            repo_url = properties_md.get_url_for_reference("source_repo")
+            if repo_url is not None:
+                src_url = calculate_class_source_url(repo_url, python_class)
+                properties_md.add_reference(
+                    "source_url",
+                    src_url,
+                    "A link to the published source file that contains this module.",
+                )
+
+        config = KiaraModuleConfigMetadata.from_config_class(module_cls._config_cls)
         pipeline_config = None
         if is_pipeline:
             pipeline_config = module_cls._base_pipeline_config  # type: ignore
@@ -205,11 +258,10 @@ class KiaraModuleInstanceMetadata(MetadataModel):
 
         table.add_row("Description", self.type_metadata.documentation.description)
 
+        table.add_row("Origin", self.type_metadata.origin.create_renderable())
+        table.add_row("Type context", self.type_metadata.context.create_renderable())
         table.add_row(
-            "Type information",
-            self.type_metadata.create_renderable(
-                include_config=False, include_doc=False
-            ),
+            "Python class", self.type_metadata.python_class.create_renderable()
         )
         conf = Syntax(
             json.dumps(self.config, indent=2), "json", background_color="default"
@@ -233,5 +285,6 @@ class KiaraModuleInstanceMetadata(MetadataModel):
             **self.outputs_schema,
         )
         table.add_row("Outputs", outputs_table)
+        table.add_row("Source code", self.type_metadata.process_src)
 
         return table

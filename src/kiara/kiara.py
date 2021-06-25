@@ -6,6 +6,9 @@ import os
 import typing
 import zmq
 from pathlib import Path
+from rich import box
+from rich.console import RenderGroup
+from rich.panel import Panel
 from threading import Thread
 from zmq import Context
 from zmq.devices import ThreadDevice
@@ -16,6 +19,7 @@ from kiara.data.persistence import DataStore
 from kiara.data.registry import DataRegistry
 from kiara.data.types import ValueType
 from kiara.data.types.type_mgmt import TypeMgmt
+from kiara.defaults import DEFAULT_PRETTY_PRINT_CONFIG
 from kiara.interfaces import get_console
 from kiara.metadata import MetadataModel, MetadataSchemaInfo
 from kiara.metadata.mgmt import MetadataMgmt
@@ -27,6 +31,7 @@ from kiara.pipeline.pipeline import Pipeline
 from kiara.processing import Job, ModuleProcessor
 from kiara.profiles import ModuleProfileMgmt
 from kiara.utils import get_auto_workflow_alias, get_data_from_file, is_debug
+from kiara.utils.output import rich_print
 from kiara.workflow.kiara_workflow import KiaraWorkflow
 
 if typing.TYPE_CHECKING:
@@ -53,6 +58,14 @@ def explain(item: typing.Any, kiara: typing.Optional["Kiara"] = None):
 
     console = get_console()
     console.print(item)
+
+
+def pretty_print(value: Value, kiara: typing.Optional["Kiara"] = None):
+
+    if kiara is None:
+        kiara = Kiara.instance()
+
+    kiara.pretty_print(value)
 
 
 class Kiara(object):
@@ -509,3 +522,17 @@ class Kiara(object):
             kiara=self,
         )
         return workflow
+
+    def pretty_print(self, value: Value) -> None:
+        pretty_print = self.create_workflow("string.pretty_print")
+        pretty_print_inputs: typing.Dict[str, typing.Any] = {"item": value}
+        pretty_print_inputs.update(DEFAULT_PRETTY_PRINT_CONFIG)
+
+        pretty_print.inputs.set_values(**pretty_print_inputs)
+
+        renderables = pretty_print.outputs.get_value_data("renderables")
+        if renderables:
+            output = Panel(RenderGroup(*renderables), box=box.SIMPLE)
+            rich_print(output)
+        else:
+            rich_print("No output.")

@@ -383,6 +383,7 @@ def find_all_kiara_pipeline_paths() -> typing.Dict[
             raise NotImplementedError()
             result_entrypoints[name] = plugin.plugin
         elif isinstance(plugin.plugin, ModuleType):
+            print(f"Entrypoint type not supported yet: {plugin.plugin}")
             raise NotImplementedError()
             # result_entrypoints[name] = _find_pipeline_folders_using_callable(
             #     plugin.plugin

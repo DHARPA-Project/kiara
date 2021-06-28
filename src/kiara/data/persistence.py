@@ -207,7 +207,7 @@ class DataStore(object):
                 and f.endswith(".metadata.json")
             ]:
 
-                split = filename.split(".")
+                split = filename[0:-14].split(".", maxsplit=1)
                 result[split[0]] = {"type": split[1]}
         self._value_id_cache = result  # type: ignore
         return self._value_id_cache  # type: ignore

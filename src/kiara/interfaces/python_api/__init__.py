@@ -83,6 +83,7 @@ class DataPoint(JupyterMixin):
             value = step.workflow.get_input_value(step, self._field_name)
         else:
             value = step.workflow.get_output_value(step, self._field_name)
+        value.get_metadata()
         return value
 
     @property

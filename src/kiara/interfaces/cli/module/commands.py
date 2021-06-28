@@ -148,16 +148,8 @@ def render(
     workflow_input = dict_from_cli_args(*inputs, list_keys=list_keys)
 
     renderer = PipelineRenderer(structure=structure)
-    # path = os.path.join(KIARA_RESOURCES_FOLDER, "templates", "notebook.ipynb.j2")
-    path = os.path.join(KIARA_RESOURCES_FOLDER, "templates", "python_script.py.j2")
-
-    workflow_input = {
-        "path": "/home/markus/projects/dharpa/notebooks/TopicModelling/data_tm_workflow",
-        "earliest": "1919-01-01",
-        "latest": "2000-01-01",
-        "languages": ["italian", "german"],
-        "compute_coherence": True,
-    }
+    path = os.path.join(KIARA_RESOURCES_FOLDER, "templates", "notebook.ipynb.j2")
+    # path = os.path.join(KIARA_RESOURCES_FOLDER, "templates", "python_script.py.j2")
 
     step_inputs: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
     for k, v in workflow_input.items():
@@ -173,8 +165,8 @@ def render(
 
     rendered = renderer.render_from_path(path, inputs=step_inputs)
     print()
-    print(rendered)
-    return
+    # print(rendered)
+    # return
     # print(rendered)
     notebook = jupytext.reads(rendered, fmt="py:percent")
     converted = jupytext.writes(notebook, fmt="notebook")

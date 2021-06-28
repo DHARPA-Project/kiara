@@ -657,7 +657,7 @@ class StepInfo(JupyterMixin, BaseModel):
         metadata = self.module_metadata.create_renderable(include_desc=False)
 
         panel = Panel(
-            RenderGroup(Panel(doc, box=box.SIMPLE), metadata),
+            RenderGroup("", Panel(doc, box=box.SIMPLE), "", metadata),
             title=f"Step info: [b]{self.step_id}[/b] (type: [i]{self.module_metadata.type_metadata.type_id}[/i])",
             title_align="left",
         )

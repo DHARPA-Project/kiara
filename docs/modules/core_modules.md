@@ -10,8 +10,8 @@
     Ideally, a modules function is [idempotent](https://en.wikipedia.org/wiki/Idempotence), but it's allowed to have calls to functions that return
     random objects within, as long as it's ok for the resulting output to be cached/re-used.
 
-An example of such a module would be the [AndModule](https://dharpa.org/kiara_modules.default/api_reference/kiara_modules.default.logic_gates/#kiara_modules.default.logic_gates.AndModule), which is a simple module that computes the logic 'and' operation:
+An example of such a module would be the [AndModule](https://dharpa.org/kiara_modules.core/modules_list.html#logicand), which is a simple module that computes the logic 'and' operation:
 
 ``` python
-{{ get_src_of_object('kiara_modules.default.logic_gates.AndModule') }}
+{{ get_src_of_object('kiara_modules.core.logic.AndModule') }}
 ```

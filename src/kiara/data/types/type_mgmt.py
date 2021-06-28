@@ -83,7 +83,7 @@ class TypeMgmt(object):
         if len(result) == 0:
             return None
         elif len(result) > 1:
-            result_str = [x._value_type_name() for x in result]  # type: ignore
+            result_str = [x._value_type_name for x in result]  # type: ignore
             raise Exception(
                 f"Multiple value types found for value: {', '.join(result_str)}."
             )

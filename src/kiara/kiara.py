@@ -6,6 +6,9 @@ import os
 import typing
 import zmq
 from pathlib import Path
+from rich import box
+from rich.console import RenderGroup
+from rich.panel import Panel
 from threading import Thread
 from zmq import Context
 from zmq.devices import ThreadDevice
@@ -16,8 +19,10 @@ from kiara.data.persistence import DataStore
 from kiara.data.registry import DataRegistry
 from kiara.data.types import ValueType
 from kiara.data.types.type_mgmt import TypeMgmt
+from kiara.defaults import DEFAULT_PRETTY_PRINT_CONFIG
 from kiara.interfaces import get_console
 from kiara.metadata import MetadataModel, MetadataSchemaInfo
+from kiara.metadata.mgmt import MetadataMgmt
 from kiara.module_config import KiaraWorkflowConfig, PipelineModuleConfig
 from kiara.module_mgmt import ModuleManager
 from kiara.module_mgmt.merged import MergedModuleManager
@@ -26,10 +31,11 @@ from kiara.pipeline.pipeline import Pipeline
 from kiara.processing import Job, ModuleProcessor
 from kiara.profiles import ModuleProfileMgmt
 from kiara.utils import get_auto_workflow_alias, get_data_from_file, is_debug
+from kiara.utils.output import rich_print
 from kiara.workflow.kiara_workflow import KiaraWorkflow
 
 if typing.TYPE_CHECKING:
-    from kiara.module import KiaraModule, ModuleInfo, ModulesList
+    from kiara.module import KiaraModule, ModulesList
 
 log = logging.getLogger("kiara")
 
@@ -54,6 +60,14 @@ def explain(item: typing.Any, kiara: typing.Optional["Kiara"] = None):
     console.print(item)
 
 
+def pretty_print(value: Value, kiara: typing.Optional["Kiara"] = None):
+
+    if kiara is None:
+        kiara = Kiara.instance()
+
+    kiara.pretty_print(value)
+
+
 class Kiara(object):
     _instance = None
 
@@ -73,7 +87,7 @@ class Kiara(object):
         self._zmq_context: Context = Context.instance()
 
         self._profile_mgmt = ModuleProfileMgmt(kiara=self)
-
+        self._metadata_mgmt = MetadataMgmt(kiara=self)
         self._data_store = DataStore(kiara=self)
 
         self.start_zmq_device()
@@ -145,6 +159,10 @@ class Kiara(object):
     @property
     def data_store(self) -> DataStore:
         return self._data_store
+
+    @property
+    def metadata_mgmt(self) -> MetadataMgmt:
+        return self._metadata_mgmt
 
     @property
     def value_types(self) -> typing.Mapping[str, typing.Type[ValueType]]:
@@ -242,7 +260,7 @@ class Kiara(object):
                     raise Exception(
                         f"Can't transform data to '{target_type}': can not determine source type."
                     )
-                source_type = _source_type.type_name()
+                source_type = _source_type._value_type_name  # type: ignore
 
         module = self._profile_mgmt.get_type_conversion_module(
             source_type=source_type, target_type=target_type  # type: ignore
@@ -273,21 +291,21 @@ class Kiara(object):
     def get_module_class(self, module_type: str) -> typing.Type["KiaraModule"]:
         return self._module_mgr.get_module_class(module_type=module_type)
 
-    def get_module_info(self, module_type: str) -> "ModuleInfo":
-
-        if module_type not in self.available_module_types:
-            raise ValueError(f"Module type '{module_type}' not available.")
-
-        if module_type in self.available_pipeline_module_types:
-            from kiara.pipeline.module import PipelineModuleInfo
-
-            info = PipelineModuleInfo(module_type=module_type, _kiara=self)  # type: ignore
-            return info
-        else:
-            from kiara.module import ModuleInfo
-
-            info = ModuleInfo(module_type=module_type)  # type: ignore
-            return info
+    # def get_module_info(self, module_type: str) -> "ModuleInfo":
+    #
+    #     if module_type not in self.available_module_types:
+    #         raise ValueError(f"Module type '{module_type}' not available.")
+    #
+    #     if module_type in self.available_pipeline_module_types:
+    #         from kiara.pipeline.module import PipelineModuleInfo
+    #
+    #         info = PipelineModuleInfo(module_type=module_type, _kiara=self)  # type: ignore
+    #         return info
+    #     else:
+    #         from kiara.module import ModuleInfo
+    #
+    #         info = ModuleInfo.from_module_cls(module_cls=module_type)
+    #         return info
 
     @property
     def available_module_types(self) -> typing.List[str]:
@@ -376,7 +394,7 @@ class Kiara(object):
     ):
 
         m = self.create_module(module_type=module_type, module_config=module_config)
-        return m.doc()
+        return m.module_instance_doc
 
     def run(
         self,
@@ -504,3 +522,17 @@ class Kiara(object):
             kiara=self,
         )
         return workflow
+
+    def pretty_print(self, value: Value) -> None:
+        pretty_print = self.create_workflow("string.pretty_print")
+        pretty_print_inputs: typing.Dict[str, typing.Any] = {"item": value}
+        pretty_print_inputs.update(DEFAULT_PRETTY_PRINT_CONFIG)
+
+        pretty_print.inputs.set_values(**pretty_print_inputs)
+
+        renderables = pretty_print.outputs.get_value_data("renderables")
+        if renderables:
+            output = Panel(RenderGroup(*renderables), box=box.SIMPLE)
+            rich_print(output)
+        else:
+            rich_print("No output.")

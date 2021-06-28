@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
+"""Data-related sub-commands for the cli."""
+
 import asyncclick as click
 import json
 import typing
-from kiara_modules.core.string import DEFAULT_PRETTY_PRINT_CONFIG
 from rich.syntax import Syntax
 
 from kiara import Kiara
 from kiara.data.values import Value
+from kiara.defaults import DEFAULT_PRETTY_PRINT_CONFIG
 from kiara.utils.output import rich_print
 
 

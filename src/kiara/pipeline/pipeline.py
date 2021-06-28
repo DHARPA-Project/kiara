@@ -630,9 +630,13 @@ def create_pipeline_step_table(
     table.add_column(f"[b]{step.step_id}[/b]", no_wrap=True)
     table.add_column("", no_wrap=True)
 
-    doc_link = step.module.doc_link()
+    doc_link = step.module.get_type_metadata().context.references.get(
+        "documentation", None
+    )
     if doc_link:
-        module_str = f"[link={doc_link}]{step.module_type}[/link]"
+        # TODO: use direct link
+        url = doc_link.url
+        module_str = f"[link={url}]{step.module_type}[/link]"
     else:
         module_str = step.module_type
     table.add_row("type", module_str, "")

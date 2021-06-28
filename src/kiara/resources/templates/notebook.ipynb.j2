@@ -1,0 +1,167 @@
+# ---
+# jupyter:
+#   jupytext:
+#     cell_markers: region,endregion
+#     formats: ipynb,.pct.py:percent,.lgt.py:light,.spx.py:sphinx,md,Rmd,.pandoc.md:pandoc
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.2'
+#       jupytext_version: 1.1.0
+#   kernelspec:
+#     display_name: Python 3
+#     language: python
+#     name: python3
+# ---
+# %%
+import kiara
+from kiara.interfaces.python_api import Step
+from kiara.utils.jupyter import graph_to_image
+{% macro print_link_assignment(link) %}step_{{ link.step_id }}.output.{{ link.value_name }}{% if link.sub_value %}.{{ link.sub_value['config'] }}{% endif %}{%  endmacro %}
+{% macro create_links_list(links) -%}
+{%  for link in links %}    {{ print_link_assignment(link) }},
+{%  endfor -%}{%- endmacro -%}
+{% macro add_links(step, input_links) -%}
+# %% [markdown]
+# #### Connecting inputs for: ``{{ step.step_id }}``
+
+{%  for input_name, links in input_links.items() -%}
+# %%
+{% if links |length == 1 -%}
+step_{{ step.step_id }}.input.{{ input_name }} = {{ print_link_assignment(links[0]) }}
+{% else %}
+step_{{ step.step_id }}.input.{{ input_name }} = [
+{{ create_links_list(links) }}]
+{%  endif %}
+{%  endfor -%}
+{%- endmacro %}
+# %% [markdown]
+# # Table of contents
+# * [Assembling the workflow](#assembly)
+#     * [Creating the steps of the workflow](#creating_steps)
+{%  for stage in structure.processing_stages -%}
+#         * [Execution stage: {{ loop.index }}](#execution_stage_{{ loop.index }})
+{% for step_id in stage -%}
+{%  set step = structure.get_step(step_id) -%}
+#             - [Step: ``{{ step.step_id }}``](#execution_stage_{{ loop.index }}_{{ step.step_id }})
+{%  endfor -%}
+{% endfor -%}
+#     * [Connecting the workflow steps](#connecting_steps)
+# * [Workflow information](#workflow_info)
+# * [Setting workflow inputs](#workflow_inputs)
+# * [Workflow results](#workflow_results)
+{% for stage in structure.processing_stages -%}
+{% for step_id in stage -%}
+{%  set step = structure.get_step(step_id) -%}
+#     - [Step: ``{{ step.step_id }}``](#output_stage_{{ loop.index }}_{{ step.step_id }})
+{% endfor -%}
+{% endfor -%}
+# %% [markdown]
+# # Assembling the workflow <a class="anchor" id="assembly"></a>
+
+The first step in the creation of our workflow is to create the individual steps from the available *kiara* modules.
+
+A list of available modules and their aliases can be found here: TODO
+
+# ## Creating the steps of the workflow <a class="anchor" id="creating_steps"></a>
+
+{%  for stage in structure.processing_stages %}
+# %% [markdown]
+# ### Execution stage: {{ loop.index }} <a class="anchor" id="execution_stage_{{ loop.index }}"></a>
+{% for step_id in stage %}# %% [markdown]
+{%  set step = structure.get_step(step_id) %}
+# #### Creating step: ``{{ step.step_id }}`` <a class="anchor" id="execution_stage_{{ loop.index }}_{{ step.step_id }}"></a>
+
+# %%
+{%  if step.module_config -%}
+step_{{ step.step_id }}_config = {{ step.module_config }}
+step_{{ step.step_id }} = Step(
+    "{{ step.module_type }}",
+    module_config=step_{{ step.step_id }}_config,
+    step_id="{{ step.step_id }}")
+{%  else -%}
+step_{{ step.step_id }} = Step("{{ step.module_type }}", step_id="{{ step.step_id }}")
+{%  endif -%}
+step_{{ step.step_id }}.info
+
+{% endfor -%}
+{%  endfor -%}
+
+# %% [markdown]
+
+# ## Connecting the workflow steps <a class="anchor" id="connecting_steps"></a>
+
+After we all steps are created, we need to wire them up to create our workflow structure. All step inputs that are not
+connected to other step outputs are considered user inputs, and, if their values are marked as 'required', must be set
+later in order for our workflow to run successfully.
+
+{% set ns = namespace(last_step_id=None) %}
+{%  for stage in structure.processing_stages -%}
+{% for step_id in stage -%}
+{%  set step = structure.get_step(step_id) -%}
+{%  if step.input_links -%}
+{%  set ns.last_step_id = step_id -%}
+{{  add_links(step, step.input_links) }}
+{%  endif -%}
+{% endfor -%}
+{% endfor -%}
+
+# %% [markdown]
+# # Workflow information <a class="anchor" id="workflow_info"></a>
+
+# After our workflow is wired up, we look can look at its structure, and other properties.
+For that, we need to retrieve the dynamically assembled workflow object. We could do this from every one of the workflow steps,
+since they all share the same workflow:
+
+# %%
+workflow = step_{{ ns.last_step_id }}.workflow
+
+# %% [markdown]
+# ## Workflow execution graph
+
+Let's look at the current execution graph for our workflow:
+
+# %%
+graph_to_image(workflow.structure.execution_graph)
+
+# %% [markdown]
+# # Setting workflow inputs <a class="anchor" id="workflow_inputs"></a>
+
+The final step before running the workflow, is to set input values:
+
+# %%
+
+{%  for step_id, inputs in input_values.items() -%}
+{%  for name, value in inputs.items() -%}
+step_{{ step_id }}.input.{{ name }} = {{ value }}
+{% endfor -%}
+{% endfor -%}
+
+# %% [markdown]
+# # Workflow results <a class="anchor" id="workflow_results"></a>
+
+We don't need to explicitly run the workflow, since our workflow object is smart enough to process the required steps
+for the outputs we request. But we can do it nonetheless, because it helps us debug any issues there might be by printing
+out the current workflow state:
+
+# %%
+
+workflow.process()
+workflow
+
+{%  for stage in structure.processing_stages -%}
+{% for step_id in stage -%}# %% [markdown]
+{%  set step = structure.get_step(step_id) -%}
+# ### Outputs for step: ``{{ step.step_id }}`` <a class="anchor" id="outputs_stage_{{ loop.index }}_{{ step.step_id }}"></a>
+{% for output_name in step.module.output_names %}
+# ### Output: ``{{ output_name }}``
+# #### Value metadata
+# %%
+step_{{ step_id }}.output.{{ output_name }}.value
+# %% [markdown]
+# #### Value data
+# %%
+kiara.pretty_print(step_{{ step_id }}.output.{{ output_name }}.data)
+{% endfor -%}
+{% endfor -%}
+{% endfor -%}

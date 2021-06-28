@@ -20,12 +20,14 @@ be discouraged, since this might not be trivial and there are quite a few things
 """
 
 import typing
-from deepdiff import DeepHash
 from enum import Enum
+from rich import box
 from rich.console import Console, ConsoleOptions, RenderResult
+from rich.markdown import Markdown
+from rich.panel import Panel
+from rich.table import Table
 
-from kiara.data.persistence import LoadConfig
-from kiara.utils import camel_case_to_snake_case
+from kiara.utils.doc import extract_doc_from_cls
 
 if typing.TYPE_CHECKING:
     from kiara.data.values import Value
@@ -65,22 +67,31 @@ class ValueType(object):
      data, say a single column of a table. Or when a frontend needs to display/visualize the data.
     """
 
+    # @classmethod
+    # def type_name(cls):
+    #     """Return the name/alias of this type.
+    #
+    #     This is the name modules will use in the 'type' field when they create their input/output schemas.
+    #
+    #     Returns:
+    #         the type alias
+    #     """
+    #
+    #     cls_name = cls.__name__
+    #     if cls_name.lower().endswith("type"):
+    #         cls_name = cls_name[0:-4]
+    #
+    #     type_name = camel_case_to_snake_case(cls_name)
+    #     return type_name
+
     @classmethod
-    def type_name(cls):
-        """Return the name/alias of this type.
+    def doc(cls) -> str:
 
-        This is the name modules will use in the 'type' field when they create their input/output schemas.
+        return extract_doc_from_cls(cls)
 
-        Returns:
-            the type alias
-        """
-
-        cls_name = cls.__name__
-        if cls_name.lower().endswith("type"):
-            cls_name = cls_name[0:-4]
-
-        type_name = camel_case_to_snake_case(cls_name)
-        return type_name
+    @classmethod
+    def desc(cls) -> str:
+        return extract_doc_from_cls(cls, only_first_line=True)
 
     @classmethod
     def conversions(
@@ -181,155 +192,50 @@ class ValueType(object):
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        yield self.__class__.type_name()
+
+        raise NotImplementedError()
 
 
-class AnyType(ValueType):
+class ValueTypeInfo(object):
+    def __init__(self, value_type_cls: typing.Type[ValueType]):
 
-    pass
+        self._value_type_cls: typing.Type[ValueType] = value_type_cls
 
+    @property
+    def doc(self) -> str:
+        return self._value_type_cls.doc()
 
-class StringType(ValueType):
-    def defer_hash_calc(self) -> bool:
-        return False
-
-    def calculate_value_hash(
-        self, value: typing.Any
-    ) -> typing.Union[int, ValueHashMarker]:
-        return hash(value)
-
-    def validate(cls, value: typing.Any) -> None:
-
-        if not isinstance(value, str):
-            raise ValueError(f"Invalid type '{type(value)}': string required")
+    @property
+    def desc(self) -> str:
+        return self._value_type_cls.desc()
 
 
-class BooleanType(ValueType):
-    def defer_hash_calc(self) -> bool:
-        return False
+class ValueTypesInfo(object):
+    def __init__(
+        self,
+        value_type_classes: typing.Mapping[str, typing.Type[ValueType]],
+        details: bool = False,
+    ):
 
-    def calculate_value_hash(
-        self, value: typing.Any
-    ) -> typing.Union[int, ValueHashMarker]:
-        return hash(value)
+        self._value_type_classes: typing.Mapping[
+            str, typing.Type[ValueType]
+        ] = value_type_classes
+        self._details: bool = details
 
-    def validate(cls, value: typing.Any):
-        if not isinstance(value, bool):
-            # if isinstance(v, str):
-            #     if v.lower() in ["true", "yes"]:
-            #         v = True
-            #     elif v.lower() in ["false", "no"]:
-            #         v = False
-            #     else:
-            #         raise ValueError(f"Can't parse string into boolean: {v}")
-            # else:
-            raise ValueError(f"Invalid type '{type(value)}' for boolean: {value}")
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
 
+        table = Table(show_header=True, box=box.SIMPLE, show_lines=True)
+        table.add_column("Type name", style="i")
+        table.add_column("Description")
 
-class IntegerType(ValueType):
-    """An integer."""
+        for type_name in sorted(self._value_type_classes.keys()):
+            if self._details:
+                md = Markdown(self._value_type_classes[type_name].doc())
+            else:
+                md = Markdown(self._value_type_classes[type_name].desc())
+            table.add_row(type_name, md)
 
-    def defer_hash_calc(self) -> bool:
-        return False
-
-    def calculate_value_hash(
-        self, value: typing.Any
-    ) -> typing.Union[int, ValueHashMarker]:
-        return hash(value)
-
-    def validate(cls, value: typing.Any) -> None:
-
-        if not isinstance(value, int):
-            #     if isinstance(v, str):
-            #         try:
-            #             v = int(v)
-            #         except Exception:
-            #             raise ValueError(f"Can't parse string into integer: {v}")
-            # else:
-            raise ValueError(f"Invalid type '{type(value)}' for integer: {value}")
-
-
-class FloatType(ValueType):
-    def defer_hash_calc(self) -> bool:
-        return False
-
-    def calculate_value_hash(
-        self, value: typing.Any
-    ) -> typing.Union[int, ValueHashMarker]:
-        return hash(value)
-
-    def validate(cls, value: typing.Any) -> typing.Any:
-
-        if not isinstance(value, float):
-            raise ValueError(f"Invalid type '{type(value)}' for float: {value}")
-
-
-class DictType(ValueType):
-    """A dict-like object."""
-
-    def defer_hash_calc(self) -> bool:
-        return True
-
-    def calculate_value_hash(
-        self, value: typing.Any
-    ) -> typing.Union[int, ValueHashMarker]:
-
-        dh = DeepHash(value)
-        return dh[value]
-
-    def validate(cls, value: typing.Any) -> None:
-
-        if not isinstance(value, typing.Mapping):
-            raise ValueError(f"Invalid type '{type(value)}', not a mapping.")
-
-    def extract_type_metadata(
-        cls, value: typing.Any
-    ) -> typing.Mapping[str, typing.Any]:
-        value_types = set()
-        for val in value.values():
-            value_types.add(get_type_name(val))
-        result = {"keys": list(value.keys()), "value_types.py": list(value_types)}
-        return result
-
-
-class ListType(ValueType):
-    """A list-like object."""
-
-    def defer_hash_calc(self) -> bool:
-        return True
-
-    def calculate_value_hash(
-        self, value: typing.Any
-    ) -> typing.Union[int, ValueHashMarker]:
-
-        dh = DeepHash(value)
-        return dh[value]
-
-    def validate(cls, value: typing.Any) -> None:
-
-        assert isinstance(value, typing.Iterable)
-
-    def extract_type_metadata(
-        cls, value: typing.Any
-    ) -> typing.Mapping[str, typing.Any]:
-
-        metadata = {"length": len(value)}
-        return metadata
-
-
-class ValueLoadConfig(ValueType):
-    @classmethod
-    def python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
-        return [typing.Mapping, LoadConfig]
-
-    @classmethod
-    def type_name(cls):
-        return "load_config"
-
-    def validate(cls, value: typing.Any) -> None:
-
-        if isinstance(value, typing.Mapping):
-            _value = LoadConfig(**value)
-
-        if not isinstance(_value, LoadConfig):
-            raise Exception(f"Invalid type for load config: {type(value)}.")
+        panel = Panel(table, title="Available value types", title_align="left")
+        yield panel

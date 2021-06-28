@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+"""Pipeline-related subcommands for the cli."""
+
 import asyncclick as click
 import os.path
 import sys
@@ -37,7 +39,7 @@ def data_flow_graph(ctx, pipeline_type: str, full: bool):
         rich_print(f"Module '{pipeline_type}' is not a pipeline-type module.")
         sys.exit(1)
 
-    info = PipelineModuleInfo(module_type=pipeline_type)
+    info = PipelineModuleInfo.from_type_name(pipeline_type, kiara=kiara_obj)
 
     info.print_data_flow_graph(simplified=not full)
 
@@ -61,7 +63,7 @@ def execution_graph(ctx, pipeline_type: str):
         rich_print(f"Module '{pipeline_type}' is not a pipeline-type module.")
         sys.exit(1)
 
-    info = PipelineModuleInfo(module_type=pipeline_type)
+    info = PipelineModuleInfo.from_type_name(pipeline_type, kiara=kiara_obj)
     info.print_execution_graph()
 
 
@@ -84,7 +86,7 @@ def structure(ctx, pipeline_type: str):
         rich_print(f"Module '{pipeline_type}' is not a pipeline-type module.")
         sys.exit(1)
 
-    info = PipelineModuleInfo(module_type=pipeline_type, _kiara=kiara_obj)
+    info = PipelineModuleInfo.from_type_name(pipeline_type, kiara=kiara_obj)
     structure = info.create_structure()
     print()
     kiara_obj.explain(structure)
@@ -108,7 +110,9 @@ def explain_steps(ctx, pipeline_type: str):
         rich_print(f"Module '{pipeline_type}' is not a pipeline-type module.")
         sys.exit(1)
 
-    info = PipelineModuleInfo(module_type=pipeline_type)
+    info = PipelineModuleInfo.from_type_name(
+        module_type_name=pipeline_type, kiara=kiara_obj
+    )
     structure = info.create_structure()
     print()
     kiara_obj.explain(structure.to_details().steps_info)

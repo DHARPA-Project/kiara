@@ -1,24 +1,13 @@
 # -*- coding: utf-8 -*-
 import abc
 import deepdiff
-import inspect
-import json
-import textwrap
 import typing
 import uuid
 from abc import abstractmethod
-from pydantic import (
-    BaseModel,
-    Extra,
-    Field,
-    PrivateAttr,
-    ValidationError,
-    root_validator,
-)
+from pydantic import BaseModel, Extra, Field, ValidationError
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderGroup, RenderResult
 from rich.panel import Panel
-from rich.syntax import Syntax
 from rich.table import Table
 
 from kiara.data.values import (
@@ -28,17 +17,13 @@ from kiara.data.values import (
     ValueSet,
     ValueSetImpl,
 )
-from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.exceptions import KiaraModuleConfigException
-from kiara.module_config import KIARA_CONFIG, KiaraModuleConfig
-from kiara.utils import (
-    StringYAML,
-    check_valid_field_names,
-    create_table_from_config_class,
-    create_table_from_field_schemas,
-    is_debug,
+from kiara.metadata.module_models import (
+    KiaraModuleInstanceMetadata,
+    KiaraModuleTypeMetadata,
 )
-from kiara.utils.output import first_line
+from kiara.module_config import KIARA_CONFIG, KiaraModuleConfig
+from kiara.utils import StringYAML, check_valid_field_names, is_debug
 
 if typing.TYPE_CHECKING:
     from kiara import Kiara
@@ -207,62 +192,20 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         id (str): the id for this module (needs to be unique within a pipeline)
         parent_id (typing.Optional[str]): the id of the parent, in case this module is part of a pipeline
         module_config (typing.Any): the configuation for this module
-        meta (typing.Mapping[str, typing.Any]): metadata for this module (not implemented yet)
+        metadata (typing.Mapping[str, typing.Any]): metadata for this module (not implemented yet)
     """
 
     # TODO: not quite sure about this generic type here, mypy doesn't seem to like it
     _config_cls: typing.Type[KIARA_CONFIG] = KiaraModuleConfig  # type: ignore
 
     @classmethod
-    def get_type_metadata(cls) -> typing.Mapping[str, typing.Mapping[str, typing.Any]]:
+    def get_type_metadata(cls) -> KiaraModuleTypeMetadata:
 
-        if not hasattr(cls, "_type_metadata"):
-            return {}
-
-        return cls._type_metadata  # type: ignore
-
-    @classmethod
-    def doc(cls) -> str:
-        doc = cls.__doc__
-        if not doc:
-            doc = DEFAULT_NO_DESC_VALUE
-        else:
-            doc = inspect.cleandoc(doc)
-
-        return doc.strip()
+        return KiaraModuleTypeMetadata.from_module_class(cls)
 
     @classmethod
     def is_pipeline(cls) -> bool:
         return False
-
-    @classmethod
-    def doc_link(cls) -> typing.Optional[str]:
-
-        if cls.is_pipeline():
-            x = "pipelines_list"
-        else:
-            x = "modules_list"
-
-        if hasattr(cls, "_module_type_id") and cls.__module__.startswith(
-            "kiara_modules.default"
-        ):
-            link = f"https://dharpa.org/kiara_modules.default/{x}/#{cls._module_type_id}"  # type: ignore
-            return link
-        else:
-            return None
-
-    @classmethod
-    def source_link(cls) -> typing.Optional[str]:
-
-        if cls.is_pipeline():
-            return None
-        else:
-            if cls.__module__.startswith("kiara_modules.default"):
-                base_url = "https://dharpa.org/kiara_modules.default/api_reference"
-                url = f"{base_url}/{cls.__module__}/#{cls.__module__}.{cls.__name__}"
-                return url
-            else:
-                return None
 
     def __init__(
         self,
@@ -271,7 +214,6 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         module_config: typing.Union[
             None, KIARA_CONFIG, typing.Mapping[str, typing.Any]
         ] = None,
-        meta: typing.Mapping[str, typing.Any] = None,
         kiara: typing.Optional["Kiara"] = None,
     ):
 
@@ -304,10 +246,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
             raise TypeError(f"Invalid type for module config: {type(module_config)}")
 
         self._module_hash: typing.Optional[int] = None
-
-        if meta is None:
-            meta = {}
-        self._meta = meta
+        self._info: typing.Optional[KiaraModuleInstanceMetadata] = None
 
         self._input_schemas: typing.Mapping[str, ValueSchema] = None  # type: ignore
         self._output_schemas: typing.Mapping[str, ValueSchema] = None  # type: ignore
@@ -579,7 +518,8 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         If not overwritten, will return this class' method ``doc()``.
         """
 
-        return self.doc()
+        # TODO: auto create instance doc?
+        return self.get_type_metadata().documentation.full_doc
 
     @property
     def module_instance_hash(self) -> int:
@@ -609,6 +549,13 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
             self._module_hash = hashes[_d]
         return self._module_hash
 
+    @property
+    def info(self) -> KiaraModuleInstanceMetadata:
+
+        if self._info is None:
+            self._info = KiaraModuleInstanceMetadata.from_module_obj(self)
+        return self._info
+
     def __eq__(self, other):
         if self.__class__ != other.__class__:
             return False
@@ -630,47 +577,8 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
             )
 
         r_gro: typing.List[typing.Any] = []
-        doc = self.doc()
-        if doc and doc != "-- n/a --":
-            r_gro.append(f"\n  {self.doc()}\n")
-
-        table = Table(box=box.SIMPLE, show_header=False)
-        table.add_column("property", style="i")
-        table.add_column("value")
-
-        doc_link = self.doc_link()
-        if doc_link:
-            m_str = f"[link={doc_link}]{self.__class__._module_type_id}[/link]"  # type: ignore
-        else:
-            m_str = self.__class__._module_type_id  # type: ignore
-        table.add_row("module_type", m_str)
-        table.add_row(
-            "module_class", f"{self.__class__.__module__}.{self.__class__.__name__}"
-        )
-        table.add_row("is pipeline", "yes" if self.__class__.is_pipeline() else "no")
-        config = self.config.dict()
-        config.pop("doc", None)
-        config.pop("steps", None)
-        config.pop("input_aliases", None)
-        config.pop("output_aliases", None)
-        config.pop("module_type_name", None)
-        config_str = json.dumps(config, indent=2)
-        c = Syntax(config_str, "json", background_color="default")
-        table.add_row("config", c)
-
-        constants = self.config.get("constants")
-
-        inputs_table = create_table_from_field_schemas(
-            _show_header=True, _constants=constants, **self.input_schemas
-        )
-        table.add_row("inputs", inputs_table)
-        outputs_table = create_table_from_field_schemas(
-            _add_required=False,
-            _add_default=False,
-            _show_header=True,
-            **self.output_schemas,
-        )
-        table.add_row("outputs", outputs_table)
+        md = self.info
+        table = md.create_renderable()
         r_gro.append(table)
 
         yield Panel(
@@ -687,105 +595,28 @@ class ModuleInfo(BaseModel):
     This is not used in processing at all, it is really only there to make it easier to communicate module characteristics..
     """
 
+    @classmethod
+    def from_module_cls(cls, module_cls: typing.Type[KiaraModule]):
+
+        return ModuleInfo(
+            metadata=KiaraModuleTypeMetadata.from_module_class(module_cls=module_cls)
+        )
+
     class Config:
         extra = Extra.forbid
         allow_mutation = False
 
-    module_type: str = Field(description="The name the module is registered under.")
-    module_cls: typing.Type[KiaraModule] = Field(description="The module to describe.")
-    doc: str = Field(description="The documentation of the module.")
-    process_doc: str = Field(
-        description="In-depth documentation of the processing step of this module.",
-        default="-- n/a --",
-    )
-    process_src: str = Field(
-        description="The source code of the processing method of this module."
-    )
-    config_cls: typing.Type[KiaraModuleConfig] = Field(
-        description="The configuration class for this module."
-    )
-    _kiara: "Kiara" = PrivateAttr()
-
-    def __init__(self, **data):  # type: ignore
-        kiara = data.get("_kiara", None)
-        if kiara is None:
-            from kiara import Kiara
-
-            kiara = Kiara.instance()
-            data["_kiara"] = kiara
-        self._kiara: "Kiara" = kiara
-        super().__init__(**data)
-
-    @root_validator(pre=True)
-    def ensure_type(cls, values):
-
-        kiara = values.pop("_kiara")
-
-        module_type = values.pop("module_type", None)
-        assert module_type is not None
-
-        if values:
-            raise ValueError(
-                f"Only 'module_type' allowed in constructor, not: {values.keys()}"
-            )
-
-        module_cls = kiara.get_module_class(module_type)
-        values["module_type"] = module_type
-        values["module_cls"] = module_cls
-
-        doc = module_cls.doc()
-
-        values["doc"] = doc
-        proc_doc = module_cls.process.__doc__
-        if not proc_doc:
-            proc_doc = "-- n/a --"
-        else:
-            proc_doc = inspect.cleandoc(proc_doc)
-        values["process_doc"] = proc_doc
-
-        proc_src = inspect.getsource(module_cls.process)
-        values["process_src"] = textwrap.dedent(proc_src)
-        values["config_cls"] = module_cls._config_cls
-
-        return values
+    metadata: KiaraModuleTypeMetadata = Field(description="The metadata of the module.")
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
 
-        my_table = Table(box=box.SIMPLE, show_lines=True, show_header=False)
-        my_table.add_column("Property", style="i")
-        my_table.add_column("Value")
-        my_table.add_row(
-            "class", f"{self.module_cls.__module__}.{self.module_cls.__qualname__}"
-        )
-        my_table.add_row(
-            "is pipeline", "yes" if self.module_cls.is_pipeline() else "no"
-        )
-        my_table.add_row("doc", self.doc)
-        source_link = self.module_cls.source_link()
-        if source_link is None:
-            source_link = "-- n/a --"
-        else:
-            source_link = f"[i link={source_link}]kiara_modules.default.{self.module_type}[/i link]"
-        my_table.add_row("source repo", source_link)
-        my_table.add_row(
-            "config class",
-            f"{self.config_cls.__module__}.{self.config_cls.__qualname__}",
-        )
-        my_table.add_row("config", create_table_from_config_class(self.config_cls))
-        if not self.module_cls.is_pipeline():
-            syn_src = Syntax(self.process_src, "python")
-        else:
-            base_pipeline_config = self.module_cls._base_pipeline_config.dict()  # type: ignore
-            yaml_str = yaml.dump(base_pipeline_config)
-            syn_src = Syntax(yaml_str, "yaml", background_color="default")
-        my_table.add_row("src", syn_src)
-
+        table = self.metadata.create_renderable()
         yield Panel(
-            my_table,
+            table,
             box=box.ROUNDED,
-            title=f"Module: [b]{self.module_type}[/b]",
+            title=f"Module: [b]{self.metadata.type_name}[/b]",
             title_align="left",
         )
 
@@ -814,8 +645,10 @@ class ModulesList(object):
         from kiara.module import ModuleInfo
 
         result = {}
+
         for m in self._modules:
-            info = ModuleInfo(_kiara=self._kiara, module_type=m)
+            cls = self._kiara.get_module_class(m)
+            info = ModuleInfo.from_module_cls(cls)
             result[m] = info
 
         self._info_map = result
@@ -839,8 +672,8 @@ class ModulesList(object):
 
         for name, details in self.module_info_map.items():
             if self._print_only_first_line:
-                table.add_row(name, first_line(details.doc))
+                table.add_row(name, details.metadata.documentation.description)
             else:
-                table.add_row(name, details.doc)
+                table.add_row(name, details.metadata.documentation.full_doc)
 
         yield table

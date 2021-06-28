@@ -5,6 +5,7 @@
 import asyncclick as click
 
 from kiara import Kiara
+from kiara.utils.output import rich_print
 
 from .data.commands import data
 from .metadata.commands import metadata
@@ -38,6 +39,21 @@ cli.add_command(metadata)
 cli.add_command(type_group)
 cli.add_command(module)
 cli.add_command(pipeline)
+
+
+@cli.command()
+@click.pass_context
+def dev(ctx):
+
+    kiara = ctx.obj["kiara"]
+
+    # from kiara.utils.global_metadata import get_metadata_for_python_module
+    # md = get_metadata_for_python_module("kiara_modules.core.onboarding")
+    # rich_print(md.json(indent=2))
+
+    model_cls = kiara.get_module_class("array.load")
+    md = model_cls.get_type_metadata()
+    rich_print(md)
 
 
 if __name__ == "__main__":

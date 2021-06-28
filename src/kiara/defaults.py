@@ -22,8 +22,6 @@ KIARA_DATA_STORE = os.path.join(kiara_app_dirs.user_data_dir, "data")
 KIARA_METADATA_STORE = os.path.join(kiara_app_dirs.user_data_dir, "metadata")
 KIARA_ALIAS_VALUE_FOLDER = os.path.join(kiara_app_dirs.user_data_dir, "aliases")
 
-RELATIVE_PIPELINES_PATH = "pipelines"
-
 MODULE_TYPE_KEY = "module_type"
 """The key to specify the type of a module."""
 
@@ -64,8 +62,17 @@ DEFAULT_PIPELINE_PARENT_ID = "__kiara__"
 
 DEFAULT_NO_DESC_VALUE = "-- n/a --"
 
+KIARA_MODULE_METADATA_ATTRIBUTE = "KIARA_METADATA"
+
 
 class SpecialValue(Enum):
 
     NOT_SET = "__not_set__"
     NO_VALUE = "__no_value__"
+
+
+DEFAULT_PRETTY_PRINT_CONFIG = {
+    "max_no_rows": 32,
+    "max_row_height": 2,
+    "max_cell_length": 80,
+}

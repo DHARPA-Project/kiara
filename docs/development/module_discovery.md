@@ -95,8 +95,9 @@ Pipeline files are supposed to be under a folder called ``pipelines`` living in 
 Again, *kiara* provides a helper function so you don't have to worry about setting all this up:
 
 ```python
-from kiara import find_kiara_pipelines_under
-pipelines = (find_kiara_pipelines_under, ["kiara_modules.language_processing"])
+from kiara import find_pipeline_base_path_for_module
+
+pipelines = (find_pipeline_base_path_for_module, ["kiara_modules.language_processing"])
 ```
 
 That's that.

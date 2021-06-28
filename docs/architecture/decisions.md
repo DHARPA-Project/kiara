@@ -19,9 +19,23 @@ Advantages:
 Disadvantages:
 - the lower-level backend code needs to implement two different ways to assemble/create modules, depending on whether it's a core-module, or a pipeline
 
+
+## Use of subclassing in general
+
+Across *kiara*, I'm using subclassing and inheritance in some instances, esp. important base classes are [KiaraModule][kiara.module.KiaraModule] and [PipelineController][kiara.pipeline.controller.PipelineController]. I'm aware that this is considered bad practice in a lot of cases, and I have [read](https://www.sicpers.info/2018/03/why-inheritance-never-made-any-sense/) [my](https://python-patterns.guide/gang-of-four/composition-over-inheritance/) [share](https://python-patterns.guide/gang-of-four/composition-over-inheritance/#problem-the-subclass-explosion) of opinions and thoughts about the matter. In principle I agree, and I'm not 100% happy with every decision I made (or thought I had to made) in this area for *kiara*, but overall I decided to allow for some inheritance and class-based code sharing in the code, partly to speed up my implementation work, partly because I thought some of the disadvantages (like having to search base classes for some function definitions) are not as bad in a certain context than in others. I can totally see how others would disagree here, though, and there are a few things I would like to change/improve later on, if I find the time.
+
+One of the main advantages I get out of using inheritance is being able to automatically discover subclasses of a base class. This is done for multiple of those, like:
+
+- [KiaraModule][kiara.module.KiaraModule]
+- [ValueType][kiara.data.type.ValueType]
+- [MetadataModel][kiara.metadata.MetadataModel]
+
+Using auto-discovery in a Python virtualenv removes the need for workflow/module developers to understand Python packaging and entry_points. I've written a [project template](https://github.com/DHARPA-Project/kiara_modules.project_template) that sets up all the basics, and developers focus on creating new classes (basically plugins), with no extra registration work to be done. I hope this will aid adoption. And that I've managed to design those base classes well enough so that they are easy to use and understand, so that some of the main drawbacks of subclassing won't matter all that much.
+
+
 ## Requiring to subclass an abstract base class when creating a module
 
-The class I'm talking about here is [KiaraModule][kiara.module.KiaraModule]. At it's heart, it's
+The main class that uses a subclassing-strategy is [KiaraModule][kiara.module.KiaraModule]. At it's heart, it's
 basically just a wrapper around a pure function, with some utility methods describing it's input and output. One reason
 I decided to not just create a decorator that wraps any function was the need to be able to describe the input the
 function takes, and the output it produces in a stricter way than would have been possible with just type hints.
@@ -41,6 +55,7 @@ Advantages:
 
 Disadvantages:
 - more abstraction layers than strictly necessary
+- other, usual disadvantages associated with subclassing/inheritance
 
 ## Separating data from the Python objects that describe them / Data registry
 

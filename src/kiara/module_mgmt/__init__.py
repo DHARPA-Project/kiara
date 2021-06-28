@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+"""Base module for code that handles the import and management of [KiaraModule][kiara.module.KiaraModule] sub-classes."""
+
 import abc
 import logging
 import typing
@@ -14,10 +16,6 @@ if typing.TYPE_CHECKING:
 
 
 log = logging.getLogger("kiara")
-
-
-# extensions
-# ------------------------------------------------------------------------
 
 
 class ModuleManager(abc.ABC):

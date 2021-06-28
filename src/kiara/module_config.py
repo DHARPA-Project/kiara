@@ -312,11 +312,11 @@ class PipelineModuleConfig(KiaraModuleConfig):
         default_factory=dict,
         description="A map of output aliases, with the calculated (<step_id>__<output_name> -- double underscore!) name as key, and a string (the resulting workflow output alias) as value.  Check the documentation for the config class for which marker strings can be used to automatically create this map if possible.",
     )
-    doc: str = Field(
+    documentation: str = Field(
         default="-- n/a --", description="Documentation about what the pipeline does."
     )
 
-    meta: typing.Dict[str, typing.Any] = Field(
+    context: typing.Dict[str, typing.Any] = Field(
         default_factory=dict, description="Metadata for this workflow."
     )
 
@@ -366,6 +366,12 @@ class PipelineModuleConfig(KiaraModuleConfig):
             controller=controller,
         )
         return pipeline
+
+    # def __rich_console__(
+    #     self, console: Console, options: ConsoleOptions
+    # ) -> RenderResult:
+    #
+    #     table = Table(show_header=False, box=box.SIMPLE)
 
 
 class KiaraWorkflowConfig(BaseModel):

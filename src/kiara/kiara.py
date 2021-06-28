@@ -161,6 +161,10 @@ class Kiara(object):
         return self._data_store
 
     @property
+    def module_mgmt(self) -> MergedModuleManager:
+        return self._module_mgr
+
+    @property
     def metadata_mgmt(self) -> MetadataMgmt:
         return self._metadata_mgmt
 

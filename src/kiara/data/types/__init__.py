@@ -27,6 +27,7 @@ from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
 
+from kiara.metadata.type_models import ValueTypeMetadata
 from kiara.utils.doc import extract_doc_from_cls
 
 if typing.TYPE_CHECKING:
@@ -83,6 +84,10 @@ class ValueType(object):
     #
     #     type_name = camel_case_to_snake_case(cls_name)
     #     return type_name
+
+    @classmethod
+    def get_type_metadata(cls) -> ValueTypeMetadata:
+        return ValueTypeMetadata.from_value_type_class(cls)
 
     @classmethod
     def doc(cls) -> str:

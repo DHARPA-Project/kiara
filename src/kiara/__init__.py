@@ -16,6 +16,7 @@ __all__ = [
     "get_version",
 ]
 import os
+import typing
 
 from .kiara import Kiara, explain, pretty_print  # noqa
 from .module import KiaraModule  # noqa
@@ -37,6 +38,9 @@ __author__ = """Markus Binsteiner"""
 """The author of this package."""
 __email__ = "markus.binsteiner@uni.lu"
 """Email address of the author."""
+
+
+KIARA_METADATA: typing.Mapping[str, typing.Any] = {"tags": [], "labels": {}}
 
 
 def get_version() -> str:

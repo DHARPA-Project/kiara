@@ -197,3 +197,35 @@ class OriginMetadataModel(MetadataModel):
         table.add_row("Authors", "\n".join(authors))
 
         return table
+
+
+class MetadataModelMetadata(MetadataModel):
+    @classmethod
+    def from_model_class(cls, model_cls: typing.Type[MetadataModel]):
+
+        origin_md = OriginMetadataModel.from_class(model_cls)
+        doc = DocumentationMetadataModel.from_class_doc(model_cls)
+        python_class = PythonClassMetadata.from_class(model_cls)
+        properties_md = ContextMetadataModel.from_class(model_cls)
+
+        return MetadataModelMetadata(
+            type_name=model_cls._metadata_key,  # type: ignore
+            documentation=doc,
+            origin=origin_md,
+            context=properties_md,
+            python_class=python_class,
+        )
+
+    type_name: str = Field(description="The registered name for this value type.")
+    documentation: DocumentationMetadataModel = Field(
+        description="Documentation for the value type."
+    )
+    origin: OriginMetadataModel = Field(
+        description="Information about the creator of this value type."
+    )
+    context: ContextMetadataModel = Field(
+        description="Generic properties of this value type."
+    )
+    python_class: PythonClassMetadata = Field(
+        description="The Python class for this value type."
+    )

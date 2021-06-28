@@ -206,3 +206,31 @@ class MergedModuleManager(ModuleManager):
             module_config=module_config,
             kiara=kiara,
         )
+
+    def find_modules_for_package(
+        self,
+        package_name: str,
+        include_core_modules: bool = True,
+        include_pipelines: bool = True,
+    ) -> typing.Dict[str, typing.Type["KiaraModule"]]:
+
+        result = {}
+        for module_type in self.available_module_types:
+
+            if module_type == "pipeline":
+                continue
+            module_cls = self.get_module_class(module_type)
+
+            module_package = module_cls.get_type_metadata().context.labels.get(
+                "package", None
+            )
+            if module_package != package_name:
+                continue
+            if module_cls.is_pipeline():
+                if include_pipelines:
+                    result[module_type] = module_cls
+            else:
+                if include_core_modules:
+                    result[module_type] = module_cls
+
+        return result

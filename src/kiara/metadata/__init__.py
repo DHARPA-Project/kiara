@@ -20,9 +20,17 @@ from kiara.utils.output import first_line
 
 if typing.TYPE_CHECKING:
     from kiara import Kiara
+    from kiara.metadata.core_models import MetadataModelMetadata
 
 
 class MetadataModel(BaseModel, JupyterMixin):
+    @classmethod
+    def get_model_cls_metadata(cls) -> "MetadataModelMetadata":
+
+        from kiara.metadata.core_models import MetadataModelMetadata
+
+        return MetadataModelMetadata.from_model_class(cls)
+
     @classmethod
     def model_doc(cls) -> str:
 

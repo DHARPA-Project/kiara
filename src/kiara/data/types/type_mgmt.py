@@ -182,6 +182,20 @@ class TypeMgmt(object):
         self._value_type_transformations[value_type_name] = result
         return self._value_type_transformations[value_type_name]
 
+    def find_value_types_for_package(
+        self, package_name: str
+    ) -> typing.Dict[str, typing.Type[ValueType]]:
+
+        result = {}
+        for value_type_name, value_type in self.value_types.items():
+
+            value_md = value_type.get_type_metadata()
+            package = value_md.context.labels.get("package")
+            if package == package_name:
+                result[value_type_name] = value_type
+
+        return result
+
     # def get_available_transformations_for_type(
     #     self, value_type_name: str
     # ) -> typing.Iterable[str]:

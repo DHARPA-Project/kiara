@@ -22,3 +22,16 @@ class MetadataMgmt(object):
         if self._metadata_models is None:
             self._metadata_models = find_all_metadata_schemas()
         return self._metadata_models
+
+    def find_all_schemas_for_package(
+        self, package_name: str
+    ) -> typing.Dict[str, typing.Type[MetadataModel]]:
+
+        result = {}
+        for name, schema in self.all_schemas.items():
+            schema_md = schema.get_model_cls_metadata()
+            package = schema_md.context.labels.get("package")
+            if package == package_name:
+                result[name] = schema
+
+        return result

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import inspect
 import os
-from pydantic import BaseModel, typing
+import typing
+from pydantic import BaseModel
 from pydoc import locate
 
 from kiara import Kiara
@@ -64,6 +65,7 @@ KIARA_MODEL_CLASSES: typing.Mapping[str, typing.List[typing.Type[BaseModel]]] = 
 
 
 yaml = StringYAML()
+kiara_obj = Kiara.instance()
 
 
 def define_env(env):
@@ -128,6 +130,53 @@ def define_env(env):
             return html
         except Exception as e:
             return f"Can't render module info: {str(e)}"
+
+    @env.macro
+    def get_module_list_for_package(
+        package_name: str,
+        include_core_modules: bool = True,
+        include_pipelines: bool = True,
+    ):
+
+        modules = kiara_obj.module_mgmt.find_modules_for_package(
+            package_name,
+            include_core_modules=include_core_modules,
+            include_pipelines=include_pipelines,
+        )
+
+        result = []
+        for name, info in modules.items():
+            type_md = info.get_type_metadata()
+            result.append(
+                f"  - [``{name}``]({type_md.context.get_url_for_reference('module_doc')}): {type_md.documentation.description}"
+            )
+
+        print(result)
+        return "\n".join(result)
+
+    @env.macro
+    def get_value_types_for_package(package_name: str):
+
+        value_types = kiara_obj.type_mgmt.find_value_types_for_package(package_name)
+        result = []
+        for name, info in value_types.items():
+            type_md = info.get_type_metadata()
+            result.append(f"  - ``{name}``: {type_md.documentation.description}")
+
+        return "\n".join(result)
+
+    @env.macro
+    def get_metadata_schemas_for_package(package_name: str):
+
+        metadata_schemas = kiara_obj.metadata_mgmt.find_all_schemas_for_package(
+            package_name
+        )
+        result = []
+        for name, info in metadata_schemas.items():
+            type_md = info.get_model_cls_metadata()
+            result.append(f"  - ``{name}``: {type_md.documentation.description}")
+
+        return "\n".join(result)
 
 
 def on_post_build(env):

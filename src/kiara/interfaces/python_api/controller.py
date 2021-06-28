@@ -37,6 +37,8 @@ class ApiController(PipelineController):
                         if self.can_be_skipped(step_id):
                             continue
                         else:
+                            # from kiara.utils.output import rich_print
+                            # rich_print(self.pipeline.get_current_state())
                             raise Exception(
                                 f"Required pipeline step '{step_id}' can't be processed, inputs not ready yet: {', '.join(self.invalid_inputs(step_id))}"
                             )

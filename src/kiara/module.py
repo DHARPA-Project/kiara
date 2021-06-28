@@ -353,7 +353,10 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
                 result[k] = v
             elif isinstance(v, typing.Mapping):
                 schema = ValueSchema(**v)
-                schema.validate_types(self._kiara)
+                try:
+                    schema.validate_types(self._kiara)
+                except Exception as e:
+                    raise Exception(f"Error for input schema in module '{self._module_type_id}': {e}")  # type: ignore
                 result[k] = schema
             else:
                 raise Exception(

@@ -5,14 +5,16 @@ import abc
 import copy
 import typing
 import uuid
-from rich.console import Console, ConsoleOptions, RenderResult
+from pydantic import BaseModel, Field
+from rich import box
+from rich.console import Console, ConsoleOptions, RenderGroup, RenderResult
 from rich.jupyter import JupyterMixin
+from rich.panel import Panel
 from slugify import slugify
 
 from kiara import Kiara, KiaraModule, Pipeline, PipelineController, PipelineStructure
 from kiara.data import Value, ValueSet
 from kiara.interfaces.python_api.controller import ApiController
-from kiara.metadata.core_models import DocumentationMetadataModel
 from kiara.metadata.module_models import KiaraModuleInstanceMetadata
 from kiara.module_config import PipelineModuleConfig, PipelineStepConfig
 from kiara.pipeline.pipeline import create_pipeline_step_table
@@ -539,22 +541,20 @@ class Step(JupyterMixin):
 
         self._structure: typing.Optional[Workflow] = None
 
-        self._info: typing.Optional[KiaraModuleInstanceMetadata] = None
+        self._info: typing.Optional[StepInfo] = None
 
     @property
     def id(self) -> str:
         return self._step_id
 
     @property
-    def info(self) -> KiaraModuleInstanceMetadata:
+    def info(self) -> "StepInfo":
         if self._info is None:
-            self._info = KiaraModuleInstanceMetadata.from_module_obj(self.module)
+            module_metadata = KiaraModuleInstanceMetadata.from_module_obj(self.module)
+            self._info = StepInfo(
+                step_id=self._step_id, module_metadata=module_metadata
+            )
         return self._info
-
-    @property
-    def doc(self) -> DocumentationMetadataModel:
-
-        return self.info.type_metadata.documentation
 
     @property
     def module_type(self) -> str:
@@ -640,3 +640,25 @@ class Step(JupyterMixin):
         step = current_state.structure.steps[self.id]
         step_table = create_pipeline_step_table(current_state, step)
         yield step_table
+
+
+class StepInfo(JupyterMixin, BaseModel):
+
+    step_id: str = Field(description="The step id.")
+    module_metadata: KiaraModuleInstanceMetadata = Field(
+        description="The module metadata."
+    )
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+
+        doc = self.module_metadata.type_metadata.documentation.create_renderable()
+        metadata = self.module_metadata.create_renderable(include_desc=False)
+
+        panel = Panel(
+            RenderGroup(Panel(doc, box=box.SIMPLE), metadata),
+            title=f"Step info: [b]{self.step_id}[/b] (type: [i]{self.module_metadata.type_metadata.type_id}[/i])",
+            title_align="left",
+        )
+        yield panel

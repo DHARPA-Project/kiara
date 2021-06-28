@@ -57,6 +57,10 @@ step_{{ step.step_id }}.input.{{ input_name }} = [
 {% endfor -%}
 {% endfor -%}
 # %% [markdown]
+# # Description
+
+{{ structure.structure_config.documentation }}
+
 # # Assembling the workflow <a class="anchor" id="assembly"></a>
 
 The first step in the creation of our workflow is to create the individual steps from the available *kiara* modules.

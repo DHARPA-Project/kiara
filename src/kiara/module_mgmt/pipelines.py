@@ -49,6 +49,62 @@ class PipelineModuleManagerConfig(BaseModel):
         return result
 
 
+def get_pipeline_details_from_path(
+    path: typing.Union[str, Path],
+    module_type_name: typing.Optional[str] = None,
+    base_module: typing.Optional[str] = None,
+):
+
+    if isinstance(path, str):
+        path = Path(os.path.expanduser(path))
+
+    if not path.is_file():
+        raise Exception(
+            f"Can't add pipeline description '{path.as_posix()}': not a file"
+        )
+
+    data = get_data_from_file(path)
+
+    if not data:
+        raise Exception(
+            f"Can't register pipeline file '{path.as_posix()}': no content."
+        )
+
+    if module_type_name:
+        data[MODULE_TYPE_NAME_KEY] = module_type_name
+
+    filename = path.name
+
+    if not isinstance(data, typing.Mapping):
+        raise Exception("Not a dictionary type.")
+    name = data.get(MODULE_TYPE_NAME_KEY, None)
+    if name is None:
+        name = filename.split(".", maxsplit=1)[0]
+
+    result = {"data": data, "source": path.as_posix(), "source_type": "file"}
+    if base_module:
+        result["base_module"] = base_module
+    return (name, result)
+
+
+def check_doc_sidecar(
+    path: typing.Union[Path, str], data: typing.Mapping[str, typing.Any]
+) -> typing.Mapping[str, typing.Any]:
+
+    if isinstance(path, str):
+        path = Path(os.path.expanduser(path))
+
+    _doc = data["data"].get("documentation", None)
+    if _doc is None:
+        _doc_path = Path(path.as_posix() + ".md")
+        if _doc_path.is_file():
+            doc = _doc_path.read_text()
+            if doc:
+                data["data"]["documentation"] = doc
+
+    return data
+
+
 class PipelineModuleManager(ModuleManager):
     def __init__(
         self,
@@ -85,44 +141,6 @@ class PipelineModuleManager(ModuleManager):
 
                 self.add_pipelines_path(ns, path[1], path[0])
 
-    def _get_pipeline_details_from_path(
-        self,
-        path: typing.Union[str, Path],
-        module_type_name: typing.Optional[str] = None,
-        base_module: typing.Optional[str] = None,
-    ):
-
-        if isinstance(path, str):
-            path = Path(os.path.expanduser(path))
-
-        if not path.is_file():
-            raise Exception(
-                f"Can't add pipeline description '{path.as_posix()}': not a file"
-            )
-
-        data = get_data_from_file(path)
-
-        if not data:
-            raise Exception(
-                f"Can't register pipeline file '{path.as_posix()}': no content."
-            )
-
-        if module_type_name:
-            data[MODULE_TYPE_NAME_KEY] = module_type_name
-
-        filename = path.name
-
-        if not isinstance(data, typing.Mapping):
-            raise Exception("Not a dictionary type.")
-        name = data.get(MODULE_TYPE_NAME_KEY, None)
-        if name is None:
-            name = filename.split(".", maxsplit=1)[0]
-
-        result = {"data": data, "source": path.as_posix(), "source_type": "file"}
-        if base_module:
-            result["base_module"] = base_module
-        return (name, result)
-
     def register_pipeline(
         self,
         data: typing.Union[str, Path, typing.Mapping[str, typing.Any]],
@@ -141,7 +159,9 @@ class PipelineModuleManager(ModuleManager):
             data = Path(os.path.expanduser(data))
 
         if isinstance(data, Path):
-            _name, _data = self._get_pipeline_details_from_path(data)
+            _name, _data = get_pipeline_details_from_path(data)
+            _data = check_doc_sidecar(data, _data)
+
         elif isinstance(data, typing.Mapping):
             _data = dict(data)
             if module_type_name:
@@ -216,9 +236,10 @@ class PipelineModuleManager(ModuleManager):
 
                         full_path = os.path.join(root, filename)
 
-                        name, data = self._get_pipeline_details_from_path(
+                        name, data = get_pipeline_details_from_path(
                             path=full_path, base_module=base_module
                         )
+                        data = check_doc_sidecar(full_path, data)
                         rel_path = os.path.relpath(os.path.dirname(full_path), path)
                         if not rel_path or rel_path == ".":
                             ns_name = name
@@ -235,9 +256,10 @@ class PipelineModuleManager(ModuleManager):
                             f"Ignoring invalid pipeline file '{full_path}': {e}"
                         )
         elif path.is_file():
-            name, data = self._get_pipeline_details_from_path(
+            name, data = get_pipeline_details_from_path(
                 path=path, base_module=base_module
             )
+            data = check_doc_sidecar(path, data)
             files = {name: data}
 
         result = {}

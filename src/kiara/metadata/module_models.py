@@ -152,9 +152,10 @@ class KiaraModuleTypeMetadata(MetadataModel):
         if is_pipeline:
             pipeline_config = module_cls._base_pipeline_config  # type: ignore
 
-        return cls(type_name=module_cls._module_type_name, documentation=doc, origin=origin_md, context=properties_md, python_class=python_class, config=config, is_pipeline=is_pipeline, pipeline_config=pipeline_config, process_src=proc_src)  # type: ignore
+        return cls(type_name=module_cls._module_type_name, type_id=module_cls._module_type_id, documentation=doc, origin=origin_md, context=properties_md, python_class=python_class, config=config, is_pipeline=is_pipeline, pipeline_config=pipeline_config, process_src=proc_src)  # type: ignore
 
     type_name: str = Field(description="The registered name for this module type.")
+    type_id: str = Field(description="The full type id.")
     documentation: DocumentationMetadataModel = Field(
         description="Documentation for the module."
     )
@@ -252,11 +253,14 @@ class KiaraModuleInstanceMetadata(MetadataModel):
 
     def create_renderable(self, **config: typing.Any) -> RenderableType:
 
+        include_desc = config.get("include_doc", True)
+
         table = Table(box=box.SIMPLE, show_header=False, show_lines=True)
         table.add_column("Property", style="i")
         table.add_column("Value")
 
-        table.add_row("Description", self.type_metadata.documentation.description)
+        if include_desc:
+            table.add_row("Description", self.type_metadata.documentation.description)
 
         table.add_row("Origin", self.type_metadata.origin.create_renderable())
         table.add_row("Type context", self.type_metadata.context.create_renderable())

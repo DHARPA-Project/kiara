@@ -7,7 +7,7 @@ from types import ModuleType
 from kiara.defaults import KIARA_MODULE_METADATA_ATTRIBUTE
 
 
-@lru_cache
+@lru_cache()
 def get_metadata_for_python_module_or_class(
     module_or_class: typing.Union[ModuleType, typing.Type]
 ) -> typing.List[typing.Dict[str, typing.Any]]:

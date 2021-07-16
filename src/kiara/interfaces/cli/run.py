@@ -294,7 +294,7 @@ async def run(ctx, module, inputs, module_config, output, explain, save, id):
         for field, value in workflow.outputs.items():
             rich_print(f"Saving '[i]{field}[/i]'...")
             try:
-                value_id = value.save()
+                value_id = value.copy_bundle()
                 rich_print(f"   -> done, id: [i]{value_id}[/i]")
 
             except Exception as e:

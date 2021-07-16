@@ -302,7 +302,9 @@ class Value(BaseModel, JupyterMixin):
     ) -> typing.Mapping[str, typing.Mapping[str, typing.Any]]:
 
         if not metadata_keys:
-            _metadata_keys = set(self._kiara.get_metadata_keys_for_type(self.type_name))
+            _metadata_keys = set(
+                self._kiara.metadata_mgmt.get_metadata_keys_for_type(self.type_name)
+            )
             for key in self.metadata.keys():
                 _metadata_keys.add(key)
         else:
@@ -322,7 +324,9 @@ class Value(BaseModel, JupyterMixin):
         if not missing:
             return result
 
-        _md = self._kiara.get_value_metadata(self, *missing, also_return_schema=True)
+        _md = self._kiara.metadata_mgmt.get_value_metadata(
+            self, *missing, also_return_schema=True
+        )
         for k, v in _md.items():
             self.metadata[k] = v
             if also_return_schema:
@@ -333,7 +337,7 @@ class Value(BaseModel, JupyterMixin):
 
     def save(self) -> str:
 
-        return self._kiara.save_value(self)
+        return self._kiara.data_store.save_value(self)
 
     def transform(
         self,
@@ -375,7 +379,10 @@ class NonRegistryValue(Value):
 
     def __init__(self, _init_value: typing.Any, **kwargs):  # type: ignore
 
-        _id: str = str(uuid.uuid4())
+        _id: typing.Optional[str] = kwargs.pop("id", None)
+        if _id is None:
+            _id = str(uuid.uuid4())
+
         self._value: typing.Any = _init_value
 
         if _init_value is None:
@@ -391,6 +398,13 @@ class NonRegistryValue(Value):
         super().__init__(id=_id, **kwargs)
 
     def get_value_data(self) -> typing.Any:
+
+        if not self.is_set and self.value_schema.default not in (
+            SpecialValue.NO_VALUE,
+            SpecialValue.NOT_SET,
+            None,
+        ):
+            return self.value_schema.default
 
         return self._value
 

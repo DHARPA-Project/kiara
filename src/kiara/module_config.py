@@ -12,9 +12,9 @@ from rich.console import Console, ConsoleOptions, RenderResult
 from rich.table import Table
 from slugify import slugify
 
+from kiara.data.operations import ModuleProfileConfig
 from kiara.data.values import StepValueAddress
 from kiara.defaults import DEFAULT_PIPELINE_PARENT_ID
-from kiara.profiles import ModuleProfileConfig
 from kiara.utils import get_data_from_file
 
 if typing.TYPE_CHECKING:

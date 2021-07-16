@@ -14,8 +14,6 @@
 #     name: python3
 # ---
 # %%
-%env COLUMNS=150
-
 import kiara
 from kiara.interfaces.python_api import Step
 from kiara.utils.jupyter import graph_to_image
@@ -43,6 +41,10 @@ step_{{ step.step_id }}.input.{{ input_name }} = [
 #     * [Creating the steps of the workflow](#creating_steps)
 {%  for stage in structure.processing_stages -%}
 #         * [Execution stage: {{ loop.index }}](#execution_stage_{{ loop.index }})
+{% for step_id in stage -%}
+{%  set step = structure.get_step(step_id) -%}
+#             - [Step: ``{{ step.step_id }}``](#execution_stage_{{ loop.index }}_{{ step.step_id }})
+{%  endfor -%}
 {% endfor -%}
 #     * [Connecting the workflow steps](#connecting_steps)
 # * [Workflow information](#workflow_info)
@@ -70,10 +72,11 @@ A list of available modules and their aliases can be found here: TODO
 {%  for stage in structure.processing_stages %}
 # %% [markdown]
 # ### Execution stage: {{ loop.index }} <a class="anchor" id="execution_stage_{{ loop.index }}"></a>
-# %%
-{% for step_id in stage %}
+{% for step_id in stage %}# %% [markdown]
 {%  set step = structure.get_step(step_id) %}
-# Creating step: {{ step.step_id }}
+# #### Creating step: ``{{ step.step_id }}`` <a class="anchor" id="execution_stage_{{ loop.index }}_{{ step.step_id }}"></a>
+
+# %%
 {%  if step.module_config -%}
 step_{{ step.step_id }}_config = {{ step.module_config }}
 step_{{ step.step_id }} = Step(
@@ -83,6 +86,8 @@ step_{{ step.step_id }} = Step(
 {%  else -%}
 step_{{ step.step_id }} = Step("{{ step.module_type }}", step_id="{{ step.step_id }}")
 {%  endif -%}
+step_{{ step.step_id }}.info
+
 {% endfor -%}
 {%  endfor -%}
 
@@ -153,10 +158,6 @@ workflow
 {%  set step = structure.get_step(step_id) -%}
 # %% [markdown]
 # ### Outputs for step: ``{{ step.step_id }}`` <a class="anchor" id="outputs_stage_{{ loop.index }}_{{ step.step_id }}"></a>
-
-# %%
-step_{{ step_id }}.info
-
 {% for output_name in step.module.output_names %}
 # %% [markdown]
 # ### Output: ``{{ output_name }}``

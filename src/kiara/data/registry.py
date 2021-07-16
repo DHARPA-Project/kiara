@@ -359,7 +359,9 @@ class DataRegistry(object):
     ):
 
         value = self.get_value_item(value)
-        if metadata_key in self._kiara.get_metadata_keys_for_type(value.type_name):
+        if metadata_key in self._kiara.metadata_mgmt.get_metadata_keys_for_type(
+            value.type_name
+        ):
             raise Exception(
                 f"Can't add metadata for auto-generated key '{metadata_key}'."
             )
@@ -483,7 +485,9 @@ class DataRegistry(object):
             raise NotImplementedError()
 
         column_name = subvalue["config"]
-        table_metadata = self._kiara.get_value_metadata(linked_obj, "table")
+        table_metadata = self._kiara.metadata_mgmt.get_value_metadata(
+            linked_obj, "table"
+        )
         column_names = table_metadata["table"]["column_names"]
         if column_name not in column_names:
             raise Exception(

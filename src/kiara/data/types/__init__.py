@@ -118,10 +118,6 @@ class ValueType(object):
     def python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
         return None
 
-    @classmethod
-    def save_config(cls) -> typing.Optional[typing.Mapping[str, typing.Any]]:
-        return None
-
     def __init__(self, **type_config: typing.Any):
 
         self._type_config: typing.Mapping[str, typing.Any] = type_config

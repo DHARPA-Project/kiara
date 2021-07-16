@@ -8,25 +8,18 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 from tzlocal import get_localzone
 
+from kiara.data.operations import ModuleProfileConfig
 from kiara.defaults import (
     KIARA_ALIAS_VALUE_FOLDER,
     KIARA_DATA_STORE,
     KIARA_METADATA_STORE,
 )
-from kiara.profiles import ModuleProfileConfig
 
 if typing.TYPE_CHECKING:
+    from kiara_modules.core.metadata_schemas import FileBundleMetadata, FileMetadata
+
     from kiara.data.values import Value
     from kiara.kiara import Kiara
-
-
-class SaveConfig(ModuleProfileConfig):
-
-    input_name: str = Field(description="The name of the input for the value to save.")
-    target_name: str = Field(description="The name of the input to specify the target.")
-    load_config_output: str = Field(
-        description="The name of the output field that contains the load config."
-    )
 
 
 class SnapshotMetadata(BaseModel):
@@ -60,6 +53,10 @@ class DataStore(object):
             typing.Dict[str, typing.Optional[typing.Dict[str, typing.Any]]]
         ] = None
 
+    @property
+    def data_store_path(self) -> Path:
+        return self._data_store
+
     def alias_available(self, alias: str):
         if alias in self.aliases.keys() or alias in self.value_ids:
             return False
@@ -76,12 +73,35 @@ class DataStore(object):
 
     def save_value(self, value: "Value") -> str:
 
-        value_type = value.type_obj
-        _save_config = value_type.save_config()
-        new_value_id = str(uuid.uuid4())
+        # save_config = self._kiara.data_operations.get_operation_config(value_type=value.type_name, operation_name="save_value", operation_id="data_store")
+        # assert isinstance(save_config, SaveOperationType)
 
-        if not _save_config:
-            raise Exception(f"Saving not supported for type '{value.type_name}'.")
+        op = self._kiara.data_operations.get_operation(
+            value_type=value.type_name,
+            operation_name="calculate_hash",
+            operation_id="default",
+        )
+        if not op:
+            new_value_id: str = str(uuid.uuid4())
+        else:
+            result = self._kiara.data_operations.run(
+                operation_name="calculate_hash", operation_id="default", value=value
+            )
+            new_value_id = result.get_value_data("hash")
+
+        # if value.type_name == "file":
+        #     fm: FileMetadata = value.get_value_data()
+        #     new_value_id = fm.file_hash
+        #     if new_value_id in self.value_ids:
+        #         # file with this hash was already stored, we don't need to do it again
+        #         return new_value_id
+        # elif value.type_name == "file_bundle":
+        #     fbm: FileBundleMetadata = value.get_value_data()
+        #     new_value_id = fbm.file_bundle_hash
+        #     if new_value_id in self.value_ids:
+        #         return new_value_id
+        # else:
+        #     new_value_id = str(uuid.uuid4())
 
         invalid = self.check_existing_aliases(*value.aliases)
 
@@ -89,18 +109,6 @@ class DataStore(object):
             raise Exception(
                 f"Can't save value, alias(es) already registered: {', '.join(invalid)}"
             )
-
-        save_config = SaveConfig(**_save_config)
-
-        module = save_config.create_module(self._kiara)
-        constants = module.config.constants
-        inputs = dict(constants)
-        for k, v in module.config.defaults:
-            if k in constants.keys():
-                raise Exception(
-                    f"Invalid default value '{k}', constant defined for this name."
-                )
-            inputs[k] = v
 
         target_path = os.path.join(self._data_store, new_value_id)
         metadata_path = os.path.join(
@@ -111,21 +119,34 @@ class DataStore(object):
                 f"Can't save value, metadata file alrady exists: {metadata_path}"
             )
 
-        if save_config.input_name in constants.keys():
-            raise Exception(
-                f"Invalid input field name '{save_config.input_name}', constant defined for this name."
-            )
-        inputs[save_config.input_name] = value
-        if save_config.target_name in constants.keys():
-            raise Exception(
-                f"Invalid target_name field name '{save_config.input_name}', constant defined for this name."
-            )
-        inputs[save_config.target_name] = target_path
+        op_config = self._kiara.data_operations.get_operation(
+            value_type=value.type_name,
+            operation_name="save_value",
+            operation_id="data_store",
+        )
+        other_inputs = {op_config.target_name: target_path}  # type: ignore
+        result = self._kiara.data_operations.run(
+            operation_name="save_value",
+            operation_id="data_store",
+            value=value,
+            other_inputs=other_inputs,
+        )
 
-        result = module.run(**inputs)
+        # file and file_bundle values are special cases, and we need to update their metadata before saving,
+        # otherwise it'd point to the wrong path
+        if value.type_name == "file":
+            onboarded_file = result.get_value_data("file")
+            orig_file: FileMetadata = value.get_value_data()
+            orig_file.is_onboarded = True
+            orig_file.path = onboarded_file.path
+        elif value.type_name == "file_bundle":
+            onboarded_bundle = result.get_value_data("file_bundle")
+            orig_bundle: FileBundleMetadata = value.get_value_data()
+            orig_bundle.included_files = onboarded_bundle.included_files
+            for path, f in orig_bundle.included_files.items():
+                f.is_onboarded = True
 
-        details: Value = result[save_config.load_config_output]
-
+        load_config_value: Value = result.get_value_obj("load_config")
         metadata: typing.Dict[str, typing.Mapping[str, typing.Any]] = dict(
             value.get_metadata(also_return_schema=True)
         )
@@ -145,7 +166,7 @@ class DataStore(object):
             "item_metadata": ssmd.dict(),
             "item_metadata_schema": ssmd.schema_json(),
         }
-        load_config = details.get_value_data()
+        load_config = load_config_value.get_value_data()
         metadata["load_config"] = {
             "item_metadata": load_config,
             "item_metadata_schema": LoadConfig.schema_json(),
@@ -155,37 +176,12 @@ class DataStore(object):
             "item_metadata_schema": value.value_metadata.schema_json(),
         }
 
-        with open(metadata_path, "w") as f:
-            f.write(json.dumps(metadata))
+        with open(metadata_path, "w") as _f:
+            _f.write(json.dumps(metadata))
 
         for alias in value.aliases:
             alias_file = os.path.join(self._alias_folder, f"{alias}.metadata.json")
             os.symlink(metadata_path, alias_file)
-
-        # metadata_columns = {
-        #     "key": [],
-        #     "metadata": [],
-        #     "metadata_schema": []
-        # }
-        #
-        # for name, md in metadata.items():
-        #     metadata_columns["key"].append(name)
-        #     md_json = json.dumps(md["metadata"])
-        #     metadata_columns["metadata"].append(md_json)
-        #     metadata_columns["metadata_schema"].append(md["metadata_schema"])
-
-        # metadata_tbl = pa.Table.from_pydict(metadata_columns)
-        # feather.write_feather(metadata_tbl, metadata_path)
-
-        # load_config_file = os.path.join(target_path,  "load_config.json")
-        # with open(load_config_file, 'w') as f:
-        #     f.write(json.dumps(load_config))
-
-        # result = {
-        #     "target_path": target_path,
-        #     "metadata_path": metadata_path,
-        #     "metadata": metadata,
-        # }
 
         return ssmd.value_id
 

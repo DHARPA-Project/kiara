@@ -15,6 +15,7 @@ from zmq.devices import ThreadDevice
 
 from kiara.config import KiaraConfig
 from kiara.data import Value, ValueSet
+from kiara.data.operations import DataOperationMgmt
 from kiara.data.persistence import DataStore
 from kiara.data.registry import DataRegistry
 from kiara.data.types import ValueType
@@ -29,7 +30,6 @@ from kiara.module_mgmt.merged import MergedModuleManager
 from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.pipeline import Pipeline
 from kiara.processing import Job, ModuleProcessor
-from kiara.profiles import ModuleProfileMgmt
 from kiara.utils import get_auto_workflow_alias, get_data_from_file, is_debug
 from kiara.utils.output import rich_print
 from kiara.workflow.kiara_workflow import KiaraWorkflow
@@ -86,7 +86,7 @@ class Kiara(object):
 
         self._zmq_context: Context = Context.instance()
 
-        self._profile_mgmt = ModuleProfileMgmt(kiara=self)
+        self._operation_mgmt = DataOperationMgmt(kiara=self)
         self._metadata_mgmt = MetadataMgmt(kiara=self)
         self._data_store = DataStore(kiara=self)
 
@@ -178,70 +178,13 @@ class Kiara(object):
 
     def determine_type(self, data: typing.Any) -> typing.Optional[ValueType]:
 
-        return self.type_mgmt.determine_type(data)
+        raise NotImplementedError()
 
-    def get_metadata_keys_for_type(self, value_type: str) -> typing.Iterable[str]:
-
-        all_profiles_for_type = self._profile_mgmt.extract_metadata_profiles.get(
-            value_type, None
-        )
-        if not all_profiles_for_type:
-            return []
-        else:
-            return all_profiles_for_type.keys()
-
-    def get_value_metadata(
-        self, value: Value, *metadata_keys: str, also_return_schema: bool = False
-    ):
-
-        value_type = value.value_schema.type
-        # TODO: validate type exists
-
-        all_profiles_for_type = self._profile_mgmt.extract_metadata_profiles.get(
-            value_type, None
-        )
-        if all_profiles_for_type is None:
-            all_profiles_for_type = {}
-
-        if not metadata_keys:
-            _metadata_keys = set(all_profiles_for_type.keys())
-            for key in value.metadata.keys():
-                _metadata_keys.add(key)
-        elif isinstance(metadata_keys, str):
-            _metadata_keys = set(metadata_keys)
-        else:
-            _metadata_keys = set(metadata_keys)
-
-        result = {}
-        missing = []
-
-        for md_key in _metadata_keys:
-            if md_key not in value.metadata.keys():
-                missing.append(md_key)
-            else:
-                result[md_key] = value.metadata[md_key]
-
-        for mk in missing:
-            if not all_profiles_for_type or mk not in all_profiles_for_type:
-                raise Exception(
-                    f"Can't extract metadata profile '{mk}' for type '{value_type}': metadata profile does not exist (for this type, anyway)."
-                )
-            profile = all_profiles_for_type[mk]
-            module = profile.create_module(kiara=self)
-            metadata_result = module.run(value_item=value)
-            result[mk] = metadata_result.get_all_value_data()
-
-        if also_return_schema:
-            return result
-        else:
-            return {k: v["item_metadata"] for k, v in result.items()}
+        # return self.type_mgmt.determine_type(data)
 
     def get_value_type_cls(self, type_name: str) -> typing.Type[ValueType]:
 
         return self.type_mgmt.get_value_type_cls(type_name=type_name)
-
-    def save_value(self, value: Value) -> str:
-        return self._data_store.save_value(value)
 
     def transform_data(
         self,
@@ -252,36 +195,40 @@ class Kiara(object):
         register_result: bool = False,
     ) -> Value:
 
-        if register_result:
-            raise NotImplementedError()
+        raise NotImplementedError()
 
-        if not source_type:
-            if isinstance(data, Value):
-                source_type = data.type_name
-            else:
-                _source_type = self.type_mgmt.determine_type(data)
-                if not _source_type:
-                    raise Exception(
-                        f"Can't transform data to '{target_type}': can not determine source type."
-                    )
-                source_type = _source_type._value_type_name  # type: ignore
-
-        module = self._profile_mgmt.get_type_conversion_module(
-            source_type=source_type, target_type=target_type  # type: ignore
-        )
-        from kiara.modules.type_conversion import TypeConversionModule
-
-        if isinstance(module, TypeConversionModule):
-
-            result = module.run(source_value=data, config=config)
-            return result.get_value_obj("target_value")
-
-        else:
-            raise NotImplementedError()
+        # if register_result:
+        #     raise NotImplementedError()
+        #
+        # if not source_type:
+        #     if isinstance(data, Value):
+        #         source_type = data.type_name
+        #     else:
+        #         _source_type = self.type_mgmt.determine_type(data)
+        #         if not _source_type:
+        #             raise Exception(
+        #                 f"Can't transform data to '{target_type}': can not determine source type."
+        #             )
+        #         source_type = _source_type._value_type_name  # type: ignore
+        #
+        # module = self._operation_mgmt.get_type_conversion_module(
+        #     source_type=source_type, target_type=target_type  # type: ignore
+        # )
+        # from kiara.modules.type_conversion import TypeConversionModule
+        #
+        # if isinstance(module, TypeConversionModule):
+        #
+        #     result = module.run(source_value=data, config=config)
+        #     return result.get_value_obj("target_value")
+        #
+        # else:
+        #     raise NotImplementedError()
 
     def get_convert_target_types(self, source_type: str) -> typing.Iterable[str]:
 
-        return self._profile_mgmt.type_convert_profiles.get(source_type, [])
+        raise NotImplementedError()
+
+        # return self._operation_mgmt.type_convert_profiles.get(source_type, [])
 
     def add_module_manager(self, module_manager: ModuleManager):
 
@@ -291,6 +238,10 @@ class Kiara(object):
     @property
     def data_registry(self) -> DataRegistry:
         return self._data_registry
+
+    @property
+    def data_operations(self) -> DataOperationMgmt:
+        return self._operation_mgmt
 
     def get_module_class(self, module_type: str) -> typing.Type["KiaraModule"]:
         return self._module_mgr.get_module_class(module_type=module_type)

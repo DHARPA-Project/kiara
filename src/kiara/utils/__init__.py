@@ -2,6 +2,7 @@
 import copy
 import dpath.util
 import importlib
+import inspect
 import json
 import logging
 import os
@@ -277,10 +278,14 @@ class StringYAML(YAML):
             return stream.getvalue()
 
 
-def _get_all_subclasses(cls: typing.Type) -> typing.Iterable[typing.Type]:
+def _get_all_subclasses(
+    cls: typing.Type, ignore_abstract: bool = False
+) -> typing.Iterable[typing.Type]:
 
     result = []
     for subclass in cls.__subclasses__():
+        if ignore_abstract and inspect.isabstract(subclass):
+            continue
         result.append(subclass)
         result.extend(_get_all_subclasses(subclass))
 

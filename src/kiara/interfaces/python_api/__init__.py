@@ -14,12 +14,12 @@ from slugify import slugify
 
 from kiara import Kiara, KiaraModule, Pipeline, PipelineController, PipelineStructure
 from kiara.data import Value, ValueSet
+from kiara.data.operations import ModuleProfileConfig
 from kiara.interfaces.python_api.controller import ApiController
 from kiara.metadata.module_models import KiaraModuleInstanceMetadata
 from kiara.module_config import PipelineModuleConfig, PipelineStepConfig
 from kiara.pipeline.pipeline import create_pipeline_step_table
 from kiara.pipeline.structure import generate_pipeline_endpoint_name
-from kiara.profiles import ModuleProfileConfig
 
 
 class DataPointSubValue(object):
@@ -612,6 +612,14 @@ class Step(JupyterMixin):
     @property
     def output_names(self):
         return self.module.output_names
+
+    @property
+    def input_schemas(self):
+        return self.module.input_schemas
+
+    @property
+    def output_schemas(self):
+        return self.module.output_schemas
 
     @property
     def input(self) -> DataPoints:

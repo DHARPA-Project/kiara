@@ -10,6 +10,7 @@ from kiara.utils.output import rich_print
 from .data.commands import data
 from .metadata.commands import metadata
 from .module.commands import module
+from .operation.commands import operation
 from .pipeline.commands import pipeline
 from .run import run
 from .type.command import type_group
@@ -39,6 +40,7 @@ cli.add_command(metadata)
 cli.add_command(type_group)
 cli.add_command(module)
 cli.add_command(pipeline)
+cli.add_command(operation)
 
 
 @cli.command()

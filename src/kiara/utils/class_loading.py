@@ -10,7 +10,6 @@ from types import ModuleType
 
 from kiara.data.types import ValueType
 from kiara.metadata import MetadataModel
-from kiara.module import KiaraModule
 from kiara.utils import (
     _get_all_subclasses,
     _import_modules_recursively,
@@ -18,6 +17,10 @@ from kiara.utils import (
     is_debug,
     log_message,
 )
+
+if typing.TYPE_CHECKING:
+    from kiara.data.operations import OperationType
+    from kiara.module import KiaraModule
 
 log = logging.getLogger("kiara")
 
@@ -200,6 +203,8 @@ def find_all_kiara_modules() -> typing.Dict[str, typing.Type["KiaraModule"]]:
     TODO
     """
 
+    from kiara.module import KiaraModule
+
     return load_all_subclasses_for_entry_point(
         entry_point_name="kiara.modules",
         base_class=KiaraModule,  # type: ignore
@@ -236,7 +241,19 @@ def find_all_value_types() -> typing.Dict[str, typing.Type["ValueType"]]:
     )
 
 
-def _get_and_set_module_name(module: typing.Type[KiaraModule]):
+def find_all_operation_types() -> typing.Dict[str, typing.Type["OperationType"]]:
+
+    from kiara.data.operations import OperationType
+
+    return load_all_subclasses_for_entry_point(
+        entry_point_name="kiara.operation_types",
+        base_class=OperationType,
+        set_id_attribute="_operation_type_name",
+        remove_namespace_tokens=["core."],
+    )
+
+
+def _get_and_set_module_name(module: typing.Type["KiaraModule"]):
 
     if hasattr(module, "_module_type_name"):
         return module._module_type_name  # type: ignore
@@ -249,7 +266,7 @@ def _get_and_set_module_name(module: typing.Type[KiaraModule]):
         return name
 
 
-def _get_and_set_metadata_model_name(module: typing.Type[KiaraModule]):
+def _get_and_set_metadata_model_name(module: typing.Type["KiaraModule"]):
 
     if hasattr(module, "_metadata_key"):
         return module._metadata_key  # type: ignore
@@ -262,7 +279,7 @@ def _get_and_set_metadata_model_name(module: typing.Type[KiaraModule]):
         return name
 
 
-def _get_and_set_value_type_name(module: typing.Type[KiaraModule]):
+def _get_and_set_value_type_name(module: typing.Type["KiaraModule"]):
 
     if hasattr(module, "_value_type_name"):
         return module._value_type_name  # type: ignore
@@ -275,9 +292,25 @@ def _get_and_set_value_type_name(module: typing.Type[KiaraModule]):
         return name
 
 
+def _get_and_set_operation_type_name(module: typing.Type["KiaraModule"]):
+
+    if hasattr(module, "_operation_type_name"):
+        return module._operation_type_name  # type: ignore
+    else:
+        name = camel_case_to_snake_case(module.__name__)
+        if name.endswith("_type"):
+            name = name[0:-5]
+        if not inspect.isabstract(module):
+            setattr(module, "_operation_type_name", name)
+        return name
+
+
 def find_kiara_modules_under(
     module: typing.Union[str, ModuleType], prefix: typing.Optional[str] = ""
-) -> typing.Mapping[str, typing.Type[KiaraModule]]:
+) -> typing.Mapping[str, typing.Type["KiaraModule"]]:
+
+    from kiara.module import KiaraModule
+
     return find_subclasses_under(
         base_class=KiaraModule,  # type: ignore
         module=module,
@@ -310,6 +343,21 @@ def find_value_types_under(
         prefix=prefix,
         remove_namespace_tokens=[],
         module_name_func=_get_and_set_value_type_name,
+    )
+
+
+def find_operations_under(
+    module: typing.Union[str, ModuleType], prefix: typing.Optional[str] = ""
+) -> typing.Mapping[str, typing.Type["OperationType"]]:
+
+    from kiara.data.operations import OperationType
+
+    return find_subclasses_under(
+        base_class=OperationType,
+        module=module,
+        prefix=prefix,
+        remove_namespace_tokens=[],
+        module_name_func=_get_and_set_operation_type_name,
     )
 
 

@@ -73,13 +73,22 @@ class DataStore(object):
 
     def save_value(self, value: "Value") -> str:
 
-        # save_config = self._kiara.data_operations.get_operation_config(value_type=value.type_name, operation_name="save_value", operation_id="data_store")
-        # assert isinstance(save_config, SaveOperationType)
+        op_config = self._kiara.data_operations.get_operation(
+            value_type=value.type_name,
+            operation_name="save_value",
+            operation_id="data_store",
+        )
+
+        if op_config is None:
+            raise Exception(
+                f"Can't save value: no 'save_value.data_store' operation registered for value type: {value.type_name}"
+            )
 
         op = self._kiara.data_operations.get_operation(
             value_type=value.type_name,
             operation_name="calculate_hash",
             operation_id="default",
+            raise_exception=False,
         )
         if not op:
             new_value_id: str = str(uuid.uuid4())
@@ -89,19 +98,9 @@ class DataStore(object):
             )
             new_value_id = result.get_value_data("hash")
 
-        # if value.type_name == "file":
-        #     fm: FileMetadata = value.get_value_data()
-        #     new_value_id = fm.file_hash
-        #     if new_value_id in self.value_ids:
-        #         # file with this hash was already stored, we don't need to do it again
-        #         return new_value_id
-        # elif value.type_name == "file_bundle":
-        #     fbm: FileBundleMetadata = value.get_value_data()
-        #     new_value_id = fbm.file_bundle_hash
-        #     if new_value_id in self.value_ids:
-        #         return new_value_id
-        # else:
-        #     new_value_id = str(uuid.uuid4())
+        if new_value_id in self.value_ids:
+            # a value item with this hash was already stored, we don't need to do it again
+            return new_value_id
 
         invalid = self.check_existing_aliases(*value.aliases)
 
@@ -119,11 +118,6 @@ class DataStore(object):
                 f"Can't save value, metadata file alrady exists: {metadata_path}"
             )
 
-        op_config = self._kiara.data_operations.get_operation(
-            value_type=value.type_name,
-            operation_name="save_value",
-            operation_id="data_store",
-        )
         other_inputs = {op_config.target_name: target_path}  # type: ignore
         result = self._kiara.data_operations.run(
             operation_name="save_value",
@@ -140,9 +134,11 @@ class DataStore(object):
             orig_file.is_onboarded = True
             orig_file.path = onboarded_file.path
         elif value.type_name == "file_bundle":
-            onboarded_bundle = result.get_value_data("file_bundle")
+            onboarded_bundle: FileBundleMetadata = result.get_value_data("file_bundle")
             orig_bundle: FileBundleMetadata = value.get_value_data()
             orig_bundle.included_files = onboarded_bundle.included_files
+            orig_bundle.is_onboarded = True
+            orig_bundle.path = onboarded_bundle.path
             for path, f in orig_bundle.included_files.items():
                 f.is_onboarded = True
 
@@ -163,17 +159,17 @@ class DataStore(object):
             snapshot_time=str(local_dt),
         )
         metadata["snapshot"] = {
-            "item_metadata": ssmd.dict(),
-            "item_metadata_schema": ssmd.schema_json(),
+            "metadata_item": ssmd.dict(),
+            "metadata_item_schema": ssmd.schema_json(),
         }
         load_config = load_config_value.get_value_data()
         metadata["load_config"] = {
-            "item_metadata": load_config,
-            "item_metadata_schema": LoadConfig.schema_json(),
+            "metadata_item": load_config,
+            "metadata_item_schema": LoadConfig.schema_json(),
         }
         metadata["value"] = {
-            "item_metadata": value.value_metadata.dict(),
-            "item_metadata_schema": value.value_metadata.schema_json(),
+            "metadata_item": value.value_metadata.dict(),
+            "metadata_item_schema": value.value_metadata.schema_json(),
         }
 
         with open(metadata_path, "w") as _f:
@@ -286,7 +282,7 @@ class DataStore(object):
                 result = self.values_metadata[value_id]["metadata"]
         else:
             r = {
-                k: v["item_metadata"]
+                k: v["metadata_item"]
                 for k, v in self.values_metadata[value_id]["metadata"].items()
             }
             if metadata_key:

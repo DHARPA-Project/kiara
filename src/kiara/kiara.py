@@ -186,49 +186,49 @@ class Kiara(object):
 
         return self.type_mgmt.get_value_type_cls(type_name=type_name)
 
-    def transform_data(
-        self,
-        data: typing.Any,
-        target_type: str,
-        source_type: typing.Optional[str] = None,
-        config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
-        register_result: bool = False,
-    ) -> Value:
+    # def transform_data(
+    #     self,
+    #     data: typing.Any,
+    #     target_type: str,
+    #     source_type: typing.Optional[str] = None,
+    #     config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+    #     register_result: bool = False,
+    # ) -> Value:
+    #
+    #     raise NotImplementedError()
+    #
+    #     # if register_result:
+    #     #     raise NotImplementedError()
+    #     #
+    #     # if not source_type:
+    #     #     if isinstance(data, Value):
+    #     #         source_type = data.type_name
+    #     #     else:
+    #     #         _source_type = self.type_mgmt.determine_type(data)
+    #     #         if not _source_type:
+    #     #             raise Exception(
+    #     #                 f"Can't transform data to '{target_type}': can not determine source type."
+    #     #             )
+    #     #         source_type = _source_type._value_type_name  # type: ignore
+    #     #
+    #     # module = self._operation_mgmt.get_type_conversion_module(
+    #     #     source_type=source_type, target_type=target_type  # type: ignore
+    #     # )
+    #     # from kiara.modules.type_conversion import TypeConversionModule
+    #     #
+    #     # if isinstance(module, TypeConversionModule):
+    #     #
+    #     #     result = module.run(source_value=data, config=config)
+    #     #     return result.get_value_obj("target_value")
+    #     #
+    #     # else:
+    #     #     raise NotImplementedError()
 
-        raise NotImplementedError()
-
-        # if register_result:
-        #     raise NotImplementedError()
-        #
-        # if not source_type:
-        #     if isinstance(data, Value):
-        #         source_type = data.type_name
-        #     else:
-        #         _source_type = self.type_mgmt.determine_type(data)
-        #         if not _source_type:
-        #             raise Exception(
-        #                 f"Can't transform data to '{target_type}': can not determine source type."
-        #             )
-        #         source_type = _source_type._value_type_name  # type: ignore
-        #
-        # module = self._operation_mgmt.get_type_conversion_module(
-        #     source_type=source_type, target_type=target_type  # type: ignore
-        # )
-        # from kiara.modules.type_conversion import TypeConversionModule
-        #
-        # if isinstance(module, TypeConversionModule):
-        #
-        #     result = module.run(source_value=data, config=config)
-        #     return result.get_value_obj("target_value")
-        #
-        # else:
-        #     raise NotImplementedError()
-
-    def get_convert_target_types(self, source_type: str) -> typing.Iterable[str]:
-
-        raise NotImplementedError()
-
-        # return self._operation_mgmt.type_convert_profiles.get(source_type, [])
+    # def get_convert_target_types(self, source_type: str) -> typing.Iterable[str]:
+    #
+    #     raise NotImplementedError()
+    #
+    #     # return self._operation_mgmt.type_convert_profiles.get(source_type, [])
 
     def add_module_manager(self, module_manager: ModuleManager):
 

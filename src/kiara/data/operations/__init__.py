@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
+import abc
 import logging
 import typing
 from pydantic import BaseModel, Extra, Field, PrivateAttr, ValidationError
 
 from kiara.data import Value
 from kiara.data.values import ValueSchema, ValueSet, ValueSetImpl
+from kiara.utils import is_debug
 from kiara.utils.class_loading import find_all_operation_types
+from kiara.utils.modules import create_schemas
 
 if typing.TYPE_CHECKING:
     from kiara import Kiara
@@ -37,7 +40,9 @@ class ModuleProfileConfig(BaseModel):
         return self._module
 
 
-class OperationType(ModuleProfileConfig):
+class OperationType(ModuleProfileConfig, abc.ABC):
+    """A class to represent a sort of an 'interface' for a group of kiara modules that do the same thing to a dataset, independent of the dataset type."""
+
     @classmethod
     def retrieve_operation_configs(
         cls, kiara: "Kiara"
@@ -58,6 +63,10 @@ class OperationType(ModuleProfileConfig):
 
     @classmethod
     def retrieve_operations(cls, kiara: "Kiara"):
+        """Return an (optional) collection of operations that the implementing class created.
+
+        Internally, this calls the [retrieve_operation_configs][kiara.data.operations.OperationType.retrieve_operation_configs] method of the sub-class (if implemented).
+        """
 
         profiles: typing.Mapping[
             str,
@@ -71,7 +80,9 @@ class OperationType(ModuleProfileConfig):
         operations: typing.Dict[
             str, typing.Dict[str, typing.Dict[str, typing.Any]]
         ] = {}
+
         for value_type, details in profiles.items():
+
             for operation_name, operation_ids_and_config in details.items():
                 for operation_id, data in operation_ids_and_config.items():
                     if operation_name in operations.setdefault(
@@ -102,7 +113,29 @@ class OperationType(ModuleProfileConfig):
 
         return operations
 
+    @classmethod
+    def create_input_schema(
+        cls,
+    ) -> typing.Optional[
+        typing.Mapping[str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]]
+    ]:
+        """Abstract method to implement by child classes, returns a description of the input schema of this module."""
+
+        return None
+
+    @classmethod
+    def create_output_schema(
+        cls,
+    ) -> typing.Optional[
+        typing.Mapping[str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]]
+    ]:
+        """Abstract method to implement by child classes, returns a description of the output schema of this module."""
+
+        return None
+
     _kiara: typing.Optional["Kiara"] = PrivateAttr(default=None)
+    _input_schemas: typing.Mapping[str, ValueSchema] = PrivateAttr(default=None)
+    _output_schemas: typing.Mapping[str, ValueSchema] = PrivateAttr(default=None)
 
     profile_doc: typing.Optional[str] = Field(
         description="Description of the profile.", default=None
@@ -192,39 +225,43 @@ class OperationType(ModuleProfileConfig):
         all_inputs[input_name] = value
         return all_inputs
 
-    @property
-    def input_schemas(self) -> typing.Mapping[str, ValueSchema]:
-        """Return the input schemas for potential other (non-main) inputs."""
+    def _validate_operation_interface(self):
+
+        pass
+
+    def _validate_input_schemas(self):
 
         if not self.input_map:
-            return {
+            input_schema = {
                 k: v
                 for k, v in self.module_obj.input_schemas.items()
                 if k != self.final_input_name
             }
 
-        result = {}
+        else:
+            input_schema = {}
+            for k, v in self.input_map.items():
+                if k == self.input_name:
+                    raise Exception(
+                        f"Misconfigured input name for operation type '{self.__class__.__name__}', input map can't contain main input field ({self.input_name}): {self.input_map}"
+                    )
 
-        for k, v in self.input_map.items():
-            if k == self.input_name:
-                raise Exception(
-                    f"Misconfigured input name for operation type '{self.__class__.__name__}', input map can't contain main input field ({self.input_name}): {self.input_map}"
-                )
+                input_schema[k] = self.module_obj.input_schemas[v]
 
-            result[k] = self.module_obj.input_schemas[v]
+        if not input_schema.keys() == self.input_schemas.keys():
+            raise Exception("Invalid input schema for ")
 
-        return result
-
-    @property
-    def output_schemas(self) -> typing.Mapping[str, ValueSchema]:
-
-        if not self.output_map:
-            return self.module_obj.output_schemas
-
-        result = {}
-        for k, v in self.output_map.items():
-            result[k] = self.module_obj.output_schemas[v]
-        return result
+    #
+    # @property
+    # def output_schemas(self) -> typing.Mapping[str, ValueSchema]:
+    #
+    #     if not self.output_map:
+    #         return self.module_obj.output_schemas
+    #
+    #     result = {}
+    #     for k, v in self.output_map.items():
+    #         result[k] = self.module_obj.output_schemas[v]
+    #     return result
 
 
 class DataOperationMgmt(object):
@@ -240,13 +277,58 @@ class DataOperationMgmt(object):
         if operation_type_classes is None:
             operation_type_classes = find_all_operation_types()
 
-        self._operation_type_classes: typing.Mapping[
-            str, typing.Type[OperationType]
-        ] = operation_type_classes
+        self._operation_type_classes: typing.Dict[str, typing.Type[OperationType]] = {}
+        self._operation_input_schemas: typing.Dict[
+            str, typing.Mapping[str, ValueSchema]
+        ] = {}
+        self._operation_output_schemas: typing.Dict[
+            str, typing.Mapping[str, ValueSchema]
+        ] = {}
+
+        for k, v in operation_type_classes.items():
+            try:
+                self.register_type_cls(alias=k, cls=v)
+            except Exception as e:
+                if is_debug():
+                    log.warning(f"Can't add operation type '{k}': {e}")
+                else:
+                    log.debug(f"Can't add operation type '{k}': {e}")
 
         self._operations: typing.Optional[
             typing.Dict[str, typing.Dict[str, typing.Dict[str, OperationType]]]
         ] = None
+
+    def register_type_cls(self, alias: str, cls: typing.Type[OperationType]):
+
+        if alias in self._operation_type_classes.keys():
+            raise Exception(f"Operation type already registered: {alias}")
+
+        _input_schemas = cls.create_input_schema()
+        _output_schema = cls.create_output_schema()
+
+        self._operation_type_classes[alias] = cls
+
+        if _input_schemas:
+            input_schemas = create_schemas(
+                schema_config=_input_schemas, kiara=self._kiara
+            )
+            self._operation_input_schemas[alias] = input_schemas
+
+        if _output_schema:
+            output_schemas = create_schemas(
+                schema_config=_output_schema, kiara=self._kiara
+            )
+            self._operation_output_schemas[alias] = output_schemas
+
+    def get_operation_type_cls(self, operation_name: str):
+
+        op_cls = self._operation_type_classes.get(operation_name, None)
+        if op_cls is None:
+            raise Exception(
+                f"No operation type with name '{operation_name}' registered."
+            )
+
+        return op_cls
 
     @property
     def operations(
@@ -281,6 +363,18 @@ class DataOperationMgmt(object):
 
                 value_type_ops = value_type_cls.get_operations()  # type: ignore
                 for operation_name, id_and_config in value_type_ops.items():
+
+                    if operation_name not in self._operation_type_classes.keys():
+                        if is_debug():
+                            log.warning(
+                                f"Ignoring {len(id_and_config)} operation config(s) for type '{value_type}': no operation type '{operation_name}' registered"
+                            )
+                        else:
+                            log.debug(
+                                f"Ignoring {len(id_and_config)} operation config(s) for type '{value_type}': no operation type '{operation_name}' registered"
+                            )
+                        continue
+
                     for operation_id, config in id_and_config.items():
                         if (
                             operation_id
@@ -294,6 +388,7 @@ class DataOperationMgmt(object):
                             )
 
                         op_type_cls = self._operation_type_classes.get(operation_name)
+
                         if not op_type_cls:
                             raise Exception(f"Invalid operation name: {operation_name}")
 
@@ -404,9 +499,16 @@ class DataOperationMgmt(object):
         )
 
         if oc is None:
-            raise Exception(
-                f"No operation '{operation_name}' with id '{operation_id}' available for value type '{value_type}'."
-            )
+            if raise_exception:
+                av = self.operations.get(value_type, {}).get(operation_name, {}).keys()
+                msg = ""
+                if av:
+                    msg = f" Available ids: {', '.join(av)}"
+                raise Exception(
+                    f"No operation '{operation_name}' with id '{operation_id}' available for value type '{value_type}'.{msg}"
+                )
+            else:
+                return None
         return oc
 
     def run(
@@ -421,10 +523,17 @@ class DataOperationMgmt(object):
             value_type=value.type_name,
             operation_name=operation_name,
             operation_id=operation_id,
-            raise_exception=True,
+            raise_exception=False,
         )
 
-        assert op_config is not None
+        if not op_config:
+            av = self.operations.get(value.type_name, {}).get(operation_name, {}).keys()
+            msg = ""
+            if av:
+                msg = f" Available ids: {', '.join(av)}"
+            raise Exception(
+                f"No operation '{operation_name}' with id '{operation_id}' available for value type '{value.type_name}'.{msg}"
+            )
 
         op_module = op_config.create_module(self._kiara)
         constants = op_module.config.constants

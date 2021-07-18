@@ -23,7 +23,8 @@ from kiara.metadata.module_models import (
     KiaraModuleTypeMetadata,
 )
 from kiara.module_config import KIARA_CONFIG, KiaraModuleConfig
-from kiara.utils import StringYAML, check_valid_field_names, is_debug
+from kiara.utils import StringYAML, is_debug
+from kiara.utils.modules import create_schemas, overlay_constants_and_defaults
 
 if typing.TYPE_CHECKING:
     from kiara import Kiara
@@ -341,46 +342,20 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
                 f"Invalid module implementation for '{self.__class__.__name__}': empty input schema"
             )
 
-        invalid = check_valid_field_names(*_input_schemas.keys())
-        if invalid:
-            raise Exception(
-                f"Can't assemble module '{self.id}', contains invalid input field name(s): {', '.join(invalid)}"
+        try:
+            self._input_schemas = create_schemas(
+                schema_config=_input_schemas, kiara=self._kiara
             )
-        result = {}
-        for k, v in _input_schemas.items():
+        except Exception as e:
+            raise Exception(
+                f"Can't create input schemas for module {self.full_id}: {e}"
+            )
 
-            if isinstance(v, ValueSchema):
-                result[k] = v
-            elif isinstance(v, typing.Mapping):
-                schema = ValueSchema(**v)
-                try:
-                    schema.validate_types(self._kiara)
-                except Exception as e:
-                    raise Exception(f"Error for input schema in module '{self._module_type_id}': {e}")  # type: ignore
-                result[k] = schema
-            else:
-                raise Exception(
-                    f"Invalid return type when tryping to create schema for '{self.id}': {type(v)}"
-                )
-            default_value = self.config.defaults.get(k, None)
-            constant_value = self.config.constants.get(k, None)
-
-            # value_to_test = None
-            if default_value is not None and constant_value is not None:
-                raise Exception(
-                    f"Module configuration error. Value '{k}' set in both 'constants' and 'defaults', this is not allowed."
-                )
-            # elif default_value is not None:
-            #     value_to_test = default_value
-            # elif constant_value is not None:
-            #     value_to_test = constant_value
-
-            # TODO: perform validation for constants/defaults
-
-            if default_value is not None:
-                result[k].default = default_value
-
-        self._input_schemas = result
+        defaults = self.config.defaults
+        constants = self.config.constants
+        overlay_constants_and_defaults(
+            self._input_schemas, defaults=defaults, constants=constants
+        )
 
         return self._input_schemas
 
@@ -398,26 +373,14 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
                 f"Invalid module implementation for '{self.__class__.__name__}': empty output schema"
             )
 
-        invalid = check_valid_field_names(*_output_schema.keys())
-        if invalid:
-            raise Exception(
-                f"Can't assemble module '{self.id}', contains invalid output field name(s): {', '.join(invalid)}"
+        try:
+            self._output_schemas = create_schemas(
+                schema_config=_output_schema, kiara=self._kiara
             )
-
-        result = {}
-        for k, v in _output_schema.items():
-            if isinstance(v, ValueSchema):
-                result[k] = v
-            elif isinstance(v, typing.Mapping):
-                schema = ValueSchema(**v)
-                schema.validate_types(self._kiara)
-                result[k] = schema
-            else:
-                raise Exception(
-                    f"Invalid return type when tryping to create schema for '{self.id}': {type(v)}"
-                )
-
-        self._output_schemas = result
+        except Exception as e:
+            raise Exception(
+                f"Can't create output schemas for module {self.full_id}: {e}"
+            )
 
         return self._output_schemas
 

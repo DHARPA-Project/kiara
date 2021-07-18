@@ -7,6 +7,12 @@ from kiara.data.operations import OperationType
 
 
 class PrettyPrintOperationType(OperationType):
+    """Create a pretty, readable string from a dataset.
+
+    Some information might be lost in the process, the main objective of this operation is to create a string that allows the user
+    to view the content of a dataset, taking into account the constraints of the output medium (e.g. line-width/height on a terminal).
+    """
+
     @classmethod
     def retrieve_operation_configs(
         cls, kiara: "Kiara"

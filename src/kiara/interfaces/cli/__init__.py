@@ -13,6 +13,7 @@ from .module.commands import module
 from .operation.commands import operation
 from .pipeline.commands import pipeline
 from .run import run
+from .service.commands import service
 from .type.command import type_group
 
 try:
@@ -41,6 +42,7 @@ cli.add_command(type_group)
 cli.add_command(module)
 cli.add_command(pipeline)
 cli.add_command(operation)
+cli.add_command(service)
 
 
 @cli.command()

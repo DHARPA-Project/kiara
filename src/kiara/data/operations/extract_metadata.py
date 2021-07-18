@@ -7,6 +7,8 @@ from kiara.data.operations import OperationType
 
 
 class ExtractMetadataOperationType(OperationType):
+    """Extract metadata from a dataset."""
+
     @classmethod
     def retrieve_operation_configs(
         cls, kiara: Kiara

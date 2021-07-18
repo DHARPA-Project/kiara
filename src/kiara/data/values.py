@@ -19,19 +19,13 @@ import uuid
 from datetime import datetime
 from pydantic import BaseModel, Extra, Field, PrivateAttr, root_validator
 from rich import box
-from rich.console import (
-    Console,
-    ConsoleOptions,
-    ConsoleRenderable,
-    RenderResult,
-    RichCast,
-)
+from rich.console import Console, ConsoleOptions, RenderResult
 from rich.jupyter import JupyterMixin
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
 
-from kiara.data.types import ValueHashMarker, ValueType
+from kiara.data.types import ValueType
 from kiara.defaults import INVALID_VALUE_NAMES, PIPELINE_PARENT_MARKER, SpecialValue
 from kiara.utils import StringYAML, camel_case_to_snake_case
 
@@ -218,9 +212,9 @@ class Value(BaseModel, JupyterMixin):
     )
     is_none: bool = Field(description="Whether the value is 'None'.", default=True)
 
-    value_hash: typing.Union[int, ValueHashMarker] = Field(
-        description="The hash of the current value.", default=ValueHashMarker.NO_VALUE
-    )
+    # value_hash: typing.Union[int, ValueHashMarker] = Field(
+    #     description="The hash of the current value.", default=ValueHashMarker.NO_VALUE
+    # )
 
     # is_valid: bool = Field(
     #     description="Whether the value is set and valid.", default=False
@@ -262,9 +256,9 @@ class Value(BaseModel, JupyterMixin):
         """
         raise NotImplementedError()
 
-    def get_value_hash(self) -> str:
-
-        raise NotImplementedError()
+    # def get_value_hash(self) -> str:
+    #
+    #     raise NotImplementedError()
 
     def _create_value_table(
         self, padding=(0, 1), ensure_metadata: bool = False
@@ -283,11 +277,11 @@ class Value(BaseModel, JupyterMixin):
         table.add_row("is set", "yes" if self.item_is_valid() else "no")
         table.add_row("is constant", "yes" if self.is_constant else "no")
 
-        if isinstance(self.value_hash, int):
-            vh = str(self.value_hash)
-        else:
-            vh = self.value_hash.value
-        table.add_row("hash", vh)
+        # if isinstance(self.value_hash, int):
+        #     vh = str(self.value_hash)
+        # else:
+        #     vh = self.value_hash.value
+        # table.add_row("hash", vh)
         if self.metadata:
             json_string = json.dumps(self.get_metadata(), indent=2)
             metadata = Syntax(json_string, "json")
@@ -317,7 +311,7 @@ class Value(BaseModel, JupyterMixin):
                 if also_return_schema:
                     result[metadata_key] = self.metadata[metadata_key]
                 else:
-                    result[metadata_key] = self.metadata[metadata_key]["item_metadata"]
+                    result[metadata_key] = self.metadata[metadata_key]["metadata_item"]
             else:
                 missing.add(metadata_key)
 
@@ -332,31 +326,31 @@ class Value(BaseModel, JupyterMixin):
             if also_return_schema:
                 result[k] = v
             else:
-                result[k] = v["item_metadata"]
+                result[k] = v["metadata_item"]
         return result
 
     def save(self) -> str:
 
         return self._kiara.data_store.save_value(self)
 
-    def transform(
-        self,
-        target_type: str,
-        return_data: bool = True,
-        config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
-        register_result: bool = False,
-    ) -> typing.Union[typing.Mapping[str, typing.Any], "Value"]:
-
-        transformed = self._kiara.transform_data(
-            data=self,
-            target_type=target_type,
-            config=config,
-            register_result=register_result,
-        )
-        if not return_data:
-            return transformed
-        else:
-            return transformed.get_value_data()
+    # def transform(
+    #     self,
+    #     target_type: str,
+    #     return_data: bool = True,
+    #     config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+    #     register_result: bool = False,
+    # ) -> typing.Union[typing.Mapping[str, typing.Any], "Value"]:
+    #
+    #     transformed = self._kiara.transform_data(
+    #         data=self,
+    #         target_type=target_type,
+    #         config=config,
+    #         register_result=register_result,
+    #     )
+    #     if not return_data:
+    #         return transformed
+    #     else:
+    #         return transformed.get_value_data()
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -462,12 +456,12 @@ class KiaraValue(Value, abc.ABC):
     def get_value_data(self) -> typing.Any:
         return self.registry.get_value_data(self)
 
-    def get_value_hash(self) -> typing.Any:
-
-        if self.value_hash == ValueHashMarker.DEFERRED:
-            return self.registry.get_value_hash(self)
-        else:
-            return self.value_hash
+    # def get_value_hash(self) -> typing.Any:
+    #
+    #     if self.value_hash == ValueHashMarker.DEFERRED:
+    #         return self.registry.get_value_hash(self)
+    #     else:
+    #         return self.value_hash
 
     def __eq__(self, other):
 
@@ -738,7 +732,7 @@ class ValueSetImpl(ValueSet, typing.MutableMapping[str, Value]):
         cls,
         kiara: "Kiara",
         schemas: typing.Mapping[str, ValueSchema],
-        read_only: bool,
+        read_only: bool = True,
         initial_values: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         title: typing.Optional[str] = None,
     ):
@@ -930,7 +924,9 @@ class ValueSetImpl(ValueSet, typing.MutableMapping[str, Value]):
 
     def __repr__(self):
 
-        return f"ValueItems(values={self._value_items} valid={self.items_are_valid()})"
+        return (
+            f"ValueSetImpl(values={self._value_items} valid={self.items_are_valid()})"
+        )
 
 
 ValueSchema.update_forward_refs()
@@ -942,46 +938,46 @@ class ValuesInfo(object):
         self._value_set: ValueSet = value_set
         self._title: typing.Optional[str] = title
 
-    def create_value_data_table(
-        self,
-        show_headers: bool = False,
-        convert_module_type: typing.Optional[str] = None,
-        convert_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
-    ) -> Table:
-
-        table = Table(show_header=show_headers, box=box.SIMPLE)
-        table.add_column("Field name", style="i")
-        table.add_column("Value data")
-
-        for field_name in self._value_set.get_all_field_names():
-            value = self._value_set.get_value_obj(field_name)
-
-            if not value.is_set:
-                if value.item_is_valid():
-                    value_str: typing.Union[
-                        ConsoleRenderable, RichCast, str
-                    ] = "-- not set --"
-                else:
-                    value_str = "[red]-- not set --[/red]"
-            elif value.is_none:
-                if value.item_is_valid():
-                    value_str = "-- no value --"
-                else:
-                    value_str = "[red]-- no value --[/red]"
-            else:
-                if not convert_module_type:
-                    value_str = value.get_value_data()
-                else:
-                    _value_str = value.transform(
-                        convert_module_type, return_data=True, config=convert_config
-                    )
-
-                if not isinstance(_value_str, (ConsoleRenderable, RichCast, str)):
-                    value_str = str(value_str)
-
-            table.add_row(field_name, value_str)
-
-        return table
+    # def create_value_data_table(
+    #     self,
+    #     show_headers: bool = False,
+    #     convert_module_type: typing.Optional[str] = None,
+    #     convert_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+    # ) -> Table:
+    #
+    #     table = Table(show_header=show_headers, box=box.SIMPLE)
+    #     table.add_column("Field name", style="i")
+    #     table.add_column("Value data")
+    #
+    #     for field_name in self._value_set.get_all_field_names():
+    #         value = self._value_set.get_value_obj(field_name)
+    #
+    #         if not value.is_set:
+    #             if value.item_is_valid():
+    #                 value_str: typing.Union[
+    #                     ConsoleRenderable, RichCast, str
+    #                 ] = "-- not set --"
+    #             else:
+    #                 value_str = "[red]-- not set --[/red]"
+    #         elif value.is_none:
+    #             if value.item_is_valid():
+    #                 value_str = "-- no value --"
+    #             else:
+    #                 value_str = "[red]-- no value --[/red]"
+    #         else:
+    #             if not convert_module_type:
+    #                 value_str = value.get_value_data()
+    #             else:
+    #                 _value_str = value.transform(
+    #                     convert_module_type, return_data=True, config=convert_config
+    #                 )
+    #
+    #             if not isinstance(_value_str, (ConsoleRenderable, RichCast, str)):
+    #                 value_str = str(value_str)
+    #
+    #         table.add_row(field_name, value_str)
+    #
+    #     return table
 
     def create_value_info_table(
         self, show_headers: bool = False, ensure_metadata: bool = False
@@ -1033,7 +1029,7 @@ class PipelineValue(BaseModel):
             value_metadata=value.value_metadata,
             aliases=value.aliases,
             last_update=value.last_update,
-            value_hash=value.value_hash,
+            # value_hash=value.value_hash,
             is_streaming=value.is_streaming,
             metadata=value.metadata,
         )
@@ -1058,9 +1054,9 @@ class PipelineValue(BaseModel):
     last_update: datetime = Field(
         default=None, description="The time the last update to this value happened."
     )
-    value_hash: typing.Union[ValueHashMarker, int] = Field(
-        description="The hash of the current value."
-    )
+    # value_hash: typing.Union[ValueHashMarker, int] = Field(
+    #     description="The hash of the current value."
+    # )
     is_streaming: bool = Field(
         default=False,
         description="Whether the value is currently streamed into this object.",

@@ -125,9 +125,7 @@ class ValueType(object):
             typing.Mapping[str, typing.Mapping[str, typing.Any]]
         ] = None
 
-    def import_value(
-        self, value: typing.Any
-    ) -> typing.Tuple[typing.Any, typing.Union[ValueHashMarker, int]]:
+    def import_value(self, value: typing.Any) -> typing.Any:
 
         assert value is not None
 
@@ -135,30 +133,30 @@ class ValueType(object):
         if parsed is None:
             parsed = value
         self.validate(parsed)
-        if self.defer_hash_calc():
-            _hash: typing.Union[ValueHashMarker, int] = ValueHashMarker.DEFERRED
-        else:
-            _hash = self.calculate_value_hash(value)
+        # if self.defer_hash_calc():
+        #     _hash: typing.Union[ValueHashMarker, int] = ValueHashMarker.DEFERRED
+        # else:
+        #     _hash = self.calculate_value_hash(value)
 
-        return (parsed, _hash)
+        return parsed
 
-    def defer_hash_calc(self) -> bool:
-        """Return a recommendation whether to defer the calculation of the hash of a value of this type.
-
-        This is useful to distinguish between types where calculating the hash is trivial, and the overhead of a
-        round-trip to the data registry would be more expensive than just calculating the hash on the spot and store
-        it in the value metadata right now.
-        """
-        return True
-
-    def calculate_value_hash(
-        self, value: typing.Any
-    ) -> typing.Union[int, ValueHashMarker]:
-        """Calculate the hash of this value.
-
-        If a hash can't be calculated, or the calculation of a type is not implemented (yet), this will return ``ValueHashMarker.NO_HASH``.
-        """
-        return ValueHashMarker.NO_HASH
+    # def defer_hash_calc(self) -> bool:
+    #     """Return a recommendation whether to defer the calculation of the hash of a value of this type.
+    #
+    #     This is useful to distinguish between types where calculating the hash is trivial, and the overhead of a
+    #     round-trip to the data registry would be more expensive than just calculating the hash on the spot and store
+    #     it in the value metadata right now.
+    #     """
+    #     return True
+    #
+    # def calculate_value_hash(
+    #     self, value: typing.Any
+    # ) -> typing.Union[int, ValueHashMarker]:
+    #     """Calculate the hash of this value.
+    #
+    #     If a hash can't be calculated, or the calculation of a type is not implemented (yet), this will return ``ValueHashMarker.NO_HASH``.
+    #     """
+    #     return ValueHashMarker.NO_HASH
 
     def parse_value(self, value: typing.Any) -> typing.Any:
         """Parse a value into a supported python type.

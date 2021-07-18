@@ -5,7 +5,6 @@ import uuid
 from pyarrow import Table
 
 from kiara.data.persistence import DataStore
-from kiara.data.types import ValueHashMarker
 from kiara.data.values import (
     DataValue,
     KiaraValue,
@@ -441,41 +440,41 @@ class DataRegistry(object):
 
         return value
 
-    def get_value_hash(
-        self, item: typing.Union[str, Value]
-    ) -> typing.Union[int, ValueHashMarker]:
-        """Request the hash for the current data of this value.
-
-        This raises an exception if no hash can be calculated.
-
-        Arguments:
-            item: the value or its id
-
-        Returns:
-            The hash of the data.
-        """
-
-        item = self.get_value_item(item)
-
-        if item.value_hash != ValueHashMarker.DEFERRED:
-            return item.value_hash
-
-        value_hash: typing.Union[ValueHashMarker, int, None] = None
-        if item.id in self._value_items.keys():
-            value_data = self._values[item.id]
-            if value_data == SpecialValue.NOT_SET:
-                return ValueHashMarker.NO_VALUE
-            elif value_data == SpecialValue.NO_VALUE:
-                return ValueHashMarker.NO_VALUE
-
-            value_hash = item.type_obj.calculate_value_hash(item)
-
-        elif item.id in self._linked_value_items.keys():
-            value_hash = ValueHashMarker.NO_HASH
-
-        assert value_hash is not None
-        item.value_hash = value_hash
-        return value_hash
+    # def get_value_hash(
+    #     self, item: typing.Union[str, Value]
+    # ) -> typing.Union[int, ValueHashMarker]:
+    #     """Request the hash for the current data of this value.
+    #
+    #     This raises an exception if no hash can be calculated.
+    #
+    #     Arguments:
+    #         item: the value or its id
+    #
+    #     Returns:
+    #         The hash of the data.
+    #     """
+    #
+    #     item = self.get_value_item(item)
+    #
+    #     if item.value_hash != ValueHashMarker.DEFERRED:
+    #         return item.value_hash
+    #
+    #     value_hash: typing.Union[ValueHashMarker, int, None] = None
+    #     if item.id in self._value_items.keys():
+    #         value_data = self._values[item.id]
+    #         if value_data == SpecialValue.NOT_SET:
+    #             return ValueHashMarker.NO_VALUE
+    #         elif value_data == SpecialValue.NO_VALUE:
+    #             return ValueHashMarker.NO_VALUE
+    #
+    #         value_hash = item.type_obj.calculate_value_hash(item)
+    #
+    #     elif item.id in self._linked_value_items.keys():
+    #         value_hash = ValueHashMarker.NO_HASH
+    #
+    #     assert value_hash is not None
+    #     item.value_hash = value_hash
+    #     return value_hash
 
     def calculate_sub_value(self, linked_id: str, subvalue: typing.Dict[str, str]):
 
@@ -602,15 +601,15 @@ class DataRegistry(object):
             else:
                 if value is None or value == SpecialValue.NO_VALUE:
                     item.metadata.clear()
-                    item.value_hash = ValueHashMarker.NO_VALUE
+                    # item.value_hash = ValueHashMarker.NO_VALUE
                     self._value_items[item.id].is_none = True
                     self._values[item.id] = SpecialValue.NO_VALUE
                 else:
-                    value, _hash = item.type_obj.import_value(value)
+                    value = item.type_obj.import_value(value)
                     item.metadata.clear()
-                    if _hash == ValueHashMarker.DEFERRED and always_calculate_hashes:
-                        _hash = item.type_obj.calculate_value_hash(value)
-                    item.value_hash = _hash
+                    # if _hash == ValueHashMarker.DEFERRED and always_calculate_hashes:
+                    #     _hash = item.type_obj.calculate_value_hash(value)
+                    # item.value_hash = _hash
 
                     self._values[item.id] = value
                     self._value_items[item.id].is_none = False
@@ -658,7 +657,7 @@ class DataRegistry(object):
 
             item.is_set = linked_item.is_set
             item.is_none = linked_item.is_none
-            item.value_hash = linked_item.value_hash
+            # item.value_hash = linked_item.value_hash
 
             # item.metadata = linked_item.metadata
 
@@ -676,7 +675,7 @@ class DataRegistry(object):
 
             item.is_none = is_none
             item.is_set = is_set
-            item.value_hash = ValueHashMarker.DEFERRED
+            # item.value_hash = ValueHashMarker.DEFERRED
 
     def get_stats(self) -> typing.Dict:
 

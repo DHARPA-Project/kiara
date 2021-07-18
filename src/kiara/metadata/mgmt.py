@@ -102,4 +102,4 @@ class MetadataMgmt(object):
         if also_return_schema:
             return result
         else:
-            return {k: v["item_metadata"] for k, v in result.items()}
+            return {k: v["metadata_item"] for k, v in result.items()}

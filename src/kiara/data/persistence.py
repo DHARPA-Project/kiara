@@ -55,6 +55,7 @@ class DataStore(object):
         os.makedirs(self._metadata_store, exist_ok=True)
         os.makedirs(self._alias_folder, exist_ok=True)
         self._aliases: typing.Optional[typing.Dict[str, str]] = None
+        self._last_metadata_change: float = 0
         self._value_id_cache: typing.Optional[
             typing.Dict[str, typing.Optional[typing.Dict[str, typing.Any]]]
         ] = None
@@ -184,7 +185,14 @@ class DataStore(object):
     ) -> typing.Mapping[str, typing.Any]:
 
         if self._value_id_cache is not None:
-            return self._value_id_cache
+            last_mod_time = os.path.getmtime(self._metadata_store)
+            if self._last_metadata_change == last_mod_time:
+                return self._value_id_cache
+            else:
+                self._value_id_cache = None
+
+        # TODO: lots of potential to make this faster, as it is it re-reads all the metadata file anew
+        # after cache clearing. Not worth it optimizing just yet.
 
         result = {}
         for root, dirnames, filenames in os.walk(self._metadata_store, topdown=True):
@@ -198,7 +206,10 @@ class DataStore(object):
 
                 split = filename[0:-14].split(".", maxsplit=1)
                 result[split[0]] = {"type": split[1]}
+
         self._value_id_cache = result  # type: ignore
+        self._last_metadata_change = os.path.getmtime(self._metadata_store)
+
         return self._value_id_cache  # type: ignore
 
     @property

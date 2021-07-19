@@ -10,7 +10,7 @@ import mkdocs.utils
 import os
 import tempfile
 import urllib.parse
-from mkdocs.config import Config
+from mkdocs.config import Config, config_options  # noqa
 from mkdocs.plugins import BasePlugin
 from mkdocs.structure.files import File, Files
 from mkdocs.structure.nav import (

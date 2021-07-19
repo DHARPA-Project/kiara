@@ -12,7 +12,7 @@ class ValueLoadConfig(ValueType):
     """
 
     @classmethod
-    def python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
+    def candidate_python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
         return [typing.Mapping, LoadConfig]
 
     @classmethod

@@ -50,7 +50,7 @@ class TypeMgmt(object):
 
         registered_types = {}
         for name, v_type in self.value_types.items():
-            rel = v_type.python_types()
+            rel = v_type.candidate_python_types()
             if rel:
                 for cls in rel:
                     registered_types.setdefault(cls, []).append(name)
@@ -99,88 +99,88 @@ class TypeMgmt(object):
             )
         return t
 
-    def get_value_type_transformations(
-        self, value_type_name: str
-    ) -> typing.Mapping[str, typing.Mapping[str, typing.Any]]:
-        """Return available transform pipelines for value types."""
-
-        if value_type_name in self._value_type_transformations.keys():
-            return self._value_type_transformations[value_type_name]
-
-        type_cls = self.get_value_type_cls(type_name=value_type_name)
-        _configs = type_cls.conversions()
-        if _configs is None:
-            configs = {}
-        else:
-            configs = dict(_configs)
-        for base in type_cls.__bases__:
-            if hasattr(base, "conversions"):
-                _b_configs = base.conversions()  # type: ignore
-                if not _b_configs:
-                    continue
-                for k, v in _b_configs.items():
-                    if k not in configs.keys():
-                        configs[k] = v
-
-        # TODO: check input type compatibility?
-        result: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
-        for name, config in configs.items():
-            config = dict(config)
-            module_type = config.pop("module_type", None)
-            if not module_type:
-                raise Exception(
-                    f"Can't create transformation '{name}' for type '{value_type_name}', no module type specified in config: {config}"
-                )
-            module_config = config.pop("module_config", {})
-            module = self._kiara.create_module(
-                id=f"_transform_{value_type_name}_{name}",
-                module_type=module_type,
-                module_config=module_config,
-            )
-
-            if "input_name" not in config.keys():
-
-                if len(module.input_schemas) == 1:
-                    config["input_name"] = next(iter(module.input_schemas.keys()))
-                else:
-                    required_inputs = [
-                        inp
-                        for inp, schema in module.input_schemas.items()
-                        if schema.is_required()
-                    ]
-                    if len(required_inputs) == 1:
-                        config["input_name"] = required_inputs[0]
-                    else:
-                        raise Exception(
-                            f"Can't create transformation '{name}' for type '{value_type_name}': can't determine input name between those options: '{', '.join(required_inputs)}'"
-                        )
-
-            if "output_name" not in config.keys():
-
-                if len(module.input_schemas) == 1:
-                    config["output_name"] = next(iter(module.output_schemas.keys()))
-                else:
-                    required_outputs = [
-                        inp
-                        for inp, schema in module.output_schemas.items()
-                        if schema.is_required()
-                    ]
-                    if len(required_outputs) == 1:
-                        config["output_name"] = required_outputs[0]
-                    else:
-                        raise Exception(
-                            f"Can't create transformation '{name}' for type '{value_type_name}': can't determine output name between those options: '{', '.join(required_outputs)}'"
-                        )
-
-            result[name] = {
-                "module": module,
-                "module_type": module_type,
-                "module_config": module_config,
-                "transformation_config": config,
-            }
-
-        self._value_type_transformations[value_type_name] = result
-        return self._value_type_transformations[value_type_name]
+    # def get_value_type_transformations(
+    #     self, value_type_name: str
+    # ) -> typing.Mapping[str, typing.Mapping[str, typing.Any]]:
+    #     """Return available transform pipelines for value types."""
+    #
+    #     if value_type_name in self._value_type_transformations.keys():
+    #         return self._value_type_transformations[value_type_name]
+    #
+    #     type_cls = self.get_value_type_cls(type_name=value_type_name)
+    #     _configs = type_cls.conversions()
+    #     if _configs is None:
+    #         configs = {}
+    #     else:
+    #         configs = dict(_configs)
+    #     for base in type_cls.__bases__:
+    #         if hasattr(base, "conversions"):
+    #             _b_configs = base.conversions()  # type: ignore
+    #             if not _b_configs:
+    #                 continue
+    #             for k, v in _b_configs.items():
+    #                 if k not in configs.keys():
+    #                     configs[k] = v
+    #
+    #     # TODO: check input type compatibility?
+    #     result: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
+    #     for name, config in configs.items():
+    #         config = dict(config)
+    #         module_type = config.pop("module_type", None)
+    #         if not module_type:
+    #             raise Exception(
+    #                 f"Can't create transformation '{name}' for type '{value_type_name}', no module type specified in config: {config}"
+    #             )
+    #         module_config = config.pop("module_config", {})
+    #         module = self._kiara.create_module(
+    #             id=f"_transform_{value_type_name}_{name}",
+    #             module_type=module_type,
+    #             module_config=module_config,
+    #         )
+    #
+    #         if "input_name" not in config.keys():
+    #
+    #             if len(module.input_schemas) == 1:
+    #                 config["input_name"] = next(iter(module.input_schemas.keys()))
+    #             else:
+    #                 required_inputs = [
+    #                     inp
+    #                     for inp, schema in module.input_schemas.items()
+    #                     if schema.is_required()
+    #                 ]
+    #                 if len(required_inputs) == 1:
+    #                     config["input_name"] = required_inputs[0]
+    #                 else:
+    #                     raise Exception(
+    #                         f"Can't create transformation '{name}' for type '{value_type_name}': can't determine input name between those options: '{', '.join(required_inputs)}'"
+    #                     )
+    #
+    #         if "output_name" not in config.keys():
+    #
+    #             if len(module.input_schemas) == 1:
+    #                 config["output_name"] = next(iter(module.output_schemas.keys()))
+    #             else:
+    #                 required_outputs = [
+    #                     inp
+    #                     for inp, schema in module.output_schemas.items()
+    #                     if schema.is_required()
+    #                 ]
+    #                 if len(required_outputs) == 1:
+    #                     config["output_name"] = required_outputs[0]
+    #                 else:
+    #                     raise Exception(
+    #                         f"Can't create transformation '{name}' for type '{value_type_name}': can't determine output name between those options: '{', '.join(required_outputs)}'"
+    #                     )
+    #
+    #         result[name] = {
+    #             "module": module,
+    #             "module_type": module_type,
+    #             "module_config": module_config,
+    #             "transformation_config": config,
+    #         }
+    #
+    #     self._value_type_transformations[value_type_name] = result
+    #     return self._value_type_transformations[value_type_name]
 
     def find_value_types_for_package(
         self, package_name: str

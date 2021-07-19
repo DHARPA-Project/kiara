@@ -26,7 +26,7 @@ class PythonClassMetadata(MetadataModel):
         }
         return PythonClassMetadata(**conf)
 
-    class_name: str = Field(description="The name of the Python class")
+    class_name: str = Field(description="The name of the Python class.")
     module_name: str = Field(
         description="The name of the Python module this class lives in."
     )
@@ -39,6 +39,15 @@ class PythonClassMetadata(MetadataModel):
     def get_module(self) -> ModuleType:
         m = importlib.import_module(self.module_name)
         return m
+
+
+class HashMetadata(MetadataModel):
+
+    hash: str = Field(description="The hash for the value.")
+    hash_desc: typing.Optional[str] = Field(
+        description="A description how the hash was calculated and other details.",
+        default=None,
+    )
 
 
 class LinkModel(BaseModel):

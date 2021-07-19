@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import typing
-from pydantic import Field
 
 from kiara import Kiara
 from kiara.data.operations import OperationType
@@ -36,11 +35,11 @@ class ExtractMetadataOperationType(OperationType):
 
                 for value_type in value_types:
 
-                    mc = {"type": value_type}
+                    mc = {"value_type": value_type}
                     profile_config = {
                         "module_type": module_type,
                         "module_config": mc,
-                        "value_type": value_type,
+                        # "value_type": value_type,
                     }
                     all_metadata_profiles.setdefault(value_type, {}).setdefault(
                         "extract_metadata", {}
@@ -49,6 +48,6 @@ class ExtractMetadataOperationType(OperationType):
 
         return all_metadata_profiles
 
-    value_type: str = Field(
-        description="The type of the value to extract metadata from."
-    )
+    # value_type: str = Field(
+    #     description="The type of the value to extract metadata from."
+    # )

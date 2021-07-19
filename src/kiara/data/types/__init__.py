@@ -20,25 +20,17 @@ be discouraged, since this might not be trivial and there are quite a few things
 """
 
 import typing
-from enum import Enum
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
 
+from kiara.defaults import NO_HASH_MARKER
 from kiara.metadata.type_models import ValueTypeMetadata
-from kiara.utils.doc import extract_doc_from_cls
 
 if typing.TYPE_CHECKING:
-    from kiara.data.values import Value
-
-
-class ValueHashMarker(Enum):
-
-    NO_VALUE = "-- no_value --"
-    DEFERRED = "-- deferred --"
-    NO_HASH = "-- no_hash --"
+    pass
 
 
 def get_type_name(obj: typing.Any):
@@ -68,62 +60,57 @@ class ValueType(object):
      data, say a single column of a table. Or when a frontend needs to display/visualize the data.
     """
 
-    # @classmethod
-    # def type_name(cls):
-    #     """Return the name/alias of this type.
-    #
-    #     This is the name modules will use in the 'type' field when they create their input/output schemas.
-    #
-    #     Returns:
-    #         the type alias
-    #     """
-    #
-    #     cls_name = cls.__name__
-    #     if cls_name.lower().endswith("type"):
-    #         cls_name = cls_name[0:-4]
-    #
-    #     type_name = camel_case_to_snake_case(cls_name)
-    #     return type_name
-
     @classmethod
     def get_type_metadata(cls) -> ValueTypeMetadata:
         return ValueTypeMetadata.from_value_type_class(cls)
 
-    @classmethod
-    def doc(cls) -> str:
+    # @classmethod
+    # def doc(cls) -> str:
+    #
+    #     return extract_doc_from_cls(cls)
+    #
+    # @classmethod
+    # def desc(cls) -> str:
+    #     return extract_doc_from_cls(cls, only_first_line=True)
 
-        return extract_doc_from_cls(cls)
-
-    @classmethod
-    def desc(cls) -> str:
-        return extract_doc_from_cls(cls, only_first_line=True)
-
-    @classmethod
-    def conversions(
-        self,
-    ) -> typing.Optional[typing.Mapping[str, typing.Mapping[str, typing.Any]]]:
-        """Return a dictionary of configuration for modules that can transform this type.
-
-        The name of the transformation is the key of the result dictionary, the configuration is a module configuration
-        (dictionary wth 'module_type' and optional 'module_config', 'input_name' and 'output_name' keys).
-        """
-
-        return {"string": {"module_type": "string.pretty_print", "input_name": "item"}}
+    # @classmethod
+    # def conversions(
+    #     self,
+    # ) -> typing.Optional[typing.Mapping[str, typing.Mapping[str, typing.Any]]]:
+    #     """Return a dictionary of configuration for modules that can transform this type.
+    #
+    #     The name of the transformation is the key of the result dictionary, the configuration is a module configuration
+    #     (dictionary wth 'module_type' and optional 'module_config', 'input_name' and 'output_name' keys).
+    #     """
+    #
+    #     return {"string": {"module_type": "string.pretty_print", "input_name": "item"}}
 
     @classmethod
     def check_data(cls, data: typing.Any) -> typing.Optional["ValueType"]:
+        """Check whether the provided input matches this value type.
+
+        If it does, return a ValueType object (with the appropriate type configuration).
+        """
         return None
 
     @classmethod
-    def python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
+    def candidate_python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
         return None
+
+    @classmethod
+    def calculate_value_hash(cls, value: typing.Any) -> str:
+        """Calculate the hash of this value.
+
+        If a hash can't be calculated, or the calculation of a type is not implemented (yet), this will return None.
+        """
+        return NO_HASH_MARKER
 
     def __init__(self, **type_config: typing.Any):
 
         self._type_config: typing.Mapping[str, typing.Any] = type_config
-        self._transformations: typing.Optional[
-            typing.Mapping[str, typing.Mapping[str, typing.Any]]
-        ] = None
+        # self._transformations: typing.Optional[
+        #     typing.Mapping[str, typing.Mapping[str, typing.Any]]
+        # ] = None
 
     def import_value(self, value: typing.Any) -> typing.Any:
 
@@ -133,30 +120,8 @@ class ValueType(object):
         if parsed is None:
             parsed = value
         self.validate(parsed)
-        # if self.defer_hash_calc():
-        #     _hash: typing.Union[ValueHashMarker, int] = ValueHashMarker.DEFERRED
-        # else:
-        #     _hash = self.calculate_value_hash(value)
 
         return parsed
-
-    # def defer_hash_calc(self) -> bool:
-    #     """Return a recommendation whether to defer the calculation of the hash of a value of this type.
-    #
-    #     This is useful to distinguish between types where calculating the hash is trivial, and the overhead of a
-    #     round-trip to the data registry would be more expensive than just calculating the hash on the spot and store
-    #     it in the value metadata right now.
-    #     """
-    #     return True
-    #
-    # def calculate_value_hash(
-    #     self, value: typing.Any
-    # ) -> typing.Union[int, ValueHashMarker]:
-    #     """Calculate the hash of this value.
-    #
-    #     If a hash can't be calculated, or the calculation of a type is not implemented (yet), this will return ``ValueHashMarker.NO_HASH``.
-    #     """
-    #     return ValueHashMarker.NO_HASH
 
     def parse_value(self, value: typing.Any) -> typing.Any:
         """Parse a value into a supported python type.
@@ -176,17 +141,13 @@ class ValueType(object):
     def validate(cls, value: typing.Any) -> None:
         pass
 
-    def extract_type_metadata(
-        cls, value: typing.Any
-    ) -> typing.Mapping[str, typing.Any]:
-        return {}
+    def get_type_hint(self, context: str = "python") -> typing.Optional[typing.Type]:
+        """Return a type hint for this value type object.
 
-    def save(
-        self,
-        value: "Value",
-        write_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
-    ):
-        raise NotImplementedError()
+        This can be used by kiara interfaces to document/validate user input. For now, only 'python' type hints are
+        expected to be implemented, but in theory this could also return type hints for other contexts.
+        """
+        return None
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -195,18 +156,18 @@ class ValueType(object):
         raise NotImplementedError()
 
 
-class ValueTypeInfo(object):
-    def __init__(self, value_type_cls: typing.Type[ValueType]):
-
-        self._value_type_cls: typing.Type[ValueType] = value_type_cls
-
-    @property
-    def doc(self) -> str:
-        return self._value_type_cls.doc()
-
-    @property
-    def desc(self) -> str:
-        return self._value_type_cls.desc()
+# class ValueTypeInfo(object):
+#     def __init__(self, value_type_cls: typing.Type[ValueType]):
+#
+#         self._value_type_cls: typing.Type[ValueType] = value_type_cls
+#
+#     @property
+#     def doc(self) -> str:
+#         return self._value_type_cls.doc()
+#
+#     @property
+#     def desc(self) -> str:
+#         return self._value_type_cls.desc()
 
 
 class ValueTypesInfo(object):
@@ -230,10 +191,11 @@ class ValueTypesInfo(object):
         table.add_column("Description")
 
         for type_name in sorted(self._value_type_classes.keys()):
+            t_md = self._value_type_classes[type_name].get_type_metadata()
             if self._details:
-                md = Markdown(self._value_type_classes[type_name].doc())
+                md = Markdown(t_md.documentation.full_doc)
             else:
-                md = Markdown(self._value_type_classes[type_name].desc())
+                md = Markdown(t_md.documentation.description)
             table.add_row(type_name, md)
 
         panel = Panel(table, title="Available value types", title_align="left")

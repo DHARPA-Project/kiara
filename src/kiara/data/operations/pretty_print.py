@@ -22,9 +22,11 @@ class PrettyPrintOperationType(OperationType):
         for type_name, type_cls in kiara.type_mgmt.value_types.items():
             result[type_name] = {
                 "pretty_print": {
-                    "default": {
+                    "terminal": {
                         "module_type": "string.pretty_print",
-                        "target_profile": "default",
+                        "module_config": {
+                            "target_profile": "terminal",
+                        },
                     }
                 }
             }

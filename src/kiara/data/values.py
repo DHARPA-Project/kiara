@@ -190,6 +190,7 @@ class Value(BaseModel, JupyterMixin):
 
     _kiara: "Kiara" = PrivateAttr()
     _type_obj: ValueType = PrivateAttr(default=None)
+    _hash_cache: typing.Optional[str] = PrivateAttr(default=None)
 
     id: str = Field(description="A unique id for this value.")
     aliases: typing.List[str] = Field(
@@ -237,6 +238,11 @@ class Value(BaseModel, JupyterMixin):
             cls = self._kiara.get_value_type_cls(self.value_schema.type)
             self._type_obj = cls(**self.value_schema.type_config)
         return self._type_obj
+
+    def calculate_hash(self) -> str:
+        if self._hash_cache is None:
+            self._hash_cache = self.type_obj.calculate_value_hash(self.get_value_data())
+        return self._hash_cache
 
     def add_alias(self, alias):
         if alias not in self.aliases:
@@ -407,6 +413,7 @@ class NonRegistryValue(Value):
         # TODO: validate against schema
         if value == self._value:
             return False
+        self._hash_cache = None
         self._value = value
         return True
 
@@ -537,6 +544,8 @@ class DataValue(KiaraValue):
 
         # TODO: validate against schema
         changed: bool = self.registry.set_value(self, value)
+        if changed:
+            self._hash_cache = None
         return changed
 
 
@@ -1252,7 +1261,7 @@ class ValueSetType(ValueType):
             return None
 
     @classmethod
-    def python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
+    def candidate_python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
         return [ValueSet]
 
 

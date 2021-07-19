@@ -76,3 +76,9 @@ DEFAULT_PRETTY_PRINT_CONFIG = {
     "max_row_height": 2,
     "max_cell_length": 80,
 }
+
+NO_HASH_MARKER = "--no-hash--"
+"""Marker string to indicate no hash was calculated."""
+
+NO_VALUE_ID_MARKER = "--no-value-id--"
+"""Marker string to indicate no value id exists."""

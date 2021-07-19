@@ -30,7 +30,7 @@ class SaveValueModule(KiaraModule):
 
     @classmethod
     @abc.abstractmethod
-    def _get_supported_types(self) -> typing.Union[str, typing.Iterable[str]]:
+    def _get_supported_types(cls) -> typing.Union[str, typing.Iterable[str]]:
         pass
 
     def create_input_schema(

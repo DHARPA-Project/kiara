@@ -110,7 +110,7 @@ def load_all_subclasses_for_entry_point(
     entry_point_name: str,
     base_class: typing.Type[SUBCLASS_TYPE],
     set_id_attribute: typing.Union[None, str] = None,
-    remove_namespace_tokens: typing.Optional[typing.Iterable[str]] = None,
+    remove_namespace_tokens: typing.Union[typing.Iterable[str], bool, None] = None,
 ) -> typing.Dict[str, typing.Type[SUBCLASS_TYPE]]:
     """Find all subclasses of a base class via package entry points.
 
@@ -118,7 +118,7 @@ def load_all_subclasses_for_entry_point(
         entry_point_name: the entry point name to query entries for
         base_class: the base class to look for
         set_id_attribute: whether to set the entry point id as attribute to the class, if None, no id attribute will be set, if a string, the attribute with that name will be set
-        remove_namespace_tokens: a list of strings to remove from module names when autogenerating subclass ids, and prefix is None
+        remove_namespace_tokens: a list of strings to remove from module names when autogenerating subclass ids, and prefix is None, or a boolean in which case all or none namespaces will be removed
 
     TODO
     """
@@ -187,9 +187,13 @@ def load_all_subclasses_for_entry_point(
 
     for k, v in result_entrypoints.items():
         if remove_namespace_tokens:
-            for rnt in remove_namespace_tokens:
-                if k.startswith(rnt):
-                    k = k[len(rnt) :]  # noqa
+            if remove_namespace_tokens is True:
+                k = k.split(".")[-1]
+            elif isinstance(remove_namespace_tokens, typing.Iterable):
+                for rnt in remove_namespace_tokens:
+                    if k.startswith(rnt):
+                        k = k[len(rnt) :]  # noqa
+
         if k in result.keys():
             raise Exception(f"Duplicate item name for base class {base_class}: {k}")
         result[k] = v
@@ -233,12 +237,20 @@ def find_all_value_types() -> typing.Dict[str, typing.Type["ValueType"]]:
     TODO
     """
 
-    return load_all_subclasses_for_entry_point(
+    all_value_types = load_all_subclasses_for_entry_point(
         entry_point_name="kiara.value_types",
         base_class=ValueType,
         set_id_attribute="_value_type_name",
-        remove_namespace_tokens=["core."],
+        remove_namespace_tokens=True,
     )
+
+    invalid = [x for x in all_value_types.keys() if "." in x]
+    if invalid:
+        raise Exception(
+            f"Invalid value type name(s), type names can't contain '.': {', '.join(invalid)}"
+        )
+
+    return all_value_types
 
 
 def find_all_operation_types() -> typing.Dict[str, typing.Type["OperationType"]]:

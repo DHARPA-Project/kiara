@@ -458,6 +458,12 @@ class DataOperationMgmt(object):
                                 operation_id
                             ] = obj
 
+        invalid = [x for x in self._operations.keys() if "." in x]
+        if invalid:
+            raise Exception(
+                f"Invalid value type name(s), type names can't contain '.': {', '.join(invalid)}"
+            )
+
         return self._operations
 
     def get_operation(

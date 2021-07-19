@@ -13,6 +13,7 @@ from kiara.defaults import (
     KIARA_ALIAS_VALUE_FOLDER,
     KIARA_DATA_STORE,
     KIARA_METADATA_STORE,
+    NO_HASH_MARKER,
 )
 
 if typing.TYPE_CHECKING:
@@ -101,7 +102,11 @@ class DataStore(object):
             result = self._kiara.data_operations.run(
                 operation_name="calculate_hash", operation_id="default", value=value
             )
-            new_value_id = result.get_value_data("metadata_item")["hash"]
+            _hash = result.get_value_data("metadata_item")["hash"]
+            if _hash == NO_HASH_MARKER:
+                new_value_id = str(uuid.uuid4())
+            else:
+                new_value_id = _hash
 
         if new_value_id in self.value_ids:
             # a value item with this hash was already stored, we don't need to do it again

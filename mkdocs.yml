@@ -83,7 +83,7 @@ plugins:
     main_module: "kiara"
 - macros:
    modules:
-     - frkl.project.documentation.mkdocs_macros_frkl
+     - kiara.doc.mkdocs_macros_cli
      - kiara.doc.mkdocs_macros_kiara
 - gen-files:
     scripts:

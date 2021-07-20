@@ -90,8 +90,8 @@ class Kiara(object):
         self._metadata_mgmt = MetadataMgmt(kiara=self)
         self._data_store = DataStore(kiara=self)
 
-        self.start_zmq_device()
-        self.start_log_thread()
+        # self.start_zmq_device()
+        # self.start_log_thread()
 
         self._default_processor: ModuleProcessor = ModuleProcessor.from_config(
             config.default_processor
@@ -100,6 +100,7 @@ class Kiara(object):
         self._type_mgmt_obj: TypeMgmt = TypeMgmt(self)
 
         self._data_registry: DataRegistry = DataRegistry(self)
+
         self._module_mgr: MergedModuleManager = MergedModuleManager(
             config.module_managers
         )
@@ -214,9 +215,9 @@ class Kiara(object):
     #     # module = self._operation_mgmt.get_type_conversion_module(
     #     #     source_type=source_type, target_type=target_type  # type: ignore
     #     # )
-    #     # from kiara.modules.type_conversion import TypeConversionModule
+    #     # from kiara.modules.type_conversion import OldTypeConversionModule
     #     #
-    #     # if isinstance(module, TypeConversionModule):
+    #     # if isinstance(module, OldTypeConversionModule):
     #     #
     #     #     result = module.run(source_value=data, config=config)
     #     #     return result.get_value_obj("target_value")
@@ -363,6 +364,22 @@ class Kiara(object):
         module = self.create_module(
             module_type=module_type, module_config=module_config
         )
+
+        return self.run_module(
+            module=module,
+            inputs=inputs,
+            output_name=output_name,
+            resolve_result=resolve_result,
+        )
+
+    def run_module(
+        self,
+        module: "KiaraModule",
+        inputs: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+        output_name: typing.Optional[str] = None,
+        resolve_result: bool = False,
+    ):
+
         if inputs is None:
             inputs = {}
         result = module.run(**inputs)

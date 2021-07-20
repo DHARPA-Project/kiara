@@ -205,6 +205,12 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         return KiaraModuleTypeMetadata.from_module_class(cls)
 
     @classmethod
+    def profiles(
+        cls,
+    ) -> typing.Optional[typing.Mapping[str, typing.Mapping[str, typing.Any]]]:
+        return None
+
+    @classmethod
     def is_pipeline(cls) -> bool:
         return False
 

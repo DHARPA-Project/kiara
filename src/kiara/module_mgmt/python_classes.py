@@ -59,9 +59,12 @@ class PythonModuleManager(ModuleManager):
 
             module_classes = find_all_kiara_modules()
 
-        self._module_classes: typing.Mapping[
-            str, typing.Type[KiaraModule]
-        ] = module_classes
+        self._module_classes: typing.Mapping[str, typing.Type[KiaraModule]] = {}
+
+        # TODO: investigate why streamlit reloads this several times
+        for k, v in module_classes.items():
+            if not v.is_pipeline():
+                self._module_classes[k] = v
 
     def get_module_class(self, module_type: str) -> typing.Type["KiaraModule"]:
 

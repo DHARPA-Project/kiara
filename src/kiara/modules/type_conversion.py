@@ -15,7 +15,7 @@ class TypeConversionModuleConfig(KiaraModuleConfig):
     target_type: str = Field(description="The target type.")
 
 
-class TypeConversionModule(KiaraModule):
+class OldTypeConversionModule(KiaraModule):
 
     _config_cls = TypeConversionModuleConfig
 

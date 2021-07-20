@@ -62,6 +62,7 @@ class MergedModuleManager(ModuleManager):
     ):
 
         self._modules: typing.Dict[str, ModuleManager] = {}
+        self._module_cls_cache: typing.Dict[str, typing.Type[KiaraModule]] = {}
 
         self._default_python_mgr = PythonModuleManager()
         self._default_pipeline_mgr = PipelineModuleManager(folders=None)
@@ -73,6 +74,9 @@ class MergedModuleManager(ModuleManager):
             self._custom_pipelines_mgr,
         ]
         if module_managers:
+
+            raise NotImplementedError()
+
             for mmc in module_managers:
                 mm = ModuleManager.from_config(mmc)
                 _mms.append(mm)
@@ -164,6 +168,9 @@ class MergedModuleManager(ModuleManager):
         if mm is None:
             raise Exception(f"No module '{module_type}' available.")
 
+        if module_type in self._module_cls_cache.keys():
+            return self._module_cls_cache[module_type]
+
         cls = mm.get_module_class(module_type)
         if not hasattr(cls, "_module_type_name"):
             raise Exception(
@@ -173,10 +180,12 @@ class MergedModuleManager(ModuleManager):
         assert module_type.endswith(cls._module_type_name)  # type: ignore
 
         if hasattr(cls, "_module_type_id") and cls._module_type_id != "pipeline" and cls._module_type_id != module_type:  # type: ignore
+            print(module_type)
             raise Exception(
                 f"Can't create module class '{cls}', it already has a _module_type_id attribute and it's different to the module name '{module_type}': {cls._module_type_id}"  # type: ignore
             )
 
+        self._module_cls_cache[module_type] = cls
         setattr(cls, "_module_type_id", module_type)
         return cls
 

@@ -1,6 +1,11 @@
 # Changelog
 
-## Version 0.0.5 (Upcoming)
+## Version 0.1.0 (Upcoming)
+
+## Version 0.0.5
+
+- this is only a stop-gap release, to a) test the release pipeline, and b) prepare for a fairly major doc/testing effort in the next few weeks
+- introduced data operations: operation do the same thing to values of different types (pretty printing, serializing, etc.)
 
 ## Version 0.0.4
 

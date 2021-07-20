@@ -75,9 +75,14 @@ def create_pipeline_class(
         _base_module = base_module
 
     if hasattr(_m, cls_name):
-        raise Exception(
-            f"Can't attach generated class '{cls_name}' to module '{_base_module}': module already has an attribute with that name."
-        )
+        # TODO: I don't like this, but this is needed for streamlit to work, since it starts a few threads
+        # right away, without any possibility to use a lock
+        cls = getattr(_m, cls_name)
+        return cls
+        # raise Exception(
+        #     f"Can't attach generated class '{cls_name}' to module '{_base_module}': module already has an attribute with that name."
+        # )
+
     attrs["__module__"] = _base_module
 
     cls = type(cls_name, (PipelineModule,), attrs)

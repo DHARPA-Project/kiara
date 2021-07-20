@@ -29,6 +29,8 @@ class ModuleManager(abc.ABC):
         ],
     ) -> "ModuleManager":
 
+        raise NotImplementedError()
+
         from kiara.module_mgmt.pipelines import (
             PipelineModuleManager,
             PipelineModuleManagerConfig,

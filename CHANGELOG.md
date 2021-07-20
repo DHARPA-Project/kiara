@@ -1,6 +1,12 @@
 # Changelog
 
-## Version 0.1.0 (Upcoming)
+## Version 0.0.7 (upcoming)
+
+-
+
+## Version 0.0.6
+
+- housekeeping
 
 ## Version 0.0.5
 

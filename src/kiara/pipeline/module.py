@@ -42,7 +42,7 @@ class PipelineModule(KiaraModule[PipelineModuleConfig]):
 
     def __init__(
         self,
-        id: str,
+        id: typing.Optional[str],
         parent_id: typing.Optional[str] = None,
         module_config: typing.Union[
             None, PipelineModuleConfig, typing.Mapping[str, typing.Any]

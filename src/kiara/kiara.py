@@ -331,9 +331,18 @@ class Kiara(object):
         self,
         module_type: str,
         module_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
-        id: str = None,
+        id: typing.Optional[str] = None,
         parent_id: typing.Optional[str] = None,
     ) -> "KiaraModule":
+
+        if module_type == "pipeline":
+            from kiara import PipelineModule
+
+            module_cls = PipelineModule
+            module = module_cls(
+                id=id, parent_id=parent_id, module_config=module_config, kiara=self
+            )
+            return module
 
         return self._module_mgr.create_module(
             kiara=self,

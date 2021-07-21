@@ -126,10 +126,6 @@ class DataStore(object):
             else:
                 new_value_id = _hash
 
-        if new_value_id in self.value_ids:
-            # a value item with this hash was already stored, we don't need to do it again
-            return new_value_id
-
         if not overwrite_aliases:
             invalid = self.check_existing_aliases(*aliases)
 
@@ -142,6 +138,16 @@ class DataStore(object):
         metadata_path = os.path.join(
             self._metadata_store, f"{new_value_id}.{value_type}.metadata.json"
         )
+
+        if new_value_id in self.value_ids:
+            # a value item with this hash was already stored, we don't need to do it again
+
+            for alias in aliases:
+                alias_file = os.path.join(self._alias_folder, f"{alias}.metadata.json")
+                os.symlink(metadata_path, alias_file)
+
+            return new_value_id
+
         if os.path.exists(metadata_path):
             raise Exception(
                 f"Can't save value, metadata file alrady exists: {metadata_path}"

@@ -2,7 +2,7 @@
 
 ## list all data item ids
 
-{{ cli('kiara', 'data', 'list', '--ids') }}
+{{ cli('kiara', 'data', 'list') }}
 
 ## get information about a data item
 

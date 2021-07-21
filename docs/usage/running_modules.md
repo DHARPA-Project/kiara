@@ -59,4 +59,4 @@ the ``tabular.import_table_from_file`` module:
 
 Now we can check that our table is present in our data store:
 
-{{ cli('kiara', 'data', 'list', '--ids') }}
+{{ cli('kiara', 'data', 'list') }}

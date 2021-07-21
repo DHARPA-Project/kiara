@@ -70,7 +70,7 @@ To check whether that worked, we can list all of our items in the data store, an
 
 {{ cli("kiara", "data", "list") }}
 
-And, yay, it is! It is named ``getting_started_example.table`` after the workflow id, and the name of the output field of the workflow.
+And, yay, it is!
 
 We can also look at the metadata *kiara* stored for this specific item:
 

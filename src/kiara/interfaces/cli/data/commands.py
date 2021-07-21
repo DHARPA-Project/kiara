@@ -2,9 +2,9 @@
 """Data-related sub-commands for the cli."""
 
 import asyncclick as click
-import json
 import typing
-from rich.syntax import Syntax
+from rich import box
+from rich.table import Table
 
 from kiara import Kiara
 from kiara.data.values import Value
@@ -19,35 +19,42 @@ def data(ctx):
 
 
 @data.command(name="list")
-@click.option("--details", "-d", help="Display data item details.", is_flag=True)
-@click.option("--ids", "-i", help="List value ids instead of aliases.", is_flag=True)
 @click.pass_context
-def list_values(ctx, details, ids):
+def list_values(ctx):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
+    table = Table(box=box.SIMPLE)
+    table.add_column("id", style="i")
+    table.add_column("aliases")
+    table.add_column("type")
+
     print()
-    if ids:
-        for id, d in kiara_obj.data_store.values_metadata.items():
-            if not details:
-                rich_print(f"  - [b]{id}[/b]: {d['type']}")
-            else:
-                rich_print(f"[b]{id}[/b]: {d['type']}\n")
-                md = kiara_obj.data_store.get_value_metadata(value_id=id)
-                s = Syntax(json.dumps(md, indent=2), "json")
-                rich_print(s)
-                print()
-    else:
-        for alias, v_id in kiara_obj.data_store.aliases.items():
-            v_type = kiara_obj.data_store.get_value_type(v_id)
-            if not details:
-                rich_print(f"  - [b]{alias}[/b]: {v_type}")
-            else:
-                rich_print(f"[b]{alias}[/b]: {v_type}\n")
-                md = kiara_obj.data_store.get_value_metadata(value_id=v_id)
-                s = Syntax(json.dumps(md, indent=2), "json")
-                rich_print(s)
-                print()
+    for v_id, d in kiara_obj.data_store.values_metadata.items():
+
+        value_type = kiara_obj.data_store.get_value_type(value_id=v_id)
+        aliases = kiara_obj.data_store.get_aliases_for_id(v_id)
+        if not aliases:
+            aliases.append("")
+
+        table.add_row(v_id, aliases[0], value_type)
+
+        for a in aliases[1:]:
+            table.add_row("", a, "")
+
+    rich_print(table)
+
+    # else:
+    #     for alias, v_id in kiara_obj.data_store.aliases.items():
+    #         v_type = kiara_obj.data_store.get_value_type(v_id)
+    #         if not details:
+    #             rich_print(f"  - [b]{alias}[/b]: {v_type}")
+    #         else:
+    #             rich_print(f"[b]{alias}[/b]: {v_type}\n")
+    #             md = kiara_obj.data_store.get_value_metadata(value_id=v_id)
+    #             s = Syntax(json.dumps(md, indent=2), "json")
+    #             rich_print(s)
+    #             print()
 
 
 @data.command(name="explain")

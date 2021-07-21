@@ -272,6 +272,10 @@ class DataStore(object):
         self._aliases = result  # type: ignore
         return self._aliases
 
+    def get_aliases_for_id(self, value_id: str) -> typing.List[str]:
+
+        return [alias for alias, v_id in self.aliases.items() if v_id == value_id]
+
     def get_value_id(self, value_id_or_alias: str):
         if value_id_or_alias in self.aliases.keys():
             return self.aliases[value_id_or_alias]

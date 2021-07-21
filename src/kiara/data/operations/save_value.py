@@ -16,7 +16,7 @@ class SaveValueModuleConfig(KiaraModuleConfig):
     value_type: str = Field(description="The type of the value to save.")
 
 
-class SaveValueModule(KiaraModule):
+class SaveValueTypeModule(KiaraModule):
 
     _config_cls = SaveValueModuleConfig
 
@@ -50,6 +50,7 @@ class SaveValueModule(KiaraModule):
                 "doc": "The base path to save the value to.",
             },
         }
+
         return inputs
 
     def create_output_schema(
@@ -65,6 +66,7 @@ class SaveValueModule(KiaraModule):
             },
             "value_id": {"type": "string", "doc": "The id of the saved value."},
         }
+
         return outputs
 
     @abc.abstractmethod
@@ -113,7 +115,7 @@ class SaveOperationType(OperationType):
 
             m_cls = kiara.get_module_class(module_type=module_type)
 
-            if issubclass(m_cls, SaveValueModule):
+            if issubclass(m_cls, SaveValueTypeModule):
                 value_types: typing.Iterable[str] = m_cls.get_supported_value_types()
 
                 if "*" in value_types:

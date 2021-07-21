@@ -193,9 +193,9 @@ class Value(BaseModel, JupyterMixin):
     _hash_cache: typing.Optional[str] = PrivateAttr(default=None)
 
     id: str = Field(description="A unique id for this value.")
-    aliases: typing.List[str] = Field(
-        description="Aliases for this value", default_factory=list
-    )
+    # aliases: typing.List[str] = Field(
+    #     description="Aliases for this value", default_factory=list
+    # )
     value_schema: ValueSchema = Field(description="The schema of this value.")
     is_constant: bool = Field(
         description="Whether this value is a constant.", default=False
@@ -244,9 +244,9 @@ class Value(BaseModel, JupyterMixin):
             self._hash_cache = self.type_obj.calculate_value_hash(self.get_value_data())
         return self._hash_cache
 
-    def add_alias(self, alias):
-        if alias not in self.aliases:
-            self.aliases.append(alias)
+    # def add_alias(self, alias):
+    #     if alias not in self.aliases:
+    #         self.aliases.append(alias)
 
     def item_is_valid(self) -> bool:
 
@@ -335,9 +335,9 @@ class Value(BaseModel, JupyterMixin):
                 result[k] = v["metadata_item"]
         return result
 
-    def save(self) -> str:
+    def save(self, aliases: typing.Optional[typing.Iterable[str]] = None) -> str:
 
-        return self._kiara.data_store.save_value(self)
+        return self._kiara.data_store.save_value(self, aliases=aliases)
 
     # def transform(
     #     self,
@@ -600,7 +600,7 @@ class LinkedValue(KiaraValue):
         raise Exception("Linked values can't be set.")
 
 
-class ValueSet(abc.ABC):
+class ValueSet(typing.MutableMapping[str, Value]):
     @abc.abstractmethod
     def get_all_field_names(self) -> typing.Iterable[str]:
         pass
@@ -733,7 +733,7 @@ class ValueSet(abc.ABC):
         )
 
 
-class ValueSetImpl(ValueSet, typing.MutableMapping[str, Value]):
+class ValueSetImpl(ValueSet):
     """A dict-like object that contains a set of value fields that belong together in some way (for example outputs of a step or pipeline)."""
 
     @classmethod
@@ -1036,7 +1036,7 @@ class PipelineValue(BaseModel):
             is_set=value.is_set,
             is_constant=value.is_constant,
             value_metadata=value.value_metadata,
-            aliases=value.aliases,
+            # aliases=value.aliases,
             last_update=value.last_update,
             # value_hash=value.value_hash,
             is_streaming=value.is_streaming,
@@ -1059,7 +1059,7 @@ class PipelineValue(BaseModel):
     value_metadata: ValueMetadata = Field(
         description="The metadata of the value itself (not the actual data)."
     )
-    aliases: typing.List[str] = Field(description="Aliases for this value.")
+    # aliases: typing.List[str] = Field(description="Aliases for this value.")
     last_update: datetime = Field(
         default=None, description="The time the last update to this value happened."
     )

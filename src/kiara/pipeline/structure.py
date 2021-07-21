@@ -103,6 +103,7 @@ class PipelineStep(BaseModel):
             from kiara import Kiara
 
             kiara = Kiara.instance()
+
         super().__init__(**data)
         self._kiara: Kiara = kiara
 

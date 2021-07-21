@@ -109,7 +109,6 @@ class DataRegistry(object):
         callbacks: typing.Optional[typing.Iterable[ValueUpdateHandler]] = None,
         initial_value: typing.Any = SpecialValue.NOT_SET,
         is_constant: bool = False,
-        aliases: typing.Optional[typing.Iterable[str]] = None,
         value_metadata: typing.Union[
             None, typing.Mapping[str, typing.Any], ValueMetadata
         ] = None,
@@ -126,8 +125,7 @@ class DataRegistry(object):
              callbacks: the callbacks to register for this value (can be added later too)
              initial_value: if provided, this value will be set
              is_constant: whether this value is a constant or not
-             aliases: a list of (optional) aliases for the value
-            value_metadata: value metadata (not related to the actual data)
+             value_metadata: value metadata (not related to the actual data)
 
         Returns:
             the newly created value object
@@ -165,11 +163,6 @@ class DataRegistry(object):
                 f"Invalid type for 'value_fields' argument: {type(value_fields)}"
             )
 
-        if aliases is None:
-            aliases = []
-        if isinstance(aliases, str):
-            aliases = [aliases]
-
         if not value_metadata:
             value_metadata = ValueMetadata()
         elif not isinstance(value_metadata, ValueMetadata):
@@ -180,7 +173,6 @@ class DataRegistry(object):
             value_schema=value_schema,
             value_fields=_value_fields,
             kiara=self._kiara,  # type: ignore
-            aliases=aliases,
             value_metadata=value_metadata,
             is_constant=is_constant,
         )
@@ -212,7 +204,6 @@ class DataRegistry(object):
         ] = None,
         value_id: typing.Optional[str] = None,
         callbacks: typing.Optional[typing.Iterable[ValueUpdateHandler]] = None,
-        aliases: typing.Optional[typing.Iterable[str]] = None,
         value_metadata: typing.Union[
             None, typing.Mapping[str, typing.Any], ValueMetadata
         ] = None,
@@ -230,7 +221,6 @@ class DataRegistry(object):
              value_fields: field(s) within a [PipelineStructure][kiara.pipeline.structure.PipelineStructure] that is associated with this value
              value_id: the (unique) id for this value, if not provided one will be generated
              callbacks: the callbacks to register for this value (can be added later too)
-             aliases: an (optional) list of aliases for the value
              value_metadata: value metadata (not related to the actual data)
 
         Returns:
@@ -320,17 +310,11 @@ class DataRegistry(object):
         elif not isinstance(value_metadata, ValueMetadata):
             value_metadata = ValueMetadata(**value_metadata)
 
-        if aliases is None:
-            aliases = []
-        if isinstance(aliases, str):
-            aliases = [aliases]
-
         value_item = LinkedValue(  # type: ignore
             id=value_id,
             value_schema=value_schema,
             value_fields=_value_fields,
             kiara=self._kiara,  # type: ignore
-            aliases=aliases,
             links=_linked_values,
             value_metadata=value_metadata,
         )

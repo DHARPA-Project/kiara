@@ -27,7 +27,6 @@ from kiara.utils.output import OutputDetails, rich_print
 @click.command()
 @click.argument("module", nargs=1)
 @click.argument("inputs", nargs=-1, required=False)
-@click.option("--id", "-i", help="Set workflow id.", required=False)
 @click.option(
     "--module-config",
     "-c",
@@ -47,12 +46,38 @@ from kiara.utils.output import OutputDetails, rich_print
 @click.option(
     "--save", "-s", help="Save the outputs into the kiara data store.", is_flag=True
 )
+@click.option(
+    "--alias",
+    "-a",
+    help="When '--save' is set, this lets you add aliases when saving the results (format: '--alias [output_name]=[alias])",
+    required=False,
+    multiple=True,
+)
 @click.pass_context
-async def run(ctx, module, inputs, module_config, output, explain, save, id):
+async def run(ctx, module, inputs, module_config, output, explain, save, alias):
     """Execute a workflow run."""
+
+    overwrite_aliases: bool = True
 
     if module_config:
         module_config = dict_from_cli_args(*module_config)
+
+    if not alias:
+        aliases: typing.Dict[str, typing.List[str]] = {}
+    else:
+        aliases = {}
+        for a in alias:
+            if "=" not in a:
+                print()
+                print(f"Invalid alias format '{a}', must be: [output_name]=[alias]")
+                sys.exit(1)
+            tokens = a.split("=")
+            if len(tokens) != 2:
+                print()
+                print(f"Invalid alias format, can only contain a single '=': {a}")
+                sys.exit(1)
+
+            aliases.setdefault(tokens[0], []).append(tokens[1])
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
@@ -130,7 +155,8 @@ async def run(ctx, module, inputs, module_config, output, explain, save, id):
     processor = None
     controller = BatchController(processor=processor)
 
-    workflow_id = id
+    # TODO: should we let the user specify?l
+    workflow_id = None
     if workflow_id is None:
         workflow_id = f"{module_name}_0"
 
@@ -142,18 +168,30 @@ async def run(ctx, module, inputs, module_config, output, explain, save, id):
     )
 
     if save:
+        invalid_fields = []
+        for field_name, alias in aliases.items():
+            if field_name not in workflow.outputs.get_all_field_names():
+                invalid_fields.append(field_name)
 
-        invalid = set()
-        for ov in workflow.outputs.values():
-            existing = kiara_obj.data_store.check_existing_aliases(*ov.aliases)
-            invalid.update(existing)
-
-        if invalid:
+        if invalid_fields:
             print()
             print(
-                f"Can't run workflow, value aliases for saving already exist: {', '.join(invalid)}. Set another workflow id?"
+                f"Can't run workflow, invalid field name(s) when specifying aliases: {', '.join(invalid_fields)}. Valid field names: {', '.join(workflow.outputs.get_all_field_names())}"
             )
             sys.exit(1)
+
+        if not overwrite_aliases:
+            all_aliases = []
+            for a in aliases.values():
+                all_aliases.extend(a)
+            invalid = kiara_obj.data_store.check_existing_aliases(*all_aliases)
+
+            if invalid:
+                print()
+                print(
+                    f"Can't run workflow, value aliases for saving already exist: {', '.join(invalid)}. Set another workflow id?"
+                )
+                sys.exit(1)
 
     list_keys = []
 
@@ -293,8 +331,9 @@ async def run(ctx, module, inputs, module_config, output, explain, save, id):
     if save:
         for field, value in workflow.outputs.items():
             rich_print(f"Saving '[i]{field}[/i]'...")
+            field_aliases = aliases.get(field, [])
             try:
-                value_id = value.save()
+                value_id = value.save(aliases=field_aliases)
                 rich_print(f"   -> done, id: [i]{value_id}[/i]")
 
             except Exception as e:

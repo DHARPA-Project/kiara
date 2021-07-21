@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import re
 import typing
 from pathlib import Path
 from pydantic import BaseModel, Field, validator
@@ -287,8 +288,9 @@ class PipelineModuleManager(ModuleManager):
         if desc is None:
             raise Exception(f"No pipeline with name '{module_type}' available.")
 
-        tokens = module_type.split(".")
+        tokens = re.split(r"\.|_", module_type)
         cls_name = "".join(x.capitalize() or "_" for x in tokens)
+
         if len(tokens) != 1:
             full_name = ".".join(tokens[0:-1] + [cls_name])
         else:

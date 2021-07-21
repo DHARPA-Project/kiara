@@ -2,7 +2,7 @@
 
 ## Version 0.0.7 (upcoming)
 
--
+- removed 'aliases' attribute from Value class, aliases are now specified when calling 'save'
 
 ## Version 0.0.6
 

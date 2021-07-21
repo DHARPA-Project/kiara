@@ -523,22 +523,26 @@ class DataOperationMgmt(object):
         operation_id: str,
         value: Value,
         other_inputs: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+        value_type: typing.Optional[str] = None,
     ) -> ValueSet:
 
+        if value_type is None:
+            value_type = value.type_name
+
         op_config = self.get_operation(
-            value_type=value.type_name,
+            value_type=value_type,
             operation_name=operation_name,
             operation_id=operation_id,
             raise_exception=False,
         )
 
         if not op_config:
-            av = self.operations.get(value.type_name, {}).get(operation_name, {}).keys()
+            av = self.operations.get(value_type, {}).get(operation_name, {}).keys()
             msg = ""
             if av:
                 msg = f" Available ids: {', '.join(av)}"
             raise Exception(
-                f"No operation '{operation_name}' with id '{operation_id}' available for value type '{value.type_name}'.{msg}"
+                f"No operation '{operation_name}' with id '{operation_id}' available for value type '{value_type}'.{msg}"
             )
 
         op_module = op_config.create_module(self._kiara)

@@ -88,6 +88,24 @@ class StepInputs(ValueSet):
     def is_read_only(self) -> bool:
         return True
 
+    def __getitem__(self, item: str) -> Value:
+
+        return self.get_value_obj(field_name=item)
+
+    def __setitem__(self, key: str, value: Value):
+
+        raise Exception("Inputs are read-only.")
+
+    def __delitem__(self, key: str):
+
+        raise Exception(f"Removing items not supported: {key}")
+
+    def __iter__(self) -> typing.Iterator[str]:
+        return iter(self._inputs.__iter__())
+
+    def __len__(self):
+        return len(self._inputs.__len__())
+
 
 class StepOutputs(ValueSet):
     """Wrapper class to hold a set of outputs for a pipeline processing step.
@@ -172,6 +190,24 @@ class StepOutputs(ValueSet):
     def sync(self):
         self._outputs.set_values(**self._outputs_staging)  # type: ignore
         self._outputs_staging.clear()  # type: ignore
+
+    def __getitem__(self, item: str) -> Value:
+
+        return self.get_value_obj(output_name=item)
+
+    def __setitem__(self, key: str, value: Value):
+
+        self.set_value(key, value)
+
+    def __delitem__(self, key: str):
+
+        raise Exception(f"Removing items not supported: {key}")
+
+    def __iter__(self) -> typing.Iterator[str]:
+        return iter(self.__dict__["_outputs"].__iter__())
+
+    def __len__(self):
+        return len(self.__dict__["_outputs"].__len__())
 
 
 class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):

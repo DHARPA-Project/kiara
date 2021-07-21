@@ -78,21 +78,35 @@ class DataStore(object):
                 invalid.append(alias)
         return invalid
 
-    def save_value(self, value: "Value") -> str:
+    def save_value(
+        self,
+        value: "Value",
+        aliases: typing.Optional[typing.Iterable[str]] = None,
+        overwrite_aliases: bool = True,
+        value_type: typing.Optional[str] = None,
+    ) -> str:
+
+        if aliases is None:
+            aliases = []
+
+        if value_type is None:
+            value_type = value.type_name
+
+        # TODO: validate type if specfied in the kwargs?
 
         op_config: SaveOperationType = self._kiara.data_operations.get_operation(  # type: ignore
-            value_type=value.type_name,
+            value_type=value_type,
             operation_name="save_value",
             operation_id="data_store",
         )
 
         if op_config is None:
             raise Exception(
-                f"Can't save value: no 'save_value.data_store' operation registered for value type: {value.type_name}"
+                f"Can't save value: no 'save_value.data_store' operation registered for value type: {value_type}"
             )
 
         op = self._kiara.data_operations.get_operation(
-            value_type=value.type_name,
+            value_type=value_type,
             operation_name="calculate_hash",
             operation_id="default",
             raise_exception=False,
@@ -101,7 +115,10 @@ class DataStore(object):
             new_value_id: str = str(uuid.uuid4())
         else:
             result = self._kiara.data_operations.run(
-                operation_name="calculate_hash", operation_id="default", value=value
+                operation_name="calculate_hash",
+                operation_id="default",
+                value=value,
+                value_type=value_type,
             )
             _hash = result.get_value_data("metadata_item")["hash"]
             if _hash == NO_HASH_MARKER:
@@ -113,16 +130,17 @@ class DataStore(object):
             # a value item with this hash was already stored, we don't need to do it again
             return new_value_id
 
-        invalid = self.check_existing_aliases(*value.aliases)
+        if not overwrite_aliases:
+            invalid = self.check_existing_aliases(*aliases)
 
-        if invalid:
-            raise Exception(
-                f"Can't save value, alias(es) already registered: {', '.join(invalid)}"
-            )
+            if invalid:
+                raise Exception(
+                    f"Can't save value, 'overwrite_aliases' turned off, and alias(es) already registered: {', '.join(invalid)}"
+                )
 
         target_path = os.path.join(self._data_store, new_value_id)
         metadata_path = os.path.join(
-            self._metadata_store, f"{new_value_id}.{value.type_name}.metadata.json"
+            self._metadata_store, f"{new_value_id}.{value_type}.metadata.json"
         )
         if os.path.exists(metadata_path):
             raise Exception(
@@ -138,6 +156,7 @@ class DataStore(object):
             operation_id="data_store",
             value=value,
             other_inputs=other_inputs,
+            value_type=value_type,
         )
 
         load_config_value: Value = result.get_value_obj("load_config")
@@ -151,7 +170,7 @@ class DataStore(object):
         local_dt = tz.localize(datetime.now(), is_dst=None)
 
         ssmd = SnapshotMetadata(
-            value_type=value.type_name,
+            value_type=value_type,
             value_id=new_value_id,
             value_id_orig=value.id,
             snapshot_time=str(local_dt),
@@ -173,7 +192,7 @@ class DataStore(object):
         with open(metadata_path, "w") as _f:
             _f.write(json.dumps(metadata))
 
-        for alias in value.aliases:
+        for alias in aliases:
             alias_file = os.path.join(self._alias_folder, f"{alias}.metadata.json")
             os.symlink(metadata_path, alias_file)
 

@@ -199,14 +199,12 @@ class Pipeline(object):
                     vm = ValueMetadata(
                         origin=f"{self._structure.pipeline_id}.steps.{step_id}.outputs.{output_name}"
                     )
-                    alias = f"{self._structure.pipeline_id}.{po.value_name}"
 
                     pv = self._data_registry.register_linked_value(
                         output_value_item,
                         value_fields=po,
                         value_schema=po.value_schema,
                         value_metadata=vm,
-                        aliases=[alias],
                     )
                     self._data_registry.register_callback(self.values_updated, pv)
                     pipeline_outputs[output_point.pipeline_output] = pv
@@ -256,7 +254,6 @@ class Pipeline(object):
                             is_constant=pipeline_input_field.is_constant,
                             initial_value=init_value,
                             value_metadata=p_vm,
-                            aliases=[alias],
                         )
                         self._data_registry.register_callback(
                             self.values_updated, pipeline_input

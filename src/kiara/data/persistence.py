@@ -10,9 +10,10 @@ from tzlocal import get_localzone
 
 from kiara.data.operations import ModuleProfileConfig
 from kiara.defaults import (
-    KIARA_ALIAS_VALUE_FOLDER,
-    KIARA_DATA_STORE,
-    KIARA_METADATA_STORE,
+    KIARA_ALIASES_DIR,
+    KIARA_DATA_DIR,
+    KIARA_DATA_STORE_DIR,
+    KIARA_METADATA_DIR,
     NO_HASH_MARKER,
 )
 
@@ -48,12 +49,13 @@ class DataStore(object):
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
-        self._data_store: Path = Path(KIARA_DATA_STORE)
-        self._metadata_store: Path = Path(KIARA_METADATA_STORE)
-        self._alias_folder: Path = Path(KIARA_ALIAS_VALUE_FOLDER)
+        self._data_store_folder: Path = Path(KIARA_DATA_STORE_DIR)
+        self._data_dir: Path = Path(KIARA_DATA_DIR)
+        self._metadata_dir: Path = Path(KIARA_METADATA_DIR)
+        self._aliases_dir: Path = Path(KIARA_ALIASES_DIR)
 
-        os.makedirs(self._metadata_store, exist_ok=True)
-        os.makedirs(self._alias_folder, exist_ok=True)
+        os.makedirs(self._metadata_dir, exist_ok=True)
+        os.makedirs(self._aliases_dir, exist_ok=True)
         self._aliases: typing.Optional[typing.Dict[str, str]] = None
         self._last_metadata_change: float = 0
         self._value_id_cache: typing.Optional[
@@ -61,8 +63,20 @@ class DataStore(object):
         ] = None
 
     @property
-    def data_store_path(self) -> Path:
-        return self._data_store
+    def data_store_dir(self) -> Path:
+        return self._data_store_folder
+
+    @property
+    def data_dir(self) -> Path:
+        return self._data_dir
+
+    @property
+    def metadata_dir(self) -> Path:
+        return self._metadata_dir
+
+    @property
+    def aliases_folder(self) -> Path:
+        return self._aliases_dir
 
     def alias_available(self, alias: str):
         if alias in self.aliases.keys() or alias in self.value_ids:
@@ -134,16 +148,16 @@ class DataStore(object):
                     f"Can't save value, 'overwrite_aliases' turned off, and alias(es) already registered: {', '.join(invalid)}"
                 )
 
-        target_path = os.path.join(self._data_store, new_value_id)
+        target_path = os.path.join(self._data_dir, new_value_id)
         metadata_path = os.path.join(
-            self._metadata_store, f"{new_value_id}.{value_type}.metadata.json"
+            self._metadata_dir, f"{new_value_id}.{value_type}.metadata.json"
         )
 
         if new_value_id in self.value_ids:
             # a value item with this hash was already stored, we don't need to do it again
 
             for alias in aliases:
-                alias_file = os.path.join(self._alias_folder, f"{alias}.metadata.json")
+                alias_file = os.path.join(self._aliases_dir, f"{alias}.metadata.json")
                 os.symlink(metadata_path, alias_file)
 
             return new_value_id
@@ -199,7 +213,7 @@ class DataStore(object):
             _f.write(json.dumps(metadata))
 
         for alias in aliases:
-            alias_file = os.path.join(self._alias_folder, f"{alias}.metadata.json")
+            alias_file = os.path.join(self._aliases_dir, f"{alias}.metadata.json")
             os.symlink(metadata_path, alias_file)
 
         return ssmd.value_id
@@ -210,7 +224,7 @@ class DataStore(object):
     ) -> typing.Mapping[str, typing.Any]:
 
         if self._value_id_cache is not None:
-            last_mod_time = os.path.getmtime(self._metadata_store)
+            last_mod_time = os.path.getmtime(self._metadata_dir)
             if self._last_metadata_change == last_mod_time:
                 return self._value_id_cache
             else:
@@ -220,7 +234,7 @@ class DataStore(object):
         # after cache clearing. Not worth it optimizing just yet.
 
         result = {}
-        for root, dirnames, filenames in os.walk(self._metadata_store, topdown=True):
+        for root, dirnames, filenames in os.walk(self._metadata_dir, topdown=True):
 
             for filename in [
                 f
@@ -233,7 +247,7 @@ class DataStore(object):
                 result[split[0]] = {"type": split[1]}
 
         self._value_id_cache = result  # type: ignore
-        self._last_metadata_change = os.path.getmtime(self._metadata_store)
+        self._last_metadata_change = os.path.getmtime(self._metadata_dir)
 
         return self._value_id_cache  # type: ignore
 
@@ -255,7 +269,7 @@ class DataStore(object):
             return self._aliases
 
         result = {}
-        for root, dirnames, filenames in os.walk(self._alias_folder, topdown=True):
+        for root, dirnames, filenames in os.walk(self._aliases_dir, topdown=True):
 
             for filename in [
                 f
@@ -306,7 +320,7 @@ class DataStore(object):
         if self.values_metadata[value_id].get("metadata", None) is None:
 
             path = os.path.join(
-                self._metadata_store, f"{value_id}.{v_type}.metadata.json"
+                self._metadata_dir, f"{value_id}.{v_type}.metadata.json"
             )
             with open(path, "r") as f:
                 json_result = json.load(f)

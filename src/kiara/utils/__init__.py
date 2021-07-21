@@ -44,6 +44,15 @@ def is_debug() -> bool:
         return False
 
 
+def is_develop() -> bool:
+
+    debug = os.environ.get("DEVELOP", None)
+    if isinstance(debug, str) and debug.lower() == "true":
+        return True
+    else:
+        return False
+
+
 def log_message(msg: str):
 
     if is_debug():

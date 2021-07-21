@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Data-related sub-commands for the cli."""
-
 import asyncclick as click
+import shutil
 import typing
 from rich import box
 from rich.table import Table
@@ -9,6 +9,7 @@ from rich.table import Table
 from kiara import Kiara
 from kiara.data.values import Value
 from kiara.defaults import DEFAULT_PRETTY_PRINT_CONFIG
+from kiara.utils import is_develop
 from kiara.utils.output import rich_print
 
 
@@ -85,3 +86,18 @@ def load_value(ctx, value_id: str):
         "string.pretty_print", inputs=pretty_print_config, output_name="renderables"
     )
     rich_print(*renderables.get_value_data())
+
+
+if is_develop():
+
+    @data.command(name="clear-data-store")
+    @click.pass_context
+    def clean_data_store(ctx):
+
+        kiara_obj: Kiara = ctx.obj["kiara"]
+
+        path = kiara_obj.data_store.data_store_dir
+        print()
+        print(f"Deleting folder: {path}...")
+        shutil.rmtree(path=path, ignore_errors=True)
+        print("Folder deleted.")

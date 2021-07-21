@@ -18,9 +18,12 @@ KIARA_RESOURCES_FOLDER = os.path.join(KIARA_MODULE_BASE_FOLDER, "resources")
 
 USER_PIPELINES_FOLDER = os.path.join(kiara_app_dirs.user_config_dir, "pipelines")
 
-KIARA_DATA_STORE = os.path.join(kiara_app_dirs.user_data_dir, "data")
-KIARA_METADATA_STORE = os.path.join(kiara_app_dirs.user_data_dir, "metadata")
-KIARA_ALIAS_VALUE_FOLDER = os.path.join(kiara_app_dirs.user_data_dir, "aliases")
+KIARA_DATA_STORE_DIR = os.path.join(
+    kiara_app_dirs.user_data_dir, "data-store", "default"
+)
+KIARA_DATA_DIR = os.path.join(KIARA_DATA_STORE_DIR, "data")
+KIARA_METADATA_DIR = os.path.join(KIARA_DATA_STORE_DIR, "metadata")
+KIARA_ALIASES_DIR = os.path.join(KIARA_DATA_STORE_DIR, "aliases")
 
 MODULE_TYPE_KEY = "module_type"
 """The key to specify the type of a module."""

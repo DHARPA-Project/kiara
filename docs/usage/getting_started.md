@@ -45,26 +45,26 @@ use [``JournalNodes1902.csv``](https://github.com/DHARPA-Project/kiara_modules.p
 journals (name, type, where it was from, etc.). We want to convert this file into a 'proper' table structure, because
 that will make subsequent processing faster, and also simpler in a lot of cases.
 
-So, after looking at the ``kiara module list`` output, it looks like the ``table.from_csv`` module might be a good fit for us. *kiara* has the [``run``](../running_modules) sub-command, which is used to execute modules. If we
+So, after looking at the ``kiara module list`` output, it looks like the ``table.import.from_local_file`` module might be a good fit for us. *kiara* has the [``run``](../running_modules) sub-command, which is used to execute modules. If we
 only provide a module name, and not any input, this command will tell us what it expects:
 
-{{ cli("kiara", "run", "table.from_csv") }}
+{{ cli("kiara", "run", "table.import.from_local_file") }}
 
 As makes obvious sense, we need to provide a ``path`` input, of type ``string``. The *kiara* commandline interface can
 take complex inputs like dicts, but fortunately this is not necessary here. If you ever come into a situation where you need this, check out [this section](../..//usage/#complex-inputs).
 
 For simple inputs like strings, all we need to do is provide the input name, followed by '=' and the value itself:
 
-{{ cli("kiara", "run", "table.from_csv", "path=examples/data/journals/JournalNodes1902.csv", max_height=340) }}
+{{ cli("kiara", "run", "table.import.from_local_file", "path=examples/data/journals/JournalNodes1902.csv", max_height=340) }}
 
 Although you can't see it from the output, *kiara* actually created an Arrow Table object from the csv. After *kiara* finished, this output was lost, though, since we didn't do anything with it. In most cases, we'll want to save this object. Which we can do with the ``run`` command: we just need to set the ``--save`` flag.
 
 This will prompt *kiara* to save the output of the workflow we are running into the internal *kiara* data store, along
 with the values metadata and a few other bits and pieces. So, let's run that command from before again, but this time
-with the ``--save`` option. We'll also use ``--id getting_started_example --output format=silent``, because we want
+with the ``--save`` option. We'll also use `--alias table=getting_started_example.table --output format=silent``, because we want
 to give our saved data a meaningful alias, and we are not interested to see the table content on the terminal (again):
 
-{{ cli("kiara", "run", "--id", "getting_started_example", "--output", "format=silent", "--save", "table.from_csv", "path=examples/data/journals/JournalNodes1902.csv") }}
+{{ cli("kiara", "run", "--alias", "table=getting_started_example.table", "--output", "format=silent", "--save", "table.import.from_local_file", "path=examples/data/journals/JournalNodes1902.csv") }}
 
 To check whether that worked, we can list all of our items in the data store, and see if the one we just created is in there:
 
@@ -128,22 +128,22 @@ The ``$(cat query.graphql)``-thing is really just a convenient way to not have t
 ## Generating a network graph
 
 Since what we actually want to do is generating a network graph from our two csv files, we'll have a look at the list of
-modules again, and it looks like the ``network.graph.from_csv`` one might do what we need.
+modules again, and it looks like the ``network.graph.import.from_local_files`` one might do what we need.
 
 But we are not sure. Luckily, *kiara* has some ways to give us more information about a module.
 
 The first one is the ``module explain-type`` command:
 
-{{ cli("kiara", "module", "explain-type", "network.graph.from_csv", max_height=320) }}
+{{ cli("kiara", "module", "explain-type", "network.graph.import.from_local_files", max_height=320) }}
 
 Uh. That's a handful. To be honest, that's mostly useful for when you want to start creating modules or pipelines
 for *kiara* yourself. The ``module explain-instance`` command is more helpful, though:
 
-{{ cli("kiara", "module", "explain-instance", "network.graph.from_csv", max_height=320) }}
+{{ cli("kiara", "module", "explain-instance", "network.graph.import.from_local_files", max_height=320) }}
 
 The 'inputs' section is most interesting, it's basically the same information we get from running ``kiara run`` without any inputs. Using the information from that output, and after looking at the headers of our csv files, we can figure out how to assemble our command:
 
-{{ cli("kiara", "run", "network.graph.from_csv", "edges_path=examples/data/journals/JournalEdges1902.csv", "source_column=Source", "target_column=Target", "nodes_path=examples/data/journals/JournalNodes1902.csv", "nodes_table_index=Id", "--save", "--id", "generate_graph_from_csvs") }}
+{{ cli("kiara", "run", "network.graph.import.from_local_files", "edges_path=examples/data/journals/JournalEdges1902.csv", "source_column=Source", "target_column=Target", "nodes_path=examples/data/journals/JournalNodes1902.csv", "nodes_table_index=Id", "--save", "--alias", "graph=generate_graph_from_csvs.graph") }}
 
 !!! note
     Yes, we could use the nodes table we loaded earlier here. But we don't. For reasons that have nothing to do with what makes sense here.

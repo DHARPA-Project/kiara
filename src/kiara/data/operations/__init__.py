@@ -342,20 +342,19 @@ class DataOperationMgmt(object):
         if self._operations is not None:
             return self._operations
 
-        self._operations = {}
+        _operations: typing.Dict[
+            str, typing.Dict[str, typing.Dict[str, OperationType]]
+        ] = {}
 
         for operation_name, operation_cls in self._operation_type_classes.items():
             all_ops = operation_cls.retrieve_operations(kiara=self._kiara)
             for value_type, details in all_ops.items():
                 for operation_name, obj in details.items():
-                    if (
-                        operation_name
-                        in self._operations.setdefault(value_type, {}).keys()
-                    ):
+                    if operation_name in _operations.setdefault(value_type, {}).keys():
                         raise Exception(
                             f"Duplicate operation name for type '{value_type}': {operation_name}"
                         )
-                    self._operations[value_type][operation_name] = obj
+                    _operations[value_type][operation_name] = obj
 
         for value_type, value_type_cls in self._kiara.value_types.items():
 
@@ -378,7 +377,7 @@ class DataOperationMgmt(object):
                     for operation_id, config in id_and_config.items():
                         if (
                             operation_id
-                            in self._operations.setdefault(value_type, {})
+                            in _operations.setdefault(value_type, {})
                             .setdefault(operation_name, {})
                             .keys()
                         ):
@@ -409,7 +408,7 @@ class DataOperationMgmt(object):
                             raise TypeError(
                                 f"Invalid operation object type: {type(config)}"
                             )
-                        self._operations[value_type][operation_name][operation_id] = obj
+                        _operations[value_type][operation_name][operation_id] = obj
 
         for module_name in self._kiara.available_module_types:
             module_cls = self._kiara.get_module_class(module_name)
@@ -420,7 +419,7 @@ class DataOperationMgmt(object):
                         for operation_id, config in id_and_config.items():
                             if (
                                 operation_id
-                                in self._operations.setdefault(value_type, {})
+                                in _operations.setdefault(value_type, {})
                                 .setdefault(operation_name, {})
                                 .keys()
                             ):
@@ -454,16 +453,28 @@ class DataOperationMgmt(object):
                                 raise TypeError(
                                     f"Invalid operation object type: {type(config)}"
                                 )
-                            self._operations[value_type][operation_name][
-                                operation_id
-                            ] = obj
+                            _operations[value_type][operation_name][operation_id] = obj
 
-        invalid = [x for x in self._operations.keys() if "." in x]
+        invalid = [x for x in _operations.keys() if "." in x]
         if invalid:
             raise Exception(
                 f"Invalid value type name(s), type names can't contain '.': {', '.join(invalid)}"
             )
 
+        invalid = []
+        for vt, op in _operations.items():
+            for op_name, id_and_config in op.items():
+                for op_id in id_and_config.keys():
+                    full_name = f"{vt}.{op_name}.{op_id}"
+                    if full_name in self._kiara.available_module_types:
+                        invalid.append(full_name)
+
+        if invalid:
+            raise Exception(
+                f"Invalid operation ids, can't be the same as existing module ids: {', '.join(invalid)}"
+            )
+
+        self._operations = _operations
         return self._operations
 
     def get_operation(

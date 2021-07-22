@@ -119,7 +119,7 @@ class ExtractMetadataModule(KiaraModule):
     def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
 
         value = inputs.get_value_obj("value_item")
-        if value.type_name not in [self.value_type, "any"]:
+        if value.type_name != self.value_type:
             raise KiaraProcessingException(
                 f"Can't extract metadata for value of type '{value.value_schema.type}'. Expected type '{self.value_type}'."
             )

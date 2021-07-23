@@ -120,7 +120,9 @@ class KiaraModuleTypeMetadata(MetadataModel):
     @classmethod
     def from_module_class(cls, module_cls: typing.Type["KiaraModule"]):
 
-        proc_src = textwrap.dedent(inspect.getsource(module_cls.process))
+        if not hasattr(module_cls, "process"):
+            raise Exception(f"Module class '{module_cls}' misses 'process' method.")
+        proc_src = textwrap.dedent(inspect.getsource(module_cls.process))  # type: ignore
 
         origin_md = OriginMetadataModel.from_class(module_cls)
         doc = DocumentationMetadataModel.from_class_doc(module_cls)

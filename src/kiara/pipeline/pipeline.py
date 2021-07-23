@@ -29,7 +29,8 @@ from kiara.events import (
     StepInputEvent,
     StepOutputEvent,
 )
-from kiara.pipeline.controller import BatchController, PipelineController
+from kiara.pipeline.controller import PipelineController
+from kiara.pipeline.controller.batch import BatchController
 from kiara.pipeline.listeners import PipelineListener
 from kiara.pipeline.structure import (
     PipelineStep,

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import abc
+import logging
 import typing
 import uuid
 import zmq
@@ -31,17 +32,39 @@ class JobStatus(Enum):
     CREATED = "__job_created__"
     STARTED = "__job_started__"
     SUCCESS = "__job_success__"
-    FAILURE = "__job_failed__"
+    FAILED = "__job_failed__"
+
+
+class LogMessage(BaseModel):
+
+    timestamp: datetime = Field(
+        description="The time the message was logged.", default_factory=datetime.now
+    )
+    log_level: int = Field(description="The log level.")
+    msg: str = Field(description="The log message")
+
+
+class JobLog(BaseModel):
+
+    log: typing.Dict[int, LogMessage] = Field(
+        description="The logs for this job.", default_factory=dict
+    )
+    percent_finished: int = Field(
+        description="Describes how much of the job is finished. A negative number means the module does not support progress tracking.",
+        default=-1,
+    )
+
+    def add_log(self, msg: str, log_level: int = logging.DEBUG):
+
+        _msg = LogMessage(msg=msg, log_level=log_level)
+        self.log[len(self.log)] = _msg
 
 
 class Job(BaseModel):
     @classmethod
     def create_event_msg(cls, job: "Job"):
 
-        if isinstance(job.status, int):
-            topic = "job_status_updated"
-        else:
-            topic = job.status.value[2:-2]
+        topic = job.status.value[2:-2]
 
         payload = f"{topic} {job.json()}"
         return payload
@@ -59,6 +82,9 @@ class Job(BaseModel):
     )
     inputs: PipelineValues = Field(description="The input values.")
     outputs: PipelineValues = Field(description="The output values.")
+    job_log: JobLog = Field(
+        description="Details about the job progress.", default_factory=JobLog
+    )
     submitted: datetime = Field(
         description="When the job was submitted.", default_factory=datetime.now
     )
@@ -68,8 +94,8 @@ class Job(BaseModel):
     finished: typing.Optional[datetime] = Field(
         description="When the job was finished.", default=None
     )
-    status: typing.Union[JobStatus, int] = Field(
-        description="The current status of the job, either a job status string, or a 'percent finished' integer.",
+    status: JobStatus = Field(
+        description="The current status of the job.",
         default=JobStatus.CREATED,
     )
     error: typing.Optional[str] = Field(description="Potential error message.")
@@ -132,6 +158,15 @@ class ModuleProcessor(abc.ABC):
         self._active_jobs: typing.Dict[str, Job] = {}
         self._finished_jobs: typing.Dict[str, Job] = {}
 
+    def get_job_details(self, job_id: str) -> typing.Optional[Job]:
+
+        if job_id in self._active_jobs.keys():
+            return self._active_jobs[job_id]
+        elif job_id in self._finished_jobs.keys():
+            return self._finished_jobs[job_id]
+        else:
+            return None
+
     def start(
         self,
         pipeline_id: str,
@@ -153,13 +188,21 @@ class ModuleProcessor(abc.ABC):
             inputs=PipelineValues.from_value_set(inputs),
             outputs=PipelineValues.from_value_set(outputs),
         )
+        job.job_log.add_log("job created")
         self._active_jobs[job_id] = job
         self._socket.send_string(Job.create_event_msg(job))
 
         try:
-            self.process(job_id=job_id, module=module, inputs=inputs, outputs=outputs)
+            self.process(
+                job_id=job_id,
+                module=module,
+                inputs=inputs,
+                outputs=outputs,
+                job_log=job.job_log,
+            )
             return job_id
         except Exception as e:
+            job.error = str(e)
             if is_debug():
                 try:
                     import traceback
@@ -175,7 +218,7 @@ class ModuleProcessor(abc.ABC):
                 raise KiaraProcessingException(e, module=module, inputs=inputs)
 
     def job_status_updated(
-        self, job_id: str, status: typing.Union[JobStatus, int, str, Exception]
+        self, job_id: str, status: typing.Union[JobStatus, str, Exception]
     ):
 
         job = self._active_jobs.get(job_id, None)
@@ -184,14 +227,16 @@ class ModuleProcessor(abc.ABC):
                 f"Can't retrieve active job with id '{job_id}', no such job registered."
             )
 
-        if status in [100, JobStatus.SUCCESS]:
+        if status == JobStatus.SUCCESS:
+            job.job_log.add_log("job finished successfully")
             job.status = JobStatus.SUCCESS
             job = self._active_jobs.pop(job_id)
             job.finished = datetime.now()
             self._finished_jobs[job_id] = job
             self._socket.send_string(Job.create_event_msg(job))
-        elif status == JobStatus.FAILURE or isinstance(status, (str, Exception)):
-            job.status = JobStatus.FAILURE
+        elif status == JobStatus.FAILED or isinstance(status, (str, Exception)):
+            job.job_log.add_log("job failed")
+            job.status = JobStatus.FAILED
             job.finished = datetime.now()
             if isinstance(status, str):
                 job.error = status
@@ -200,18 +245,21 @@ class ModuleProcessor(abc.ABC):
             job = self._active_jobs.pop(job_id)
             self._finished_jobs[job_id] = job
             self._socket.send_string(Job.create_event_msg(job))
-        elif status in [0, JobStatus.STARTED]:
+        elif status == JobStatus.STARTED:
+            job.job_log.add_log("job started")
             job.status = JobStatus.STARTED
-            self._socket.send_string(Job.create_event_msg(job))
-        elif isinstance(status, int) and status > 1 and status < 100:
-            job.status = status
             self._socket.send_string(Job.create_event_msg(job))
         else:
             raise ValueError(f"Invalid value for status: {status}")
 
     @abc.abstractmethod
     def process(
-        self, job_id: str, module: "KiaraModule", inputs: ValueSet, outputs: ValueSet
+        self,
+        job_id: str,
+        module: "KiaraModule",
+        inputs: ValueSet,
+        outputs: ValueSet,
+        job_log: JobLog,
     ) -> str:
         pass
 

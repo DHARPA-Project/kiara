@@ -17,9 +17,9 @@ from kiara.data.values import ValuesInfo
 from kiara.defaults import DEFAULT_PRETTY_PRINT_CONFIG
 from kiara.interfaces.cli.utils import _create_module_instance
 from kiara.module import KiaraModule
-from kiara.pipeline.controller import BatchController
+from kiara.pipeline.controller.batch import BatchController
 from kiara.pipeline.pipeline import StepStatus
-from kiara.processing.parallel import ThreadPoolProcessor
+from kiara.processing import JobStatus
 from kiara.utils import create_table_from_field_schemas, dict_from_cli_args, is_debug
 from kiara.utils.output import OutputDetails, rich_print
 
@@ -151,11 +151,11 @@ async def run(ctx, module, inputs, module_config, output, explain, save, alias):
             )
             sys.exit(1)
 
-    processor = ThreadPoolProcessor()
+    # processor = ThreadPoolProcessor()
     processor = None
     controller = BatchController(processor=processor)
 
-    # TODO: should we let the user specify?l
+    # TODO: should we let the user specify?
     workflow_id = None
     if workflow_id is None:
         workflow_id = f"{module_name}_0"
@@ -227,119 +227,134 @@ async def run(ctx, module, inputs, module_config, output, explain, save, alias):
     if failed:
         sys.exit(1)
 
-    if not silent:
+    if workflow.status != StepStatus.RESULTS_READY:
 
-        if output_details.target == "terminal":
-            if output_details.format == "terminal":
-                print()
-                pretty_print = kiara_obj.create_workflow("string.pretty_print")
-                pretty_print_inputs: typing.Dict[str, typing.Any] = {
-                    "item": workflow.outputs
-                }
-                pretty_print_inputs.update(DEFAULT_PRETTY_PRINT_CONFIG)
+        failed = {}
+        for step_id in workflow.pipeline.step_ids:
+            job = workflow.controller.get_job_details(step_id)
+            if job.status == JobStatus.FAILED:
+                failed[step_id] = job.error if job.error else "-- no error details --"
 
-                pretty_print.inputs.set_values(**pretty_print_inputs)
+        print()
+        rich_print(
+            "[bold red]Error:[/bold red] One or several workflow steps failed!\n"
+        )
+        for s_id, msg in failed.items():
+            rich_print(f" - [bold]{s_id}[/bold]: {msg}")
+    else:
+        if not silent:
 
-                renderables = pretty_print.outputs.get_value_data("renderables")
-                if renderables:
-                    output = Panel(RenderGroup(*renderables), box=box.SIMPLE)
-                    rich_print("[b]Output data[/b]")
-                    rich_print(output)
-                else:
-                    rich_print("No output.")
-            else:
-
-                format = output_details.format
-                available_formats = kiara_obj.get_convert_target_types(
-                    source_type="value_set"
-                )
-                if format not in available_formats:
+            if output_details.target == "terminal":
+                if output_details.format == "terminal":
                     print()
-                    print(
-                        f"Can't convert to output format '{format}', this format is not supported. Available formats: {', '.join(available_formats)}."
+                    pretty_print = kiara_obj.create_workflow("string.pretty_print")
+                    pretty_print_inputs: typing.Dict[str, typing.Any] = {
+                        "item": workflow.outputs
+                    }
+                    pretty_print_inputs.update(DEFAULT_PRETTY_PRINT_CONFIG)
+
+                    pretty_print.inputs.set_values(**pretty_print_inputs)
+
+                    renderables = pretty_print.outputs.get_value_data("renderables")
+                    if renderables:
+                        output = Panel(RenderGroup(*renderables), box=box.SIMPLE)
+                        rich_print("[b]Output data[/b]")
+                        rich_print(output)
+                    else:
+                        rich_print("No output.")
+                else:
+
+                    format = output_details.format
+                    available_formats = kiara_obj.get_convert_target_types(
+                        source_type="value_set"
                     )
-                    sys.exit(1)
+                    if format not in available_formats:
+                        print()
+                        print(
+                            f"Can't convert to output format '{format}', this format is not supported. Available formats: {', '.join(available_formats)}."
+                        )
+                        sys.exit(1)
 
-                config = {}
-                config.update(DEFAULT_TO_JSON_CONFIG)
+                    config = {}
+                    config.update(DEFAULT_TO_JSON_CONFIG)
 
-                try:
+                    try:
+                        transformed = kiara_obj.transform_data(
+                            workflow.outputs,
+                            source_type="value_set",
+                            target_type=format,
+                            config=config,
+                        )
+                        transformed_value = transformed.get_value_data("target_value")
+
+                        if format in ["json", "yaml"]:
+                            transformed_str = Syntax(
+                                transformed_value,
+                                lexer_name=format,
+                                background_color="default",
+                            )
+                            rich_print(transformed_str)
+                        else:
+                            print(transformed_value)
+                    except Exception as e:
+                        print()
+                        rich_print(f"Can't transform outputs into '{format}': {e}")
+                        sys.exit(1)
+
+            else:
+                if output_details.format == "terminal":
+
+                    pretty_print = kiara_obj.create_workflow("string.pretty_print")
+
+                    pretty_print_inputs = {"item": value}
+                    pretty_print_inputs.update(DEFAULT_PRETTY_PRINT_CONFIG)
+                    pretty_print.inputs.set_values(**pretty_print_inputs)
+
+                    renderables = pretty_print.outputs.get_value_data("renderables")
+                    output = Panel(RenderGroup(*renderables), box=box.SIMPLE)
+                    with open(target_file, "wt") as f:
+                        console = Console(record=True, file=f)
+                        console.print(output)
+                else:
+
+                    format = output_details.format
+                    available_formats = kiara_obj.get_convert_target_types(
+                        source_type="value_set"
+                    )
+                    if format not in available_formats:
+                        print()
+                        print(
+                            f"Can't convert to output format '{format}', this format is not supported. Available formats: {', '.join(available_formats)}."
+                        )
+                        sys.exit(1)
+
+                    config = {}
+                    config.update(DEFAULT_TO_JSON_CONFIG)
+
                     transformed = kiara_obj.transform_data(
                         workflow.outputs,
                         source_type="value_set",
                         target_type=format,
                         config=config,
                     )
-                    transformed_value = transformed.get_value_data("target_value")
+                    transformed_value = transformed.get_value_data()
 
-                    if format in ["json", "yaml"]:
-                        transformed_str = Syntax(
-                            transformed_value,
-                            lexer_name=format,
-                            background_color="default",
-                        )
-                        rich_print(transformed_str)
-                    else:
-                        print(transformed_value)
+                    target_file.parent.mkdir(parents=True, exist_ok=True)
+                    # TODO: check whether to write text or bytes
+                    target_file.write_text(transformed_value)
+
+        if save:
+            for field, value in workflow.outputs.items():
+                rich_print(f"Saving '[i]{field}[/i]'...")
+                field_aliases = aliases.get(field, [])
+                try:
+                    value_id = value.save(aliases=field_aliases)
+                    rich_print(f"   -> done, id: [i]{value_id}[/i]")
+
                 except Exception as e:
-                    print()
-                    rich_print(f"Can't transform outputs into '{format}': {e}")
-                    sys.exit(1)
+                    if is_debug():
+                        import traceback
 
-        else:
-            if output_details.format == "terminal":
-
-                pretty_print = kiara_obj.create_workflow("string.pretty_print")
-
-                pretty_print_inputs = {"item": value}
-                pretty_print_inputs.update(DEFAULT_PRETTY_PRINT_CONFIG)
-                pretty_print.inputs.set_values(**pretty_print_inputs)
-
-                renderables = pretty_print.outputs.get_value_data("renderables")
-                output = Panel(RenderGroup(*renderables), box=box.SIMPLE)
-                with open(target_file, "wt") as f:
-                    console = Console(record=True, file=f)
-                    console.print(output)
-            else:
-
-                format = output_details.format
-                available_formats = kiara_obj.get_convert_target_types(
-                    source_type="value_set"
-                )
-                if format not in available_formats:
-                    print()
-                    print(
-                        f"Can't convert to output format '{format}', this format is not supported. Available formats: {', '.join(available_formats)}."
-                    )
-                    sys.exit(1)
-
-                config = {}
-                config.update(DEFAULT_TO_JSON_CONFIG)
-
-                transformed = kiara_obj.transform_data(
-                    workflow.outputs,
-                    source_type="value_set",
-                    target_type=format,
-                    config=config,
-                )
-                transformed_value = transformed.get_value_data()
-
-                target_file.parent.mkdir(parents=True, exist_ok=True)
-                # TODO: check whether to write text or bytes
-                target_file.write_text(transformed_value)
-
-    if save:
-        for field, value in workflow.outputs.items():
-            rich_print(f"Saving '[i]{field}[/i]'...")
-            field_aliases = aliases.get(field, [])
-            try:
-                value_id = value.save(aliases=field_aliases)
-                rich_print(f"   -> done, id: [i]{value_id}[/i]")
-
-            except Exception as e:
-                if is_debug():
-                    import traceback
-
-                    traceback.print_exc()
-                rich_print(f"   -> failed: [red]{e}[/red]")
-            print()
+                        traceback.print_exc()
+                    rich_print(f"   -> failed: [red]{e}[/red]")
+                print()

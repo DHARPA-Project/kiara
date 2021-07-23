@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import abc
 import deepdiff
+import inspect
 import typing
 import uuid
 from abc import abstractmethod
@@ -23,6 +24,7 @@ from kiara.metadata.module_models import (
     KiaraModuleTypeMetadata,
 )
 from kiara.module_config import KIARA_CONFIG, KiaraModuleConfig
+from kiara.processing import JobLog
 from kiara.utils import StringYAML, is_debug
 from kiara.utils.modules import create_schemas, overlay_constants_and_defaults
 
@@ -436,7 +438,9 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         """A list of output field names for this module."""
         return self.output_schemas.keys()
 
-    def process_step(self, inputs: ValueSet, outputs: ValueSet) -> None:
+    def process_step(
+        self, inputs: ValueSet, outputs: ValueSet, job_log: JobLog
+    ) -> None:
         """Kick off processing for a specific set of input/outputs.
 
         This method calls the implemented [process][kiara.module.KiaraModule.process] method of the inheriting class,
@@ -447,26 +451,52 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
             outputs: the output value set
         """
 
-        try:
-            self.process(inputs=inputs, outputs=outputs)
-        except Exception as e:
-            if is_debug():
-                try:
-                    import traceback
+        signature = inspect.signature(self.process)  # type: ignore
 
-                    traceback.print_exc()
-                except Exception:
-                    pass
-            raise e
+        if "job_log" not in signature.parameters.keys():
 
-    @abstractmethod
-    def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
-        """Abstract method to implement by child classes, should be a pure, idempotent function that uses the values from ``inputs``, and stores results in the provided ``outputs`` object.
+            try:
+                self.process(inputs=inputs, outputs=outputs)  # type: ignore
+            except Exception as e:
+                if is_debug():
+                    try:
+                        import traceback
 
-        Arguments:
-            inputs: the input value set
-            outputs: the output value set
-        """
+                        traceback.print_exc()
+                    except Exception:
+                        pass
+                raise e
+
+        else:
+
+            try:
+                self.process(inputs=inputs, outputs=outputs, job_log=job_log)  # type: ignore
+            except Exception as e:
+                if is_debug():
+                    try:
+                        import traceback
+
+                        traceback.print_exc()
+                    except Exception:
+                        pass
+                raise e
+
+    # @typing.overload
+    # def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
+    #     """Abstract method to implement by child classes, should be a pure, idempotent function that uses the values from ``inputs``, and stores results in the provided ``outputs`` object.
+    #
+    #     Arguments:
+    #         inputs: the input value set
+    #         outputs: the output value set
+    #     """
+    #     pass
+    #
+    # @typing.overload
+    # def process(self, inputs: ValueSet, outputs: ValueSet, job_log: typing.Optional[JobLog]=None) -> None:
+    #     pass
+    #
+    # def process(self, inputs, outputs, job_log=None) -> None:
+    #     pass
 
     def run(self, **inputs: typing.Any) -> ValueSet:
         """Execute the module with the provided inputs directly.
@@ -514,7 +544,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         # m_inputs = StepInputs(inputs=input_value_set)
         # m_outputs = StepOutputs(outputs=output_value_set)
 
-        self.process(inputs=input_value_set, outputs=output_value_set)
+        self.process(inputs=input_value_set, outputs=output_value_set)  # type: ignore
 
         result = output_value_set.get_all_value_objects()
         return ValueSetImpl(items=result, read_only=True)

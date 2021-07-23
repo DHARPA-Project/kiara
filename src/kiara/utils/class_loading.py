@@ -209,12 +209,27 @@ def find_all_kiara_modules() -> typing.Dict[str, typing.Type["KiaraModule"]]:
 
     from kiara.module import KiaraModule
 
-    return load_all_subclasses_for_entry_point(
+    modules = load_all_subclasses_for_entry_point(
         entry_point_name="kiara.modules",
         base_class=KiaraModule,  # type: ignore
         set_id_attribute="_module_type_name",
         remove_namespace_tokens=["core."],
     )
+    result = {}
+    # need to test this, since I couldn't add an abstract method to the KiaraModule class itself (mypy complained because it is potentially overloaded)
+    for k, cls in modules.items():
+        if not hasattr(cls, "process"):
+            msg = f"Ignoring module class '{cls}': no 'process' method."
+            if is_debug():
+                log.warning(msg)
+            else:
+                log.debug(msg)
+            continue
+
+        # TODO: check signature of process method
+
+        result[k] = cls
+    return result
 
 
 def find_all_metadata_schemas() -> typing.Dict[str, typing.Type["MetadataModel"]]:

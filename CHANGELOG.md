@@ -1,8 +1,11 @@
 # Changelog
 
-## Version 0.0.7 (upcoming)
+## Version
+
+## Version 0.0.9 (upcoming)
 
 - removed 'aliases' attribute from Value class, aliases are now specified when calling 'save'
+- Job details (incl. error messages -- check the kiara.processing.Job class) for the most recent or current module executions can be retrieved: `[controller_obj].get_job_details(step_id)```
 
 ## Version 0.0.6
 

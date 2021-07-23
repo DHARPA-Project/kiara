@@ -5,7 +5,7 @@ from pydantic import Field
 
 from kiara.data import ValueSet
 from kiara.module import KiaraModule, StepInputs, StepOutputs
-from kiara.processing import ModuleProcessor, ProcessorConfig
+from kiara.processing import JobLog, JobStatus, ModuleProcessor, ProcessorConfig
 
 try:
     pass
@@ -29,27 +29,39 @@ class ThreadPoolProcessor(ModuleProcessor):
         super().__init__(**kwargs)
 
     def process(
-        self, job_id: str, module: KiaraModule, inputs: ValueSet, outputs: ValueSet
+        self,
+        job_id: str,
+        module: KiaraModule,
+        inputs: ValueSet,
+        outputs: ValueSet,
+        job_log: JobLog,
     ):
 
         # TODO: ensure this is thread-safe
         future = self._executor.submit(
-            self.wrap_process, job_id, module, inputs, outputs
+            self.wrap_process, job_id, module, inputs, outputs, job_log
         )
         self._futures[job_id] = future
 
     def wrap_process(
-        self, job_id: str, module: KiaraModule, inputs: ValueSet, outputs: ValueSet
+        self,
+        job_id: str,
+        module: KiaraModule,
+        inputs: ValueSet,
+        outputs: ValueSet,
+        job_log: JobLog,
     ):
 
         wrapped_inputs = StepInputs(inputs=inputs)
         wrapped_outputs = StepOutputs(outputs=outputs)
 
-        self.job_status_updated(job_id=job_id, status=0)
+        self.job_status_updated(job_id=job_id, status=JobStatus.STARTED)
         try:
-            module.process_step(inputs=wrapped_inputs, outputs=wrapped_outputs)
+            module.process_step(
+                inputs=wrapped_inputs, outputs=wrapped_outputs, job_log=job_log
+            )
             wrapped_outputs.sync()
-            self.job_status_updated(job_id=job_id, status=100)
+            self.job_status_updated(job_id=job_id, status=JobStatus.SUCCESS)
         except Exception as e:
             self.job_status_updated(job_id=job_id, status=e)
 

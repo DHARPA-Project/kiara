@@ -3,6 +3,7 @@ import typing
 
 if typing.TYPE_CHECKING:
     from kiara import KiaraModule
+    from kiara.data.types import ValueType
     from kiara.data.values import ValueSet
 
 
@@ -30,6 +31,20 @@ class KiaraModuleConfigException(Exception):
             _msg = msg
 
         super().__init__(_msg)
+
+
+class KiaraValueException(Exception):
+    def __init__(
+        self,
+        value_type: typing.Type["ValueType"],
+        value_data: typing.Any,
+        exception: Exception,
+    ):
+        self._value_type: typing.Type["ValueType"] = value_type
+        self._value_data: typing.Any = value_data
+        self._exception: Exception = exception
+
+        super().__init__(f"Invalid value of type '{value_type._value_type_name}': {exception}")  # type: ignore
 
 
 class KiaraProcessingException(Exception):

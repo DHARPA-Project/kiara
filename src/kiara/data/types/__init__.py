@@ -27,6 +27,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from kiara.defaults import NO_HASH_MARKER
+from kiara.exceptions import KiaraValueException
 from kiara.metadata.type_models import ValueTypeMetadata
 
 if typing.TYPE_CHECKING:
@@ -116,10 +117,15 @@ class ValueType(object):
 
         assert value is not None
 
-        parsed = self.parse_value(value)
-        if parsed is None:
-            parsed = value
-        self.validate(parsed)
+        try:
+            parsed = self.parse_value(value)
+            if parsed is None:
+                parsed = value
+            self.validate(parsed)
+        except Exception as e:
+            raise KiaraValueException(
+                value_type=self.__class__, value_data=value, exception=e
+            )
 
         return parsed
 

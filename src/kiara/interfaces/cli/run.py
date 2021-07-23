@@ -153,7 +153,7 @@ async def run(ctx, module, inputs, module_config, output, explain, save, alias):
 
     # processor = ThreadPoolProcessor()
     processor = None
-    controller = BatchController(processor=processor)
+    controller = BatchController(processor=processor, auto_process=False)
 
     # TODO: should we let the user specify?
     workflow_id = None
@@ -204,8 +204,14 @@ async def run(ctx, module, inputs, module_config, output, explain, save, alias):
     try:
         if workflow_input:
             workflow.inputs.set_values(**workflow_input)
-        else:
-            workflow.controller.process_pipeline()
+
+    except Exception as e:
+        print()
+        rich_print(f"[bold red]Input value error[/bold red]: {e}")
+        sys.exit(1)
+
+    try:
+        workflow.controller.process_pipeline()
     except Exception as e:
         print()
         print(e)
@@ -232,15 +238,22 @@ async def run(ctx, module, inputs, module_config, output, explain, save, alias):
         failed = {}
         for step_id in workflow.pipeline.step_ids:
             job = workflow.controller.get_job_details(step_id)
+            if not job:
+                continue
             if job.status == JobStatus.FAILED:
                 failed[step_id] = job.error if job.error else "-- no error details --"
 
         print()
-        rich_print(
-            "[bold red]Error:[/bold red] One or several workflow steps failed!\n"
-        )
-        for s_id, msg in failed.items():
-            rich_print(f" - [bold]{s_id}[/bold]: {msg}")
+        if failed:
+            rich_print(
+                "[bold red]Error:[/bold red] One or several workflow steps failed!\n"
+            )
+            for s_id, msg in failed.items():
+                rich_print(f" - [bold]{s_id}[/bold]: {msg}")
+        else:
+            rich_print(
+                "Workflow results not ready: one or several inputs missing or invalid."
+            )
     else:
         if not silent:
 

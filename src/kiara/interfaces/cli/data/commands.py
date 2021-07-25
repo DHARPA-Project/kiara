@@ -30,28 +30,50 @@ def list_values(ctx):
     table.add_column("aliases")
     table.add_column("type")
 
-    print()
-    for v_id, d in kiara_obj.data_store.values_metadata.items():
+    for v_id in kiara_obj.data_store.value_ids:
 
-        value_type = kiara_obj.data_store.get_value_type(value_id=v_id)
-        aliases = kiara_obj.data_store.get_aliases_for_id(v_id)
+        value_type = kiara_obj.data_store.get_value_type_for_id(v_id)
+        aliases = kiara_obj.data_store.find_aliases_for_value_id(
+            v_id, include_all_versions=False
+        )
+        _aliases = []
         if not aliases:
-            aliases.append("")
+            _aliases.append("")
+        else:
+            for a in aliases:
+                _aliases.append(a.alias)
 
-        table.add_row(v_id, aliases[0], value_type)
+        table.add_row(v_id, _aliases[0], value_type)
 
-        for a in aliases[1:]:
+        for a in _aliases[1:]:
             table.add_row("", a, "")
 
     rich_print(table)
 
+    # for alias, details in kiara_obj.data_store.aliases.items():
+    #     print("-----")
+    #     print(alias)
+    #     import pp
+    #     pp(details)
+    #     versions = kiara_obj.data_store.get_alias_versions(alias)
+    #     for version, d in versions.items():
+    #         print('---')
+    #         print(version)
+    #         pp(d)
+
+    # kiara_obj.data_store
+    # aliases = kiara_obj.data_store.get_aliases_for_id(v_id)
+    #     aliases = []
+    #
+    # rich_print(table)
+
     # else:
-    #     for alias, v_id in kiara_obj.data_store.aliases.items():
+    #     for id_or_alias, v_id in kiara_obj.data_store.ids_or_aliases.items():
     #         v_type = kiara_obj.data_store.get_value_type(v_id)
     #         if not details:
-    #             rich_print(f"  - [b]{alias}[/b]: {v_type}")
+    #             rich_print(f"  - [b]{id_or_alias}[/b]: {v_type}")
     #         else:
-    #             rich_print(f"[b]{alias}[/b]: {v_type}\n")
+    #             rich_print(f"[b]{id_or_alias}[/b]: {v_type}\n")
     #             md = kiara_obj.data_store.get_value_metadata(value_id=v_id)
     #             s = Syntax(json.dumps(md, indent=2), "json")
     #             rich_print(s)

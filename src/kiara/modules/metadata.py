@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 import abc
 import typing
-import uuid
 from pydantic import BaseModel, Field
 
 from kiara.data import Value, ValueSet
 from kiara.data.values import ValueSchema
-from kiara.defaults import NO_HASH_MARKER
 from kiara.exceptions import KiaraProcessingException
-from kiara.metadata.core_models import HashMetadata, PythonClassMetadata
+from kiara.metadata.core_models import PythonClassMetadata
 from kiara.module import KiaraModule
 from kiara.module_config import KiaraModuleConfig
 
@@ -164,34 +162,3 @@ class ExtractPythonClass(ExtractMetadataModule):
             "module_name": cls.__module__,
             "full_name": f"{cls.__module__}.{cls.__name__}",
         }
-
-
-class CalculateValueHashModule(ExtractMetadataModule):
-    """Calculate the hash of a value."""
-
-    _module_type_name = "metadata.value_hash"
-
-    @classmethod
-    def _get_supported_types(self) -> typing.Union[str, typing.Iterable[str]]:
-        return "*"
-
-    @classmethod
-    def get_metadata_key(cls) -> str:
-        return "value_hash"
-
-    def _get_metadata_schema(
-        self, type: str
-    ) -> typing.Union[str, typing.Type[BaseModel]]:
-
-        return HashMetadata
-
-    def extract_metadata(self, value: Value) -> typing.Mapping[str, typing.Any]:
-
-        value_hash = value.calculate_hash()
-        hash_desc = f"Hash for value type {value.type_name}."
-
-        if value_hash == NO_HASH_MARKER:
-            value_hash = str(uuid.uuid4())
-            hash_desc = "Generated uuid."
-
-        return {"hash": value_hash, "hash_desc": hash_desc}

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import typing
 
-from kiara.data.persistence import LoadConfig
 from kiara.data.types import ValueType
+from kiara.metadata.core_models import LoadConfig
 
 
 class ValueLoadConfig(ValueType):

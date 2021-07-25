@@ -4,7 +4,7 @@ import typing
 import uuid
 from pyarrow import Table
 
-from kiara.data.persistence import DataStore
+from kiara.data.store import LocalDataStore
 from kiara.data.values import (
     DataValue,
     KiaraValue,
@@ -46,7 +46,7 @@ class DataRegistry(object):
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
-        self._data_store: DataStore = self._kiara.data_store
+        self._data_store: LocalDataStore = self._kiara.data_store
 
         self._id: str = str(uuid.uuid4())
 
@@ -92,7 +92,7 @@ class DataRegistry(object):
             return self._linked_value_items[value_id]
         elif value_id in self._persisted_values.keys():
             return self._persisted_values[value_id]
-        elif value_id in self._data_store.available_ids:
+        elif value_id in self._data_store.value_ids:
             value = self._data_store.load_value(value_id=value_id)
             self._persisted_values[value_id] = value
             return self._persisted_values[value_id]

@@ -57,8 +57,6 @@ from kiara.utils.output import OutputDetails, rich_print
 async def run(ctx, module, inputs, module_config, output, explain, save, alias):
     """Execute a workflow run."""
 
-    overwrite_aliases: bool = True
-
     if module_config:
         module_config = dict_from_cli_args(*module_config)
 
@@ -179,19 +177,6 @@ async def run(ctx, module, inputs, module_config, output, explain, save, alias):
                 f"Can't run workflow, invalid field name(s) when specifying aliases: {', '.join(invalid_fields)}. Valid field names: {', '.join(workflow.outputs.get_all_field_names())}"
             )
             sys.exit(1)
-
-        if not overwrite_aliases:
-            all_aliases = []
-            for a in aliases.values():
-                all_aliases.extend(a)
-            invalid = kiara_obj.data_store.check_existing_aliases(*all_aliases)
-
-            if invalid:
-                print()
-                print(
-                    f"Can't run workflow, value aliases for saving already exist: {', '.join(invalid)}. Set another workflow id?"
-                )
-                sys.exit(1)
 
     list_keys = []
 

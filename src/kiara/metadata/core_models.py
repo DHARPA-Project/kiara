@@ -9,6 +9,7 @@ from rich.markdown import Markdown
 from rich.table import Table
 from types import ModuleType
 
+from kiara.data.operations import ModuleProfileConfig
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.metadata import MetadataModel
 from kiara.utils import merge_dicts
@@ -41,13 +42,13 @@ class PythonClassMetadata(MetadataModel):
         return m
 
 
-class HashMetadata(MetadataModel):
-
-    hash: str = Field(description="The hash for the value.")
-    hash_desc: typing.Optional[str] = Field(
-        description="A description how the hash was calculated and other details.",
-        default=None,
-    )
+# class HashMetadata(MetadataModel):
+#
+#     hash: str = Field(description="The hash for the value.")
+#     hash_desc: typing.Optional[str] = Field(
+#         description="A description how the hash was calculated and other details.",
+#         default=None,
+#     )
 
 
 class LinkModel(BaseModel):
@@ -237,4 +238,48 @@ class MetadataModelMetadata(MetadataModel):
     )
     python_class: PythonClassMetadata = Field(
         description="The Python class for this value type."
+    )
+
+
+class ValueHash(BaseModel):
+
+    hash: str = Field(description="The value hash.")
+    hash_type: str = Field(description="The value hash method.")
+
+
+class ValueInfo(BaseModel):
+
+    type: str = Field(description="The value type.")
+    hashes: typing.Dict[str, ValueHash] = Field(
+        description="All available hashes for this value."
+    )
+
+
+class SnapshotMetadata(BaseModel):
+
+    value_type: str = Field(description="The value type.")
+    value_id: str = Field(description="The value id after the snapshot.")
+    value_id_orig: str = Field(description="The value id before the snapshot.")
+    snapshot_time: str = Field(description="The time the data was saved.")
+
+
+class LoadConfig(ModuleProfileConfig):
+
+    value_id: str = Field(description="The id of the value.")
+    base_path_input_name: str = Field(
+        description="The base path where the value is stored.", default="base_path"
+    )
+    inputs: typing.Dict[str, typing.Any] = Field(
+        description="The inputs to use when running this module.", default_factory=dict
+    )
+    output_name: str = Field(description="The name of the output field for the value.")
+
+
+class SaveConfig(ModuleProfileConfig):
+
+    inputs: typing.Dict[str, typing.Any] = Field(
+        description="The inputs to use when running this module.", default_factory=dict
+    )
+    load_config_output: str = Field(
+        description="The output name that will contain the load config output value."
     )

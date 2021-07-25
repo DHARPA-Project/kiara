@@ -4,14 +4,11 @@ import logging
 import typing
 from pydantic import BaseModel, Extra, Field, PrivateAttr, ValidationError
 
-from kiara.data import Value
-from kiara.data.values import ValueSchema, ValueSet, ValueSetImpl
 from kiara.utils import is_debug
-from kiara.utils.class_loading import find_all_operation_types
-from kiara.utils.modules import create_schemas
 
 if typing.TYPE_CHECKING:
     from kiara import Kiara
+    from kiara.data.values import Value, ValueSchema, ValueSet
     from kiara.module import KiaraModule
 
 
@@ -117,7 +114,9 @@ class OperationType(ModuleProfileConfig, abc.ABC):
     def create_input_schema(
         cls,
     ) -> typing.Optional[
-        typing.Mapping[str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]]
+        typing.Mapping[
+            str, typing.Union["ValueSchema", typing.Mapping[str, typing.Any]]
+        ]
     ]:
         """Abstract method to implement by child classes, returns a description of the input schema of this module."""
 
@@ -127,15 +126,17 @@ class OperationType(ModuleProfileConfig, abc.ABC):
     def create_output_schema(
         cls,
     ) -> typing.Optional[
-        typing.Mapping[str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]]
+        typing.Mapping[
+            str, typing.Union["ValueSchema", typing.Mapping[str, typing.Any]]
+        ]
     ]:
         """Abstract method to implement by child classes, returns a description of the output schema of this module."""
 
         return None
 
     _kiara: typing.Optional["Kiara"] = PrivateAttr(default=None)
-    _input_schemas: typing.Mapping[str, ValueSchema] = PrivateAttr(default=None)
-    _output_schemas: typing.Mapping[str, ValueSchema] = PrivateAttr(default=None)
+    _input_schemas: typing.Mapping[str, "ValueSchema"] = PrivateAttr(default=None)
+    _output_schemas: typing.Mapping[str, "ValueSchema"] = PrivateAttr(default=None)
 
     profile_doc: typing.Optional[str] = Field(
         description="Description of the profile.", default=None
@@ -189,7 +190,7 @@ class OperationType(ModuleProfileConfig, abc.ABC):
 
     def create_inputs(
         self,
-        value: Value,
+        value: "Value",
         other_inputs: typing.Optional[typing.Mapping[str, typing.Any]] = None,
     ) -> typing.Dict[str, typing.Any]:
 
@@ -275,14 +276,16 @@ class DataOperationMgmt(object):
 
         self._kiara: "Kiara" = kiara
         if operation_type_classes is None:
+            from kiara.utils.class_loading import find_all_operation_types
+
             operation_type_classes = find_all_operation_types()
 
         self._operation_type_classes: typing.Dict[str, typing.Type[OperationType]] = {}
         self._operation_input_schemas: typing.Dict[
-            str, typing.Mapping[str, ValueSchema]
+            str, typing.Mapping[str, "ValueSchema"]
         ] = {}
         self._operation_output_schemas: typing.Dict[
-            str, typing.Mapping[str, ValueSchema]
+            str, typing.Mapping[str, "ValueSchema"]
         ] = {}
 
         for k, v in operation_type_classes.items():
@@ -307,6 +310,8 @@ class DataOperationMgmt(object):
         _output_schema = cls.create_output_schema()
 
         self._operation_type_classes[alias] = cls
+
+        from kiara.utils.modules import create_schemas
 
         if _input_schemas:
             input_schemas = create_schemas(
@@ -532,10 +537,10 @@ class DataOperationMgmt(object):
         self,
         operation_name: str,
         operation_id: str,
-        value: Value,
+        value: "Value",
         other_inputs: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         value_type: typing.Optional[str] = None,
-    ) -> ValueSet:
+    ) -> "ValueSet":
 
         if value_type is None:
             value_type = value.type_name
@@ -578,8 +583,10 @@ class DataOperationMgmt(object):
         if not op_config.output_map:
             return result
 
-        mapped_results: typing.Dict[str, Value] = {}
+        mapped_results: typing.Dict[str, "Value"] = {}
         for k, v in op_config.output_map.items():
             mapped_results[k] = result[v]
+
+        from kiara.data.values import ValueSetImpl
 
         return ValueSetImpl(items=mapped_results, read_only=True)

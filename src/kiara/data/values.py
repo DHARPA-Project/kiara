@@ -193,9 +193,6 @@ class Value(BaseModel, JupyterMixin):
     _hash_cache: typing.Optional[str] = PrivateAttr(default=None)
 
     id: str = Field(description="A unique id for this value.")
-    # aliases: typing.List[str] = Field(
-    #     description="Aliases for this value", default_factory=list
-    # )
     value_schema: ValueSchema = Field(description="The schema of this value.")
     is_constant: bool = Field(
         description="Whether this value is a constant.", default=False
@@ -239,14 +236,12 @@ class Value(BaseModel, JupyterMixin):
             self._type_obj = cls(**self.value_schema.type_config)
         return self._type_obj
 
-    def calculate_hash(self) -> str:
+    def calculate_hash(self, hash_type: str) -> str:
         if self._hash_cache is None:
-            self._hash_cache = self.type_obj.calculate_value_hash(self.get_value_data())
+            self._hash_cache = self.type_obj.calculate_value_hash(
+                self.get_value_data(), hash_type=hash_type
+            )
         return self._hash_cache
-
-    # def add_alias(self, alias):
-    #     if alias not in self.aliases:
-    #         self.aliases.append(alias)
 
     def item_is_valid(self) -> bool:
 
@@ -1036,7 +1031,6 @@ class PipelineValue(BaseModel):
             is_set=value.is_set,
             is_constant=value.is_constant,
             value_metadata=value.value_metadata,
-            # aliases=value.aliases,
             last_update=value.last_update,
             # value_hash=value.value_hash,
             is_streaming=value.is_streaming,
@@ -1059,7 +1053,6 @@ class PipelineValue(BaseModel):
     value_metadata: ValueMetadata = Field(
         description="The metadata of the value itself (not the actual data)."
     )
-    # aliases: typing.List[str] = Field(description="Aliases for this value.")
     last_update: datetime = Field(
         default=None, description="The time the last update to this value happened."
     )

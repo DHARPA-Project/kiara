@@ -5,9 +5,9 @@ from pydantic import Field
 
 from kiara import Kiara, KiaraModule
 from kiara.data.operations import OperationType
-from kiara.data.persistence import LoadConfig
 from kiara.data.values import Value, ValueSchema, ValueSet
 from kiara.exceptions import KiaraProcessingException
+from kiara.metadata.core_models import LoadConfig
 from kiara.module_config import KiaraModuleConfig
 
 

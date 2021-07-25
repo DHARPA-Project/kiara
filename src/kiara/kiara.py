@@ -16,8 +16,8 @@ from zmq.devices import ThreadDevice
 from kiara.config import KiaraConfig
 from kiara.data import Value, ValueSet
 from kiara.data.operations import DataOperationMgmt
-from kiara.data.persistence import DataStore
 from kiara.data.registry import DataRegistry
+from kiara.data.store import LocalDataStore
 from kiara.data.types import ValueType
 from kiara.data.types.type_mgmt import TypeMgmt
 from kiara.defaults import DEFAULT_PRETTY_PRINT_CONFIG
@@ -88,7 +88,7 @@ class Kiara(object):
 
         self._operation_mgmt = DataOperationMgmt(kiara=self)
         self._metadata_mgmt = MetadataMgmt(kiara=self)
-        self._data_store = DataStore(kiara=self)
+        self._data_store = LocalDataStore(kiara=self)
 
         # self.start_zmq_device()
         # self.start_log_thread()
@@ -158,7 +158,7 @@ class Kiara(object):
         return self._type_mgmt_obj
 
     @property
-    def data_store(self) -> DataStore:
+    def data_store(self) -> LocalDataStore:
         return self._data_store
 
     @property

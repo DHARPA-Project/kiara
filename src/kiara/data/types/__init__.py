@@ -26,7 +26,6 @@ from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
 
-from kiara.defaults import NO_HASH_MARKER
 from kiara.exceptions import KiaraValueException
 from kiara.metadata.type_models import ValueTypeMetadata
 
@@ -99,12 +98,17 @@ class ValueType(object):
         return None
 
     @classmethod
-    def calculate_value_hash(cls, value: typing.Any) -> str:
+    def get_supported_hash_types(cls) -> typing.Iterable[str]:
+        return []
+
+    @classmethod
+    def calculate_value_hash(cls, value: typing.Any, hash_type: str) -> str:
         """Calculate the hash of this value.
 
         If a hash can't be calculated, or the calculation of a type is not implemented (yet), this will return None.
         """
-        return NO_HASH_MARKER
+
+        raise Exception(f"Value type '{cls._value_type_name}' does not support hash calculation.")  # type: ignore
 
     def __init__(self, **type_config: typing.Any):
 

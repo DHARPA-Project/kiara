@@ -184,7 +184,7 @@ async def run(ctx, module, inputs, module_config, output, explain, save, alias):
             list_keys.append(name)
 
     workflow_input = dict_from_cli_args(*inputs, list_keys=list_keys)
-    failed = False
+
     try:
         if workflow_input:
             workflow.inputs.set_values(**workflow_input)
@@ -199,7 +199,6 @@ async def run(ctx, module, inputs, module_config, output, explain, save, alias):
     except Exception as e:
         print()
         print(e)
-        failed = True
 
     if explain:
         print()
@@ -213,9 +212,6 @@ async def run(ctx, module, inputs, module_config, output, explain, save, alias):
             panel = Panel(Panel(vi_table), box=box.SIMPLE)
             rich_print("[b]Output data details[/b]")
             rich_print(panel)
-
-    if failed:
-        sys.exit(1)
 
     if workflow.status != StepStatus.RESULTS_READY:
 

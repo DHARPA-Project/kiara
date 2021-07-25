@@ -10,6 +10,7 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 from tzlocal import get_localzone
 
+from kiara.data.operations import OperationType
 from kiara.defaults import KIARA_DATA_STORE_DIR
 from kiara.metadata.core_models import (
     LoadConfig,
@@ -22,7 +23,6 @@ from kiara.metadata.core_models import (
 if typing.TYPE_CHECKING:
     pass
 
-    from kiara.data.operations.save_value import SaveOperationType
     from kiara.data.values import Value
     from kiara.kiara import Kiara
 
@@ -375,7 +375,7 @@ class DataStore(abc.ABC):
     @abc.abstractmethod
     def _prepare_save_config(
         self, value_id: str, value_type: str, value: "Value"
-    ) -> SaveConfig:
+    ) -> typing.Optional[SaveConfig]:
         """Return the save config for """
 
     @abc.abstractmethod
@@ -528,6 +528,12 @@ class DataStore(abc.ABC):
             save_config = self._prepare_save_config(
                 value_id=new_value_id, value_type=value_type, value=value
             )
+
+            if save_config is None:
+                raise Exception(
+                    f"Can't save value: no save operation found for value type '{value_type}'"
+                )
+
             save_module = save_config.create_module(self._kiara)
             result = save_module.run(**save_config.inputs)
             load_config_value: Value = result.get_value_obj("load_config")
@@ -650,7 +656,7 @@ class LocalDataStore(DataStore):
 
     def _get_versions_for_alias(self, alias: str) -> typing.Iterable[int]:
 
-        alias_files = self._base_path.glob("value_*/alias_*.version_*.json")
+        alias_files = self._base_path.glob(f"value_*/alias_{alias}.version_*.json")
         result = []
         for af in alias_files:
             idx = af.name.rfind(".version_") + 9
@@ -660,7 +666,7 @@ class LocalDataStore(DataStore):
 
     def _get_tags_for_alias(self, alias: str) -> typing.Iterable[str]:
 
-        tag_files = self._base_path.glob("value_*/alias_*.tag_*.json")
+        tag_files = self._base_path.glob(f"value_*/alias_{alias}.tag_*.json")
         result = []
         for af in tag_files:
             idx = af.name.rfind(".tag_") + 5
@@ -733,13 +739,18 @@ class LocalDataStore(DataStore):
 
     def _prepare_save_config(
         self, value_id: str, value_type: str, value: "Value"
-    ) -> SaveConfig:
+    ) -> typing.Optional[SaveConfig]:
 
-        op_config: SaveOperationType = self._kiara.data_operations.get_operation(  # type: ignore
+        op_config: typing.Optional[
+            OperationType
+        ] = self._kiara.data_operations.get_operation(
             value_type=value_type,
             operation_name="save_value",
             operation_id="data_store",
         )
+
+        if not op_config:
+            return None
 
         target_path = self.get_data_path(value_id=value_id)
         metadata_path = self.get_metadata_path(value_id=value_id)

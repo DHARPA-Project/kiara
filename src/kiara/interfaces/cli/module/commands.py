@@ -4,14 +4,12 @@ import asyncclick as click
 import os.path
 import sys
 import typing
-from jupytext import jupytext
 from rich.panel import Panel
 
 from kiara import Kiara, PipelineModule
 from kiara.defaults import KIARA_RESOURCES_FOLDER
 from kiara.interfaces.cli.utils import _create_module_instance
 from kiara.module import ModuleInfo
-from kiara.rendering.pipeline import PipelineRenderer
 from kiara.utils import dict_from_cli_args
 from kiara.utils.output import rich_print
 
@@ -111,63 +109,72 @@ def explain_module(ctx, module_type: str, module_config: typing.Iterable[typing.
     rich_print(module_obj)
 
 
-@module.command("render")
-@click.argument("module_type", nargs=1)
-@click.argument("inputs", nargs=-1, required=False)
-@click.option(
-    "--module-config",
-    "-c",
-    required=False,
-    help="(Optional) module configuration.",
-    multiple=True,
-)
-@click.pass_context
-def render(
-    ctx,
-    module_type: str,
-    module_config: typing.Iterable[typing.Any],
-    inputs: typing.Any,
-):
+try:
+    from jupytext import jupytext
 
-    if module_config:
-        module_config = dict_from_cli_args(*module_config)
+    from kiara.rendering.pipeline import PipelineRenderer
 
-    module_obj: PipelineModule = _create_module_instance(  # type: ignore
-        ctx, module_type=module_type, module_config=module_config
+    @module.command("render")
+    @click.argument("module_type", nargs=1)
+    @click.argument("inputs", nargs=-1, required=False)
+    @click.option(
+        "--module-config",
+        "-c",
+        required=False,
+        help="(Optional) module configuration.",
+        multiple=True,
     )
-    if not module_obj.is_pipeline():
-        print("Only pipeline modules supported (for now).")
-        sys.exit(1)
+    @click.pass_context
+    def render(
+        ctx,
+        module_type: str,
+        module_config: typing.Iterable[typing.Any],
+        inputs: typing.Any,
+    ):
 
-    structure = module_obj.structure
+        if module_config:
+            module_config = dict_from_cli_args(*module_config)
 
-    list_keys = []
-    for name, value_schema in module_obj.input_schemas.items():
-        if value_schema.type in ["array", "list"]:
-            list_keys.append(name)
-    workflow_input = dict_from_cli_args(*inputs, list_keys=list_keys)
+        module_obj: PipelineModule = _create_module_instance(  # type: ignore
+            ctx, module_type=module_type, module_config=module_config
+        )
+        if not module_obj.is_pipeline():
+            print("Only pipeline modules supported (for now).")
+            sys.exit(1)
 
-    renderer = PipelineRenderer(structure=structure)
-    path = os.path.join(KIARA_RESOURCES_FOLDER, "templates", "notebook.ipynb.j2")
-    # path = os.path.join(KIARA_RESOURCES_FOLDER, "templates", "python_script.py.j2")
+        structure = module_obj.structure
 
-    step_inputs: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
-    for k, v in workflow_input.items():
-        pi = structure.pipeline_inputs.get(k)
-        assert pi
-        if len(pi.connected_inputs) != 1:
-            raise NotImplementedError()
+        list_keys = []
+        for name, value_schema in module_obj.input_schemas.items():
+            if value_schema.type in ["array", "list"]:
+                list_keys.append(name)
+        workflow_input = dict_from_cli_args(*inputs, list_keys=list_keys)
 
-        ci = pi.connected_inputs[0]
-        if isinstance(v, str):
-            v = f'"{v}"'
-        step_inputs.setdefault(ci.step_id, {})[ci.value_name] = v
+        renderer = PipelineRenderer(structure=structure)
+        path = os.path.join(KIARA_RESOURCES_FOLDER, "templates", "notebook.ipynb.j2")
+        # path = os.path.join(KIARA_RESOURCES_FOLDER, "templates", "python_script.py.j2")
 
-    rendered = renderer.render_from_path(path, inputs=step_inputs)
-    print()
-    # print(rendered)
-    # return
-    # print(rendered)
-    notebook = jupytext.reads(rendered, fmt="py:percent")
-    converted = jupytext.writes(notebook, fmt="notebook")
-    print(converted)
+        step_inputs: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
+        for k, v in workflow_input.items():
+            pi = structure.pipeline_inputs.get(k)
+            assert pi
+            if len(pi.connected_inputs) != 1:
+                raise NotImplementedError()
+
+            ci = pi.connected_inputs[0]
+            if isinstance(v, str):
+                v = f'"{v}"'
+            step_inputs.setdefault(ci.step_id, {})[ci.value_name] = v
+
+        rendered = renderer.render_from_path(path, inputs=step_inputs)
+        print()
+        # print(rendered)
+        # return
+        # print(rendered)
+        notebook = jupytext.reads(rendered, fmt="py:percent")
+        converted = jupytext.writes(notebook, fmt="notebook")
+        print(converted)
+
+
+except ModuleNotFoundError:
+    pass

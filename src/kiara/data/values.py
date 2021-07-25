@@ -46,7 +46,7 @@ try:
 
 
 except Exception:
-    # there is some issue with older Python versions, typing.Protocol, and Pydantic
+    # there is some issue with older Python only_latest, typing.Protocol, and Pydantic
     ValueUpdateHandler = typing.Callable  # type:ignore
 
 

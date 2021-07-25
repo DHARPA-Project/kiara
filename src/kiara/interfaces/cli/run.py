@@ -5,7 +5,6 @@ import asyncclick as click
 import os.path
 import sys
 import typing
-from kiara_modules.core.json import DEFAULT_TO_JSON_CONFIG
 from pathlib import Path
 from rich import box
 from rich.console import Console, RenderGroup
@@ -14,7 +13,7 @@ from rich.syntax import Syntax
 
 from kiara import Kiara
 from kiara.data.values import ValuesInfo
-from kiara.defaults import DEFAULT_PRETTY_PRINT_CONFIG
+from kiara.defaults import DEFAULT_PRETTY_PRINT_CONFIG, DEFAULT_TO_JSON_CONFIG
 from kiara.interfaces.cli.utils import _create_module_instance
 from kiara.module import KiaraModule
 from kiara.pipeline.controller.batch import BatchController
@@ -348,7 +347,6 @@ async def run(ctx, module, inputs, module_config, output, explain, save, alias):
                 try:
                     value_id = value.save(aliases=field_aliases)
                     rich_print(f"   -> done, id: [i]{value_id}[/i]")
-
                 except Exception as e:
                     if is_debug():
                         import traceback

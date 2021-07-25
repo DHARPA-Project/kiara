@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import typing
 from appdirs import AppDirs
 from enum import Enum
 
@@ -85,3 +86,6 @@ NO_HASH_MARKER = "--no-hash--"
 
 NO_VALUE_ID_MARKER = "--no-value-id--"
 """Marker string to indicate no value id exists."""
+DEFAULT_TO_JSON_CONFIG: typing.Mapping[str, typing.Any] = {
+    "indent": 2,
+}

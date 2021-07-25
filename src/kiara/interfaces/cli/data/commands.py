@@ -20,12 +20,42 @@ def data(ctx):
 
 
 @data.command(name="list")
+@click.option(
+    "--with-alias/--all-ids",
+    help="Also list values without aliases (default: '--with-alias').",
+    is_flag=True,
+    default=True,
+)
+@click.option(
+    "--only-latest/--all-versions",
+    help="List all alias only_latest, not just the latest (default: '--only-latest').",
+    is_flag=True,
+    default=True,
+)
+@click.option(
+    "--tags/--no-tags",
+    help="List alias tags (default: '--tags').",
+    is_flag=True,
+    default=True,
+)
+@click.option(
+    "--all",
+    help="Display all information and values. Overrides the other options.",
+    is_flag=True,
+)
 @click.pass_context
-def list_values(ctx):
+def list_values(ctx, with_alias, only_latest, tags, all):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     table = Table(box=box.SIMPLE)
+
+    print(all)
+    if all:
+        with_alias = False
+        only_latest = False
+        # tags = True
+
     table.add_column("id", style="i")
     table.add_column("aliases")
     table.add_column("type")
@@ -34,14 +64,30 @@ def list_values(ctx):
 
         value_type = kiara_obj.data_store.get_value_type_for_id(v_id)
         aliases = kiara_obj.data_store.find_aliases_for_value_id(
-            v_id, include_all_versions=False
+            v_id, include_all_versions=not only_latest
         )
+
+        if with_alias:
+            if not aliases:
+                continue
+
         _aliases = []
         if not aliases:
             _aliases.append("")
         else:
             for a in aliases:
-                _aliases.append(a.alias)
+                latest_alias = kiara_obj.data_store.get_latest_version_for_alias(
+                    a.alias
+                )
+                if not only_latest:
+                    if latest_alias == a.version:
+                        _aliases.append(
+                            f"[bold yellow2]{a.alias}[/bold yellow2]@{a.version}"
+                        )
+                    else:
+                        _aliases.append(a.full_alias)
+                else:
+                    _aliases.append(a.alias)
 
         table.add_row(v_id, _aliases[0], value_type)
 
@@ -55,8 +101,8 @@ def list_values(ctx):
     #     print(alias)
     #     import pp
     #     pp(details)
-    #     versions = kiara_obj.data_store.get_alias_versions(alias)
-    #     for version, d in versions.items():
+    #     only_latest = kiara_obj.data_store.get_alias_versions(alias)
+    #     for version, d in only_latest.items():
     #         print('---')
     #         print(version)
     #         pp(d)

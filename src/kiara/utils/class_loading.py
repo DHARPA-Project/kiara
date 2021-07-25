@@ -31,7 +31,7 @@ SUBCLASS_TYPE = typing.TypeVar("SUBCLASS_TYPE")
 
 
 def _get_subclass_name(module: typing.Type) -> str:
-    """Utility method to auto-generate a more or less nice looking alias for a class."""
+    """Utility method to auto-generate a more or less nice looking id_or_alias for a class."""
 
     name = camel_case_to_snake_case(module.__name__)
     return name

@@ -1,5 +1,0 @@
-# Data-management in *Kiara*
-
-Managing (research) data is the main overarching purpose of *Kiara*. Even the processing step of a *Kiara* [module](../modules/) only exists because we need to transform (existing) input data into 'more' data, to aid the users reasearch goal.
-
-Internally, *Kiara* separates the actual data ("bytes') from their metadata, because in a lot of cases the metadata is all that is needed, and moving or copying potentially large datasets around would be inefficient and unnecessary. For this reason, one of the architectural strategies within *Kiara* is to defer accessing the actual bytes up until the last possible moment. This is achieved by providing an internal service component (aka the '[data registry](registry.md)') that manages those bytes, and enables access to them via unique identifier, which all other components (or users) can use to request them. Either in full, or part (via a query). This service component can also create metadata for each piece of data (e.g. size of the data, type, etc.), and stores it, along with potential metadata that was provided by external components, or users.

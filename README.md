@@ -8,8 +8,9 @@
 
 *A pipeline management and execution engine for the DHARPA project.*
 
- - Documentation: [https://dharpa.org/kiara](https://dharpa.org/kiara)
+ - *kiara* user documentation: [https://dharpa.org/kiara_documentation](https://dharpa.org/kiara_documentation)
  - Code: [https://github.com/DHARPA-Project/kiara](https://github.com/DHARPA-Project/kiara)
+ - Development documentation for this repo: [https://dharpa.org/kiara](https://dharpa.org/kiara)
 
 ## Description
 

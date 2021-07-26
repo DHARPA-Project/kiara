@@ -61,10 +61,10 @@ Although you can't see it from the output, *kiara* actually created an Arrow Tab
 
 This will prompt *kiara* to save the output of the workflow we are running into the internal *kiara* data store, along
 with the values metadata and a few other bits and pieces. So, let's run that command from before again, but this time
-with the ``--save`` option. We'll also use `--alias table=getting_started_example.table --output format=silent``, because we want
+with the ``--save`` option. We'll also use `--save table=getting_started_example.table --output format=silent``, because we want
 to give our saved data a meaningful alias, and we are not interested to see the table content on the terminal (again):
 
-{{ cli("kiara", "run", "--alias", "table=getting_started_example.table", "--output", "format=silent", "--save", "table.import.from_local_file", "path=examples/data/journals/JournalNodes1902.csv") }}
+{{ cli("kiara", "run", "--save", "table=getting_started_example.table", "--output", "format=silent", "table.import.from_local_file", "path=examples/data/journals/JournalNodes1902.csv") }}
 
 To check whether that worked, we can list all of our items in the data store, and see if the one we just created is in there:
 
@@ -143,7 +143,7 @@ for *kiara* yourself. The ``module explain-instance`` command is more helpful, t
 
 The 'inputs' section is most interesting, it's basically the same information we get from running ``kiara run`` without any inputs. Using the information from that output, and after looking at the headers of our csv files, we can figure out how to assemble our command:
 
-{{ cli("kiara", "run", "network.graph.import.from_local_files", "edges_path=examples/data/journals/JournalEdges1902.csv", "source_column=Source", "target_column=Target", "nodes_path=examples/data/journals/JournalNodes1902.csv", "nodes_table_index=Id", "--save", "--alias", "graph=generate_graph_from_csvs.graph") }}
+{{ cli("kiara", "run", "network.graph.import.from_local_files", "edges_path=examples/data/journals/JournalEdges1902.csv", "source_column=Source", "target_column=Target", "nodes_path=examples/data/journals/JournalNodes1902.csv", "nodes_table_index=Id", "--save", "graph=generate_graph_from_csvs.graph") }}
 
 !!! note
     Yes, we could use the nodes table we loaded earlier here. But we don't. For reasons that have nothing to do with what makes sense here.
@@ -156,7 +156,7 @@ To confirm our graph is stored, let's check the data store:
 
 Now we might want to have a look at some of the intrinsic properties of our graph. For that, we will use the ``network.graph.properties`` module:
 
-{{ cli("kiara", "run", "network.graph.properties", "graph=value:generate_graph_from_csvs.graph", "--save") }}
+{{ cli("kiara", "run", "network.graph.properties", "graph=value:generate_graph_from_csvs.graph", "--save", "graph_properties_workflow") }}
 
 ## Finding the shortest path
 

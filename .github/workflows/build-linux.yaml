@@ -77,7 +77,7 @@ jobs:
       - name: create an entry in the data store
         run: kiara run --save --output format=silent --alias table=example.table table.import.from_local_file path=docs/example_data/JournalNodes1902.csv
       - name: create documentation
-        run: make docs
+        run: FAIL_DOC_BUILD_ON_ERROR=true make docs
       - name: deploy documentation to gh-pages
         uses: JamesIves/github-pages-deploy-action@4.1.0
         with:

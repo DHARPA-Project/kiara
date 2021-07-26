@@ -5,11 +5,11 @@ help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
 docs: ## build documentation
-	kiara run --save --output format=silent --alias table=example.table table.import.from_local_file path=docs/example_data/JournalNodes1902.csv || true
+	kiara run --output format=silent --save table=example.table table.import.from_local_file path=docs/example_data/JournalNodes1902.csv || true
 	mkdocs build
 
 serve-docs: ## serve and watch documentation
-	kiara run --save --output format=silent --alias table=example.table table.import.from_local_file path=docs/example_data/JournalNodes1902.csv || true
+	kiara run --output format=silent --save table=example.table table.import.from_local_file path=docs/example_data/JournalNodes1902.csv || true
 	mkdocs serve -a 0.0.0.0:8000
 
 clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts

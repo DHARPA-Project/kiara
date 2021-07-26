@@ -24,7 +24,10 @@ the command let's you costumize a few things:
 
 ``--save``
 :    If set, the outputs of this workflow will be saved into the *kiara* data store. You can get see the stored items
-     via ``kiara data list`` and the [other data-related subcommands](./data.md)
+     via ``kiara data list`` and the [other data-related subcommands](./data.md). The argument to this flag is a string,
+     which can either contain a '=', which means the output field with the name that matches the first part of this argument
+     will be saved as alias named after the second part. Or, if it doesn't contain a '=', all output fields will be saved
+     as namespaced aliases, with the argument as first part, and the output field name as second.
 
 
 ### Arguments: *module* and *input*
@@ -55,7 +58,7 @@ types, but basically, all you need to do is add the ``-save`` flag, and *kiara* 
 Let's say we want to create an (Apache arrow) table object out of a csv file, and store it in the data store, we could use
 the ``tabular.import_table_from_file`` module:
 
-{{ cli('kiara', 'run', '--output', 'format=silent', '--save', 'table.import.from_local_file', 'path=docs/example_data/JournalNodes1902.csv') }}
+{{ cli('kiara', 'run', '--output', 'format=silent', '--save', 'table_import_example', 'table.import.from_local_file', 'path=docs/example_data/JournalNodes1902.csv') }}
 
 Now we can check that our table is present in our data store:
 

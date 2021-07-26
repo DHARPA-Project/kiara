@@ -10,7 +10,7 @@ import subprocess
 import sys
 from deepdiff import DeepHash
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional
 
 from kiara.defaults import kiara_app_dirs
 
@@ -20,6 +20,9 @@ if not os.path.exists(CACHE_DIR):
 
 os_env_vars = copy.copy(os.environ)
 os_env_vars["CONSOLE_WIDTH"] = "80"
+os_env_vars["KAIRA_DATA_STORE"] = os.path.join(
+    kiara_app_dirs.user_cache_dir, "data_store_1"
+)
 
 
 def define_env(env):
@@ -44,23 +47,35 @@ def define_env(env):
         *command,
         print_command: bool = True,
         code_block: bool = True,
+        split_command_and_output: bool = True,
         max_height: Optional[int] = None,
+        cache_key: Optional[str] = None,
+        extra_env: Optional[Dict[str, str]] = None,
     ):
         """Execute the provided command, save the output and return it to be used in documentation pages."""
 
         hashes = DeepHash(command)
         hash_str = hashes[command]
 
+        if cache_key:
+            hash_str = hash_str + "_" + cache_key
+
         cache_file: Path = Path(os.path.join(CACHE_DIR, str(hash_str)))
+
+        _run_env = dict(os_env_vars)
+        if extra_env:
+            _run_env.update(extra_env)
+
         if cache_file.is_file():
             stdout = cache_file.read_text()
         else:
             try:
                 print(f"RUNNING: {' '.join(command)}")
-                result = subprocess.check_output(command, env=os_env_vars)
+                result = subprocess.check_output(command, env=_run_env)
                 stdout = result.decode()
                 cache_file.write_text(stdout)
             except subprocess.CalledProcessError as e:
+                stdout = f"Error: {e}\n\nStdout: {e.stdout}\n\nStderr: {e.stderr}"
                 print("stdout:")
                 print(e.stdout)
                 print("stderr:")
@@ -68,15 +83,22 @@ def define_env(env):
                 if os.getenv("FAIL_DOC_BUILD_ON_ERROR") == "true":
                     sys.exit(1)
 
-        if print_command:
-            stdout = f"> {' '.join(command)}\n{stdout}"
-        if code_block:
-            stdout = "``` console\n" + stdout + "\n```\n"
+        if split_command_and_output and print_command:
+            _c = f"\n``` console\n{' '.join(command)}\n```\n"
+            _output = "``` console\n" + stdout + "\n```\n"
+            if max_height is not None and max_height > 0:
+                _output = f"<div style='max-height:{max_height}px;overflow:auto'>\n{_output}\n</div>"
+            _stdout = _c + _output
+        else:
+            if print_command:
+                _stdout = f"> {' '.join(command)}\n{stdout}"
+            if code_block:
+                _stdout = "``` console\n" + _stdout + "\n```\n"
 
-        if max_height is not None and max_height > 0:
-            stdout = f"<div style='max-height:{max_height}px;overflow:auto'>\n{stdout}\n</div>"
+            if max_height is not None and max_height > 0:
+                _stdout = f"<div style='max-height:{max_height}px;overflow:auto'>\n{_stdout}\n</div>"
 
-        return stdout
+        return _stdout
 
     @env.macro
     def inline_file_as_codeblock(path, format: str = ""):

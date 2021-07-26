@@ -20,7 +20,7 @@ from kiara.data.registry import DataRegistry
 from kiara.data.store import LocalDataStore
 from kiara.data.types import ValueType
 from kiara.data.types.type_mgmt import TypeMgmt
-from kiara.defaults import DEFAULT_PRETTY_PRINT_CONFIG
+from kiara.defaults import DEFAULT_PRETTY_PRINT_CONFIG, KIARA_DATA_STORE_DIR
 from kiara.interfaces import get_console
 from kiara.metadata import MetadataModel, MetadataSchemaInfo
 from kiara.metadata.mgmt import MetadataMgmt
@@ -88,7 +88,10 @@ class Kiara(object):
 
         self._operation_mgmt = DataOperationMgmt(kiara=self)
         self._metadata_mgmt = MetadataMgmt(kiara=self)
-        self._data_store = LocalDataStore(kiara=self)
+        store_base_path = KIARA_DATA_STORE_DIR
+        if os.getenv("KIARA_DATA_STORE"):
+            store_base_path = os.getenv("KIARA_DATA_STORE")  # type: ignore
+        self._data_store = LocalDataStore(kiara=self, base_path=store_base_path)
 
         # self.start_zmq_device()
         # self.start_log_thread()

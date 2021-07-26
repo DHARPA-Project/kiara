@@ -43,38 +43,36 @@ from kiara.utils.output import OutputDetails, rich_print
     "--output", "-o", help="The output format and configuration.", multiple=True
 )
 @click.option(
-    "--save", "-s", help="Save the outputs into the kiara data store.", is_flag=True
-)
-@click.option(
-    "--alias",
-    "-a",
-    help="When '--save' is set, this lets you add aliases when saving the results (format: '--alias [output_name]=[alias])",
+    "--save",
+    "-s",
+    help="Save one or several of the outputs of this run. If the argument contains a '=', the format is [output_name]=[alias], if not, the values will be saved as '[alias].[output_name]'.",
     required=False,
     multiple=True,
 )
 @click.pass_context
-async def run(ctx, module, inputs, module_config, output, explain, save, alias):
+async def run(ctx, module, inputs, module_config, output, explain, save):
     """Execute a workflow run."""
 
     if module_config:
         module_config = dict_from_cli_args(*module_config)
 
-    if not alias:
+    if not save:
         aliases: typing.Dict[str, typing.List[str]] = {}
+        full_aliases: typing.List[str] = []
     else:
         aliases = {}
-        for a in alias:
+        full_aliases = []
+        for a in save:
             if "=" not in a:
-                print()
-                print(f"Invalid alias format '{a}', must be: [output_name]=[alias]")
-                sys.exit(1)
-            tokens = a.split("=")
-            if len(tokens) != 2:
-                print()
-                print(f"Invalid alias format, can only contain a single '=': {a}")
-                sys.exit(1)
+                full_aliases.append(a)
+            else:
+                tokens = a.split("=")
+                if len(tokens) != 2:
+                    print()
+                    print(f"Invalid alias format, can only contain a single '=': {a}")
+                    sys.exit(1)
 
-            aliases.setdefault(tokens[0], []).append(tokens[1])
+                aliases.setdefault(tokens[0], []).append(tokens[1])
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
@@ -164,11 +162,19 @@ async def run(ctx, module, inputs, module_config, output, explain, save, alias):
         controller=controller,
     )
 
+    final_aliases = None
     if save:
+        final_aliases = {}
         invalid_fields = []
         for field_name, alias in aliases.items():
             if field_name not in workflow.outputs.get_all_field_names():
                 invalid_fields.append(field_name)
+            else:
+                final_aliases[field_name] = alias
+
+        for alias in full_aliases:
+            for field_name in workflow.outputs.get_all_field_names():
+                final_aliases.setdefault(field_name, []).append(f"{alias}.{field_name}")
 
         if invalid_fields:
             print()
@@ -339,7 +345,7 @@ async def run(ctx, module, inputs, module_config, output, explain, save, alias):
         if save:
             for field, value in workflow.outputs.items():
                 rich_print(f"Saving '[i]{field}[/i]'...")
-                field_aliases = aliases.get(field, [])
+                field_aliases = final_aliases.get(field, [])
                 try:
                     value_id = value.save(aliases=field_aliases)
                     rich_print(f"   -> done, id: [i]{value_id}[/i]")

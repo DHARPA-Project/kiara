@@ -4,8 +4,10 @@
 
 ## Version 0.0.9 (upcoming)
 
-- removed 'aliases' attribute from Value class, aliases are now specified when calling 'save'
+- removed 'aliases' attribute from Value class, aliases are now specified when calling 'save' on the Value object
 - Job details (incl. error messages -- check the kiara.processing.Job class) for the most recent or current module executions can be retrieved: `[controller_obj].get_job_details(step_id)```
+- re-write of the DataStore class, should be overall more stable and extendable, with the option of having different data store types down the line
+- '--save' option in the ``kiara run`` command does now take an alias as option (previously the '--alias` flag)
 
 ## Version 0.0.6
 

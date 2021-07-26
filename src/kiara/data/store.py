@@ -651,8 +651,12 @@ class LocalDataStore(DataStore):
     def _get_available_aliases(self) -> typing.Iterable[str]:
 
         alias_files = self._base_path.glob("value_*/alias_*.version_*.json")
-        aliases = set((x.name.split(".")[0][6:] for x in alias_files))
-        return aliases
+        result = set()
+        for af in alias_files:
+            version_idx = af.name.rfind(".version_")
+            alias = af.name[6:version_idx]
+            result.add(alias)
+        return result
 
     def _get_versions_for_alias(self, alias: str) -> typing.Iterable[int]:
 

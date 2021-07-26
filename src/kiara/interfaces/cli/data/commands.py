@@ -40,6 +40,7 @@ def data(ctx):
 )
 @click.option(
     "--all",
+    "-a",
     help="Display all information and values. Overrides the other options.",
     is_flag=True,
 )
@@ -50,7 +51,6 @@ def list_values(ctx, with_alias, only_latest, tags, all):
 
     table = Table(box=box.SIMPLE)
 
-    print(all)
     if all:
         with_alias = False
         only_latest = False

@@ -164,7 +164,7 @@ if is_develop():
 
         kiara_obj: Kiara = ctx.obj["kiara"]
 
-        path = kiara_obj.data_store.data_store_dir
+        path = kiara_obj.data_store._base_path
         print()
         print(f"Deleting folder: {path}...")
         shutil.rmtree(path=path, ignore_errors=True)

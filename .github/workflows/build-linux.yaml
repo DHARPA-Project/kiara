@@ -75,7 +75,7 @@ jobs:
       - name: install kiara_modules.network_analysis
         run: pip install -U --pre  --extra-index-url https://gitlab.com/api/v4/projects/25344049/packages/pypi/simple --extra-index-url https://pypi.fury.io/dharpa/ kiara_modules.network_analysis
       - name: create an entry in the data store
-        run: kiara run --save --output format=silent --alias table=example.table table.import.from_local_file path=docs/example_data/JournalNodes1902.csv
+        run: kiara run --output format=silent --save table=example.table table.import.from_local_file path=docs/example_data/JournalNodes1902.csv
       - name: create documentation
         run: FAIL_DOC_BUILD_ON_ERROR=true make docs
       - name: deploy documentation to gh-pages

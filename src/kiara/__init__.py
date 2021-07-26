@@ -36,7 +36,7 @@ from .utils.class_loading import (
 
 __author__ = """Markus Binsteiner"""
 """The author of this package."""
-__email__ = "markus.binsteiner@uni.lu"
+__email__ = "markus@frkl.io"
 """Email address of the author."""
 
 

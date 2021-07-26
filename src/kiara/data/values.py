@@ -599,6 +599,8 @@ class LinkedValue(KiaraValue):
 
 
 class ValueSet(typing.MutableMapping[str, Value]):
+    """A dict-like collection of values, with their field_names as keys, and a Value object as value."""
+
     @abc.abstractmethod
     def get_all_field_names(self) -> typing.Iterable[str]:
         pass

@@ -51,6 +51,7 @@ def define_env(env):
         max_height: Optional[int] = None,
         cache_key: Optional[str] = None,
         extra_env: Optional[Dict[str, str]] = None,
+        error_ok: bool = False,
     ):
         """Execute the provided command, save the output and return it to be used in documentation pages."""
 

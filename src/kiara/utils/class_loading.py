@@ -92,7 +92,7 @@ def find_subclasses_under(
             full_name = name
 
         if prefix is None:
-            prefix = module.__name__
+            prefix = module.__name__ + "."
             if remove_namespace_tokens:
                 for rnt in remove_namespace_tokens:
                     if prefix.startswith(rnt):

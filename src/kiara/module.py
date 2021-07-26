@@ -362,7 +362,21 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
     ) -> typing.Mapping[
         str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
     ]:
-        """Abstract method to implement by child classes, returns a description of the input schema of this module."""
+        """Abstract method to implement by child classes, returns a description of the input schema of this module.
+
+        If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):
+
+        {
+          "[input_field_name]: {
+              "type": "[value_type]",
+              "doc*": "[a description of this input]",
+              "optional*': [boolean whether this input is optional or required (defaults to 'False')]
+          "[other_input_field_name]: {
+              "type: ...
+              ...
+          }
+
+        """
 
     @abstractmethod
     def create_output_schema(
@@ -370,7 +384,19 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
     ) -> typing.Mapping[
         str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
     ]:
-        """Abstract method to implement by child classes, returns a description of the output schema of this module."""
+        """Abstract method to implement by child classes, returns a description of the output schema of this module.
+
+        If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):
+
+        {
+          "[output_field_name]: {
+              "type": "[value_type]",
+              "doc*": "[a description of this output]"
+          "[other_input_field_name]: {
+              "type: ...
+              ...
+          }
+        """
 
     @property
     def input_schemas(self) -> typing.Mapping[str, ValueSchema]:

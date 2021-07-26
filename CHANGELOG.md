@@ -1,6 +1,6 @@
 # Changelog
 
-## Version
+## Version 0.0.10 (upcoming)
 
 ## Version 0.0.9 (upcoming)
 
@@ -10,6 +10,7 @@
   - support for aliases, as well as alias versions & tags (still to be documented)
   - enables the option of having different data store types down the line
   - API and overall workings of this is still a draft, so expect to see some changes to how value ids and alias are handled and look like
+  - internal organisation of existing data is different, so when updating to this version you'll have to re-import your data sets and ideally also delete the old folder (``DEVELOP=true kiara data clear-data-store``)
 - '--save' option in the ``kiara run`` command does now take an alias as option (previously the '--alias` flag)
 
 ## Version 0.0.6

@@ -51,7 +51,7 @@ def define_env(env):
         max_height: Optional[int] = None,
         cache_key: Optional[str] = None,
         extra_env: Optional[Dict[str, str]] = None,
-        error_ok: bool = False,
+        fake_command: Optional[str] = None,
     ):
         """Execute the provided command, save the output and return it to be used in documentation pages."""
 
@@ -84,15 +84,19 @@ def define_env(env):
                 if os.getenv("FAIL_DOC_BUILD_ON_ERROR") == "true":
                     sys.exit(1)
 
+        if fake_command:
+            command_str = fake_command
+        else:
+            command_str = " ".join(command)
         if split_command_and_output and print_command:
-            _c = f"\n``` console\n{' '.join(command)}\n```\n"
+            _c = f"\n``` console\n{command_str}\n```\n"
             _output = "``` console\n" + stdout + "\n```\n"
             if max_height is not None and max_height > 0:
                 _output = f"<div style='max-height:{max_height}px;overflow:auto'>\n{_output}\n</div>"
             _stdout = _c + _output
         else:
             if print_command:
-                _stdout = f"> {' '.join(command)}\n{stdout}"
+                _stdout = f"> {command_str}\n{stdout}"
             if code_block:
                 _stdout = "``` console\n" + _stdout + "\n```\n"
 

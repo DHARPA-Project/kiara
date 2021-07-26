@@ -146,7 +146,7 @@ class ValueAlias(BaseModel):
 #     value_type: str = Field(description="The value type of this alias version.")
 
 
-class ValueMetadata(BaseModel):
+class SavedValueMetadata(BaseModel):
 
     value_id: str = Field(description="The value id.")
     value_type: str = Field(description="The type of the value.")
@@ -296,14 +296,18 @@ class DataStore(abc.ABC):
 
         return result
 
-    def get_metadata_for_id(self, value_id: str) -> ValueMetadata:
+    def get_metadata_for_id(self, value_id: str) -> SavedValueMetadata:
 
         v_id = self.resolve_id(value_id)
 
         if not v_id:
             raise Exception(f"No value registered for id/alias/hash: {value_id}")
 
-        return self._get_metadata_for_id(v_id)
+        md = self._get_metadata_for_id(v_id)
+        md.aliases = [
+            x.full_alias for x in self.find_aliases_for_value_id(value_id=value_id)
+        ]
+        return md
 
     def get_value_type_for_id(self, value_id) -> str:
 
@@ -365,7 +369,7 @@ class DataStore(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def _get_metadata_for_id(self, value_id: str) -> ValueMetadata:
+    def _get_metadata_for_id(self, value_id: str) -> SavedValueMetadata:
         pass
 
     # @abc.abstractmethod
@@ -443,7 +447,7 @@ class DataStore(abc.ABC):
         value: "Value",
         aliases: typing.Optional[typing.Iterable[typing.Union[str, ValueAlias]]] = None,
         value_type: typing.Optional[str] = None,
-    ):
+    ) -> SavedValueMetadata:
 
         if value_type is None:
             value_type = value.type_name
@@ -585,7 +589,7 @@ class DataStore(abc.ABC):
         if value_aliases:
             self.register_aliases(new_value_id, *value_aliases)
 
-        return new_value_id
+        return self.get_metadata_for_id(new_value_id)
 
     def load_value(self, value_id: str) -> "Value":
 
@@ -728,17 +732,18 @@ class LocalDataStore(DataStore):
 
         return tag_files[0].parent.name[6:]
 
-    def _get_metadata_for_id(self, value_id: str) -> ValueMetadata:
+    def _get_metadata_for_id(self, value_id: str) -> SavedValueMetadata:
 
         if value_id in self._metadata_cache.keys():
-            md = self._metadata_cache[value_id]
+            return self._metadata_cache[value_id]
         else:
             path = self.get_metadata_path(value_id=value_id)
             md = json.loads(path.read_text())
 
         value_type = md["value"]["metadata_item"]["type"]
 
-        vmd = ValueMetadata(value_id=value_id, value_type=value_type, metadata=md)
+        vmd = SavedValueMetadata(value_id=value_id, value_type=value_type, metadata=md)
+        self._metadata_cache[value_id] = vmd
         return vmd
 
     def _prepare_save_config(
@@ -804,6 +809,11 @@ class LocalDataStore(DataStore):
 
         for hf in hashes_files:
             os.symlink(metadata_path.name, hf)
+
+        vmd = SavedValueMetadata(
+            value_id=value_id, value_type=value_type, metadata=metadata
+        )
+        self._metadata_cache[value_id] = vmd
 
     def _register_alias(self, value_id: str, alias: str, version: int):
 

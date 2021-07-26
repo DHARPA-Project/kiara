@@ -48,11 +48,11 @@ class SaveValueModule(KiaraModule):
         value = inputs.get_value_obj("value_item")
         aliases = inputs.get_value_data("aliases")
 
-        value_id = self._kiara.data_store.save_value(
+        value_md = self._kiara.data_store.save_value(
             value=value, aliases=aliases, value_type=self.get_config_value("value_type")
         )
 
-        outputs.set_value("value_id", value_id)
+        outputs.set_value("value_id", value_md.value_id)
 
 
 class LoadValueModule(KiaraModule):

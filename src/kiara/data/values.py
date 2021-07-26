@@ -25,6 +25,7 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
 
+from kiara.data.store import SavedValueMetadata
 from kiara.data.types import ValueType
 from kiara.defaults import INVALID_VALUE_NAMES, PIPELINE_PARENT_MARKER, SpecialValue
 from kiara.utils import StringYAML, camel_case_to_snake_case
@@ -330,7 +331,9 @@ class Value(BaseModel, JupyterMixin):
                 result[k] = v["metadata_item"]
         return result
 
-    def save(self, aliases: typing.Optional[typing.Iterable[str]] = None) -> str:
+    def save(
+        self, aliases: typing.Optional[typing.Iterable[str]] = None
+    ) -> SavedValueMetadata:
 
         return self._kiara.data_store.save_value(self, aliases=aliases)
 

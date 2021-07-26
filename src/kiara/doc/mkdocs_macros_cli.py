@@ -65,7 +65,8 @@ def define_env(env):
                 print(e.stdout)
                 print("stderr:")
                 print(e.stderr)
-                sys.exit(1)
+                if os.getenv("FAIL_DOC_BUILD_ON_ERROR") == "true":
+                    sys.exit(1)
 
         if print_command:
             stdout = f"> {' '.join(command)}\n{stdout}"

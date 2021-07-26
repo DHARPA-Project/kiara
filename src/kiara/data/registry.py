@@ -58,9 +58,6 @@ class DataRegistry(object):
         self._linked_value_items_reverse: typing.Dict[str, typing.List[str]] = {}
         """Lookup dict for linked values."""
 
-        self._persisted_values: typing.Dict[str, Value] = {}
-        """Persisted values."""
-
         self._values: typing.Dict[str, typing.Any] = {}
         self._callbacks: typing.Dict[str, typing.List[ValueUpdateHandler]] = {}
 
@@ -90,14 +87,13 @@ class DataRegistry(object):
             return self._value_items[value_id]
         elif value_id in self._linked_value_items.keys():
             return self._linked_value_items[value_id]
-        elif value_id in self._persisted_values.keys():
-            return self._persisted_values[value_id]
-        elif value_id in self._data_store.value_ids:
-            value = self._data_store.load_value(value_id=value_id)
-            self._persisted_values[value_id] = value
-            return self._persisted_values[value_id]
-        else:
-            raise Exception(f"No value with id: {value_id}")
+        try:
+            value = self._data_store.load_value(value_id)
+            return value
+        except Exception:
+            pass
+
+        raise Exception(f"No value with id: {value_id}")
 
     def register_value(
         self,

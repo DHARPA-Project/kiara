@@ -343,12 +343,16 @@ async def run(ctx, module, inputs, module_config, output, explain, save):
                     target_file.write_text(transformed_value)
 
         if save:
-            for field, value in workflow.outputs.items():
-                rich_print(f"Saving '[i]{field}[/i]'...")
-                field_aliases = final_aliases.get(field, [])
+
+            for field_name, aliases in aliases.items():
+                rich_print(f"Saving '[i]{field_name}[/i]'...")
                 try:
-                    value_id = value.save(aliases=field_aliases)
-                    rich_print(f"   -> done, id: [i]{value_id}[/i]")
+                    value = workflow.outputs.get_value_obj(field_name)
+                    value_md = value.save(aliases=aliases)
+                    msg = f"   -> done, id: [i]{value_md.value_id}[/i]"
+                    if value_md.aliases:
+                        msg = msg + f", aliases: [i]{', '.join(value_md.aliases)}[/i]"
+                    rich_print(msg)
                 except Exception as e:
                     if is_debug():
                         import traceback

@@ -41,7 +41,12 @@ class SaveValueModule(KiaraModule):
     ) -> typing.Mapping[
         str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
     ]:
-        return {"value_id": {"type": "string", "doc": "The id of the saved value."}}
+        return {
+            "value_id": {
+                "type": "string",
+                "doc": f"The id of the saved {self.get_config_value('value_type')} data-item.",
+            }
+        }
 
     def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
 

@@ -808,7 +808,9 @@ class LocalDataStore(DataStore):
             _f.write(json.dumps(metadata))
 
         for hf in hashes_files:
-            os.symlink(metadata_path.name, hf)
+            with open(hf, "a"):
+                os.utime(hf, None)
+            # os.symlink(metadata_path.name, hf)
 
         vmd = SavedValueMetadata(
             value_id=value_id, value_type=value_type, metadata=metadata
@@ -821,10 +823,15 @@ class LocalDataStore(DataStore):
         alias_version_path = (
             metadata_path.parent / f"alias_{alias}.version_{version}.json"
         )
-        os.symlink(metadata_path.name, alias_version_path)
+        with open(alias_version_path, "a"):
+            os.utime(alias_version_path, None)
+
+        # os.symlink(metadata_path.name, alias_version_path)
 
     def _register_alias_tag(self, value_id: str, alias: str, tag: str):
 
         metadata_path = self.get_metadata_path(value_id=value_id)
         tag_path = metadata_path.parent / f"alias_{alias}.tag_{tag}.json"
-        os.symlink(metadata_path.name, tag_path)
+        with open(tag_path, "a"):
+            os.utime(tag_path, None)
+        # os.symlink(metadata_path.name, tag_path)

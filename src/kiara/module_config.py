@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """Configuration models for the *Kiara* package."""
+
 import deepdiff
 import os
 import typing
@@ -16,6 +17,84 @@ if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
     from kiara.module import KiaraModule
     from kiara.pipeline.config import PipelineModuleConfig
+
+
+class ModuleTypeConfig(BaseModel):
+    """Base class that describes the configuration a [``KiaraModule``][kiara.module.KiaraModule] class accepts.
+
+    This is stored in the ``_config_cls`` class attribute in each ``KiaraModule`` class. By default,
+    such a ``KiaraModule`` is not configurable.
+
+    There are two config options every ``KiaraModule`` supports:
+
+     - ``constants``, and
+     - ``defaults``
+
+     Constants are pre-set inputs, and users can't change them and an error is thrown if they try. Defaults are default
+     values that override the schema defaults, and those can be overwritten by users. If both a constant and a default
+     value is set for an input field, an error is thrown.
+    """
+
+    @classmethod
+    def requires_config(cls) -> bool:
+
+        for field_name, field in cls.__fields__.items():
+            if field.required and field.default is None:
+                return True
+        return False
+
+    _config_hash: str = PrivateAttr(default=None)
+    constants: typing.Dict[str, typing.Any] = Field(
+        default_factory=dict, description="Value constants for this module."
+    )
+    defaults: typing.Dict[str, typing.Any] = Field(
+        default_factory=dict, description="Value defaults for this module."
+    )
+
+    class Config:
+        extra = Extra.forbid
+        validate_assignment = True
+
+    def get(self, key: str) -> typing.Any:
+
+        if key not in self.__fields__:
+            raise Exception(
+                f"No config value '{key}' in module config class '{self.__class__.__name__}'."
+            )
+
+        return getattr(self, key)
+
+    @property
+    def config_hash(self):
+
+        if self._config_hash is None:
+            _d = self.dict()
+            hashes = deepdiff.DeepHash(_d)
+            self._config_hash = hashes[_d]
+        return self._config_hash
+
+    def __eq__(self, other):
+
+        if self.__class__ != other.__class__:
+            return False
+
+        return self.dict() == other.dict()
+
+    def __hash__(self):
+
+        return hash(self.config_hash)
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+
+        my_table = Table(box=box.MINIMAL, show_header=False)
+        my_table.add_column("Field name", style="i")
+        my_table.add_column("Value")
+        for field in self.__fields__:
+            my_table.add_row(field, getattr(self, field))
+
+        yield my_table
 
 
 class ModuleInstanceConfig(BaseModel):
@@ -118,84 +197,6 @@ class ModuleInstanceConfig(BaseModel):
                 module_config=self.module_config,
             )
         return self._module
-
-
-class ModuleTypeConfig(BaseModel):
-    """Base class that describes the configuration a [``KiaraModule``][kiara.module.KiaraModule] class accepts.
-
-    This is stored in the ``_config_cls`` class attribute in each ``KiaraModule`` class. By default,
-    such a ``KiaraModule`` is not configurable.
-
-    There are two config options every ``KiaraModule`` supports:
-
-     - ``constants``, and
-     - ``defaults``
-
-     Constants are pre-set inputs, and users can't change them and an error is thrown if they try. Defaults are default
-     values that override the schema defaults, and those can be overwritten by users. If both a constant and a default
-     value is set for an input field, an error is thrown.
-    """
-
-    @classmethod
-    def requires_config(cls) -> bool:
-
-        for field_name, field in cls.__fields__.items():
-            if field.required and field.default is None:
-                return True
-        return False
-
-    _config_hash: str = PrivateAttr(default=None)
-    constants: typing.Dict[str, typing.Any] = Field(
-        default_factory=dict, description="Value constants for this module."
-    )
-    defaults: typing.Dict[str, typing.Any] = Field(
-        default_factory=dict, description="Value defaults for this module."
-    )
-
-    class Config:
-        extra = Extra.forbid
-        validate_assignment = True
-
-    def get(self, key: str) -> typing.Any:
-
-        if key not in self.__fields__:
-            raise Exception(
-                f"No config value '{key}' in module config class '{self.__class__.__name__}'."
-            )
-
-        return getattr(self, key)
-
-    @property
-    def config_hash(self):
-
-        if self._config_hash is None:
-            _d = self.dict()
-            hashes = deepdiff.DeepHash(_d)
-            self._config_hash = hashes[_d]
-        return self._config_hash
-
-    def __eq__(self, other):
-
-        if self.__class__ != other.__class__:
-            return False
-
-        return self.dict() == other.dict()
-
-    def __hash__(self):
-
-        return hash(self.config_hash)
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-
-        my_table = Table(box=box.MINIMAL, show_header=False)
-        my_table.add_column("Field name", style="i")
-        my_table.add_column("Value")
-        for field in self.__fields__:
-            my_table.add_row(field, getattr(self, field))
-
-        yield my_table
 
 
 KIARA_CONFIG = typing.TypeVar("KIARA_CONFIG", bound=ModuleTypeConfig)

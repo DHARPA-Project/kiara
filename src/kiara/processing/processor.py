@@ -5,7 +5,6 @@ import uuid
 import zmq
 from datetime import datetime
 from pydantic import BaseSettings
-from typing import Literal
 from zmq import Context, Socket
 
 from kiara.data import ValueSet
@@ -13,6 +12,12 @@ from kiara.exceptions import KiaraProcessingException
 from kiara.pipeline import PipelineValues
 from kiara.processing import Job, JobLog, JobStatus
 from kiara.utils import is_debug
+
+try:
+    from typing import Literal
+except Exception:
+    from typing_extensions import Literal  # type: ignore
+
 
 if typing.TYPE_CHECKING:
     from kiara.module import KiaraModule

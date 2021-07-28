@@ -662,7 +662,7 @@ class StepInfo(JupyterMixin, BaseModel):
     ) -> RenderResult:
 
         doc = self.module_metadata.type_metadata.documentation.create_renderable()
-        metadata = self.module_metadata.create_renderable(include_desc=False)
+        metadata = self.module_metadata.create_renderable(include_doc=False)
 
         panel = Panel(
             RenderGroup("", Panel(doc, box=box.SIMPLE), "", metadata),

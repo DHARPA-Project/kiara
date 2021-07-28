@@ -2,8 +2,8 @@
 import typing
 
 from kiara.data import Value
-from kiara.data.operations import OperationType
 from kiara.metadata import MetadataModel
+from kiara.operations.type_operations import TypeOperationConfig
 from kiara.utils.class_loading import find_all_metadata_schemas
 
 if typing.TYPE_CHECKING:
@@ -41,7 +41,7 @@ class MetadataMgmt(object):
     def get_metadata_keys_for_type(self, value_type: str) -> typing.Set[str]:
 
         all_profiles_for_type: typing.Mapping[
-            str, OperationType
+            str, TypeOperationConfig
         ] = self._kiara.data_operations.operations.get(value_type, {}).get(
             "extract_metadata", {}
         )
@@ -61,7 +61,7 @@ class MetadataMgmt(object):
         all_metadata_keys_for_type = self.get_metadata_keys_for_type(
             value_type=value_type
         )
-        # all_profiles_for_type = self._kiara.data_operations.extract_metadata_profiles.get(
+        # all_profiles_for_type = self._kiara.operations.type_operations.extract_metadata_profiles.get(
         #     value_type, None
         # )
         # if all_profiles_for_type is None:

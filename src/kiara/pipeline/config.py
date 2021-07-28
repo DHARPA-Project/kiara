@@ -6,7 +6,8 @@ from slugify import slugify
 
 from kiara.defaults import DEFAULT_PIPELINE_PARENT_ID
 from kiara.module_config import KiaraModuleConfig, OperationConfig
-from kiara.pipeline.values import StepValueAddress, ensure_step_value_addresses
+from kiara.pipeline.utils import ensure_step_value_addresses
+from kiara.pipeline.values import StepValueAddress
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara

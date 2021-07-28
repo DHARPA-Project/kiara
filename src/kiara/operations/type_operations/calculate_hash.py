@@ -4,9 +4,9 @@ from pydantic import Field
 
 from kiara import KiaraModule
 from kiara.data import Value, ValueSet
-from kiara.data.operations import OperationType
 from kiara.data.values import ValueSchema
 from kiara.module_config import KiaraModuleConfig
+from kiara.operations.type_operations import TypeOperationConfig
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -54,7 +54,7 @@ class CalculateValueHashModule(KiaraModule):
         outputs.set_value("hash", value_hash)
 
 
-class CalculateHashOperationType(OperationType):
+class CalculateHashTypeOperationConfig(TypeOperationConfig):
     """Calculate a hash for a dataset."""
 
     @classmethod

@@ -3,10 +3,10 @@ import typing
 from pydantic import Field
 
 from kiara import Kiara
-from kiara.data.operations import OperationType
+from kiara.operations.type_operations import TypeOperationConfig
 
 
-class PrettyPrintOperationType(OperationType):
+class PrettyPrintTypeOperationConfig(TypeOperationConfig):
     """Create a pretty, readable string from a dataset.
 
     Some information might be lost in the process, the main objective of this operation is to create a string that allows the user

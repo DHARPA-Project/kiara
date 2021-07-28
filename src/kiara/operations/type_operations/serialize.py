@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import typing
 
-from kiara.data.operations import OperationType
+from kiara.operations.type_operations import TypeOperationConfig
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
 
 
-class SerializeOperationType(OperationType):
+class SerializeTypeOperationConfig(TypeOperationConfig):
     """Save a dataset into the internal kiara data store."""
 
     @classmethod
@@ -36,7 +36,7 @@ class SerializeOperationType(OperationType):
         return result
 
 
-class DeserializeOperationType(OperationType):
+class DeserializeTypeOperationConfig(TypeOperationConfig):
     """Save a dataset into the internal kiara data store."""
 
     @classmethod

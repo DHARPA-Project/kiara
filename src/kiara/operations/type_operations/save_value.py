@@ -4,11 +4,11 @@ import typing
 from pydantic import Field
 
 from kiara import Kiara, KiaraModule
-from kiara.data.operations import OperationType
 from kiara.data.values import Value, ValueSchema, ValueSet
 from kiara.exceptions import KiaraProcessingException
 from kiara.metadata.core_models import LoadConfig
 from kiara.module_config import KiaraModuleConfig
+from kiara.operations.type_operations import TypeOperationConfig
 
 
 class SaveValueModuleConfig(KiaraModuleConfig):
@@ -96,7 +96,7 @@ class SaveValueTypeModule(KiaraModule):
         outputs.set_values(load_config=lc)
 
 
-class SaveOperationType(OperationType):
+class SaveTypeOperationConfig(TypeOperationConfig):
     """Save a dataset into the internal kiara data store."""
 
     @classmethod

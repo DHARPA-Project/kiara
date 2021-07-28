@@ -16,7 +16,7 @@ if typing.TYPE_CHECKING:
 log = logging.getLogger("kiara")
 
 
-class OperationType(OperationConfig, abc.ABC):
+class TypeOperationConfig(OperationConfig, abc.ABC):
     """A class to represent a sort of an 'interface' for a group of kiara modules that do the same thing to a dataset, independent of the dataset type."""
 
     @classmethod
@@ -29,7 +29,10 @@ class OperationType(OperationConfig, abc.ABC):
             typing.Mapping[
                 str,
                 typing.Mapping[
-                    str, typing.Union[typing.Mapping[str, typing.Any], "OperationType"]
+                    str,
+                    typing.Union[
+                        typing.Mapping[str, typing.Any], "TypeOperationConfig"
+                    ],
                 ],
             ],
         ],
@@ -41,7 +44,7 @@ class OperationType(OperationConfig, abc.ABC):
     def retrieve_operations(cls, kiara: "Kiara"):
         """Return an (optional) collection of operations that the implementing class created.
 
-        Internally, this calls the [retrieve_operation_configs][kiara.data.operations.OperationType.retrieve_operation_configs] method of the sub-class (if implemented).
+        Internally, this calls the [retrieve_operation_configs][kiara.operations.type_operations.TypeOperationConfig.retrieve_operation_configs] method of the sub-class (if implemented).
         """
 
         profiles: typing.Mapping[
@@ -49,7 +52,8 @@ class OperationType(OperationConfig, abc.ABC):
             typing.Mapping[
                 str,
                 typing.Mapping[
-                    str, typing.Union[OperationType, typing.Mapping[str, typing.Any]]
+                    str,
+                    typing.Union[TypeOperationConfig, typing.Mapping[str, typing.Any]],
                 ],
             ],
         ] = cls.retrieve_operation_configs(kiara=kiara)
@@ -68,7 +72,7 @@ class OperationType(OperationConfig, abc.ABC):
                             f"Duplicate name for value type '{value_type}' and operation '{operation_name}': {operation_id}"
                         )
 
-                    if isinstance(data, OperationType):
+                    if isinstance(data, TypeOperationConfig):
                         if not isinstance(data, cls):
                             raise Exception(
                                 f"Invalid operation object type '{type(data)}' for operation type '{operation_name}': should be {cls}"
@@ -249,7 +253,7 @@ class DataOperationMgmt(object):
         self,
         kiara: "Kiara",
         operation_type_classes: typing.Optional[
-            typing.Mapping[str, typing.Type[OperationType]]
+            typing.Mapping[str, typing.Type[TypeOperationConfig]]
         ] = None,
     ):
 
@@ -259,7 +263,9 @@ class DataOperationMgmt(object):
 
             operation_type_classes = find_all_operation_types()
 
-        self._operation_type_classes: typing.Dict[str, typing.Type[OperationType]] = {}
+        self._operation_type_classes: typing.Dict[
+            str, typing.Type[TypeOperationConfig]
+        ] = {}
         self._operation_input_schemas: typing.Dict[
             str, typing.Mapping[str, "ValueSchema"]
         ] = {}
@@ -277,10 +283,10 @@ class DataOperationMgmt(object):
                     log.debug(f"Can't add operation type '{k}': {e}")
 
         self._operations: typing.Optional[
-            typing.Dict[str, typing.Dict[str, typing.Dict[str, OperationType]]]
+            typing.Dict[str, typing.Dict[str, typing.Dict[str, TypeOperationConfig]]]
         ] = None
 
-    def register_type_cls(self, alias: str, cls: typing.Type[OperationType]):
+    def register_type_cls(self, alias: str, cls: typing.Type[TypeOperationConfig]):
 
         if alias in self._operation_type_classes.keys():
             raise Exception(f"Operation type already registered: {alias}")
@@ -317,17 +323,19 @@ class DataOperationMgmt(object):
     @property
     def operations(
         self,
-    ) -> typing.Mapping[str, typing.Mapping[str, typing.Mapping[str, OperationType]]]:
+    ) -> typing.Mapping[
+        str, typing.Mapping[str, typing.Mapping[str, TypeOperationConfig]]
+    ]:
         """Return all available operations, per value type.
 
-        The result dict has the value type as key, and then another dict with the name of the operation type as key and the [OperationType][kiara.profiles.OperationType] object as value.
+        The result dict has the value type as key, and then another dict with the name of the operation type as key and the [TypeOperationConfig][kiara.profiles.TypeOperationConfig] object as value.
         """
 
         if self._operations is not None:
             return self._operations
 
         _operations: typing.Dict[
-            str, typing.Dict[str, typing.Dict[str, OperationType]]
+            str, typing.Dict[str, typing.Dict[str, TypeOperationConfig]]
         ] = {}
 
         for operation_name, operation_cls in self._operation_type_classes.items():
@@ -375,7 +383,7 @@ class DataOperationMgmt(object):
                         if not op_type_cls:
                             raise Exception(f"Invalid operation name: {operation_name}")
 
-                        if isinstance(config, OperationType):
+                        if isinstance(config, TypeOperationConfig):
                             if not isinstance(config, op_type_cls):
                                 raise Exception(
                                     f"Invalid operation object type '{type(config)}' for operation type '{operation_name}': should be {op_type_cls}"
@@ -420,7 +428,7 @@ class DataOperationMgmt(object):
                                     f"Invalid operation name: {operation_name}"
                                 )
 
-                            if isinstance(config, OperationType):
+                            if isinstance(config, TypeOperationConfig):
                                 if not isinstance(config, op_type_cls):
                                     raise Exception(
                                         f"Invalid operation object type '{type(config)}' for operation type '{operation_name}': should be {op_type_cls}"
@@ -467,7 +475,7 @@ class DataOperationMgmt(object):
         operation_name: str,
         operation_id: typing.Optional[str],
         raise_exception: bool = False,
-    ) -> typing.Optional[OperationType]:
+    ) -> typing.Optional[TypeOperationConfig]:
 
         if operation_id is None:
             available_operations: typing.Optional[

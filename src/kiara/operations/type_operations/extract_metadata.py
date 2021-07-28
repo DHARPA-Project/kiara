@@ -2,10 +2,10 @@
 import typing
 
 from kiara import Kiara
-from kiara.data.operations import OperationType
+from kiara.operations.type_operations import TypeOperationConfig
 
 
-class ExtractMetadataOperationType(OperationType):
+class ExtractMetadataTypeOperationConfig(TypeOperationConfig):
     """Extract metadata from a dataset."""
 
     @classmethod

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """Configuration models for the *Kiara* package."""
-
 import deepdiff
+import os
 import typing
 from pathlib import Path
 from pydantic import BaseModel, Extra, Field, PrivateAttr
@@ -15,6 +15,7 @@ from kiara.utils import get_data_from_file
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
     from kiara.module import KiaraModule
+    from kiara.pipeline.config import PipelineModuleConfig
 
 
 class OperationConfig(BaseModel):
@@ -23,6 +24,80 @@ class OperationConfig(BaseModel):
 
         data = get_data_from_file(path)
         return OperationConfig(module_type="pipeline", module_config=data)
+
+    @classmethod
+    def create(
+        cls,
+        config: typing.Union["OperationConfig", typing.Mapping, str],
+        module_config: typing.Union[
+            None, typing.Mapping[str, typing.Any], "PipelineModuleConfig"
+        ] = None,
+        kiara: typing.Optional["Kiara"] = None,
+    ):
+
+        if kiara is None:
+            kiara = Kiara.instance()
+
+        if isinstance(config, typing.Mapping):
+
+            if module_config:
+                raise NotImplementedError()
+            operation_config: OperationConfig = OperationConfig(**config)
+
+        elif isinstance(config, str):
+            if config == "pipeline":
+                if not module_config:
+                    raise Exception(
+                        "Can't create workflow from 'pipeline' module type without further configuration."
+                    )
+                elif isinstance(module_config, typing.Mapping):
+                    operation_config = OperationConfig(
+                        module_type="pipeline", module_config=module_config
+                    )
+                else:
+                    from kiara.pipeline.config import PipelineModuleConfig
+
+                    if isinstance(config, PipelineModuleConfig):
+                        operation_config = OperationConfig(
+                            module_type="pipeline", module_config=config.dict()
+                        )
+                    else:
+                        raise Exception(
+                            f"Can't create operation config, invalid type for 'module_config': {type(module_config)}"
+                        )
+
+            elif config in kiara.available_module_types:
+                if module_config:
+                    operation_config = OperationConfig(
+                        module_type=config, module_config=module_config
+                    )
+                else:
+                    operation_config = OperationConfig(module_type=config)
+
+            elif os.path.isfile(os.path.expanduser(config)):
+                path = os.path.expanduser(config)
+                workflow_config_data = get_data_from_file(path)
+
+                if module_config:
+                    raise NotImplementedError()
+
+                operation_config = OperationConfig(
+                    module_type="pipeline", module_config=workflow_config_data
+                )
+            else:
+                raise Exception(
+                    f"Can't create workflow config from string '{config}'. Value must be path to a file, or one of: {', '.join(kiara.available_module_types)}"
+                )
+        elif isinstance(config, OperationConfig):
+            operation_config = config
+            if module_config:
+                raise NotImplementedError()
+        else:
+            raise TypeError(
+                f"Invalid type '{type(config)}' for workflow configuration."
+            )
+
+        return operation_config
 
     class Config:
         extra = Extra.forbid
@@ -60,6 +135,14 @@ class KiaraModuleConfig(BaseModel):
      values that override the schema defaults, and those can be overwritten by users. If both a constant and a default
      value is set for an input field, an error is thrown.
     """
+
+    @classmethod
+    def requires_config(cls) -> bool:
+
+        for field_name, field in cls.__fields__.items():
+            if field.required and field.default is None:
+                return True
+        return False
 
     _config_hash: str = PrivateAttr(default=None)
     constants: typing.Dict[str, typing.Any] = Field(
@@ -116,25 +199,3 @@ class KiaraModuleConfig(BaseModel):
 
 
 KIARA_CONFIG = typing.TypeVar("KIARA_CONFIG", bound=KiaraModuleConfig)
-
-# class OperationConfig(BaseModel):
-#     """The object to hold a configuration for a workflow."""
-#
-#     class Config:
-#         extra = Extra.forbid
-#         validate_assignment = True
-#
-#     @classmethod
-#     def from_file(cls, path: typing.Union[str, Path]):
-#
-#         data = get_data_from_file(path)
-#         return OperationConfig(module_type="pipeline", module_config=data)
-#
-#     module_type: str = Field(
-#         description="The name of the 'root' module of this workflow.",
-#         default="pipeline",
-#     )
-#     module_config: typing.Dict[str, typing.Any] = Field(
-#         default_factory=dict,
-#         description="The configuration for the 'root' module of this workflow.",
-#     )

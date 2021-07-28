@@ -25,11 +25,12 @@ from kiara.metadata.core_models import (
     PythonClassMetadata,
 )
 from kiara.module_config import KiaraModuleConfig
+from kiara.pipeline.config import PipelineModuleConfig
 from kiara.utils import create_table_from_field_schemas
+from kiara.utils.output import create_table_from_base_model
 
 if typing.TYPE_CHECKING:
     from kiara import KiaraModule
-    from kiara.pipeline.config import PipelineModuleConfig
 
 
 class ValueTypeAndDescription(BaseModel):
@@ -177,7 +178,7 @@ class KiaraModuleTypeMetadata(MetadataModel):
     is_pipeline: bool = Field(
         description="Whether the module type is a pipeline, or a core module."
     )
-    pipeline_config: typing.Optional["PipelineModuleConfig"] = Field(
+    pipeline_config: typing.Optional[PipelineModuleConfig] = Field(
         description="If this module is a pipeline, this field contains the pipeline configuration.",
         default_factory=None,
     )
@@ -187,7 +188,8 @@ class KiaraModuleTypeMetadata(MetadataModel):
 
     def create_renderable(self, **config: typing.Any) -> RenderableType:
 
-        include_config = config.get("include_config", True)
+        include_config_schema = config.get("include_config_schema", True)
+        include_src = config.get("include_src", True)
         include_doc = config.get("include_doc", True)
 
         table = Table(box=box.SIMPLE, show_header=False, padding=(0, 0, 0, 0))
@@ -201,9 +203,14 @@ class KiaraModuleTypeMetadata(MetadataModel):
             )
         table.add_row("Origin", self.origin.create_renderable())
         table.add_row("Context", self.context.create_renderable())
+
+        if include_config_schema:
+            config_cls = self.config.python_class.get_class()
+            table.add_row("Module config", create_table_from_base_model(config_cls))
+
         table.add_row("Python class", self.python_class.create_renderable())
 
-        if include_config:
+        if include_src:
             if self.is_pipeline:
                 json_str = self.pipeline_config.json(indent=2)  # type: ignore
                 _config: Syntax = Syntax(json_str, "json", background_color="default")

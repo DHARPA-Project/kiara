@@ -19,8 +19,8 @@ from kiara.utils import (
 )
 
 if typing.TYPE_CHECKING:
-    from kiara.data.operations import OperationType
     from kiara.module import KiaraModule
+    from kiara.operations.type_operations import TypeOperationConfig
 
 log = logging.getLogger("kiara")
 
@@ -268,13 +268,13 @@ def find_all_value_types() -> typing.Dict[str, typing.Type["ValueType"]]:
     return all_value_types
 
 
-def find_all_operation_types() -> typing.Dict[str, typing.Type["OperationType"]]:
+def find_all_operation_types() -> typing.Dict[str, typing.Type["TypeOperationConfig"]]:
 
-    from kiara.data.operations import OperationType
+    from kiara.operations.type_operations import TypeOperationConfig
 
     return load_all_subclasses_for_entry_point(
         entry_point_name="kiara.operation_types",
-        base_class=OperationType,
+        base_class=TypeOperationConfig,
         set_id_attribute="_operation_type_name",
         remove_namespace_tokens=["core."],
     )
@@ -375,12 +375,12 @@ def find_value_types_under(
 
 def find_operations_under(
     module: typing.Union[str, ModuleType], prefix: typing.Optional[str] = ""
-) -> typing.Mapping[str, typing.Type["OperationType"]]:
+) -> typing.Mapping[str, typing.Type["TypeOperationConfig"]]:
 
-    from kiara.data.operations import OperationType
+    from kiara.operations.type_operations import TypeOperationConfig
 
     return find_subclasses_under(
-        base_class=OperationType,
+        base_class=TypeOperationConfig,
         module=module,
         prefix=prefix,
         remove_namespace_tokens=[],

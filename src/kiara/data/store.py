@@ -10,7 +10,6 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 from tzlocal import get_localzone
 
-from kiara.data.operations import OperationType
 from kiara.defaults import KIARA_DATA_STORE_DIR
 from kiara.metadata.core_models import (
     LoadConfig,
@@ -19,6 +18,7 @@ from kiara.metadata.core_models import (
     ValueHash,
     ValueInfo,
 )
+from kiara.operations.type_operations import TypeOperationConfig
 
 if typing.TYPE_CHECKING:
     pass
@@ -751,7 +751,7 @@ class LocalDataStore(DataStore):
     ) -> typing.Optional[SaveConfig]:
 
         op_config: typing.Optional[
-            OperationType
+            TypeOperationConfig
         ] = self._kiara.data_operations.get_operation(
             value_type=value_type,
             operation_name="save_value",

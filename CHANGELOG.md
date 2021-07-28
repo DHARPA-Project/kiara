@@ -6,10 +6,12 @@
   - renamed:
     - 'kiara.module_config.KiaraWorkflowConfig' -> 'kiara.module_config.OperationConfig'
   - moved classes/functions:
+    - 'kiara.data.operations' -> 'kiara.operations.type_operations'
     - 'kiara.processing.ModuleProcessor' -> 'kiara.processing.processor.ModuleProcessor'
-    - from 'kiara.module_config' -> kiara.pipeline.config:
+    - from 'kiara.module_config' -> kiara.pipeline.utils:
       - create_step_value_address
       - ensure_step_value_addresses
+    - from 'kiara.module_config' -> kiara.pipeline.config:
       - PipelineStepConfig
       - PipelineStructureConfig
       - PipelineModuleConfig

@@ -4,10 +4,10 @@ import typing
 from pydantic import Field
 
 from kiara import Kiara, KiaraModule
-from kiara.data.operations import OperationType
 from kiara.data.values import Value, ValueSchema, ValueSet
 from kiara.exceptions import KiaraProcessingException
 from kiara.module_config import KiaraModuleConfig
+from kiara.operations.type_operations import TypeOperationConfig
 
 
 class TypeConversionModuleConfig(KiaraModuleConfig):
@@ -154,7 +154,7 @@ class TypeConversionModule(KiaraModule):
         outputs.set_value("value_item", converted)
 
 
-class TypeConversionOperationType(OperationType):
+class TypeConversionTypeOperationConfig(TypeOperationConfig):
     @classmethod
     def retrieve_operation_configs(
         cls, kiara: Kiara

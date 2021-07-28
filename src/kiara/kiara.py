@@ -15,7 +15,6 @@ from zmq.devices import ThreadDevice
 
 from kiara.config import KiaraConfig
 from kiara.data import Value, ValueSet
-from kiara.data.operations import DataOperationMgmt
 from kiara.data.registry import DataRegistry
 from kiara.data.store import LocalDataStore
 from kiara.data.types import ValueType
@@ -27,6 +26,7 @@ from kiara.metadata.mgmt import MetadataMgmt
 from kiara.module_config import OperationConfig
 from kiara.module_mgmt import ModuleManager
 from kiara.module_mgmt.merged import MergedModuleManager
+from kiara.operations.type_operations import DataOperationMgmt
 from kiara.pipeline.config import PipelineModuleConfig
 from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.pipeline import Pipeline
@@ -445,6 +445,26 @@ class Kiara(object):
         pipeline = pipeline_config.create_pipeline(controller=controller, kiara=self)
         return pipeline
 
+    def create_workflow_from_operation_config(
+        self,
+        config: "OperationConfig",
+        workflow_id: typing.Optional[str] = None,
+        controller: typing.Optional[PipelineController] = None,
+    ):
+
+        if not workflow_id:
+            workflow_id = get_auto_workflow_alias(
+                config.module_type, use_incremental_ids=True
+            )
+
+        workflow = KiaraWorkflow(
+            workflow_id=workflow_id,
+            config=config,
+            controller=controller,
+            kiara=self,
+        )
+        return workflow
+
     def create_workflow(
         self,
         config: typing.Union[OperationConfig, typing.Mapping[str, typing.Any], str],
@@ -453,61 +473,12 @@ class Kiara(object):
         controller: typing.Optional[PipelineController] = None,
     ) -> KiaraWorkflow:
 
-        if isinstance(config, typing.Mapping):
-            workflow_config: OperationConfig = OperationConfig(**config)
-
-            if module_config:
-                raise NotImplementedError()
-
-        elif isinstance(config, str):
-            if config == "pipeline":
-                raise Exception(
-                    "Can't create workflow from 'pipeline' module type without further configuration."
-                )
-
-            if config in self.available_module_types:
-                if module_config:
-                    workflow_config = OperationConfig(
-                        module_type=config, module_config=module_config
-                    )
-                else:
-                    workflow_config = OperationConfig(module_type=config)
-
-            elif os.path.isfile(os.path.expanduser(config)):
-                path = os.path.expanduser(config)
-                workflow_config_data = get_data_from_file(path)
-
-                if module_config:
-                    raise NotImplementedError()
-
-                workflow_config = OperationConfig(
-                    module_config=workflow_config_data, module_type="pipeline"
-                )
-            else:
-                raise Exception(
-                    f"Can't create workflow config from string '{config}'. Value must be path to a file, or one of: {', '.join(self.available_module_types)}"
-                )
-        elif isinstance(config, OperationConfig):
-            workflow_config = config
-            if module_config:
-                raise NotImplementedError()
-        else:
-            raise TypeError(
-                f"Invalid type '{type(config)}' for workflow configuration."
-            )
-
-        if not workflow_id:
-            workflow_id = get_auto_workflow_alias(
-                workflow_config.module_type, use_incremental_ids=True
-            )
-
-        workflow = KiaraWorkflow(
-            workflow_id=workflow_id,
-            config=workflow_config,
-            controller=controller,
-            kiara=self,
+        _config = OperationConfig.create(
+            config=config, module_config=module_config, kiara=self
         )
-        return workflow
+        return self.create_workflow_from_operation_config(
+            config=_config, workflow_id=workflow_id, controller=controller
+        )
 
     def pretty_print(self, value: Value) -> None:
         pretty_print = self.create_workflow("string.pretty_print")

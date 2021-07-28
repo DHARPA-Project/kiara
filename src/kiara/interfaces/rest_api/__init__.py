@@ -7,9 +7,9 @@ from pydantic.fields import Field
 from pydantic.main import BaseModel
 
 from kiara import Kiara
-from kiara.data.operations import DataOperationMgmt
 from kiara.data.values import ValueSchema, ValueSetImpl
 from kiara.metadata.module_models import KiaraModuleInstanceMetadata
+from kiara.operations.type_operations import DataOperationMgmt
 
 
 class ModuleRunResponse(BaseModel):

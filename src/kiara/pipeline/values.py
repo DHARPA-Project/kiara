@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 import abc
-import collections
 import typing
 import uuid
 from datetime import datetime
 from pydantic import BaseModel, Extra, Field, PrivateAttr, root_validator
 
-from kiara.data import Value
-from kiara.data.values import ValueSchema
+from kiara.data.values import Value, ValueSchema
 from kiara.defaults import PIPELINE_PARENT_MARKER
 from kiara.pipeline.utils import generate_step_alias
 from kiara.utils import camel_case_to_snake_case
@@ -74,76 +72,6 @@ class StepValueAddress(BaseModel):
 
     def __str__(self):
         return self.__repr__()
-
-
-def create_step_value_address(
-    value_address_config: typing.Union[str, typing.Mapping[str, typing.Any]],
-    default_field_name: str,
-) -> StepValueAddress:
-
-    if isinstance(value_address_config, StepValueAddress):
-        return value_address_config
-
-    sub_value: typing.Optional[typing.Mapping[str, typing.Any]] = None
-
-    if isinstance(value_address_config, str):
-
-        tokens = value_address_config.split(".")
-        if len(tokens) == 1:
-            step_id = value_address_config
-            output_name = default_field_name
-        elif len(tokens) == 2:
-            step_id = tokens[0]
-            output_name = tokens[1]
-        elif len(tokens) == 3:
-            step_id = tokens[0]
-            output_name = tokens[1]
-            sub_value = {"config": tokens[2]}
-        else:
-            raise NotImplementedError()
-
-    elif isinstance(value_address_config, collections.abc.Mapping):
-        step_id = value_address_config["step_id"]
-        output_name = value_address_config["output_name"]
-        sub_value = value_address_config.get("sub_value", None)
-    else:
-        raise TypeError(
-            f"Invalid type for creating step value address: {type(value_address_config)}"
-        )
-
-    if sub_value is not None and not isinstance(sub_value, typing.Mapping):
-        raise ValueError(
-            f"Invalid type '{type(sub_value)}' for sub_value (step_id: {step_id}, value name: {output_name}): {sub_value}"
-        )
-
-    input_link = StepValueAddress(
-        step_id=step_id, value_name=output_name, sub_value=sub_value
-    )
-    return input_link
-
-
-def ensure_step_value_addresses(
-    link: typing.Union[str, typing.Mapping, typing.Iterable], default_field_name: str
-) -> typing.List[StepValueAddress]:
-
-    if isinstance(link, (str, typing.Mapping)):
-        input_links: typing.List[StepValueAddress] = [
-            create_step_value_address(
-                value_address_config=link, default_field_name=default_field_name
-            )
-        ]
-
-    elif isinstance(link, typing.Iterable):
-        input_links = []
-        for o in link:
-            il = create_step_value_address(
-                value_address_config=o, default_field_name=default_field_name
-            )
-            input_links.append(il)
-    else:
-        raise TypeError(f"Can't parse input map, invalid type for output: {link}")
-
-    return input_links
 
 
 class KiaraValue(Value, abc.ABC):

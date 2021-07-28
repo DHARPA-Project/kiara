@@ -193,3 +193,29 @@ def first_line(text: str):
         return text.split("\n")[0].strip()
     else:
         return text
+
+
+def create_table_from_base_model(model_cls: typing.Type[BaseModel]):
+
+    table = RichTable(box=box.SIMPLE)
+    table.add_column("Field")
+    table.add_column("Type")
+    table.add_column("Required")
+
+    props = model_cls.schema().get("properties", {})
+
+    for field_name, field in model_cls.__fields__.items():
+        row = [field_name]
+        p = props.get(field_name, None)
+        p_type = None
+        if p is not None:
+            p_type = p.get("type", None)
+            # TODO: check 'anyOf' keys
+
+        if p_type is None:
+            p_type = "-- check source --"
+        row.append(p_type)
+        row.append("yes" if field.required else "no")
+        table.add_row(*row)
+
+    return table

@@ -12,7 +12,8 @@ import pytest
 import os
 import typing
 
-from ..pipeline.pipeline_config import PipelineModuleConfig
+from kiara.pipeline.config import PipelineModuleConfig
+
 from .utils import PIPELINES_FOLDER
 
 

@@ -5,7 +5,7 @@ from pydantic import BaseModel, Extra, Field, root_validator, validator
 from slugify import slugify
 
 from kiara.defaults import DEFAULT_PIPELINE_PARENT_ID
-from kiara.module_config import KiaraModuleConfig, OperationConfig
+from kiara.module_config import ModuleInstanceConfig, ModuleTypeConfig
 from kiara.pipeline.utils import ensure_step_value_addresses
 from kiara.pipeline.values import StepValueAddress
 
@@ -17,7 +17,7 @@ if typing.TYPE_CHECKING:
 log = logging.getLogger("kiara")
 
 
-class PipelineStepConfig(OperationConfig):
+class PipelineStepConfig(ModuleInstanceConfig):
     """A class to hold the configuration of one module within a [PipelineModule][kiara.pipeline.module.PipelineModule]."""
 
     class Config:
@@ -83,7 +83,7 @@ class PipelineStructureConfig(BaseModel):
     output_aliases: typing.Union[None, str, typing.Dict[str, str]] = None
 
 
-class PipelineModuleConfig(KiaraModuleConfig):
+class PipelineModuleConfig(ModuleTypeConfig):
     """A class to hold the configuration for a [PipelineModule][kiara.pipeline.module.PipelineModule].
 
     If you want to control the pipeline input and output names, you need to have to provide a map that uses the

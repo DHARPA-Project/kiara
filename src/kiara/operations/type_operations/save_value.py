@@ -7,11 +7,11 @@ from kiara import Kiara, KiaraModule
 from kiara.data.values import Value, ValueSchema, ValueSet
 from kiara.exceptions import KiaraProcessingException
 from kiara.metadata.core_models import LoadConfig
-from kiara.module_config import KiaraModuleConfig
+from kiara.module_config import ModuleTypeConfig
 from kiara.operations.type_operations import TypeOperationConfig
 
 
-class SaveValueModuleConfig(KiaraModuleConfig):
+class SaveValueModuleConfig(ModuleTypeConfig):
 
     value_type: str = Field(description="The type of the value to save.")
 

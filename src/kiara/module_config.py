@@ -18,17 +18,17 @@ if typing.TYPE_CHECKING:
     from kiara.pipeline.config import PipelineModuleConfig
 
 
-class OperationConfig(BaseModel):
+class ModuleInstanceConfig(BaseModel):
     @classmethod
     def from_file(cls, path: typing.Union[str, Path]):
 
         data = get_data_from_file(path)
-        return OperationConfig(module_type="pipeline", module_config=data)
+        return ModuleInstanceConfig(module_type="pipeline", module_config=data)
 
     @classmethod
     def create(
         cls,
-        config: typing.Union["OperationConfig", typing.Mapping, str],
+        config: typing.Union["ModuleInstanceConfig", typing.Mapping, str],
         module_config: typing.Union[
             None, typing.Mapping[str, typing.Any], "PipelineModuleConfig"
         ] = None,
@@ -42,7 +42,7 @@ class OperationConfig(BaseModel):
 
             if module_config:
                 raise NotImplementedError()
-            operation_config: OperationConfig = OperationConfig(**config)
+            operation_config: ModuleInstanceConfig = ModuleInstanceConfig(**config)
 
         elif isinstance(config, str):
             if config == "pipeline":
@@ -51,14 +51,14 @@ class OperationConfig(BaseModel):
                         "Can't create workflow from 'pipeline' module type without further configuration."
                     )
                 elif isinstance(module_config, typing.Mapping):
-                    operation_config = OperationConfig(
+                    operation_config = ModuleInstanceConfig(
                         module_type="pipeline", module_config=module_config
                     )
                 else:
                     from kiara.pipeline.config import PipelineModuleConfig
 
                     if isinstance(config, PipelineModuleConfig):
-                        operation_config = OperationConfig(
+                        operation_config = ModuleInstanceConfig(
                             module_type="pipeline", module_config=config.dict()
                         )
                     else:
@@ -68,11 +68,11 @@ class OperationConfig(BaseModel):
 
             elif config in kiara.available_module_types:
                 if module_config:
-                    operation_config = OperationConfig(
+                    operation_config = ModuleInstanceConfig(
                         module_type=config, module_config=module_config
                     )
                 else:
-                    operation_config = OperationConfig(module_type=config)
+                    operation_config = ModuleInstanceConfig(module_type=config)
 
             elif os.path.isfile(os.path.expanduser(config)):
                 path = os.path.expanduser(config)
@@ -81,14 +81,14 @@ class OperationConfig(BaseModel):
                 if module_config:
                     raise NotImplementedError()
 
-                operation_config = OperationConfig(
+                operation_config = ModuleInstanceConfig(
                     module_type="pipeline", module_config=workflow_config_data
                 )
             else:
                 raise Exception(
                     f"Can't create workflow config from string '{config}'. Value must be path to a file, or one of: {', '.join(kiara.available_module_types)}"
                 )
-        elif isinstance(config, OperationConfig):
+        elif isinstance(config, ModuleInstanceConfig):
             operation_config = config
             if module_config:
                 raise NotImplementedError()
@@ -120,7 +120,7 @@ class OperationConfig(BaseModel):
         return self._module
 
 
-class KiaraModuleConfig(BaseModel):
+class ModuleTypeConfig(BaseModel):
     """Base class that describes the configuration a [``KiaraModule``][kiara.module.KiaraModule] class accepts.
 
     This is stored in the ``_config_cls`` class attribute in each ``KiaraModule`` class. By default,
@@ -198,4 +198,4 @@ class KiaraModuleConfig(BaseModel):
         yield my_table
 
 
-KIARA_CONFIG = typing.TypeVar("KIARA_CONFIG", bound=KiaraModuleConfig)
+KIARA_CONFIG = typing.TypeVar("KIARA_CONFIG", bound=ModuleTypeConfig)

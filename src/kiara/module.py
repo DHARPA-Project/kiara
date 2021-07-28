@@ -23,7 +23,7 @@ from kiara.metadata.module_models import (
     KiaraModuleInstanceMetadata,
     KiaraModuleTypeMetadata,
 )
-from kiara.module_config import KIARA_CONFIG, KiaraModuleConfig
+from kiara.module_config import KIARA_CONFIG, ModuleTypeConfig
 from kiara.processing import JobLog
 from kiara.utils import StringYAML, is_debug
 from kiara.utils.modules import create_schemas, overlay_constants_and_defaults
@@ -235,7 +235,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
     """
 
     # TODO: not quite sure about this generic type here, mypy doesn't seem to like it
-    _config_cls: typing.Type[KIARA_CONFIG] = KiaraModuleConfig  # type: ignore
+    _config_cls: typing.Type[KIARA_CONFIG] = ModuleTypeConfig  # type: ignore
 
     @classmethod
     def get_type_metadata(cls) -> KiaraModuleTypeMetadata:
@@ -273,7 +273,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
             kiara = Kiara.instance()
         self._kiara = kiara
 
-        if isinstance(module_config, KiaraModuleConfig):
+        if isinstance(module_config, ModuleTypeConfig):
             self._config: KIARA_CONFIG = module_config  # type: ignore
         elif module_config is None:
             self._config = self.__class__._config_cls()

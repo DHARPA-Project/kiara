@@ -24,7 +24,7 @@ from kiara.metadata.core_models import (
     OriginMetadataModel,
     PythonClassMetadata,
 )
-from kiara.module_config import KiaraModuleConfig
+from kiara.module_config import ModuleTypeConfig
 from kiara.pipeline.config import PipelineModuleConfig
 from kiara.utils import create_table_from_field_schemas
 from kiara.utils.output import create_table_from_base_model
@@ -43,7 +43,7 @@ class KiaraModuleConfigMetadata(MetadataModel):
     @classmethod
     def from_config_class(
         cls,
-        config_cls: typing.Type[KiaraModuleConfig],
+        config_cls: typing.Type[ModuleTypeConfig],
         remove_pipeline_config: bool = False,
     ):
 

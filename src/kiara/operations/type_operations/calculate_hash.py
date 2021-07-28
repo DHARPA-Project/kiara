@@ -5,14 +5,14 @@ from pydantic import Field
 from kiara import KiaraModule
 from kiara.data import Value, ValueSet
 from kiara.data.values import ValueSchema
-from kiara.module_config import KiaraModuleConfig
+from kiara.module_config import ModuleTypeConfig
 from kiara.operations.type_operations import TypeOperationConfig
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
 
 
-class CalculateValueHashesConfig(KiaraModuleConfig):
+class CalculateValueHashesConfig(ModuleTypeConfig):
 
     value_type: str = Field(
         description="The type of the value to calculate the hash for."

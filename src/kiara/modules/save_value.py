@@ -4,10 +4,10 @@ from pydantic import Field
 
 from kiara import KiaraModule
 from kiara.data.values import ValueSchema, ValueSet
-from kiara.module_config import KiaraModuleConfig
+from kiara.module_config import ModuleTypeConfig
 
 
-class SaveValueModuleConfig(KiaraModuleConfig):
+class SaveValueModuleConfig(ModuleTypeConfig):
 
     value_type: str = Field(description="The type of the value to save.")
 

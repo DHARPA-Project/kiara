@@ -4,7 +4,7 @@ import logging
 import typing
 from pydantic import Field, PrivateAttr, ValidationError
 
-from kiara.module_config import OperationConfig
+from kiara.module_config import ModuleInstanceConfig
 from kiara.utils import is_debug
 
 if typing.TYPE_CHECKING:
@@ -16,7 +16,7 @@ if typing.TYPE_CHECKING:
 log = logging.getLogger("kiara")
 
 
-class TypeOperationConfig(OperationConfig, abc.ABC):
+class TypeOperationConfig(ModuleInstanceConfig, abc.ABC):
     """A class to represent a sort of an 'interface' for a group of kiara modules that do the same thing to a dataset, independent of the dataset type."""
 
     @classmethod

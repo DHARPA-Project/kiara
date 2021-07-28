@@ -4,7 +4,7 @@ import uuid
 
 from kiara import Kiara
 from kiara.interfaces.python_api import ApiController
-from kiara.module_config import OperationConfig
+from kiara.module_config import ModuleInstanceConfig
 from kiara.workflow.kiara_workflow import KiaraWorkflow
 
 
@@ -16,7 +16,9 @@ class WorkflowSessionMgmt(object):
 
     def add_session(
         self,
-        config: typing.Union[OperationConfig, typing.Mapping[str, typing.Any], str],
+        config: typing.Union[
+            ModuleInstanceConfig, typing.Mapping[str, typing.Any], str
+        ],
         module_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         session_id: typing.Optional[str] = None,
     ) -> str:

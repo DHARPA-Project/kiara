@@ -23,7 +23,7 @@ from kiara.defaults import DEFAULT_PRETTY_PRINT_CONFIG, KIARA_DATA_STORE_DIR
 from kiara.interfaces import get_console
 from kiara.metadata import MetadataModel, MetadataSchemaInfo
 from kiara.metadata.mgmt import MetadataMgmt
-from kiara.module_config import OperationConfig
+from kiara.module_config import ModuleInstanceConfig
 from kiara.module_mgmt import ModuleManager
 from kiara.module_mgmt.merged import MergedModuleManager
 from kiara.operations.type_operations import DataOperationMgmt
@@ -411,7 +411,9 @@ class Kiara(object):
 
     def create_pipeline(
         self,
-        config: typing.Union[OperationConfig, typing.Mapping[str, typing.Any], str],
+        config: typing.Union[
+            ModuleInstanceConfig, typing.Mapping[str, typing.Any], str
+        ],
         controller: typing.Optional[PipelineController] = None,
     ) -> Pipeline:
 
@@ -447,7 +449,7 @@ class Kiara(object):
 
     def create_workflow_from_operation_config(
         self,
-        config: "OperationConfig",
+        config: "ModuleInstanceConfig",
         workflow_id: typing.Optional[str] = None,
         controller: typing.Optional[PipelineController] = None,
     ):
@@ -467,13 +469,15 @@ class Kiara(object):
 
     def create_workflow(
         self,
-        config: typing.Union[OperationConfig, typing.Mapping[str, typing.Any], str],
+        config: typing.Union[
+            ModuleInstanceConfig, typing.Mapping[str, typing.Any], str
+        ],
         workflow_id: typing.Optional[str] = None,
         module_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         controller: typing.Optional[PipelineController] = None,
     ) -> KiaraWorkflow:
 
-        _config = OperationConfig.create(
+        _config = ModuleInstanceConfig.create(
             config=config, module_config=module_config, kiara=self
         )
         return self.create_workflow_from_operation_config(

@@ -8,10 +8,10 @@ from kiara.data.values import ValueSchema
 from kiara.exceptions import KiaraProcessingException
 from kiara.metadata.core_models import PythonClassMetadata
 from kiara.module import KiaraModule
-from kiara.module_config import KiaraModuleConfig
+from kiara.module_config import ModuleTypeConfig
 
 
-class MetadataModuleConfig(KiaraModuleConfig):
+class MetadataModuleConfig(ModuleTypeConfig):
 
     value_type: str = Field(description="The data type this module will be used for.")
 

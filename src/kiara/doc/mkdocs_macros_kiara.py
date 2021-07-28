@@ -8,7 +8,7 @@ from pydoc import locate
 from kiara import Kiara
 from kiara.data.values import Value, ValueSchema
 from kiara.module import ModuleInfo
-from kiara.module_config import KiaraModuleConfig, OperationConfig
+from kiara.module_config import ModuleInstanceConfig, ModuleTypeConfig
 from kiara.module_mgmt.pipelines import PipelineModuleManager
 from kiara.pipeline import PipelineValue, PipelineValues
 from kiara.pipeline.config import PipelineModuleConfig
@@ -43,12 +43,12 @@ KIARA_MODEL_CLASSES: typing.Mapping[str, typing.List[typing.Type[BaseModel]]] = 
         PipelineOutputField,
     ],
     "modules": [
-        KiaraModuleConfig,
+        ModuleTypeConfig,
         PipelineModuleConfig,
         PipelineStep,
         PipelineStructureDesc,
         PipelineState,
-        OperationConfig,
+        ModuleInstanceConfig,
     ],
     "events": [
         StepInputEvent,

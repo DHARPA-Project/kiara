@@ -4,7 +4,8 @@
 
 - major refactoring:
   - renamed:
-    - 'kiara.module_config.KiaraWorkflowConfig' -> 'kiara.module_config.OperationConfig'
+    - 'kiara.module_config.KiaraWorkflowConfig' -> 'kiara.module_config.ModuleInstanceConfig'
+    - 'kiara.module_config.KiaraModuleConfig' -> 'kiara.module_config.ModuleTypeConfig'
   - moved classes/functions:
     - 'kiara.data.operations' -> 'kiara.operations.type_operations'
     - 'kiara.processing.ModuleProcessor' -> 'kiara.processing.processor.ModuleProcessor'

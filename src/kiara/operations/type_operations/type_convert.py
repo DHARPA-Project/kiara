@@ -6,11 +6,11 @@ from pydantic import Field
 from kiara import Kiara, KiaraModule
 from kiara.data.values import Value, ValueSchema, ValueSet
 from kiara.exceptions import KiaraProcessingException
-from kiara.module_config import KiaraModuleConfig
+from kiara.module_config import ModuleTypeConfig
 from kiara.operations.type_operations import TypeOperationConfig
 
 
-class TypeConversionModuleConfig(KiaraModuleConfig):
+class TypeConversionModuleConfig(ModuleTypeConfig):
 
     source_type: str = Field(description="The type of the source value.")
     target_type: str = Field(description="The type of the converted value.")

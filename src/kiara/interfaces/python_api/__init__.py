@@ -16,7 +16,7 @@ from kiara import Kiara, KiaraModule, Pipeline, PipelineController, PipelineStru
 from kiara.data import Value, ValueSet
 from kiara.interfaces.python_api.controller import ApiController
 from kiara.metadata.module_models import KiaraModuleInstanceMetadata
-from kiara.module_config import OperationConfig
+from kiara.module_config import ModuleInstanceConfig
 from kiara.pipeline.config import PipelineModuleConfig, PipelineStepConfig
 from kiara.pipeline.pipeline import create_pipeline_step_table
 from kiara.pipeline.structure import generate_pipeline_endpoint_name
@@ -537,7 +537,7 @@ class Step(JupyterMixin):
         self._inputs: InputDataPoints = InputDataPoints(self)
         self._outputs: OutputDataPoints = OutputDataPoints(self)
 
-        self._profile_config: typing.Optional[OperationConfig] = None
+        self._profile_config: typing.Optional[ModuleInstanceConfig] = None
 
         self._structure: typing.Optional[Workflow] = None
 
@@ -568,12 +568,12 @@ class Step(JupyterMixin):
         self._profile_config = None
         self._module = None
 
-    def config(self) -> OperationConfig:
+    def config(self) -> ModuleInstanceConfig:
 
         if self._profile_config is not None:
             return self._profile_config
 
-        self._profile_config = OperationConfig(
+        self._profile_config = ModuleInstanceConfig(
             module_type=self._module_type, module_config=self._module_config
         )
         return self._profile_config

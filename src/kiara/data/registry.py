@@ -5,17 +5,15 @@ import uuid
 from pyarrow import Table
 
 from kiara.data.store import LocalDataStore
-from kiara.data.values import (
+from kiara.data.values import Value, ValueMetadata, ValueSchema
+from kiara.defaults import SpecialValue
+from kiara.pipeline.values import (
     DataValue,
     KiaraValue,
     LinkedValue,
-    Value,
     ValueField,
-    ValueMetadata,
-    ValueSchema,
     ValueUpdateHandler,
 )
-from kiara.defaults import SpecialValue
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara

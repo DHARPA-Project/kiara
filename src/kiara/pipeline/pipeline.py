@@ -10,18 +10,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from kiara.data.registry import DataRegistry
-from kiara.data.values import (
-    KiaraValue,
-    PipelineInputField,
-    PipelineOutputField,
-    PipelineValues,
-    StepInputField,
-    StepOutputField,
-    Value,
-    ValueMetadata,
-    ValueSet,
-    ValueSetImpl,
-)
+from kiara.data.values import Value, ValueMetadata, ValueSet, ValueSetImpl
 from kiara.events import (
     PipelineInputEvent,
     PipelineOutputEvent,
@@ -29,6 +18,7 @@ from kiara.events import (
     StepInputEvent,
     StepOutputEvent,
 )
+from kiara.pipeline import PipelineValues
 from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.controller.batch import BatchController
 from kiara.pipeline.listeners import PipelineListener
@@ -37,6 +27,13 @@ from kiara.pipeline.structure import (
     PipelineStructure,
     PipelineStructureDesc,
     StepDesc,
+)
+from kiara.pipeline.values import (
+    KiaraValue,
+    PipelineInputField,
+    PipelineOutputField,
+    StepInputField,
+    StepOutputField,
 )
 
 if typing.TYPE_CHECKING:

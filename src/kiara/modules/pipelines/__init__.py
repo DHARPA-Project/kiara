@@ -18,7 +18,7 @@ def create_pipeline_class(
     base_module: str,
 ):
 
-    from kiara.module_config import PipelineModuleConfig
+    from kiara.pipeline.config import PipelineModuleConfig
     from kiara.pipeline.module import PipelineModule
 
     pmc = PipelineModuleConfig(**pipeline_desc)

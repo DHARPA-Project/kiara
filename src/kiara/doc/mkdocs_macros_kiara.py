@@ -6,24 +6,12 @@ from pydantic import BaseModel
 from pydoc import locate
 
 from kiara import Kiara
-from kiara.data.values import (
-    PipelineInputField,
-    PipelineOutputField,
-    PipelineValue,
-    PipelineValues,
-    StepInputField,
-    StepOutputField,
-    StepValueAddress,
-    Value,
-    ValueSchema,
-)
+from kiara.data.values import Value, ValueSchema
 from kiara.module import ModuleInfo
-from kiara.module_config import (
-    KiaraModuleConfig,
-    KiaraWorkflowConfig,
-    PipelineModuleConfig,
-)
+from kiara.module_config import KiaraModuleConfig, OperationConfig
 from kiara.module_mgmt.pipelines import PipelineModuleManager
+from kiara.pipeline import PipelineValue, PipelineValues
+from kiara.pipeline.config import PipelineModuleConfig
 from kiara.pipeline.pipeline import (
     PipelineInputEvent,
     PipelineOutputEvent,
@@ -32,6 +20,13 @@ from kiara.pipeline.pipeline import (
     PipelineStructureDesc,
     StepInputEvent,
     StepOutputEvent,
+)
+from kiara.pipeline.values import (
+    PipelineInputField,
+    PipelineOutputField,
+    StepInputField,
+    StepOutputField,
+    StepValueAddress,
 )
 from kiara.utils import StringYAML
 
@@ -53,7 +48,7 @@ KIARA_MODEL_CLASSES: typing.Mapping[str, typing.List[typing.Type[BaseModel]]] = 
         PipelineStep,
         PipelineStructureDesc,
         PipelineState,
-        KiaraWorkflowConfig,
+        OperationConfig,
     ],
     "events": [
         StepInputEvent,

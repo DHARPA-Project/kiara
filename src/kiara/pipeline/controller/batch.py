@@ -3,12 +3,12 @@ import logging
 import typing
 
 from kiara.pipeline.controller import PipelineController
-from kiara.processing import ModuleProcessor
 from kiara.utils import is_debug
 
 if typing.TYPE_CHECKING:
     from kiara.events import PipelineOutputEvent, StepInputEvent
     from kiara.pipeline.pipeline import Pipeline
+    from kiara.processing.processor import ModuleProcessor
 
 log = logging.getLogger("kiara")
 
@@ -28,7 +28,7 @@ class BatchController(PipelineController):
         self,
         pipeline: typing.Optional["Pipeline"] = None,
         auto_process: bool = True,
-        processor: typing.Optional[ModuleProcessor] = None,
+        processor: typing.Optional["ModuleProcessor"] = None,
     ):
 
         self._auto_process: bool = auto_process

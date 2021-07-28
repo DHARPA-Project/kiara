@@ -2,8 +2,9 @@
 import abc
 import logging
 import typing
-from pydantic import BaseModel, Extra, Field, PrivateAttr, ValidationError
+from pydantic import Field, PrivateAttr, ValidationError
 
+from kiara.module_config import OperationConfig
 from kiara.utils import is_debug
 
 if typing.TYPE_CHECKING:
@@ -15,29 +16,7 @@ if typing.TYPE_CHECKING:
 log = logging.getLogger("kiara")
 
 
-class ModuleProfileConfig(BaseModel):
-    class Config:
-        extra = Extra.forbid
-        validate_all = True
-
-    _module: typing.Optional["KiaraModule"] = PrivateAttr(default=None)
-    module_type: str = Field(description="The module type.")
-    module_config: typing.Dict[str, typing.Any] = Field(
-        default_factory=dict, description="The configuration for the module."
-    )
-
-    def create_module(self, kiara: "Kiara"):
-
-        if self._module is None:
-            self._module = kiara.create_module(
-                id=f"extract_metadata_{self.module_type}",
-                module_type=self.module_type,
-                module_config=self.module_config,
-            )
-        return self._module
-
-
-class OperationType(ModuleProfileConfig, abc.ABC):
+class OperationType(OperationConfig, abc.ABC):
     """A class to represent a sort of an 'interface' for a group of kiara modules that do the same thing to a dataset, independent of the dataset type."""
 
     @classmethod

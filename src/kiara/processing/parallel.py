@@ -5,7 +5,8 @@ from pydantic import Field
 
 from kiara.data import ValueSet
 from kiara.module import KiaraModule, StepInputs, StepOutputs
-from kiara.processing import JobLog, JobStatus, ModuleProcessor, ProcessorConfig
+from kiara.processing import JobLog, JobStatus
+from kiara.processing.processor import ModuleProcessor, ProcessorConfig
 
 try:
     pass

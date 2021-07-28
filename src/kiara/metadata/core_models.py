@@ -9,9 +9,9 @@ from rich.markdown import Markdown
 from rich.table import Table
 from types import ModuleType
 
-from kiara.data.operations import ModuleProfileConfig
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.metadata import MetadataModel
+from kiara.module_config import OperationConfig
 from kiara.utils import merge_dicts
 from kiara.utils.global_metadata import get_metadata_for_python_module_or_class
 
@@ -263,7 +263,7 @@ class SnapshotMetadata(BaseModel):
     snapshot_time: str = Field(description="The time the data was saved.")
 
 
-class LoadConfig(ModuleProfileConfig):
+class LoadConfig(OperationConfig):
 
     value_id: str = Field(description="The id of the value.")
     base_path_input_name: str = Field(
@@ -275,7 +275,7 @@ class LoadConfig(ModuleProfileConfig):
     output_name: str = Field(description="The name of the output field for the value.")
 
 
-class SaveConfig(ModuleProfileConfig):
+class SaveConfig(OperationConfig):
 
     inputs: typing.Dict[str, typing.Any] = Field(
         description="The inputs to use when running this module.", default_factory=dict

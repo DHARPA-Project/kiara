@@ -3,4 +3,4 @@
 
 """Data and value related classes for *Kiara*."""
 
-from .values import Value, PipelineValues, ValueSet  # noqa
+from .values import Value, ValueSet  # noqa

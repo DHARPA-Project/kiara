@@ -5,11 +5,11 @@ import typing
 from kiara.data import Value, ValueSet
 from kiara.pipeline.listeners import PipelineListener
 from kiara.pipeline.structure import PipelineStep
-from kiara.processing import Job, ModuleProcessor
-from kiara.processing.synchronous import SynchronousProcessor
+from kiara.processing import Job
 
 if typing.TYPE_CHECKING:
     from kiara.pipeline.pipeline import Pipeline, PipelineState, StepStatus
+    from kiara.processing.processor import ModuleProcessor
 
 log = logging.getLogger("kiara")
 
@@ -40,10 +40,12 @@ class PipelineController(PipelineListener):
     def __init__(
         self,
         pipeline: typing.Optional["Pipeline"] = None,
-        processor: typing.Optional[ModuleProcessor] = None,
+        processor: typing.Optional["ModuleProcessor"] = None,
     ):
         self._pipeline: typing.Optional[Pipeline] = None
         if processor is None:
+            from kiara.processing.synchronous import SynchronousProcessor
+
             processor = SynchronousProcessor()
         self._processor: ModuleProcessor = processor
         self._job_ids: typing.Dict[str, str] = {}

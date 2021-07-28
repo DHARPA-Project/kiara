@@ -7,7 +7,7 @@ from slugify import slugify
 
 from kiara.data import ValueSet
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
-from kiara.module_config import KiaraWorkflowConfig
+from kiara.module_config import OperationConfig
 from kiara.pipeline.module import PipelineModule
 from kiara.pipeline.pipeline import (
     Pipeline,
@@ -28,14 +28,14 @@ class KiaraWorkflow(object):
     def __init__(
         self,
         workflow_id: str,
-        config: KiaraWorkflowConfig,
+        config: OperationConfig,
         kiara: "Kiara",
         controller: typing.Optional[PipelineController] = None,
     ):
 
         self._controller: typing.Optional[PipelineController] = controller
         self._workflow_id: str = workflow_id
-        self._workflow_config: KiaraWorkflowConfig = config
+        self._workflow_config: OperationConfig = config
         self._kiara: Kiara = kiara
 
         root_module_args: typing.Dict[str, typing.Any] = {"id": self._workflow_id}

@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import typing
 
-from kiara.data.values import StepValueAddress, generate_step_alias
 from kiara.defaults import PIPELINE_PARENT_MARKER
 
 if typing.TYPE_CHECKING:
-    from kiara.module_config import PipelineModuleConfig
+    from kiara.pipeline.config import PipelineModuleConfig
     from kiara.pipeline.pipeline import Pipeline
     from kiara.pipeline.structure import PipelineStructure, PipelineStructureDesc
+    from kiara.pipeline.values import StepValueAddress
 
 
 def create_pipeline_structure_desc(
@@ -93,11 +93,11 @@ def extend_pipeline(
         typing.Mapping[str, typing.Any],
     ],
     input_links: typing.Optional[
-        typing.Mapping[str, typing.Iterable[StepValueAddress]]
+        typing.Mapping[str, typing.Iterable["StepValueAddress"]]
     ] = None,
 ):
 
-    from kiara.module_config import PipelineModuleConfig
+    from kiara.pipeline.config import PipelineModuleConfig
     from kiara.pipeline.pipeline import Pipeline
     from kiara.pipeline.structure import PipelineStructure
 
@@ -208,3 +208,7 @@ def extend_pipeline(
         f"{structure.pipeline_id}_{other_name}", kiara=structure._kiara
     )
     return new_structure
+
+
+def generate_step_alias(step_id: str, value_name):
+    return f"{step_id}.{value_name}"

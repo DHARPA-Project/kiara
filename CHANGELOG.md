@@ -2,7 +2,36 @@
 
 ## Version 0.0.10 (upcoming)
 
-## Version 0.0.9 (upcoming)
+- major refactoring:
+  - renamed:
+    - 'kiara.module_config.KiaraWorkflowConfig' -> 'kiara.module_config.OperationConfig'
+  - moved classes/functions:
+    - 'kiara.processing.ModuleProcessor' -> 'kiara.processing.processor.ModuleProcessor'
+    - from 'kiara.module_config' -> kiara.pipeline.config:
+      - create_step_value_address
+      - ensure_step_value_addresses
+      - PipelineStepConfig
+      - PipelineStructureConfig
+      - PipelineModuleConfig
+    - from 'kiara.data.values' -> 'kiara.pipeline.utils':
+      - generate_step_alias
+    - from 'kiara.data.values' -> 'kiara.pipeline'
+      - PipelineValue
+      - PipelineValues
+    - from 'kiara.data.values' -> 'kiara.pipeline.values'
+      - ValueUpdateHandler
+      - StepValueAddress
+      - ValueField
+      - KiaraValue
+      - DataValue
+      - LinkedValue
+      - StepInputField
+      - StepOutputField
+      - PipelineInputField
+      - PipelineOutputField
+
+
+## Version 0.0.9
 
 - removed 'aliases' attribute from Value class, aliases are now specified when calling 'save' on the Value object
 - Job details (incl. error messages -- check the kiara.processing.Job class) for the most recent or current module executions can be retrieved: `[controller_obj].get_job_details(step_id)```

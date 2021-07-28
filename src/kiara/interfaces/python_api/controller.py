@@ -5,7 +5,7 @@ import typing
 from kiara import Pipeline, PipelineController
 from kiara.data import Value
 from kiara.events import PipelineInputEvent, PipelineOutputEvent, StepInputEvent
-from kiara.processing import ModuleProcessor
+from kiara.processing.processor import ModuleProcessor
 
 log = logging.getLogger("kiara")
 

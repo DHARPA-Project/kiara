@@ -12,22 +12,25 @@ from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
 
-from kiara.data.values import (
+from kiara.data.values import ValueSchema
+from kiara.defaults import DEFAULT_NO_DESC_VALUE, PIPELINE_PARENT_MARKER, SpecialValue
+from kiara.module import KiaraModule
+from kiara.pipeline.config import PipelineModuleConfig, PipelineStepConfig
+from kiara.pipeline.utils import (
+    create_pipeline_structure_desc,
+    extend_pipeline,
+    generate_step_alias,
+)
+from kiara.pipeline.values import (
     PipelineInputField,
     PipelineOutputField,
     StepInputField,
     StepOutputField,
     StepValueAddress,
-    ValueSchema,
-    generate_step_alias,
 )
-from kiara.defaults import DEFAULT_NO_DESC_VALUE, PIPELINE_PARENT_MARKER, SpecialValue
-from kiara.module import KiaraModule
-from kiara.pipeline.utils import create_pipeline_structure_desc, extend_pipeline
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
-    from kiara.module_config import PipelineModuleConfig, PipelineStepConfig
     from kiara.pipeline.pipeline import Pipeline
 
 

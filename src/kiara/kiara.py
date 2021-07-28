@@ -24,12 +24,14 @@ from kiara.defaults import DEFAULT_PRETTY_PRINT_CONFIG, KIARA_DATA_STORE_DIR
 from kiara.interfaces import get_console
 from kiara.metadata import MetadataModel, MetadataSchemaInfo
 from kiara.metadata.mgmt import MetadataMgmt
-from kiara.module_config import KiaraWorkflowConfig, PipelineModuleConfig
+from kiara.module_config import OperationConfig
 from kiara.module_mgmt import ModuleManager
 from kiara.module_mgmt.merged import MergedModuleManager
+from kiara.pipeline.config import PipelineModuleConfig
 from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.pipeline import Pipeline
-from kiara.processing import Job, ModuleProcessor
+from kiara.processing import Job
+from kiara.processing.processor import ModuleProcessor
 from kiara.utils import get_auto_workflow_alias, get_data_from_file, is_debug
 from kiara.utils.output import rich_print
 from kiara.workflow.kiara_workflow import KiaraWorkflow
@@ -409,7 +411,7 @@ class Kiara(object):
 
     def create_pipeline(
         self,
-        config: typing.Union[KiaraWorkflowConfig, typing.Mapping[str, typing.Any], str],
+        config: typing.Union[OperationConfig, typing.Mapping[str, typing.Any], str],
         controller: typing.Optional[PipelineController] = None,
     ) -> Pipeline:
 
@@ -445,14 +447,14 @@ class Kiara(object):
 
     def create_workflow(
         self,
-        config: typing.Union[KiaraWorkflowConfig, typing.Mapping[str, typing.Any], str],
+        config: typing.Union[OperationConfig, typing.Mapping[str, typing.Any], str],
         workflow_id: typing.Optional[str] = None,
         module_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         controller: typing.Optional[PipelineController] = None,
     ) -> KiaraWorkflow:
 
         if isinstance(config, typing.Mapping):
-            workflow_config: KiaraWorkflowConfig = KiaraWorkflowConfig(**config)
+            workflow_config: OperationConfig = OperationConfig(**config)
 
             if module_config:
                 raise NotImplementedError()
@@ -465,11 +467,11 @@ class Kiara(object):
 
             if config in self.available_module_types:
                 if module_config:
-                    workflow_config = KiaraWorkflowConfig(
+                    workflow_config = OperationConfig(
                         module_type=config, module_config=module_config
                     )
                 else:
-                    workflow_config = KiaraWorkflowConfig(module_type=config)
+                    workflow_config = OperationConfig(module_type=config)
 
             elif os.path.isfile(os.path.expanduser(config)):
                 path = os.path.expanduser(config)
@@ -478,14 +480,14 @@ class Kiara(object):
                 if module_config:
                     raise NotImplementedError()
 
-                workflow_config = KiaraWorkflowConfig(
+                workflow_config = OperationConfig(
                     module_config=workflow_config_data, module_type="pipeline"
                 )
             else:
                 raise Exception(
                     f"Can't create workflow config from string '{config}'. Value must be path to a file, or one of: {', '.join(self.available_module_types)}"
                 )
-        elif isinstance(config, KiaraWorkflowConfig):
+        elif isinstance(config, OperationConfig):
             workflow_config = config
             if module_config:
                 raise NotImplementedError()

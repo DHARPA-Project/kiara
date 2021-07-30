@@ -33,7 +33,7 @@ from kiara.utils import StringYAML
 if typing.TYPE_CHECKING:
     from kiara.data.registry import DataRegistry
     from kiara.kiara import Kiara
-    from kiara.pipeline import PipelineValue, PipelineValues
+    from kiara.pipeline import PipelineValues
 
 log = logging.getLogger("kiara")
 yaml = StringYAML()
@@ -444,6 +444,8 @@ class ValueSet(typing.MutableMapping[str, Value]):
         return True
 
     def to_details(self, ensure_metadata: bool = False) -> "PipelineValues":
+
+        from kiara.pipeline import PipelineValue, PipelineValues
 
         result = {}
         for name in self.get_all_field_names():

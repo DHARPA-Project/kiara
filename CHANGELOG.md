@@ -1,6 +1,9 @@
 # Changelog
 
-## Version 0.0.10 (upcoming)
+## Version 0.0.11 (upcoming)
+
+
+## Version 0.0.10
 
 - major refactoring:
   - renamed:

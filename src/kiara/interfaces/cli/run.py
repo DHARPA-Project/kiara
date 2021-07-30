@@ -55,6 +55,8 @@ async def run(ctx, module, inputs, module_config, output, explain, save):
 
     if module_config:
         module_config = dict_from_cli_args(*module_config)
+    else:
+        module_config = {}
 
     if not save:
         aliases: typing.Dict[str, typing.List[str]] = {}
@@ -162,7 +164,6 @@ async def run(ctx, module, inputs, module_config, output, explain, save):
         controller=controller,
     )
 
-    final_aliases = None
     if save:
         final_aliases = {}
         invalid_fields = []

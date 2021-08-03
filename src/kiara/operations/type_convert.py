@@ -7,7 +7,8 @@ from kiara import Kiara, KiaraModule
 from kiara.data.values import Value, ValueSchema, ValueSet
 from kiara.exceptions import KiaraProcessingException
 from kiara.module_config import ModuleTypeConfig
-from kiara.operations.type_operations import TypeOperationConfig
+from kiara.operations import OperationConfig, Operations
+from kiara.utils import log_message
 
 
 class TypeConversionModuleConfig(ModuleTypeConfig):
@@ -16,9 +17,78 @@ class TypeConversionModuleConfig(ModuleTypeConfig):
     target_type: str = Field(description="The type of the converted value.")
 
 
-class TypeConversionModule(KiaraModule):
+class ConvertValueModule(KiaraModule):
 
     _config_cls = TypeConversionModuleConfig
+
+    @classmethod
+    def retrieve_module_profiles(
+        cls, kiara: "Kiara"
+    ) -> typing.Mapping[
+        str, typing.Union[typing.Mapping[str, typing.Any], OperationConfig]
+    ]:
+
+        all_metadata_profiles: typing.Dict[
+            str, typing.Dict[str, typing.Dict[str, typing.Any]]
+        ] = {}
+
+        value_types: typing.Iterable[str] = cls.get_supported_value_types()
+        if "*" in value_types:
+            value_types = kiara.type_mgmt.value_type_names
+
+        for value_type in value_types:
+
+            if value_type not in kiara.type_mgmt.value_type_names:
+                log_message(
+                    f"Ignoring type convert operation for source type '{value_type}': type not available"
+                )
+
+            for target_type in cls.get_target_value_types():
+
+                if target_type not in kiara.type_mgmt.value_type_names:
+                    log_message(
+                        f"Ignoring type convert operation for target type '{target_type}': type not available"
+                    )
+
+                mod_conf = {
+                    "source_type": value_type,
+                    "target_type": target_type,
+                }
+
+                op_config = {
+                    "module_type": cls._module_type_id,  # type: ignore
+                    "module_config": mod_conf,
+                }
+                key = f"{value_type}.convert_to.{target_type}"
+                if key in all_metadata_profiles.keys():
+                    raise Exception(f"Duplicate profile key: {key}")
+                all_metadata_profiles[key] = op_config
+                # key = f"{target_type}.convert_from.{value_type}"
+                # if key in all_metadata_profiles.keys():
+                #     raise Exception(f"Duplicate profile key: {key}")
+                # all_metadata_profiles[key] = op_config
+
+            for source_type in cls.get_source_value_types():
+
+                mod_conf = {
+                    "source_type": source_type,
+                    "target_type": value_type,
+                }
+
+                op_config = {
+                    "module_type": cls._module_type_id,  # type: ignore
+                    "module_config": mod_conf,
+                }
+                # key = f"{value_type}.convert_from.{target_type}"   # type: ignore
+                # if key in all_metadata_profiles.keys():
+                #     raise Exception(f"Duplicate profile key: {key}")
+                # all_metadata_profiles[key] = op_config
+                key = f"{source_type}.convert_to.{value_type}"
+                if key in all_metadata_profiles.keys():
+                    raise Exception(f"Duplicate profile key: {key}")
+                all_metadata_profiles[key] = op_config
+
+        return all_metadata_profiles
 
     @classmethod
     def get_supported_value_types(cls) -> typing.Set[str]:
@@ -154,61 +224,7 @@ class TypeConversionModule(KiaraModule):
         outputs.set_value("value_item", converted)
 
 
-class TypeConversionTypeOperationConfig(TypeOperationConfig):
-    @classmethod
-    def retrieve_operation_configs(
-        cls, kiara: Kiara
-    ) -> typing.Mapping[
-        str, typing.Mapping[str, typing.Mapping[str, typing.Mapping[str, typing.Any]]]
-    ]:
+class ConvertValueOperations(Operations):
+    def is_matching_operation(self, op_config: OperationConfig) -> bool:
 
-        all_metadata_profiles: typing.Dict[
-            str, typing.Dict[str, typing.Dict[str, typing.Any]]
-        ] = {}
-
-        # find all KiaraModule subclasses that are relevant for this profile type
-        for module_type in kiara.available_module_types:
-
-            m_cls = kiara.get_module_class(module_type=module_type)
-
-            if issubclass(m_cls, TypeConversionModule):
-
-                value_types: typing.Iterable[str] = m_cls.get_supported_value_types()
-                if "*" in value_types:
-                    value_types = kiara.type_mgmt.value_type_names
-
-                for value_type in value_types:
-
-                    for target_type in m_cls.get_target_value_types():
-
-                        mod_conf = {
-                            "source_type": value_type,
-                            "target_type": target_type,
-                        }
-
-                        op_config = {
-                            "module_type": module_type,
-                            "module_config": mod_conf,
-                            "input_name": "value_item",
-                        }
-                        all_metadata_profiles.setdefault(value_type, {}).setdefault(
-                            "convert_to", {}
-                        )[target_type] = op_config
-
-                    for source_type in m_cls.get_source_value_types():
-
-                        mod_conf = {
-                            "source_type": source_type,
-                            "target_type": value_type,
-                        }
-
-                        op_config = {
-                            "module_type": module_type,
-                            "module_config": mod_conf,
-                            "input_name": "value_item",
-                        }
-                        all_metadata_profiles.setdefault(source_type, {}).setdefault(
-                            "convert_to", {}
-                        )[value_type] = op_config
-
-        return all_metadata_profiles
+        return issubclass(op_config.module_cls, ConvertValueModule)

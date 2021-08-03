@@ -6,9 +6,6 @@ import os
 import typing
 import zmq
 from pathlib import Path
-from rich import box
-from rich.console import RenderGroup
-from rich.panel import Panel
 from threading import Thread
 from zmq import Context
 from zmq.devices import ThreadDevice
@@ -19,39 +16,36 @@ from kiara.data.registry import DataRegistry
 from kiara.data.store import LocalDataStore
 from kiara.data.types import ValueType
 from kiara.data.types.type_mgmt import TypeMgmt
-from kiara.defaults import DEFAULT_PRETTY_PRINT_CONFIG, KIARA_DATA_STORE_DIR
+from kiara.defaults import KIARA_DATA_STORE_DIR
 from kiara.interfaces import get_console
 from kiara.metadata import MetadataModel, MetadataSchemaInfo
 from kiara.metadata.mgmt import MetadataMgmt
 from kiara.module_config import ModuleInstanceConfig
 from kiara.module_mgmt import ModuleManager
 from kiara.module_mgmt.merged import MergedModuleManager
-from kiara.operations.type_operations import DataOperationMgmt
+from kiara.operations import OperationMgmt
 from kiara.pipeline.config import PipelineModuleConfig
 from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.pipeline import Pipeline
 from kiara.processing import Job
 from kiara.processing.processor import ModuleProcessor
 from kiara.utils import get_auto_workflow_alias, get_data_from_file, is_debug
-from kiara.utils.output import rich_print
 from kiara.workflow.kiara_workflow import KiaraWorkflow
 
 if typing.TYPE_CHECKING:
     from kiara.module import KiaraModule, ModulesList
+    from kiara.operations.pretty_print import PrettyPrintOperations
 
 log = logging.getLogger("kiara")
 
 
-def explain(item: typing.Any, kiara: typing.Optional["Kiara"] = None):
-
-    if kiara is None:
-        kiara = Kiara.instance()
+def explain(item: typing.Any):
 
     if isinstance(item, type):
         from kiara.module import KiaraModule, ModuleInfo
 
         if issubclass(item, KiaraModule):
-            item = ModuleInfo(module_type=item._module_type_id, _kiara=kiara)  # type: ignore
+            item = ModuleInfo.from_module_cls(module_cls=item)
         elif issubclass(item, MetadataModel):
             item = MetadataSchemaInfo(item)
 
@@ -62,12 +56,12 @@ def explain(item: typing.Any, kiara: typing.Optional["Kiara"] = None):
     console.print(item)
 
 
-def pretty_print(value: Value, kiara: typing.Optional["Kiara"] = None):
-
-    if kiara is None:
-        kiara = Kiara.instance()
-
-    kiara.pretty_print(value)
+# def pretty_print(value: Value, kiara: typing.Optional["Kiara"] = None):
+#
+#     if kiara is None:
+#         kiara = Kiara.instance()
+#
+#     kiara.pretty_print(value)
 
 
 class Kiara(object):
@@ -88,7 +82,7 @@ class Kiara(object):
 
         self._zmq_context: Context = Context.instance()
 
-        self._operation_mgmt = DataOperationMgmt(kiara=self)
+        self._operation_mgmt = OperationMgmt(kiara=self)
         self._metadata_mgmt = MetadataMgmt(kiara=self)
         store_base_path = KIARA_DATA_STORE_DIR
         if os.getenv("KIARA_DATA_STORE"):
@@ -154,8 +148,7 @@ class Kiara(object):
         t.start()
 
     def explain(self, item: typing.Any):
-
-        explain(item, kiara=self)
+        explain(item)
 
     @property
     def type_mgmt(self) -> TypeMgmt:
@@ -246,7 +239,7 @@ class Kiara(object):
         return self._data_registry
 
     @property
-    def data_operations(self) -> DataOperationMgmt:
+    def operation_mgmt(self) -> OperationMgmt:
         return self._operation_mgmt
 
     def get_module_class(self, module_type: str) -> typing.Type["KiaraModule"]:
@@ -484,16 +477,15 @@ class Kiara(object):
             config=_config, workflow_id=workflow_id, controller=controller
         )
 
-    def pretty_print(self, value: Value) -> None:
-        pretty_print = self.create_workflow("string.pretty_print")
-        pretty_print_inputs: typing.Dict[str, typing.Any] = {"item": value}
-        pretty_print_inputs.update(DEFAULT_PRETTY_PRINT_CONFIG)
+    def pretty_print(
+        self,
+        value: Value,
+        target_type: str = "renderables",
+        print_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+    ) -> typing.Any:
 
-        pretty_print.inputs.set_values(**pretty_print_inputs)
+        pretty_print_ops: PrettyPrintOperations = self.operation_mgmt.get_operation_type("pretty_print")  # type: ignore
 
-        renderables = pretty_print.outputs.get_value_data("renderables")
-        if renderables:
-            output = Panel(RenderGroup(*renderables), box=box.SIMPLE)
-            rich_print(output)
-        else:
-            rich_print("No output.")
+        return pretty_print_ops.pretty_print(
+            value=value, target_type=target_type, print_config=print_config
+        )

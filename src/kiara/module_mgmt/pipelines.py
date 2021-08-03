@@ -139,7 +139,6 @@ class PipelineModuleManager(ModuleManager):
         for ns, paths in folders_map.items():
 
             for path in paths:
-
                 self.add_pipelines_path(ns, path[1], path[0])
 
     def register_pipeline(
@@ -204,7 +203,7 @@ class PipelineModuleManager(ModuleManager):
         """Add a pipeline description file or folder containing some to this manager.
 
         Arguments:
-            namespace: the namespace the pipeline modules found under this path will be part of
+            namespace: the namespace the pipeline modules found under this path will be part of, if it starts with '_' it will be omitted
             path: the path to a pipeline description file, or folder which contains some
         Returns:
             a list of module type names that were added
@@ -265,7 +264,21 @@ class PipelineModuleManager(ModuleManager):
 
         result = {}
         for k, v in files.items():
-            full_name = f"{namespace}.{k}"
+
+            if namespace.startswith("_"):
+                tokens = namespace.split(".")
+                if len(tokens) == 1:
+                    _namespace = ""
+                else:
+                    _namespace = ".".join(tokens[1:])
+            else:
+                _namespace = namespace
+
+            if not _namespace:
+                full_name = k
+            else:
+                full_name = f"{_namespace}.{k}"
+
             if full_name.startswith("core."):
                 full_name = full_name[5:]
             if full_name in self._pipeline_descs.keys():

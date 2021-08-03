@@ -18,13 +18,12 @@ from kiara.metadata.core_models import (
     ValueHash,
     ValueInfo,
 )
-from kiara.operations.type_operations import TypeOperationConfig
 
 if typing.TYPE_CHECKING:
-    pass
-
     from kiara.data.values import Value
     from kiara.kiara import Kiara
+    from kiara.operations.calculate_hash import CalculateHashOperations
+    from kiara.operations.save_value import SaveOperations
 
 
 log = logging.getLogger("kiara")
@@ -104,46 +103,6 @@ class ValueAlias(BaseModel):
             return f"{self.alias}@{self.version}"
         else:
             return self.alias
-
-
-# def parse_alias(alias: str) -> typing.Tuple[str, typing.Optional[int], typing.Optional[str]]:
-#
-#     if not isinstance(alias, str):
-#         raise Exception("Invalid id_or_alias: not a string.")
-#     if not alias:
-#         raise Exception("Invalid id_or_alias: can't be empty string.")
-#
-#     _repo_name: typing.Optional[str] = None
-#     _version: typing.Optional[int] = None
-#     _tag: typing.Optional[str] = None
-#
-#     if "#" in alias:
-#         _repo_name, alias = alias.split("#", maxsplit=1)
-#
-#     if "@" in alias:
-#         _alias, _postfix = alias.split("@", maxsplit=1)
-#
-#         try:
-#             _version = int(_postfix)
-#         except ValueError:
-#             if not _postfix.isidentifier():
-#                 raise Exception(f"Invalid format for version/tag element of id_or_alias: {_tag}")
-#             _tag = _postfix
-#     else:
-#         _alias = alias
-#
-#     return (_repo_name, _alias, _version, _tag)
-
-
-# class AliasVersion(BaseModel):
-#
-#     version: int = Field(description="The version of this value alias.")
-#     value_type: str = Field(description="The value type of this alias version.")
-#
-# class AliasTag(BaseModel):
-#
-#     tag: str = Field(description="The version of this value alias.")
-#     value_type: str = Field(description="The value type of this alias version.")
 
 
 class SavedValueMetadata(BaseModel):
@@ -491,16 +450,17 @@ class DataStore(abc.ABC):
                 )
 
         # try to calculate the hash for the value, so we can use it as value id
-        hash_ops = self._kiara.data_operations.operations.get(value_type, {}).get(
-            "calculate_hash", {}
-        )
-        hashes = {}
-        for op_id, op_config in hash_ops.items():
-            op_module = op_config.create_module(self._kiara)
-            inputs = op_config.create_inputs(value=value)
+        hash_ops: CalculateHashOperations = self._kiara.operation_mgmt.get_operation_type("calculate_hash")  # type: ignore
 
-            result = op_module.run(**inputs)
-            # TODO: make sure that always works
+        hash_ops_for_type = hash_ops.get_hash_operations_for_type(value_type=value_type)
+
+        hashes = {}
+        for op_id, op_config in hash_ops_for_type.items():
+
+            op_module = op_config.module
+
+            result = op_module.run(value_item=value)
+
             _hash = result.get_value_data("hash")
             hashes[op_id] = ValueHash(hash=_hash, hash_type=op_id)
 
@@ -750,13 +710,9 @@ class LocalDataStore(DataStore):
         self, value_id: str, value_type: str, value: "Value"
     ) -> typing.Optional[SaveConfig]:
 
-        op_config: typing.Optional[
-            TypeOperationConfig
-        ] = self._kiara.data_operations.get_operation(
-            value_type=value_type,
-            operation_name="save_value",
-            operation_id="data_store",
-        )
+        save_operations: SaveOperations = self._kiara.operation_mgmt.get_operation_type("save_value")  # type: ignore
+
+        op_config = save_operations.get_save_operation_for_type(value_type)
 
         if not op_config:
             return None

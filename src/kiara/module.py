@@ -24,6 +24,7 @@ from kiara.metadata.module_models import (
     KiaraModuleTypeMetadata,
 )
 from kiara.module_config import KIARA_CONFIG, ModuleTypeConfig
+from kiara.operations import OperationConfig
 from kiara.processing import JobLog
 from kiara.utils import StringYAML, is_debug
 from kiara.utils.modules import create_schemas, overlay_constants_and_defaults
@@ -236,6 +237,14 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
 
     # TODO: not quite sure about this generic type here, mypy doesn't seem to like it
     _config_cls: typing.Type[KIARA_CONFIG] = ModuleTypeConfig  # type: ignore
+
+    @classmethod
+    def retrieve_module_profiles(
+        cls, kiara: "Kiara"
+    ) -> typing.Mapping[
+        str, typing.Union[typing.Mapping[str, typing.Any], OperationConfig]
+    ]:
+        pass
 
     @classmethod
     def get_type_metadata(cls) -> KiaraModuleTypeMetadata:

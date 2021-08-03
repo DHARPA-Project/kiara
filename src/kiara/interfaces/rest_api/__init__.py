@@ -7,9 +7,8 @@ from pydantic.fields import Field
 from pydantic.main import BaseModel
 
 from kiara import Kiara
-from kiara.data.values import ValueSchema, ValueSetImpl
+from kiara.data.values import ValueSchema
 from kiara.metadata.module_models import KiaraModuleInstanceMetadata
-from kiara.operations.type_operations import DataOperationMgmt
 
 
 class ModuleRunResponse(BaseModel):
@@ -59,41 +58,43 @@ class KiaraRestService(object):
             inputs: typing.Optional[typing.Dict[str, typing.Any]] = None,
         ) -> ModuleRunResponse:
 
-            module = self._kiara.create_module(
-                module_type=module_type, module_config=module_config
-            )
+            raise NotImplementedError()
 
-            result_values = self._kiara.run_module(
-                module=module,
-                inputs=inputs,
-                resolve_result=False,
-            )
-
-            op_mgmt: DataOperationMgmt = self._kiara.data_operations
-
-            result = {}
-            for field_name, value in result_values.items():
-                v = op_mgmt.run("serialize", "msgpack", value)
-                result[field_name] = v.get_value_obj("bytes")
-
-            r = {}
-            schemas = {}
-
-            for field_name, value in result.items():
-                assert value.type_name == "bytes"
-                v = op_mgmt.run("deserialize", "msgpack", value)
-                r[field_name] = v.get_value_obj("value_data")
-                schemas[field_name] = ValueSchema(
-                    type=v.get_value_data("value_type"),
-                    doc=result_values.get_value_obj(field_name).value_schema.doc,
-                )
-
-            value_set = ValueSetImpl.from_schemas(
-                kiara=self._kiara, schemas=schemas, initial_values=r
-            )
-            outputs = value_set.get_all_value_data()
-
-            _result = ModuleRunResponse(outputs=outputs, output_schema=schemas)
-            return _result
+            # module = self._kiara.create_module(
+            #     module_type=module_type, module_config=module_config
+            # )
+            #
+            # result_values = self._kiara.run_module(
+            #     module=module,
+            #     inputs=inputs,
+            #     resolve_result=False,
+            # )
+            #
+            # op_mgmt: OperationMgmt = self._kiara.operation_mgmt
+            #
+            # result = {}
+            # for field_name, value in result_values.items():
+            #     v = op_mgmt.run("serialize", "msgpack", value)
+            #     result[field_name] = v.get_value_obj("bytes")
+            #
+            # r = {}
+            # schemas = {}
+            #
+            # for field_name, value in result.items():
+            #     assert value.type_name == "bytes"
+            #     v = op_mgmt.run("deserialize", "msgpack", value)
+            #     r[field_name] = v.get_value_obj("value_data")
+            #     schemas[field_name] = ValueSchema(
+            #         type=v.get_value_data("value_type"),
+            #         doc=result_values.get_value_obj(field_name).value_schema.doc,
+            #     )
+            #
+            # value_set = ValueSetImpl.from_schemas(
+            #     kiara=self._kiara, schemas=schemas, initial_values=r
+            # )
+            # outputs = value_set.get_all_value_data()
+            #
+            # _result = ModuleRunResponse(outputs=outputs, output_schema=schemas)
+            # return _result
 
         return modules_router

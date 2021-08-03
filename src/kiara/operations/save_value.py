@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import abc
+import logging
 import typing
 from pydantic import Field
 
@@ -8,7 +9,10 @@ from kiara.data.values import Value, ValueSchema, ValueSet
 from kiara.exceptions import KiaraProcessingException
 from kiara.metadata.core_models import LoadConfig
 from kiara.module_config import ModuleTypeConfig
-from kiara.operations.type_operations import TypeOperationConfig
+from kiara.operations import OperationConfig, Operations
+from kiara.utils import log_message
+
+log = logging.getLogger("kiara")
 
 
 class SaveValueModuleConfig(ModuleTypeConfig):
@@ -22,7 +26,7 @@ class SaveValueTypeModule(KiaraModule):
 
     @classmethod
     def get_supported_value_types(cls) -> typing.Set[str]:
-        _types = cls._get_supported_types()
+        _types = cls.retrieve_supported_types()
         if isinstance(_types, str):
             _types = [_types]
 
@@ -30,8 +34,34 @@ class SaveValueTypeModule(KiaraModule):
 
     @classmethod
     @abc.abstractmethod
-    def _get_supported_types(cls) -> typing.Union[str, typing.Iterable[str]]:
+    def retrieve_supported_types(cls) -> typing.Union[str, typing.Iterable[str]]:
         pass
+
+    @classmethod
+    def retrieve_module_profiles(
+        cls, kiara: Kiara
+    ) -> typing.Mapping[
+        str, typing.Union[typing.Mapping[str, typing.Any], OperationConfig]
+    ]:
+
+        all_metadata_profiles: typing.Dict[
+            str, typing.Dict[str, typing.Dict[str, typing.Any]]
+        ] = {}
+
+        for sup_type in cls.get_supported_value_types():
+
+            if sup_type not in kiara.type_mgmt.value_type_names:
+                log_message(
+                    f"Ignoring save operation for type '{sup_type}': type not available"
+                )
+
+            op_config = {
+                "module_type": cls._module_type_id,  # type: ignore
+                "module_config": {"value_type": sup_type},
+            }
+            all_metadata_profiles[f"{sup_type}.save"] = op_config
+
+        return all_metadata_profiles
 
     def create_input_schema(
         self,
@@ -96,43 +126,24 @@ class SaveValueTypeModule(KiaraModule):
         outputs.set_values(load_config=lc)
 
 
-class SaveTypeOperationConfig(TypeOperationConfig):
-    """Save a dataset into the internal kiara data store."""
+class SaveOperations(Operations):
+    def is_matching_operation(self, op_config: OperationConfig) -> bool:
 
-    @classmethod
-    def retrieve_operation_configs(
-        cls, kiara: Kiara
-    ) -> typing.Mapping[
-        str, typing.Mapping[str, typing.Mapping[str, typing.Mapping[str, typing.Any]]]
-    ]:
+        return issubclass(op_config.module_cls, SaveValueTypeModule)
 
-        all_metadata_profiles: typing.Dict[
-            str, typing.Dict[str, typing.Dict[str, typing.Any]]
-        ] = {}
+    def get_save_operation_for_type(self, value_type: str) -> OperationConfig:
 
-        # find all KiaraModule subclasses that are relevant for this profile type
-        for module_type in kiara.available_module_types:
+        result = []
 
-            m_cls = kiara.get_module_class(module_type=module_type)
+        for op_config in self.operation_configs.values():
+            if op_config.module_config["value_type"] == value_type:
+                result.append(op_config)
 
-            if issubclass(m_cls, SaveValueTypeModule):
-                value_types: typing.Iterable[str] = m_cls.get_supported_value_types()
+        if not result:
+            raise Exception(f"No save operation for type '{value_type}' registered.")
+        elif len(result) != 1:
+            raise Exception(
+                f"Multiple save operations for type '{value_type}' registered."
+            )
 
-                if "*" in value_types:
-                    value_types = kiara.type_mgmt.value_type_names
-
-                for value_type in value_types:
-
-                    mc = {"value_type": value_type}
-                    profile_config = {
-                        "module_type": module_type,
-                        "module_config": mc,
-                        "input_name": "value_item"
-                        # "value_type": value_type,
-                    }
-                    all_metadata_profiles.setdefault(value_type, {}).setdefault(
-                        "save_value", {}
-                    )["data_store"] = profile_config
-                    # TODO: validate here?
-
-        return all_metadata_profiles
+        return result[0]

@@ -11,7 +11,6 @@ def _create_module_instance(
     ctx, module_type: str, module_config: typing.Iterable[typing.Any]
 ) -> KiaraModule:
 
-    print(module_config)
     kiara_obj = ctx.obj["kiara"]
     if os.path.isfile(module_type):
         module_type = kiara_obj.register_pipeline_description(

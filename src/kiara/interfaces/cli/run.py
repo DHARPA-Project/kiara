@@ -13,7 +13,7 @@ from rich.syntax import Syntax
 
 from kiara import Kiara
 from kiara.data.values import ValuesInfo
-from kiara.defaults import DEFAULT_PRETTY_PRINT_CONFIG, DEFAULT_TO_JSON_CONFIG
+from kiara.defaults import DEFAULT_TO_JSON_CONFIG
 from kiara.interfaces.cli.utils import _create_module_instance
 from kiara.module import KiaraModule
 from kiara.pipeline.controller.batch import BatchController
@@ -80,6 +80,10 @@ async def run(ctx, module, inputs, module_config, output, explain, save):
 
     if module in kiara_obj.available_module_types:
         module_name = module
+    elif module in kiara_obj.operation_mgmt.profiles.keys():
+        op_config = kiara_obj.operation_mgmt.profiles[module]
+        module_name = op_config.module_type
+        module_config = op_config.module_config
     elif f"core.{module}" in kiara_obj.available_module_types:
         module_name = f"core.{module}"
     elif os.path.isfile(module):
@@ -247,22 +251,32 @@ async def run(ctx, module, inputs, module_config, output, explain, save):
             if output_details.target == "terminal":
                 if output_details.format == "terminal":
                     print()
-                    pretty_print = kiara_obj.create_workflow("string.pretty_print")
-                    pretty_print_inputs: typing.Dict[str, typing.Any] = {
-                        "item": workflow.outputs
-                    }
-                    pretty_print_inputs.update(DEFAULT_PRETTY_PRINT_CONFIG)
+                    all_renderables = []
 
-                    pretty_print.inputs.set_values(**pretty_print_inputs)
+                    for field_name, value in workflow.outputs.items():
+                        try:
+                            renderables = kiara_obj.pretty_print(value, "renderables")
+                        except Exception as e:
+                            if is_debug():
+                                print(e)
+                            renderables = [str(value.get_value_data())]
 
-                    renderables = pretty_print.outputs.get_value_data("renderables")
-                    if renderables:
-                        output = Panel(RenderGroup(*renderables), box=box.SIMPLE)
-                        rich_print("[b]Output data[/b]")
-                        rich_print(output)
-                    else:
-                        rich_print("No output.")
+                        if isinstance(renderables, str):
+                            renderables = [renderables]
+                        p = Panel(
+                            RenderGroup(*renderables),
+                            box=box.ROUNDED,
+                            title=f"Value: [b i]{field_name}[/b i]",
+                            title_align="left",
+                        )
+                        all_renderables.append(p)
+
+                    output = Panel(RenderGroup(*all_renderables), box=box.SIMPLE)
+                    rich_print("[b]Output data[/b]")
+                    rich_print(output)
+
                 else:
+                    raise NotImplementedError()
 
                     format = output_details.format
                     available_formats = kiara_obj.get_convert_target_types(
@@ -302,15 +316,11 @@ async def run(ctx, module, inputs, module_config, output, explain, save):
                         sys.exit(1)
 
             else:
+                raise NotImplementedError()
+
                 if output_details.format == "terminal":
 
-                    pretty_print = kiara_obj.create_workflow("string.pretty_print")
-
-                    pretty_print_inputs = {"item": value}
-                    pretty_print_inputs.update(DEFAULT_PRETTY_PRINT_CONFIG)
-                    pretty_print.inputs.set_values(**pretty_print_inputs)
-
-                    renderables = pretty_print.outputs.get_value_data("renderables")
+                    renderables = kiara_obj.pretty_print(value=value)
                     output = Panel(RenderGroup(*renderables), box=box.SIMPLE)
                     with open(target_file, "wt") as f:
                         console = Console(record=True, file=f)

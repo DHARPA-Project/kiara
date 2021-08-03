@@ -1,7 +1,11 @@
 # Changelog
 
-## Version 0.0.11 (upcoming)
+## Version 0.0.12 (upcoming)
 
+
+## Version 0.0.11
+
+- added 'BatchControllerManual' controller
 
 ## Version 0.0.10
 

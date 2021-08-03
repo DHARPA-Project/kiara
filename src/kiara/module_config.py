@@ -152,7 +152,8 @@ class ModuleInstanceConfig(BaseModel):
                     )
                 else:
                     operation_config = ModuleInstanceConfig(module_type=config)
-
+            elif config in kiara.operation_mgmt.profiles.keys():
+                operation_config = kiara.operation_mgmt.profiles[config]
             elif os.path.isfile(os.path.expanduser(config)):
                 path = os.path.expanduser(config)
                 workflow_config_data = get_data_from_file(path)
@@ -192,7 +193,7 @@ class ModuleInstanceConfig(BaseModel):
 
         if self._module is None:
             self._module = kiara.create_module(
-                id=f"extract_metadata_{self.module_type}",
+                id=f"__{self.module_type}",
                 module_type=self.module_type,
                 module_config=self.module_config,
             )

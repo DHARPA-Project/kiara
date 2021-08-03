@@ -3,11 +3,15 @@ import typing
 
 from kiara.data import Value
 from kiara.metadata import MetadataModel
-from kiara.operations.type_operations import TypeOperationConfig
+from kiara.operations import OperationConfig
 from kiara.utils.class_loading import find_all_metadata_schemas
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
+    from kiara.operations.extract_metadata import (
+        ExtractMetadataModule,
+        ExtractMetadataOperations,
+    )
 
 
 class MetadataMgmt(object):
@@ -40,11 +44,11 @@ class MetadataMgmt(object):
 
     def get_metadata_keys_for_type(self, value_type: str) -> typing.Set[str]:
 
+        metadata_operations: ExtractMetadataOperations = self._kiara.operation_mgmt.get_operation_type("extract_metadata")  # type: ignore
+
         all_profiles_for_type: typing.Mapping[
-            str, TypeOperationConfig
-        ] = self._kiara.data_operations.operations.get(value_type, {}).get(
-            "extract_metadata", {}
-        )
+            str, OperationConfig
+        ] = metadata_operations.get_all_operations_for_type(value_type)
 
         if not all_profiles_for_type:
             return set()
@@ -88,15 +92,27 @@ class MetadataMgmt(object):
             else:
                 result[md_key] = value.metadata[md_key]
 
+        extract_metadata_ops: ExtractMetadataOperations = self._kiara.operation_mgmt.get_operation_type(  # type: ignore
+            "extract_metadata"
+        )
+        value_md_ops = extract_metadata_ops.get_all_operations_for_type(
+            value_type=value_type
+        )
+
         for mk in missing:
             if mk not in all_metadata_keys_for_type:
                 raise Exception(
                     f"Can't extract metadata profile '{mk}' for type '{value_type}': metadata profile does not exist (for this type, anyway)."
                 )
 
-            md_result = self._kiara._operation_mgmt.run(
-                operation_name="extract_metadata", operation_id=mk, value=value
-            )
+            op_config = value_md_ops.get(mk, None)
+            if op_config is None:
+                raise Exception(
+                    f"Can't extract metadata profile '{mk}' for type '{value_type}': metadata profile does not exist (for this type, anyway). This is a bug."
+                )
+
+            md_module: ExtractMetadataModule = op_config.module  # type: ignore
+            md_result = md_module.run(value_item=value)
             result[mk] = md_result.get_all_value_data()
 
         if also_return_schema:

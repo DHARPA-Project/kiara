@@ -2,14 +2,11 @@
 """Data-related sub-commands for the cli."""
 import asyncclick as click
 import shutil
-import typing
 from rich import box
 from rich.table import Table
 
 from kiara import Kiara
-from kiara.data.values import Value
-from kiara.defaults import DEFAULT_PRETTY_PRINT_CONFIG
-from kiara.utils import is_develop
+from kiara.utils import is_debug, is_develop
 from kiara.utils.output import rich_print
 
 
@@ -96,35 +93,6 @@ def list_values(ctx, with_alias, only_latest, tags, all):
 
     rich_print(table)
 
-    # for alias, details in kiara_obj.data_store.aliases.items():
-    #     print("-----")
-    #     print(alias)
-    #     import pp
-    #     pp(details)
-    #     only_latest = kiara_obj.data_store.get_alias_versions(alias)
-    #     for version, d in only_latest.items():
-    #         print('---')
-    #         print(version)
-    #         pp(d)
-
-    # kiara_obj.data_store
-    # aliases = kiara_obj.data_store.get_aliases_for_id(v_id)
-    #     aliases = []
-    #
-    # rich_print(table)
-
-    # else:
-    #     for id_or_alias, v_id in kiara_obj.data_store.ids_or_aliases.items():
-    #         v_type = kiara_obj.data_store.get_value_type(v_id)
-    #         if not details:
-    #             rich_print(f"  - [b]{id_or_alias}[/b]: {v_type}")
-    #         else:
-    #             rich_print(f"[b]{id_or_alias}[/b]: {v_type}\n")
-    #             md = kiara_obj.data_store.get_value_metadata(value_id=v_id)
-    #             s = Syntax(json.dumps(md, indent=2), "json")
-    #             rich_print(s)
-    #             print()
-
 
 @data.command(name="explain")
 @click.argument("value_id", nargs=1, required=True)
@@ -148,12 +116,14 @@ def load_value(ctx, value_id: str):
     print()
     value = kiara_obj.data_store.load_value(value_id=value_id)
 
-    pretty_print_config: typing.Dict[str, typing.Any] = {"item": value}
-    pretty_print_config.update(DEFAULT_PRETTY_PRINT_CONFIG)
-    renderables: Value = kiara_obj.run(  # type: ignore
-        "string.pretty_print", inputs=pretty_print_config, output_name="renderables"
-    )
-    rich_print(*renderables.get_value_data())
+    try:
+        renderables = kiara_obj.pretty_print(value, "renderables")
+    except Exception as e:
+        if is_debug():
+            print(e)
+        renderables = [str(value.get_value_data())]
+
+    rich_print(*renderables)
 
 
 if is_develop():

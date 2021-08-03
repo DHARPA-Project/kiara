@@ -6,7 +6,7 @@ from kiara import KiaraModule
 from kiara.data import Value, ValueSet
 from kiara.data.values import ValueSchema
 from kiara.module_config import ModuleTypeConfig
-from kiara.operations.type_operations import TypeOperationConfig
+from kiara.operations import OperationConfig, Operations
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -25,6 +25,32 @@ class CalculateValueHashModule(KiaraModule):
 
     _module_type_name = "value.hash"
     _config_cls = CalculateValueHashesConfig
+
+    @classmethod
+    def retrieve_module_profiles(
+        cls, kiara: "Kiara"
+    ) -> typing.Mapping[
+        str, typing.Union[typing.Mapping[str, typing.Any], OperationConfig]
+    ]:
+
+        all_metadata_profiles: typing.Dict[
+            str, typing.Dict[str, typing.Dict[str, typing.Any]]
+        ] = {}
+
+        for value_type_name, value_type in kiara.type_mgmt.value_types.items():
+
+            hash_types = value_type.get_supported_hash_types()
+
+            for ht in hash_types:
+                op_config = {
+                    "module_type": cls._module_type_id,  # type: ignore
+                    "module_config": {"value_type": value_type_name, "hash_type": ht},
+                }
+                all_metadata_profiles[
+                    f"{value_type_name}.calculate_hash.{ht}"
+                ] = op_config
+
+        return all_metadata_profiles
 
     def create_input_schema(
         self,
@@ -54,27 +80,20 @@ class CalculateValueHashModule(KiaraModule):
         outputs.set_value("hash", value_hash)
 
 
-class CalculateHashTypeOperationConfig(TypeOperationConfig):
+class CalculateHashOperations(Operations):
     """Calculate a hash for a dataset."""
 
-    @classmethod
-    def retrieve_operation_configs(
-        cls, kiara: "Kiara"
-    ) -> typing.Mapping[str, typing.Mapping[str, typing.Mapping[str, typing.Any]]]:
+    def is_matching_operation(self, op_config: OperationConfig) -> bool:
 
-        result: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
-        for type_name, type_cls in kiara.type_mgmt.value_types.items():
+        return op_config.module_cls == CalculateValueHashModule
 
-            hash_types = type_cls.get_supported_hash_types()
+    def get_hash_operations_for_type(
+        self, value_type: str
+    ) -> typing.Dict[str, OperationConfig]:
 
-            for hash_type in hash_types:
-
-                result.setdefault(type_name, {}).setdefault("calculate_hash", {})[
-                    hash_type
-                ] = {
-                    "module_type": "value.hash",
-                    "module_config": {"value_type": type_name, "hash_type": hash_type},
-                    "input_name": "value_item",
-                }
+        result = {}
+        for op_config in self.operation_configs.values():
+            if op_config.module_config["value_type"] == value_type:
+                result[op_config.module_config["hash_type"]] = op_config
 
         return result

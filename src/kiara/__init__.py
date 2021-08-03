@@ -18,7 +18,7 @@ __all__ = [
 import os
 import typing
 
-from .kiara import Kiara, explain, pretty_print  # noqa
+from .kiara import Kiara, explain  # noqa
 from .module import KiaraModule  # noqa
 from .pipeline.pipeline import Pipeline  # noqa
 from .pipeline.structure import PipelineStructure  # noqa
@@ -30,6 +30,57 @@ from .utils.class_loading import (
     find_pipeline_base_path_for_module,
     KiaraEntryPointItem,
 )
+
+try:
+    builtins = __import__("__builtin__")
+except ImportError:
+    builtins = __import__("builtins")
+
+
+try:
+    from rich import inspect
+    from rich import print as rich_print
+
+    setattr(builtins, "insp", inspect)
+
+    def dbg(
+        *objects: typing.Any,
+        sep: str = " ",
+        end: str = "\n",
+        file: typing.Optional[typing.IO[str]] = None,
+        flush: bool = False,
+    ):
+
+        for obj in objects:
+            try:
+                rich_print(obj, sep=sep, end=end, file=file, flush=flush)
+            except Exception:
+                rich_print(
+                    f"[green]{obj}[/green]", sep=sep, end=end, file=file, flush=flush
+                )
+
+    setattr(builtins, "dbg", dbg)
+
+    def DBG(
+        *objects: typing.Any,
+        sep: str = " ",
+        end: str = "\n",
+        file: typing.Optional[typing.IO[str]] = None,
+        flush: bool = False,
+    ):
+
+        objs = (
+            ["[green]----------------------------------------------[/green]"]
+            + list(objects)
+            + ["[green]----------------------------------------------[/green]"]
+        )
+        dbg(*objs, sep=sep, end=end, file=file, flush=flush)
+
+    setattr(builtins, "DBG", DBG)
+
+except ImportError:  # Graceful fallback if IceCream isn't installed.
+    pass
+
 
 """Top-level package for kiara."""
 

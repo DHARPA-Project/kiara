@@ -20,7 +20,7 @@ from kiara.utils import (
 
 if typing.TYPE_CHECKING:
     from kiara.module import KiaraModule
-    from kiara.operations.type_operations import TypeOperationConfig
+    from kiara.operations import Operations
 
 log = logging.getLogger("kiara")
 
@@ -184,8 +184,8 @@ def load_all_subclasses_for_entry_point(
         result_entrypoints[k] = v
 
     result: typing.Dict[str, typing.Type[SUBCLASS_TYPE]] = {}
-
     for k, v in result_entrypoints.items():
+
         if remove_namespace_tokens:
             if remove_namespace_tokens is True:
                 k = k.split(".")[-1]
@@ -218,6 +218,7 @@ def find_all_kiara_modules() -> typing.Dict[str, typing.Type["KiaraModule"]]:
     result = {}
     # need to test this, since I couldn't add an abstract method to the KiaraModule class itself (mypy complained because it is potentially overloaded)
     for k, cls in modules.items():
+
         if not hasattr(cls, "process"):
             msg = f"Ignoring module class '{cls}': no 'process' method."
             if is_debug():
@@ -227,6 +228,13 @@ def find_all_kiara_modules() -> typing.Dict[str, typing.Type["KiaraModule"]]:
             continue
 
         # TODO: check signature of process method
+
+        if k.startswith("_"):
+            tokens = k.split(".")
+            if len(tokens) == 1:
+                k = k[1:]
+            else:
+                k = ".".join(tokens[1:])
 
         result[k] = cls
     return result
@@ -268,13 +276,13 @@ def find_all_value_types() -> typing.Dict[str, typing.Type["ValueType"]]:
     return all_value_types
 
 
-def find_all_operation_types() -> typing.Dict[str, typing.Type["TypeOperationConfig"]]:
+def find_all_operation_types() -> typing.Dict[str, typing.Type["Operations"]]:
 
-    from kiara.operations.type_operations import TypeOperationConfig
+    from kiara.operations import Operations
 
     return load_all_subclasses_for_entry_point(
         entry_point_name="kiara.operation_types",
-        base_class=TypeOperationConfig,
+        base_class=Operations,
         set_id_attribute="_operation_type_name",
         remove_namespace_tokens=["core."],
     )
@@ -333,16 +341,21 @@ def _get_and_set_operation_type_name(module: typing.Type["KiaraModule"]):
 
 
 def find_kiara_modules_under(
-    module: typing.Union[str, ModuleType], prefix: typing.Optional[str] = ""
+    module: typing.Union[str, ModuleType],
+    prefix: typing.Optional[str] = "",
+    remove_namespace_tokens: typing.Optional[typing.Iterable[str]] = None,
 ) -> typing.Mapping[str, typing.Type["KiaraModule"]]:
 
     from kiara.module import KiaraModule
+
+    if remove_namespace_tokens is None:
+        remove_namespace_tokens = ["kiara_modules."]
 
     return find_subclasses_under(
         base_class=KiaraModule,  # type: ignore
         module=module,
         prefix=prefix,
-        remove_namespace_tokens=["kiara_modules."],
+        remove_namespace_tokens=remove_namespace_tokens,
         module_name_func=_get_and_set_module_name,
     )
 
@@ -375,12 +388,12 @@ def find_value_types_under(
 
 def find_operations_under(
     module: typing.Union[str, ModuleType], prefix: typing.Optional[str] = ""
-) -> typing.Mapping[str, typing.Type["TypeOperationConfig"]]:
+) -> typing.Mapping[str, typing.Type["Operations"]]:
 
-    from kiara.operations.type_operations import TypeOperationConfig
+    from kiara.operations import Operations
 
     return find_subclasses_under(
-        base_class=TypeOperationConfig,
+        base_class=Operations,
         module=module,
         prefix=prefix,
         remove_namespace_tokens=[],

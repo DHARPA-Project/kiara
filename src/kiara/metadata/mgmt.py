@@ -44,7 +44,7 @@ class MetadataMgmt(object):
 
     def get_metadata_keys_for_type(self, value_type: str) -> typing.Set[str]:
 
-        metadata_operations: ExtractMetadataOperations = self._kiara.operation_mgmt.get_operation_type("extract_metadata")  # type: ignore
+        metadata_operations: ExtractMetadataOperations = self._kiara.operation_mgmt.get_operations("extract_metadata")  # type: ignore
 
         all_profiles_for_type: typing.Mapping[
             str, OperationConfig
@@ -92,7 +92,7 @@ class MetadataMgmt(object):
             else:
                 result[md_key] = value.metadata[md_key]
 
-        extract_metadata_ops: ExtractMetadataOperations = self._kiara.operation_mgmt.get_operation_type(  # type: ignore
+        extract_metadata_ops: ExtractMetadataOperations = self._kiara.operation_mgmt.get_operations(  # type: ignore
             "extract_metadata"
         )
         value_md_ops = extract_metadata_ops.get_all_operations_for_type(

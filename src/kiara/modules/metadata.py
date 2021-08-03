@@ -8,7 +8,7 @@ from kiara.operations.extract_metadata import ExtractMetadataModule
 
 
 class ExtractPythonClass(ExtractMetadataModule):
-    """Extract metadata about the Python type of this value."""
+    """Extract metadata about the Python type of a value."""
 
     _module_type_name = "metadata.python_class"
 

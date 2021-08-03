@@ -2,6 +2,8 @@
 
 ## Version 0.0.12 (upcoming)
 
+- re-implementation/refactoring of operations:
+
 
 ## Version 0.0.11
 

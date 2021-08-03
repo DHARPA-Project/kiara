@@ -80,7 +80,7 @@ class Operations(object):
         return self._operations
 
 
-class DefaultOperations(Operations):
+class AllOperations(Operations):
     def is_matching_operation(self, op_config: OperationConfig) -> bool:
         return True
 
@@ -168,11 +168,19 @@ class OperationMgmt(object):
         self.profiles
         return self._operation_types
 
-    def get_operation_type(self, operation_type: str) -> Operations:
+    def get_operations(self, operation_type: str) -> Operations:
 
         if operation_type not in self.operation_types.keys():
             raise Exception(f"No operation type '{operation_type}' registered.")
         return self.operation_types[operation_type]
+
+    def get_types_for_id(self, operation_id: str) -> typing.Set[str]:
+
+        result = set()
+        for ops_ty, ops in self.operation_types.items():
+            if operation_id in ops.operation_configs.keys():
+                result.add(ops_ty)
+        return result
 
     def run(self):
         pass

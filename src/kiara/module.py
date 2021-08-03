@@ -739,7 +739,8 @@ class ModulesList(object):
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
 
-        table = Table(show_header=False, box=box.SIMPLE, show_lines=True)
+        show_lines = False
+        table = Table(show_header=False, box=box.SIMPLE, show_lines=show_lines)
         table.add_column("name", style="b")
         table.add_column("desc", style="i")
 

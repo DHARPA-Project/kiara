@@ -102,6 +102,11 @@ def explain_module(ctx, module_type: str, module_config: typing.Iterable[typing.
     This command shows information and metadata about an instantiated *kiara* module.
     """
 
+    if module_config:
+        module_config = dict_from_cli_args(*module_config)
+    else:
+        module_config = {}
+
     module_obj = _create_module_instance(
         ctx, module_type=module_type, module_config=module_config
     )

@@ -450,7 +450,7 @@ class DataStore(abc.ABC):
                 )
 
         # try to calculate the hash for the value, so we can use it as value id
-        hash_ops: CalculateHashOperations = self._kiara.operation_mgmt.get_operation_type("calculate_hash")  # type: ignore
+        hash_ops: CalculateHashOperations = self._kiara.operation_mgmt.get_operations("calculate_hash")  # type: ignore
 
         hash_ops_for_type = hash_ops.get_hash_operations_for_type(value_type=value_type)
 
@@ -710,7 +710,7 @@ class LocalDataStore(DataStore):
         self, value_id: str, value_type: str, value: "Value"
     ) -> typing.Optional[SaveConfig]:
 
-        save_operations: SaveOperations = self._kiara.operation_mgmt.get_operation_type("save_value")  # type: ignore
+        save_operations: SaveOperations = self._kiara.operation_mgmt.get_operations("save_value")  # type: ignore
 
         op_config = save_operations.get_save_operation_for_type(value_type)
 

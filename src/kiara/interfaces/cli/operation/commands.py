@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import asyncclick as click
-from rich import box
+import typing
+from rich import box, print as rich_print
+from rich.panel import Panel
 from rich.table import Table
 
 from kiara import Kiara
@@ -13,49 +15,94 @@ def operation(ctx):
     """Metadata-related sub-commands."""
 
 
-# @operation.command(name="list")
-# @click.pass_context
-# def list_operations(ctx):
-#
-#     kiara_obj: Kiara = ctx.obj["kiara"]
-#
-#     op_mgmt = OperationMgmt(kiara=kiara_obj)
-#
-#     import pp
-#
-#     # pp(op_mgmt.profiles)
-#
-#     pp(op_mgmt.operation_types)
-
-
 @operation.command(name="list")
+@click.option("--by-type", is_flag=True, help="List the operations by operation type.")
+@click.argument("filter", nargs=-1, required=False)
+@click.option(
+    "--type",
+    "-t",
+    multiple=False,
+    help="Only list operations whose name match this string (partial matches allowed).",
+)
 @click.pass_context
-def list_ops(ctx):
+def list(ctx, by_type: bool, filter: typing.Iterable[str], type: str):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    all_operations_types = kiara_obj._operation_mgmt.operation_types
+    if by_type:
+        title = "Operations by type"
+        all_operations_types = kiara_obj.operation_mgmt.operation_types
 
-    table = Table(box=box.SIMPLE)
-    table.add_column("Operation", no_wrap=True)
-    table.add_column("Id", no_wrap=True)
+        table = Table(box=box.SIMPLE, show_header=True)
+        table.add_column("Type", no_wrap=True, style="b green")
+        table.add_column("Id", no_wrap=True)
+        table.add_column("Description", no_wrap=False, style="i")
 
-    for operation_name in sorted(all_operations_types.keys()):
+        for operation_name in sorted(all_operations_types.keys()):
 
-        operation_details: Operations = all_operations_types[operation_name]
-        first_line_value = True
+            if type and type not in operation_name:
+                continue
 
-        for op_id, op_config in sorted(operation_details.operation_configs.items()):
+            operation_details: Operations = all_operations_types[operation_name]
+            first_line_value = True
 
-            row = []
-            if first_line_value:
-                row.append(operation_name)
+            for op_id, op_config in sorted(operation_details.operation_configs.items()):
+                desc = (
+                    op_config.module_cls.get_type_metadata().documentation.description
+                )
+                if filter:
+                    match = True
+                    for f in filter:
+                        if f not in operation_name and f not in op_id and f not in desc:
+                            match = False
+                            break
+                    if not match:
+                        continue
+
+                row = []
+                if first_line_value:
+                    row.append(operation_name)
+                else:
+                    row.append("")
+
+                row.append(op_id)
+                row.append(desc)
+
+                table.add_row(*row)
+                first_line_value = False
+
+    else:
+        title = "All operations"
+        table = Table(box=box.SIMPLE, show_header=True)
+        table.add_column("Id", no_wrap=True, style="b")
+        table.add_column("Type(s)", style="green")
+        table.add_column("Description", style="i")
+
+        for op_id, config in kiara_obj.operation_mgmt.profiles.items():
+
+            types = kiara_obj.operation_mgmt.get_types_for_id(op_id)
+            types.remove("all")
+            if type:
+                match = False
+                for t in types:
+                    if type in t:
+                        match = True
+                        break
+                if not match:
+                    continue
+
+            desc = config.module_cls.get_type_metadata().documentation.description
+            if filter:
+                match = True
+                for f in filter:
+                    if f not in op_id and f not in desc:
+                        match = False
+                        break
+                if match:
+                    table.add_row(op_id, ", ".join(types), desc)
+
             else:
-                row.append("")
+                table.add_row(op_id, ", ".join(types), desc)
 
-            row.append(op_id)
-
-            table.add_row(*row)
-            first_line_value = False
-
-    kiara_obj.explain(table)
+    panel = Panel(table, title=title, title_align="left", box=box.ROUNDED)
+    rich_print(panel)

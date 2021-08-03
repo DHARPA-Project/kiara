@@ -53,6 +53,7 @@ class ThreadPoolProcessor(ModuleProcessor):
         job_log: JobLog,
     ):
 
+        # need to wrap again, since this runs in it's own thread
         wrapped_inputs = StepInputs(inputs=inputs)
         wrapped_outputs = StepOutputs(outputs=outputs)
 
@@ -66,7 +67,7 @@ class ThreadPoolProcessor(ModuleProcessor):
         except Exception as e:
             self.job_status_updated(job_id=job_id, status=e)
 
-    def wait_for(self, *job_ids: str) -> None:
+    def _wait_for(self, *job_ids: str) -> None:
 
         futures = []
         missing = []

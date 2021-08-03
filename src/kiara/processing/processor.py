@@ -9,6 +9,7 @@ from zmq import Context, Socket
 
 from kiara.data import ValueSet
 from kiara.exceptions import KiaraProcessingException
+from kiara.module import KiaraModule, StepInputs, StepOutputs
 from kiara.pipeline import PipelineValues
 from kiara.processing import Job, JobLog, JobStatus
 from kiara.utils import is_debug
@@ -17,10 +18,6 @@ try:
     from typing import Literal
 except Exception:
     from typing_extensions import Literal  # type: ignore
-
-
-if typing.TYPE_CHECKING:
-    from kiara.module import KiaraModule
 
 
 class ProcessorConfig(BaseSettings):
@@ -74,6 +71,10 @@ class ModuleProcessor(abc.ABC):
         self._active_jobs: typing.Dict[str, Job] = {}
         self._finished_jobs: typing.Dict[str, Job] = {}
 
+        # TODO: clean up those?
+        self._inputs: typing.Dict[str, StepInputs] = {}
+        self._outputs: typing.Dict[str, StepOutputs] = {}
+
     def get_job_details(self, job_id: str) -> typing.Optional[Job]:
 
         if job_id in self._active_jobs.keys():
@@ -94,6 +95,15 @@ class ModuleProcessor(abc.ABC):
     ) -> str:
 
         job_id = str(uuid.uuid4())
+
+        # TODO: make snapshot of current state of data?
+
+        wrapped_inputs = StepInputs(inputs=inputs)
+        wrapped_outputs = StepOutputs(outputs=outputs)
+
+        self._inputs[job_id] = wrapped_inputs
+        self._outputs[job_id] = wrapped_outputs
+
         job = Job(
             id=job_id,
             pipeline_id=pipeline_id,
@@ -112,10 +122,11 @@ class ModuleProcessor(abc.ABC):
             self.process(
                 job_id=job_id,
                 module=module,
-                inputs=inputs,
-                outputs=outputs,
+                inputs=wrapped_inputs,
+                outputs=wrapped_outputs,
                 job_log=job.job_log,
             )
+
             return job_id
         except Exception as e:
             job.error = str(e)
@@ -168,6 +179,20 @@ class ModuleProcessor(abc.ABC):
         else:
             raise ValueError(f"Invalid value for status: {status}")
 
+    def sync_outputs(self, *job_ids: str):
+
+        for j_id in job_ids:
+            d = self._outputs[j_id]
+            d.sync()
+
+    def wait_for(self, *job_ids: str, sync_outputs: bool = True):
+        """Wait for the jobs with the specified ids, also optionally sync their outputs with the pipeline value state."""
+
+        self._wait_for(*job_ids)
+
+        if sync_outputs:
+            self.sync_outputs(*job_ids)
+
     @abc.abstractmethod
     def process(
         self,
@@ -180,6 +205,6 @@ class ModuleProcessor(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def wait_for(self, *job_ids: str):
+    def _wait_for(self, *job_ids: str):
 
         pass

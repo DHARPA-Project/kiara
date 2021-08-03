@@ -2,6 +2,10 @@
 
 ## Version 0.0.12 (upcoming)
 
+- change to how job control works in the pipeline-controller:
+    - calling the `wait_for` job-ids method is now mandatory after calling the `process_step` method, even when using the synchronous non-parallel processor
+    - the `wait_for` method now comes with an argument `sync_outputs` (default: True) that allows not actually syncing the output of the processing step to the pipeline value (which gives the controller more control about when to do that)
+    - if you were calling `wait_for` before, there is nothing more to do. If you used the syncronous (default) processor and omitted that step, you'll have to add a line below your `process_step` call, `wait_for`-ing for the job ids it returned
 - re-implementation/refactoring of operations:
 
 

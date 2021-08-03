@@ -152,6 +152,7 @@ async def run(ctx, module, inputs, module_config, output, explain, save):
             )
             sys.exit(1)
 
+    # from kiara.processing.parallel import ThreadPoolProcessor
     # processor = ThreadPoolProcessor()
     processor = None
     controller = BatchController(processor=processor, auto_process=False)

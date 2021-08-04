@@ -18,8 +18,8 @@ from kiara.data.types import ValueType
 from kiara.data.types.type_mgmt import TypeMgmt
 from kiara.defaults import KIARA_DATA_STORE_DIR
 from kiara.interfaces import get_console
-from kiara.metadata import MetadataModel, MetadataSchemaInfo
 from kiara.metadata.mgmt import MetadataMgmt
+from kiara.metadata.module_models import KiaraModuleTypeMetadata
 from kiara.module_config import ModuleInstanceConfig
 from kiara.module_mgmt import ModuleManager
 from kiara.module_mgmt.merged import MergedModuleManager
@@ -33,7 +33,7 @@ from kiara.utils import get_auto_workflow_alias, get_data_from_file, is_debug
 from kiara.workflow.kiara_workflow import KiaraWorkflow
 
 if typing.TYPE_CHECKING:
-    from kiara.module import KiaraModule, ModulesList
+    from kiara.module import KiaraModule
     from kiara.operations.pretty_print import PrettyPrintOperations
 
 log = logging.getLogger("kiara")
@@ -42,12 +42,10 @@ log = logging.getLogger("kiara")
 def explain(item: typing.Any):
 
     if isinstance(item, type):
-        from kiara.module import KiaraModule, ModuleInfo
+        from kiara.module import KiaraModule
 
         if issubclass(item, KiaraModule):
-            item = ModuleInfo.from_module_cls(module_cls=item)
-        elif issubclass(item, MetadataModel):
-            item = MetadataSchemaInfo(item)
+            item = KiaraModuleTypeMetadata.from_module_class(module_cls=item)
 
     elif isinstance(item, Value):
         item.get_metadata()
@@ -265,34 +263,6 @@ class Kiara(object):
     def available_module_types(self) -> typing.List[str]:
         """Return the names of all available modules"""
         return self._module_mgr.available_module_types
-
-    @property
-    def modules_list(self) -> "ModulesList":
-        """Return an object that contains a list of all available modules, and their details."""
-
-        return self.create_modules_list()
-
-    def create_modules_list(
-        self, list_non_pipeline_modules: bool = True, list_pipeline_modules: bool = True
-    ) -> "ModulesList":
-
-        if list_non_pipeline_modules and list_pipeline_modules:
-            module_names = self.available_module_types
-        elif list_non_pipeline_modules:
-            module_names = self.available_non_pipeline_module_types
-        elif list_pipeline_modules:
-            module_names = self.available_pipeline_module_types
-        else:
-            module_names = []
-
-        try:
-            module_names.remove("pipeline")
-        except ValueError:
-            pass
-
-        from kiara.module import ModulesList
-
-        return ModulesList(kiara=self, modules=module_names)
 
     @property
     def available_non_pipeline_module_types(self) -> typing.List[str]:

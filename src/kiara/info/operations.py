@@ -8,6 +8,7 @@ from rich.table import Table
 from kiara import Kiara
 from kiara.info import KiaraInfoModel
 from kiara.metadata.operation_models import OperationsMetadata
+from kiara.module_config import ModuleInstanceConfig
 from kiara.operations import OperationConfig, Operations
 
 
@@ -54,3 +55,39 @@ class OperationsInfo(KiaraInfoModel):
         return self.info.create_renderable(
             operations=self.operation_configs, omit_type_name=True
         )
+
+
+class OperationsGroupInfo(KiaraInfoModel):
+    @classmethod
+    def create(cls, kiara: "Kiara"):
+
+        operation_types = OperationsInfo.create_all(kiara=kiara)
+        operation_configs = operation_types.pop("all")
+
+        return OperationsGroupInfo(
+            operation_types=operation_types,
+            operation_configs=operation_configs.operation_configs,
+        )
+
+    operation_types: typing.Dict[str, OperationsInfo] = Field(
+        description="The available operation types and their details."
+    )
+    operation_configs: typing.Dict[str, OperationConfig] = Field(
+        description="The available operation ids and configs."
+    )
+
+    def create_renderable(self, **config: typing.Any) -> RenderableType:
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("Key", style="i")
+        table.add_column("Value")
+
+        op_map_table = OperationsInfo.create_renderable_from_operations_map(
+            self.operation_types
+        )
+        table.add_row("operation types", op_map_table)
+        configs = ModuleInstanceConfig.create_renderable_from_module_instance_configs(
+            self.operation_configs
+        )
+        table.add_row("operations", configs)
+        return table

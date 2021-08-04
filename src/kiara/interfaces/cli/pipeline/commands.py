@@ -5,7 +5,7 @@ import asyncclick as click
 import os.path
 import sys
 
-from kiara.pipeline.module import PipelineModuleInfo
+from kiara.info.pipelines import PipelineModuleInfo
 from kiara.utils.output import rich_print
 
 

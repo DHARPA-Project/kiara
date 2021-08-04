@@ -14,11 +14,11 @@ from slugify import slugify
 
 from kiara import Kiara, KiaraModule, Pipeline, PipelineController, PipelineStructure
 from kiara.data import Value, ValueSet
+from kiara.info.pipelines import create_pipeline_step_table
 from kiara.interfaces.python_api.controller import ApiController
 from kiara.metadata.module_models import KiaraModuleInstanceMetadata
 from kiara.module_config import ModuleInstanceConfig
 from kiara.pipeline.config import PipelineModuleConfig, PipelineStepConfig
-from kiara.pipeline.pipeline import create_pipeline_step_table
 from kiara.pipeline.structure import generate_pipeline_endpoint_name
 
 

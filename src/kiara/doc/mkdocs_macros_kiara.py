@@ -7,17 +7,16 @@ from pydoc import locate
 
 from kiara import Kiara
 from kiara.data.values import Value, ValueSchema
-from kiara.module import ModuleInfo
+from kiara.info.pipelines import PipelineState, PipelineStructureDesc
+from kiara.metadata.module_models import KiaraModuleTypeMetadata
 from kiara.module_config import ModuleInstanceConfig, ModuleTypeConfig
 from kiara.module_mgmt.pipelines import PipelineModuleManager
-from kiara.pipeline import PipelineValue, PipelineValues
+from kiara.pipeline import PipelineValue, PipelineValues, StepValueAddress
 from kiara.pipeline.config import PipelineModuleConfig
 from kiara.pipeline.pipeline import (
     PipelineInputEvent,
     PipelineOutputEvent,
-    PipelineState,
     PipelineStep,
-    PipelineStructureDesc,
     StepInputEvent,
     StepOutputEvent,
 )
@@ -26,7 +25,6 @@ from kiara.pipeline.values import (
     PipelineOutputField,
     StepInputField,
     StepOutputField,
-    StepValueAddress,
 )
 from kiara.utils import StringYAML
 
@@ -114,7 +112,7 @@ def define_env(env):
         try:
 
             m_cls = Kiara.instance().get_module_class(module_type)
-            info = ModuleInfo.from_module_cls(module_cls=m_cls)
+            info = KiaraModuleTypeMetadata.from_module_class(m_cls)
 
             from rich.console import Console
 

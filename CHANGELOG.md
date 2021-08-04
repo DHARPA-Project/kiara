@@ -7,7 +7,9 @@
     - because the `wait_for` method now comes with an argument `sync_outputs` (default: True) that allows not actually syncing the output of the processing step to the pipeline value (which gives the controller more control over when to do that)
     - if you were calling `wait_for` before, there is nothing more to do. If you used the synchronous (default) processor and omitted that step, you'll have to add a line below your `process_step` call, `wait_for`-ing for the job ids that method returned
 - re-implementation/refactoring of operations (documentation still to be done)
-
+- removed 'kiara.module.ModuleInfo' class (use 'kiara.metadata.module_models.KiaraModuleTypeMetadata' instead)
+- refactorings:
+    - kiara.pipeline.module.PipelineModuleInfo -> kiara.info.pipelines.PipelineModuleInfo
 
 ## Version 0.0.11
 

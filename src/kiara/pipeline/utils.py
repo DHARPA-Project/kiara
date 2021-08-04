@@ -2,87 +2,11 @@
 import collections
 import typing
 
-from kiara.defaults import PIPELINE_PARENT_MARKER
-
 if typing.TYPE_CHECKING:
+    from kiara.pipeline import StepValueAddress
     from kiara.pipeline.config import PipelineModuleConfig
     from kiara.pipeline.pipeline import Pipeline
-    from kiara.pipeline.structure import PipelineStructure, PipelineStructureDesc
-    from kiara.pipeline.values import StepValueAddress
-
-
-def create_pipeline_structure_desc(
-    pipeline: typing.Union["Pipeline", "PipelineStructure"]
-) -> "PipelineStructureDesc":
-
-    from kiara.pipeline.pipeline import Pipeline
-    from kiara.pipeline.structure import (
-        PipelineStructure,
-        PipelineStructureDesc,
-        StepDesc,
-    )
-
-    if isinstance(pipeline, Pipeline):
-        structure: PipelineStructure = pipeline.structure
-    elif isinstance(pipeline, PipelineStructure):
-        structure = pipeline
-
-    steps = {}
-    workflow_inputs: typing.Dict[str, typing.List[str]] = {}
-    workflow_outputs: typing.Dict[str, str] = {}
-
-    for m_id, details in structure.steps_details.items():
-
-        step = details["step"]
-
-        input_connections: typing.Dict[str, typing.List[str]] = {}
-        for k, v in details["inputs"].items():
-
-            if v.connected_pipeline_input is not None:
-                connected_item = v.connected_pipeline_input
-                input_connections[k] = [
-                    generate_step_alias(PIPELINE_PARENT_MARKER, connected_item)
-                ]
-                workflow_inputs.setdefault(f"{connected_item}", []).append(v.alias)
-            elif v.connected_outputs is not None:
-                assert len(v.connected_outputs) > 0
-                for co in v.connected_outputs:
-                    input_connections.setdefault(k, []).append(co.alias)
-            else:
-                raise TypeError(f"Invalid connection type: {type(connected_item)}")
-
-        output_connections: typing.Dict[str, typing.Any] = {}
-        for k, v in details["outputs"].items():
-            for connected_item in v.connected_inputs:
-
-                output_connections.setdefault(k, []).append(
-                    generate_step_alias(
-                        connected_item.step_id, connected_item.value_name
-                    )
-                )
-            if v.pipeline_output:
-                output_connections.setdefault(k, []).append(
-                    generate_step_alias(PIPELINE_PARENT_MARKER, v.pipeline_output)
-                )
-                workflow_outputs[v.pipeline_output] = v.alias
-
-        steps[step.step_id] = StepDesc(
-            step=step,
-            processing_stage=details["processing_stage"],
-            input_connections=input_connections,
-            output_connections=output_connections,
-            required=step.required,
-        )
-
-    return PipelineStructureDesc(
-        pipeline_id=structure._pipeline_id,
-        steps=steps,
-        processing_stages=structure.processing_stages,
-        pipeline_input_connections=workflow_inputs,
-        pipeline_output_connections=workflow_outputs,
-        pipeline_inputs=structure.pipeline_inputs,
-        pipeline_outputs=structure.pipeline_outputs,
-    )
+    from kiara.pipeline.structure import PipelineStructure
 
 
 def extend_pipeline(
@@ -106,6 +30,8 @@ def extend_pipeline(
         structure: PipelineStructure = pipeline.structure
     elif isinstance(pipeline, PipelineStructure):
         structure = pipeline
+    else:
+        raise TypeError(f"Invalid type '{type(pipeline)}' for pipeline.")
 
     other_pipeline_config: typing.Optional[PipelineModuleConfig] = None
 

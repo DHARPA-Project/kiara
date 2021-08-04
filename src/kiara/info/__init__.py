@@ -12,6 +12,7 @@ from rich.console import (
     RichCast,
 )
 from rich.jupyter import JupyterMixin
+from rich.panel import Panel
 from rich.table import Table
 
 
@@ -37,6 +38,11 @@ def extract_renderable(item: typing.Any):
 
 
 class KiaraInfoModel(BaseModel, JupyterMixin):
+    def create_panel(self, title: str = None, **config: typing.Any) -> Panel:
+
+        rend = self.create_renderable(**config)
+        return Panel(rend, box=box.ROUNDED, title=title, title_align="left")
+
     def create_renderable(self, **config: typing.Any) -> RenderableType:
 
         table = Table(show_header=False, box=box.SIMPLE)

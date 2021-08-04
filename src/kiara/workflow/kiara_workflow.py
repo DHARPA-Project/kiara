@@ -7,16 +7,15 @@ from slugify import slugify
 
 from kiara.data import ValueSet
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
+from kiara.info.pipelines import PipelineState, StepsInfo
 from kiara.module_config import ModuleInstanceConfig
 from kiara.pipeline.module import PipelineModule
 from kiara.pipeline.pipeline import (
     Pipeline,
     PipelineController,
-    PipelineState,
     PipelineStructure,
     StepStatus,
 )
-from kiara.pipeline.structure import StepsInfo
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara

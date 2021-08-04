@@ -53,7 +53,11 @@ def list(ctx, by_type: bool, filter: typing.Iterable[str], type: str):
                 if filter:
                     match = True
                     for f in filter:
-                        if f not in operation_name and f not in op_id and f not in desc:
+                        if (
+                            f.lower() not in operation_name.lower()
+                            and f.lower() not in op_id.lower()
+                            and f.lower() not in desc.lower()
+                        ):
                             match = False
                             break
                     if not match:
@@ -95,7 +99,7 @@ def list(ctx, by_type: bool, filter: typing.Iterable[str], type: str):
             if filter:
                 match = True
                 for f in filter:
-                    if f not in op_id and f not in desc:
+                    if f.lower() not in op_id.lower() and f.lower() not in desc.lower():
                         match = False
                         break
                 if match:

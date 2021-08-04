@@ -6,31 +6,23 @@ import uuid
 from functools import lru_cache
 from networkx import NetworkXNoPath, NodeNotFound
 from pydantic import BaseModel, Extra, Field, PrivateAttr, validator
-from rich import box
-from rich.console import Console, ConsoleOptions, RenderGroup, RenderResult
-from rich.markdown import Markdown
-from rich.panel import Panel
-from rich.table import Table
+from rich.console import Console, ConsoleOptions, RenderResult
 
 from kiara.data.values import ValueSchema
-from kiara.defaults import DEFAULT_NO_DESC_VALUE, PIPELINE_PARENT_MARKER, SpecialValue
-from kiara.module import KiaraModule
-from kiara.pipeline.config import PipelineModuleConfig, PipelineStepConfig
-from kiara.pipeline.utils import (
-    create_pipeline_structure_desc,
-    extend_pipeline,
-    generate_step_alias,
-)
+from kiara.pipeline import StepValueAddress
+from kiara.pipeline.utils import extend_pipeline, generate_step_alias
 from kiara.pipeline.values import (
     PipelineInputField,
     PipelineOutputField,
     StepInputField,
     StepOutputField,
-    StepValueAddress,
 )
 
 if typing.TYPE_CHECKING:
+    from kiara.info.pipelines import PipelineStructureDesc
     from kiara.kiara import Kiara
+    from kiara.module import KiaraModule
+    from kiara.pipeline.config import PipelineModuleConfig, PipelineStepConfig
     from kiara.pipeline.pipeline import Pipeline
 
 
@@ -66,7 +58,7 @@ class PipelineStep(BaseModel):
 
         return result
 
-    _module: typing.Optional[KiaraModule] = PrivateAttr(default=None)
+    _module: typing.Optional["KiaraModule"] = PrivateAttr(default=None)
 
     @validator("step_id")
     def _validate_step_id(cls, v):
@@ -108,22 +100,28 @@ class PipelineStep(BaseModel):
             kiara = Kiara.instance()
 
         super().__init__(**data)
-        self._kiara: Kiara = kiara
+        self._kiara: "Kiara" = kiara
 
     @property
     def kiara(self):
         return self._kiara
 
     @property
-    def module(self) -> KiaraModule:
+    def module(self) -> "KiaraModule":
 
         if self._module is None:
 
-            self._module = self.kiara.create_module(
-                id=self.step_id,
-                module_type=self.module_type,
-                module_config=self.module_config,
-            )
+            try:
+                self._module = self.kiara.create_module(
+                    id=self.step_id,
+                    module_type=self.module_type,
+                    module_config=self.module_config,
+                )
+            except Exception as e:
+                raise Exception(
+                    f"Can't assemble pipeline structure '{self.parent_id}': {e}"
+                )
+
         return self._module
 
     def __eq__(self, other):
@@ -328,7 +326,7 @@ class PipelineStructure(object):
         return self._steps
 
     @property
-    def modules(self) -> typing.Iterable[KiaraModule]:
+    def modules(self) -> typing.Iterable["KiaraModule"]:
         return (s.module for s in self.steps)
 
     @property
@@ -803,7 +801,9 @@ class PipelineStructure(object):
 
     def to_details(self) -> "PipelineStructureDesc":
 
-        return create_pipeline_structure_desc(self)
+        from kiara.info.pipelines import PipelineStructureDesc
+
+        return PipelineStructureDesc.create_pipeline_structure_desc(pipeline=self)
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -811,401 +811,3 @@ class PipelineStructure(object):
 
         d = self.to_details()
         yield d
-
-
-class StepDesc(BaseModel):
-    """Details of a single [PipelineStep][kiara.pipeline.structure.PipelineStep] (which lives within a [Pipeline][kiara.pipeline.pipeline.Pipeline]"""
-
-    class Config:
-        allow_mutation = False
-        extra = Extra.forbid
-
-    step: PipelineStep = Field(description="Attributes of the step itself.")
-    processing_stage: int = Field(
-        description="The processing stage of this step within a Pipeline."
-    )
-    input_connections: typing.Dict[str, typing.List[str]] = Field(
-        description="""A map that explains what elements connect to this steps inputs. A connection could either be a Pipeline input (indicated by the ``__pipeline__`` token), or another steps output.
-
-Example:
-``` json
-input_connections: {
-    "a": ["__pipeline__.a"],
-    "b": ["step_one.a"]
-}
-
-```
-        """
-    )
-    output_connections: typing.Dict[str, typing.List[str]] = Field(
-        description="A map that explains what elemnts connect to this steps outputs. A connection could be either a Pipeline output, or another steps input."
-    )
-    required: bool = Field(
-        description="Whether this step is always required, or potentially could be skipped in case some inputs are not available."
-    )
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-
-        yield f"[b]Step: {self.step.step_id}[\b]"
-
-
-class StepsInfo(BaseModel):
-
-    pipeline_id: str = Field(description="The pipeline id.")
-    steps: typing.Dict[str, StepDesc] = Field(description="A list of step details.")
-    processing_stages: typing.List[typing.List[str]] = Field(
-        description="The stages in which the steps are processed."
-    )
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-
-        table = Table(box=box.SIMPLE, show_lines=True)
-        table.add_column("Stage", justify="center")
-        table.add_column("Step Id")
-        table.add_column("Module type", style="i")
-        table.add_column("Description")
-
-        for nr, stage in enumerate(self.processing_stages):
-
-            for i, step_id in enumerate(stage):
-                step: StepDesc = self.steps[step_id]
-                if step.required:
-                    title = f"[b]{step_id}[/b]"
-                else:
-                    title = f"[b]{step_id}[/b] [i](optional)[/i]"
-
-                if hasattr(step.step.module, "instance_doc"):
-                    doc = step.step.module.module_instance_doc
-                else:
-                    doc = step.step.module.get_type_metadata().model_doc()
-                row: typing.List[typing.Any] = []
-                if i == 0:
-                    row.append(str(nr))
-                else:
-                    row.append("")
-                row.append(title)
-
-                # TODO; generate the right link here
-                module_link = (
-                    step.step.module.get_type_metadata().context.references.get(
-                        "sources", None
-                    )
-                )
-                if module_link:
-                    module_str = f"[link={module_link}]{step.step.module_type}[/link]"
-                else:
-                    module_str = step.step.module_type
-                row.append(module_str)
-                if doc and doc != "-- n/a --":
-                    m = Markdown(doc + "\n\n---\n")
-                    row.append(m)
-                else:
-                    row.append("")
-                table.add_row(*row)
-
-        yield Panel(table, title_align="left", title="Processing stages")
-
-    def __rich_console_old__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-
-        explanation = {}
-
-        for nr, stage in enumerate(self.processing_stages):
-
-            stage_details = {}
-            for step_id in stage:
-                step: StepDesc = self.steps[step_id]
-                if step.required:
-                    title = step_id
-                else:
-                    title = f"{step_id} (optional)"
-                stage_details[title] = step.step.module.get_type_metadata().model_doc()
-
-            explanation[nr + 1] = stage_details
-
-        lines = []
-        for stage_nr, stage_steps in explanation.items():
-            lines.append(f"[bold]Processing stage {stage_nr}[/bold]:")
-            lines.append("")
-            for step_id, desc in stage_steps.items():
-                if desc == DEFAULT_NO_DESC_VALUE:
-                    lines.append(f"  - {step_id}")
-                else:
-                    lines.append(f"  - {step_id}: [i]{desc}[/i]")
-                lines.append("")
-
-        padding = (1, 2, 0, 2)
-        yield Panel(
-            "\n".join(lines),
-            box=box.ROUNDED,
-            title_align="left",
-            title=f"Stages for pipeline: [b]{self.pipeline_id}[/b]",
-            padding=padding,
-        )
-
-
-class PipelineStructureDesc(BaseModel):
-    """Outlines the internal structure of a [Pipeline][kiara.pipeline.pipeline.Pipeline]."""
-
-    class Config:
-        allow_mutation = False
-        extra = Extra.forbid
-
-    pipeline_id: str = Field(description="The (unique) pipeline id.")
-    steps: typing.Dict[str, StepDesc] = Field(
-        description="The steps contained in this pipeline, with the 'step_id' as key."
-    )
-    processing_stages: typing.List[typing.List[str]] = Field(
-        description="The order in which this pipeline has to be processed (basically the dependencies of each step on other steps, if any)."
-    )
-    pipeline_input_connections: typing.Dict[str, typing.List[str]] = Field(
-        description="The connections of this pipelines input fields. One input field can be connected to one or several step input fields."
-    )
-    pipeline_output_connections: typing.Dict[str, str] = Field(
-        description="The connections of this pipelines output fields. Each pipeline output is connected to exactly one step output field."
-    )
-    pipeline_inputs: typing.Dict[str, PipelineInputField] = Field(
-        description="The pipeline inputs."
-    )
-    pipeline_outputs: typing.Dict[str, PipelineOutputField] = Field(
-        description="The pipeline outputs."
-    )
-
-    @property
-    def steps_info(self) -> StepsInfo:
-
-        return StepsInfo(
-            pipeline_id=self.pipeline_id,
-            processing_stages=self.processing_stages,
-            steps=self.steps,
-        )
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-
-        yield f"[b]Pipeline structure: {self.pipeline_id}[/b]\n"
-
-        yield "[b]Inputs / Outputs[/b]"
-
-        data_panel: typing.List[typing.Any] = []
-        inp_table = Table(show_header=True, box=box.SIMPLE, show_lines=True)
-        inp_table.add_column("Name", style="i")
-        inp_table.add_column("Type")
-        inp_table.add_column("Description")
-        inp_table.add_column("Required", justify="center")
-        inp_table.add_column("Default", justify="center")
-
-        for inp, details in self.pipeline_inputs.items():
-            req = details.value_schema.is_required()
-            if not req:
-                req_str = "no"
-            else:
-                d = details.value_schema.default
-                if d in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
-                    req_str = "[b]yes[/b]"
-                else:
-                    req_str = "no"
-            default = details.value_schema.default
-            if default in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
-                default = "-- no default --"
-            else:
-                default = str(default)
-            inp_table.add_row(
-                inp,
-                details.value_schema.type,
-                details.value_schema.doc,
-                req_str,
-                default,
-            )
-
-        p_inp = Panel(
-            inp_table, box=box.ROUNDED, title="Input fields", title_align="left"
-        )
-        data_panel.append(p_inp)
-
-        # yield "[b]Pipeline outputs[/b]"
-
-        out_table = Table(show_header=True, box=box.SIMPLE, show_lines=True)
-        out_table.add_column("Name", style="i")
-        out_table.add_column("Type")
-        out_table.add_column("Description")
-
-        for inp, details_o in self.pipeline_outputs.items():
-
-            out_table.add_row(
-                inp,
-                details_o.value_schema.type,
-                details_o.value_schema.doc,
-            )
-
-        outp = Panel(
-            out_table, box=box.ROUNDED, title="Output fields", title_align="left"
-        )
-        data_panel.append(outp)
-        yield Panel(RenderGroup(*data_panel), box=box.SIMPLE)
-
-        color_list = [
-            "green",
-            "blue",
-            "bright_magenta",
-            "dark_red",
-            "gold3",
-            "cyan",
-            "orange1",
-            "light_yellow3",
-            "light_slate_grey",
-            "deep_pink4",
-        ]
-
-        step_color_map = {}
-        for i, s in enumerate(self.steps.values()):
-            step_color_map[s.step.step_id] = color_list[i % len(color_list)]
-
-        rg = []
-        for nr, stage in enumerate(self.processing_stages):
-
-            render_group = []
-
-            for s in self.steps.values():
-
-                if s.step.step_id not in stage:
-                    continue
-
-                step_table = create_step_table(s, step_color_map)
-                render_group.append(step_table)
-
-            panel = Panel(
-                RenderGroup(*render_group),
-                box=box.ROUNDED,
-                title=f"Processing stage: {nr+1}",
-                title_align="left",
-            )
-            rg.append(panel)
-
-        yield "[b]Steps[/b]"
-        r_panel = Panel(RenderGroup(*rg), box=box.SIMPLE)
-        yield r_panel
-
-
-def create_step_table(
-    step_desc: StepDesc, step_color_map: typing.Mapping[str, str]
-) -> Table:
-
-    step = step_desc.step
-
-    table = Table(show_header=True, box=box.SIMPLE, show_lines=False)
-    table.add_column("step_id:", style="i", no_wrap=True)
-    c = step_color_map[step.step_id]
-    table.add_column(f"[b {c}]{step.step_id}[/b {c}]", no_wrap=True)
-
-    # TODO: double check
-    doc_ref = step.module.get_type_metadata().context.references.get(
-        "documentation", None
-    )
-    doc_link = None
-    if doc_ref:
-        doc_link = doc_ref.url
-    if doc_link:
-        module_str = f"[link={doc_link}]{step.module_type}[/link]"
-    else:
-        module_str = step.module_type
-
-    table.add_row("", f"\n{step.module.get_type_metadata().model_doc()}\n")
-    table.add_row("type", module_str)
-
-    table.add_row(
-        "required", "[red]yes[/red]" if step.required else "[green]no[/green]"
-    )
-    table.add_row("is pipeline", "yes\n" if step.module.is_pipeline() else "no\n")
-
-    input_links: typing.List[typing.Any] = []
-    max_source_len = 0
-    for source, targets in step_desc.input_connections.items():
-        source_type = step_desc.step.module.input_schemas[source].type
-        source = f"{source} ([i]type: {source_type}[/i])"
-        source_len = len(source)
-        if source_len > max_source_len:
-            max_source_len = source_len
-        for i, target in enumerate(targets):
-            if i == 0:
-                input_links.append((source, target))
-            else:
-                input_links.append((None, target))
-
-    last_source = None
-    for i, il in enumerate(input_links):
-        source = il[0]
-        if source is None:
-            padding = (
-                len(last_source) - 6
-            ) * " "  # calculate without the [i]..[/i] markers
-            source_str = padding + "  "
-        else:
-            last_source = source.ljust(max_source_len)
-            source_str = last_source + " ← "
-        target = il[1]
-        tokens = target.split(".")
-        assert len(tokens) == 2
-        if tokens[0] == PIPELINE_PARENT_MARKER:
-            target_str = f"[b]PIPE_INPUT[/b].{tokens[1]}"
-        else:
-            c = step_color_map[tokens[0]]
-            target_str = f"[b {c}]{tokens[0]}[/b {c}].{tokens[1]}"
-
-        postfix = ""
-        if len(input_links) == i + 1:
-            postfix = "\n"
-        if i == 0:
-            row_str = f"{source_str}{target_str}{postfix}"
-            table.add_row("inputs", row_str)
-        else:
-            row_str = f"{source_str}{target_str}{postfix}"
-            table.add_row("", row_str)
-
-    output_links: typing.List[typing.Any] = []
-    max_source_len = 0
-    for source, targets in step_desc.output_connections.items():
-        target_type = step_desc.step.module.output_schemas[source].type
-        source = f"{source} ([i]type: {target_type}[/i])"
-        source_len = len(source)
-        if source_len > max_source_len:
-            max_source_len = source_len
-        for i, target in enumerate(targets):
-            if i == 0:
-                output_links.append((source, target))
-            else:
-                output_links.append((None, target))
-
-    last_source = None
-    for i, il in enumerate(output_links):
-        source = il[0]
-        if source is None:
-            padding = (
-                len(last_source) - 6
-            ) * " "  # calculate without the [i]..[/i] markers
-            source_str = padding + "  "
-        else:
-            last_source = source.ljust(max_source_len)
-            source_str = last_source + " → "
-        target = il[1]
-        tokens = target.split(".")
-        assert len(tokens) == 2
-        if tokens[0] == PIPELINE_PARENT_MARKER:
-            target_str = f"[b]PIPE_OUTPUT[/b].{tokens[1]}"
-        else:
-            c = step_color_map[tokens[0]]
-            target_str = f"[b {c}]{tokens[0]}[/b {c}].{tokens[1]}"
-        if i == 0:
-            row_str = f"{source_str}{target_str}"
-            table.add_row("outputs", row_str)
-        else:
-            row_str = f"{source_str}{target_str}"
-            table.add_row("", row_str)
-
-    return table

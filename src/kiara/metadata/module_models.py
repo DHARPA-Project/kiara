@@ -122,6 +122,14 @@ class KiaraModuleTypeMetadata(MetadataModel):
     @classmethod
     def from_module_class(cls, module_cls: typing.Type["KiaraModule"]):
 
+        module_attrs = cls.extract_module_attributes(module_cls=module_cls)
+        return cls(**module_attrs)
+
+    @classmethod
+    def extract_module_attributes(
+        self, module_cls: typing.Type["KiaraModule"]
+    ) -> typing.Dict[str, typing.Any]:
+
         if not hasattr(module_cls, "process"):
             raise Exception(f"Module class '{module_cls}' misses 'process' method.")
         proc_src = textwrap.dedent(inspect.getsource(module_cls.process))  # type: ignore
@@ -156,7 +164,18 @@ class KiaraModuleTypeMetadata(MetadataModel):
         if is_pipeline:
             pipeline_config = module_cls._base_pipeline_config  # type: ignore
 
-        return cls(type_name=module_cls._module_type_name, type_id=module_cls._module_type_id, documentation=doc, origin=origin_md, context=properties_md, python_class=python_class, config=config, is_pipeline=is_pipeline, pipeline_config=pipeline_config, process_src=proc_src)  # type: ignore
+        return {
+            "type_name": module_cls._module_type_name,  # type: ignore
+            "type_id": module_cls._module_type_id,  # type: ignore
+            "documentation": doc,
+            "origin": origin_md,
+            "context": properties_md,
+            "python_class": python_class,
+            "config": config,
+            "is_pipeline": is_pipeline,
+            "pipeline_config": pipeline_config,
+            "process_src": proc_src,
+        }
 
     type_name: str = Field(description="The registered name for this module type.")
     type_id: str = Field(description="The full type id.")

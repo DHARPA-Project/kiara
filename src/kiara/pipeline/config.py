@@ -2,17 +2,18 @@
 import logging
 import typing
 from pydantic import BaseModel, Extra, Field, root_validator, validator
+from rich.console import Console, ConsoleOptions, RenderResult
 from slugify import slugify
 
 from kiara.defaults import DEFAULT_PIPELINE_PARENT_ID
 from kiara.module_config import ModuleInstanceConfig, ModuleTypeConfig
+from kiara.pipeline import StepValueAddress
+from kiara.pipeline.structure import PipelineStep, PipelineStructure
 from kiara.pipeline.utils import ensure_step_value_addresses
-from kiara.pipeline.values import StepValueAddress
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
     from kiara.pipeline.controller import PipelineController
-    from kiara.pipeline.structure import PipelineStructure
 
 log = logging.getLogger("kiara")
 
@@ -225,3 +226,41 @@ class PipelineModuleConfig(ModuleTypeConfig):
     # ) -> RenderResult:
     #
     #     table = Table(show_header=False, box=box.SIMPLE)
+
+
+class StepDesc(BaseModel):
+    """Details of a single [PipelineStep][kiara.pipeline.structure.PipelineStep] (which lives within a [Pipeline][kiara.pipeline.pipeline.Pipeline]"""
+
+    class Config:
+        allow_mutation = False
+        extra = Extra.forbid
+
+    step: PipelineStep = Field(description="Attributes of the step itself.")
+    processing_stage: int = Field(
+        description="The processing stage of this step within a Pipeline."
+    )
+    input_connections: typing.Dict[str, typing.List[str]] = Field(
+        description="""A map that explains what elements connect to this steps inputs. A connection could either be a Pipeline input (indicated by the ``__pipeline__`` token), or another steps output.
+
+Example:
+``` json
+input_connections: {
+    "a": ["__pipeline__.a"],
+    "b": ["step_one.a"]
+}
+
+```
+        """
+    )
+    output_connections: typing.Dict[str, typing.List[str]] = Field(
+        description="A map that explains what elemnts connect to this steps outputs. A connection could be either a Pipeline output, or another steps input."
+    )
+    required: bool = Field(
+        description="Whether this step is always required, or potentially could be skipped in case some inputs are not available."
+    )
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+
+        yield f"[b]Step: {self.step.step_id}[\b]"

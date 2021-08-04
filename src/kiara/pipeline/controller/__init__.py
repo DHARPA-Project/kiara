@@ -8,7 +8,8 @@ from kiara.pipeline.structure import PipelineStep
 from kiara.processing import Job
 
 if typing.TYPE_CHECKING:
-    from kiara.pipeline.pipeline import Pipeline, PipelineState, StepStatus
+    from kiara.info.pipelines import PipelineState
+    from kiara.pipeline.pipeline import Pipeline, StepStatus
     from kiara.processing.processor import ModuleProcessor
 
 log = logging.getLogger("kiara")

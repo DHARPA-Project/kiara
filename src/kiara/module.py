@@ -5,11 +5,10 @@ import inspect
 import typing
 import uuid
 from abc import abstractmethod
-from pydantic import BaseModel, Extra, Field, ValidationError
+from pydantic import ValidationError
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderGroup, RenderResult
 from rich.panel import Panel
-from rich.table import Table
 
 from kiara.data.values import (
     NonRegistryValue,
@@ -660,94 +659,3 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
             title_align="left",
             title=f"Module: [b]{self.id}[/b]",
         )
-
-
-class ModuleInfo(BaseModel):
-    """A simple model class to hold and display information about a module.
-
-    This is not used in processing at all, it is really only there to make it easier to communicate module characteristics..
-    """
-
-    @classmethod
-    def from_module_cls(cls, module_cls: typing.Type[KiaraModule]):
-
-        return ModuleInfo(
-            metadata=KiaraModuleTypeMetadata.from_module_class(module_cls=module_cls)
-        )
-
-    class Config:
-        extra = Extra.forbid
-        allow_mutation = False
-
-    metadata: KiaraModuleTypeMetadata = Field(description="The metadata of the module.")
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-
-        table = self.metadata.create_renderable()
-        yield Panel(
-            table,
-            box=box.ROUNDED,
-            title=f"Module: [b]{self.metadata.type_name}[/b]",
-            title_align="left",
-        )
-
-
-class ModulesList(object):
-    def __init__(
-        self, modules: typing.Iterable[str], kiara: typing.Optional["Kiara"] = None
-    ):
-
-        if kiara is None:
-            from kiara import Kiara
-
-            kiara = Kiara.instance()
-
-        self._kiara: Kiara = kiara
-        self._modules: typing.Iterable[str] = modules
-        self._info_map: typing.Optional[typing.Dict[str, ModuleInfo]] = None
-        self._print_only_first_line: bool = True
-
-    @property
-    def module_info_map(self) -> typing.Mapping[str, ModuleInfo]:
-
-        if self._info_map is not None:
-            return self._info_map
-
-        from kiara.module import ModuleInfo
-
-        result = {}
-
-        for m in self._modules:
-            cls = self._kiara.get_module_class(m)
-            info = ModuleInfo.from_module_cls(cls)
-            result[m] = info
-
-        self._info_map = result
-        return self._info_map
-
-    def __repr__(self):
-
-        return str(list(self._modules.keys()))
-
-    def __str__(self):
-
-        return self.__repr__()
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-
-        show_lines = False
-        table = Table(show_header=False, box=box.SIMPLE, show_lines=show_lines)
-        table.add_column("name", style="b")
-        table.add_column("desc", style="i")
-
-        for name, details in self.module_info_map.items():
-            if self._print_only_first_line:
-                table.add_row(name, details.metadata.documentation.description)
-            else:
-                table.add_row(name, details.metadata.documentation.full_doc)
-
-        yield table

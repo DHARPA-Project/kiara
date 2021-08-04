@@ -8,8 +8,9 @@ from rich.panel import Panel
 
 from kiara import Kiara, PipelineModule
 from kiara.defaults import KIARA_RESOURCES_FOLDER
+from kiara.info.modules import ModuleTypesGroupInfo
 from kiara.interfaces.cli.utils import _create_module_instance
-from kiara.module import ModuleInfo
+from kiara.metadata.module_models import KiaraModuleTypeMetadata
 from kiara.utils import dict_from_cli_args
 from kiara.utils.output import rich_print
 
@@ -30,8 +31,21 @@ def module(ctx):
     is_flag=True,
     help="Only list core (aka 'Python') modules.",
 )
+@click.option(
+    "--full-doc",
+    "-d",
+    is_flag=True,
+    help="Display the full documentation for every module type.",
+)
+@click.argument("filter", nargs=-1, required=False)
 @click.pass_context
-def list_modules(ctx, only_pipeline_modules: bool, only_core_modules: bool):
+def list_modules(
+    ctx,
+    only_pipeline_modules: bool,
+    only_core_modules: bool,
+    full_doc: bool,
+    filter: typing.Iterable[str],
+):
     """List available module types."""
 
     if only_pipeline_modules and only_core_modules:
@@ -43,26 +57,50 @@ def list_modules(ctx, only_pipeline_modules: bool, only_core_modules: bool):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
+    if filter:
+        module_types = []
+
+        for m in kiara_obj.available_module_types:
+            match = True
+
+            for f in filter:
+
+                if f.lower() not in m.lower():
+                    match = False
+                    break
+                else:
+                    m_cls = kiara_obj.get_module_class(m)
+                    doc = m_cls.get_type_metadata().documentation.full_doc
+
+                    if f.lower() not in doc.lower():
+                        match = False
+                        break
+
+            if match:
+                module_types.append(m)
+    else:
+        module_types = kiara_obj.available_module_types
+
+    renderable = ModuleTypesGroupInfo.create_renderable_from_type_names(
+        kiara=kiara_obj,
+        type_names=module_types,
+        ignore_non_pipeline_modules=only_pipeline_modules,
+        ignore_pipeline_modules=only_core_modules,
+        include_full_doc=full_doc,
+    )
     if only_pipeline_modules:
         title = "Available pipeline modules"
-        m_list = kiara_obj.create_modules_list(
-            list_pipeline_modules=True, list_non_pipeline_modules=False
-        )
     elif only_core_modules:
         title = "Available core modules"
-        m_list = kiara_obj.create_modules_list(
-            list_pipeline_modules=False, list_non_pipeline_modules=True
-        )
     else:
         title = "Available modules"
-        m_list = kiara_obj.modules_list
 
-    p = Panel(m_list, title_align="left", title=title)
+    p = Panel(renderable, title_align="left", title=title)
     print()
     kiara_obj.explain(p)
 
 
-@module.command(name="explain-type")
+@module.command(name="explain")
 @click.argument("module_type", nargs=1, required=True)
 @click.pass_context
 def explain_module_type(ctx, module_type: str):
@@ -83,10 +121,10 @@ def explain_module_type(ctx, module_type: str):
         _module_type = module_type
 
     m_cls = kiara_obj.get_module_class(_module_type)
-    info = ModuleInfo.from_module_cls(m_cls)
+    info = KiaraModuleTypeMetadata.from_module_class(m_cls)
 
     rich_print()
-    rich_print(info)
+    rich_print(info.create_panel(title=f"Module type: [b i]{module_type}[/b i]"))
 
 
 @module.command("explain-instance")

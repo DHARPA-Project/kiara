@@ -11,13 +11,8 @@ from pydantic import BaseModel, Field
 from tzlocal import get_localzone
 
 from kiara.defaults import KIARA_DATA_STORE_DIR
-from kiara.metadata.core_models import (
-    LoadConfig,
-    SaveConfig,
-    SnapshotMetadata,
-    ValueHash,
-    ValueInfo,
-)
+from kiara.metadata.core_models import SnapshotMetadata, ValueHash, ValueInfo
+from kiara.metadata.data import LoadConfig, SaveConfig
 
 if typing.TYPE_CHECKING:
     from kiara.data.values import Value

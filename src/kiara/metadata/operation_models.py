@@ -14,18 +14,18 @@ if typing.TYPE_CHECKING:
     from kiara.operations import Operations
 
 
-class OperationTypeMetadata(MetadataModel):
+class OperationsMetadata(MetadataModel):
     @classmethod
-    def from_operation_type_class(
+    def from_operations_class(
         cls, operation_type_cls: typing.Type["Operations"]
-    ) -> "OperationTypeMetadata":
+    ) -> "OperationsMetadata":
 
         origin_md = OriginMetadataModel.from_class(operation_type_cls)
         doc = DocumentationMetadataModel.from_class_doc(operation_type_cls)
         python_class = PythonClassMetadata.from_class(operation_type_cls)
         properties_md = ContextMetadataModel.from_class(operation_type_cls)
 
-        return OperationTypeMetadata(
+        return OperationsMetadata.construct(
             type_name=operation_type_cls._operation_type_name,  # type: ignore
             documentation=doc,
             origin=origin_md,

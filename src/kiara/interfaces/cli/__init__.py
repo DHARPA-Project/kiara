@@ -5,9 +5,11 @@
 import asyncclick as click
 
 from kiara import Kiara
+from kiara.utils import is_develop
 from kiara.utils.output import rich_print
 
 from .data.commands import data
+from .info.commands import info
 from .metadata.commands import metadata
 from .module.commands import module
 from .operation.commands import operation
@@ -41,6 +43,8 @@ cli.add_command(type_group)
 cli.add_command(module)
 cli.add_command(pipeline)
 cli.add_command(operation)
+if is_develop():
+    cli.add_command(info)
 
 try:
     from .service.commands import service

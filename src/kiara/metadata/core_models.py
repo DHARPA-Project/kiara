@@ -11,7 +11,6 @@ from types import ModuleType
 
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.metadata import MetadataModel
-from kiara.module_config import ModuleInstanceConfig
 from kiara.utils import merge_dicts
 from kiara.utils.global_metadata import get_metadata_for_python_module_or_class
 
@@ -146,6 +145,14 @@ class DocumentationMetadataModel(MetadataModel):
             doc = DEFAULT_NO_DESC_VALUE
 
         doc = inspect.cleandoc(doc)
+        return cls.from_string(doc)
+
+    @classmethod
+    def from_string(cls, doc: typing.Optional[str]):
+
+        if not doc:
+            doc = DEFAULT_NO_DESC_VALUE
+
         if "\n" in doc:
             desc, doc = doc.split("\n", maxsplit=1)
         else:
@@ -156,6 +163,39 @@ class DocumentationMetadataModel(MetadataModel):
             doc = doc.strip()
 
         return cls(description=desc.strip(), doc=doc)
+
+    @classmethod
+    def from_dict(cls, data: typing.Mapping):
+
+        doc = data.get("doc", None)
+        desc = data.get("description", None)
+        if desc is None:
+            desc = data.get("desc", None)
+
+        if not doc and not desc:
+            return cls.from_string(DEFAULT_NO_DESC_VALUE)
+        elif doc and not desc:
+            return cls.from_string(doc)
+        elif desc and not doc:
+            return cls.from_string(desc)
+        else:
+            return DocumentationMetadataModel(description=desc, doc=doc)
+
+    @classmethod
+    def create(cls, item: typing.Any):
+
+        if not item:
+            return cls.from_string(DEFAULT_NO_DESC_VALUE)
+        elif isinstance(item, DocumentationMetadataModel):
+            return item
+        elif isinstance(item, typing.Mapping):
+            return cls.from_dict(item)
+        if isinstance(item, type):
+            return cls.from_class_doc(item)
+        elif isinstance(item, str):
+            return cls.from_string(item)
+        else:
+            raise TypeError(f"Can't create documentation from type '{type(item)}'.")
 
     description: str = Field(
         description="Short description of the item.", default=DEFAULT_NO_DESC_VALUE
@@ -261,25 +301,3 @@ class SnapshotMetadata(BaseModel):
     value_id: str = Field(description="The value id after the snapshot.")
     value_id_orig: str = Field(description="The value id before the snapshot.")
     snapshot_time: str = Field(description="The time the data was saved.")
-
-
-class LoadConfig(ModuleInstanceConfig):
-
-    value_id: str = Field(description="The id of the value.")
-    base_path_input_name: str = Field(
-        description="The base path where the value is stored.", default="base_path"
-    )
-    inputs: typing.Dict[str, typing.Any] = Field(
-        description="The inputs to use when running this module.", default_factory=dict
-    )
-    output_name: str = Field(description="The name of the output field for the value.")
-
-
-class SaveConfig(ModuleInstanceConfig):
-
-    inputs: typing.Dict[str, typing.Any] = Field(
-        description="The inputs to use when running this module.", default_factory=dict
-    )
-    load_config_output: str = Field(
-        description="The output name that will contain the load config output value."
-    )

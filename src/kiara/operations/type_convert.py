@@ -58,6 +58,7 @@ class ConvertValueModule(KiaraModule):
                 op_config = {
                     "module_type": cls._module_type_id,  # type: ignore
                     "module_config": mod_conf,
+                    "doc": f"Convert value of type '{value_type}' to type '{target_type}'.",
                 }
                 key = f"{value_type}.convert_to.{target_type}"
                 if key in all_metadata_profiles.keys():
@@ -78,6 +79,7 @@ class ConvertValueModule(KiaraModule):
                 op_config = {
                     "module_type": cls._module_type_id,  # type: ignore
                     "module_config": mod_conf,
+                    "doc": f"Convert value of type '{source_type}' to type '{value_type}'.",
                 }
                 # key = f"{value_type}.convert_from.{target_type}"   # type: ignore
                 # if key in all_metadata_profiles.keys():

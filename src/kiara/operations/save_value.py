@@ -7,7 +7,7 @@ from pydantic import Field
 from kiara import Kiara, KiaraModule
 from kiara.data.values import Value, ValueSchema, ValueSet
 from kiara.exceptions import KiaraProcessingException
-from kiara.metadata.core_models import LoadConfig
+from kiara.metadata.data import LoadConfig
 from kiara.module_config import ModuleTypeConfig
 from kiara.operations import OperationConfig, Operations
 from kiara.utils import log_message
@@ -58,6 +58,7 @@ class SaveValueTypeModule(KiaraModule):
             op_config = {
                 "module_type": cls._module_type_id,  # type: ignore
                 "module_config": {"value_type": sup_type},
+                "doc": f"Save value of type '{sup_type}'.",
             }
             all_metadata_profiles[f"{sup_type}.save"] = op_config
 
@@ -127,6 +128,8 @@ class SaveValueTypeModule(KiaraModule):
 
 
 class SaveOperations(Operations):
+    """Save a value into a data store."""
+
     def is_matching_operation(self, op_config: OperationConfig) -> bool:
 
         return issubclass(op_config.module_cls, SaveValueTypeModule)

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import typing
-from pydantic import BaseModel
 from rich import box
 from rich.console import (
     Console,
@@ -9,11 +8,11 @@ from rich.console import (
     RenderGroup,
     RenderResult,
 )
-from rich.jupyter import JupyterMixin
 from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
 
+from kiara.info import KiaraInfoModel, extract_renderable
 from kiara.utils import merge_dicts
 from kiara.utils.doc import extract_doc_from_cls
 from kiara.utils.output import first_line
@@ -23,7 +22,7 @@ if typing.TYPE_CHECKING:
     from kiara.metadata.core_models import MetadataModelMetadata
 
 
-class MetadataModel(BaseModel, JupyterMixin):
+class MetadataModel(KiaraInfoModel):
     @classmethod
     def get_model_cls_metadata(cls) -> "MetadataModelMetadata":
 
@@ -55,15 +54,17 @@ class MetadataModel(BaseModel, JupyterMixin):
         table.add_column("Key", style="i")
         table.add_column("Value")
         for k in self.__fields__.keys():
-            value_str = str(getattr(self, k))
-            table.add_row(k, value_str)
+            if k == "type_name" and config.get("omit_type_name", False):
+                continue
+            attr = getattr(self, k)
+            v = extract_renderable(attr)
+            table.add_row(k, v)
+
+        if "operations" in config.keys():
+            ids = list(config["operations"].keys())
+            table.add_row("operations", "\n".join(ids))
+
         return table
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-
-        yield self.create_renderable()
 
 
 class MetadataSchemaInfo(object):

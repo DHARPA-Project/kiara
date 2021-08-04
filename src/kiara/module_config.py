@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 
 """Configuration models for the *Kiara* package."""
-
 import deepdiff
 import os
 import typing
 from pathlib import Path
-from pydantic import BaseModel, Extra, Field, PrivateAttr
+from pydantic import BaseModel, Extra, Field, PrivateAttr, validator
 from rich import box
-from rich.console import Console, ConsoleOptions, RenderResult
+from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
+from rich.syntax import Syntax
 from rich.table import Table
 
+from kiara.defaults import DEFAULT_NO_DESC_VALUE
+from kiara.info import KiaraInfoModel
+from kiara.metadata.core_models import DocumentationMetadataModel
 from kiara.utils import get_data_from_file
 
 if typing.TYPE_CHECKING:
@@ -97,7 +100,7 @@ class ModuleTypeConfig(BaseModel):
         yield my_table
 
 
-class ModuleInstanceConfig(BaseModel):
+class ModuleInstanceConfig(KiaraInfoModel):
     @classmethod
     def from_file(cls, path: typing.Union[str, Path]):
 
@@ -121,6 +124,7 @@ class ModuleInstanceConfig(BaseModel):
 
             if module_config:
                 raise NotImplementedError()
+
             operation_config: ModuleInstanceConfig = ModuleInstanceConfig(**config)
 
         elif isinstance(config, str):
@@ -179,6 +183,33 @@ class ModuleInstanceConfig(BaseModel):
 
         return operation_config
 
+    @classmethod
+    def create_renderable_from_module_instance_configs(
+        cls,
+        configs: typing.Mapping[str, "ModuleInstanceConfig"],
+        **render_config: typing.Any,
+    ):
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("Id", style="i", no_wrap=True)
+        table.add_column("Description")
+        if not render_config.get("omit_config", False):
+            table.add_column("Configuration")
+
+        for id, config in configs.items():
+            if config.doc:
+                doc = config.doc.description
+            else:
+                doc = DEFAULT_NO_DESC_VALUE
+
+            row: typing.List[RenderableType] = [id, doc]
+            if not render_config.get("omit_config", False):
+                conf = config.json(exclude={"doc"}, indent=2)
+                row.append(Syntax(conf, "json", background_color="default"))
+            table.add_row(*row)
+
+        return table
+
     class Config:
         extra = Extra.forbid
         validate_all = True
@@ -188,6 +219,15 @@ class ModuleInstanceConfig(BaseModel):
     module_config: typing.Dict[str, typing.Any] = Field(
         default_factory=dict, description="The configuration for the module."
     )
+    doc: typing.Optional[DocumentationMetadataModel] = Field(
+        description="Documentation for this operation.", default=None
+    )
+
+    @validator("doc", pre=True)
+    def create_doc(cls, value):
+        if value is None:
+            return None
+        return DocumentationMetadataModel.create(value)
 
     def create_module(self, kiara: "Kiara"):
 
@@ -198,6 +238,15 @@ class ModuleInstanceConfig(BaseModel):
                 module_config=self.module_config,
             )
         return self._module
+
+    def create_renderable(self, **config: typing.Any) -> RenderableType:
+
+        conf = Syntax(
+            self.json(indent=2, exclude_none=True, exclude={"doc"}),
+            "json",
+            background_color="default",
+        )
+        return conf
 
 
 KIARA_CONFIG = typing.TypeVar("KIARA_CONFIG", bound=ModuleTypeConfig)

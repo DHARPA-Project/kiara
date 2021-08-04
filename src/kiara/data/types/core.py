@@ -2,7 +2,7 @@
 import typing
 
 from kiara.data.types import ValueType
-from kiara.metadata.core_models import LoadConfig
+from kiara.metadata.data import LoadConfig
 
 
 class ValueLoadConfig(ValueType):

@@ -91,7 +91,22 @@ __email__ = "markus@frkl.io"
 """Email address of the author."""
 
 
-KIARA_METADATA: typing.Mapping[str, typing.Any] = {"tags": [], "labels": {}}
+KIARA_METADATA = {
+    "authors": [{"name": __author__, "email": __email__}],
+    "description": "Kiara Python package",
+    "references": {
+        "source_repo": {
+            "desc": "The kiara project git repository.",
+            "url": "https://github.com/DHARPA-Project/kiara",
+        },
+        "documentation": {
+            "desc": "The url for kiara documentation.",
+            "url": "https://dharpa.org/kiara_documentation/",
+        },
+    },
+    "tags": [],
+    "labels": {"package": "kiara"},
+}
 
 
 def get_version() -> str:

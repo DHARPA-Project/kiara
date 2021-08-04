@@ -83,6 +83,7 @@ class PrettyPrintValueModule(KiaraModule):
                 op_config = {
                     "module_type": cls._module_type_id,  # type: ignore
                     "module_config": {"value_type": sup_type, "target_type": tar_type},
+                    "doc": f"Pretty print a value of type '{sup_type}' as '{tar_type}'.",
                 }
                 all_metadata_profiles[
                     f"{sup_type}.pretty_print.as.{tar_type}"

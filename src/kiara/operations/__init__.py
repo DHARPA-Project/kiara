@@ -2,6 +2,7 @@
 import typing
 from pydantic import PrivateAttr
 
+from kiara.metadata.operation_models import OperationsMetadata
 from kiara.module_config import ModuleInstanceConfig
 
 if typing.TYPE_CHECKING:
@@ -54,6 +55,11 @@ class OperationConfig(ModuleInstanceConfig):
 
 
 class Operations(object):
+    @classmethod
+    def get_type_metadata(cls) -> OperationsMetadata:
+
+        return OperationsMetadata.from_operations_class(cls)
+
     def __init__(self, kiara: typing.Optional["Kiara"] = None):
 
         if kiara is None:
@@ -123,7 +129,11 @@ class OperationMgmt(object):
             mod_conf = mod_cls._config_cls
             if not mod_conf.requires_config():
                 _profiles[module_id] = OperationConfig.create_operation_config(
-                    config={"module_type": module_id}, kiara=self._kiara
+                    config={
+                        "module_type": module_id,
+                        "doc": mod_cls.get_type_metadata().documentation,
+                    },
+                    kiara=self._kiara,
                 )
 
             profiles = mod_cls.retrieve_module_profiles(kiara=self._kiara)
@@ -165,7 +175,8 @@ class OperationMgmt(object):
             _operation_types[op_name] = op_cls()
 
         self._operation_types = _operation_types
-        self.profiles
+        # make sure the profiles are loaded
+        self.profiles  # noqa
         return self._operation_types
 
     def get_operations(self, operation_type: str) -> Operations:

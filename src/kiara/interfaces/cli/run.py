@@ -16,8 +16,8 @@ from kiara.data.values import ValuesInfo
 from kiara.defaults import DEFAULT_TO_JSON_CONFIG
 from kiara.interfaces.cli.utils import _create_module_instance
 from kiara.module import KiaraModule
+from kiara.pipeline import StepStatus
 from kiara.pipeline.controller.batch import BatchController
-from kiara.pipeline.pipeline import StepStatus
 from kiara.processing import JobStatus
 from kiara.utils import create_table_from_field_schemas, dict_from_cli_args, is_debug
 from kiara.utils.output import OutputDetails, rich_print

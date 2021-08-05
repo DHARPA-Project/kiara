@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import asyncclick as click
+import sys
 import typing
 from rich import box, print as rich_print
 from rich.panel import Panel
@@ -110,3 +111,30 @@ def list(ctx, by_type: bool, filter: typing.Iterable[str], type: str):
 
     panel = Panel(table, title=title, title_align="left", box=box.ROUNDED)
     rich_print(panel)
+
+
+@operation.command()
+@click.argument("operation_id", nargs=1, required=True)
+@click.option(
+    "--source",
+    "-s",
+    help="Show module source code (or pipeline configuration).",
+    is_flag=True,
+)
+@click.pass_context
+def explain(ctx, operation_id: str, source: bool):
+
+    kiara_obj: Kiara = ctx.obj["kiara"]
+
+    op_config = kiara_obj.operation_mgmt.profiles.get(operation_id)
+    if not op_config:
+        print()
+        print(f"No operation with id '{operation_id}' registered.")
+        sys.exit(1)
+
+    print()
+    rich_print(
+        op_config.create_panel(
+            title=f"Operation: [b i]{operation_id}[/b i]", include_src=source
+        )
+    )

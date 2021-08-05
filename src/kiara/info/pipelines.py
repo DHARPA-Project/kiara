@@ -17,6 +17,7 @@ from rich.table import Table
 from kiara.defaults import PIPELINE_PARENT_MARKER, SpecialValue
 from kiara.info import KiaraInfoModel
 from kiara.metadata.module_models import KiaraModuleTypeMetadata
+from kiara.pipeline import PipelineValues, StepStatus
 from kiara.pipeline.config import StepDesc
 from kiara.pipeline.utils import generate_step_alias
 from kiara.pipeline.values import PipelineInputField, PipelineOutputField, ValueField
@@ -24,9 +25,8 @@ from kiara.utils import StringYAML, create_table_from_config_class, print_ascii_
 
 if typing.TYPE_CHECKING:
     from kiara import Kiara
-    from kiara.pipeline import PipelineValues
     from kiara.pipeline.config import PipelineModuleConfig
-    from kiara.pipeline.pipeline import Pipeline, StepStatus
+    from kiara.pipeline.pipeline import Pipeline
     from kiara.pipeline.structure import PipelineStructure
 
 yaml = StringYAML()
@@ -39,12 +39,6 @@ class StepsInfo(KiaraInfoModel):
     processing_stages: typing.List[typing.List[str]] = Field(
         description="The stages in which the steps are processed."
     )
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-
-        pass
 
     def create_renderable(self, **config: typing.Any) -> RenderableType:
 
@@ -392,11 +386,8 @@ class PipelineModuleInfo(KiaraModuleTypeMetadata):
         structure = self._structure
         print_ascii_graph(structure.execution_graph)
 
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
+    def create_renderable(self, **config: typing.Any) -> RenderableType:
 
-        yield f"[i]PipelineModule[/i]: [b]{self.type_name}[/b]"
         my_table = Table(box=box.SIMPLE, show_lines=True, show_header=False)
         my_table.add_column("Property", style="i")
         my_table.add_column("Value")
@@ -474,7 +465,7 @@ class PipelineModuleInfo(KiaraModuleTypeMetadata):
         _stages_txt = Syntax(stages_str, "yaml", background_color="default")
         my_table.add_row("processing stages", _stages_txt)
 
-        yield my_table
+        return my_table
 
 
 class PipelineTypesGroupInfo(KiaraInfoModel):
@@ -643,7 +634,7 @@ def create_step_table(
     return table
 
 
-class PipelineState(BaseModel):
+class PipelineState(KiaraInfoModel):
     """Describes the current state of a pipeline.
 
     This includes the structure of the pipeline (how the internal modules/steps are connected to each other), as well
@@ -655,42 +646,39 @@ class PipelineState(BaseModel):
     structure: PipelineStructureDesc = Field(
         description="The structure (interconnections of modules/steps) of the pipeline."
     )
-    pipeline_inputs: "PipelineValues" = Field(
+    pipeline_inputs: PipelineValues = Field(
         description="The current (externally facing) input values of this pipeline."
     )
-    pipeline_outputs: "PipelineValues" = Field(
+    pipeline_outputs: PipelineValues = Field(
         description="The current (externally facing) output values of this pipeline."
     )
-    step_states: typing.Dict[str, "StepStatus"] = Field(
+    step_states: typing.Dict[str, StepStatus] = Field(
         description="The status of each step."
     )
-    step_inputs: typing.Dict[str, "PipelineValues"] = Field(
+    step_inputs: typing.Dict[str, PipelineValues] = Field(
         description="The current (internal) input values of each step of this pipeline."
     )
-    step_outputs: typing.Dict[str, "PipelineValues"] = Field(
+    step_outputs: typing.Dict[str, PipelineValues] = Field(
         description="The current (internal) output values of each step of this pipeline."
     )
-    status: "StepStatus" = Field(
-        description="The current overal status of the pipeline."
-    )
+    status: StepStatus = Field(description="The current overal status of the pipeline.")
 
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
+    def create_renderable(self, **config: typing.Any) -> RenderableType:
 
         from kiara.pipeline.pipeline import StepStatus
 
-        yield f"Pipeline state for: [b]{self.structure.pipeline_id}[/b]"
-        yield ""
+        all: typing.List[RenderableType] = []
+        all.append(f"Pipeline state for: [b]{self.structure.pipeline_id}[/b]")
+        all.append("")
         if self.status == StepStatus.RESULTS_READY:
             c = "green"
         elif self.status == StepStatus.INPUTS_READY:
             c = "yellow"
         else:
             c = "red"
-        yield f"[b]Status[/b]: [b i {c}]{self.status.name}[/b i {c}]"
-        yield ""
-        yield "[b]Inputs / Outputs[/b]"
+        all.append(f"[b]Status[/b]: [b i {c}]{self.status.name}[/b i {c}]")
+        all.append("")
+        all.append("[b]Inputs / Outputs[/b]")
 
         r_gro = []
 
@@ -775,7 +763,7 @@ class PipelineState(BaseModel):
             Panel(out_table, box=box.ROUNDED, title_align="left", title="Outputs")
         )
 
-        yield Panel(RenderGroup(*r_gro), box=box.SIMPLE)
+        all.append(Panel(RenderGroup(*r_gro), box=box.SIMPLE))
 
         rg = []
         for nr, stage in enumerate(self.structure.processing_stages):
@@ -798,9 +786,11 @@ class PipelineState(BaseModel):
             )
             rg.append(panel)
 
-        yield "[b]Steps[/b]"
+        all.append("[b]Steps[/b]")
         r_panel = Panel(RenderGroup(*rg), box=box.SIMPLE)
-        yield r_panel
+        all.append(r_panel)
+
+        return RenderGroup(*all)
 
 
 def create_pipeline_step_table(

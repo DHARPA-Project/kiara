@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
+import json
 import typing
-from pydantic import PrivateAttr
+from pydantic import Field, PrivateAttr
+from rich import box
+from rich.console import RenderableType
+from rich.syntax import Syntax
+from rich.table import Table
 
 from kiara.metadata.operation_models import OperationsMetadata
 from kiara.module_config import ModuleInstanceConfig
+from kiara.utils import create_table_from_field_schemas
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -21,6 +27,7 @@ class OperationConfig(ModuleInstanceConfig):
     def create_operation_config(
         cls,
         kiara: "Kiara",
+        operation_id: str,
         config: typing.Union["ModuleInstanceConfig", typing.Mapping, str],
         module_config: typing.Union[
             None, typing.Mapping[str, typing.Any], "PipelineModuleConfig"
@@ -30,12 +37,16 @@ class OperationConfig(ModuleInstanceConfig):
         _config = ModuleInstanceConfig.create(
             config=config, module_config=module_config, kiara=kiara
         )
-        op_config = cls(**_config.dict())
+        _config_dict = _config.dict()
+        _config_dict["id"] = operation_id
+        op_config = cls(**_config_dict)
         op_config._kiara = kiara
         return op_config
 
     _kiara: typing.Optional["Kiara"] = PrivateAttr(default=None)
     _module: typing.Optional["KiaraModule"]
+
+    id: str = Field(description="The operation id.")
 
     @property
     def kiara(self) -> "Kiara":
@@ -52,6 +63,58 @@ class OperationConfig(ModuleInstanceConfig):
     @property
     def module_cls(self) -> typing.Type["KiaraModule"]:
         return self.kiara.get_module_class(self.module_type)
+
+    def create_renderable(self, **config: typing.Any) -> RenderableType:
+        """Create a printable overview of this operations details.
+
+        Available config options:
+          - 'include_full_doc' (default: True): whether to include the full documentation, or just a description
+          - 'include_src' (default: False): whether to include the module source code
+        """
+
+        include_full_doc = config.get("include_full_doc", True)
+
+        table = Table(box=box.SIMPLE, show_header=False, show_lines=True)
+        table.add_column("Property", style="i")
+        table.add_column("Value")
+
+        if self.doc:
+            if include_full_doc:
+                table.add_row("Documentation", self.doc.full_doc)
+            else:
+                table.add_row("Description", self.doc.description)
+
+        module_type_md = self.module.get_type_metadata()
+
+        table.add_row("Module type", self.module_type)
+        table.add_row("Module origin", module_type_md.origin.create_renderable())
+        table.add_row("Module context", module_type_md.context.create_renderable())
+        conf = Syntax(
+            json.dumps(self.module_config, indent=2), "json", background_color="default"
+        )
+        table.add_row("Module config", conf)
+
+        constants = self.module_config.get("constants")
+        inputs_table = create_table_from_field_schemas(
+            _add_required=True,
+            _add_default=True,
+            _show_header=True,
+            _constants=constants,
+            **self.module.input_schemas,
+        )
+        table.add_row("Inputs", inputs_table)
+        outputs_table = create_table_from_field_schemas(
+            _add_required=False,
+            _add_default=False,
+            _show_header=True,
+            _constants=None,
+            **self.module.output_schemas,
+        )
+        table.add_row("Outputs", outputs_table)
+        if config.get("include_src", False):
+            table.add_row("Source code", module_type_md.process_src)
+
+        return table
 
 
 class Operations(object):
@@ -129,6 +192,7 @@ class OperationMgmt(object):
             mod_conf = mod_cls._config_cls
             if not mod_conf.requires_config():
                 _profiles[module_id] = OperationConfig.create_operation_config(
+                    operation_id=module_id,
                     config={
                         "module_type": module_id,
                         "doc": mod_cls.get_type_metadata().documentation,
@@ -139,16 +203,17 @@ class OperationMgmt(object):
             profiles = mod_cls.retrieve_module_profiles(kiara=self._kiara)
             if profiles:
                 for profile_name, config in profiles.items():
-                    if not isinstance(config, OperationConfig):
-                        config = OperationConfig.create_operation_config(
-                            config=config, kiara=self._kiara
-                        )
                     if "." not in profile_name:
                         profile_id = f"{module_id}.{profile_name}"
                     else:
                         profile_id = profile_name
                     if profile_id in _profiles.keys():
                         raise Exception(f"Duplicate operation id: {profile_id}")
+
+                    if not isinstance(config, OperationConfig):
+                        config = OperationConfig.create_operation_config(
+                            operation_id=profile_id, config=config, kiara=self._kiara
+                        )
                     _profiles[profile_id] = config
 
         self._profiles = {k: _profiles[k] for k in sorted(_profiles.keys())}

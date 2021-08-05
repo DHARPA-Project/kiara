@@ -3,7 +3,7 @@ import inspect
 import json
 import textwrap
 import typing
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from pydantic.schema import (
     get_flat_models_from_model,
     get_model_name_map,
@@ -204,6 +204,11 @@ class KiaraModuleTypeMetadata(MetadataModel):
     process_src: str = Field(
         description="The source code of the process method of the module."
     )
+
+    @validator("documentation", pre=True)
+    def validate_doc(cls, value):
+
+        return DocumentationMetadataModel.create(value)
 
     def create_renderable(self, **config: typing.Any) -> RenderableType:
 

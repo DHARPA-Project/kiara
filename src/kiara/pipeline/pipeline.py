@@ -2,7 +2,6 @@
 import logging
 import typing
 import uuid
-from enum import Enum
 from rich.console import Console, ConsoleOptions, RenderResult
 
 from kiara.data.registry import DataRegistry
@@ -14,7 +13,7 @@ from kiara.events import (
     StepInputEvent,
     StepOutputEvent,
 )
-from kiara.pipeline import PipelineValues
+from kiara.pipeline import PipelineValues, StepStatus
 from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.controller.batch import BatchController
 from kiara.pipeline.listeners import PipelineListener
@@ -32,15 +31,6 @@ if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
 
 log = logging.getLogger("kiara")
-
-
-class StepStatus(Enum):
-    """Enum to describe the state of a workflow."""
-
-    STALE = "stale"
-    INPUTS_READY = "inputs_ready"
-    RESULTS_INCOMING = "processing"
-    RESULTS_READY = "results_ready"
 
 
 class Pipeline(object):
@@ -431,6 +421,8 @@ class Pipeline(object):
             step_outputs[k] = PipelineValues.from_value_set(v)
             if v.items_are_valid():
                 step_states[k] = StepStatus.RESULTS_READY
+
+        from kiara.info.pipelines import PipelineState
 
         state = PipelineState(
             structure=self.structure.to_details(),

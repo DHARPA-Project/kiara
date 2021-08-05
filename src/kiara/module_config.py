@@ -2,6 +2,7 @@
 
 """Configuration models for the *Kiara* package."""
 import deepdiff
+import json
 import os
 import typing
 from pathlib import Path
@@ -242,7 +243,18 @@ class ModuleInstanceConfig(KiaraInfoModel):
     def create_renderable(self, **config: typing.Any) -> RenderableType:
 
         conf = Syntax(
-            self.json(indent=2, exclude_none=True, exclude={"doc"}),
+            self.json(exclude_none=True, indent=2),
+            "json",
+            background_color="default",
+        )
+        return conf
+
+    def create_config_renderable(self, **config: typing.Any) -> RenderableType:
+
+        c = {"module_type": self.module_type, "module_config": self.module_config}
+        conf_json = json.dumps(c, indent=2)
+        conf = Syntax(
+            conf_json,
             "json",
             background_color="default",
         )

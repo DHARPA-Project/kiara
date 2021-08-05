@@ -162,7 +162,7 @@ class ConvertValueModule(KiaraModule):
         return {
             "value_item": {
                 "type": source_type,
-                "doc": "The value that needs to be converted.",
+                "doc": f"The '{source_type}' value to be converted.",
             }
         }
 
@@ -186,7 +186,7 @@ class ConvertValueModule(KiaraModule):
         return {
             "value_item": {
                 "type": target_type,
-                "doc": "The type of the converted value.",
+                "doc": f"The converted '{source_type}' value as '{target_type}'.",
             }
         }
 

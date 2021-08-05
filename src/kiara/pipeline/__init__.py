@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import typing
 from datetime import datetime
+from enum import Enum
 from pydantic import BaseModel, Extra, Field
 
 from kiara.data import Value, ValueSet
@@ -136,3 +137,12 @@ class StepValueAddress(BaseModel):
 
     def __str__(self):
         return self.__repr__()
+
+
+class StepStatus(Enum):
+    """Enum to describe the state of a workflow."""
+
+    STALE = "stale"
+    INPUTS_READY = "inputs_ready"
+    RESULTS_INCOMING = "processing"
+    RESULTS_READY = "results_ready"

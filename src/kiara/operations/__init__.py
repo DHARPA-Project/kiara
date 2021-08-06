@@ -3,7 +3,7 @@ import json
 import typing
 from pydantic import Field, PrivateAttr
 from rich import box
-from rich.console import RenderableType
+from rich.console import RenderableType, RenderGroup
 from rich.syntax import Syntax
 from rich.table import Table
 
@@ -87,8 +87,6 @@ class OperationConfig(ModuleInstanceConfig):
         module_type_md = self.module.get_type_metadata()
 
         table.add_row("Module type", self.module_type)
-        table.add_row("Module origin", module_type_md.origin.create_renderable())
-        table.add_row("Module context", module_type_md.context.create_renderable())
         conf = Syntax(
             json.dumps(self.module_config, indent=2), "json", background_color="default"
         )
@@ -111,6 +109,12 @@ class OperationConfig(ModuleInstanceConfig):
             **self.module.output_schemas,
         )
         table.add_row("Outputs", outputs_table)
+
+        m_md_o = module_type_md.origin.create_renderable()
+        m_md_c = module_type_md.context.create_renderable()
+        m_md = RenderGroup(m_md_o, m_md_c)
+        table.add_row("Module metadata", m_md)
+
         if config.get("include_src", False):
             table.add_row("Source code", module_type_md.process_src)
 

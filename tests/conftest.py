@@ -12,13 +12,14 @@ import pytest
 import os
 import typing
 
+from kiara.kiara import Kiara
 from kiara.pipeline.config import PipelineModuleConfig
 
 from .utils import PIPELINES_FOLDER
 
 
 @pytest.fixture
-def workflow_paths():
+def pipeline_paths():
 
     result = {}
     for root, dirnames, filenames in os.walk(PIPELINES_FOLDER, topdown=True):
@@ -32,9 +33,16 @@ def workflow_paths():
 
 
 @pytest.fixture
-def workflow_configs(workflow_paths) -> typing.Mapping[str, PipelineModuleConfig]:
+def pipeline_configs(pipeline_paths) -> typing.Mapping[str, PipelineModuleConfig]:
 
     return {
         name: PipelineModuleConfig.parse_file(path)
-        for name, path in workflow_paths.items()
+        for name, path in pipeline_paths.items()
     }
+
+
+@pytest.fixture
+def kiara() -> Kiara:
+
+    kiara = Kiara()
+    return kiara

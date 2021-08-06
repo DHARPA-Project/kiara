@@ -6,9 +6,9 @@ from kiara.pipeline.config import PipelineModuleConfig
 from kiara.pipeline.structure import PipelineStep
 
 
-def test_workflow_desc_files(workflow_paths):
+def test_workflow_desc_files(pipeline_paths):
 
-    for path in workflow_paths.values():
+    for path in pipeline_paths.values():
         c = PipelineModuleConfig.parse_file(path)
         assert isinstance(c, PipelineModuleConfig)
         assert len(c.steps) > 0
@@ -17,22 +17,22 @@ def test_workflow_desc_files(workflow_paths):
 
 
 def test_workflow_obj_attributes(
-    workflow_configs: typing.Mapping[str, PipelineModuleConfig]
+    pipeline_configs: typing.Mapping[str, PipelineModuleConfig]
 ):
 
-    logic_1 = workflow_configs["logic_1"]
+    logic_1 = pipeline_configs["logic_1"]
 
     assert len(logic_1.steps) == 1
     assert len(logic_1.input_aliases) == 0
     assert len(logic_1.output_aliases) == 0
 
-    logic_2 = workflow_configs["logic_2"]
+    logic_2 = pipeline_configs["logic_2"]
 
     assert len(logic_2.steps) == 2
     assert len(logic_2.input_aliases) == 3
     assert len(logic_2.output_aliases) == 1
 
-    logic_3 = workflow_configs["logic_3"]
+    logic_3 = pipeline_configs["logic_3"]
 
     assert len(logic_3.steps) == 3
     assert len(logic_3.input_aliases) == 0
@@ -40,10 +40,10 @@ def test_workflow_obj_attributes(
 
 
 def test_workflow_obj_creation(
-    workflow_configs: typing.Mapping[str, PipelineModuleConfig]
+    pipeline_configs: typing.Mapping[str, PipelineModuleConfig]
 ):
 
-    logic_1 = workflow_configs["logic_1"]
+    logic_1 = pipeline_configs["logic_1"]
     c = PipelineModule(id="logic_1", module_config=logic_1)
     assert isinstance(c, PipelineModule)
 

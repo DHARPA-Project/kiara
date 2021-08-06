@@ -10,6 +10,7 @@
 - removed 'kiara.module.ModuleInfo' class (use 'kiara.metadata.module_models.KiaraModuleTypeMetadata' instead)
 - refactorings:
     - kiara.pipeline.module.PipelineModuleInfo -> kiara.info.pipelines.PipelineModuleInfo
+    - other renames/relocations of (hopefully) mostly internal classes -- if something is missing it should now be somewhere under 'kiara.info.*'
 - renamed subcommand 'pipeline structure' -> 'pipeline explain'
 
 ## Version 0.0.11

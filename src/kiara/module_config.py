@@ -220,14 +220,12 @@ class ModuleInstanceConfig(KiaraInfoModel):
     module_config: typing.Dict[str, typing.Any] = Field(
         default_factory=dict, description="The configuration for the module."
     )
-    doc: typing.Optional[DocumentationMetadataModel] = Field(
+    doc: DocumentationMetadataModel = Field(
         description="Documentation for this operation.", default=None
     )
 
     @validator("doc", pre=True)
     def create_doc(cls, value):
-        if value is None:
-            return None
         return DocumentationMetadataModel.create(value)
 
     def create_module(self, kiara: "Kiara"):

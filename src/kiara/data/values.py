@@ -354,6 +354,14 @@ class NonRegistryValue(Value):
             return False
         self._hash_cache = None
         self._value = value
+
+        if self._value is None:
+            self.is_set = False
+            self.is_none = True
+        else:
+            self.is_set = True
+            self.is_none = False
+
         return True
 
     def __eq__(self, other):

@@ -110,9 +110,41 @@ class SavedValueMetadata(BaseModel):
     tags: typing.List[str] = Field(
         description="All tags for this value.", default_factory=list
     )
-    metadata: typing.Dict[str, typing.Dict[str, typing.Any]] = Field(
+    metadata: typing.Dict[str, typing.Dict[str, typing.Dict[str, typing.Any]]] = Field(
         description="The metadata associated with this value."
     )
+
+    def get_metadata_items(self, *keys: str) -> typing.Dict[str, typing.Any]:
+
+        if not keys:
+            _keys: typing.Iterable[str] = self.metadata.keys()
+        else:
+            _keys = keys
+
+        result = {}
+        for k in _keys:
+            md = self.metadata.get(k)
+            if md is None:
+                raise Exception(f"No metadata for key '{k}' available.")
+            result[k] = md["metadata_item"]
+
+        return result
+
+    def get_metadata_schemas(self, *keys: str) -> typing.Dict[str, typing.Any]:
+
+        if not keys:
+            _keys: typing.Iterable[str] = self.metadata.keys()
+        else:
+            _keys = keys
+
+        result = {}
+        for k in _keys:
+            md = self.metadata.get(k)
+            if md is None:
+                raise Exception(f"No metadata for key '{k}' available.")
+            result[k] = md["metadata_schema"]
+
+        return result
 
 
 class DataStore(abc.ABC):
@@ -556,7 +588,7 @@ class DataStore(abc.ABC):
         load_config_dict = md.metadata["load_config"]
 
         load_config = LoadConfig(**load_config_dict["metadata_item"])
-        value: Value = self._kiara.run(**load_config.dict(exclude={"value_id", "base_path_input_name"}))  # type: ignore
+        value: Value = self._kiara.run(**load_config.dict(exclude={"value_id", "base_path_input_name", "doc"}))  # type: ignore
         value.id = value_id
 
         value.metadata = md.metadata
@@ -564,6 +596,18 @@ class DataStore(abc.ABC):
         value.is_none = False
         value.is_constant = True
         return value
+
+    def find_all_values_of_type(
+        self, type: str
+    ) -> typing.Dict[str, SavedValueMetadata]:
+
+        result = {}
+        for value_id in self.value_ids:
+            vmd = self.get_metadata_for_id(value_id)
+            if vmd.value_type == type:
+                result[value_id] = vmd
+
+        return result
 
 
 class LocalDataStore(DataStore):

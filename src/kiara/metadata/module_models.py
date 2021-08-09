@@ -161,7 +161,7 @@ class KiaraModuleTypeMetadata(MetadataModel):
 
         config = KiaraModuleConfigMetadata.from_config_class(module_cls._config_cls)
         pipeline_config = None
-        if is_pipeline:
+        if module_cls._module_type_id != "pipeline" and is_pipeline:  # type: ignore
             pipeline_config = module_cls._base_pipeline_config  # type: ignore
 
         return {

@@ -329,6 +329,14 @@ class Kiara(object):
         m = self.create_module(module_type=module_type, module_config=module_config)
         return m.module_instance_doc
 
+    def get_operation(self, operation_id: str):
+
+        op = self.operation_mgmt.profiles.get(operation_id, None)
+        if op is None:
+            raise Exception(f"No operation with id '{operation_id}' available.")
+
+        return op
+
     def run(
         self,
         module_type: str,

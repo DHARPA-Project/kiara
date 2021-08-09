@@ -112,11 +112,15 @@ class PipelineStep(BaseModel):
         if self._module is None:
 
             try:
-                self._module = self.kiara.create_module(
-                    id=self.step_id,
-                    module_type=self.module_type,
-                    module_config=self.module_config,
-                )
+                if self.module_type in self.kiara.operation_mgmt.profiles.keys():
+                    op = self.kiara.operation_mgmt.profiles[self.module_type]
+                    self._module = op.module
+                else:
+                    self._module = self.kiara.create_module(
+                        id=self.step_id,
+                        module_type=self.module_type,
+                        module_config=self.module_config,
+                    )
             except Exception as e:
                 raise Exception(
                     f"Can't assemble pipeline structure '{self.parent_id}': {e}"

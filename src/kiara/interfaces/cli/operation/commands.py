@@ -17,16 +17,23 @@ def operation(ctx):
 
 
 @operation.command(name="list")
-@click.option("--by-type", is_flag=True, help="List the operations by operation type.")
+@click.option(
+    "--by-type", "-t", is_flag=True, help="List the operations by operation type."
+)
 @click.argument("filter", nargs=-1, required=False)
 @click.option(
-    "--type",
-    "-t",
-    multiple=False,
-    help="Only list operations whose name match this string (partial matches allowed).",
+    "--full-doc", "-d", is_flag=True, help="Display the full doc for all operations."
+)
+@click.option(
+    "--omit-default",
+    "-o",
+    is_flag=True,
+    help="Don't list operations that have no specific operation type associated with them.",
 )
 @click.pass_context
-def list(ctx, by_type: bool, filter: typing.Iterable[str], type: str):
+def list(
+    ctx, by_type: bool, filter: typing.Iterable[str], full_doc: bool, omit_default: bool
+):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
@@ -41,16 +48,19 @@ def list(ctx, by_type: bool, filter: typing.Iterable[str], type: str):
 
         for operation_name in sorted(all_operations_types.keys()):
 
-            if type and type not in operation_name:
+            if operation_name == "all":
                 continue
 
             operation_details: Operations = all_operations_types[operation_name]
             first_line_value = True
 
             for op_id, op_config in sorted(operation_details.operation_configs.items()):
-                desc = (
-                    op_config.module_cls.get_type_metadata().documentation.description
-                )
+
+                if full_doc:
+                    desc = op_config.doc.full_doc
+                else:
+                    desc = op_config.doc.description
+
                 if filter:
                     match = True
                     for f in filter:
@@ -86,17 +96,17 @@ def list(ctx, by_type: bool, filter: typing.Iterable[str], type: str):
         for op_id, config in kiara_obj.operation_mgmt.profiles.items():
 
             types = kiara_obj.operation_mgmt.get_types_for_id(op_id)
-            types.remove("all")
-            if type:
-                match = False
-                for t in types:
-                    if type in t:
-                        match = True
-                        break
-                if not match:
-                    continue
 
-            desc = config.module_cls.get_type_metadata().documentation.description
+            if omit_default and len(types) == 1:
+                continue
+
+            types.remove("all")
+
+            if full_doc:
+                desc = config.doc.full_doc
+            else:
+                desc = config.doc.description
+            # desc = config.module_cls.get_type_metadata().documentation.description
             if filter:
                 match = True
                 for f in filter:

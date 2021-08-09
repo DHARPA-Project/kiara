@@ -21,6 +21,10 @@ class SaveValueModuleConfig(ModuleTypeConfig):
 
 
 class SaveValueTypeModule(KiaraModule):
+    """Save a specific value type.
+
+    This is used internally.
+    """
 
     _config_cls = SaveValueModuleConfig
 

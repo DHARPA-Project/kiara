@@ -56,7 +56,7 @@ class ExtractMetadataModule(KiaraModule):
             }
 
             all_metadata_profiles[
-                f"{value_type}.extract_{metadata_key}_metadata"
+                f"{value_type}.extract_metadata.{metadata_key}"
             ] = op_config
 
         return all_metadata_profiles
@@ -154,7 +154,7 @@ class ExtractMetadataModule(KiaraModule):
     def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
 
         value = inputs.get_value_obj("value_item")
-        if value.type_name != self.value_type:
+        if self.value_type != "any" and value.type_name != self.value_type:
             raise KiaraProcessingException(
                 f"Can't extract metadata for value of type '{value.value_schema.type}'. Expected type '{self.value_type}'."
             )

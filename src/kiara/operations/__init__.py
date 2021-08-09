@@ -7,6 +7,7 @@ from rich.console import RenderableType, RenderGroup
 from rich.syntax import Syntax
 from rich.table import Table
 
+from kiara.data.values import ValueSchema
 from kiara.metadata.operation_models import OperationsMetadata
 from kiara.module_config import ModuleInstanceConfig
 from kiara.utils import create_table_from_field_schemas
@@ -59,6 +60,14 @@ class OperationConfig(ModuleInstanceConfig):
         if self._module is None:
             self._module = self.create_module(self.kiara)
         return self._module
+
+    @property
+    def input_schemas(self) -> typing.Mapping[str, ValueSchema]:
+        return self.module.input_schemas
+
+    @property
+    def output_schemas(self) -> typing.Mapping[str, ValueSchema]:
+        return self.module.output_schemas
 
     @property
     def module_cls(self) -> typing.Type["KiaraModule"]:

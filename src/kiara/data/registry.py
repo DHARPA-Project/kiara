@@ -14,6 +14,7 @@ from kiara.pipeline.values import (
     ValueField,
     ValueUpdateHandler,
 )
+from kiara.utils import is_debug
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -91,6 +92,10 @@ class DataRegistry(object):
         except Exception:
             pass
 
+        if is_debug():
+            import traceback
+
+            traceback.print_stack()
         raise Exception(f"No value with id: {value_id}")
 
     def register_value(

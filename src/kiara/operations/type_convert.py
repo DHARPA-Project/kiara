@@ -230,3 +230,44 @@ class ConvertValueOperations(Operations):
     def is_matching_operation(self, op_config: OperationConfig) -> bool:
 
         return issubclass(op_config.module_cls, ConvertValueModule)
+
+    def get_operations_for_source_type(
+        self, value_type: str
+    ) -> typing.Dict[str, OperationConfig]:
+        """Find all operations that transform from the specified type.
+
+        The result dict uses the target type of the conversion as key, and the operation itself as value.
+        """
+
+        result: typing.Dict[str, OperationConfig] = {}
+        for o_id, op in self.operation_configs.items():
+            source_type = op.module_config["source_type"]
+            if source_type == value_type:
+                target_type = op.module_config["target_type"]
+                if target_type in result.keys():
+                    raise Exception(
+                        f"Multiple operations to transform from '{source_type}' to {target_type}"
+                    )
+                result[target_type] = op
+
+        return result
+
+    def get_operations_for_target_type(
+        self, value_type: str
+    ) -> typing.Dict[str, OperationConfig]:
+        """Find all operations that transform to the specified type.
+
+        The result dict uses the source type of the conversion as key, and the operation itself as value.
+        """
+
+        result: typing.Dict[str, OperationConfig] = {}
+        for o_id, op in self.operation_configs.items():
+            target_type = op.module_config["target_type"]
+            if target_type == value_type:
+                source_type = op.module_config["source_type"]
+                if source_type in result.keys():
+                    raise Exception(
+                        f"Multiple operations to transform from '{source_type}' to {target_type}"
+                    )
+                result[source_type] = op
+        return result

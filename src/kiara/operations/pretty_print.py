@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import abc
 import typing
 from pydantic import Field
 
@@ -24,32 +23,6 @@ class PrettyPrintValueModule(KiaraModule):
     _config_cls = PrettyPrintModuleConfig
 
     @classmethod
-    def get_supported_source_types(cls) -> typing.Set[str]:
-        _types = cls.retrieve_supported_source_types()
-        if isinstance(_types, str):
-            _types = [_types]
-
-        return set(_types)
-
-    @classmethod
-    @abc.abstractmethod
-    def retrieve_supported_source_types(cls) -> typing.Union[str, typing.Iterable[str]]:
-        pass
-
-    @classmethod
-    def get_supported_target_types(cls) -> typing.Set[str]:
-        _types = cls.retrieve_supported_target_types()
-        if isinstance(_types, str):
-            _types = [_types]
-
-        return set(_types)
-
-    @classmethod
-    @abc.abstractmethod
-    def retrieve_supported_target_types(cls) -> typing.Union[str, typing.Iterable[str]]:
-        pass
-
-    @classmethod
     def retrieve_module_profiles(
         cls, kiara: Kiara
     ) -> typing.Mapping[
@@ -60,33 +33,29 @@ class PrettyPrintValueModule(KiaraModule):
             str, typing.Dict[str, typing.Dict[str, typing.Any]]
         ] = {}
 
-        sup_types: typing.Iterable[str] = cls.get_supported_source_types()
-        if "*" in sup_types:
-            sup_types = kiara.type_mgmt.value_type_names
+        for value_type_name, value_type_cls in kiara.type_mgmt.value_types.items():
 
-        for sup_type in sup_types:
+            for attr in dir(value_type_cls):
+                if not attr.startswith("pretty_print_as_"):
+                    continue
 
-            if sup_type not in kiara.type_mgmt.value_type_names:
-                log_message(
-                    f"Ignoring pretty print operation for source type '{sup_type}': type not available"
-                )
-                continue
-
-            target_types = cls.get_supported_target_types()
-            for tar_type in target_types:
-                if tar_type not in kiara.type_mgmt.value_type_names:
+                target_type = attr[16:]
+                if target_type not in kiara.type_mgmt.value_type_names:
                     log_message(
-                        f"Ignoring pretty print operation for target type '{tar_type}': type not available"
+                        f"Pretty print target type '{target_type}' for source type '{value_type_name}' not valid, ignoring."
                     )
                     continue
 
                 op_config = {
                     "module_type": cls._module_type_id,  # type: ignore
-                    "module_config": {"value_type": sup_type, "target_type": tar_type},
-                    "doc": f"Pretty print a value of type '{sup_type}' as '{tar_type}'.",
+                    "module_config": {
+                        "value_type": value_type_name,
+                        "target_type": target_type,
+                    },
+                    "doc": f"Pretty print a value of type '{value_type_name}' as '{target_type}'.",
                 }
                 all_metadata_profiles[
-                    f"{sup_type}.pretty_print.as.{tar_type}"
+                    f"{value_type_name}.pretty_print_as.{target_type}"
                 ] = op_config
 
         return all_metadata_profiles
@@ -125,16 +94,6 @@ class PrettyPrintValueModule(KiaraModule):
         }
         return outputs
 
-    @abc.abstractmethod
-    def pretty_print(
-        self,
-        value: Value,
-        value_type: str,
-        target_type: str,
-        print_config: typing.Mapping[str, typing.Any],
-    ) -> typing.Any:
-        """Render the value."""
-
     def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
 
         value_obj: Value = inputs.get_value_obj("value_item")
@@ -146,13 +105,18 @@ class PrettyPrintValueModule(KiaraModule):
         value_type: str = self.get_config_value("value_type")
         target_type: str = self.get_config_value("target_type")
 
-        result = self.pretty_print(
-            value=value_obj,
-            value_type=value_type,
-            target_type=target_type,
-            print_config=print_config,
-        )
-        outputs.set_value("printed", result)
+        func_name = f"pretty_print_as_{target_type}"
+
+        if not hasattr(value_obj.type_obj, func_name):
+            raise Exception(
+                f"Type '{value_type}' can't be pretty printed as '{target_type}'. This is most likely a bug."
+            )
+
+        func = getattr(value_obj.type_obj, func_name)
+        # TODO: check signature
+        printed = func(value=value_obj, print_config=print_config)
+
+        outputs.set_value("printed", printed)
 
 
 class PrettyPrintOperations(Operations):

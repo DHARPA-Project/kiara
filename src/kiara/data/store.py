@@ -110,7 +110,7 @@ class SavedValueMetadata(BaseModel):
     tags: typing.List[str] = Field(
         description="All tags for this value.", default_factory=list
     )
-    metadata: typing.Dict[str, typing.Dict[str, typing.Dict[str, typing.Any]]] = Field(
+    metadata: typing.Dict[str, typing.Dict[str, typing.Any]] = Field(
         description="The metadata associated with this value."
     )
 

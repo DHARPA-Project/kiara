@@ -112,7 +112,6 @@ class BatchControllerManual(PipelineController):
     def __init__(
         self,
         pipeline: typing.Optional["Pipeline"] = None,
-        auto_process: bool = True,
         processor: typing.Optional["ModuleProcessor"] = None,
     ):
 
@@ -178,11 +177,8 @@ class BatchControllerManual(PipelineController):
     def process_stage(self, stage_nr: int):
 
         if self._is_running:
-            print("IS RUNNING")
             log.debug("Pipeline running, doing nothing.")
             raise Exception("Pipeline already running.")
-
-        print("PROCESSING")
 
         self._is_running = True
         try:
@@ -191,15 +187,11 @@ class BatchControllerManual(PipelineController):
                 if idx + 1 > stage_nr:
                     break
 
-                print(f"PROCESSING STAGE: {idx}")
-
                 if self._finished_until is not None and idx <= self._finished_until:
-                    print("STAGE CACHED")
                     continue
 
                 job_ids = []
                 for step_id in stage:
-                    print(f"PROCESSING STEP: {step_id}")
                     if not self.can_be_processed(step_id):
                         if self.can_be_skipped(step_id):
                             continue
@@ -224,5 +216,3 @@ class BatchControllerManual(PipelineController):
                 self._finished_until = idx
         finally:
             self._is_running = False
-
-        print("FINISHED")

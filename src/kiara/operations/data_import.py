@@ -69,7 +69,7 @@ class DataImportModule(KiaraModule):
                     "source_name": source_name,
                     "source_type": source_type,
                 },
-                "doc": f"Import data of type '{sup_type}' from a {source_name} {source_type}.",
+                "doc": f"Import data of type '{sup_type}' from a {source_name} {source_type} and save it to the kiara data store.",
             }
             all_metadata_profiles[
                 f"{sup_type}.import_from.{source_name}.{source_type}"
@@ -151,19 +151,24 @@ class DataImportOperations(Operations):
 
         return issubclass(op_config.module_cls, DataImportModule)
 
-    def get_import_operation_for_type(self, value_type: str) -> OperationConfig:
+    def get_import_operations_for_type(
+        self, value_type: str
+    ) -> typing.Dict[str, typing.Dict[str, OperationConfig]]:
+        """Return all available import operataions for a value type.
 
-        result = []
+        The result dictionary uses the source type as first level key, a source name/description as 2nd level key,
+        and the Operation object as value.
+        """
+
+        result: typing.Dict[str, typing.Dict[str, OperationConfig]] = {}
 
         for op_config in self.operation_configs.values():
-            if op_config.module_config["value_type"] == value_type:
-                result.append(op_config)
+            if op_config.module_config["value_type"] != value_type:
+                continue
 
-        if not result:
-            raise Exception(f"No import operation for type '{value_type}' registered.")
-        elif len(result) != 1:
-            raise Exception(
-                f"Multiple save operations for type '{value_type}' registered."
-            )
+            source_type = op_config.module_config["source_type"]
+            source_name = op_config.module_config["source_name"]
 
-        return result[0]
+            result.setdefault(source_type, {})[source_name] = op_config
+
+        return result

@@ -75,7 +75,10 @@ class SaveValueTypeModule(KiaraModule):
     ]:
 
         inputs: typing.Mapping[str, typing.Any] = {
-            "value_id": {"type": "string", "doc": "The id of the saved value."},
+            "value_id": {
+                "type": "string",
+                "doc": "The id to use when saving the value.",
+            },
             "value_item": {
                 "type": self.get_config_value("value_type"),
                 "doc": f"A value of type '{self.get_config_value('value_type')}'.",
@@ -98,27 +101,24 @@ class SaveValueTypeModule(KiaraModule):
             "load_config": {
                 "type": "load_config",
                 "doc": "The configuration to use with kiara to load the saved value.",
-            },
-            "value_id": {"type": "string", "doc": "The id of the saved value."},
+            }
         }
 
         return outputs
 
     @abc.abstractmethod
-    def save_value(
-        self, value: Value, value_id: str, base_path: str
-    ) -> typing.Dict[str, typing.Any]:
+    def save_value(self, value: Value, base_path: str) -> typing.Dict[str, typing.Any]:
         """Save the value, and return the load config needed to load it again."""
 
     def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
 
         value_id: str = inputs.get_value_data("value_id")
+        if not value_id:
+            raise KiaraProcessingException("No value id provided.")
         value_obj: Value = inputs.get_value_obj("value_item")
         base_path: str = inputs.get_value_data("base_path")
 
-        load_config = self.save_value(
-            value=value_obj, value_id=value_id, base_path=base_path
-        )
+        load_config = self.save_value(value=value_obj, base_path=base_path)
         load_config["value_id"] = value_id
 
         lc = LoadConfig(**load_config)

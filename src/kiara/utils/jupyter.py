@@ -28,6 +28,9 @@ def save_image(graph: nx.Graph, path: str):
         f.write(graph_b)
 
 
-def graph_to_image(graph: nx.Graph):
+def graph_to_image(graph: nx.Graph, return_bytes: bool = False):
     b = create_image(graph=graph)
-    return Image(b)
+    if return_bytes:
+        return b
+    else:
+        return Image(b)

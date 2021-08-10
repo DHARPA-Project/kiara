@@ -9,7 +9,7 @@ from kiara import Kiara
 from kiara.info import KiaraInfoModel
 from kiara.metadata.operation_models import OperationsMetadata
 from kiara.module_config import ModuleInstanceConfig
-from kiara.operations import OperationConfig, Operations
+from kiara.operations import Operation, OperationType
 
 
 class OperationsInfo(KiaraInfoModel):
@@ -23,7 +23,7 @@ class OperationsInfo(KiaraInfoModel):
         }
 
     @classmethod
-    def create(cls, operations: Operations):
+    def create(cls, operations: OperationType):
 
         info = OperationsMetadata.from_operations_class(operations.__class__)
         return OperationsInfo(
@@ -46,7 +46,7 @@ class OperationsInfo(KiaraInfoModel):
     info: OperationsMetadata = Field(
         description="Details about the type of operations contained in this collection."
     )
-    operation_configs: typing.Dict[str, OperationConfig] = Field(
+    operation_configs: typing.Dict[str, Operation] = Field(
         description="All available operation ids and their configurations."
     )
 
@@ -72,7 +72,7 @@ class OperationsGroupInfo(KiaraInfoModel):
     operation_types: typing.Dict[str, OperationsInfo] = Field(
         description="The available operation types and their details."
     )
-    operation_configs: typing.Dict[str, OperationConfig] = Field(
+    operation_configs: typing.Dict[str, Operation] = Field(
         description="The available operation ids and configs."
     )
 

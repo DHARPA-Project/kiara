@@ -9,7 +9,7 @@ from kiara.data.values import Value, ValueSchema, ValueSet
 from kiara.exceptions import KiaraProcessingException
 from kiara.metadata.data import LoadConfig
 from kiara.module_config import ModuleTypeConfig
-from kiara.operations import OperationConfig, Operations
+from kiara.operations import Operation, OperationType
 from kiara.utils import log_message
 
 log = logging.getLogger("kiara")
@@ -44,9 +44,7 @@ class SaveValueTypeModule(KiaraModule):
     @classmethod
     def retrieve_module_profiles(
         cls, kiara: Kiara
-    ) -> typing.Mapping[
-        str, typing.Union[typing.Mapping[str, typing.Any], OperationConfig]
-    ]:
+    ) -> typing.Mapping[str, typing.Union[typing.Mapping[str, typing.Any], Operation]]:
 
         all_metadata_profiles: typing.Dict[
             str, typing.Dict[str, typing.Dict[str, typing.Any]]
@@ -131,14 +129,14 @@ class SaveValueTypeModule(KiaraModule):
         outputs.set_values(load_config=lc)
 
 
-class SaveOperations(Operations):
+class SaveOperationType(OperationType):
     """Save a value into a data store."""
 
-    def is_matching_operation(self, op_config: OperationConfig) -> bool:
+    def is_matching_operation(self, op_config: Operation) -> bool:
 
         return issubclass(op_config.module_cls, SaveValueTypeModule)
 
-    def get_save_operation_for_type(self, value_type: str) -> OperationConfig:
+    def get_save_operation_for_type(self, value_type: str) -> Operation:
 
         result = []
 

@@ -23,7 +23,7 @@ class ClassAttributes(object):
         self._attrs: typing.Iterable[str] = attrs
 
 
-class OperationConfig(ModuleInstanceConfig):
+class Operation(ModuleInstanceConfig):
     @classmethod
     def create_operation_config(
         cls,
@@ -33,7 +33,7 @@ class OperationConfig(ModuleInstanceConfig):
         module_config: typing.Union[
             None, typing.Mapping[str, typing.Any], "PipelineModuleConfig"
         ] = None,
-    ) -> "OperationConfig":
+    ) -> "Operation":
 
         _config = ModuleInstanceConfig.create(
             config=config, module_config=module_config, kiara=kiara
@@ -130,7 +130,7 @@ class OperationConfig(ModuleInstanceConfig):
         return table
 
 
-class Operations(object):
+class OperationType(object):
     @classmethod
     def get_type_metadata(cls) -> OperationsMetadata:
 
@@ -144,9 +144,9 @@ class Operations(object):
             kiara = Kiara.instance()
 
         self._kiara: "Kiara" = kiara
-        self._operations: typing.Dict[str, OperationConfig] = {}
+        self._operations: typing.Dict[str, Operation] = {}
 
-    def is_matching_operation(self, op_config: OperationConfig) -> bool:
+    def is_matching_operation(self, op_config: Operation) -> bool:
         raise NotImplementedError()
 
     def add_operation(self, module_type_id, op_config) -> bool:
@@ -158,12 +158,12 @@ class Operations(object):
         return True
 
     @property
-    def operation_configs(self) -> typing.Mapping[str, OperationConfig]:
+    def operation_configs(self) -> typing.Mapping[str, Operation]:
         return self._operations
 
 
-class AllOperations(Operations):
-    def is_matching_operation(self, op_config: OperationConfig) -> bool:
+class AllOperationType(OperationType):
+    def is_matching_operation(self, op_config: Operation) -> bool:
         return True
 
 
@@ -172,7 +172,7 @@ class OperationMgmt(object):
         self,
         kiara: "Kiara",
         operation_type_classes: typing.Optional[
-            typing.Mapping[str, typing.Type[Operations]]
+            typing.Mapping[str, typing.Type[OperationType]]
         ] = None,
     ):
 
@@ -182,17 +182,17 @@ class OperationMgmt(object):
             from kiara.utils.class_loading import find_all_operation_types
 
             self._operation_type_classes: typing.Dict[
-                str, typing.Type["Operations"]
+                str, typing.Type["OperationType"]
             ] = find_all_operation_types()
         else:
             self._operation_type_classes = dict(operation_type_classes)
-        self._operation_types: typing.Optional[typing.Dict[str, Operations]] = None
+        self._operation_types: typing.Optional[typing.Dict[str, OperationType]] = None
 
-        self._profiles: typing.Optional[typing.Dict[str, OperationConfig]] = None
+        self._profiles: typing.Optional[typing.Dict[str, Operation]] = None
         self._operations: typing.Optional[typing.Dict[str, typing.List[str]]] = None
 
     @property
-    def profiles(self) -> typing.Mapping[str, OperationConfig]:
+    def profiles(self) -> typing.Mapping[str, Operation]:
 
         if self._profiles is not None:
             return self._profiles
@@ -204,7 +204,7 @@ class OperationMgmt(object):
             mod_cls = self._kiara.get_module_class(module_id)
             mod_conf = mod_cls._config_cls
             if not mod_conf.requires_config():
-                _profiles[module_id] = OperationConfig.create_operation_config(
+                _profiles[module_id] = Operation.create_operation_config(
                     operation_id=module_id,
                     config={
                         "module_type": module_id,
@@ -221,10 +221,12 @@ class OperationMgmt(object):
                     else:
                         profile_id = profile_name
                     if profile_id in _profiles.keys():
-                        raise Exception(f"Duplicate operation id: {profile_id}")
+                        raise Exception(
+                            f"Duplicate operation id '{profile_id}': {_profiles[profile_id].dict()} -- {config}"
+                        )
 
-                    if not isinstance(config, OperationConfig):
-                        config = OperationConfig.create_operation_config(
+                    if not isinstance(config, Operation):
+                        config = Operation.create_operation_config(
                             operation_id=profile_id, config=config, kiara=self._kiara
                         )
                     _profiles[profile_id] = config
@@ -242,7 +244,7 @@ class OperationMgmt(object):
         return self._profiles
 
     @property
-    def operation_types(self) -> typing.Mapping[str, Operations]:
+    def operation_types(self) -> typing.Mapping[str, OperationType]:
 
         if self._operation_types is not None:
             return self._operation_types
@@ -257,7 +259,7 @@ class OperationMgmt(object):
         self.profiles  # noqa
         return self._operation_types
 
-    def get_operations(self, operation_type: str) -> Operations:
+    def get_operations(self, operation_type: str) -> OperationType:
 
         if operation_type not in self.operation_types.keys():
             raise Exception(f"No operation type '{operation_type}' registered.")

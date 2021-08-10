@@ -2,6 +2,10 @@
 
 ## Version 0.0.12 (upcoming)
 
+- renamed:
+    - kiara.operations.OperationConfig -> kiara.operations.Operation
+    - kiara.operations.Operations -> kiara.operations.OperationType
+- re-organizing/re-naming of onboarding/import related module/operation names
 - small change to how job control works in the pipeline-controller:
     - calling the `wait_for` job-ids method is now mandatory after calling the `process_step` method, even when using the synchronous non-parallel processor
     - because the `wait_for` method now comes with an argument `sync_outputs` (default: True) that allows not actually syncing the output of the processing step to the pipeline value (which gives the controller more control over when to do that)

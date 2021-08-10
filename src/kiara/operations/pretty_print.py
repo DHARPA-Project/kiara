@@ -6,7 +6,7 @@ from kiara import Kiara, KiaraModule
 from kiara.data.values import Value, ValueSchema, ValueSet
 from kiara.defaults import DEFAULT_PRETTY_PRINT_CONFIG
 from kiara.module_config import ModuleTypeConfig
-from kiara.operations import OperationConfig, Operations
+from kiara.operations import Operation, OperationType
 from kiara.utils import log_message
 
 
@@ -25,9 +25,7 @@ class PrettyPrintValueModule(KiaraModule):
     @classmethod
     def retrieve_module_profiles(
         cls, kiara: Kiara
-    ) -> typing.Mapping[
-        str, typing.Union[typing.Mapping[str, typing.Any], OperationConfig]
-    ]:
+    ) -> typing.Mapping[str, typing.Union[typing.Mapping[str, typing.Any], Operation]]:
 
         all_metadata_profiles: typing.Dict[
             str, typing.Dict[str, typing.Dict[str, typing.Any]]
@@ -119,14 +117,14 @@ class PrettyPrintValueModule(KiaraModule):
         outputs.set_value("printed", printed)
 
 
-class PrettyPrintOperations(Operations):
-    def is_matching_operation(self, op_config: OperationConfig) -> bool:
+class PrettyPrintOperationType(OperationType):
+    def is_matching_operation(self, op_config: Operation) -> bool:
 
         return issubclass(op_config.module_cls, PrettyPrintValueModule)
 
     def get_pretty_print_operation(
         self, value_type: str, target_type: str
-    ) -> OperationConfig:
+    ) -> Operation:
 
         result = []
         for op_config in self.operation_configs.values():

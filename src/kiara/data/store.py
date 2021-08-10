@@ -17,8 +17,8 @@ from kiara.metadata.data import LoadConfig, SaveConfig
 if typing.TYPE_CHECKING:
     from kiara.data.values import Value
     from kiara.kiara import Kiara
-    from kiara.operations.calculate_hash import CalculateHashOperations
-    from kiara.operations.save_value import SaveOperations
+    from kiara.operations.calculate_hash import CalculateHashOperationType
+    from kiara.operations.save_value import SaveOperationType
 
 
 log = logging.getLogger("kiara")
@@ -477,7 +477,7 @@ class DataStore(abc.ABC):
                 )
 
         # try to calculate the hash for the value, so we can use it as value id
-        hash_ops: CalculateHashOperations = self._kiara.operation_mgmt.get_operations("calculate_hash")  # type: ignore
+        hash_ops: CalculateHashOperationType = self._kiara.operation_mgmt.get_operations("calculate_hash")  # type: ignore
 
         hash_ops_for_type = hash_ops.get_hash_operations_for_type(value_type=value_type)
 
@@ -749,7 +749,7 @@ class LocalDataStore(DataStore):
         self, value_id: str, value_type: str, value: "Value"
     ) -> typing.Optional[SaveConfig]:
 
-        save_operations: SaveOperations = self._kiara.operation_mgmt.get_operations("save_value")  # type: ignore
+        save_operations: SaveOperationType = self._kiara.operation_mgmt.get_operations("save_value")  # type: ignore
 
         op_config = save_operations.get_save_operation_for_type(value_type)
 

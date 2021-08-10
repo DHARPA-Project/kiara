@@ -8,7 +8,7 @@ from kiara.data import Value, ValueSet
 from kiara.data.values import ValueSchema
 from kiara.exceptions import KiaraProcessingException
 from kiara.module_config import ModuleTypeConfig
-from kiara.operations import OperationConfig, Operations
+from kiara.operations import Operation, OperationType
 from kiara.utils import log_message
 
 
@@ -28,9 +28,7 @@ class ExtractMetadataModule(KiaraModule):
     @classmethod
     def retrieve_module_profiles(
         cls, kiara: "Kiara"
-    ) -> typing.Mapping[
-        str, typing.Union[typing.Mapping[str, typing.Any], OperationConfig]
-    ]:
+    ) -> typing.Mapping[str, typing.Union[typing.Mapping[str, typing.Any], Operation]]:
 
         all_metadata_profiles: typing.Dict[
             str, typing.Dict[str, typing.Dict[str, typing.Any]]
@@ -170,15 +168,15 @@ class ExtractMetadataModule(KiaraModule):
         outputs.set_value("metadata_item", metadata)
 
 
-class ExtractMetadataOperations(Operations):
+class ExtractMetadataOperationType(OperationType):
     """Extract metadata from a dataset."""
 
-    def is_matching_operation(self, op_config: OperationConfig) -> bool:
+    def is_matching_operation(self, op_config: Operation) -> bool:
         return issubclass(op_config.module_cls, ExtractMetadataModule)
 
     def get_all_operations_for_type(
         self, value_type: str
-    ) -> typing.Mapping[str, OperationConfig]:
+    ) -> typing.Mapping[str, Operation]:
 
         result = {}
         for op_config in self.operation_configs.values():

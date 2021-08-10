@@ -34,7 +34,7 @@ from kiara.workflow.kiara_workflow import KiaraWorkflow
 
 if typing.TYPE_CHECKING:
     from kiara.module import KiaraModule
-    from kiara.operations.pretty_print import PrettyPrintOperations
+    from kiara.operations.pretty_print import PrettyPrintOperationType
 
 log = logging.getLogger("kiara")
 
@@ -462,7 +462,7 @@ class Kiara(object):
         print_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
     ) -> typing.Any:
 
-        pretty_print_ops: PrettyPrintOperations = self.operation_mgmt.get_operations("pretty_print")  # type: ignore
+        pretty_print_ops: PrettyPrintOperationType = self.operation_mgmt.get_operations("pretty_print")  # type: ignore
 
         return pretty_print_ops.pretty_print(
             value=value, target_type=target_type, print_config=print_config

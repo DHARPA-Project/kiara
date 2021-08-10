@@ -7,7 +7,7 @@ from kiara import Kiara, KiaraModule
 from kiara.data.values import Value, ValueSchema, ValueSet
 from kiara.exceptions import KiaraProcessingException
 from kiara.module_config import ModuleTypeConfig
-from kiara.operations import OperationConfig, Operations
+from kiara.operations import Operation, OperationType
 from kiara.utils import log_message
 
 
@@ -24,9 +24,7 @@ class ConvertValueModule(KiaraModule):
     @classmethod
     def retrieve_module_profiles(
         cls, kiara: "Kiara"
-    ) -> typing.Mapping[
-        str, typing.Union[typing.Mapping[str, typing.Any], OperationConfig]
-    ]:
+    ) -> typing.Mapping[str, typing.Union[typing.Mapping[str, typing.Any], Operation]]:
 
         all_metadata_profiles: typing.Dict[
             str, typing.Dict[str, typing.Dict[str, typing.Any]]
@@ -226,20 +224,20 @@ class ConvertValueModule(KiaraModule):
         outputs.set_value("value_item", converted)
 
 
-class ConvertValueOperations(Operations):
-    def is_matching_operation(self, op_config: OperationConfig) -> bool:
+class ConvertValueOperationType(OperationType):
+    def is_matching_operation(self, op_config: Operation) -> bool:
 
         return issubclass(op_config.module_cls, ConvertValueModule)
 
     def get_operations_for_source_type(
         self, value_type: str
-    ) -> typing.Dict[str, OperationConfig]:
+    ) -> typing.Dict[str, Operation]:
         """Find all operations that transform from the specified type.
 
         The result dict uses the target type of the conversion as key, and the operation itself as value.
         """
 
-        result: typing.Dict[str, OperationConfig] = {}
+        result: typing.Dict[str, Operation] = {}
         for o_id, op in self.operation_configs.items():
             source_type = op.module_config["source_type"]
             if source_type == value_type:
@@ -254,13 +252,13 @@ class ConvertValueOperations(Operations):
 
     def get_operations_for_target_type(
         self, value_type: str
-    ) -> typing.Dict[str, OperationConfig]:
+    ) -> typing.Dict[str, Operation]:
         """Find all operations that transform to the specified type.
 
         The result dict uses the source type of the conversion as key, and the operation itself as value.
         """
 
-        result: typing.Dict[str, OperationConfig] = {}
+        result: typing.Dict[str, Operation] = {}
         for o_id, op in self.operation_configs.items():
             target_type = op.module_config["target_type"]
             if target_type == value_type:

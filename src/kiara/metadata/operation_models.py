@@ -11,13 +11,13 @@ from kiara.metadata.core_models import (
 )
 
 if typing.TYPE_CHECKING:
-    from kiara.operations import Operations
+    from kiara.operations import OperationType
 
 
 class OperationsMetadata(MetadataModel):
     @classmethod
     def from_operations_class(
-        cls, operation_type_cls: typing.Type["Operations"]
+        cls, operation_type_cls: typing.Type["OperationType"]
     ) -> "OperationsMetadata":
 
         origin_md = OriginMetadataModel.from_class(operation_type_cls)

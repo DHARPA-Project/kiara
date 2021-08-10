@@ -6,7 +6,7 @@ from kiara import KiaraModule
 from kiara.data import Value, ValueSet
 from kiara.data.values import ValueSchema
 from kiara.module_config import ModuleTypeConfig
-from kiara.operations import OperationConfig, Operations
+from kiara.operations import Operation, OperationType
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -29,9 +29,7 @@ class CalculateValueHashModule(KiaraModule):
     @classmethod
     def retrieve_module_profiles(
         cls, kiara: "Kiara"
-    ) -> typing.Mapping[
-        str, typing.Union[typing.Mapping[str, typing.Any], OperationConfig]
-    ]:
+    ) -> typing.Mapping[str, typing.Union[typing.Mapping[str, typing.Any], Operation]]:
 
         all_metadata_profiles: typing.Dict[
             str, typing.Dict[str, typing.Dict[str, typing.Any]]
@@ -81,16 +79,16 @@ class CalculateValueHashModule(KiaraModule):
         outputs.set_value("hash", value_hash)
 
 
-class CalculateHashOperations(Operations):
+class CalculateHashOperationType(OperationType):
     """Calculate a hash for a dataset."""
 
-    def is_matching_operation(self, op_config: OperationConfig) -> bool:
+    def is_matching_operation(self, op_config: Operation) -> bool:
 
         return op_config.module_cls == CalculateValueHashModule
 
     def get_hash_operations_for_type(
         self, value_type: str
-    ) -> typing.Dict[str, OperationConfig]:
+    ) -> typing.Dict[str, Operation]:
 
         result = {}
         for op_config in self.operation_configs.values():

@@ -7,7 +7,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from kiara import Kiara
-from kiara.operations import Operations
+from kiara.operations import OperationType
 
 
 @click.group()
@@ -51,7 +51,7 @@ def list(
             if operation_name == "all":
                 continue
 
-            operation_details: Operations = all_operations_types[operation_name]
+            operation_details: OperationType = all_operations_types[operation_name]
             first_line_value = True
 
             for op_id, op_config in sorted(operation_details.operation_configs.items()):

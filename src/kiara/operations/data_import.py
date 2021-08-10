@@ -7,7 +7,7 @@ from pydantic import Field
 from kiara import Kiara, KiaraModule
 from kiara.data.values import NonRegistryValue, Value, ValueSchema, ValueSet
 from kiara.module_config import ModuleTypeConfig
-from kiara.operations import OperationConfig, Operations
+from kiara.operations import Operation, OperationType
 from kiara.utils import log_message
 
 log = logging.getLogger("kiara")
@@ -35,9 +35,7 @@ class DataImportModule(KiaraModule):
     @classmethod
     def retrieve_module_profiles(
         cls, kiara: Kiara
-    ) -> typing.Mapping[
-        str, typing.Union[typing.Mapping[str, typing.Any], OperationConfig]
-    ]:
+    ) -> typing.Mapping[str, typing.Union[typing.Mapping[str, typing.Any], Operation]]:
 
         all_metadata_profiles: typing.Dict[
             str, typing.Dict[str, typing.Dict[str, typing.Any]]
@@ -144,23 +142,23 @@ class DataImportModule(KiaraModule):
         outputs.set_values(value_item=result, value_metadata=v_md)
 
 
-class DataImportOperations(Operations):
+class DataImportOperationType(OperationType):
     """Save a value into a data store."""
 
-    def is_matching_operation(self, op_config: OperationConfig) -> bool:
+    def is_matching_operation(self, op_config: Operation) -> bool:
 
         return issubclass(op_config.module_cls, DataImportModule)
 
     def get_import_operations_for_type(
         self, value_type: str
-    ) -> typing.Dict[str, typing.Dict[str, OperationConfig]]:
+    ) -> typing.Dict[str, typing.Dict[str, Operation]]:
         """Return all available import operataions for a value type.
 
         The result dictionary uses the source type as first level key, a source name/description as 2nd level key,
         and the Operation object as value.
         """
 
-        result: typing.Dict[str, typing.Dict[str, OperationConfig]] = {}
+        result: typing.Dict[str, typing.Dict[str, Operation]] = {}
 
         for op_config in self.operation_configs.values():
             if op_config.module_config["value_type"] != value_type:

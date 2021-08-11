@@ -37,33 +37,26 @@ async def test_module_explain_subcommand():
     assert result.exit_code == 0
     assert "Pipeline config" in result.stdout
     assert "Processing source code" not in result.stdout
-    assert "https://github.com/DHARPA-Project/kiara_modules.core" in result.stdout
+    # assert "https://github.com/DHARPA-Project/kiara_modules.core" in result.stdout
 
     result = await runner.invoke(cli, "module explain logic.and")
 
     assert result.exit_code == 0
     assert "Pipeline config" not in result.stdout
     assert "Processing source code" in result.stdout
-    assert "https://github.com/DHARPA-Project/kiara_modules.core" in result.stdout
+    # assert "https://github.com/DHARPA-Project/kiara_modules.core" in result.stdout
 
 
 async def test_module_explain_instance_subcommand():
 
     runner = CliRunner()
-    result = await runner.invoke(cli, "module explain logic.xor")
+    result = await runner.invoke(cli, "module explain-instance logic.xor")
 
     assert result.exit_code == 0
-    assert "Pipeline config" in result.stdout
-    assert "Processing source code" not in result.stdout
-    assert "A boolean describing this input state." in result.stdout
+    assert "Inputs" in result.stdout
     assert "constants" in result.stdout
-    assert "https://github.com/DHARPA-Project/kiara_modules.core" in result.stdout
 
-    result = await runner.invoke(cli, "module explain logic.and")
-
+    result = await runner.invoke(cli, "module explain-instance logic.and")
     assert result.exit_code == 0
-    assert "Pipeline config" not in result.stdout
-    assert "Processing source code" in result.stdout
-    assert "A boolean describing this input state." in result.stdout
+    assert "Inputs" in result.stdout
     assert "constants" in result.stdout
-    assert "https://github.com/DHARPA-Project/kiara_modules.core" in result.stdout

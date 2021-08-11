@@ -54,7 +54,6 @@
       - PipelineInputField
       - PipelineOutputField
 
-
 ## Version 0.0.9
 
 - removed 'aliases' attribute from Value class, aliases are now specified when calling 'save' on the Value object

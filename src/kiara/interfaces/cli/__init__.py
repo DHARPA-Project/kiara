@@ -33,7 +33,7 @@ def cli(ctx):
     """Main cli entry-point, contains all the sub-commands."""
 
     ctx.obj = {}
-    ctx.obj["kiara"] = Kiara.instance()
+    ctx.obj["kiara"] = Kiara()
 
 
 cli.add_command(run)

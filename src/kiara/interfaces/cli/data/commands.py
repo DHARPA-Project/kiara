@@ -43,6 +43,7 @@ def data(ctx):
 )
 @click.pass_context
 def list_values(ctx, with_alias, only_latest, tags, all):
+    """List all data items that are stored in kiara."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
@@ -98,6 +99,7 @@ def list_values(ctx, with_alias, only_latest, tags, all):
 @click.argument("value_id", nargs=1, required=True)
 @click.pass_context
 def explain_value(ctx, value_id: str):
+    """Print the metadata of a stored value."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
@@ -110,6 +112,7 @@ def explain_value(ctx, value_id: str):
 @click.argument("value_id", nargs=1, required=True)
 @click.pass_context
 def load_value(ctx, value_id: str):
+    """Load a stored value and print it in a format suitable for the terminal."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 

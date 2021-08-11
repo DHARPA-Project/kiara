@@ -16,6 +16,7 @@ def metadata(ctx):
 @metadata.command(name="list")
 @click.pass_context
 def list_metadata(ctx):
+    """List available metadata schemas."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
@@ -36,6 +37,7 @@ def list_metadata(ctx):
 @click.option("--details", "-d", help="Print more schema details.", is_flag=True)
 @click.pass_context
 def explain_metadata(ctx, metadata_key, json_schema, details):
+    """Print details for a specific metadata schema."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 

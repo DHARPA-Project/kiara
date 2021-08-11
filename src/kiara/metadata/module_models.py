@@ -323,6 +323,6 @@ class KiaraModuleInstanceMetadata(MetadataModel):
             **self.outputs_schema,
         )
         table.add_row("Outputs", outputs_table)
-        table.add_row("Source code", self.type_metadata.process_src)
+        # table.add_row("Source code", self.type_metadata.process_src)
 
         return table

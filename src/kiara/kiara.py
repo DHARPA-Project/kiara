@@ -16,14 +16,13 @@ from kiara.data.registry import DataRegistry
 from kiara.data.store import LocalDataStore
 from kiara.data.types import ValueType
 from kiara.data.types.type_mgmt import TypeMgmt
-from kiara.defaults import KIARA_DATA_STORE_DIR
 from kiara.interfaces import get_console
 from kiara.metadata.mgmt import MetadataMgmt
 from kiara.metadata.module_models import KiaraModuleTypeMetadata
 from kiara.module_config import ModuleInstanceConfig
 from kiara.module_mgmt import ModuleManager
 from kiara.module_mgmt.merged import MergedModuleManager
-from kiara.operations import OperationMgmt
+from kiara.operations import Operation, OperationMgmt
 from kiara.pipeline.config import PipelineModuleConfig
 from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.pipeline import Pipeline
@@ -82,10 +81,7 @@ class Kiara(object):
 
         self._operation_mgmt = OperationMgmt(kiara=self)
         self._metadata_mgmt = MetadataMgmt(kiara=self)
-        store_base_path = KIARA_DATA_STORE_DIR
-        if os.getenv("KIARA_DATA_STORE"):
-            store_base_path = os.getenv("KIARA_DATA_STORE")  # type: ignore
-        self._data_store = LocalDataStore(kiara=self, base_path=store_base_path)
+        self._data_store = LocalDataStore(kiara=self, base_path=config.data_store)
 
         # self.start_zmq_device()
         # self.start_log_thread()
@@ -101,6 +97,10 @@ class Kiara(object):
         self._module_mgr: MergedModuleManager = MergedModuleManager(
             config.module_managers
         )
+
+    @property
+    def config(self) -> KiaraConfig:
+        return self._config
 
     @property
     def default_processor(self) -> "ModuleProcessor":
@@ -339,16 +339,27 @@ class Kiara(object):
 
     def run(
         self,
-        module_type: str,
+        module_type: typing.Union[str, Operation],
         module_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         inputs: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         output_name: typing.Optional[str] = None,
         resolve_result: bool = False,
     ) -> typing.Union[ValueSet, Value, typing.Any]:
 
-        module = self.create_module(
-            module_type=module_type, module_config=module_config
-        )
+        if isinstance(module_type, str):
+            if module_type in self.available_module_types:
+                module = self.create_module(
+                    module_type=module_type, module_config=module_config
+                )
+            elif module_type in self.operation_mgmt.profiles.keys():
+                if module_config:
+                    raise NotImplementedError()
+                op = self.operation_mgmt.profiles[module_type]
+                module = op.module
+        elif isinstance(module_type, Operation):
+            if module_config:
+                raise NotImplementedError()
+            module = module_type.module
 
         return self.run_module(
             module=module,

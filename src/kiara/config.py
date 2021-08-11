@@ -3,7 +3,7 @@ import os
 import typing
 from pydantic import BaseSettings, Extra, Field, validator
 
-from kiara.defaults import kiara_app_dirs
+from kiara.defaults import KIARA_DATA_STORE_DIR, kiara_app_dirs
 from kiara.module_mgmt import ModuleManager
 from kiara.module_mgmt.pipelines import PipelineModuleManagerConfig
 from kiara.module_mgmt.python_classes import PythonModuleManagerConfig
@@ -38,6 +38,7 @@ class KiaraConfig(BaseSettings):
     class Config:
         extra = Extra.forbid
         env_file_encoding = "utf-8"
+        env_prefix = "kiara_"
 
         @classmethod
         def customise_sources(
@@ -65,6 +66,10 @@ class KiaraConfig(BaseSettings):
     ] = Field(
         description="The configuration for the default processor to use.",
         default_factory=SynchronousProcessorConfig,
+    )
+    data_store: str = Field(
+        description="The path to the local kiara data store.",
+        default=KIARA_DATA_STORE_DIR,
     )
 
     @validator("module_managers", pre=True)

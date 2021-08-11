@@ -10,7 +10,6 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 from tzlocal import get_localzone
 
-from kiara.defaults import KIARA_DATA_STORE_DIR
 from kiara.metadata.core_models import SnapshotMetadata, ValueHash, ValueInfo
 from kiara.metadata.data import LoadConfig, SaveConfig
 
@@ -611,9 +610,7 @@ class DataStore(abc.ABC):
 
 
 class LocalDataStore(DataStore):
-    def __init__(
-        self, kiara: "Kiara", base_path: typing.Union[str, Path] = KIARA_DATA_STORE_DIR
-    ):
+    def __init__(self, kiara: "Kiara", base_path: typing.Union[str, Path]):
 
         if isinstance(base_path, str):
             base_path = Path(base_path)

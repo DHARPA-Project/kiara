@@ -10,12 +10,18 @@
 import pytest
 
 import os
+import tempfile
 import typing
+import uuid
 
+from kiara.config import KiaraConfig
 from kiara.kiara import Kiara
 from kiara.pipeline.config import PipelineModuleConfig
 
 from .utils import PIPELINES_FOLDER
+
+TEMP_DIR = os.path.join(tempfile.gettempdir(), "kiara_tests")
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 
 @pytest.fixture
@@ -45,4 +51,31 @@ def pipeline_configs(pipeline_paths) -> typing.Mapping[str, PipelineModuleConfig
 def kiara() -> Kiara:
 
     kiara = Kiara()
+    return kiara
+
+
+@pytest.fixture
+def anyio_backend():
+    return "asyncio"
+
+
+@pytest.fixture(scope="module")
+def presseeded_data_store():
+
+    session_id = str(uuid.uuid4())
+
+    instance_data_store = os.path.join(TEMP_DIR, f"instance_{session_id}")
+    conf = KiaraConfig(data_store=instance_data_store)
+
+    kiara = Kiara(config=conf)
+    kiara.run(
+        "table.import_from.file_path.string",
+        inputs={
+            "source": os.path.join(
+                ROOT_DIR, "examples", "data", "journals", "JournalNodes1902.csv"
+            ),
+            "aliases": ["journal_nodes"],
+        },
+    )
+
     return kiara

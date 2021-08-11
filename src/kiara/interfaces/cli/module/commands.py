@@ -18,7 +18,7 @@ from kiara.utils.output import rich_print
 @click.group()
 @click.pass_context
 def module(ctx):
-    """Information about available modules, and details about them."""
+    """Module-related sub-commands.."""
 
 
 @module.command(name="list")

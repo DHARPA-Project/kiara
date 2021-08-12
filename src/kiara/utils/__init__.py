@@ -22,6 +22,7 @@ from rich import box
 from rich.console import ConsoleRenderable, RichCast
 from rich.table import Table
 from ruamel.yaml import YAML
+from slugify import slugify
 from types import ModuleType
 from typing import Union
 
@@ -321,6 +322,11 @@ def check_valid_field_names(*field_names) -> typing.List[str]:
     """
 
     return [x for x in field_names if x in INVALID_VALUE_NAMES or x.startswith("_")]
+
+
+def create_valid_identifier(text: str):
+
+    return slugify(text, separator="_")
 
 
 def merge_dicts(

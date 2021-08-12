@@ -28,7 +28,12 @@ from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.pipeline import Pipeline
 from kiara.processing import Job
 from kiara.processing.processor import ModuleProcessor
-from kiara.utils import get_auto_workflow_alias, get_data_from_file, is_debug
+from kiara.utils import (
+    create_valid_identifier,
+    get_auto_workflow_alias,
+    get_data_from_file,
+    is_debug,
+)
 from kiara.workflow.kiara_workflow import KiaraWorkflow
 
 if typing.TYPE_CHECKING:
@@ -411,7 +416,14 @@ class Kiara(object):
                 )
 
             if config in self.available_module_types:
-                config_data = {"steps": [{"module_type": config, "step_id": config}]}
+                config_data = {
+                    "steps": [
+                        {
+                            "module_type": config,
+                            "step_id": create_valid_identifier(config),
+                        }
+                    ]
+                }
                 pipeline_config = PipelineModuleConfig(**config_data)
             elif os.path.isfile(os.path.expanduser(config)):
                 path = os.path.expanduser(config)

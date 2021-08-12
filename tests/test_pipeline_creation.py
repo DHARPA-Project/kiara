@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+import os
 import typing
 
-from kiara import PipelineModule
+from kiara import Kiara, PipelineModule
 from kiara.pipeline.config import PipelineModuleConfig
-from kiara.pipeline.structure import PipelineStep
+from kiara.pipeline.structure import PipelineStep, PipelineStructure
 
 
 def test_workflow_desc_files(pipeline_paths):
@@ -52,3 +53,18 @@ def test_workflow_obj_creation(
     assert len(c.structure.steps) == 1
     assert "and_1" in c.structure.to_details().steps.keys()
     assert isinstance(c.structure.to_details().steps["and_1"].step, PipelineStep)
+
+
+def test_pipeline_structure_creation(kiara: Kiara):
+
+    pipeline_file = os.path.join(
+        os.path.dirname(__file__), "resources", "pipelines", "logic", "logic_3.json"
+    )
+
+    config = PipelineModuleConfig.from_file(pipeline_file)
+    structure = PipelineStructure(parent_id="_", config=config, kiara=kiara)
+
+    for idx, step in enumerate(structure.steps):
+        assert isinstance(step, PipelineStep)
+
+    assert idx == 2

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import typing
+from pathlib import Path
 from pydantic import BaseModel, Extra, Field, root_validator, validator
 from rich.console import Console, ConsoleOptions, RenderResult
 from slugify import slugify
@@ -10,6 +11,7 @@ from kiara.module_config import ModuleInstanceConfig, ModuleTypeConfig
 from kiara.pipeline import StepValueAddress
 from kiara.pipeline.structure import PipelineStep, PipelineStructure
 from kiara.pipeline.utils import ensure_step_value_addresses
+from kiara.utils import get_data_from_file
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -149,6 +151,12 @@ class PipelineModuleConfig(ModuleTypeConfig):
         }
         ```
     """
+
+    @classmethod
+    def from_file(cls, path: typing.Union[str, Path]):
+
+        content = get_data_from_file(path)
+        return PipelineModuleConfig(**content)
 
     class Config:
         extra = Extra.allow

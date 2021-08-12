@@ -356,6 +356,8 @@ class Kiara(object):
                     raise NotImplementedError()
                 op = self.operation_mgmt.profiles[module_type]
                 module = op.module
+            else:
+                raise Exception(f"Can't run operation: invalid module type '{module_type}'")
         elif isinstance(module_type, Operation):
             if module_config:
                 raise NotImplementedError()

@@ -1,6 +1,11 @@
 # Changelog
 
-## Version 0.0.12 (upcoming)
+### Version 0.0.13
+
+- mostly tests
+
+
+## Version 0.0.12
 
 - renamed:
     - kiara.operations.OperationConfig -> kiara.operations.Operation

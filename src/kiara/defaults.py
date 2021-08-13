@@ -55,6 +55,9 @@ PIPELINE_PARENT_MARKER = "__pipeline__"
 DEFAULT_EXCLUDE_DIRS = [".git", ".tox", ".cache"]
 """List of directory names to exclude by default when walking a folder recursively."""
 
+DEFAULT_EXCLUDE_FILES = [".DS_Store"]
+"""List of file names to exclude by default when reading folders."""
+
 VALID_PIPELINE_FILE_EXTENSIONS = ["yaml", "yml", "json"]
 """File extensions a kiara pipeline/workflow file can have."""
 

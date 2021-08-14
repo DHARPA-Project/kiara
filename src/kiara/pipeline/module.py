@@ -3,7 +3,7 @@ import typing
 
 from kiara.data.values import ValueSchema, ValueSet
 from kiara.module import KiaraModule
-from kiara.pipeline.config import PipelineModuleConfig
+from kiara.pipeline.config import PipelineConfig
 from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.structure import PipelineStructure
 from kiara.utils import StringYAML
@@ -14,10 +14,10 @@ if typing.TYPE_CHECKING:
 yaml = StringYAML()
 
 
-class PipelineModule(KiaraModule[PipelineModuleConfig]):
+class PipelineModule(KiaraModule[PipelineConfig]):
     """A [KiaraModule][kiara.module.KiaraModule] that contains a collection of interconnected other modules."""
 
-    _config_cls: typing.Type[PipelineModuleConfig] = PipelineModuleConfig  # type: ignore
+    _config_cls: typing.Type[PipelineConfig] = PipelineConfig  # type: ignore
     _module_type_id = "pipeline"
 
     @classmethod
@@ -29,7 +29,7 @@ class PipelineModule(KiaraModule[PipelineModuleConfig]):
         id: typing.Optional[str],
         parent_id: typing.Optional[str] = None,
         module_config: typing.Union[
-            None, PipelineModuleConfig, typing.Mapping[str, typing.Any]
+            None, PipelineConfig, typing.Mapping[str, typing.Any]
         ] = None,
         controller: typing.Union[
             None, PipelineController, str, typing.Type[PipelineController]

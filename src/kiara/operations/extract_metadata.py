@@ -7,12 +7,12 @@ from kiara import Kiara, KiaraModule
 from kiara.data import Value, ValueSet
 from kiara.data.values import ValueSchema
 from kiara.exceptions import KiaraProcessingException
-from kiara.module_config import ModuleTypeConfig
+from kiara.module_config import ModuleTypeConfigSchema
 from kiara.operations import Operation, OperationType
 from kiara.utils import log_message
 
 
-class MetadataModuleConfig(ModuleTypeConfig):
+class MetadataModuleConfig(ModuleTypeConfigSchema):
 
     value_type: str = Field(description="The data type this module will be used for.")
 

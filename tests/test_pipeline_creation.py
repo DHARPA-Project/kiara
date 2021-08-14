@@ -3,23 +3,21 @@ import os
 import typing
 
 from kiara import Kiara, PipelineModule
-from kiara.pipeline.config import PipelineModuleConfig
+from kiara.pipeline.config import PipelineConfig
 from kiara.pipeline.structure import PipelineStep, PipelineStructure
 
 
 def test_workflow_desc_files(pipeline_paths):
 
     for path in pipeline_paths.values():
-        c = PipelineModuleConfig.parse_file(path)
-        assert isinstance(c, PipelineModuleConfig)
+        c = PipelineConfig.parse_file(path)
+        assert isinstance(c, PipelineConfig)
         assert len(c.steps) > 0
         assert c.steps[0].step_id
         assert c.steps[0].module_type
 
 
-def test_workflow_obj_attributes(
-    pipeline_configs: typing.Mapping[str, PipelineModuleConfig]
-):
+def test_workflow_obj_attributes(pipeline_configs: typing.Mapping[str, PipelineConfig]):
 
     logic_1 = pipeline_configs["logic_1"]
 
@@ -40,9 +38,7 @@ def test_workflow_obj_attributes(
     assert len(logic_3.output_aliases) == 0
 
 
-def test_workflow_obj_creation(
-    pipeline_configs: typing.Mapping[str, PipelineModuleConfig]
-):
+def test_workflow_obj_creation(pipeline_configs: typing.Mapping[str, PipelineConfig]):
 
     logic_1 = pipeline_configs["logic_1"]
     c = PipelineModule(id="logic_1", module_config=logic_1)
@@ -61,7 +57,7 @@ def test_pipeline_structure_creation(kiara: Kiara):
         os.path.dirname(__file__), "resources", "pipelines", "logic", "logic_3.json"
     )
 
-    config = PipelineModuleConfig.from_file(pipeline_file)
+    config = PipelineConfig.create_pipeline_config(pipeline_file)
     structure = PipelineStructure(parent_id="_", config=config, kiara=kiara)
 
     for idx, step in enumerate(structure.steps):

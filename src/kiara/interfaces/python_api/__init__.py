@@ -17,8 +17,8 @@ from kiara.data import Value, ValueSet
 from kiara.info.pipelines import create_pipeline_step_table
 from kiara.interfaces.python_api.controller import ApiController
 from kiara.metadata.module_models import KiaraModuleInstanceMetadata
-from kiara.module_config import ModuleInstanceConfig
-from kiara.pipeline.config import PipelineModuleConfig, PipelineStepConfig
+from kiara.module_config import ModuleConfig
+from kiara.pipeline.config import PipelineConfig, PipelineStepConfig
 from kiara.pipeline.structure import generate_pipeline_endpoint_name
 
 
@@ -312,7 +312,7 @@ class Workflow(JupyterMixin):
         self._controller: PipelineController = ApiController()
 
         self._steps: typing.Dict[str, Step] = {}
-        self._pipeline_conf: typing.Optional[PipelineModuleConfig] = None
+        self._pipeline_conf: typing.Optional[PipelineConfig] = None
         self._structure: typing.Optional[PipelineStructure] = None
         self._pipeline: typing.Optional[Pipeline] = None
 
@@ -385,7 +385,7 @@ class Workflow(JupyterMixin):
         self._inputs.update(other_workflow._inputs)
 
     @property
-    def pipeline_config(self) -> PipelineModuleConfig:
+    def pipeline_config(self) -> PipelineConfig:
 
         if self._pipeline_conf is not None:
             return self._pipeline_conf
@@ -405,7 +405,7 @@ class Workflow(JupyterMixin):
             )
             steps.append(step_conf)
 
-        self._pipeline_conf = PipelineModuleConfig(steps=steps)
+        self._pipeline_conf = PipelineConfig(steps=steps)
         return self._pipeline_conf
 
     @property
@@ -414,7 +414,7 @@ class Workflow(JupyterMixin):
         if self._structure is not None:
             return self._structure
 
-        self._structure = self.pipeline_config.create_structure(
+        self._structure = self.pipeline_config.create_pipeline_structure(
             "dynamic", kiara=self._kiara
         )
         return self._structure
@@ -537,7 +537,7 @@ class Step(JupyterMixin):
         self._inputs: InputDataPoints = InputDataPoints(self)
         self._outputs: OutputDataPoints = OutputDataPoints(self)
 
-        self._profile_config: typing.Optional[ModuleInstanceConfig] = None
+        self._profile_config: typing.Optional[ModuleConfig] = None
 
         self._structure: typing.Optional[Workflow] = None
 
@@ -568,12 +568,12 @@ class Step(JupyterMixin):
         self._profile_config = None
         self._module = None
 
-    def config(self) -> ModuleInstanceConfig:
+    def config(self) -> ModuleConfig:
 
         if self._profile_config is not None:
             return self._profile_config
 
-        self._profile_config = ModuleInstanceConfig(
+        self._profile_config = ModuleConfig(
             module_type=self._module_type, module_config=self._module_config
         )
         return self._profile_config

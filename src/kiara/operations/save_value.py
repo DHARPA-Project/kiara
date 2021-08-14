@@ -8,14 +8,14 @@ from kiara import Kiara, KiaraModule
 from kiara.data.values import Value, ValueSchema, ValueSet
 from kiara.exceptions import KiaraProcessingException
 from kiara.metadata.data import LoadConfig
-from kiara.module_config import ModuleTypeConfig
+from kiara.module_config import ModuleTypeConfigSchema
 from kiara.operations import Operation, OperationType
 from kiara.utils import log_message
 
 log = logging.getLogger("kiara")
 
 
-class SaveValueModuleConfig(ModuleTypeConfig):
+class SaveValueModuleConfig(ModuleTypeConfigSchema):
 
     value_type: str = Field(description="The type of the value to save.")
 

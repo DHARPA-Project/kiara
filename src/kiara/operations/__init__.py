@@ -9,13 +9,12 @@ from rich.table import Table
 
 from kiara.data.values import ValueSchema
 from kiara.metadata.operation_models import OperationsMetadata
-from kiara.module_config import ModuleInstanceConfig
+from kiara.module_config import ModuleConfig
 from kiara.utils import create_table_from_field_schemas
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
     from kiara.module import KiaraModule
-    from kiara.pipeline.config import PipelineModuleConfig
 
 
 class ClassAttributes(object):
@@ -23,19 +22,17 @@ class ClassAttributes(object):
         self._attrs: typing.Iterable[str] = attrs
 
 
-class Operation(ModuleInstanceConfig):
+class Operation(ModuleConfig):
     @classmethod
     def create_operation_config(
         cls,
         kiara: "Kiara",
         operation_id: str,
-        config: typing.Union["ModuleInstanceConfig", typing.Mapping, str],
-        module_config: typing.Union[
-            None, typing.Mapping[str, typing.Any], "PipelineModuleConfig"
-        ] = None,
+        config: typing.Union["ModuleConfig", typing.Mapping, str],
+        module_config: typing.Union[None, typing.Mapping[str, typing.Any]] = None,
     ) -> "Operation":
 
-        _config = ModuleInstanceConfig.create(
+        _config = ModuleConfig.create_module_config(
             config=config, module_config=module_config, kiara=kiara
         )
         _config_dict = _config.dict()
@@ -252,7 +249,7 @@ class OperationMgmt(object):
         # TODO: support op type config
         _operation_types = {}
         for op_name, op_cls in self._operation_type_classes.items():
-            _operation_types[op_name] = op_cls()
+            _operation_types[op_name] = op_cls(kiara=self._kiara)
 
         self._operation_types = _operation_types
         # make sure the profiles are loaded

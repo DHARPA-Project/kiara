@@ -8,7 +8,7 @@ from rich.table import Table
 from kiara import Kiara
 from kiara.info import KiaraInfoModel
 from kiara.metadata.operation_models import OperationsMetadata
-from kiara.module_config import ModuleInstanceConfig
+from kiara.module_config import ModuleConfig
 from kiara.operations import Operation, OperationType
 
 
@@ -86,7 +86,7 @@ class OperationsGroupInfo(KiaraInfoModel):
             self.operation_types
         )
         table.add_row("operation types", op_map_table)
-        configs = ModuleInstanceConfig.create_renderable_from_module_instance_configs(
+        configs = ModuleConfig.create_renderable_from_module_instance_configs(
             self.operation_configs
         )
         table.add_row("operations", configs)

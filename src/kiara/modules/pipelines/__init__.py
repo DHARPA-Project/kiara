@@ -18,10 +18,10 @@ def create_pipeline_class(
     base_module: str,
 ):
 
-    from kiara.pipeline.config import PipelineModuleConfig
+    from kiara.pipeline.config import PipelineConfig
     from kiara.pipeline.module import PipelineModule
 
-    pmc = PipelineModuleConfig(**pipeline_desc)
+    pmc = PipelineConfig(**pipeline_desc)
 
     def init(self, id: str, **kwargs):
         # TODO: merge config
@@ -35,7 +35,7 @@ def create_pipeline_class(
     attrs = {
         "__init__": init,
         "__doc__": pmc.documentation,
-        "_config_cls": PipelineModuleConfig,
+        "_config_cls": PipelineConfig,
         "_base_pipeline_config": pmc,
     }
 

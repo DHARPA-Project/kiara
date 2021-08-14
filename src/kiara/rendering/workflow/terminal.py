@@ -2,16 +2,14 @@
 import typing
 
 from kiara import Kiara, PipelineController
-from kiara.module_config import ModuleInstanceConfig
+from kiara.module_config import ModuleConfig
 from kiara.rendering.workflow import WorkflowRenderer
 
 
 class TerminalRenderer(WorkflowRenderer):
     def __init__(
         self,
-        config: typing.Union[
-            ModuleInstanceConfig, typing.Mapping[str, typing.Any], str
-        ],
+        config: typing.Union[ModuleConfig, typing.Mapping[str, typing.Any], str],
         workflow_id: typing.Optional[str] = None,
         module_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         controller: typing.Optional[PipelineController] = None,

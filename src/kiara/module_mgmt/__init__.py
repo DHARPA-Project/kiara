@@ -7,7 +7,7 @@ import typing
 
 if typing.TYPE_CHECKING:
     from kiara import Kiara, KiaraModule
-    from kiara.module_config import ModuleTypeConfig
+    from kiara.module_config import ModuleTypeConfigSchema
     from kiara.module_mgmt.pipelines import PipelineModuleManagerConfig
     from kiara.module_mgmt.python_classes import (
         PythonModuleManager,
@@ -70,7 +70,7 @@ class ModuleManager(abc.ABC):
 
     def create_module_config(
         self, module_type: str, module_config: typing.Mapping[str, typing.Any]
-    ) -> "ModuleTypeConfig":
+    ) -> "ModuleTypeConfigSchema":
 
         cls = self.get_module_class(module_type)
         config = cls._config_cls(**module_config)

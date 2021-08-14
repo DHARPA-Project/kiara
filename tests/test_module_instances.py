@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import pytest
 
+from kiara_modules.core.logic import AndModule
+
 from kiara import Kiara
 
 
@@ -51,3 +53,10 @@ def test_module_instance_run(kiara: Kiara):
         l_xor.run(x=True)
 
     assert "Invalid input name" in str(e_info.value)
+
+
+def test_module_instance_direct(kiara: Kiara):
+
+    and_module = AndModule(kiara=kiara)
+    result = and_module.run(a=True, b=True)
+    assert result.get_all_value_data() == {"y": True}

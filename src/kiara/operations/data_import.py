@@ -6,14 +6,14 @@ from pydantic import Field
 
 from kiara import Kiara, KiaraModule
 from kiara.data.values import NonRegistryValue, Value, ValueSchema, ValueSet
-from kiara.module_config import ModuleTypeConfig
+from kiara.module_config import ModuleTypeConfigSchema
 from kiara.operations import Operation, OperationType
 from kiara.utils import log_message
 
 log = logging.getLogger("kiara")
 
 
-class DataImportModuleConfig(ModuleTypeConfig):
+class DataImportModuleConfig(ModuleTypeConfigSchema):
 
     value_type: str = Field(description="The type of the value to be imported.")
     source_name: str = Field(

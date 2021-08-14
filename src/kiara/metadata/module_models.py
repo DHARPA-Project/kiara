@@ -24,8 +24,8 @@ from kiara.metadata.core_models import (
     OriginMetadataModel,
     PythonClassMetadata,
 )
-from kiara.module_config import ModuleTypeConfig
-from kiara.pipeline.config import PipelineModuleConfig
+from kiara.module_config import ModuleTypeConfigSchema
+from kiara.pipeline.config import PipelineConfig
 from kiara.utils import create_table_from_field_schemas
 from kiara.utils.output import create_table_from_base_model
 
@@ -43,7 +43,7 @@ class KiaraModuleConfigMetadata(MetadataModel):
     @classmethod
     def from_config_class(
         cls,
-        config_cls: typing.Type[ModuleTypeConfig],
+        config_cls: typing.Type[ModuleTypeConfigSchema],
         remove_pipeline_config: bool = False,
     ):
 
@@ -197,7 +197,7 @@ class KiaraModuleTypeMetadata(MetadataModel):
     is_pipeline: bool = Field(
         description="Whether the module type is a pipeline, or a core module."
     )
-    pipeline_config: typing.Optional[PipelineModuleConfig] = Field(
+    pipeline_config: typing.Optional[PipelineConfig] = Field(
         description="If this module is a pipeline, this field contains the pipeline configuration.",
         default_factory=None,
     )

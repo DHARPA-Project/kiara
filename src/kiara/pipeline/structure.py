@@ -22,7 +22,7 @@ if typing.TYPE_CHECKING:
     from kiara.info.pipelines import PipelineStructureDesc
     from kiara.kiara import Kiara
     from kiara.module import KiaraModule
-    from kiara.pipeline.config import PipelineModuleConfig, PipelineStepConfig
+    from kiara.pipeline.config import PipelineConfig, PipelineStepConfig
     from kiara.pipeline.pipeline import Pipeline
 
 
@@ -253,11 +253,11 @@ class PipelineStructure(object):
     def __init__(
         self,
         parent_id: str,
-        config: "PipelineModuleConfig",
+        config: "PipelineConfig",
         kiara: typing.Optional["Kiara"] = None,
     ):
 
-        self._structure_config: "PipelineModuleConfig" = config
+        self._structure_config: "PipelineConfig" = config
 
         steps = self._structure_config.steps
         input_aliases = self._structure_config.input_aliases
@@ -322,7 +322,7 @@ class PipelineStructure(object):
         return self._pipeline_id
 
     @property
-    def structure_config(self) -> "PipelineModuleConfig":
+    def structure_config(self) -> "PipelineConfig":
         return self._structure_config
 
     @property
@@ -793,7 +793,7 @@ class PipelineStructure(object):
         other: typing.Union[
             "Pipeline",
             "PipelineStructure",
-            "PipelineModuleConfig",
+            "PipelineConfig",
             typing.Mapping[str, typing.Any],
         ],
         input_links: typing.Optional[

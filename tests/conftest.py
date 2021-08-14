@@ -16,7 +16,7 @@ import uuid
 
 from kiara.config import KiaraConfig
 from kiara.kiara import Kiara
-from kiara.pipeline.config import PipelineModuleConfig
+from kiara.pipeline.config import PipelineConfig
 
 from .utils import PIPELINES_FOLDER
 
@@ -39,11 +39,10 @@ def pipeline_paths():
 
 
 @pytest.fixture
-def pipeline_configs(pipeline_paths) -> typing.Mapping[str, PipelineModuleConfig]:
+def pipeline_configs(pipeline_paths) -> typing.Mapping[str, PipelineConfig]:
 
     return {
-        name: PipelineModuleConfig.parse_file(path)
-        for name, path in pipeline_paths.items()
+        name: PipelineConfig.parse_file(path) for name, path in pipeline_paths.items()
     }
 
 

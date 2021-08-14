@@ -4,7 +4,7 @@ import typing
 
 if typing.TYPE_CHECKING:
     from kiara.pipeline import StepValueAddress
-    from kiara.pipeline.config import PipelineModuleConfig
+    from kiara.pipeline.config import PipelineConfig
     from kiara.pipeline.pipeline import Pipeline
     from kiara.pipeline.structure import PipelineStructure
 
@@ -14,7 +14,7 @@ def extend_pipeline(
     other: typing.Union[
         "Pipeline",
         "PipelineStructure",
-        "PipelineModuleConfig",
+        "PipelineConfig",
         typing.Mapping[str, typing.Any],
     ],
     input_links: typing.Optional[
@@ -22,7 +22,7 @@ def extend_pipeline(
     ] = None,
 ):
 
-    from kiara.pipeline.config import PipelineModuleConfig
+    from kiara.pipeline.config import PipelineConfig
     from kiara.pipeline.pipeline import Pipeline
     from kiara.pipeline.structure import PipelineStructure
 
@@ -33,13 +33,13 @@ def extend_pipeline(
     else:
         raise TypeError(f"Invalid type '{type(pipeline)}' for pipeline.")
 
-    other_pipeline_config: typing.Optional[PipelineModuleConfig] = None
+    other_pipeline_config: typing.Optional[PipelineConfig] = None
 
     other_name = "extended"
 
     if isinstance(other, typing.Mapping):
-        other_pipeline_config = PipelineModuleConfig(**other)
-    elif isinstance(other, PipelineModuleConfig):
+        other_pipeline_config = PipelineConfig(**other)
+    elif isinstance(other, PipelineConfig):
         other_pipeline_config = other
     elif isinstance(other, PipelineStructure):
         other_pipeline_config = other.structure_config
@@ -130,8 +130,8 @@ def extend_pipeline(
                 new_steps.append(step_dict)
 
     config["steps"] = new_steps
-    pmc = PipelineModuleConfig(**config)
-    new_structure = pmc.create_structure(
+    pmc = PipelineConfig(**config)
+    new_structure = pmc.create_pipeline_structure(
         f"{structure.pipeline_id}_{other_name}", kiara=structure._kiara
     )
     return new_structure

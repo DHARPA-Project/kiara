@@ -2,10 +2,10 @@
 import typing
 from pydantic import Field
 
-from kiara.module_config import ModuleInstanceConfig
+from kiara.module_config import ModuleConfig
 
 
-class LoadConfig(ModuleInstanceConfig):
+class LoadConfig(ModuleConfig):
 
     value_id: str = Field(description="The id of the value.")
     base_path_input_name: str = Field(
@@ -17,7 +17,7 @@ class LoadConfig(ModuleInstanceConfig):
     output_name: str = Field(description="The name of the output field for the value.")
 
 
-class SaveConfig(ModuleInstanceConfig):
+class SaveConfig(ModuleConfig):
 
     inputs: typing.Dict[str, typing.Any] = Field(
         description="The inputs to use when running this module.", default_factory=dict

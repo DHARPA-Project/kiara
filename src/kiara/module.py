@@ -22,7 +22,7 @@ from kiara.metadata.module_models import (
     KiaraModuleInstanceMetadata,
     KiaraModuleTypeMetadata,
 )
-from kiara.module_config import KIARA_CONFIG, ModuleTypeConfig
+from kiara.module_config import KIARA_CONFIG, ModuleConfig, ModuleTypeConfigSchema
 from kiara.operations import Operation
 from kiara.processing import JobLog
 from kiara.utils import StringYAML, is_debug
@@ -235,7 +235,19 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
     """
 
     # TODO: not quite sure about this generic type here, mypy doesn't seem to like it
-    _config_cls: typing.Type[KIARA_CONFIG] = ModuleTypeConfig  # type: ignore
+    _config_cls: typing.Type[KIARA_CONFIG] = ModuleTypeConfigSchema  # type: ignore
+
+    @classmethod
+    def create_instance_from_class(
+        cls,
+        module_config: typing.Mapping[str, typing.Any],
+        kiara: typing.Optional["Kiara"] = None,
+    ) -> "KiaraModule":
+
+        module_conf = ModuleConfig.create_module_config(
+            config=cls, module_config=module_config, kiara=kiara
+        )
+        return module_conf.create_module(kiara)
 
     @classmethod
     def retrieve_module_profiles(
@@ -279,7 +291,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
             kiara = Kiara.instance()
         self._kiara = kiara
 
-        if isinstance(module_config, ModuleTypeConfig):
+        if isinstance(module_config, ModuleTypeConfigSchema):
             self._config: KIARA_CONFIG = module_config  # type: ignore
         elif module_config is None:
             self._config = self.__class__._config_cls()

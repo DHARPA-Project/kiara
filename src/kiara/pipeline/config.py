@@ -1,26 +1,25 @@
 # -*- coding: utf-8 -*-
 import logging
 import typing
-from pathlib import Path
 from pydantic import BaseModel, Extra, Field, root_validator, validator
 from rich.console import Console, ConsoleOptions, RenderResult
 from slugify import slugify
 
 from kiara.defaults import DEFAULT_PIPELINE_PARENT_ID
-from kiara.module_config import ModuleInstanceConfig, ModuleTypeConfig
+from kiara.module_config import ModuleConfig, ModuleTypeConfigSchema
 from kiara.pipeline import StepValueAddress
 from kiara.pipeline.structure import PipelineStep, PipelineStructure
 from kiara.pipeline.utils import ensure_step_value_addresses
-from kiara.utils import get_data_from_file
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
     from kiara.pipeline.controller import PipelineController
+    from kiara.pipeline.module import PipelineModule
 
 log = logging.getLogger("kiara")
 
 
-class PipelineStepConfig(ModuleInstanceConfig):
+class PipelineStepConfig(ModuleConfig):
     """A class to hold the configuration of one module within a [PipelineModule][kiara.pipeline.module.PipelineModule]."""
 
     class Config:
@@ -86,7 +85,7 @@ class PipelineStructureConfig(BaseModel):
     output_aliases: typing.Union[None, str, typing.Dict[str, str]] = None
 
 
-class PipelineModuleConfig(ModuleTypeConfig):
+class PipelineConfig(ModuleTypeConfigSchema):
     """A class to hold the configuration for a [PipelineModule][kiara.pipeline.module.PipelineModule].
 
     If you want to control the pipeline input and output names, you need to have to provide a map that uses the
@@ -111,7 +110,7 @@ class PipelineModuleConfig(ModuleTypeConfig):
         ``` python
         and_step = PipelineStepConfig(module_type="and", step_id="and")
         not_step = PipelineStepConfig(module_type="not", step_id="not", input_links={"a": ["and.y"]}
-        nand_p_conf = PipelineModuleConfig(doc="Returns 'False' if both inputs are 'True'.",
+        nand_p_conf = PipelineConfig(doc="Returns 'False' if both inputs are 'True'.",
                             steps=[and_step, not_step],
                             input_aliases={
                                 "and__a": "a",
@@ -152,11 +151,75 @@ class PipelineModuleConfig(ModuleTypeConfig):
         ```
     """
 
-    @classmethod
-    def from_file(cls, path: typing.Union[str, Path]):
+    # @classmethod
+    # def from_file(cls, path: typing.Union[str, Path]):
+    #
+    #     content = get_data_from_file(path)
+    #     return PipelineConfig(**content)
 
-        content = get_data_from_file(path)
-        return PipelineModuleConfig(**content)
+    @classmethod
+    def create_pipeline_config(
+        cls,
+        config: typing.Union[ModuleConfig, typing.Mapping[str, typing.Any], str],
+        module_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+        kiara: typing.Optional["Kiara"] = None,
+    ) -> "PipelineConfig":
+        """Create a PipelineModule instance.
+
+        The main 'config' argument here can be either:
+
+          - a string: in which case it needs to be (in that order):
+            - a module id
+            - an operation id
+            - a path to a local file
+          - a [ModuleConfig][kiara.module_config.ModuleConfig] object
+          - a dict (to create a `ModuleInstsanceConfig` from
+
+
+        Arguments:
+            kiara: the kiara context
+            config: the 'main' config object
+            module_config: in case the 'main' config object was a module id, this argument is used to instantiate the module
+            kiara: the kiara context (will use default context instance if not provided)
+
+        """
+
+        if kiara is None:
+            from kiara.kiara import Kiara
+
+            kiara = Kiara.instance()
+
+        module_config_obj = ModuleConfig.create_module_config(
+            config=config, module_config=module_config, kiara=kiara
+        )
+
+        root_module_args: typing.Dict[str, typing.Any] = {}
+        if module_config_obj.module_type == "pipeline":
+            root_module_args["module_type"] = "pipeline"
+            root_module_args["module_config"] = module_config_obj.module_config
+        elif kiara.is_pipeline_module(module_config_obj.module_type):
+            root_module_args["module_type"] = module_config_obj.module_type
+            root_module_args["module_config"] = module_config_obj.module_config
+        else:
+            # means it's a python module, and we wrap it into a single-module pipeline
+            root_module_args["module_type"] = "pipeline"
+            steps_conf = {
+                "steps": [
+                    {
+                        "module_type": module_config_obj.module_type,
+                        "step_id": slugify(
+                            module_config_obj.module_type, separator="_"
+                        ),
+                        "module_config": module_config_obj.module_config,
+                    }
+                ],
+                "input_aliases": "auto",
+                "output_aliases": "auto",
+            }
+            root_module_args["module_config"] = steps_conf
+
+        module: PipelineConfig = PipelineConfig(**root_module_args)
+        return module
 
     class Config:
         extra = Extra.allow
@@ -195,7 +258,7 @@ class PipelineModuleConfig(ModuleTypeConfig):
                 raise TypeError(step)
         return steps
 
-    def create_structure(
+    def create_pipeline_structure(
         self, parent_id: str, kiara: typing.Optional["Kiara"] = None
     ) -> "PipelineStructure":
         from kiara import Kiara, PipelineStructure
@@ -219,7 +282,7 @@ class PipelineModuleConfig(ModuleTypeConfig):
 
         if parent_id is None:
             parent_id = DEFAULT_PIPELINE_PARENT_ID
-        structure = self.create_structure(parent_id=parent_id, kiara=kiara)
+        structure = self.create_pipeline_structure(parent_id=parent_id, kiara=kiara)
 
         from kiara import Pipeline
 
@@ -228,6 +291,30 @@ class PipelineModuleConfig(ModuleTypeConfig):
             controller=controller,
         )
         return pipeline
+
+    def create_pipeline_module(
+        self,
+        module_id: typing.Optional[str] = None,
+        parent_id: typing.Optional[str] = None,
+        controller: typing.Optional["PipelineController"] = None,
+        kiara: typing.Optional["Kiara"] = None,
+    ) -> "PipelineModule":
+
+        if kiara is None:
+            from kiara.kiara import Kiara
+
+            kiara = Kiara.instance()
+
+        from kiara.pipeline.module import PipelineModule
+
+        module = PipelineModule(
+            id=module_id,
+            parent_id=parent_id,
+            module_config=self,
+            controller=controller,
+            kiara=kiara,
+        )
+        return module
 
     # def __rich_console__(
     #     self, console: Console, options: ConsoleOptions

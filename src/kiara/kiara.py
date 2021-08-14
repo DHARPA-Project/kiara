@@ -19,11 +19,11 @@ from kiara.data.types.type_mgmt import TypeMgmt
 from kiara.interfaces import get_console
 from kiara.metadata.mgmt import MetadataMgmt
 from kiara.metadata.module_models import KiaraModuleTypeMetadata
-from kiara.module_config import ModuleInstanceConfig
+from kiara.module_config import ModuleConfig
 from kiara.module_mgmt import ModuleManager
 from kiara.module_mgmt.merged import MergedModuleManager
 from kiara.operations import Operation, OperationMgmt
-from kiara.pipeline.config import PipelineModuleConfig
+from kiara.pipeline.config import PipelineConfig
 from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.pipeline import Pipeline
 from kiara.processing import Job
@@ -362,7 +362,9 @@ class Kiara(object):
                 op = self.operation_mgmt.profiles[module_type]
                 module = op.module
             else:
-                raise Exception(f"Can't run operation: invalid module type '{module_type}'")
+                raise Exception(
+                    f"Can't run operation: invalid module type '{module_type}'"
+                )
         elif isinstance(module_type, Operation):
             if module_config:
                 raise NotImplementedError()
@@ -400,14 +402,12 @@ class Kiara(object):
 
     def create_pipeline(
         self,
-        config: typing.Union[
-            ModuleInstanceConfig, typing.Mapping[str, typing.Any], str
-        ],
+        config: typing.Union[ModuleConfig, typing.Mapping[str, typing.Any], str],
         controller: typing.Optional[PipelineController] = None,
     ) -> Pipeline:
 
         if isinstance(config, typing.Mapping):
-            pipeline_config: PipelineModuleConfig = PipelineModuleConfig(**config)
+            pipeline_config: PipelineConfig = PipelineConfig(**config)
 
         elif isinstance(config, str):
             if config == "pipeline":
@@ -424,16 +424,16 @@ class Kiara(object):
                         }
                     ]
                 }
-                pipeline_config = PipelineModuleConfig(**config_data)
+                pipeline_config = PipelineConfig(**config_data)
             elif os.path.isfile(os.path.expanduser(config)):
                 path = os.path.expanduser(config)
                 pipeline_config_data = get_data_from_file(path)
-                pipeline_config = PipelineModuleConfig(**pipeline_config_data)
+                pipeline_config = PipelineConfig(**pipeline_config_data)
             else:
                 raise Exception(
                     f"Can't create pipeline config from string '{config}'. Value must be path to a file, or one of: {', '.join(self.available_module_types)}"
                 )
-        elif isinstance(config, PipelineModuleConfig):
+        elif isinstance(config, PipelineConfig):
             pipeline_config = config
         else:
             raise TypeError(
@@ -445,7 +445,7 @@ class Kiara(object):
 
     def create_workflow_from_operation_config(
         self,
-        config: "ModuleInstanceConfig",
+        config: "ModuleConfig",
         workflow_id: typing.Optional[str] = None,
         controller: typing.Optional[PipelineController] = None,
     ):
@@ -465,15 +465,13 @@ class Kiara(object):
 
     def create_workflow(
         self,
-        config: typing.Union[
-            ModuleInstanceConfig, typing.Mapping[str, typing.Any], str
-        ],
+        config: typing.Union[ModuleConfig, typing.Mapping[str, typing.Any], str],
         workflow_id: typing.Optional[str] = None,
         module_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         controller: typing.Optional[PipelineController] = None,
     ) -> KiaraWorkflow:
 
-        _config = ModuleInstanceConfig.create(
+        _config = ModuleConfig.create_module_config(
             config=config, module_config=module_config, kiara=self
         )
         return self.create_workflow_from_operation_config(

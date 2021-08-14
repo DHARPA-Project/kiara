@@ -30,7 +30,7 @@ from kiara.defaults import INVALID_VALUE_NAMES, SpecialValue
 
 if typing.TYPE_CHECKING:
     from kiara.data.values import ValueSchema
-    from kiara.module_config import ModuleTypeConfig
+    from kiara.module_config import ModuleTypeConfigSchema
 
 log = logging.getLogger("kiara")
 CAMEL_TO_SNAKE_REGEX = re.compile(r"(?<!^)(?=[A-Z])")
@@ -145,7 +145,8 @@ def get_auto_workflow_alias(module_type: str, use_incremental_ids: bool = False)
 
 
 def create_table_from_config_class(
-    config_cls: typing.Type["ModuleTypeConfig"], remove_pipeline_config: bool = False
+    config_cls: typing.Type["ModuleTypeConfigSchema"],
+    remove_pipeline_config: bool = False,
 ) -> Table:
 
     table = Table(box=box.HORIZONTALS, show_header=False)

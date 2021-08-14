@@ -76,6 +76,8 @@ def find_subclasses_under(
 
         if inspect.isabstract(sc):
             if is_debug():
+                # import traceback
+                # traceback.print_stack()
                 log.warning(f"Ignoring abstract subclass: {sc}")
             else:
                 log.debug(f"Ignoring abstract subclass: {sc}")

@@ -1,9 +1,14 @@
 # Changelog
 
+## Version 0.0.14 (Upcoming)
+
+- renamed:
+  - kiara.pipeline.config.PipelineModuleConfig -> kiara.pipeline.config.PipelineConfig
+  - kiara.module_config.ModuleTypeConfig -> kiara.module_config.ModuleTypeConfigSchema
+  - kiara.module_config.ModuleConfig -> kiara.module_config.ModuleConfig
 ### Version 0.0.13
 
 - mostly tests
-
 
 ## Version 0.0.12
 
@@ -30,8 +35,8 @@
 
 - major refactoring:
   - renamed:
-    - 'kiara.module_config.KiaraWorkflowConfig' -> 'kiara.module_config.ModuleInstanceConfig'
-    - 'kiara.module_config.KiaraModuleConfig' -> 'kiara.module_config.ModuleTypeConfig'
+    - 'kiara.module_config.KiaraWorkflowConfig' -> 'kiara.module_config.ModuleConfig'
+    - 'kiara.module_config.KiaraModuleConfig' -> 'kiara.module_config.ModuleTypeConfigSchema'
   - moved classes/functions:
     - 'kiara.data.operations' -> 'kiara.operations.type_operations'
     - 'kiara.processing.ModuleProcessor' -> 'kiara.processing.processor.ModuleProcessor'
@@ -41,7 +46,7 @@
     - from 'kiara.module_config' -> kiara.pipeline.config:
       - PipelineStepConfig
       - PipelineStructureConfig
-      - PipelineModuleConfig
+      - PipelineConfig
     - from 'kiara.data.values' -> 'kiara.pipeline.utils':
       - generate_step_alias
     - from 'kiara.data.values' -> 'kiara.pipeline'

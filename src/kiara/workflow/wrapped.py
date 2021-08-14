@@ -195,7 +195,7 @@ if typing.TYPE_CHECKING:
 #         new_config = {}
 #         steps = [x.config for x in self._steps.values()]
 #         new_config["steps"] = steps
-#         config = PipelineModuleConfig(**new_config)
+#         config = PipelineConfig(**new_config)
 #         self._current_structure = PipelineStructure(parent_id=self.id, config=config, kiara=self._kiara)
 #         return self._current_structure
 #

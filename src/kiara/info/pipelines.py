@@ -25,7 +25,7 @@ from kiara.utils import StringYAML, create_table_from_config_class, print_ascii_
 
 if typing.TYPE_CHECKING:
     from kiara import Kiara
-    from kiara.pipeline.config import PipelineModuleConfig
+    from kiara.pipeline.config import PipelineConfig
     from kiara.pipeline.pipeline import Pipeline
     from kiara.pipeline.structure import PipelineStructure
 
@@ -354,8 +354,10 @@ class PipelineModuleInfo(KiaraModuleTypeMetadata):
 
         m = kiara.get_module_class(module_type=module_type_name)
 
-        base_conf: "PipelineModuleConfig" = m._base_pipeline_config  # type: ignore
-        structure = base_conf.create_structure(parent_id=module_type_name, kiara=kiara)
+        base_conf: "PipelineConfig" = m._base_pipeline_config  # type: ignore
+        structure = base_conf.create_pipeline_structure(
+            parent_id=module_type_name, kiara=kiara
+        )
         struc_desc = PipelineStructureDesc.create_pipeline_structure_desc(
             pipeline=structure
         )

@@ -73,7 +73,7 @@ class OperationsGroupInfo(KiaraInfoModel):
         description="The available operation types and their details."
     )
     operation_configs: typing.Dict[str, Operation] = Field(
-        description="The available operation ids and configs."
+        description="The available operation ids and module_configs."
     )
 
     def create_renderable(self, **config: typing.Any) -> RenderableType:

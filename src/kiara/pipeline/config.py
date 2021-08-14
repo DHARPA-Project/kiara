@@ -193,32 +193,13 @@ class PipelineConfig(ModuleTypeConfigSchema):
             config=config, module_config=module_config, kiara=kiara
         )
 
-        root_module_args: typing.Dict[str, typing.Any] = {}
-        if module_config_obj.module_type == "pipeline":
-            root_module_args["module_type"] = "pipeline"
-            root_module_args["module_config"] = module_config_obj.module_config
-        elif kiara.is_pipeline_module(module_config_obj.module_type):
-            root_module_args["module_type"] = module_config_obj.module_type
-            root_module_args["module_config"] = module_config_obj.module_config
-        else:
-            # means it's a python module, and we wrap it into a single-module pipeline
-            root_module_args["module_type"] = "pipeline"
-            steps_conf = {
-                "steps": [
-                    {
-                        "module_type": module_config_obj.module_type,
-                        "step_id": slugify(
-                            module_config_obj.module_type, separator="_"
-                        ),
-                        "module_config": module_config_obj.module_config,
-                    }
-                ],
-                "input_aliases": "auto",
-                "output_aliases": "auto",
-            }
-            root_module_args["module_config"] = steps_conf
+        if not module_config_obj.module_type == "pipeline":
+            raise Exception(f"Not a valid pipeline configuration: {config}")
 
-        module: PipelineConfig = PipelineConfig(**root_module_args)
+        # TODO: this is a bit round-about, to create a module config first, but it probably doesn't matter
+        pipeline_config_data = module_config_obj.module_config
+
+        module: PipelineConfig = PipelineConfig(**pipeline_config_data)
         return module
 
     class Config:

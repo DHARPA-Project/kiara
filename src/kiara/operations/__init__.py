@@ -55,7 +55,7 @@ class Operation(ModuleConfig):
     @property
     def module(self) -> "KiaraModule":
         if self._module is None:
-            self._module = self.create_module(self.kiara)
+            self._module = self.create_module(kiara=self.kiara)
         return self._module
 
     @property
@@ -189,6 +189,10 @@ class OperationMgmt(object):
         self._operations: typing.Optional[typing.Dict[str, typing.List[str]]] = None
 
     @property
+    def operation_ids(self) -> typing.Iterable[str]:
+        return self.profiles.keys()
+
+    @property
     def profiles(self) -> typing.Mapping[str, Operation]:
 
         if self._profiles is not None:
@@ -239,6 +243,10 @@ class OperationMgmt(object):
         self._operations = _operations
 
         return self._profiles
+
+    def get_operation(self, operation_id: str) -> typing.Optional[Operation]:
+
+        return self.profiles.get(operation_id, None)
 
     @property
     def operation_types(self) -> typing.Mapping[str, OperationType]:

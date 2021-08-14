@@ -524,7 +524,7 @@ class DataStore(abc.ABC):
                     f"Can't save value: no save operation found for value type '{value_type}'"
                 )
 
-            save_module = save_config.create_module(self._kiara)
+            save_module = save_config.create_module(kiara=self._kiara)
             result = save_module.run(**save_config.inputs)
             load_config_value: Value = result.get_value_obj("load_config")
 

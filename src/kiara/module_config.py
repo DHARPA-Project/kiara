@@ -19,6 +19,7 @@ from kiara.utils import get_data_from_file
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
     from kiara.module import KiaraModule
+    from kiara.pipeline.config import PipelineConfig
 
 
 class ModuleTypeConfigSchema(BaseModel):
@@ -101,7 +102,11 @@ class ModuleTypeConfigSchema(BaseModel):
 
 def parse_and_create_module_config(
     config: typing.Union[
-        "ModuleConfig", typing.Mapping, str, typing.Type["KiaraModule"]
+        "ModuleConfig",
+        typing.Mapping,
+        str,
+        typing.Type["KiaraModule"],
+        "PipelineConfig",
     ],
     module_config: typing.Union[None, typing.Mapping[str, typing.Any]] = None,
     kiara: typing.Optional["Kiara"] = None,
@@ -116,6 +121,17 @@ def parse_and_create_module_config(
         from kiara.module import KiaraModule
 
         if issubclass(config, KiaraModule):
+            # this basically makes sure the class is augmented with the '_module_type_id` attribute
+            if not hasattr(config, "_module_type_id"):
+                match = False
+                for mod_name in kiara.available_module_types:
+                    mod_cls = kiara.get_module_class(mod_name)
+                    if mod_cls == config:
+                        match = True
+                        break
+                if not match:
+                    raise Exception(f"Class '{config}' not a valid kiara module.")
+
             config = config._module_type_id  # type: ignore
         else:
             raise TypeError(f"Invalid type '{type(config)}' for module configuration.")
@@ -160,14 +176,23 @@ def parse_and_create_module_config(
             module_instance_config = kiara.operation_mgmt.profiles[config]
         elif os.path.isfile(os.path.expanduser(config)):
             path = os.path.expanduser(config)
-            workflow_config_data = get_data_from_file(path)
+            module_config_data = get_data_from_file(path)
 
             if module_config:
                 raise NotImplementedError()
 
-            module_instance_config = ModuleConfig(
-                module_type="pipeline", module_config=workflow_config_data
-            )
+            if not isinstance(module_config_data, typing.Mapping):
+                raise Exception(
+                    f"Invalid module/pipeline config, must be a mapping type: {module_config_data}"
+                )
+
+            if "steps" in module_config_data.keys():
+                module_type = "pipeline"
+                module_instance_config = ModuleConfig(
+                    module_type=module_type, module_config=module_config_data
+                )
+            elif "module_type" in module_config_data.keys():
+                module_instance_config = ModuleConfig(**module_config_data)
         else:
             raise Exception(
                 f"Can't create module config from string '{config}'. Value must be path to a file, or one of: {', '.join(kiara.available_module_types)}"
@@ -177,7 +202,15 @@ def parse_and_create_module_config(
         if module_config:
             raise NotImplementedError()
     else:
-        raise TypeError(f"Invalid type '{type(config)}' for module configuration.")
+
+        from kiara.pipeline.config import PipelineConfig
+
+        if isinstance(config, PipelineConfig):
+            module_instance_config = ModuleConfig(
+                module_type="pipeline", module_config=config.dict()
+            )
+        else:
+            raise TypeError(f"Invalid type '{type(config)}' for module configuration.")
 
     return module_instance_config
 
@@ -193,7 +226,11 @@ class ModuleConfig(KiaraInfoModel):
     def create_module_config(
         cls,
         config: typing.Union[
-            "ModuleConfig", typing.Mapping, str, typing.Type["KiaraModule"]
+            "ModuleConfig",
+            typing.Mapping,
+            str,
+            typing.Type["KiaraModule"],
+            "PipelineConfig",
         ],
         module_config: typing.Union[None, typing.Mapping[str, typing.Any]] = None,
         kiara: typing.Optional["Kiara"] = None,
@@ -248,7 +285,16 @@ class ModuleConfig(KiaraInfoModel):
     def create_doc(cls, value):
         return DocumentationMetadataModel.create(value)
 
-    def create_module(self, kiara: typing.Optional["Kiara"] = None):
+    def create_module(
+        self,
+        kiara: typing.Optional["Kiara"] = None,
+        module_id: typing.Optional[str] = None,
+    ):
+
+        if module_id and not isinstance(module_id, str):
+            raise TypeError(
+                f"Invalid type, module_id must be a string, not: {type(module_id)}"
+            )
 
         if kiara is None:
             from kiara.kiara import Kiara
@@ -257,7 +303,7 @@ class ModuleConfig(KiaraInfoModel):
 
         if self._module is None:
             self._module = kiara.create_module(
-                id=f"__{self.module_type}",
+                id=module_id,
                 module_type=self.module_type,
                 module_config=self.module_config,
             )

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import pytest
 
+import typing
 from kiara_modules.core.logic import AndModule
 
-from kiara import Kiara
+from kiara import Kiara, KiaraModule
 
 
 def test_module_instance_creation(kiara: Kiara):
@@ -60,3 +61,37 @@ def test_module_instance_direct(kiara: Kiara):
     and_module = AndModule(kiara=kiara)
     result = and_module.run(a=True, b=True)
     assert result.get_all_value_data() == {"y": True}
+
+
+def test_module_instance_from_class(kiara: Kiara):
+
+    and_module = AndModule.create_instance(kiara=kiara)
+    result = and_module.run(a=True, b=True)
+    assert result.get_all_value_data() == {"y": True}
+
+    with pytest.raises(Exception) as e:
+        AndModule.create_instance(module_type="and", kiara=kiara)
+
+    assert "but not both" in str(e.value)
+
+
+def test_module_instance_from_config_file(
+    kiara: Kiara, module_config_paths: typing.Dict[str, str]
+):
+
+    for path in module_config_paths.values():
+        mod = KiaraModule.create_instance(path, kiara=kiara)
+        assert isinstance(mod, KiaraModule)
+        assert mod.input_schemas.keys()
+        assert mod.output_schemas.keys()
+
+
+def test_module_instance_from_pipeline_config_files(
+    kiara: Kiara, pipeline_paths: typing.Dict[str, str]
+):
+
+    for path in pipeline_paths.values():
+        mod = KiaraModule.create_instance(path, kiara=kiara)
+        assert isinstance(mod, KiaraModule)
+        assert mod.input_schemas.keys()
+        assert mod.output_schemas.keys()

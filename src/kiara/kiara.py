@@ -58,14 +58,6 @@ def explain(item: typing.Any):
     console.print(item)
 
 
-# def pretty_print(value: Value, kiara: typing.Optional["Kiara"] = None):
-#
-#     if kiara is None:
-#         kiara = Kiara.instance()
-#
-#     kiara.pretty_print(value)
-
-
 class Kiara(object):
     _instance = None
 
@@ -188,50 +180,6 @@ class Kiara(object):
 
         return self.type_mgmt.get_value_type_cls(type_name=type_name)
 
-    # def transform_data(
-    #     self,
-    #     data: typing.Any,
-    #     target_type: str,
-    #     source_type: typing.Optional[str] = None,
-    #     config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
-    #     register_result: bool = False,
-    # ) -> Value:
-    #
-    #     raise NotImplementedError()
-    #
-    #     # if register_result:
-    #     #     raise NotImplementedError()
-    #     #
-    #     # if not source_type:
-    #     #     if isinstance(data, Value):
-    #     #         source_type = data.type_name
-    #     #     else:
-    #     #         _source_type = self.type_mgmt.determine_type(data)
-    #     #         if not _source_type:
-    #     #             raise Exception(
-    #     #                 f"Can't transform data to '{target_type}': can not determine source type."
-    #     #             )
-    #     #         source_type = _source_type._value_type_name  # type: ignore
-    #     #
-    #     # module = self._operation_mgmt.get_type_conversion_module(
-    #     #     source_type=source_type, target_type=target_type  # type: ignore
-    #     # )
-    #     # from kiara.modules.type_conversion import OldTypeConversionModule
-    #     #
-    #     # if isinstance(module, OldTypeConversionModule):
-    #     #
-    #     #     result = module.run(source_value=data, config=config)
-    #     #     return result.get_value_obj("target_value")
-    #     #
-    #     # else:
-    #     #     raise NotImplementedError()
-
-    # def get_convert_target_types(self, source_type: str) -> typing.Iterable[str]:
-    #
-    #     raise NotImplementedError()
-    #
-    #     # return self._operation_mgmt.type_convert_profiles.get(source_type, [])
-
     def add_module_manager(self, module_manager: ModuleManager):
 
         self._module_mgr.add_module_manager(module_manager)
@@ -307,6 +255,20 @@ class Kiara(object):
         id: typing.Optional[str] = None,
         parent_id: typing.Optional[str] = None,
     ) -> "KiaraModule":
+        """Create a module instance.
+
+        The 'module_type' argument can be a module type id, or an operation id. In case of the latter, the 'real' module_type
+        and module_config will be resolved via the operation management.
+
+        Arguments:
+            module_type: the module type- or operation-id
+            module_config: the module instance configuration (must be empty in case of the module_type being an operation id
+            id: the id of this module, only relevant if the module is part of a pipeline, in which case it must be unique within the pipeline
+            parent_id: a reference to the pipeline that contains this module (if applicable)
+
+        Returns:
+            The instantiated module object.
+        """
 
         if module_type == "pipeline":
             from kiara import PipelineModule
@@ -316,6 +278,17 @@ class Kiara(object):
                 id=id, parent_id=parent_id, module_config=module_config, kiara=self
             )
             return module
+
+        elif (
+            module_type not in self.available_module_types
+            and module_type in self.operation_mgmt.operation_ids
+        ):
+            if module_config:
+                raise NotImplementedError()
+            op = self.operation_mgmt.get_operation(module_type)
+            assert op is not None
+            module_type = op.module_type
+            module_config = op.module_config
 
         return self._module_mgr.create_module(
             kiara=self,
@@ -334,7 +307,7 @@ class Kiara(object):
         m = self.create_module(module_type=module_type, module_config=module_config)
         return m.module_instance_doc
 
-    def get_operation(self, operation_id: str):
+    def get_operation(self, operation_id: str) -> Operation:
 
         op = self.operation_mgmt.profiles.get(operation_id, None)
         if op is None:

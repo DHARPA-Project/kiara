@@ -1,0 +1,12 @@
+{
+  "module_type": "pipeline",
+  "module_config": {
+    "steps": [
+      {
+        "module_type": "logic.and",
+        "step_id": "and_1"
+      }
+    ],
+    "doc": "Simple example pipeline, wrapping a single 'and' module."
+  }
+}

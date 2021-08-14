@@ -110,21 +110,21 @@ class TypeMgmt(object):
     #     type_cls = self.get_value_type_cls(type_name=value_type_name)
     #     _configs = type_cls.conversions()
     #     if _configs is None:
-    #         configs = {}
+    #         module_configs = {}
     #     else:
-    #         configs = dict(_configs)
+    #         module_configs = dict(_configs)
     #     for base in type_cls.__bases__:
     #         if hasattr(base, "conversions"):
     #             _b_configs = base.conversions()  # type: ignore
     #             if not _b_configs:
     #                 continue
     #             for k, v in _b_configs.items():
-    #                 if k not in configs.keys():
-    #                     configs[k] = v
+    #                 if k not in module_configs.keys():
+    #                     module_configs[k] = v
     #
     #     # TODO: check input type compatibility?
     #     result: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
-    #     for name, config in configs.items():
+    #     for name, config in module_configs.items():
     #         config = dict(config)
     #         module_type = config.pop("module_type", None)
     #         if not module_type:

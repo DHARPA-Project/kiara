@@ -238,16 +238,35 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
     _config_cls: typing.Type[KIARA_CONFIG] = ModuleTypeConfigSchema  # type: ignore
 
     @classmethod
-    def create_instance_from_class(
+    def create_instance(
         cls,
-        module_config: typing.Mapping[str, typing.Any],
+        module_type: typing.Optional[str] = None,
+        module_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         kiara: typing.Optional["Kiara"] = None,
     ) -> "KiaraModule":
 
-        module_conf = ModuleConfig.create_module_config(
-            config=cls, module_config=module_config, kiara=kiara
-        )
-        return module_conf.create_module(kiara)
+        if cls == KiaraModule:
+            if not module_type:
+                raise Exception(
+                    "This method must be either called on a subclass of KiaraModule, not KiaraModule itself, or it needs the 'module_type' argument specified."
+                )
+        else:
+            if module_type:
+                raise Exception(
+                    "This method must be either called without the 'module_type' argument specified, or on a subclass of the KiaraModule class, but not both."
+                )
+
+        if cls == KiaraModule:
+            assert module_type is not None
+            module_conf = ModuleConfig.create_module_config(
+                config=module_type, module_config=module_config, kiara=kiara
+            )
+        else:
+            module_conf = ModuleConfig.create_module_config(
+                config=cls, module_config=module_config, kiara=kiara
+            )
+
+        return module_conf.create_module(kiara=kiara)
 
     @classmethod
     def retrieve_module_profiles(
@@ -282,6 +301,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
 
         if id is None:
             id = str(uuid.uuid4())
+
         self._id: str = id
         self._parent_id = parent_id
 

@@ -6,6 +6,8 @@ from kiara import Kiara, PipelineModule
 from kiara.pipeline.config import PipelineConfig
 from kiara.pipeline.structure import PipelineStep, PipelineStructure
 
+from .utils import PIPELINES_FOLDER
+
 
 def test_workflow_desc_files(pipeline_paths):
 
@@ -53,11 +55,10 @@ def test_workflow_obj_creation(pipeline_configs: typing.Mapping[str, PipelineCon
 
 def test_pipeline_structure_creation(kiara: Kiara):
 
-    pipeline_file = os.path.join(
-        os.path.dirname(__file__), "resources", "pipelines", "logic", "logic_3.json"
-    )
+    pipeline_file = os.path.join(PIPELINES_FOLDER, "logic", "logic_3.json")
 
     config = PipelineConfig.create_pipeline_config(pipeline_file)
+
     structure = PipelineStructure(parent_id="_", config=config, kiara=kiara)
 
     for idx, step in enumerate(structure.steps):

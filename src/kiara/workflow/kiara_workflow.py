@@ -124,7 +124,7 @@ class KiaraWorkflow(object):
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
 
-        yield f"[b]Workflow: {self.workflow_id}"
+        yield f"[b]Workflow: {self.workflow_id}[/b]"
 
         doc = self._root_module.get_type_metadata().documentation.description
         if doc and doc != DEFAULT_NO_DESC_VALUE:

@@ -6,7 +6,7 @@
 
 # kiara
 
-*A pipeline management and execution engine for the DHARPA project.*
+*A research data management and orchestration engine.*
 
  - *kiara* user documentation: [https://dharpa.org/kiara_documentation](https://dharpa.org/kiara_documentation)
  - Code: [https://github.com/DHARPA-Project/kiara](https://github.com/DHARPA-Project/kiara)

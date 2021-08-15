@@ -664,7 +664,7 @@ class PipelineState(KiaraInfoModel):
         from kiara.pipeline.pipeline import StepStatus
 
         all: typing.List[RenderableType] = []
-        all.append("Pipeline state[/b]")
+        all.append("[b]Pipeline state[/b]")
         all.append("")
         if self.status == StepStatus.RESULTS_READY:
             c = "green"

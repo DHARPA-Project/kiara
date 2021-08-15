@@ -5,7 +5,6 @@ from pydantic import BaseModel, Extra, Field, root_validator, validator
 from rich.console import Console, ConsoleOptions, RenderResult
 from slugify import slugify
 
-from kiara.defaults import DEFAULT_PIPELINE_PARENT_ID
 from kiara.module_config import ModuleConfig, ModuleTypeConfigSchema
 from kiara.pipeline import StepValueAddress
 from kiara.pipeline.structure import PipelineStep, PipelineStructure
@@ -240,7 +239,7 @@ class PipelineConfig(ModuleTypeConfigSchema):
         return steps
 
     def create_pipeline_structure(
-        self, parent_id: str, kiara: typing.Optional["Kiara"] = None
+        self, kiara: typing.Optional["Kiara"] = None
     ) -> "PipelineStructure":
         from kiara import Kiara, PipelineStructure
 
@@ -248,7 +247,6 @@ class PipelineConfig(ModuleTypeConfigSchema):
             kiara = Kiara.instance()
 
         ps = PipelineStructure(
-            parent_id=parent_id,
             config=self,
             kiara=kiara,
         )
@@ -256,14 +254,13 @@ class PipelineConfig(ModuleTypeConfigSchema):
 
     def create_pipeline(
         self,
-        parent_id: typing.Optional[str] = None,
         controller: typing.Optional["PipelineController"] = None,
         kiara: typing.Optional["Kiara"] = None,
     ):
 
-        if parent_id is None:
-            parent_id = DEFAULT_PIPELINE_PARENT_ID
-        structure = self.create_pipeline_structure(parent_id=parent_id, kiara=kiara)
+        # if parent_id is None:
+        #     parent_id = DEFAULT_PIPELINE_PARENT_ID
+        structure = self.create_pipeline_structure(kiara=kiara)
 
         from kiara import Pipeline
 

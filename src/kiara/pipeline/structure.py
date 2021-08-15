@@ -35,7 +35,7 @@ class PipelineStep(BaseModel):
 
     @classmethod
     def create_steps(
-        cls, parent_id: str, *steps: "PipelineStepConfig", kiara: "Kiara"
+        cls, *steps: "PipelineStepConfig", kiara: "Kiara"
     ) -> typing.List["PipelineStep"]:
 
         result: typing.List[PipelineStep] = []
@@ -48,7 +48,6 @@ class PipelineStep(BaseModel):
 
             _s = PipelineStep(
                 step_id=step.step_id,
-                parent_id=parent_id,
                 module_type=step.module_type,
                 module_config=copy.deepcopy(step.module_config),
                 input_links=copy.deepcopy(step.input_links),
@@ -70,7 +69,6 @@ class PipelineStep(BaseModel):
         return v
 
     step_id: str
-    parent_id: str
     module_type: str = Field(description="The module type.")
     module_config: typing.Mapping[str, typing.Any] = Field(
         description="The module config.", default_factory=dict
@@ -122,9 +120,7 @@ class PipelineStep(BaseModel):
                         module_config=self.module_config,
                     )
             except Exception as e:
-                raise Exception(
-                    f"Can't assemble pipeline structure '{self.parent_id}': {e}"
-                )
+                raise Exception(f"Can't assemble pipeline structure: {e}")
 
         return self._module
 
@@ -170,7 +166,7 @@ class PipelineStep(BaseModel):
 
     def __repr__(self):
 
-        return f"{self.__class__.__name__}(step_id={self.step_id} parent={self.parent_id} module_type={self.module_type} processing_stage={self.processing_stage})"
+        return f"{self.__class__.__name__}(step_id={self.step_id} module_type={self.module_type} processing_stage={self.processing_stage})"
 
     def __str__(self):
         return f"step: {self.step_id} (module: {self.module_type})"
@@ -252,7 +248,6 @@ class PipelineStructure(object):
 
     def __init__(
         self,
-        parent_id: str,
         config: "PipelineConfig",
         kiara: typing.Optional["Kiara"] = None,
     ):
@@ -270,9 +265,9 @@ class PipelineStructure(object):
             kiara = Kiara.instance()
         self._kiara: Kiara = kiara
         self._steps: typing.List[PipelineStep] = PipelineStep.create_steps(
-            parent_id, *steps, kiara=self._kiara
+            *steps, kiara=self._kiara
         )
-        self._pipeline_id: str = parent_id
+        # self._pipeline_id: str = parent_id
 
         if input_aliases is None:
             input_aliases = {}
@@ -317,9 +312,9 @@ class PipelineStructure(object):
         self._steps_details: typing.Dict[str, typing.Any] = None  # type: ignore
         """Holds details about the (current) processing steps contained in this workflow."""
 
-    @property
-    def pipeline_id(self) -> str:
-        return self._pipeline_id
+    # @property
+    # def pipeline_id(self) -> str:
+    #     return self._pipeline_id
 
     @property
     def structure_config(self) -> "PipelineConfig":
@@ -512,7 +507,6 @@ class PipelineStructure(object):
                     value_name=output_name,
                     value_schema=schema,
                     step_id=step.step_id,
-                    pipeline_id=self._pipeline_id,
                 )
 
                 steps_details[step.step_id]["outputs"][output_name] = step_output
@@ -535,7 +529,6 @@ class PipelineStructure(object):
                         step_id=step.step_id, value_name=output_name
                     )
                     pipeline_output = PipelineOutputField(
-                        pipeline_id=self._pipeline_id,
                         value_name=step_output_name,
                         connected_output=step_output_address,
                         value_schema=schema,
@@ -602,7 +595,6 @@ class PipelineStructure(object):
 
                     step_input_point = StepInputField(
                         step_id=step.step_id,
-                        pipeline_id=self._pipeline_id,
                         value_name=input_name,
                         value_schema=schema,
                         is_constant=is_constant,
@@ -645,7 +637,6 @@ class PipelineStructure(object):
                         connected_pipeline_input = PipelineInputField(
                             value_name=pipeline_input_name,
                             value_schema=schema,
-                            pipeline_id=self._pipeline_id,
                             is_constant=is_constant,
                         )
 
@@ -676,7 +667,6 @@ class PipelineStructure(object):
 
                     step_input_point = StepInputField(
                         step_id=step.step_id,
-                        pipeline_id=self._pipeline_id,
                         value_name=input_name,
                         value_schema=schema,
                         connected_pipeline_input=connected_pipeline_input.value_name,

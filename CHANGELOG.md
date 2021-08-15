@@ -6,6 +6,9 @@
   - kiara.pipeline.config.PipelineModuleConfig -> kiara.pipeline.config.PipelineConfig
   - kiara.module_config.ModuleTypeConfig -> kiara.module_config.ModuleTypeConfigSchema
   - kiara.module_config.ModuleConfig -> kiara.module_config.ModuleConfig
+
+- removed 'pipeline_id' attribute from 'PipelineStructure' class, but 'Pipeline" has 'id' and 'title' fields now instead
+
 ### Version 0.0.13
 
 - mostly tests

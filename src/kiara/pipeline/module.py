@@ -63,9 +63,7 @@ class PipelineModule(KiaraModule[PipelineConfig]):
 
     def _create_structure(self) -> PipelineStructure:
 
-        pipeline_structure = PipelineStructure(
-            parent_id=self.full_id, config=self.config, kiara=self._kiara
-        )
+        pipeline_structure = PipelineStructure(config=self.config, kiara=self._kiara)
         return pipeline_structure
 
     def create_input_schema(self) -> typing.Mapping[str, ValueSchema]:

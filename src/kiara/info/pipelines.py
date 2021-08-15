@@ -34,7 +34,6 @@ yaml = StringYAML()
 
 class StepsInfo(KiaraInfoModel):
 
-    pipeline_id: str = Field(description="The pipeline id.")
     steps: typing.Dict[str, StepDesc] = Field(description="A list of step details.")
     processing_stages: typing.List[typing.List[str]] = Field(
         description="The stages in which the steps are processed."
@@ -195,7 +194,6 @@ class PipelineStructureDesc(BaseModel):
             )
 
         return PipelineStructureDesc(
-            pipeline_id=structure._pipeline_id,
             steps=steps,
             processing_stages=structure.processing_stages,
             pipeline_input_connections=workflow_inputs,
@@ -208,7 +206,6 @@ class PipelineStructureDesc(BaseModel):
         allow_mutation = False
         extra = Extra.forbid
 
-    pipeline_id: str = Field(description="The (unique) pipeline id.")
     steps: typing.Dict[str, StepDesc] = Field(
         description="The steps contained in this pipeline, with the 'step_id' as key."
     )
@@ -232,7 +229,6 @@ class PipelineStructureDesc(BaseModel):
     def steps_info(self) -> StepsInfo:
 
         return StepsInfo(
-            pipeline_id=self.pipeline_id,
             processing_stages=self.processing_stages,
             steps=self.steps,
         )
@@ -241,7 +237,7 @@ class PipelineStructureDesc(BaseModel):
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
 
-        yield f"[b]Pipeline structure: {self.pipeline_id}[/b]\n"
+        yield "[b]Pipeline structure[/b]\n"
 
         yield "[b]Inputs / Outputs[/b]"
 
@@ -355,9 +351,7 @@ class PipelineModuleInfo(KiaraModuleTypeMetadata):
         m = kiara.get_module_class(module_type=module_type_name)
 
         base_conf: "PipelineConfig" = m._base_pipeline_config  # type: ignore
-        structure = base_conf.create_pipeline_structure(
-            parent_id=module_type_name, kiara=kiara
-        )
+        structure = base_conf.create_pipeline_structure(kiara=kiara)
         struc_desc = PipelineStructureDesc.create_pipeline_structure_desc(
             pipeline=structure
         )
@@ -670,7 +664,7 @@ class PipelineState(KiaraInfoModel):
         from kiara.pipeline.pipeline import StepStatus
 
         all: typing.List[RenderableType] = []
-        all.append(f"Pipeline state for: [b]{self.structure.pipeline_id}[/b]")
+        all.append("Pipeline state[/b]")
         all.append("")
         if self.status == StepStatus.RESULTS_READY:
             c = "green"

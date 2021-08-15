@@ -415,7 +415,7 @@ class Workflow(JupyterMixin):
             return self._structure
 
         self._structure = self.pipeline_config.create_pipeline_structure(
-            "dynamic", kiara=self._kiara
+            kiara=self._kiara
         )
         return self._structure
 

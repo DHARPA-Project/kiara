@@ -50,7 +50,7 @@ class ApiController(PipelineController):
                     except Exception as e:
                         # TODO: cancel running jobs?
                         log.error(
-                            f"Processing of step '{step_id}' from pipeline '{self.pipeline.structure.pipeline_id}' failed: {e}"
+                            f"Processing of step '{step_id}' from pipeline '{self.pipeline.id}' failed: {e}"
                         )
                         return False
                 self._processor.wait_for(*job_ids)
@@ -112,7 +112,7 @@ class ApiController(PipelineController):
         except Exception as e:
             # TODO: cancel running jobs?
             log.error(
-                f"Processing of step '{step_id}' from pipeline '{self.pipeline.structure.pipeline_id}' failed: {e}"
+                f"Processing of step '{step_id}' from pipeline '{self.pipeline.id}' failed: {e}"
             )
 
             return False

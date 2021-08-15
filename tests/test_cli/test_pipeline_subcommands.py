@@ -26,7 +26,7 @@ async def test_pipeline_explain_subcommand():
     result = await runner.invoke(cli, "pipeline explain logic.xor")
 
     assert result.exit_code == 0
-    assert "Pipeline structure: logic.xor" in result.stdout
+    assert "Pipeline structure" in result.stdout
     assert "Processing stage: 2" in result.stdout
 
     pipeline_file = os.path.join(
@@ -41,7 +41,7 @@ async def test_pipeline_explain_subcommand():
     result = await runner.invoke(cli, f"pipeline explain {abs_path}")
 
     assert result.exit_code == 0
-    assert "Pipeline structure: logic_3" in result.stdout
+    assert "Pipeline structure" in result.stdout
     assert "Processing stage: 2" in result.stdout
 
 

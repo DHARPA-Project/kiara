@@ -35,15 +35,12 @@ def extend_pipeline(
 
     other_pipeline_config: typing.Optional[PipelineConfig] = None
 
-    other_name = "extended"
-
     if isinstance(other, typing.Mapping):
         other_pipeline_config = PipelineConfig(**other)
     elif isinstance(other, PipelineConfig):
         other_pipeline_config = other
     elif isinstance(other, PipelineStructure):
         other_pipeline_config = other.structure_config
-        other_name = other.pipeline_id
 
     if other_pipeline_config is None:
         from kiara.pipeline.pipeline import Pipeline
@@ -57,7 +54,7 @@ def extend_pipeline(
         )
 
     other_structure: PipelineStructure = PipelineStructure(
-        parent_id="_", config=other_pipeline_config, kiara=structure._kiara
+        config=other_pipeline_config, kiara=structure._kiara
     )
 
     step_id_overlap = [
@@ -131,9 +128,7 @@ def extend_pipeline(
 
     config["steps"] = new_steps
     pmc = PipelineConfig(**config)
-    new_structure = pmc.create_pipeline_structure(
-        f"{structure.pipeline_id}_{other_name}", kiara=structure._kiara
-    )
+    new_structure = pmc.create_pipeline_structure(kiara=structure._kiara)
     return new_structure
 
 

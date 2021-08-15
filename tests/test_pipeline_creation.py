@@ -47,7 +47,6 @@ def test_workflow_obj_creation(pipeline_configs: typing.Mapping[str, PipelineCon
     assert isinstance(c, PipelineModule)
 
     assert c.full_id == "logic_1"
-    assert c.structure.pipeline_id == "logic_1"
     assert len(c.structure.steps) == 1
     assert "and_1" in c.structure.to_details().steps.keys()
     assert isinstance(c.structure.to_details().steps["and_1"].step, PipelineStep)
@@ -59,7 +58,7 @@ def test_pipeline_structure_creation(kiara: Kiara):
 
     config = PipelineConfig.create_pipeline_config(pipeline_file)
 
-    structure = PipelineStructure(parent_id="_", config=config, kiara=kiara)
+    structure = PipelineStructure(config=config, kiara=kiara)
 
     for idx, step in enumerate(structure.steps):
         assert isinstance(step, PipelineStep)

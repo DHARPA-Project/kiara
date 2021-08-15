@@ -216,7 +216,7 @@ class ValueField(BaseModel):
     _id: uuid.UUID = PrivateAttr(default_factory=uuid.uuid4)
     value_name: str
     value_schema: ValueSchema
-    pipeline_id: str
+    # pipeline_id: str
 
     def __eq__(self, other):
 
@@ -232,7 +232,7 @@ class ValueField(BaseModel):
         step_id = ""
         if hasattr(self, "step_id"):
             step_id = f" step_id='{self.step_id}'"
-        return f"{self.__class__.__name__}(value_name='{self.value_name}' pipeline_id='{self.pipeline_id}'{step_id})"
+        return f"{self.__class__.__name__}(value_name='{self.value_name}' {step_id})"
 
     def __str__(self):
         name = camel_case_to_snake_case(self.__class__.__name__[0:-5], repl=" ")

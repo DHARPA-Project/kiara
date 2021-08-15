@@ -40,9 +40,14 @@ class Pipeline(object):
         structure: PipelineStructure,
         # constants: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         controller: typing.Optional[PipelineController] = None,
+        title: typing.Optional[str] = None,
     ):
 
         self._id: str = str(uuid.uuid4())
+        if title is None:
+            title = self._id
+
+        self._title: str = title
         self._structure: PipelineStructure = structure
 
         self._pipeline_inputs: ValueSet = None  # type: ignore
@@ -81,6 +86,10 @@ class Pipeline(object):
     @property
     def id(self) -> str:
         return self._id
+
+    @property
+    def title(self) -> str:
+        return self._title
 
     @property
     def structure(self) -> PipelineStructure:
@@ -174,7 +183,7 @@ class Pipeline(object):
                     po = self._structure.pipeline_outputs[output_point.pipeline_output]
 
                     vm = ValueMetadata(
-                        origin=f"{self._structure.pipeline_id}.steps.{step_id}.outputs.{output_name}"
+                        origin=f"{self.id}.steps.{step_id}.outputs.{output_name}"
                     )
 
                     pv = self._data_registry.register_linked_value(
@@ -196,7 +205,7 @@ class Pipeline(object):
                 # if this step input gets fed from a pipeline_input (meaning user input in most cases),
                 # we need to create a DataValue for that pipeline input
                 vm = ValueMetadata(
-                    origin=f"{self.structure.pipeline_id}.steps.{step_id}.inputs.{input_point.value_name}"
+                    origin=f"{self.id}.steps.{step_id}.inputs.{input_point.value_name}"
                 )
                 if input_point.connected_pipeline_input:
                     connected_pipeline_input_name = input_point.connected_pipeline_input
@@ -289,37 +298,33 @@ class Pipeline(object):
                     )
 
         if not pipeline_inputs:
-            raise Exception(
-                f"Can't init pipeline '{self.structure.pipeline_id}': no pipeline inputs"
-            )
+            raise Exception(f"Can't init pipeline '{self.title}': no pipeline inputs")
         self._pipeline_inputs = ValueSetImpl(
             items=pipeline_inputs,
             read_only=False,
-            title=f"Inputs for pipeline '{self.structure.pipeline_id}'",
+            title=f"Inputs for pipeline '{self.title}'",
         )
         if not pipeline_outputs:
-            raise Exception(
-                f"Can't init pipeline '{self.structure.pipeline_id}': no pipeline outputs"
-            )
+            raise Exception(f"Can't init pipeline '{self.title}': no pipeline outputs")
 
         self._pipeline_outputs = ValueSetImpl(
             items=pipeline_outputs,
             read_only=True,
-            title=f"Outputs for pipeline '{self.structure.pipeline_id}'",
+            title=f"Outputs for pipeline '{self.title}'",
         )
         self._step_inputs = {}
         for step_id, inputs in all_step_inputs.items():
             self._step_inputs[step_id] = ValueSetImpl(
                 items=inputs,
                 read_only=True,
-                title=f"Inputs for step '{step_id}' of pipeline '{self.structure.pipeline_id}",
+                title=f"Inputs for step '{step_id}' of pipeline '{self.title}",
             )
         self._step_outputs = {}
         for step_id, outputs in all_step_outputs.items():
             self._step_outputs[step_id] = ValueSetImpl(
                 read_only=False,
                 items=outputs,
-                title=f"Outputs for step '{step_id}' of pipeline '{self.structure.pipeline_id}'",
+                title=f"Outputs for step '{step_id}' of pipeline '{self.title}'",
             )
 
     def values_updated(self, *items: PipelineValue):
@@ -358,7 +363,7 @@ class Pipeline(object):
 
         if updated_pipeline_inputs:
             event_pi = PipelineInputEvent(
-                pipeline_id=self._structure.pipeline_id,
+                pipeline_id=self.id,
                 updated_pipeline_inputs=updated_pipeline_inputs,
             )
             self._controller.pipeline_inputs_changed(event_pi)
@@ -366,7 +371,7 @@ class Pipeline(object):
 
         if updated_outputs:
             event_so = StepOutputEvent(
-                pipeline_id=self._structure.pipeline_id,
+                pipeline_id=self.id,
                 updated_step_outputs=updated_outputs,
             )
             self._controller.step_outputs_changed(event_so)
@@ -374,7 +379,7 @@ class Pipeline(object):
 
         if updated_inputs:
             event_si = StepInputEvent(
-                pipeline_id=self._structure.pipeline_id,
+                pipeline_id=self.id,
                 updated_step_inputs=updated_inputs,
             )
             self._controller.step_inputs_changed(event_si)
@@ -382,7 +387,7 @@ class Pipeline(object):
 
         if updated_pipeline_outputs:
             event_po = PipelineOutputEvent(
-                pipeline_id=self._structure.pipeline_id,
+                pipeline_id=self.id,
                 updated_pipeline_outputs=updated_pipeline_outputs,
             )
             self._controller.pipeline_outputs_changed(event_po)

@@ -215,7 +215,7 @@ class PipelineController(PipelineListener):
 
         job_id = self._processor.start(
             pipeline_id=self.pipeline.id,
-            pipeline_name=self.pipeline.structure.pipeline_id,
+            pipeline_name=self.pipeline.title,
             step_id=step_id,
             module=step.module,
             inputs=step_inputs,

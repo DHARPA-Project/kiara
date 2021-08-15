@@ -50,13 +50,13 @@
     - from 'kiara.data.values' -> 'kiara.pipeline.utils':
       - generate_step_alias
     - from 'kiara.data.values' -> 'kiara.pipeline'
-      - PipelineValue
-      - PipelineValues
+      - PipelineValueInfo
+      - PipelineValuesInfo
     - from 'kiara.data.values' -> 'kiara.pipeline.values'
       - ValueUpdateHandler
       - StepValueAddress
       - ValueField
-      - KiaraValue
+      - PipelineValue
       - DataValue
       - LinkedValue
       - StepInputField

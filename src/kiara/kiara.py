@@ -13,6 +13,7 @@ from zmq.devices import ThreadDevice
 from kiara.config import KiaraConfig
 from kiara.data import Value, ValueSet
 from kiara.data.registry import DataRegistry
+from kiara.data.registry.pipeline_registry import PipelineRegistry
 from kiara.data.store import LocalDataStore
 from kiara.data.types import ValueType
 from kiara.data.types.type_mgmt import TypeMgmt
@@ -44,6 +45,7 @@ log = logging.getLogger("kiara")
 
 
 def explain(item: typing.Any):
+    """Pretty print information about an item on the terminal."""
 
     if isinstance(item, type):
         from kiara.module import KiaraModule
@@ -59,10 +61,33 @@ def explain(item: typing.Any):
 
 
 class Kiara(object):
+    """The core context of a kiara session.
+
+    The `Kiara` object holds all information related to the current environment the user does works in. This includes:
+
+      - available modules, operations & pipelines
+      - available value types
+      - available metadata schemas
+      - available data items
+      - available controller and processor types
+      - misc. configuration options
+
+    It's possible to use *kiara* without ever manually touching the 'Kiara' class, by default all relevant classes and functions
+    will use a default instance of this class (available via the `Kiara.instance()` method.
+
+    The Kiara class is highly dependent on the Python environment it lives in, because it auto-discovers available sub-classes
+    of its building blocks (modules, value types, etc.). So, you can't assume that, for example, a pipeline you create
+    will work the same way (or at all) in a different environment. *kiara* will always be able to tell you all the details
+    of this environment, though, and it will attach those details to things like data, so there is always a record of
+    how something was created, and in which environment.
+    """
+
     _instance = None
 
     @classmethod
     def instance(cls):
+        """The default *kiara* context. In most cases, it's recommended you create and manage your own, though."""
+
         if cls._instance is None:
             cls._instance = Kiara()
         return cls._instance
@@ -89,7 +114,7 @@ class Kiara(object):
 
         self._type_mgmt_obj: TypeMgmt = TypeMgmt(self)
 
-        self._data_registry: DataRegistry = DataRegistry(self)
+        self._data_registry: DataRegistry = PipelineRegistry(self)
 
         self._module_mgr: MergedModuleManager = MergedModuleManager(
             config.module_managers
@@ -97,10 +122,13 @@ class Kiara(object):
 
     @property
     def config(self) -> KiaraConfig:
+        """The configuration of this *kiara* environment."""
         return self._config
 
     @property
     def default_processor(self) -> "ModuleProcessor":
+        """The default module processor that will be used in this environment, unless otherwise specified."""
+
         return self._default_processor
 
     def start_zmq_device(self):

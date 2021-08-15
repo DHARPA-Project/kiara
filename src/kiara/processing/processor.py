@@ -10,7 +10,7 @@ from zmq import Context, Socket
 from kiara.data import ValueSet
 from kiara.exceptions import KiaraProcessingException
 from kiara.module import KiaraModule, StepInputs, StepOutputs
-from kiara.pipeline import PipelineValues
+from kiara.pipeline import PipelineValuesInfo
 from kiara.processing import Job, JobLog, JobStatus
 from kiara.utils import is_debug
 
@@ -109,10 +109,10 @@ class ModuleProcessor(abc.ABC):
             pipeline_id=pipeline_id,
             pipeline_name=pipeline_name,
             step_id=step_id,
-            module_type=module.type_name,
+            module_type=module._module_type_id,  # type: ignore
             module_config=module.config.dict(),
-            inputs=PipelineValues.from_value_set(inputs),
-            outputs=PipelineValues.from_value_set(outputs),
+            inputs=PipelineValuesInfo.from_value_set(inputs),
+            outputs=PipelineValuesInfo.from_value_set(outputs),
         )
         job.job_log.add_log("job created")
         self._active_jobs[job_id] = job

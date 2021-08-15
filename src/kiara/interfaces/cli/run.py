@@ -12,7 +12,7 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 
 from kiara import Kiara
-from kiara.data.values import ValuesInfo
+from kiara.data.values import ValueSet, ValuesInfo
 from kiara.defaults import DEFAULT_TO_JSON_CONFIG
 from kiara.interfaces.cli.utils import _create_module_instance
 from kiara.module import KiaraModule
@@ -294,7 +294,7 @@ async def run(ctx, module, inputs, module_config, output, explain, save):
                     config.update(DEFAULT_TO_JSON_CONFIG)
 
                     try:
-                        transformed = kiara_obj.transform_data(
+                        transformed: ValueSet = kiara_obj.transform_data(
                             workflow.outputs,
                             source_type="value_set",
                             target_type=format,

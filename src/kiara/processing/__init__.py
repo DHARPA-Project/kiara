@@ -5,7 +5,7 @@ from datetime import datetime
 from enum import Enum
 from pydantic import BaseModel, Field, validator
 
-from kiara.pipeline import PipelineValues
+from kiara.pipeline import PipelineValuesInfo
 
 try:
     from typing import Literal
@@ -66,8 +66,8 @@ class Job(BaseModel):
     module_config: typing.Dict[str, typing.Any] = Field(
         description="The module configuration."
     )
-    inputs: PipelineValues = Field(description="The input values.")
-    outputs: PipelineValues = Field(description="The output values.")
+    inputs: PipelineValuesInfo = Field(description="The input values.")
+    outputs: PipelineValuesInfo = Field(description="The output values.")
     job_log: JobLog = Field(
         description="Details about the job progress.", default_factory=JobLog
     )

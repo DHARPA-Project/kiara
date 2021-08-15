@@ -4,13 +4,14 @@ import typing
 import uuid
 from pyarrow import Table
 
+from kiara.data.registry import DataRegistry
 from kiara.data.store import LocalDataStore
 from kiara.data.values import Value, ValueMetadata, ValueSchema
 from kiara.defaults import SpecialValue
 from kiara.pipeline.values import (
     DataValue,
-    KiaraValue,
     LinkedValue,
+    PipelineValue,
     ValueField,
     ValueUpdateHandler,
 )
@@ -27,7 +28,7 @@ def generate_random_value_id():
     return str(uuid.uuid4())
 
 
-class DataRegistry(object):
+class PipelineRegistry(DataRegistry):
     """Contains and manages all [Value][kiara.data.values.Value] objects for *Kiara*.
 
     This is one of the central classes in *Kiara*, as it manages all data that is set by users or which results from
@@ -44,16 +45,14 @@ class DataRegistry(object):
 
     def __init__(self, kiara: "Kiara"):
 
-        self._kiara: Kiara = kiara
+        super().__init__(kiara=kiara)
         self._data_store: LocalDataStore = self._kiara.data_store
 
-        self._id: str = str(uuid.uuid4())
-
         self._value_items: typing.Dict[str, DataValue] = {}
-        """PipelineValues that have a actual data associated to it. key is the value id, value is the value wrapper object."""
+        """PipelineValuesInfo that have a actual data associated to it. key is the value id, value is the value wrapper object."""
 
         self._linked_value_items: typing.Dict[str, LinkedValue] = {}
-        """PipelineValues that track one or several other values. key is the value id, value is a dictionary with the tracked value id as key and an optional sub-value query string as value (if not the whole value is used)."""
+        """PipelineValuesInfo that track one or several other values. key is the value id, value is a dictionary with the tracked value id as key and an optional sub-value query string as value (if not the whole value is used)."""
         self._linked_value_items_reverse: typing.Dict[str, typing.List[str]] = {}
         """Lookup dict for linked values."""
 
@@ -79,7 +78,7 @@ class DataRegistry(object):
             value_id = item.id
         else:
             raise TypeError(
-                f"Invalid type '{type(item)}', need PipelineValue or string."
+                f"Invalid type '{type(item)}', need PipelineValueInfo or string."
             )
 
         if value_id in self._value_items.keys():
@@ -104,14 +103,13 @@ class DataRegistry(object):
         value_fields: typing.Union[
             ValueField, typing.Iterable[ValueField], None
         ] = None,
-        value_id: typing.Optional[str] = None,
         callbacks: typing.Optional[typing.Iterable[ValueUpdateHandler]] = None,
         initial_value: typing.Any = SpecialValue.NOT_SET,
         is_constant: bool = False,
         value_metadata: typing.Union[
             None, typing.Mapping[str, typing.Any], ValueMetadata
         ] = None,
-    ) -> DataValue:
+    ) -> Value:
         """Register a value in this registry.
 
         This registers an unique id, along with a data schema and other metadata which can then be 'filled' with actual
@@ -130,11 +128,7 @@ class DataRegistry(object):
             the newly created value object
         """
 
-        if value_id is not None and value_id in self._values.keys():
-            raise Exception(f"Value id '{id}' already registered.")
-
-        if value_id is None:
-            value_id = generate_random_value_id()
+        value_id = generate_random_value_id()
 
         if initial_value is None:
             initial_value = SpecialValue.NOT_SET
@@ -255,7 +249,7 @@ class DataRegistry(object):
             if linked_values in _linked_values.keys():
                 raise Exception(f"Duplicate linked value id: {linked_values}")
             _linked_values[linked_values] = {}
-        elif isinstance(linked_values, KiaraValue):
+        elif isinstance(linked_values, PipelineValue):
             if linked_values.id in _linked_values.keys():
                 raise Exception(f"Duplicate linked value id: {linked_values.id}")
             _linked_values[linked_values.id] = {}
@@ -264,7 +258,7 @@ class DataRegistry(object):
 
                 if isinstance(k, str):
                     k = self.get_value_item(k)
-                assert isinstance(k, KiaraValue)
+                assert isinstance(k, PipelineValue)
 
                 if k.id in _linked_values.keys():
                     raise Exception(f"Duplicate linked value id: {k}")
@@ -379,7 +373,7 @@ class DataRegistry(object):
 
         for item in items:
             item = self.get_value_item(item)
-            if not isinstance(item, KiaraValue):
+            if not isinstance(item, PipelineValue):
                 raise Exception("Can't register callback on non-kiara value.")
             self._callbacks.setdefault(item.id, []).append(callback)
 
@@ -422,42 +416,6 @@ class DataRegistry(object):
                     value = self.get_value_data(linked_id)
 
         return value
-
-    # def get_value_hash(
-    #     self, item: typing.Union[str, Value]
-    # ) -> typing.Union[int, ValueHashMarker]:
-    #     """Request the hash for the current data of this value.
-    #
-    #     This raises an exception if no hash can be calculated.
-    #
-    #     Arguments:
-    #         item: the value or its id
-    #
-    #     Returns:
-    #         The hash of the data.
-    #     """
-    #
-    #     item = self.get_value_item(item)
-    #
-    #     if item.value_hash != ValueHashMarker.DEFERRED:
-    #         return item.value_hash
-    #
-    #     value_hash: typing.Union[ValueHashMarker, int, None] = None
-    #     if item.id in self._value_items.keys():
-    #         value_data = self._values[item.id]
-    #         if value_data == SpecialValue.NOT_SET:
-    #             return ValueHashMarker.NO_VALUE
-    #         elif value_data == SpecialValue.NO_VALUE:
-    #             return ValueHashMarker.NO_VALUE
-    #
-    #         value_hash = item.type_obj.calculate_value_hash(item)
-    #
-    #     elif item.id in self._linked_value_items.keys():
-    #         value_hash = ValueHashMarker.NO_HASH
-    #
-    #     assert value_hash is not None
-    #     item.value_hash = value_hash
-    #     return value_hash
 
     def calculate_sub_value(self, linked_id: str, subvalue: typing.Dict[str, str]):
 
@@ -520,7 +478,6 @@ class DataRegistry(object):
     def set_values(
         self,
         values: typing.Mapping[typing.Union[str, Value], typing.Any],
-        always_calculate_hashes: bool = False,
     ) -> typing.Dict[Value, bool]:
         """Set data on values.
 

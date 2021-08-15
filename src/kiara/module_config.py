@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-"""Configuration models for the *Kiara* package."""
+"""Module-related configuration models for the *Kiara* package."""
+
 import deepdiff
-import json
 import os
 import typing
 from pydantic import BaseModel, Extra, Field, PrivateAttr, validator
@@ -40,6 +40,7 @@ class ModuleTypeConfigSchema(BaseModel):
 
     @classmethod
     def requires_config(cls) -> bool:
+        """Return whether this class can be used as-is, or requires configuration before an instance can be created."""
 
         for field_name, field in cls.__fields__.items():
             if field.required and field.default is None:
@@ -59,6 +60,7 @@ class ModuleTypeConfigSchema(BaseModel):
         validate_assignment = True
 
     def get(self, key: str) -> typing.Any:
+        """Get the value for the specified configuation key."""
 
         if key not in self.__fields__:
             raise Exception(
@@ -111,6 +113,13 @@ def parse_and_create_module_config(
     module_config: typing.Union[None, typing.Mapping[str, typing.Any]] = None,
     kiara: typing.Optional["Kiara"] = None,
 ) -> "ModuleConfig":
+    """Utility method to create a `ModuleConfig` object from different input types.
+
+    Arguments:
+        config: the 'main' configuation
+        module_config: if the 'main' configuration value is an (unconfigured) module type, this argument can contain the configuration for the module instance
+        kiara: the *kiara* context
+    """
 
     if kiara is None:
         from kiara.kiara import Kiara
@@ -216,11 +225,7 @@ def parse_and_create_module_config(
 
 
 class ModuleConfig(KiaraInfoModel):
-    # @classmethod
-    # def from_file(cls, path: typing.Union[str, Path]):
-    #
-    #     data = get_data_from_file(path)
-    #     return ModuleConfig(module_type="pipeline", module_config=data)
+    """A class to hold the type and configuration for a module instance."""
 
     @classmethod
     def create_module_config(
@@ -247,6 +252,7 @@ class ModuleConfig(KiaraInfoModel):
         configs: typing.Mapping[str, "ModuleConfig"],
         **render_config: typing.Any,
     ):
+        """Convenience method to create a renderable for this module configuration, to be printed to terminal."""
 
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("Id", style="i", no_wrap=True)
@@ -290,6 +296,7 @@ class ModuleConfig(KiaraInfoModel):
         kiara: typing.Optional["Kiara"] = None,
         module_id: typing.Optional[str] = None,
     ):
+        """Create a module instance from this configuration."""
 
         if module_id and not isinstance(module_id, str):
             raise TypeError(
@@ -310,6 +317,7 @@ class ModuleConfig(KiaraInfoModel):
         return self._module
 
     def create_renderable(self, **config: typing.Any) -> RenderableType:
+        """Create a renderable for this module configuration."""
 
         conf = Syntax(
             self.json(exclude_none=True, indent=2),
@@ -318,16 +326,16 @@ class ModuleConfig(KiaraInfoModel):
         )
         return conf
 
-    def create_config_renderable(self, **config: typing.Any) -> RenderableType:
-
-        c = {"module_type": self.module_type, "module_config": self.module_config}
-        conf_json = json.dumps(c, indent=2)
-        conf = Syntax(
-            conf_json,
-            "json",
-            background_color="default",
-        )
-        return conf
+    # def create_config_renderable(self, **config: typing.Any) -> RenderableType:
+    #
+    #     c = {"module_type": self.module_type, "module_config": self.module_config}
+    #     conf_json = json.dumps(c, indent=2)
+    #     conf = Syntax(
+    #         conf_json,
+    #         "json",
+    #         background_color="default",
+    #     )
+    #     return conf
 
 
 KIARA_CONFIG = typing.TypeVar("KIARA_CONFIG", bound=ModuleTypeConfigSchema)

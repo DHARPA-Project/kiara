@@ -154,7 +154,7 @@ class ConvertValueModule(KiaraModule):
             # means this is a 'from supported type' conversion
             if target_type not in self.get_target_value_types():
                 raise Exception(
-                    f"Can't create input schema for module '{self.type_name}': converstion to target value type '{target_type}' not supported."
+                    f"Can't create input schema for module '{self._module_type_id}': converstion to target value type '{target_type}' not supported."  # type: ignore
                 )
 
         return {
@@ -178,7 +178,7 @@ class ConvertValueModule(KiaraModule):
             # means this is a 'to supported type' conversion
             if source_type not in self.get_source_value_types():
                 raise Exception(
-                    f"Can't create output schema for module '{self.type_name}': conversion from source value type '{source_type}' not supported."
+                    f"Can't create output schema for module '{self._module_type_id}': conversion from source value type '{source_type}' not supported."  # type: ignore
                 )
 
         return {
@@ -206,7 +206,7 @@ class ConvertValueModule(KiaraModule):
             if not hasattr(self, f"to_{target_type}"):
                 # this can never happen, I think
                 raise Exception(
-                    f"Module '{self.type_name}' can't convert '{source_type}' into '{target_type}': missing method 'to_{target_type}'. This is a bug."
+                    f"Module '{self._module_type_id}' can't convert '{source_type}' into '{target_type}': missing method 'to_{target_type}'. This is a bug."  # type: ignore
                 )
 
             func = getattr(self, f"to_{target_type}")
@@ -215,7 +215,7 @@ class ConvertValueModule(KiaraModule):
             if not hasattr(self, f"from_{source_type}"):
                 # this can never happen, I think
                 raise Exception(
-                    f"Module '{self.type_name}' can't convert '{source_type}' into '{target_type}': missing method 'from_{source_type}'. This is a bug."
+                    f"Module '{self._module_type_id}' can't convert '{source_type}' into '{target_type}': missing method 'from_{source_type}'. This is a bug."  # type: ignore
                 )
 
             func = getattr(self, f"from_{source_type}")

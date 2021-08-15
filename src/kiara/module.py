@@ -59,9 +59,11 @@ class StepInputs(ValueSet):
     #         return super().__getattribute__(key)
 
     def get_all_field_names(self) -> typing.Iterable[str]:
+        """All field names included in this ValueSet."""
         return self.__dict__["_inputs"].keys()
 
     def get_value_data_for_fields(self, *field_names) -> typing.Dict[str, typing.Any]:
+        """Return a dictionary with all resolved values for the specified fields."""
 
         result = {}
 
@@ -78,6 +80,7 @@ class StepInputs(ValueSet):
         field_name: str,
         ensure_metadata: typing.Union[bool, typing.Iterable[str], str] = False,
     ) -> Value:
+        """Retrieve the value object for the specified field."""
 
         if ensure_metadata:
             raise NotImplementedError()
@@ -88,6 +91,7 @@ class StepInputs(ValueSet):
         raise Exception("Inputs are read-only.")
 
     def is_read_only(self) -> bool:
+        """Return whether this value set is read-only, or whether its values can be set/changed."""
         return True
 
     def __getitem__(self, item: str) -> Value:
@@ -116,6 +120,14 @@ class StepOutputs(ValueSet):
     as the pipeline controller. By disconnecting the value from the processing code, we can react appropriately to
     those circumstances.
 
+    Internally, this class stores two sets of its values: the 'actual', up-to-date values, and the referenced (original)
+    ones that were used when creating an object of this class. It's not a good idea to keep both synced all the time,
+    because that could potentially involve unnecessary data transfer and I/O.
+
+    Also, in some cases a developer might want to avoid events that could be triggered by a changed value.
+
+    Both value sets can be synced manually using the 'sync()' method.
+
     Arguments:
         outputs (ValueSet): the output values of a pipeline step
     """
@@ -124,25 +136,9 @@ class StepOutputs(ValueSet):
         super().__setattr__("_outputs_staging", {})
         super().__setattr__("_outputs", outputs)
 
-    # def __getattr__(self, key):
-    #
-    #     print("xxxx")
-    #     raise Exception()
-    #
-    #     if key == "_outputs":
-    #         raise KeyError()
-    #     elif key in self.__dict__["_outputs"].keys():
-    #         return self.get_value_data(key)
-    #     else:
-    #         return super().__getattribute__(key)
-
-    # def __setattr__(self, key, value):
-    #     print("XXXXXXXXXXX")
-    #     raise Exception()
-    #
-    #     self.set_values(**{key: value})
-
     def get_all_field_names(self) -> typing.Iterable[str]:
+        """All field names included in this ValueSet."""
+
         return self.__dict__["_outputs"].keys()
 
     def _set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:
@@ -175,6 +171,8 @@ class StepOutputs(ValueSet):
     def get_value_data_for_fields(
         self, *field_names: str
     ) -> typing.Dict[str, typing.Any]:
+        """Return a dictionary with all resolved values for the specified fields."""
+
         self.sync()
         result = {}
         for output_name in field_names:
@@ -183,13 +181,19 @@ class StepOutputs(ValueSet):
         return result
 
     def get_value_obj(self, output_name):
+        """Retrieve the value object for the specified field."""
+
         self.sync()
         return self.__dict__["_outputs"][output_name]
 
     def is_read_only(self) -> bool:
+        """Return whether this value set is read-only, or whether its values can be set/changed."""
+
         return False
 
     def sync(self):
+        """Sync this value sets 'shadow' values with the ones a user would retrieve."""
+
         self._outputs.set_values(**self._outputs_staging)  # type: ignore
         self._outputs_staging.clear()  # type: ignore
 
@@ -215,9 +219,18 @@ class StepOutputs(ValueSet):
 class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
     """The base class that every custom module in *Kiara* needs to inherit from.
 
-    The core of every ``KiaraModule`` is the [``process``][kiara.module.KiaraModule.process] method, which needs to be
-    a pure, (ideally, but not strictly) idempotent function that creates one or several output values from the given
-    input(s).
+    The core of every ``KiaraModule`` is a ``process`` method, which should be a 'pure',
+     idempotent function that creates one or several output values from the given input(s), and its purpose is to transfor
+     a set of inputs into a set of outputs.
+
+     Every module can be configured. The module configuration schema can differ, but every one such configuration needs to
+     subclass the [ModuleTypeConfigSchema][kiara.module_config.ModuleTypeConfigSchema] class and set as the value to the
+     ``_config_cls`` attribute of the module class. This is useful, because it allows for some modules to serve a much
+     larger variety of use-cases than non-configurable modules would be, which would mean more code duplication because
+     of very simlilar, but slightly different module types.
+
+     Each module class (type) has a unique -- within a *kiara* context -- module type id which can be accessed via the
+     ``_module_type_id`` class attribute.
 
     Examples:
 
@@ -244,6 +257,17 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         module_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         kiara: typing.Optional["Kiara"] = None,
     ) -> "KiaraModule":
+        """Create an instance of a *kiara* module.
+
+        This class method is overloaded in a way that you can either provide the `module_type` argument, in which case
+        the relevant sub-class will be queried from the *kiara* context, or you can call this method directly on any of the
+        inehreting sub-classes. You can't do both, though.
+
+        Arguments:
+            module_type: must be None if called on the ``KiaraModule`` base class, otherwise the module or operation id
+            module_config: the configuration of the module instance
+            kiara: the *kiara* context
+        """
 
         if cls == KiaraModule:
             if not module_type:
@@ -272,21 +296,30 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
     def retrieve_module_profiles(
         cls, kiara: "Kiara"
     ) -> typing.Mapping[str, typing.Union[typing.Mapping[str, typing.Any], Operation]]:
-        pass
+        """Retrieve a collection of profiles (pre-set module configs) for this *kiara* module type.
+
+        This is used to automatically create generally useful operations (incl. their ids).
+        """
 
     @classmethod
     def get_type_metadata(cls) -> KiaraModuleTypeMetadata:
+        """Return all metadata associated with this module type."""
 
         return KiaraModuleTypeMetadata.from_module_class(cls)
 
-    @classmethod
-    def profiles(
-        cls,
-    ) -> typing.Optional[typing.Mapping[str, typing.Mapping[str, typing.Any]]]:
-        return None
+    # @classmethod
+    # def profiles(
+    #     cls,
+    # ) -> typing.Optional[typing.Mapping[str, typing.Mapping[str, typing.Any]]]:
+    #     """Retrieve a collection of profiles (pre-set module configs) for this *kiara* module type.
+    #
+    #     This is used to automatically create generally useful operations (incl. their ids).
+    #     """
+    #     return None
 
     @classmethod
     def is_pipeline(cls) -> bool:
+        """Check whether this module type is a pipeline, or not."""
         return False
 
     def __init__(
@@ -341,10 +374,6 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         This is only unique within a pipeline.
         """
         return self._id
-
-    @property
-    def type_name(self) -> str:
-        return self._module_type_id  # type:ignore
 
     @property
     def parent_id(self) -> typing.Optional[str]:
@@ -653,6 +682,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
 
     @property
     def info(self) -> KiaraModuleInstanceMetadata:
+        """Return an info wrapper class for this module."""
 
         if self._info is None:
             self._info = KiaraModuleInstanceMetadata.from_module_obj(self)

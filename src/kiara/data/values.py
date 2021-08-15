@@ -33,7 +33,7 @@ from kiara.utils import StringYAML
 if typing.TYPE_CHECKING:
     from kiara.data.registry import DataRegistry
     from kiara.kiara import Kiara
-    from kiara.pipeline import PipelineValues
+    from kiara.pipeline import PipelineValuesInfo
 
 log = logging.getLogger("kiara")
 yaml = StringYAML()
@@ -113,7 +113,7 @@ class ValueMetadata(BaseModel):
 class Value(BaseModel, JupyterMixin):
     """The underlying base class for all values.
 
-    The important subclasses here are the ones inheriting from 'KiaraValue', as those are registered in the data
+    The important subclasses here are the ones inheriting from 'PipelineValue', as those are registered in the data
     registry.
     """
 
@@ -451,18 +451,18 @@ class ValueSet(typing.MutableMapping[str, Value]):
                 return False
         return True
 
-    def to_details(self, ensure_metadata: bool = False) -> "PipelineValues":
+    def to_details(self, ensure_metadata: bool = False) -> "PipelineValuesInfo":
 
-        from kiara.pipeline import PipelineValue, PipelineValues
+        from kiara.pipeline import PipelineValueInfo, PipelineValuesInfo
 
         result = {}
         for name in self.get_all_field_names():
             item = self.get_value_obj(name)
-            result[name] = PipelineValue.from_value_obj(
+            result[name] = PipelineValueInfo.from_value_obj(
                 item, ensure_metadata=ensure_metadata
             )
 
-        return PipelineValues(values=result)
+        return PipelineValuesInfo(values=result)
 
     def _create_rich_table(
         self, show_headers: bool = True, ensure_metadata: bool = False

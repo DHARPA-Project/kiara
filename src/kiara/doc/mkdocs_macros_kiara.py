@@ -11,7 +11,7 @@ from kiara.info.pipelines import PipelineState, PipelineStructureDesc
 from kiara.metadata.module_models import KiaraModuleTypeMetadata
 from kiara.module_config import ModuleConfig, ModuleTypeConfigSchema
 from kiara.module_mgmt.pipelines import PipelineModuleManager
-from kiara.pipeline import PipelineValue, PipelineValues, StepValueAddress
+from kiara.pipeline import PipelineValueInfo, PipelineValuesInfo, StepValueAddress
 from kiara.pipeline.config import PipelineConfig
 from kiara.pipeline.pipeline import (
     PipelineInputEvent,
@@ -32,8 +32,8 @@ KIARA_MODEL_CLASSES: typing.Mapping[str, typing.List[typing.Type[BaseModel]]] = 
     "values": [
         ValueSchema,
         Value,
-        PipelineValue,
-        PipelineValues,
+        PipelineValueInfo,
+        PipelineValuesInfo,
         StepValueAddress,
         StepInputField,
         StepOutputField,

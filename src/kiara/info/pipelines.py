@@ -17,7 +17,7 @@ from rich.table import Table
 from kiara.defaults import PIPELINE_PARENT_MARKER, SpecialValue
 from kiara.info import KiaraInfoModel
 from kiara.metadata.module_models import KiaraModuleTypeMetadata
-from kiara.pipeline import PipelineValues, StepStatus
+from kiara.pipeline import PipelineValuesInfo, StepStatus
 from kiara.pipeline.config import StepDesc
 from kiara.pipeline.utils import generate_step_alias
 from kiara.pipeline.values import PipelineInputField, PipelineOutputField, ValueField
@@ -648,19 +648,19 @@ class PipelineState(KiaraInfoModel):
     structure: PipelineStructureDesc = Field(
         description="The structure (interconnections of modules/steps) of the pipeline."
     )
-    pipeline_inputs: PipelineValues = Field(
+    pipeline_inputs: PipelineValuesInfo = Field(
         description="The current (externally facing) input values of this pipeline."
     )
-    pipeline_outputs: PipelineValues = Field(
+    pipeline_outputs: PipelineValuesInfo = Field(
         description="The current (externally facing) output values of this pipeline."
     )
     step_states: typing.Dict[str, StepStatus] = Field(
         description="The status of each step."
     )
-    step_inputs: typing.Dict[str, PipelineValues] = Field(
+    step_inputs: typing.Dict[str, PipelineValuesInfo] = Field(
         description="The current (internal) input values of each step of this pipeline."
     )
-    step_outputs: typing.Dict[str, PipelineValues] = Field(
+    step_outputs: typing.Dict[str, PipelineValuesInfo] = Field(
         description="The current (internal) output values of each step of this pipeline."
     )
     status: StepStatus = Field(description="The current overal status of the pipeline.")

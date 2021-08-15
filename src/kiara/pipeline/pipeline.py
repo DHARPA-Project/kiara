@@ -13,22 +13,21 @@ from kiara.events import (
     StepInputEvent,
     StepOutputEvent,
 )
-from kiara.pipeline import PipelineValues, StepStatus
+from kiara.pipeline import PipelineValuesInfo, StepStatus
 from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.controller.batch import BatchController
 from kiara.pipeline.listeners import PipelineListener
 from kiara.pipeline.structure import PipelineStep, PipelineStructure
 from kiara.pipeline.values import (
-    KiaraValue,
     PipelineInputField,
     PipelineOutputField,
+    PipelineValue,
     StepInputField,
     StepOutputField,
 )
 
 if typing.TYPE_CHECKING:
     from kiara.info.pipelines import PipelineState
-    from kiara.kiara import Kiara
 
 log = logging.getLogger("kiara")
 
@@ -54,9 +53,7 @@ class Pipeline(object):
 
         self._status: StepStatus = StepStatus.STALE
 
-        self._kiara: Kiara = self._structure._kiara
-
-        self._data_registry: DataRegistry = self._kiara.data_registry
+        self._data_registry: DataRegistry = self._structure._kiara.data_registry
 
         self._init_values()
 
@@ -140,7 +137,7 @@ class Pipeline(object):
     def _init_values(self):
         """Initialize this object. This should only be called once.
 
-        Basically, this goes through all the inputs and outputs of all steps, and 'allocates' a PipelineValue object
+        Basically, this goes through all the inputs and outputs of all steps, and 'allocates' a PipelineValueInfo object
         for each of them. In case where output/input or pipeline-input/input points are connected, only one
         value item is allocated, since those refer to the same value.
         """
@@ -325,7 +322,7 @@ class Pipeline(object):
                 title=f"Outputs for step '{step_id}' of pipeline '{self.structure.pipeline_id}'",
             )
 
-    def values_updated(self, *items: KiaraValue):
+    def values_updated(self, *items: PipelineValue):
 
         updated_inputs: typing.Dict[str, typing.List[str]] = {}
         updated_outputs: typing.Dict[str, typing.List[str]] = {}
@@ -410,7 +407,7 @@ class Pipeline(object):
         step_inputs = {}
         step_states = {}
         for k, v in self._step_inputs.items():
-            step_inputs[k] = PipelineValues.from_value_set(v)
+            step_inputs[k] = PipelineValuesInfo.from_value_set(v)
             if v.items_are_valid():
                 step_states[k] = StepStatus.INPUTS_READY
             else:
@@ -418,7 +415,7 @@ class Pipeline(object):
 
         step_outputs = {}
         for k, v in self._step_outputs.items():
-            step_outputs[k] = PipelineValues.from_value_set(v)
+            step_outputs[k] = PipelineValuesInfo.from_value_set(v)
             if v.items_are_valid():
                 step_states[k] = StepStatus.RESULTS_READY
 

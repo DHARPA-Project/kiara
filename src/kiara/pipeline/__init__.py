@@ -9,7 +9,7 @@ from kiara.data.values import ValueMetadata, ValueSchema
 from kiara.pipeline.utils import generate_step_alias
 
 
-class PipelineValue(BaseModel):
+class PipelineValueInfo(BaseModel):
     """Convenience wrapper to make the [PipelineState][kiara.pipeline.pipeline.PipelineState] json/dict export prettier."""
 
     @classmethod
@@ -18,7 +18,7 @@ class PipelineValue(BaseModel):
         if ensure_metadata:
             value.get_metadata()
 
-        return PipelineValue(
+        return PipelineValueInfo(
             id=value.id,
             value_schema=value.value_schema,
             is_valid=value.item_is_valid(),
@@ -63,7 +63,7 @@ class PipelineValue(BaseModel):
     )
 
 
-class PipelineValues(BaseModel):
+class PipelineValuesInfo(BaseModel):
     """Convenience wrapper to make the [PipelineState][kiara.pipeline.pipeline.PipelineState] json/dict export prettier.
 
     This is basically just a simplified version of the [ValueSet][kiara.data.values.ValueSet] class that is using
@@ -73,18 +73,20 @@ class PipelineValues(BaseModel):
     @classmethod
     def from_value_set(cls, value_set: ValueSet, ensure_metadata: bool = False):
 
-        from kiara.pipeline.values import KiaraValue
+        from kiara.pipeline.values import PipelineValue
 
-        values: typing.Dict[str, PipelineValue] = {}
+        values: typing.Dict[str, PipelineValueInfo] = {}
         for k in value_set.get_all_field_names():
             v = value_set.get_value_obj(k, ensure_metadata=ensure_metadata)
-            if not isinstance(v, KiaraValue):
+            if not isinstance(v, PipelineValue):
                 raise TypeError(f"Invalid type of value: {type(v)}")
-            values[k] = PipelineValue.from_value_obj(v, ensure_metadata=ensure_metadata)
+            values[k] = PipelineValueInfo.from_value_obj(
+                v, ensure_metadata=ensure_metadata
+            )
 
-        return PipelineValues(values=values)
+        return PipelineValuesInfo(values=values)
 
-    values: typing.Dict[str, PipelineValue] = Field(
+    values: typing.Dict[str, PipelineValueInfo] = Field(
         description="Field names are keys, and the data as values."
     )
 

@@ -28,14 +28,8 @@ except Exception:
     ValueUpdateHandler = typing.Callable  # type:ignore
 
 
-class KiaraValue(Value, abc.ABC):
-    """A pointer to 'actual' data (bytes), along with metadata associated with this data.
-
-    This object is created by a [DataRegistry][kiara.data.registry.DataRegistry], and can be used to retrieve the associated data
-    from that registry. In addition, it can be used to subscribe to change events for that data, using the [register_callback][kiara.data.registry.DataRegistry.register_callback] method.
-    The reason the data itself is not contained within this model is that the data could be very big,
-    and it might not be necessary to hold them in memory in a lot of cases.
-    """
+class PipelineValue(Value, abc.ABC):
+    """An implementation of [Value][kiara.data.values.Value] that contains information about the pipeline it is contained in."""
 
     value_fields: typing.Tuple["ValueField", ...] = Field(
         description="Value fields within a pipeline connected to this value.",
@@ -73,7 +67,7 @@ class KiaraValue(Value, abc.ABC):
 
         # TODO: compare all attributes if id is equal, just to make sure...
 
-        if not isinstance(other, KiaraValue):
+        if not isinstance(other, PipelineValue):
             return False
         return self.id == other.id
 
@@ -89,7 +83,7 @@ class KiaraValue(Value, abc.ABC):
         return self.__repr__()
 
 
-class DataValue(KiaraValue):
+class DataValue(PipelineValue):
     """An implementation of [Value][kiara.data.values.Value] that points to 'actual' data.
 
     This is opposed to a [LinkedValue][kiara.data.values.LinkedValue], which points to one or several other ``Value``
@@ -148,7 +142,7 @@ class DataValue(KiaraValue):
         return changed
 
 
-class LinkedValue(KiaraValue):
+class LinkedValue(PipelineValue):
     """An implementation of [Value][kiara.data.values.Value] that points to one or several other ``Value`` objects..
 
     This is opposed to a [DataValue][kiara.data.values.DataValue], which points to 'actual' data, and is read/write-able.

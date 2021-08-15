@@ -19,11 +19,11 @@ from kiara.pipeline.controller.batch import BatchController
 from kiara.pipeline.listeners import PipelineListener
 from kiara.pipeline.structure import PipelineStep, PipelineStructure
 from kiara.pipeline.values import (
-    PipelineInputField,
-    PipelineOutputField,
+    PipelineInputRef,
+    PipelineOutputRef,
     PipelineValue,
-    StepInputField,
-    StepOutputField,
+    StepInputRef,
+    StepOutputRef,
 )
 
 if typing.TYPE_CHECKING:
@@ -162,7 +162,7 @@ class Pipeline(object):
         # those can be associated are step outputs
         for step_id, step_details in self._structure.steps_details.items():
 
-            step_outputs: typing.Mapping[str, StepOutputField] = step_details["outputs"]
+            step_outputs: typing.Mapping[str, StepOutputRef] = step_details["outputs"]
 
             for output_name, output_point in step_outputs.items():
 
@@ -198,7 +198,7 @@ class Pipeline(object):
         # create the value objects that are associated with step inputs
         for step_id, step_details in self._structure.steps_details.items():
 
-            step_inputs: typing.Mapping[str, StepInputField] = step_details["inputs"]
+            step_inputs: typing.Mapping[str, StepInputRef] = step_details["inputs"]
 
             for input_name, input_point in step_inputs.items():
 
@@ -209,7 +209,7 @@ class Pipeline(object):
                 )
                 if input_point.connected_pipeline_input:
                     connected_pipeline_input_name = input_point.connected_pipeline_input
-                    pipeline_input_field: PipelineInputField = (
+                    pipeline_input_field: PipelineInputRef = (
                         self._structure.pipeline_inputs[connected_pipeline_input_name]
                     )
                     pipeline_input = pipeline_inputs.get(
@@ -350,13 +350,13 @@ class Pipeline(object):
 
             p = list(ps)[0]
 
-            if isinstance(p, StepInputField):
+            if isinstance(p, StepInputRef):
                 updated_inputs.setdefault(p.step_id, []).append(p.value_name)
-            elif isinstance(p, StepOutputField):
+            elif isinstance(p, StepOutputRef):
                 updated_outputs.setdefault(p.step_id, []).append(p.value_name)
-            elif isinstance(p, PipelineInputField):
+            elif isinstance(p, PipelineInputRef):
                 updated_pipeline_inputs.append(p.value_name)
-            elif isinstance(p, PipelineOutputField):
+            elif isinstance(p, PipelineOutputRef):
                 updated_pipeline_outputs.append(p.value_name)
             else:
                 raise TypeError(f"Can't update, invalid type: {type(p)}")

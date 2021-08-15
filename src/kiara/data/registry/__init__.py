@@ -6,7 +6,7 @@ import uuid
 
 from kiara.data.values import Value, ValueMetadata, ValueSchema
 from kiara.defaults import SpecialValue
-from kiara.pipeline.values import LinkedValue, ValueField, ValueUpdateHandler
+from kiara.pipeline.values import LinkedValue, ValueRef, ValueUpdateHandler
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -57,9 +57,7 @@ class DataRegistry(abc.ABC):
     def register_value(
         self,
         value_schema: ValueSchema,
-        value_fields: typing.Union[
-            ValueField, typing.Iterable[ValueField], None
-        ] = None,
+        value_fields: typing.Union[ValueRef, typing.Iterable[ValueRef], None] = None,
         callbacks: typing.Optional[typing.Iterable[ValueUpdateHandler]] = None,
         initial_value: typing.Any = SpecialValue.NOT_SET,
         is_constant: bool = False,
@@ -95,9 +93,7 @@ class DataRegistry(abc.ABC):
             typing.Iterable[typing.Union[str, Value]],
         ],
         value_schema: ValueSchema,
-        value_fields: typing.Union[
-            ValueField, typing.Iterable[ValueField], None
-        ] = None,
+        value_fields: typing.Union[ValueRef, typing.Iterable[ValueRef], None] = None,
         value_id: typing.Optional[str] = None,
         callbacks: typing.Optional[typing.Iterable[ValueUpdateHandler]] = None,
         value_metadata: typing.Union[

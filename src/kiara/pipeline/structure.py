@@ -12,10 +12,10 @@ from kiara.data.values import ValueSchema
 from kiara.pipeline import StepValueAddress
 from kiara.pipeline.utils import extend_pipeline, generate_step_alias
 from kiara.pipeline.values import (
-    PipelineInputField,
-    PipelineOutputField,
-    StepInputField,
-    StepOutputField,
+    PipelineInputRef,
+    PipelineOutputRef,
+    StepInputRef,
+    StepOutputRef,
 )
 
 if typing.TYPE_CHECKING:
@@ -363,7 +363,7 @@ class PipelineStructure(object):
 
         return d["step"]
 
-    def get_step_inputs(self, step_id: str) -> typing.Iterable[StepInputField]:
+    def get_step_inputs(self, step_id: str) -> typing.Iterable[StepInputRef]:
 
         d = self.steps_details.get(step_id, None)
         if d is None:
@@ -371,7 +371,7 @@ class PipelineStructure(object):
 
         return d["inputs"]
 
-    def get_step_outputs(self, step_id: str) -> typing.Iterable[StepOutputField]:
+    def get_step_outputs(self, step_id: str) -> typing.Iterable[StepOutputRef]:
 
         d = self.steps_details.get(step_id, None)
         if d is None:
@@ -423,31 +423,31 @@ class PipelineStructure(object):
         ]
 
     @property
-    def steps_inputs(self) -> typing.Dict[str, StepInputField]:
+    def steps_inputs(self) -> typing.Dict[str, StepInputRef]:
         return {
             node.alias: node
-            for node in self._get_node_of_type(node_type=StepInputField.__name__)
+            for node in self._get_node_of_type(node_type=StepInputRef.__name__)
         }
 
     @property
-    def steps_outputs(self) -> typing.Dict[str, StepOutputField]:
+    def steps_outputs(self) -> typing.Dict[str, StepOutputRef]:
         return {
             node.alias: node
-            for node in self._get_node_of_type(node_type=StepOutputField.__name__)
+            for node in self._get_node_of_type(node_type=StepOutputRef.__name__)
         }
 
     @property
-    def pipeline_inputs(self) -> typing.Dict[str, PipelineInputField]:
+    def pipeline_inputs(self) -> typing.Dict[str, PipelineInputRef]:
         return {
             node.value_name: node
-            for node in self._get_node_of_type(node_type=PipelineInputField.__name__)
+            for node in self._get_node_of_type(node_type=PipelineInputRef.__name__)
         }
 
     @property
-    def pipeline_outputs(self) -> typing.Dict[str, PipelineOutputField]:
+    def pipeline_outputs(self) -> typing.Dict[str, PipelineOutputRef]:
         return {
             node.value_name: node
-            for node in self._get_node_of_type(node_type=PipelineOutputField.__name__)
+            for node in self._get_node_of_type(node_type=PipelineOutputRef.__name__)
         }
 
     @property
@@ -478,11 +478,11 @@ class PipelineStructure(object):
         structure_defaults = {}
 
         # temp variable, to hold all outputs
-        outputs: typing.Dict[str, StepOutputField] = {}
+        outputs: typing.Dict[str, StepOutputRef] = {}
 
         # process all pipeline and step outputs first
         _temp_steps_map: typing.Dict[str, PipelineStep] = {}
-        pipeline_outputs: typing.Dict[str, PipelineOutputField] = {}
+        pipeline_outputs: typing.Dict[str, PipelineOutputRef] = {}
         for step in self._steps:
 
             _temp_steps_map[step.step_id] = step
@@ -503,7 +503,7 @@ class PipelineStructure(object):
             # go through all the module outputs, create points for them and connect them to pipeline outputs
             for output_name, schema in step.module.output_schemas.items():
 
-                step_output = StepOutputField(
+                step_output = StepOutputRef(
                     value_name=output_name,
                     value_schema=schema,
                     step_id=step.step_id,
@@ -528,7 +528,7 @@ class PipelineStructure(object):
                     step_output_address = StepValueAddress(
                         step_id=step.step_id, value_name=output_name
                     )
-                    pipeline_output = PipelineOutputField(
+                    pipeline_output = PipelineOutputRef(
                         value_name=step_output_name,
                         connected_output=step_output_address,
                         value_schema=schema,
@@ -537,20 +537,20 @@ class PipelineStructure(object):
                     step_output.pipeline_output = pipeline_output.value_name
 
                     data_flow_graph.add_node(
-                        pipeline_output, type=PipelineOutputField.__name__
+                        pipeline_output, type=PipelineOutputRef.__name__
                     )
                     data_flow_graph.add_edge(step_output, pipeline_output)
 
                     data_flow_graph_simple.add_node(
-                        pipeline_output, type=PipelineOutputField.__name__
+                        pipeline_output, type=PipelineOutputRef.__name__
                     )
                     data_flow_graph_simple.add_edge(step, pipeline_output)
 
-                data_flow_graph.add_node(step_output, type=StepOutputField.__name__)
+                data_flow_graph.add_node(step_output, type=StepOutputRef.__name__)
                 data_flow_graph.add_edge(step, step_output)
 
         # now process inputs, and connect them to the appropriate output/pipeline-input points
-        existing_pipeline_input_points: typing.Dict[str, PipelineInputField] = {}
+        existing_pipeline_input_points: typing.Dict[str, PipelineInputRef] = {}
         for step in self._steps:
 
             other_step_dependency: typing.Set = set()
@@ -576,7 +576,7 @@ class PipelineStructure(object):
                 if matching_input_links:
                     # this means we connect to other steps output
 
-                    connected_output_points: typing.List[StepOutputField] = []
+                    connected_output_points: typing.List[StepOutputRef] = []
                     connected_outputs: typing.List[StepValueAddress] = []
 
                     for input_link in matching_input_links:
@@ -593,7 +593,7 @@ class PipelineStructure(object):
 
                         other_step_dependency.add(input_link.step_id)
 
-                    step_input_point = StepInputField(
+                    step_input_point = StepInputRef(
                         step_id=step.step_id,
                         value_name=input_name,
                         value_schema=schema,
@@ -634,7 +634,7 @@ class PipelineStructure(object):
                         assert connected_pipeline_input.is_constant == is_constant
                     else:
                         # we need to create the pipeline input
-                        connected_pipeline_input = PipelineInputField(
+                        connected_pipeline_input = PipelineInputRef(
                             value_name=pipeline_input_name,
                             value_schema=schema,
                             is_constant=is_constant,
@@ -645,10 +645,10 @@ class PipelineStructure(object):
                         ] = connected_pipeline_input
 
                         data_flow_graph.add_node(
-                            connected_pipeline_input, type=PipelineInputField.__name__
+                            connected_pipeline_input, type=PipelineInputRef.__name__
                         )
                         data_flow_graph_simple.add_node(
-                            connected_pipeline_input, type=PipelineInputField.__name__
+                            connected_pipeline_input, type=PipelineInputRef.__name__
                         )
                         if is_constant:
                             constants[
@@ -665,7 +665,7 @@ class PipelineStructure(object):
                         elif default_val is not None:
                             structure_defaults[pipeline_input_name] = default_val
 
-                    step_input_point = StepInputField(
+                    step_input_point = StepInputRef(
                         step_id=step.step_id,
                         value_name=input_name,
                         value_schema=schema,
@@ -678,7 +678,7 @@ class PipelineStructure(object):
                     data_flow_graph.add_edge(connected_pipeline_input, step_input_point)
                     data_flow_graph_simple.add_edge(connected_pipeline_input, step)
 
-                data_flow_graph.add_node(step_input_point, type=StepInputField.__name__)
+                data_flow_graph.add_node(step_input_point, type=StepInputRef.__name__)
 
                 steps_details[step.step_id]["inputs"][input_name] = step_input_point
 

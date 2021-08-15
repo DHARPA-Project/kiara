@@ -20,7 +20,7 @@ from kiara.metadata.module_models import KiaraModuleTypeMetadata
 from kiara.pipeline import PipelineValuesInfo, StepStatus
 from kiara.pipeline.config import StepDesc
 from kiara.pipeline.utils import generate_step_alias
-from kiara.pipeline.values import PipelineInputField, PipelineOutputField, ValueField
+from kiara.pipeline.values import PipelineInputRef, PipelineOutputRef, ValueRef
 from kiara.utils import StringYAML, create_table_from_config_class, print_ascii_graph
 
 if typing.TYPE_CHECKING:
@@ -218,10 +218,10 @@ class PipelineStructureDesc(BaseModel):
     pipeline_output_connections: typing.Dict[str, str] = Field(
         description="The connections of this pipelines output fields. Each pipeline output is connected to exactly one step output field."
     )
-    pipeline_inputs: typing.Dict[str, PipelineInputField] = Field(
+    pipeline_inputs: typing.Dict[str, PipelineInputRef] = Field(
         description="The pipeline inputs."
     )
-    pipeline_outputs: typing.Dict[str, PipelineOutputField] = Field(
+    pipeline_outputs: typing.Dict[str, PipelineOutputRef] = Field(
         description="The pipeline outputs."
     )
 
@@ -422,7 +422,7 @@ class PipelineModuleInfo(KiaraModuleTypeMetadata):
                 step = structure.get_step(s_id)
                 mc = self._kiara.get_module_class(step.module_type)
                 desc = mc.get_type_metadata().model_doc()
-                inputs: typing.Dict["ValueField", typing.List[str]] = {}
+                inputs: typing.Dict["ValueRef", typing.List[str]] = {}
                 for inp in structure.steps_inputs.values():
                     if inp.step_id != s_id:
                         continue

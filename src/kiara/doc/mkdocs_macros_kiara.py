@@ -21,10 +21,10 @@ from kiara.pipeline.pipeline import (
     StepOutputEvent,
 )
 from kiara.pipeline.values import (
-    PipelineInputField,
-    PipelineOutputField,
-    StepInputField,
-    StepOutputField,
+    PipelineInputRef,
+    PipelineOutputRef,
+    StepInputRef,
+    StepOutputRef,
 )
 from kiara.utils import StringYAML
 
@@ -35,10 +35,10 @@ KIARA_MODEL_CLASSES: typing.Mapping[str, typing.List[typing.Type[BaseModel]]] = 
         PipelineValueInfo,
         PipelineValuesInfo,
         StepValueAddress,
-        StepInputField,
-        StepOutputField,
-        PipelineInputField,
-        PipelineOutputField,
+        StepInputRef,
+        StepOutputRef,
+        PipelineInputRef,
+        PipelineOutputRef,
     ],
     "modules": [
         ModuleTypeConfigSchema,

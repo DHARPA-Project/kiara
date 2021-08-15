@@ -19,7 +19,7 @@ try:
     class ValueUpdateHandler(typing.Protocol):
         """The call signature for callbacks that can be registered as value update handlers."""
 
-        def __call__(self, *items: "Value", **kwargs: typing.Any) -> typing.Any:
+        def __call__(self, *items: "Value") -> typing.Any:
             ...
 
 
@@ -31,7 +31,7 @@ except Exception:
 class PipelineValue(Value, abc.ABC):
     """An implementation of [Value][kiara.data.values.Value] that contains information about the pipeline it is contained in."""
 
-    value_fields: typing.Tuple["ValueField", ...] = Field(
+    value_fields: typing.Tuple["ValueRef", ...] = Field(
         description="Value fields within a pipeline connected to this value.",
         default_factory=set,
     )
@@ -193,17 +193,17 @@ class LinkedValue(PipelineValue):
         raise Exception("Linked values can't be set.")
 
 
-class ValueField(BaseModel):
+class ValueRef(BaseModel):
     """An object that holds information about the location of a value within a pipeline.
 
     This object does not contain the value itself.
 
     There are four different ValuePoint types:
 
-    - [kiara.data.values.StepInputField][]: an input to a step
-    - [kiara.data.values.StepOutputField][]: an output of a step
-    - [kiara.data.values.PipelineInputField][]: an input to a pipeline
-    - [kiara.data.values.PipelineOutputField][]: an output for a pipeline
+    - [kiara.data.values.StepInputRef][]: an input to a step
+    - [kiara.data.values.StepOutputRef][]: an output of a step
+    - [kiara.data.values.PipelineInputRef][]: an input to a pipeline
+    - [kiara.data.values.PipelineOutputRef][]: an output for a pipeline
 
     Several point objects can target the same value, for example a step output and a connected step input are
     actually the same.
@@ -239,7 +239,7 @@ class ValueField(BaseModel):
         return f"{name}: {self.value_name} ({self.value_schema.type})"
 
 
-class StepInputField(ValueField):
+class StepInputRef(ValueRef):
     """An input to a step.
 
     This object can either have a 'connected_outputs' set, or a 'connected_pipeline_input', not both.
@@ -280,7 +280,7 @@ class StepInputField(ValueField):
         return f"{name}: {self.step_id}.{self.value_name} ({self.value_schema.type})"
 
 
-class StepOutputField(ValueField):
+class StepOutputRef(ValueRef):
     """An output to a step."""
 
     class Config:
@@ -308,7 +308,7 @@ class StepOutputField(ValueField):
         return f"{name}: {self.step_id}.{self.value_name} ({self.value_schema.type})"
 
 
-class PipelineInputField(ValueField):
+class PipelineInputRef(ValueRef):
     """An input to a pipeline."""
 
     connected_inputs: typing.List[StepValueAddress] = Field(
@@ -324,7 +324,7 @@ class PipelineInputField(ValueField):
         return generate_step_alias(PIPELINE_PARENT_MARKER, self.value_name)
 
 
-class PipelineOutputField(ValueField):
+class PipelineOutputRef(ValueRef):
     """An output to a pipeline."""
 
     connected_output: StepValueAddress = Field(description="Connected step outputs.")
@@ -336,5 +336,5 @@ class PipelineOutputField(ValueField):
 
 DataValue.update_forward_refs()
 LinkedValue.update_forward_refs()
-StepInputField.update_forward_refs()
-StepOutputField.update_forward_refs()
+StepInputRef.update_forward_refs()
+StepOutputRef.update_forward_refs()

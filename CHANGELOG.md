@@ -6,6 +6,12 @@
   - kiara.pipeline.config.PipelineModuleConfig -> kiara.pipeline.config.PipelineConfig
   - kiara.module_config.ModuleTypeConfig -> kiara.module_config.ModuleTypeConfigSchema
   - kiara.module_config.ModuleConfig -> kiara.module_config.ModuleConfig
+  - in kiara.pipeline.values:
+    - ValueField -> ValueRef
+    - StepInputField -> StepInputRef
+    - StepOutputField -> StepOutputRef
+    - PipelineInputField -> PipelineInputRef
+    - PipelineOutputField -> PipelineOutputRef
 
 - removed 'pipeline_id' attribute from 'PipelineStructure' class, but 'Pipeline" has 'id' and 'title' fields now instead
 
@@ -58,14 +64,14 @@
     - from 'kiara.data.values' -> 'kiara.pipeline.values'
       - ValueUpdateHandler
       - StepValueAddress
-      - ValueField
+      - ValueRef
       - PipelineValue
       - DataValue
       - LinkedValue
-      - StepInputField
-      - StepOutputField
-      - PipelineInputField
-      - PipelineOutputField
+      - StepInputRef
+      - StepOutputRef
+      - PipelineInputRef
+      - PipelineOutputRef
 
 ## Version 0.0.9
 

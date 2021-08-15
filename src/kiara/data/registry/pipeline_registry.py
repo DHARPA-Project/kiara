@@ -12,7 +12,7 @@ from kiara.pipeline.values import (
     DataValue,
     LinkedValue,
     PipelineValue,
-    ValueField,
+    ValueRef,
     ValueUpdateHandler,
 )
 from kiara.utils import is_debug
@@ -100,9 +100,7 @@ class PipelineRegistry(DataRegistry):
     def register_value(
         self,
         value_schema: ValueSchema,
-        value_fields: typing.Union[
-            ValueField, typing.Iterable[ValueField], None
-        ] = None,
+        value_fields: typing.Union[ValueRef, typing.Iterable[ValueRef], None] = None,
         callbacks: typing.Optional[typing.Iterable[ValueUpdateHandler]] = None,
         initial_value: typing.Any = SpecialValue.NOT_SET,
         is_constant: bool = False,
@@ -144,12 +142,12 @@ class PipelineRegistry(DataRegistry):
             raise Exception("Can't register constant, no initial value provided.")
 
         if value_fields is None:
-            _value_fields: typing.Tuple[ValueField, ...] = tuple()
-        elif isinstance(value_fields, ValueField):
+            _value_fields: typing.Tuple[ValueRef, ...] = tuple()
+        elif isinstance(value_fields, ValueRef):
             _value_fields = (value_fields,)
         elif isinstance(value_fields, typing.Iterable):
             for vf in value_fields:
-                assert isinstance(vf, ValueField)
+                assert isinstance(vf, ValueRef)
             _value_fields = tuple(value_fields)  # type: ignore
         else:
             raise TypeError(
@@ -192,9 +190,7 @@ class PipelineRegistry(DataRegistry):
             typing.Iterable[typing.Union[str, Value]],
         ],
         value_schema: ValueSchema,
-        value_fields: typing.Union[
-            ValueField, typing.Iterable[ValueField], None
-        ] = None,
+        value_fields: typing.Union[ValueRef, typing.Iterable[ValueRef], None] = None,
         value_id: typing.Optional[str] = None,
         callbacks: typing.Optional[typing.Iterable[ValueUpdateHandler]] = None,
         value_metadata: typing.Union[
@@ -230,12 +226,12 @@ class PipelineRegistry(DataRegistry):
             value_id = generate_random_value_id()
 
         if value_fields is None:
-            _value_fields: typing.Tuple[ValueField, ...] = tuple()
-        elif isinstance(value_fields, ValueField):
+            _value_fields: typing.Tuple[ValueRef, ...] = tuple()
+        elif isinstance(value_fields, ValueRef):
             _value_fields = (value_fields,)
         elif isinstance(value_fields, typing.Iterable):
             for vf in value_fields:
-                assert isinstance(vf, ValueField)
+                assert isinstance(vf, ValueRef)
             _value_fields = tuple(value_fields)  # type: ignore
         else:
             raise TypeError(
@@ -574,8 +570,9 @@ class PipelineRegistry(DataRegistry):
             for cb in self._callbacks.get(linked_value, []):
                 callbacks.setdefault(cb, []).append(_i)
 
-        for cb, v in callbacks.items():
-            cb(*v)
+        _cb: typing.Callable
+        for _cb, v in callbacks.items():
+            _cb(*v)
 
         return result
 

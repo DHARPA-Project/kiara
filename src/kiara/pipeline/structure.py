@@ -110,7 +110,10 @@ class PipelineStep(BaseModel):
         if self._module is None:
 
             try:
-                if self.module_type in self.kiara.operation_mgmt.profiles.keys():
+                if (
+                    self.module_type in self.kiara.operation_mgmt.profiles.keys()
+                    and not self.module_config
+                ):
                     op = self.kiara.operation_mgmt.profiles[self.module_type]
                     self._module = op.module
                 else:

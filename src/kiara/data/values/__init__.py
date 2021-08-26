@@ -65,6 +65,9 @@ class ValueSchema(BaseModel):
         description="Whether this value is required (True), or whether 'None' value is allowed (False).",
         default=False,
     )
+    is_constant: bool = Field(
+        description="Whether the value is a constant.", default=False
+    )
     # required: typing.Any = Field(
     #     description="Whether this value is required to be set.", default=True
     # )
@@ -134,6 +137,19 @@ class Value(BaseModel, JupyterMixin):
             from kiara.kiara import Kiara
 
             kiara = Kiara.instance()
+
+        if value_schema is None:
+            raise NotImplementedError()
+
+        if value_schema.is_constant and value_data not in [
+            SpecialValue.NO_VALUE,
+            SpecialValue.NOT_SET,
+            None,
+        ]:
+            raise Exception(
+                "Can't create value. Is a constant, but value data was provided."
+            )
+
         self._kiara = kiara
         if registry is None:
             registry = self._kiara.data_registry
@@ -141,15 +157,18 @@ class Value(BaseModel, JupyterMixin):
 
         kwargs: typing.Dict[str, typing.Any] = {}
         kwargs["id"] = str(uuid.uuid4())
-        if value_schema is None:
-            raise NotImplementedError()
+
         kwargs["value_schema"] = value_schema
+        if value_schema.is_constant:
+            value_data = value_schema.default
+            is_constant = True
+
+        kwargs["is_constant"] = is_constant
 
         if value_seed is None:
             value_seed = ValueSeed()
-        kwargs["value_seed"] = value_seed
 
-        kwargs["is_constant"] = is_constant
+        kwargs["value_seed"] = value_seed
 
         kwargs["is_streaming"] = False  # not used yet
         kwargs["metadata"] = {}

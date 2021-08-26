@@ -260,6 +260,7 @@ class Pipeline(object):
                             ] = output_value
                             value_refs.setdefault(output_value, []).append(input_point)
                         else:
+                            print(input_point.connected_outputs)
                             raise NotImplementedError()
                             # sub_value = co.sub_value
 

@@ -98,7 +98,8 @@ class ModuleProcessor(abc.ABC):
 
         # TODO: make snapshot of current state of data?
 
-        wrapped_inputs = StepInputs(inputs=inputs)
+        full_inputs = module.create_full_inputs(**inputs)
+        wrapped_inputs = StepInputs(inputs=full_inputs)
         wrapped_outputs = StepOutputs(outputs=outputs)
 
         self._inputs[job_id] = wrapped_inputs

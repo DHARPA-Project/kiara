@@ -6,6 +6,7 @@ import asyncclick as click
 
 from kiara import Kiara
 from kiara.utils import is_develop
+from kiara.utils.output import rich_print
 
 from .data.commands import data
 from .info.commands import info
@@ -60,13 +61,18 @@ if is_develop():
 
         kiara: Kiara = ctx.obj["kiara"]
 
-        and_pipeline = kiara.create_workflow("logic.and")
+        mod = kiara.create_module("logic.and", module_config={"constants": {"a": True}})
+        rich_print(mod.input_schemas)
+
+        result = mod.run(b=True)
+        print(result.get_all_value_data())
+
+        # and_pipeline = kiara.create_workflow("/home/markus/projects/dharpa/kiara/tests/resources/pipelines/logic/logic_4.json")
         # print_ascii_graph(and_pipeline.structure.data_flow_graph)
 
-        and_pipeline.inputs.set_value("a", True)
+        # and_pipeline.inputs.set_value("and_1_1__a", True)
+
         # kiara.explain(and_pipeline.current_state)
-        and_pipeline.inputs.set_value("b", True)
-        kiara.explain(and_pipeline.current_state)
 
         # print(and_pipeline.outputs.get_all_value_data())
         #

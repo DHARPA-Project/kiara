@@ -42,15 +42,17 @@ class StepInputs(ValueSet):
         inputs (ValueSet): the input values of a pipeline step
     """
 
-    def __init__(self, inputs: ValueSet, title: typing.Optional[str] = None):
+    def __init__(
+        self, inputs: typing.Mapping[str, Value], title: typing.Optional[str] = None
+    ):
 
-        self._inputs: ValueSet = inputs
+        self._inputs: typing.Mapping[str, Value] = inputs
         super().__init__(read_only=True, title=title)
 
     def get_all_field_names(self) -> typing.Iterable[str]:
         """All field names included in this ValueSet."""
 
-        return self._inputs.get_all_field_names()
+        return self._inputs.keys()
 
     def _get_value_obj(
         self,
@@ -59,9 +61,19 @@ class StepInputs(ValueSet):
     ) -> Value:
         """Retrieve the value object for the specified field."""
 
-        return self._inputs.get_value_obj(
-            field_name=field_name, ensure_metadata=ensure_metadata
-        )
+        value = self._inputs[field_name]
+        if ensure_metadata:
+            if isinstance(ensure_metadata, bool):
+                value.get_metadata()
+            elif isinstance(ensure_metadata, str):
+                value.get_metadata(ensure_metadata)
+            elif isinstance(ensure_metadata, typing.Iterable):
+                value.get_metadata(*ensure_metadata)
+            else:
+                raise ValueError(
+                    f"Invalid type '{type(ensure_metadata)}' for 'ensure_metadata' argument."
+                )
+        return value
 
     def _set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:
         raise Exception("Inputs are read-only.")
@@ -280,6 +292,8 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         self._info: typing.Optional[KiaraModuleInstanceMetadata] = None
 
         self._input_schemas: typing.Mapping[str, ValueSchema] = None  # type: ignore
+        self._constants: typing.Mapping[str, ValueSchema] = None  # type: ignore
+        self._merged_input_schemas: typing.Mapping[str, ValueSchema] = None  # type: ignore
         self._output_schemas: typing.Mapping[str, ValueSchema] = None  # type: ignore
 
     @property
@@ -321,7 +335,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         if not self._input_schemas[input_name].is_required():
             return False
 
-        if input_name in self.get_config_value("constants"):
+        if input_name in self.constants.keys():
             return False
         else:
             return True
@@ -384,19 +398,40 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
     def input_schemas(self) -> typing.Mapping[str, ValueSchema]:
         """The input schema for this module."""
 
-        if self._input_schemas is not None:
-            return self._input_schemas
+        if self._input_schemas is None:
+            self._create_input_schemas()
 
-        _input_schemas = self.create_input_schema()
+        return self._input_schemas  # type: ignore
 
-        if not _input_schemas:
+    @property
+    def full_input_schemas(self) -> typing.Mapping[str, ValueSchema]:
+
+        if self._merged_input_schemas is not None:
+            return self._merged_input_schemas
+
+        self._merged_input_schemas = dict(self.input_schemas)
+        self._merged_input_schemas.update(self.constants)
+        return self._merged_input_schemas
+
+    @property
+    def constants(self) -> typing.Mapping[str, ValueSchema]:
+
+        if self._constants is None:
+            self._create_input_schemas()
+        return self._constants  # type: ignore
+
+    def _create_input_schemas(self) -> None:
+
+        _input_schemas_data = self.create_input_schema()
+
+        if not _input_schemas_data:
             raise Exception(
                 f"Invalid module implementation for '{self.__class__.__name__}': empty input schema"
             )
 
         try:
-            self._input_schemas = create_schemas(
-                schema_config=_input_schemas, kiara=self._kiara
+            _input_schemas = create_schemas(
+                schema_config=_input_schemas_data, kiara=self._kiara
             )
         except Exception as e:
             raise Exception(
@@ -405,11 +440,10 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
 
         defaults = self.config.defaults
         constants = self.config.constants
-        overlay_constants_and_defaults(
-            self._input_schemas, defaults=defaults, constants=constants
-        )
 
-        return self._input_schemas
+        self._input_schemas, self._constants = overlay_constants_and_defaults(
+            _input_schemas, defaults=defaults, constants=constants
+        )
 
     @property
     def output_schemas(self) -> typing.Mapping[str, ValueSchema]:
@@ -506,6 +540,53 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
     # def process(self, inputs, outputs, job_log=None) -> None:
     #     pass
 
+    def create_full_inputs(self, **inputs: typing.Any) -> typing.Mapping[str, Value]:
+
+        # TODO: find a generic way to do this kind of stuff
+        def clean_value(v: typing.Any) -> typing.Any:
+            if hasattr(v, "as_py"):
+                return v.as_py()  # type: ignore
+            else:
+                return v
+
+        resolved_inputs: typing.Dict[str, Value] = {}
+
+        for k, v in self.constants.items():
+            if k in inputs.keys():
+                raise Exception(f"Invalid input: value provided for constant '{k}'")
+            inputs[k] = v
+
+        for k, value in inputs.items():
+            value = clean_value(value)
+            if not isinstance(value, Value):
+                if (
+                    k not in self.input_schemas.keys()
+                    and k not in self.constants.keys()
+                ):
+                    raise Exception(
+                        f"Invalid input name '{k} for module {self._module_type_id}. Not part of the schema, allowed input names: {', '.join(self.input_names)}"  # type: ignore
+                    )
+                if k in self.input_schemas.keys():
+                    schema = self.input_schemas[k]
+                    value = Value(
+                        value_data=value,  # type: ignore
+                        value_schema=schema,
+                        is_constant=False,
+                        kiara=self._kiara,  # type: ignore
+                        registry=self._kiara.data_registry,  # type: ignore
+                    )
+                else:
+                    schema = self.constants[k]
+                    value = Value(
+                        value_schema=schema,
+                        is_constant=False,
+                        kiara=self._kiara,  # type: ignore
+                        registry=self._kiara.data_registry,  # type: ignore
+                    )
+            resolved_inputs[k] = value
+
+        return resolved_inputs
+
     def run(self, **inputs: typing.Any) -> ValueSet:
         """Execute the module with the provided inputs directly.
 
@@ -515,35 +596,12 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
             a map of the output values (as described by the output schema)
         """
 
-        # TODO: find a generic way to do this kind of stuff
-        def clean_value(v: typing.Any) -> typing.Any:
-            if hasattr(v, "as_py"):
-                return v.as_py()  # type: ignore
-            else:
-                return v
-
-        resolved_inputs = {}
-        for k, v in inputs.items():
-            v = clean_value(v)
-            if not isinstance(v, Value):
-                if k not in self.input_schemas.keys():
-                    raise Exception(
-                        f"Invalid input name '{k} for module {self._module_type_id}. Not part of the schema, allowed input names: {', '.join(self.input_names)}"  # type: ignore
-                    )
-                schema = self.input_schemas[k]
-                v = Value(
-                    value_data=v,  # type: ignore
-                    value_schema=schema,
-                    is_constant=False,
-                    kiara=self._kiara,
-                    registry=self._kiara.data_registry,
-                )
-            resolved_inputs[k] = v
+        resolved_inputs = self.create_full_inputs(**inputs)
 
         # TODO: introduce a 'temp' value set implementation and use that here
         input_value_set = SlottedValueSet.from_schemas(
             kiara=self._kiara,
-            schemas=self.input_schemas,
+            schemas=self.full_input_schemas,
             read_only=True,
             initial_values=resolved_inputs,
             title=f"module_inputs_{self.id}",

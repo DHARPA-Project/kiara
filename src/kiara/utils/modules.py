@@ -59,3 +59,17 @@ def overlay_constants_and_defaults(
 
         if default_value is not None:
             schemas[k].default = default_value
+
+        if constant_value is not None:
+            schemas[k].default = constant_value
+            schemas[k].is_constant = True
+
+    input_schemas = {}
+    constants = {}
+    for k, v in schemas.items():
+        if v.is_constant:
+            constants[k] = v
+        else:
+            input_schemas[k] = v
+
+    return input_schemas, constants

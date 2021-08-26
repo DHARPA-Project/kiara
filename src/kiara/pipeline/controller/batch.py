@@ -71,7 +71,7 @@ class BatchController(PipelineController):
 
                             traceback.print_stack()
                         log.error(
-                            f"Processing of step '{step_id}' from pipeline '{self.pipeline.structure.pipeline_id}' failed: {e}"
+                            f"Processing of step '{step_id}' from pipeline '{self.pipeline.id}' failed: {e}"
                         )
                         return False
 

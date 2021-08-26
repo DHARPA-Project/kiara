@@ -1,0 +1,25 @@
+{
+  "steps": [
+    {
+      "module_type": "logic.and",
+      "module_config": {
+        "constants": {
+          "a": false
+        }
+      },
+      "step_id": "and_1_1"
+    },
+    {
+      "module_type": "logic.and",
+      "step_id": "and_1_2"
+    },
+    {
+      "module_type": "logic.and",
+      "step_id": "and_2",
+      "input_links": {
+        "a": "and_1_1.y",
+        "b": "and_1_2.y"
+      }
+    }
+  ]
+}

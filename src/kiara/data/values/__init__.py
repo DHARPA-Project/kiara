@@ -150,6 +150,13 @@ class Value(BaseModel, JupyterMixin):
                 "Can't create value. Is a constant, but value data was provided."
             )
 
+        cls = kiara.get_value_type_cls(value_schema.type)
+        _type_obj = cls(**value_schema.type_config)
+
+        if value_data not in [SpecialValue.NO_VALUE, SpecialValue.NOT_SET, None]:
+            # TODO: should we keep the original value?
+            value_data = _type_obj.import_value(value_data)
+
         self._kiara = kiara
         if registry is None:
             registry = self._kiara.data_registry
@@ -175,6 +182,8 @@ class Value(BaseModel, JupyterMixin):
         kwargs["creation_date"] = datetime.now()
 
         super().__init__(**kwargs)
+
+        self._type_obj = _type_obj
 
         self._registry._register_value(self, data=value_data)
 
@@ -217,9 +226,9 @@ class Value(BaseModel, JupyterMixin):
 
     @property
     def type_obj(self):
-        if self._type_obj is None:
-            cls = self._kiara.get_value_type_cls(self.value_schema.type)
-            self._type_obj = cls(**self.value_schema.type_config)
+        # if self._type_obj is None:
+        #     cls = self._kiara.get_value_type_cls(self.value_schema.type)
+        #     self._type_obj = cls(**self.value_schema.type_config)
         return self._type_obj
 
     def calculate_hash(self, hash_type: str) -> str:

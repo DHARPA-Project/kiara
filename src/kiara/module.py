@@ -441,6 +441,18 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         defaults = self.config.defaults
         constants = self.config.constants
 
+        for k, v in defaults.items():
+            if k not in _input_schemas.keys():
+                raise Exception(
+                    f"Can't create inputs for module '{self._module_type_id}', invalid default field name '{k}'. Available field names: '{', '.join(_input_schemas.keys())}'"  # type: ignore
+                )
+
+        for k, v in constants.items():
+            if k not in _input_schemas.keys():
+                raise Exception(
+                    f"Can't create inputs for module '{self._module_type_id}', invalid constant field name '{k}'. Available field names: '{', '.join(_input_schemas.keys())}'"  # type: ignore
+                )
+
         self._input_schemas, self._constants = overlay_constants_and_defaults(
             _input_schemas, defaults=defaults, constants=constants
         )

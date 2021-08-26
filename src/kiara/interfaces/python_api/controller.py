@@ -60,8 +60,9 @@ class ApiController(PipelineController):
     def step_inputs_changed(self, event: StepInputEvent):
 
         for step_id in event.updated_step_inputs.keys():
-            outputs = self.get_step_outputs(step_id)
-            outputs.invalidate()
+            # outputs = self.get_step_outputs(step_id)
+            raise NotImplementedError()
+            # outputs.invalidate()
 
     def pipeline_inputs_changed(self, event: PipelineInputEvent):
 

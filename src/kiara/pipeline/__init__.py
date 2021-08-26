@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 import typing
-from datetime import datetime
 from enum import Enum
 from pydantic import BaseModel, Extra, Field
 
-from kiara.data import Value, ValueSet
-from kiara.data.values import ValueMetadata, ValueSchema
+from kiara.data.values import Value, ValueSchema
+from kiara.data.values.value_set import ValueSet
 from kiara.pipeline.utils import generate_step_alias
 
 
@@ -24,8 +23,8 @@ class PipelineValueInfo(BaseModel):
             is_valid=value.item_is_valid(),
             is_set=value.is_set,
             is_constant=value.is_constant,
-            value_metadata=value.value_metadata,
-            last_update=value.last_update,
+            # value_metadata=value.value_metadata,
+            # last_update=value.last_update,
             # value_hash=value.value_hash,
             is_streaming=value.is_streaming,
             metadata=value.metadata,
@@ -44,12 +43,12 @@ class PipelineValueInfo(BaseModel):
     is_constant: bool = Field(
         description="Whether this value is a constant.", default=False
     )
-    value_metadata: ValueMetadata = Field(
-        description="The metadata of the value itself (not the actual data)."
-    )
-    last_update: datetime = Field(
-        default=None, description="The time the last update to this value happened."
-    )
+    # value_metadata: ValueMetadata = Field(
+    #     description="The metadata of the value itself (not the actual data)."
+    # )
+    # last_update: datetime = Field(
+    #     default=None, description="The time the last update to this value happened."
+    # )
     # value_hash: typing.Union[ValueHashMarker, int] = Field(
     #     description="The hash of the current value."
     # )
@@ -73,13 +72,9 @@ class PipelineValuesInfo(BaseModel):
     @classmethod
     def from_value_set(cls, value_set: ValueSet, ensure_metadata: bool = False):
 
-        from kiara.pipeline.values import PipelineValue
-
         values: typing.Dict[str, PipelineValueInfo] = {}
         for k in value_set.get_all_field_names():
             v = value_set.get_value_obj(k, ensure_metadata=ensure_metadata)
-            if not isinstance(v, PipelineValue):
-                raise TypeError(f"Invalid type of value: {type(v)}")
             values[k] = PipelineValueInfo.from_value_obj(
                 v, ensure_metadata=ensure_metadata
             )

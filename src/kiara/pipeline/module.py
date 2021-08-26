@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import typing
 
-from kiara.data.values import ValueSchema, ValueSet
+from kiara.data.values import ValueSchema
+from kiara.data.values.value_set import ValueSet
 from kiara.module import KiaraModule
 from kiara.pipeline.config import PipelineConfig
 from kiara.pipeline.controller import PipelineController

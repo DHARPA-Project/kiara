@@ -33,7 +33,8 @@ STEP_ID_KEY = "step_id"
 """The key to specify the step id."""
 
 INVALID_VALUE_NAMES = [
-    "dict",
+    "kiara",
+    "registry" "dict",
     "items_are_valid",
     "set_values",
     "set_value",
@@ -46,6 +47,8 @@ INVALID_VALUE_NAMES = [
     "values",
     "data",
     "point_id",
+    "callbacks",
+    "trigger_callbacks",
 ]
 """List of reserved names, inputs/outputs can't use those."""
 

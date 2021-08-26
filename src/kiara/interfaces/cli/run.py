@@ -12,7 +12,7 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 
 from kiara import Kiara
-from kiara.data.values import ValueSet, ValuesInfo
+from kiara.data.values.value_set import ValueSet, ValuesInfo
 from kiara.defaults import DEFAULT_TO_JSON_CONFIG
 from kiara.interfaces.cli.utils import _create_module_instance
 from kiara.module import KiaraModule
@@ -356,7 +356,7 @@ async def run(ctx, module, inputs, module_config, output, explain, save):
 
         if save:
 
-            for field_name, aliases in aliases.items():
+            for field_name, aliases in final_aliases.items():
                 rich_print(f"Saving '[i]{field_name}[/i]'...")
                 try:
                     value = workflow.outputs.get_value_obj(field_name)

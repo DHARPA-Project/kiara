@@ -3,7 +3,7 @@ import typing
 from concurrent.futures import Future, ThreadPoolExecutor
 from pydantic import Field
 
-from kiara.data import ValueSet
+from kiara.data.values.value_set import ValueSet
 from kiara.module import KiaraModule, StepInputs, StepOutputs
 from kiara.processing import JobLog, JobStatus
 from kiara.processing.processor import ModuleProcessor, ProcessorConfig

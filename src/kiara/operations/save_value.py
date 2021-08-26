@@ -5,7 +5,8 @@ import typing
 from pydantic import Field
 
 from kiara import Kiara, KiaraModule
-from kiara.data.values import Value, ValueSchema, ValueSet
+from kiara.data import ValueSet
+from kiara.data.values import Value, ValueSchema
 from kiara.exceptions import KiaraProcessingException
 from kiara.metadata.data import LoadConfig
 from kiara.module_config import ModuleTypeConfigSchema

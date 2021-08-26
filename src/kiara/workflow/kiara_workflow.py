@@ -5,7 +5,7 @@ from rich.console import Console, ConsoleOptions, RenderResult
 from rich.table import Table
 from slugify import slugify
 
-from kiara.data import ValueSet
+from kiara.data.values.value_set import ValueSet
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.info.pipelines import PipelineState, StepsInfo
 from kiara.module_config import ModuleConfig

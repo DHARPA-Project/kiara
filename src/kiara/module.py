@@ -10,13 +10,9 @@ from rich import box
 from rich.console import Console, ConsoleOptions, RenderGroup, RenderResult
 from rich.panel import Panel
 
-from kiara.data.values import (
-    NonRegistryValue,
-    Value,
-    ValueSchema,
-    ValueSet,
-    ValueSetImpl,
-)
+from kiara.data.values import Value, ValueSchema
+from kiara.data.values.value_set import SlottedValueSet, ValueSet
+from kiara.defaults import SpecialValue
 from kiara.exceptions import KiaraModuleConfigException
 from kiara.metadata.module_models import (
     KiaraModuleInstanceMetadata,
@@ -46,71 +42,29 @@ class StepInputs(ValueSet):
         inputs (ValueSet): the input values of a pipeline step
     """
 
-    def __init__(self, inputs: ValueSet):
-        self._inputs: ValueSet = inputs
+    def __init__(self, inputs: ValueSet, title: typing.Optional[str] = None):
 
-    # def __getattr__(self, key):
-    #
-    #     if key == "_inputs":
-    #         raise KeyError()
-    #     elif key in self.__dict__["_inputs"].keys():
-    #         return self.get_value_data(key)
-    #     else:
-    #         return super().__getattribute__(key)
+        self._inputs: ValueSet = inputs
+        super().__init__(read_only=True, title=title)
 
     def get_all_field_names(self) -> typing.Iterable[str]:
         """All field names included in this ValueSet."""
-        return self.__dict__["_inputs"].keys()
 
-    def get_value_data_for_fields(self, *field_names) -> typing.Dict[str, typing.Any]:
-        """Return a dictionary with all resolved values for the specified fields."""
+        return self._inputs.get_all_field_names()
 
-        result = {}
-
-        for input_name in field_names:
-            value = self.__dict__["_inputs"][input_name].get_value_data()
-            if hasattr(value, "as_py"):
-                result[input_name] = value.as_py()
-            else:
-                result[input_name] = value
-        return result
-
-    def get_value_obj(
+    def _get_value_obj(
         self,
         field_name: str,
         ensure_metadata: typing.Union[bool, typing.Iterable[str], str] = False,
     ) -> Value:
         """Retrieve the value object for the specified field."""
 
-        if ensure_metadata:
-            raise NotImplementedError()
-
-        return self.__dict__["_inputs"][field_name]
+        return self._inputs.get_value_obj(
+            field_name=field_name, ensure_metadata=ensure_metadata
+        )
 
     def _set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:
         raise Exception("Inputs are read-only.")
-
-    def is_read_only(self) -> bool:
-        """Return whether this value set is read-only, or whether its values can be set/changed."""
-        return True
-
-    def __getitem__(self, item: str) -> Value:
-
-        return self.get_value_obj(field_name=item)
-
-    def __setitem__(self, key: str, value: Value):
-
-        raise Exception("Inputs are read-only.")
-
-    def __delitem__(self, key: str):
-
-        raise Exception(f"Removing items not supported: {key}")
-
-    def __iter__(self) -> typing.Iterator[str]:
-        return iter(self._inputs.__iter__())
-
-    def __len__(self):
-        return len(self._inputs.__len__())
 
 
 class StepOutputs(ValueSet):
@@ -132,16 +86,18 @@ class StepOutputs(ValueSet):
         outputs (ValueSet): the output values of a pipeline step
     """
 
-    def __init__(self, outputs: ValueSet):
-        super().__setattr__("_outputs_staging", {})
-        super().__setattr__("_outputs", outputs)
+    def __init__(self, outputs: ValueSet, title: typing.Optional[str] = None):
+
+        self._outputs_staging: typing.Dict[str, typing.Any] = {}
+        self._outputs: ValueSet = outputs
+        super().__init__(read_only=False, title=title)
 
     def get_all_field_names(self) -> typing.Iterable[str]:
         """All field names included in this ValueSet."""
 
-        return self.__dict__["_outputs"].keys()
+        return self._outputs.get_all_field_names()
 
-    def _set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:
+    def _set_values(self, **values: typing.Any):
 
         wrong = []
         for key in values.keys():
@@ -154,66 +110,25 @@ class StepOutputs(ValueSet):
                 f"Can't set output value(s), invalid key name(s): {', '.join(wrong)}. Available: {av}"
             )
 
-        result = {}
         for output_name, value in values.items():
-            value_obj = self.__dict__["_outputs"][output_name]
+            # value_obj = self._outputs.get_value_obj(output_name)
             if (
                 output_name not in self._outputs_staging.keys()  # type: ignore
                 or value != self._outputs_staging[output_name]  # type: ignore
             ):
-                result[value_obj] = True
                 self._outputs_staging[output_name] = value  # type: ignore
-            else:
-                result[value_obj] = False
 
-        return result
-
-    def get_value_data_for_fields(
-        self, *field_names: str
-    ) -> typing.Dict[str, typing.Any]:
-        """Return a dictionary with all resolved values for the specified fields."""
-
-        self.sync()
-        result = {}
-        for output_name in field_names:
-            data = self.__dict__["_outputs"][field_names].get_value_data()
-            result[output_name] = data
-        return result
-
-    def get_value_obj(self, output_name):
+    def _get_value_obj(self, output_name):
         """Retrieve the value object for the specified field."""
 
         self.sync()
-        return self.__dict__["_outputs"][output_name]
-
-    def is_read_only(self) -> bool:
-        """Return whether this value set is read-only, or whether its values can be set/changed."""
-
-        return False
+        return self._outputs.get_value_obj(output_name)
 
     def sync(self):
         """Sync this value sets 'shadow' values with the ones a user would retrieve."""
 
         self._outputs.set_values(**self._outputs_staging)  # type: ignore
         self._outputs_staging.clear()  # type: ignore
-
-    def __getitem__(self, item: str) -> Value:
-
-        return self.get_value_obj(output_name=item)
-
-    def __setitem__(self, key: str, value: Value):
-
-        self.set_value(key, value)
-
-    def __delitem__(self, key: str):
-
-        raise Exception(f"Removing items not supported: {key}")
-
-    def __iter__(self) -> typing.Iterator[str]:
-        return iter(self.__dict__["_outputs"].__iter__())
-
-    def __len__(self):
-        return len(self.__dict__["_outputs"].__len__())
 
 
 class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
@@ -616,22 +531,35 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
                         f"Invalid input name '{k} for module {self._module_type_id}. Not part of the schema, allowed input names: {', '.join(self.input_names)}"  # type: ignore
                     )
                 schema = self.input_schemas[k]
-                v = NonRegistryValue(
-                    _init_value=v,  # type: ignore
+                v = Value(
+                    value_data=v,  # type: ignore
                     value_schema=schema,
                     is_constant=False,
                     kiara=self._kiara,
+                    registry=self._kiara.data_registry,
                 )
             resolved_inputs[k] = v
 
-        input_value_set = ValueSetImpl.from_schemas(
+        # TODO: introduce a 'temp' value set implementation and use that here
+        input_value_set = SlottedValueSet.from_schemas(
             kiara=self._kiara,
             schemas=self.input_schemas,
             read_only=True,
             initial_values=resolved_inputs,
+            title=f"module_inputs_{self.id}",
         )
-        output_value_set = ValueSetImpl.from_schemas(
-            kiara=self._kiara, schemas=self.output_schemas, read_only=False
+
+        if not input_value_set.items_are_valid():
+            raise Exception(
+                f"Can't process module '{self._module_type_name}': Inputs not valid."  # type: ignore
+            )
+
+        output_value_set = SlottedValueSet.from_schemas(
+            kiara=self._kiara,
+            schemas=self.output_schemas,
+            read_only=False,
+            title=f"{self._module_type_name}_module_outputs_{self.id}",  # type: ignore
+            default_value=SpecialValue.NOT_SET,
         )
 
         # m_inputs = StepInputs(inputs=input_value_set)
@@ -639,8 +567,9 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
 
         self.process(inputs=input_value_set, outputs=output_value_set)  # type: ignore
 
-        result = output_value_set.get_all_value_objects()
-        return ValueSetImpl(items=result, read_only=True)
+        # result = output_value_set.get_all_value_objects()
+        return output_value_set
+        # return ValueSetImpl(items=result, read_only=True)
 
     @property
     def module_instance_doc(self) -> str:

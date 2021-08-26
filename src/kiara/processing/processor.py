@@ -7,7 +7,7 @@ from datetime import datetime
 from pydantic import BaseSettings
 from zmq import Context, Socket
 
-from kiara.data import ValueSet
+from kiara.data.values.value_set import ValueSet
 from kiara.exceptions import KiaraProcessingException
 from kiara.module import KiaraModule, StepInputs, StepOutputs
 from kiara.pipeline import PipelineValuesInfo

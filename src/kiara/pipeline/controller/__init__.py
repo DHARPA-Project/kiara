@@ -2,7 +2,8 @@
 import logging
 import typing
 
-from kiara.data import Value, ValueSet
+from kiara.data import Value
+from kiara.data.values.value_set import ValueSet
 from kiara.pipeline.listeners import PipelineListener
 from kiara.pipeline.structure import PipelineStep
 from kiara.processing import Job

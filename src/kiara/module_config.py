@@ -326,16 +326,5 @@ class ModuleConfig(KiaraInfoModel):
         )
         return conf
 
-    # def create_config_renderable(self, **config: typing.Any) -> RenderableType:
-    #
-    #     c = {"module_type": self.module_type, "module_config": self.module_config}
-    #     conf_json = json.dumps(c, indent=2)
-    #     conf = Syntax(
-    #         conf_json,
-    #         "json",
-    #         background_color="default",
-    #     )
-    #     return conf
-
 
 KIARA_CONFIG = typing.TypeVar("KIARA_CONFIG", bound=ModuleTypeConfigSchema)

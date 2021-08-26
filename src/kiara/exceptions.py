@@ -4,7 +4,7 @@ import typing
 if typing.TYPE_CHECKING:
     from kiara import KiaraModule
     from kiara.data.types import ValueType
-    from kiara.data.values import ValueSet
+    from kiara.data.values.value_set import ValueSet
 
 
 class KiaraException(Exception):

@@ -34,27 +34,27 @@ async def test_data_list_subcommand(presseeded_data_store: Kiara):
     assert "journal_nodes@1" in result.stdout
 
 
-async def test_data_explain_subcommand(presseeded_data_store: Kiara):
-
-    runner = CliRunner()
-    result = await runner.invoke(
-        cli,
-        "data explain journal_nodes",
-        env={"KIARA_DATA_STORE": presseeded_data_store.config.data_store},
-    )
-    assert result.exit_code == 0
-
-    assert "table" in result.stdout
-
-
-async def test_data_load_subcommand(presseeded_data_store: Kiara):
-
-    runner = CliRunner()
-    result = await runner.invoke(
-        cli,
-        "data load journal_nodes",
-        env={"KIARA_DATA_STORE": presseeded_data_store.config.data_store},
-    )
-    assert result.exit_code == 0
-    assert "Id" in result.stdout
-    assert "City" in result.stdout
+# async def test_data_explain_subcommand(presseeded_data_store: Kiara):
+#
+#     runner = CliRunner()
+#     result = await runner.invoke(
+#         cli,
+#         "data explain journal_nodes",
+#         env={"KIARA_DATA_STORE": presseeded_data_store.config.data_store},
+#     )
+#     assert result.exit_code == 0
+#
+#     assert "table" in result.stdout
+#
+#
+# async def test_data_load_subcommand(presseeded_data_store: Kiara):
+#
+#     runner = CliRunner()
+#     result = await runner.invoke(
+#         cli,
+#         "data load journal_nodes",
+#         env={"KIARA_DATA_STORE": presseeded_data_store.config.data_store},
+#     )
+#     assert result.exit_code == 0
+#     assert "Id" in result.stdout
+#     assert "City" in result.stdout

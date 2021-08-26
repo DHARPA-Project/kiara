@@ -11,12 +11,12 @@ from zmq import Context
 from zmq.devices import ThreadDevice
 
 from kiara.config import KiaraConfig
-from kiara.data import Value, ValueSet
-from kiara.data.registry import DataRegistry
-from kiara.data.registry.pipeline_registry import PipelineRegistry
-from kiara.data.store import LocalDataStore
+from kiara.data import Value
+from kiara.data.registry import DataRegistry, InMemoryDataRegistry
+from kiara.data.store.local import LocalDataStore
 from kiara.data.types import ValueType
 from kiara.data.types.type_mgmt import TypeMgmt
+from kiara.data.values.value_set import ValueSet
 from kiara.interfaces import get_console
 from kiara.metadata.mgmt import MetadataMgmt
 from kiara.metadata.module_models import KiaraModuleTypeMetadata
@@ -114,7 +114,7 @@ class Kiara(object):
 
         self._type_mgmt_obj: TypeMgmt = TypeMgmt(self)
 
-        self._data_registry: DataRegistry = PipelineRegistry(self)
+        self._data_registry: InMemoryDataRegistry = InMemoryDataRegistry(self)
 
         self._module_mgr: MergedModuleManager = MergedModuleManager(
             config.module_managers

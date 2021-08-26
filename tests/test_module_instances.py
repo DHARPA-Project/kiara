@@ -34,9 +34,10 @@ def test_module_instance_run(kiara: Kiara):
     result = l_and.run(a=True, b=True)
     assert result.get_all_value_data() == {"y": True}
 
-    # with pytest.raises(Exception) as e_info:
-    result = l_and.run()
-    assert result.get_all_value_data() == {"y": None}
+    with pytest.raises(Exception) as e_info:
+        l_and.run()
+
+    assert "Inputs not valid" in str(e_info.value)
 
     with pytest.raises(Exception) as e_info:
         l_and.run(x=True)
@@ -47,8 +48,9 @@ def test_module_instance_run(kiara: Kiara):
     result = l_and.run(a=True, b=True)
     assert result.get_all_value_data() == {"y": True}
 
-    result = l_xor.run()
-    assert result.get_all_value_data() == {"y": None}
+    with pytest.raises(Exception) as e_info:
+        result = l_xor.run()
+    assert "Inputs not valid" in str(e_info.value)
 
     with pytest.raises(Exception) as e_info:
         l_xor.run(x=True)

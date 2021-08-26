@@ -1,230 +1,302 @@
 # -*- coding: utf-8 -*-
 import abc
-import logging
 import typing
 import uuid
 
-from kiara.data.values import Value, ValueMetadata, ValueSchema
+from kiara.data import Value
+from kiara.data.values import ValueSchema, ValueSeed, ValueSlot
 from kiara.defaults import SpecialValue
-from kiara.pipeline.values import LinkedValue, ValueRef, ValueUpdateHandler
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
 
-log = logging.getLogger("kiara")
+try:
+
+    class ValueSlotUpdateHandler(typing.Protocol):
+        """The call signature for callbacks that can be registered as value update handlers."""
+
+        def values_updated(self, *items: "ValueSlot") -> typing.Any:
+            ...
 
 
-def generate_random_value_id():
-
-    return str(uuid.uuid4())
+except Exception:
+    # there is some issue with older Python only_latest, typing.Protocol, and Pydantic
+    ValueUpdateHandler = typing.Callable  # type:ignore
 
 
 class DataRegistry(abc.ABC):
-    """Contains and manages all [Value][kiara.data.values.Value] objects for *Kiara*.
-
-    This is one of the central classes in *Kiara*, as it manages all data that is set by users or which results from
-    processing steps in [KiaraModule][kiara.module.KiaraModule]s. Basically, the registry keeps a record of every ``Value`` object that is produced
-    or consumed within *Kiara* by associating it with a unique id. This id then can be used to retrieve or set/replace the
-    current data (bytes) for a value, and subscribe to events that happens on such ``Value`` object (which is needed in
-    [PipelineController][kiara.pipeline.controller.PipelineController]s).
-
-    Note:
-        In the future, this will probably become an abstract base class, so it'll be possible to implement different
-        ways of storing/managing values and data.
-
-    """
-
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
-        self._id: str = generate_random_value_id()
+        self._value_slots: typing.Dict[str, ValueSlot] = {}
 
     @abc.abstractmethod
-    def get_value_item(self, item: typing.Union[str, Value]) -> Value:
-        """Get the [Value][kiara.data.values.Value] object for an id.
-
-        If a string is provided, it is interpreted as value id. If a ``Value`` object is provided, the registry will check whether its id is registered with it, and return the object that is registered with it.
-
-        If the provided id could not be found, an Exception is thrown.
-
-        Arguments:
-            item: a value id or ``Value`` object
-
-        Returns: the ``Value`` objectssh 1
-        """
+    def _register_value(self, value: Value, data: typing.Any) -> None:
+        pass
 
     @abc.abstractmethod
-    def register_value(
+    def _get_value_data_for_id(self, value_item: str) -> typing.Any:
+        pass
+
+    @abc.abstractmethod
+    def _get_value_for_id(self, value_id: str) -> Value:
+        pass
+
+    @abc.abstractmethod
+    def _get_available_value_ids(self) -> typing.Iterable[str]:
+        """Return all of the registries available value ids."""
+
+    def get_value_data(
+        self, value_item: typing.Union[str, Value, ValueSlot]
+    ) -> typing.Any:
+
+        value_obj = self.get_value(value_item)
+
+        if not value_obj.is_set and value_obj.value_schema.default not in (
+            SpecialValue.NO_VALUE,
+            SpecialValue.NOT_SET,
+            None,
+        ):
+            return value_obj.value_schema.default
+        elif not value_obj.is_set:
+            # return None
+            raise Exception("Value not set.")
+
+        data = self._get_value_data_for_id(value_obj.id)
+        if data == SpecialValue.NO_VALUE:
+            return None
+        elif isinstance(data, Value):
+            return data.get_value_data()
+        else:
+            return data
+
+    def get_value(self, value_item: typing.Union[str, Value, ValueSlot]) -> Value:
+
+        if isinstance(value_item, Value):
+            _value_id = value_item.id
+        elif isinstance(value_item, ValueSlot):
+            vs = self.get_value_slot(
+                value_slot=value_item
+            )  # just to make sure this slot is valid
+            _value_obj = vs.get_latest_value()
+            _value_id = _value_obj.id
+        elif isinstance(value_item, str):
+            if value_item in self._get_available_value_ids():
+                _value_id = value_item
+            elif value_item in self._value_slots.keys():
+                _value_slot = self.get_value_slot(value_item)
+                _value_obj = _value_slot.get_latest_value()
+                _value_id = _value_obj.id
+            else:
+                raise Exception(
+                    f"No value or value_slot id registered in registry: {value_item}"
+                )
+        else:
+            raise TypeError(f"Invalid type for value item: {type(value_item)}")
+
+        return self._get_value_for_id(_value_id)
+
+    def get_value_slot(self, value_slot: typing.Union[str, ValueSlot]) -> ValueSlot:
+
+        if isinstance(value_slot, ValueSlot):
+            _value_slot = value_slot.id
+        elif isinstance(value_slot, str):
+            _value_slot = value_slot
+        else:
+            raise TypeError(f"Invalid type for value item: {type(value_slot)}")
+
+        if _value_slot not in self._value_slots.keys():
+            raise KeyError(f"No value_slot with id '{_value_slot}' registered.")
+
+        return self._value_slots[_value_slot]
+
+    def create_value(
         self,
-        value_schema: ValueSchema,
-        value_fields: typing.Union[ValueRef, typing.Iterable[ValueRef], None] = None,
-        callbacks: typing.Optional[typing.Iterable[ValueUpdateHandler]] = None,
-        initial_value: typing.Any = SpecialValue.NOT_SET,
-        is_constant: bool = False,
-        value_metadata: typing.Union[
-            None, typing.Mapping[str, typing.Any], ValueMetadata
-        ] = None,
-    ) -> Value:
-        """Register a value in this registry.
-
-        This registers an unique id, along with a data schema and other metadata which can then be 'filled' with actual
-        data.
-
-        Arguments:
-             value_schema: the allowed schema for the data that is held in this value
-             value_fields: the field(s) within a [PipelineStructure][kiara.pipeline.structure.PipelineStructure] that is associated with this value
-             value_id: the (unique) id for this value, if not provided one will be generated
-             callbacks: the callbacks to register for this value (can be added later too)
-             initial_value: if provided, this value will be set
-             is_constant: whether this value is a constant or not
-             value_metadata: value metadata (not related to the actual data)
-
-        Returns:
-            the newly created value object
-        """
-
-    @abc.abstractmethod
-    def register_linked_value(
-        self,
-        linked_values: typing.Union[
-            typing.Dict[typing.Union[str, Value], typing.Dict[str, typing.Any]],
-            str,
-            Value,
-            typing.Iterable[typing.Union[str, Value]],
-        ],
-        value_schema: ValueSchema,
-        value_fields: typing.Union[ValueRef, typing.Iterable[ValueRef], None] = None,
-        value_id: typing.Optional[str] = None,
-        callbacks: typing.Optional[typing.Iterable[ValueUpdateHandler]] = None,
-        value_metadata: typing.Union[
-            None, typing.Mapping[str, typing.Any], ValueMetadata
-        ] = None,
-    ) -> LinkedValue:
-        """Register a linked value in this registry.
-
-        This registers an unique id, along with one or several other, already existing 'parent' ``Value`` objects. The
-        'value' of the resulting [LinkedValue][kiara.data.values.LinkedValue] and its schema is determined by those upstream objects.
-
-        Note:
-            Currently only one-to-one mappings of ``Value``/``LinkedValue`` is allowed. This will be more flexible in the future.
-
-        Arguments:
-             value_schema: the schema of the linked value
-             value_fields: field(s) within a [PipelineStructure][kiara.pipeline.structure.PipelineStructure] that is associated with this value
-             value_id: the (unique) id for this value, if not provided one will be generated
-             callbacks: the callbacks to register for this value (can be added later too)
-             value_metadata: value metadata (not related to the actual data)
-
-        Returns:
-            the newly created value object
-        """
-
-    @abc.abstractmethod
-    def register_callback(
-        self, callback: ValueUpdateHandler, *items: typing.Union[str, Value]
+        value_data: typing.Any = SpecialValue.NOT_SET,
+        value_schema: typing.Optional[ValueSchema] = None,
+        is_constant: typing.Optional[bool] = False,
+        value_seed: typing.Optional[ValueSeed] = None,
+        register_slot: bool = False,
+        callbacks: typing.Optional[typing.Iterable[ValueSlotUpdateHandler]] = None,
     ):
-        """Register a callback function that is called when one or several of the provided data items were changed.
 
-        This callback needs to have a signature that takes in one or several objects of the class [Value][kiara.data.values.Value]
-        as positional parameters (``*args``). If the callback has keyword arguments ``(**kwargs)``, those will be ignored.
+        if not register_slot and callbacks:
+            raise Exception(
+                "Callbacks can only be registered on slots, so 'register_slot' must be set to 'True'."
+            )
 
-        Arguments:
-            callback: the callback
-            *items: the value items (or their ids) to get notified for
+        value = Value(  # type: ignore
+            value_data=value_data,  # type: ignore
+            value_schema=value_schema,
+            is_constant=is_constant,
+            value_seed=value_seed,
+            kiara=self._kiara,  # type: ignore
+            registry=self,  # type: ignore
+        )
+        assert value.id in self._get_available_value_ids()
 
-        """
+        if register_slot:
+            self.register_slot(value, callbacks=callbacks)
 
-    @abc.abstractmethod
-    def get_value_data(self, item: typing.Union[str, Value]) -> typing.Any:
-        """Request the actual data for a value item or its id.
+        return value
 
-        Arguments:
-            item: the value or its id
-
-        Returns:
-            The data wrapped in a Python object.
-        """
-
-    # def calculate_sub_value(self, linked_id: str, subvalue: typing.Dict[str, str]):
-    #
-    #     linked_obj = self.get_value_item(linked_id)
-    #
-    #     if linked_obj.value_schema.type != "table":
-    #         raise NotImplementedError()
-    #
-    #     column_name = subvalue["config"]
-    #     table_metadata = self._kiara.metadata_mgmt.get_value_metadata(
-    #         linked_obj, "table"
-    #     )
-    #     column_names = table_metadata["table"]["column_names"]
-    #     if column_name not in column_names:
-    #         raise Exception(
-    #             f"Can't retrieve subvalue column '{column_name}'. Table does not contain a column with that name. Available column names: {', '.join(column_names)}"
-    #         )
-    #
-    #     value: Table = self.get_value_data(linked_id)
-    #     return value.column(column_name)
-    #
-    # def calculate_multiple_linked_value(self, value_id: str):
-    #
-    #     linked_item = self._linked_value_items[value_id]
-    #     assert isinstance(linked_item, LinkedValue)
-    #     assert linked_item.value_schema.type == "dict"
-    #
-    #     result = {}
-    #     for l_id, v in linked_item.links.items():
-    #
-    #         value = self.get_value_data(l_id)
-    #         key = v["config"]
-    #         result[key] = value
-    #
-    #     return result
-
-    def set_value(self, item: typing.Union[str, Value], value: typing.Any) -> bool:
-        """Set a single value.
-
-        In most cases, the [set_values][kiara.data.registry.DataRegistry.set_values] method will be used, which is
-        always recommended if multiple values are updated, since otherwise callbacks will be sent out seperately
-        which might be inefficient.
-
-
-        Arguments:
-            item: the value object or id to be set
-            value: the data (a Python object)
-
-        Returns:
-            whether the value was changed (``True``) or not (``False``)
-        """
-
-        if value == SpecialValue.NOT_SET:
-            raise Exception("'not_set' is not a valid value to set.")
-
-        item = self.get_value_item(item)
-        result = self.set_values({item: value})  # type: ignore
-        return result[item]
-
-    @abc.abstractmethod
-    def set_values(
+    def register_slot(
         self,
-        values: typing.Mapping[typing.Union[str, Value], typing.Any],
-    ) -> typing.Dict[Value, bool]:
-        """Set data on values.
+        value_or_schema: typing.Union[Value, ValueSchema],
+        callbacks: typing.Optional[typing.Iterable[ValueSlotUpdateHandler]] = None,
+    ) -> ValueSlot:
+        """Register a value slot.
 
-        Args:
-            values: a dict where the key is the value to set (or its id), and the value is the data to set
-
-        Returns:
-            a dict where the key is the value and the value a bool that indicates whether the
-                                      value was changed or not for that value
+        A value slot is an object that holds multiple versions of values that all use the same schema.
         """
 
-    def __eq__(self, other):
+        id = str(uuid.uuid4())
+        if isinstance(value_or_schema, ValueSchema):
+            value_or_schema = Value(
+                value_data=SpecialValue.NOT_SET,  # type: ignore
+                value_schema=value_or_schema,
+                kiara=self._kiara,  # type: ignore
+                registry=self,  # type: ignore
+            )
+        elif not isinstance(value_or_schema, Value):
+            raise TypeError(f"Invalid value type: {type(value_or_schema)}")
 
-        if not isinstance(other, DataRegistry):
-            return False
+        vs = ValueSlot.from_value(id=id, value=value_or_schema)
+        self._value_slots[vs.id] = vs
+        if callbacks:
+            self.register_callbacks(vs, *callbacks)
 
-        return self._id == other._id
+        return vs
 
-    def __hash__(self):
+    def register_callbacks(
+        self,
+        value_slot: typing.Union[str, ValueSlot],
+        *callbacks: ValueSlotUpdateHandler,
+    ) -> None:
 
-        return hash(self._id)
+        _value_slot = self.get_value_slot(value_slot)
+        _value_slot.register_callbacks(*callbacks)
+
+    def find_value_slots(
+        self, value_item: typing.Union[str, Value]
+    ) -> typing.List[ValueSlot]:
+
+        value_item = self.get_value(value_item)
+        result = []
+        for slot_id, slot in self._value_slots.items():
+            if slot.is_latest_value(value_item):
+                result.append(slot)
+        return result
+
+    def update_value_slot(
+        self,
+        value_slot: typing.Union[str, Value, ValueSlot],
+        data: typing.Any,
+        value_seed: typing.Optional[ValueSeed] = None,
+    ) -> bool:
+
+        if isinstance(value_slot, str):
+            if value_slot in self._value_slots.keys():
+                value_slot = self.get_value_slot(value_slot)
+            elif value_slot in self._get_available_value_ids():
+                value_slot = self.get_value(value_slot)
+
+        if isinstance(value_slot, Value):
+            slots = self.find_value_slots(value_slot)
+            if len(slots) == 0:
+                raise Exception(f"No value slot found for value '{value_slot.id}'.")
+            elif len(slots) > 1:
+                raise Exception(
+                    f"Multiple value slots found for value '{value_slot.id}'. This is not supported (yet)."
+                )
+            _value_slot: ValueSlot = slots[0]
+        elif isinstance(value_slot, ValueSlot):
+            _value_slot = value_slot
+        else:
+            raise TypeError(f"Invalid type for value slot: {type(value_slot)}")
+
+        if isinstance(data, Value):
+            if value_seed:
+                raise Exception("Can't update value slot with new value seed data.")
+            _value: Value = data
+        else:
+            _value = self.create_value(
+                value_data=data,
+                value_schema=_value_slot.value_schema,
+                value_seed=value_seed,
+            )
+
+        return self._update_value_slot(
+            value_slot=_value_slot, new_value=_value, trigger_callbacks=True
+        )
+
+    def update_value_slots(
+        self, updated_values: typing.Mapping[typing.Union[str, ValueSlot], typing.Any]
+    ) -> typing.Mapping[ValueSlot, bool]:
+
+        updated: typing.Dict[str, typing.List[ValueSlot]] = {}
+        cb_map: typing.Dict[str, ValueSlotUpdateHandler] = {}
+
+        result = {}
+
+        for value_slot, value_item in updated_values.items():
+
+            value_slot = self.get_value_slot(value_slot)
+            if isinstance(value_item, Value):
+                _value_item: Value = value_item
+            else:
+                _value_item = self.create_value(
+                    value_data=value_item, value_schema=value_slot.value_schema
+                )
+
+            updated_item = self._update_value_slot(
+                value_slot=value_slot, new_value=_value_item, trigger_callbacks=False
+            )
+            result[value_slot] = updated_item
+            if updated_item:
+                for cb_id, cb in value_slot._callbacks.items():
+                    cb_map[cb_id] = cb
+                    updated.setdefault(cb_id, []).append(value_slot)
+
+        for cb_id, value_slots in updated.items():
+            cb = cb_map[cb_id]
+            cb.values_updated(*value_slots)
+
+        return result
+
+    def _update_value_slot(
+        self, value_slot: ValueSlot, new_value: Value, trigger_callbacks: bool = True
+    ) -> bool:
+
+        last_version = value_slot.latest_version_nr
+        new_version = value_slot.add_value(
+            new_value, trigger_callbacks=trigger_callbacks
+        )
+
+        updated = last_version != new_version
+        return updated
+
+
+class InMemoryDataRegistry(DataRegistry):
+    def __init__(self, kiara: "Kiara"):
+
+        self._values: typing.Dict[str, Value] = {}
+        self._value_data: typing.Dict[str, typing.Any] = {}
+        super().__init__(kiara=kiara)
+
+    def _get_available_value_ids(self) -> typing.Iterable[str]:
+
+        return self._values.keys()
+
+    def _get_value_for_id(self, value_id: str) -> Value:
+
+        return self._values[value_id]
+
+    def _get_value_data_for_id(self, value_id: str) -> typing.Any:
+
+        return self._value_data[value_id]
+
+    def _register_value(self, value: Value, data: typing.Any) -> None:
+
+        self._values[value.id] = value
+        self._value_data[value.id] = data

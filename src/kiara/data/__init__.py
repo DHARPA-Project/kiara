@@ -3,4 +3,5 @@
 
 """Data and value related classes for *Kiara*."""
 
-from .values import Value, ValueSet  # noqa
+from .values import Value  # noqa
+from .values.value_set import ValueSet  # noqa

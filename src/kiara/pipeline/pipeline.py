@@ -5,7 +5,9 @@ import uuid
 from rich.console import Console, ConsoleOptions, RenderResult
 
 from kiara.data.registry import DataRegistry
-from kiara.data.values import Value, ValueMetadata, ValueSet, ValueSetImpl
+from kiara.data.values import ValueSlot
+from kiara.data.values.value_set import SlottedValueSet, ValueSet
+from kiara.defaults import SpecialValue
 from kiara.events import (
     PipelineInputEvent,
     PipelineOutputEvent,
@@ -21,13 +23,14 @@ from kiara.pipeline.structure import PipelineStep, PipelineStructure
 from kiara.pipeline.values import (
     PipelineInputRef,
     PipelineOutputRef,
-    PipelineValue,
     StepInputRef,
     StepOutputRef,
+    ValueRef,
 )
 
 if typing.TYPE_CHECKING:
     from kiara.info.pipelines import PipelineState
+    from kiara.kiara import Kiara
 
 log = logging.getLogger("kiara")
 
@@ -56,9 +59,11 @@ class Pipeline(object):
         self._step_inputs: typing.Mapping[str, ValueSet] = None  # type: ignore
         self._step_outputs: typing.Mapping[str, ValueSet] = None  # type: ignore
 
+        self._value_refs: typing.Mapping[ValueSlot, typing.Iterable[ValueRef]] = None  # type: ignore
         self._status: StepStatus = StepStatus.STALE
 
-        self._data_registry: DataRegistry = self._structure._kiara.data_registry
+        self._kiara: "Kiara" = self._structure._kiara
+        self._data_registry: DataRegistry = self._kiara.data_registry
 
         self._init_values()
 
@@ -151,11 +156,13 @@ class Pipeline(object):
         value item is allocated, since those refer to the same value.
         """
 
-        pipeline_inputs: typing.Dict[str, Value] = {}
-        pipeline_outputs: typing.Dict[str, Value] = {}
+        pipeline_inputs: typing.Dict[str, ValueSlot] = {}
+        pipeline_outputs: typing.Dict[str, ValueSlot] = {}
 
-        all_step_inputs: typing.Dict[str, typing.Dict[str, Value]] = {}
-        all_step_outputs: typing.Dict[str, typing.Dict[str, Value]] = {}
+        all_step_inputs: typing.Dict[str, typing.Dict[str, ValueSlot]] = {}
+        all_step_outputs: typing.Dict[str, typing.Dict[str, ValueSlot]] = {}
+
+        value_refs: typing.Dict[ValueSlot, typing.List[ValueRef]] = {}
 
         # create the value objects that are associated with step outputs
         # all pipeline outputs are created here too, since the only place
@@ -166,34 +173,24 @@ class Pipeline(object):
 
             for output_name, output_point in step_outputs.items():
 
-                output_value_item = self._data_registry.register_value(
-                    value_schema=output_point.value_schema,
-                    value_fields=output_point,
-                    is_constant=False,
+                init_output_value_item = self._data_registry.create_value(
+                    value_schema=output_point.value_schema
                 )
-                self._data_registry.register_callback(
-                    self.values_updated, output_value_item
+                output_value_slot = self._data_registry.register_slot(
+                    value_or_schema=init_output_value_item, callbacks=[self]
                 )
+                value_refs.setdefault(output_value_slot, []).append(output_point)
+
                 all_step_outputs.setdefault(step_id, {})[
                     output_name
-                ] = output_value_item
+                ] = output_value_slot
 
                 # not all step outputs necessarily need to be connected to a pipeline output
                 if output_point.pipeline_output:
+
+                    pipeline_outputs[output_point.pipeline_output] = output_value_slot
                     po = self._structure.pipeline_outputs[output_point.pipeline_output]
-
-                    vm = ValueMetadata(
-                        origin=f"{self.id}.steps.{step_id}.outputs.{output_name}"
-                    )
-
-                    pv = self._data_registry.register_linked_value(
-                        output_value_item,
-                        value_fields=po,
-                        value_schema=po.value_schema,
-                        value_metadata=vm,
-                    )
-                    self._data_registry.register_callback(self.values_updated, pv)
-                    pipeline_outputs[output_point.pipeline_output] = pv
+                    value_refs.setdefault(output_value_slot, []).append(po)
 
         # create the value objects that are associated with step inputs
         for step_id, step_details in self._structure.steps_details.items():
@@ -204,19 +201,19 @@ class Pipeline(object):
 
                 # if this step input gets fed from a pipeline_input (meaning user input in most cases),
                 # we need to create a DataValue for that pipeline input
-                vm = ValueMetadata(
-                    origin=f"{self.id}.steps.{step_id}.inputs.{input_point.value_name}"
-                )
+                # vm = ValueMetadata(
+                #     origin=f"{self.id}.steps.{step_id}.inputs.{input_point.value_name}"
+                # )
                 if input_point.connected_pipeline_input:
                     connected_pipeline_input_name = input_point.connected_pipeline_input
                     pipeline_input_field: PipelineInputRef = (
                         self._structure.pipeline_inputs[connected_pipeline_input_name]
                     )
-                    pipeline_input = pipeline_inputs.get(
+                    pipeline_input_slot: ValueSlot = pipeline_inputs.get(
                         connected_pipeline_input_name, None
                     )
 
-                    if pipeline_input is None:
+                    if pipeline_input_slot is None:
                         # if the pipeline input wasn't created by another step input before,
                         # we need to take care of it here
 
@@ -226,71 +223,70 @@ class Pipeline(object):
                             ]
                         else:
                             init_value = self.structure.defaults.get(
-                                pipeline_input_field.value_name, None
+                                pipeline_input_field.value_name, SpecialValue.NOT_SET
                             )
 
-                        alias = (
-                            f"{self._structure}.inputs.{connected_pipeline_input_name}"
-                        )
-                        p_vm = ValueMetadata(origin=alias)
-
-                        pipeline_input = self._data_registry.register_value(
+                        init_pipeline_input_value = self._data_registry.create_value(
+                            value_data=init_value,
                             value_schema=pipeline_input_field.value_schema,
-                            value_fields=pipeline_input_field,
                             is_constant=pipeline_input_field.is_constant,
-                            initial_value=init_value,
-                            value_metadata=p_vm,
                         )
-                        self._data_registry.register_callback(
-                            self.values_updated, pipeline_input
+                        pipeline_input_slot = self._data_registry.register_slot(
+                            value_or_schema=init_pipeline_input_value, callbacks=[self]
+                        )
+                        value_refs.setdefault(pipeline_input_slot, []).append(
+                            pipeline_input_field
                         )
 
-                        pipeline_inputs[connected_pipeline_input_name] = pipeline_input
-                        # TODO: create input field value
-                    # else:
-                    #     # TODO: compare schemas of multiple inputs
-                    #     log.warning(
-                    #         "WARNING: not comparing schemas of pipeline inputs with links to more than one step input currently, but this will be implemented in the future"
-                    #     )
-                    #     # raise NotImplementedError()
-                    #     import pp
-                    #     pp(pipeline_inputs)
+                        pipeline_inputs[
+                            connected_pipeline_input_name
+                        ] = pipeline_input_slot
 
-                    step_input = self._data_registry.register_linked_value(
-                        linked_values=pipeline_input,
-                        value_schema=input_point.value_schema,
-                        value_fields=input_point,
-                        value_metadata=vm,
-                    )
-                    self._data_registry.register_callback(
-                        self.values_updated, step_input
-                    )
-
-                    all_step_inputs.setdefault(step_id, {})[input_name] = step_input
+                    all_step_inputs.setdefault(step_id, {})[
+                        input_name
+                    ] = pipeline_input_slot
+                    value_refs.setdefault(pipeline_input_slot, []).append(input_point)
 
                 elif input_point.connected_outputs:
 
-                    linked_values = {}
                     for co in input_point.connected_outputs:
-                        output_value = all_step_outputs[co.step_id][co.value_name]
-                        sub_value = co.sub_value
-                        if len(input_point.connected_outputs) > 1 and not sub_value:
-                            sub_value = {"config": co.step_id}
+                        if len(input_point.connected_outputs) == 1 and not co.sub_value:
+                            # this means the input is the same value as the connected output
+                            output_value: ValueSlot = all_step_outputs[co.step_id][
+                                co.value_name
+                            ]
+                            all_step_inputs.setdefault(input_point.step_id, {})[
+                                input_point.value_name
+                            ] = output_value
+                            value_refs.setdefault(output_value, []).append(input_point)
+                        else:
+                            raise NotImplementedError()
+                            # sub_value = co.sub_value
 
-                        linked_values[output_value.id] = sub_value
-
-                    step_input = self._data_registry.register_linked_value(
-                        linked_values=linked_values,
-                        value_schema=input_point.value_schema,
-                        value_fields=input_point,
-                        value_metadata=vm,
-                    )
-                    self._data_registry.register_callback(
-                        self.values_updated, step_input
-                    )
-                    all_step_inputs.setdefault(input_point.step_id, {})[
-                        input_point.value_name
-                    ] = step_input
+                            # linked_values = {}
+                            # for co in input_point.connected_outputs:
+                            #     output_value = all_step_outputs[co.step_id][co.value_name]
+                            #     sub_value = co.sub_value
+                            #     if len(input_point.connected_outputs) > 1 and not sub_value:
+                            #         raise NotImplementedError()
+                            #         sub_value = {"config": co.step_id}
+                            #     if sub_value is not None:
+                            #         raise NotImplementedError
+                            #
+                            #     linked_values[output_value.id] = sub_value
+                            #
+                            # step_input = self._data_registry.register_linked_value(
+                            #     parent_id=self.id,
+                            #     linked_values=linked_values,
+                            #     value_schema=input_point.value_schema,
+                            #     value_refs=input_point,
+                            # )
+                            # self._data_registry.register_callback(
+                            #     self.values_updated, step_input
+                            # )
+                            # all_step_inputs.setdefault(input_point.step_id, {})[
+                            #     input_point.value_name
+                            # ] = step_input
 
                 else:
                     raise Exception(
@@ -299,35 +295,46 @@ class Pipeline(object):
 
         if not pipeline_inputs:
             raise Exception(f"Can't init pipeline '{self.title}': no pipeline inputs")
-        self._pipeline_inputs = ValueSetImpl(
+
+        self._pipeline_inputs = SlottedValueSet(
             items=pipeline_inputs,
             read_only=False,
             title=f"Inputs for pipeline '{self.title}'",
+            kiara=self._kiara,
+            registry=self._data_registry,
         )
         if not pipeline_outputs:
             raise Exception(f"Can't init pipeline '{self.title}': no pipeline outputs")
 
-        self._pipeline_outputs = ValueSetImpl(
+        self._pipeline_outputs = SlottedValueSet(
             items=pipeline_outputs,
             read_only=True,
             title=f"Outputs for pipeline '{self.title}'",
+            kiara=self._kiara,
+            registry=self._data_registry,
         )
         self._step_inputs = {}
         for step_id, inputs in all_step_inputs.items():
-            self._step_inputs[step_id] = ValueSetImpl(
+            self._step_inputs[step_id] = SlottedValueSet(
                 items=inputs,
                 read_only=True,
                 title=f"Inputs for step '{step_id}' of pipeline '{self.title}",
+                kiara=self._kiara,
+                registry=self._data_registry,
             )
         self._step_outputs = {}
         for step_id, outputs in all_step_outputs.items():
-            self._step_outputs[step_id] = ValueSetImpl(
+            self._step_outputs[step_id] = SlottedValueSet(
                 read_only=False,
                 items=outputs,
                 title=f"Outputs for step '{step_id}' of pipeline '{self.title}'",
+                kiara=self._kiara,
+                registry=self._data_registry,
             )
 
-    def values_updated(self, *items: PipelineValue):
+        self._value_refs = value_refs
+
+    def values_updated(self, *items: ValueSlot) -> None:
 
         updated_inputs: typing.Dict[str, typing.List[str]] = {}
         updated_outputs: typing.Dict[str, typing.List[str]] = {}
@@ -344,22 +351,35 @@ class Pipeline(object):
         for item in items:
 
             # TODO: multiple value fields, also check pipeline id
-            ps = item.value_fields
-            if len(ps) != 1:
-                raise NotImplementedError()
+            references = self._value_refs.get(item, None)
+            assert references
 
-            p = list(ps)[0]
+            for p in references:
 
-            if isinstance(p, StepInputRef):
-                updated_inputs.setdefault(p.step_id, []).append(p.value_name)
-            elif isinstance(p, StepOutputRef):
-                updated_outputs.setdefault(p.step_id, []).append(p.value_name)
-            elif isinstance(p, PipelineInputRef):
-                updated_pipeline_inputs.append(p.value_name)
-            elif isinstance(p, PipelineOutputRef):
-                updated_pipeline_outputs.append(p.value_name)
-            else:
-                raise TypeError(f"Can't update, invalid type: {type(p)}")
+                if isinstance(p, StepInputRef):
+                    updated_inputs.setdefault(p.step_id, []).append(p.value_name)
+                elif isinstance(p, StepOutputRef):
+                    updated_outputs.setdefault(p.step_id, []).append(p.value_name)
+                elif isinstance(p, PipelineInputRef):
+                    updated_pipeline_inputs.append(p.value_name)
+                elif isinstance(p, PipelineOutputRef):
+                    updated_pipeline_outputs.append(p.value_name)
+                else:
+                    raise TypeError(f"Can't update, invalid type: {type(p)}")
+
+        # print('========================================')
+        # print('---')
+        # print("Upaded pipeline input")
+        # print(updated_pipeline_inputs)
+        # print('---')
+        # print("Upaded step inputs")
+        # print(updated_inputs)
+        # print('---')
+        # print("Upaded step outputs")
+        # print(updated_outputs)
+        # print('---')
+        # print("Upaded pipeline outputs")
+        # print(updated_pipeline_outputs)
 
         if updated_pipeline_inputs:
             event_pi = PipelineInputEvent(

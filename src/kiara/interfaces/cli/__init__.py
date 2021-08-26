@@ -6,7 +6,6 @@ import asyncclick as click
 
 from kiara import Kiara
 from kiara.utils import is_develop
-from kiara.utils.output import rich_print
 
 from .data.commands import data
 from .info.commands import info
@@ -53,20 +52,36 @@ try:
 except ModuleNotFoundError:
     pass
 
+if is_develop():
 
-@cli.command()
-@click.pass_context
-def dev(ctx):
+    @cli.command()
+    @click.pass_context
+    def dev(ctx):
 
-    kiara = ctx.obj["kiara"]
+        kiara: Kiara = ctx.obj["kiara"]
 
-    # from kiara.utils.global_metadata import get_metadata_for_python_module
-    # md = get_metadata_for_python_module("kiara_modules.core.onboarding")
-    # rich_print(md.json(indent=2))
+        and_pipeline = kiara.create_workflow("logic.and")
+        # print_ascii_graph(and_pipeline.structure.data_flow_graph)
 
-    model_cls = kiara.get_module_class("array.load")
-    md = model_cls.get_type_metadata()
-    rich_print(md)
+        and_pipeline.inputs.set_value("a", True)
+        # kiara.explain(and_pipeline.current_state)
+        and_pipeline.inputs.set_value("b", True)
+        kiara.explain(and_pipeline.current_state)
+
+        # print(and_pipeline.outputs.get_all_value_data())
+        #
+        # and_pipeline.inputs.set_value("b", False)
+        #
+        # print(and_pipeline.outputs.get_all_value_data())
+        #
+        # value_slot: ValueSlot = and_pipeline.outputs._value_slots['y']
+        #
+        # for k, v in value_slot.values.items():
+        #     try:
+        #         print(v.get_value_data())
+        #     except Exception:
+        #         print("-- not set --")
+        #         pass
 
 
 if __name__ == "__main__":

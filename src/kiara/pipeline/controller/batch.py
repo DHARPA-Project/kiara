@@ -74,6 +74,7 @@ class BatchController(PipelineController):
                             f"Processing of step '{step_id}' from pipeline '{self.pipeline.structure.pipeline_id}' failed: {e}"
                         )
                         return False
+
                 self._processor.wait_for(*job_ids)
         finally:
             self._is_running = False

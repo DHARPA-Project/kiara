@@ -7,13 +7,25 @@
   - kiara.module_config.ModuleTypeConfig -> kiara.module_config.ModuleTypeConfigSchema
   - kiara.module_config.ModuleConfig -> kiara.module_config.ModuleConfig
   - in kiara.pipeline.values:
-    - ValueField -> ValueRef
     - StepInputField -> StepInputRef
     - StepOutputField -> StepOutputRef
     - PipelineInputField -> PipelineInputRef
     - PipelineOutputField -> PipelineOutputRef
-
+  - kiara.pipeline.values -> kiara.data.registry:
+    - ValueField -> ValueRef
+    - PipelineValue -> RegisteredValue
+    - DataValue -> RegisteredValue (merged with former base class)
+    - LinkedValue -> LinkedValue
+    - ValueUpdateHandler -> ValueUpdateHandler
+  - kiara.data.values.ValueSet*-related -> kiara.data.values.value_set
 - removed 'pipeline_id' attribute from 'PipelineStructure' class, but 'Pipeline" has 'id' and 'title' fields now instead
+- refactored 'DataRegistry' and 'Value' object:
+  - 'Value' objects are now immutable, data must be set when they are constructed
+  - all subclasses of 'Value' are removed, there is only one 'Value' type now, which is always connected to a data registry (which handles versioning and actual storage of the payload)
+  - removed linked values, replaced by 'ValueSlot' class
+  - 'ValueSlot' basically contains the history of all (immutable) Value objects on a specific spot (mostly within a pipeline, but can be used elsewhere)
+  - 'set_value_data' on 'Value' class is removed
+  - the interface of 'ValueSet' however is mostly unchanged, and all 'set/get value_obj/value_data' methods should still work as before
 
 ### Version 0.0.13
 
@@ -65,8 +77,8 @@
       - ValueUpdateHandler
       - StepValueAddress
       - ValueRef
-      - PipelineValue
-      - DataValue
+      - RegisteredValue
+      - RegisteredValue
       - LinkedValue
       - StepInputRef
       - StepOutputRef

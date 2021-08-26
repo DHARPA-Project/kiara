@@ -1,212 +1,30 @@
 # -*- coding: utf-8 -*-
-import abc
 import typing
 import uuid
-from datetime import datetime
 from pydantic import BaseModel, Extra, Field, PrivateAttr, root_validator
 
-from kiara.data.values import Value, ValueSchema
+from kiara.data.values import ValueSchema
 from kiara.defaults import PIPELINE_PARENT_MARKER
 from kiara.pipeline import StepValueAddress
 from kiara.pipeline.utils import generate_step_alias
 from kiara.utils import camel_case_to_snake_case
 
-if typing.TYPE_CHECKING:
-    from kiara.data.registry import DataRegistry
-
-try:
-
-    class ValueUpdateHandler(typing.Protocol):
-        """The call signature for callbacks that can be registered as value update handlers."""
-
-        def __call__(self, *items: "Value") -> typing.Any:
-            ...
-
-
-except Exception:
-    # there is some issue with older Python only_latest, typing.Protocol, and Pydantic
-    ValueUpdateHandler = typing.Callable  # type:ignore
-
-
-class PipelineValue(Value, abc.ABC):
-    """An implementation of [Value][kiara.data.values.Value] that contains information about the pipeline it is contained in."""
-
-    value_fields: typing.Tuple["ValueRef", ...] = Field(
-        description="Value fields within a pipeline connected to this value.",
-        default_factory=set,
-    )
-
-    def __init__(self, **data):  # type: ignore
-        data["stage"] = "init"
-
-        super().__init__(**data)
-
-    @property
-    def registry(self) -> "DataRegistry":
-        if self._kiara is None:
-            raise Exception(f"Kiara object not set for value: {self}")
-        return self._kiara.data_registry
-
-    def register_callback(
-        self, callback: typing.Callable
-    ):  # this needs to implement ValueUpdateHandler, but can't add that type hint due to a pydantic error
-        assert self._kiara is not None
-        self._kiara.data_registry.register_callback(callback, self)
-
-    def get_value_data(self) -> typing.Any:
-        return self.registry.get_value_data(self)
-
-    # def get_value_hash(self) -> typing.Any:
-    #
-    #     if self.value_hash == ValueHashMarker.DEFERRED:
-    #         return self.registry.get_value_hash(self)
-    #     else:
-    #         return self.value_hash
-
-    def __eq__(self, other):
-
-        # TODO: compare all attributes if id is equal, just to make sure...
-
-        if not isinstance(other, PipelineValue):
-            return False
-        return self.id == other.id
-
-    def __hash__(self):
-        return hash(self.id)
-
-    def __repr__(self):
-        return (
-            f"{self.__class__.__name__}(id={str(self.id)} valid={self.item_is_valid()})"
-        )
-
-    def __str__(self):
-        return self.__repr__()
-
-
-class DataValue(PipelineValue):
-    """An implementation of [Value][kiara.data.values.Value] that points to 'actual' data.
-
-    This is opposed to a [LinkedValue][kiara.data.values.LinkedValue], which points to one or several other ``Value``
-    objects, and is read-only.
-    """
-
-    @root_validator(pre=True)
-    def validate_input_fields(cls, values):
-
-        # TODO: validate against schema?
-
-        if values.get("last_update", None):
-            raise ValueError(
-                "Can't set 'last_update', this value will be set automatically."
-            )
-
-        is_init = True if values.pop("stage", None) == "init" else False
-
-        value_schema: ValueSchema = values.get("value_schema", None)
-        if value_schema is not None and not is_init:
-            raise ValueError(
-                "Can't set value_schema after initial construction of a Value object."
-            )
-        else:
-            if not isinstance(value_schema, ValueSchema):
-                raise TypeError(f"Invalid type for ValueSchema: {type(value_schema)}")
-
-        value_id: str = values.get("id", None)
-        if value_id and not is_init:
-            raise ValueError(
-                "Can't set value id after initial construction of a Value object."
-            )
-        else:
-            if not isinstance(value_id, str):
-                raise TypeError(f"Invalid type for value id: {type(value_id)}")
-
-        is_constant: bool = values.get("is_constant", None)
-        if is_constant and not is_init:
-            raise ValueError(
-                "Can't set 'is_constant' value after initial construction of a Value object."
-            )
-        else:
-            if not isinstance(is_constant, bool):
-                raise TypeError(f"Invalid type for 'is_constant': {type(is_constant)}")
-
-        values["last_update"] = datetime.now()
-
-        return values
-
-    def set_value_data(self, value: typing.Any) -> bool:
-
-        # TODO: validate against schema
-        changed: bool = self.registry.set_value(self, value)
-        if changed:
-            self._hash_cache = None
-        return changed
-
-
-class LinkedValue(PipelineValue):
-    """An implementation of [Value][kiara.data.values.Value] that points to one or several other ``Value`` objects..
-
-    This is opposed to a [DataValue][kiara.data.values.DataValue], which points to 'actual' data, and is read/write-able.
-    """
-
-    links: typing.Dict[str, typing.Dict[str, typing.Any]]
-
-    @root_validator(pre=True)
-    def validate_input_fields(cls, values):
-
-        # TODO: validate against schema?
-
-        if values.get("last_update", None):
-            raise ValueError(
-                "Can't set 'last_update', this value will be set automatically."
-            )
-
-        is_init = True if values.pop("stage", None) == "init" else False
-
-        value_schema: ValueSchema = values.get("value_schema", None)
-        if value_schema is not None and not is_init:
-            raise ValueError(
-                "Can't set value_schema after initial construction of a Value object."
-            )
-        else:
-            if not isinstance(value_schema, ValueSchema):
-                raise TypeError(f"Invalid type for ValueSchema: {type(value_schema)}")
-
-        value_id: str = values.get("id", None)
-        if value_id and not is_init:
-            raise ValueError(
-                "Can't set value id after initial construction of a Value object."
-            )
-        else:
-            if not isinstance(value_id, str):
-                raise TypeError(f"Invalid type for value id: {type(value_id)}")
-
-        is_constant: bool = values.get("is_constant", None)
-        if is_constant is not None:
-            raise ValueError("Can't set 'is_constant' value in LinkedValue object.")
-
-        values["last_update"] = datetime.now()
-        values["is_constant"] = False
-
-        return values
-
-    def set_value_data(self, value: typing.Any) -> bool:
-        raise Exception("Linked values can't be set.")
-
 
 class ValueRef(BaseModel):
-    """An object that holds information about the location of a value within a pipeline.
+    """An object that holds information about the location of a value within a pipeline (or other structure).
 
-    This object does not contain the value itself.
+    Basically, a `ValueRef` helps the containing object where in its structure the value belongs (for example so
+    it can update dependent other values). A `ValueRef` object (obviously) does not contain the value itself.
 
-    There are four different ValuePoint types:
+    There are four different ValueRef type that are relevant for pipelines:
 
-    - [kiara.data.values.StepInputRef][]: an input to a step
-    - [kiara.data.values.StepOutputRef][]: an output of a step
-    - [kiara.data.values.PipelineInputRef][]: an input to a pipeline
-    - [kiara.data.values.PipelineOutputRef][]: an output for a pipeline
+    - [kiara.pipeline.values.StepInputRef][]: an input to a step
+    - [kiara.pipeline.values.StepOutputRef][]: an output of a step
+    - [kiara.pipeline.values.PipelineInputRef][]: an input to a pipeline
+    - [kiara.pipeline.values.PipelineOutputRef][]: an output for a pipeline
 
-    Several point objects can target the same value, for example a step output and a connected step input are
-    actually the same.
+    Several `ValueRef` objects can target the same value, for example a step output and a connected step input would
+    reference the same `Value` (in most cases)..
     """
 
     class Config:
@@ -334,7 +152,5 @@ class PipelineOutputRef(ValueRef):
         return generate_step_alias(PIPELINE_PARENT_MARKER, self.value_name)
 
 
-DataValue.update_forward_refs()
-LinkedValue.update_forward_refs()
 StepInputRef.update_forward_refs()
 StepOutputRef.update_forward_refs()

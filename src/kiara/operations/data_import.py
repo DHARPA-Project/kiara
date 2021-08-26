@@ -5,7 +5,8 @@ import typing
 from pydantic import Field
 
 from kiara import Kiara, KiaraModule
-from kiara.data.values import NonRegistryValue, Value, ValueSchema, ValueSet
+from kiara.data.values import Value, ValueSchema
+from kiara.data.values.value_set import ValueSet
 from kiara.module_config import ModuleTypeConfigSchema
 from kiara.operations import Operation, OperationType
 from kiara.utils import log_message
@@ -131,8 +132,8 @@ class DataImportModule(KiaraModule):
         result = func(source, base_aliases=aliases)
 
         schema = ValueSchema(type=value_type, doc=f"Imported {value_type} value.")
-        value: Value = NonRegistryValue(
-            value_schema=schema, _init_value=result, kiara=self._kiara  # type: ignore
+        value: Value = Value(
+            value_schema=schema, value_data=result, kiara=self._kiara  # type: ignore
         )
         v_md = self._kiara.data_store.save_value(
             value=value, aliases=aliases, value_type=value_type

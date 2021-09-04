@@ -30,7 +30,7 @@ async def test_data_list_subcommand(presseeded_data_store: Kiara):
     )
 
     assert result.exit_code == 0
-    assert "journal_nodes.table" in result.stdout
+    assert "journal_nodes_table" in result.stdout
     assert "journal_nodes@1" in result.stdout
 
 

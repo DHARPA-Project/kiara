@@ -103,10 +103,10 @@ class DataImportModule(KiaraModule):
                 "type": self.get_config_value("value_type"),
                 "doc": f"The imported {self.get_config_value('value_type')} value.",
             },
-            "value_metadata": {
-                "type": "value_metadata",
-                "doc": "The metadata of the value that was created when storing to the data store.",
-            },
+            # "value_metadata": {
+            #     "type": "value_metadata",
+            #     "doc": "The metadata of the value that was created when storing to the data store.",
+            # },
         }
         return outputs
 
@@ -130,17 +130,18 @@ class DataImportModule(KiaraModule):
         # TODO: check signature?
 
         result = func(source, base_aliases=aliases)
-
         schema = ValueSchema(type=value_type, doc=f"Imported {value_type} value.")
-        value: Value = Value(
-            value_schema=schema, value_data=result, kiara=self._kiara  # type: ignore
-        )
-        v_md = self._kiara.data_store.save_value(
-            value=value, aliases=aliases, value_type=value_type
-        )
 
-        # TODO: this needs to set the actual 'value'  once the data registry is refactored
-        outputs.set_values(value_item=result, value_metadata=v_md)
+        value: Value = self._kiara.data_registry.register_data(
+            value_data=result, value_schema=schema
+        )
+        # value: Value = Value(
+        #     value_schema=schema, value_data=result, kiara=self._kiara  # type: ignore
+        # )
+        value_saved = self._kiara.data_store.register_data(value_data=value)
+        self._kiara.data_store.register_aliases(value_saved, aliases=aliases)
+
+        outputs.set_values(value_item=value)
 
 
 class DataImportOperationType(OperationType):

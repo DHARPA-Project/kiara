@@ -18,7 +18,7 @@ from kiara.config import KiaraConfig
 from kiara.kiara import Kiara
 from kiara.pipeline.config import PipelineConfig
 
-from .utils import MODULE_CONFIGS_FOLDER, PIPELINES_FOLDER
+from .utils import INVALID_PIPELINES_FOLDER, MODULE_CONFIGS_FOLDER, PIPELINES_FOLDER
 
 TEMP_DIR = os.path.join(tempfile.gettempdir(), "kiara_tests")
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -29,6 +29,20 @@ def pipeline_paths():
 
     result = {}
     for root, dirnames, filenames in os.walk(PIPELINES_FOLDER, topdown=True):
+
+        for f in filenames:
+            full = os.path.join(root, f)
+            if os.path.isfile(full) and f.endswith(".json"):
+                result[os.path.splitext(f)[0]] = full
+
+    return result
+
+
+@pytest.fixture
+def invalid_pipeline_paths():
+
+    result = {}
+    for root, dirnames, filenames in os.walk(INVALID_PIPELINES_FOLDER, topdown=True):
 
         for f in filenames:
             full = os.path.join(root, f)

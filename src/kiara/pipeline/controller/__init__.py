@@ -10,6 +10,7 @@ from kiara.processing import Job
 
 if typing.TYPE_CHECKING:
     from kiara.info.pipelines import PipelineState
+    from kiara.kiara import Kiara
     from kiara.pipeline import StepStatus
     from kiara.pipeline.pipeline import Pipeline
     from kiara.processing.processor import ModuleProcessor
@@ -44,12 +45,20 @@ class PipelineController(PipelineListener):
         self,
         pipeline: typing.Optional["Pipeline"] = None,
         processor: typing.Optional["ModuleProcessor"] = None,
+        kiara: typing.Optional["Kiara"] = None,
     ):
+
+        if kiara is None:
+            from kiara.kiara import Kiara
+
+            kiara = Kiara.instance()
+
+        self._kiara: Kiara = kiara
         self._pipeline: typing.Optional[Pipeline] = None
         if processor is None:
             from kiara.processing.synchronous import SynchronousProcessor
 
-            processor = SynchronousProcessor()
+            processor = SynchronousProcessor(kiara=kiara)
         self._processor: ModuleProcessor = processor
         self._job_ids: typing.Dict[str, str] = {}
         """A map of the last or current job ids per step_id."""

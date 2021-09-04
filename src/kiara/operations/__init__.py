@@ -189,8 +189,8 @@ class OperationMgmt(object):
         self._operations: typing.Optional[typing.Dict[str, typing.List[str]]] = None
 
     @property
-    def operation_ids(self) -> typing.Iterable[str]:
-        return self.profiles.keys()
+    def operation_ids(self) -> typing.List[str]:
+        return list(self.profiles.keys())
 
     @property
     def profiles(self) -> typing.Mapping[str, Operation]:

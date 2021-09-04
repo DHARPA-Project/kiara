@@ -155,7 +155,9 @@ async def run(ctx, module, inputs, module_config, output, explain, save):
     # from kiara.processing.parallel import ThreadPoolProcessor
     # processor = ThreadPoolProcessor()
     processor = None
-    controller = BatchController(processor=processor, auto_process=False)
+    controller = BatchController(
+        processor=processor, auto_process=False, kiara=kiara_obj
+    )
 
     # TODO: should we let the user specify?
     workflow_id = None
@@ -361,9 +363,9 @@ async def run(ctx, module, inputs, module_config, output, explain, save):
                 try:
                     value = workflow.outputs.get_value_obj(field_name)
                     value_md = value.save(aliases=aliases)
-                    msg = f"   -> done, id: [i]{value_md.value_id}[/i]"
-                    if value_md.aliases:
-                        msg = msg + f", aliases: [i]{', '.join(value_md.aliases)}[/i]"
+                    msg = f"   -> done, id: [i]{value_md.id}[/i]"
+                    if aliases:
+                        msg = msg + f", aliases: [i]{', '.join(aliases)}[/i]"
                     rich_print(msg)
                 except Exception as e:
                     if is_debug():

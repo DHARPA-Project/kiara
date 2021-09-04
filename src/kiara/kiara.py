@@ -109,7 +109,7 @@ class Kiara(object):
         # self.start_log_thread()
 
         self._default_processor: ModuleProcessor = ModuleProcessor.from_config(
-            config.default_processor
+            config.default_processor, kiara=self
         )
 
         self._type_mgmt_obj: TypeMgmt = TypeMgmt(self)
@@ -208,6 +208,37 @@ class Kiara(object):
 
         return self.type_mgmt.get_value_type_cls(type_name=type_name)
 
+    def get_value(self, value_id: str) -> Value:
+
+        if not isinstance(value_id, str):
+            raise TypeError(
+                f"Invalid type '{type(value_id)}' for value id, must be a string."
+            )
+
+        if value_id.startswith("value:"):
+            value_id = value_id[6:]
+
+        if not value_id:
+            raise Exception("No value id provided.")
+
+        try:
+            value = self.data_registry.get_value_obj(value_id)
+            if value is None:
+                raise Exception(f"No value with id: {value_id}")
+            return value
+        except Exception:
+            pass
+
+        try:
+            value = self.data_store.get_value_obj(value_id)
+            if value is None:
+                raise Exception(f"No value with id: {value_id}")
+            return value
+        except Exception:
+            pass
+
+        raise Exception(f"No value registered for id: {value_id}")
+
     def add_module_manager(self, module_manager: ModuleManager):
 
         self._module_mgr.add_module_manager(module_manager)
@@ -256,6 +287,10 @@ class Kiara(object):
         """Return the names of all available pipeline-type modules."""
 
         return self._module_mgr.available_pipeline_module_types
+
+    @property
+    def available_operation_ids(self) -> typing.List[str]:
+        return self._operation_mgmt.operation_ids
 
     def is_pipeline_module(self, module_type: str):
 

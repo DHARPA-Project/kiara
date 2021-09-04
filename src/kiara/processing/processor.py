@@ -16,6 +16,9 @@ from kiara.utils import is_debug
 
 try:
     from typing import Literal
+
+    from kiara.kiara import Kiara
+
 except Exception:
     from typing_extensions import Literal  # type: ignore
 
@@ -30,6 +33,7 @@ class ModuleProcessor(abc.ABC):
     def from_config(
         cls,
         config: typing.Union[None, typing.Mapping[str, typing.Any], ProcessorConfig],
+        kiara: typing.Optional["Kiara"] = None,
     ) -> "ModuleProcessor":
 
         from kiara.processing.parallel import ThreadPoolProcessorConfig
@@ -52,16 +56,28 @@ class ModuleProcessor(abc.ABC):
             from kiara.processing.synchronous import SynchronousProcessor
 
             proc: ModuleProcessor = SynchronousProcessor(
-                **config.dict(exclude={"module_processor_type"})
+                kiara=kiara, **config.dict(exclude={"module_processor_type"})
             )
         elif isinstance(config, ThreadPoolProcessorConfig):
             from kiara.processing.parallel import ThreadPoolProcessor
 
-            proc = ThreadPoolProcessor(**config.dict(exclude={"module_processor_type"}))
+            proc = ThreadPoolProcessor(
+                kiara=kiara, **config.dict(exclude={"module_processor_type"})
+            )
 
         return proc
 
-    def __init__(self, zmq_context: typing.Optional[Context] = None):
+    def __init__(
+        self,
+        zmq_context: typing.Optional[Context] = None,
+        kiara: typing.Optional["Kiara"] = None,
+    ):
+
+        if kiara is None:
+            from kiara.kiara import Kiara
+
+            kiara = Kiara.instance()
+        self._kiara: Kiara = kiara
 
         if zmq_context is None:
             zmq_context = Context.instance()
@@ -99,8 +115,8 @@ class ModuleProcessor(abc.ABC):
         # TODO: make snapshot of current state of data?
 
         full_inputs = module.create_full_inputs(**inputs)
-        wrapped_inputs = StepInputs(inputs=full_inputs)
-        wrapped_outputs = StepOutputs(outputs=outputs)
+        wrapped_inputs = StepInputs(inputs=full_inputs, kiara=self._kiara)
+        wrapped_outputs = StepOutputs(outputs=outputs, kiara=self._kiara)
 
         self._inputs[job_id] = wrapped_inputs
         self._outputs[job_id] = wrapped_outputs

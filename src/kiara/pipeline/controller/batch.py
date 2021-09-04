@@ -7,6 +7,7 @@ from kiara.utils import is_debug
 
 if typing.TYPE_CHECKING:
     from kiara.events import PipelineInputEvent, PipelineOutputEvent, StepInputEvent
+    from kiara.kiara import Kiara
     from kiara.pipeline.pipeline import Pipeline
     from kiara.processing.processor import ModuleProcessor
 
@@ -29,11 +30,12 @@ class BatchController(PipelineController):
         pipeline: typing.Optional["Pipeline"] = None,
         auto_process: bool = True,
         processor: typing.Optional["ModuleProcessor"] = None,
+        kiara: typing.Optional["Kiara"] = None,
     ):
 
         self._auto_process: bool = auto_process
         self._is_running: bool = False
-        super().__init__(pipeline=pipeline, processor=processor)
+        super().__init__(pipeline=pipeline, processor=processor, kiara=kiara)
 
     @property
     def auto_process(self) -> bool:
@@ -114,11 +116,12 @@ class BatchControllerManual(PipelineController):
         self,
         pipeline: typing.Optional["Pipeline"] = None,
         processor: typing.Optional["ModuleProcessor"] = None,
+        kiara: typing.Optional["Kiara"] = None,
     ):
 
         self._finished_until: typing.Optional[int] = None
         self._is_running: bool = False
-        super().__init__(pipeline=pipeline, processor=processor)
+        super().__init__(pipeline=pipeline, processor=processor, kiara=kiara)
 
     def process_pipeline(self):
 

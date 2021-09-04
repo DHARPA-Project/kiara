@@ -75,7 +75,7 @@ class CalculateValueHashModule(KiaraModule):
 
         value: Value = inputs.get_value_obj("value_item")
 
-        value_hash = value.calculate_hash(hash_type=self.get_config_value("hash_type"))
+        value_hash = value.get_hash(hash_type=self.get_config_value("hash_type"))
         outputs.set_value("hash", value_hash)
 
 

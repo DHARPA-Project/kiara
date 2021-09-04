@@ -44,7 +44,11 @@ class KiaraValueException(Exception):
         self._value_data: typing.Any = value_data
         self._exception: Exception = exception
 
-        super().__init__(f"Invalid value of type '{value_type._value_type_name}': {exception}")  # type: ignore
+        exc_msg = str(self._exception)
+        if not exc_msg:
+            exc_msg = "no details available"
+
+        super().__init__(f"Invalid value of type '{value_type._value_type_name}': {exc_msg}")  # type: ignore
 
 
 class KiaraProcessingException(Exception):

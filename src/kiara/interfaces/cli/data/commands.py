@@ -2,6 +2,7 @@
 """Data-related sub-commands for the cli."""
 import asyncclick as click
 import shutil
+import sys
 from rich import box
 from rich.table import Table
 
@@ -60,7 +61,8 @@ def list_values(ctx, with_alias, only_latest, tags, all):
 
     for v_id in kiara_obj.data_store.value_ids:
 
-        value_type = kiara_obj.data_store.get_value_type_for_id(v_id)
+        value = kiara_obj.data_store.get_value_obj(v_id)
+        value_type = value.type_name
         aliases = kiara_obj.data_store.find_aliases_for_value_id(
             v_id, include_all_versions=not only_latest
         )
@@ -104,7 +106,7 @@ def explain_value(ctx, value_id: str):
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     print()
-    value = kiara_obj.data_store.load_value(value_id=value_id)
+    value = kiara_obj.data_store.get_value_obj(value_item=value_id)
     rich_print(value)
 
 
@@ -117,7 +119,10 @@ def load_value(ctx, value_id: str):
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     print()
-    value = kiara_obj.data_store.load_value(value_id=value_id)
+    value = kiara_obj.data_store.get_value_obj(value_item=value_id)
+    if value is None:
+        print(f"No value available for id: {value_id}")
+        sys.exit(1)
 
     try:
         renderables = kiara_obj.pretty_print(value, "renderables")

@@ -10,7 +10,7 @@ from kiara.defaults import SpecialValue
 def test_values_create(kiara: Kiara):
 
     value_schema = ValueSchema(type="string")
-    v = Value(value_schema=value_schema)
+    v = kiara.data_registry.register_data(value_schema=value_schema)
     assert not v.is_set
 
 
@@ -18,23 +18,23 @@ def test_registry_values(kiara: Kiara):
 
     value_schema_1 = ValueSchema(type="string", required=False)
 
-    v = Value(kiara=kiara, value_schema=value_schema_1)
+    reg = kiara.data_registry
+
+    v = reg.register_data(value_schema=value_schema_1)
     with pytest.raises(Exception):
         v.get_value_data()
 
-    v = Value(kiara=kiara, value_data=None, value_schema=value_schema_1)
+    v = reg.register_data(value_data=None, value_schema=value_schema_1)
     assert v.get_value_data() is None
 
-    v = Value(
-        kiara=kiara, value_data=SpecialValue.NO_VALUE, value_schema=value_schema_1
-    )
+    v = reg.register_data(value_data=SpecialValue.NO_VALUE, value_schema=value_schema_1)
     assert v.get_value_data() is None
 
-    v = Value(kiara=kiara, value_data=SpecialValue.NOT_SET, value_schema=value_schema_1)
+    v = reg.register_data(value_data=SpecialValue.NOT_SET, value_schema=value_schema_1)
     with pytest.raises(Exception):
         v.get_value_data()
 
-    v = Value(kiara=kiara, value_data="xxx", value_schema=value_schema_1)
+    v = reg.register_data(value_data="xxx", value_schema=value_schema_1)
     assert v.get_value_data() == "xxx"
 
 

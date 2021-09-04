@@ -6,7 +6,6 @@ import asyncclick as click
 
 from kiara import Kiara
 from kiara.utils import is_develop
-from kiara.utils.output import rich_print
 
 from .data.commands import data
 from .info.commands import info
@@ -59,30 +58,36 @@ if is_develop():
     @click.pass_context
     def dev(ctx):
 
-        kiara: Kiara = ctx.obj["kiara"]
+        print("HELLO")
+        # kiara: Kiara = ctx.obj["kiara"]
 
-        mod = kiara.create_module("logic.and", module_config={"constants": {"a": True}})
-        rich_print(mod.input_schemas)
-
-        result = mod.run(b=True)
-        print(result.get_all_value_data())
+        # mod = kiara.create_module("logic.and", module_config={"constants": {"a": True}})
+        # rich_print(mod.input_schemas)
+        #
+        # result = mod.run(b=True)
+        # print(result.get_all_value_data())
 
         # and_pipeline = kiara.create_workflow("/home/markus/projects/dharpa/kiara/tests/resources/pipelines/logic/logic_4.json")
         # print_ascii_graph(and_pipeline.structure.data_flow_graph)
-
-        # and_pipeline.inputs.set_value("and_1_1__a", True)
-
+        #
+        # and_pipeline.inputs.set_value("and_1_1__b", True)
+        # and_pipeline.inputs.set_value("and_1_2__a", True)
+        # and_pipeline.inputs.set_value("and_1_2__b", True)
+        #
         # kiara.explain(and_pipeline.current_state)
-
-        # print(and_pipeline.outputs.get_all_value_data())
-        #
-        # and_pipeline.inputs.set_value("b", False)
         #
         # print(and_pipeline.outputs.get_all_value_data())
         #
-        # value_slot: ValueSlot = and_pipeline.outputs._value_slots['y']
+        # # and_pipeline.inputs.set_value("b", False)
+        # #
+        # # print(and_pipeline.outputs.get_all_value_data())
+        #
+        # import pp
+        # value_slot: ValueSlot = and_pipeline.outputs._value_slots['and_1_1__y']
         #
         # for k, v in value_slot.values.items():
+        #     print("---")
+        #     print(k)
         #     try:
         #         print(v.get_value_data())
         #     except Exception:

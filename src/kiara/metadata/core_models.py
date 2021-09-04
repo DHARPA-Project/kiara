@@ -279,25 +279,3 @@ class MetadataModelMetadata(MetadataModel):
     python_class: PythonClassMetadata = Field(
         description="The Python class for this value type."
     )
-
-
-class ValueHash(BaseModel):
-
-    hash: str = Field(description="The value hash.")
-    hash_type: str = Field(description="The value hash method.")
-
-
-class ValueInfo(BaseModel):
-
-    type: str = Field(description="The value type.")
-    hashes: typing.Dict[str, ValueHash] = Field(
-        description="All available hashes for this value."
-    )
-
-
-class SnapshotMetadata(BaseModel):
-
-    value_type: str = Field(description="The value type.")
-    value_id: str = Field(description="The value id after the snapshot.")
-    value_id_orig: str = Field(description="The value id before the snapshot.")
-    snapshot_time: str = Field(description="The time the data was saved.")

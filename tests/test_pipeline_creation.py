@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
+import pytest
+
 import os
 import typing
 
-from kiara import Kiara, PipelineModule
+from kiara import Kiara, Pipeline, PipelineModule
 from kiara.pipeline.config import PipelineConfig
 from kiara.pipeline.structure import PipelineStep, PipelineStructure
 
-from .utils import PIPELINES_FOLDER
+from .utils import INVALID_PIPELINES_FOLDER, PIPELINES_FOLDER
 
 
 def test_workflow_desc_files(pipeline_paths):
@@ -64,3 +66,21 @@ def test_pipeline_structure_creation(kiara: Kiara):
         assert isinstance(step, PipelineStep)
 
     assert idx == 2
+
+    Pipeline(structure=structure)
+
+
+def test_invalid_pipeline_creation(kiara: Kiara):
+
+    pipeline_file = os.path.join(INVALID_PIPELINES_FOLDER, "logic_4.json")
+    config = PipelineConfig.create_pipeline_config(pipeline_file)
+
+    structure = PipelineStructure(config=config, kiara=kiara)
+
+    for idx, step in enumerate(structure.steps):
+        assert isinstance(step, PipelineStep)
+    assert idx == 2
+
+    with pytest.raises(Exception) as exc_info:
+        Pipeline(structure=structure)
+    assert "a1" in str(exc_info.value)

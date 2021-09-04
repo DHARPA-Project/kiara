@@ -79,6 +79,7 @@ class SpecialValue(Enum):
 
     NOT_SET = "__not_set__"
     NO_VALUE = "__no_value__"
+    IGNORE = "__ignore__"
 
 
 DEFAULT_PRETTY_PRINT_CONFIG = {

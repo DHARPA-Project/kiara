@@ -68,7 +68,7 @@ class Pipeline(object):
         self._init_values()
 
         if controller is None:
-            controller = BatchController(self)
+            controller = BatchController(self, kiara=self._kiara)
         else:
             controller.set_pipeline(self)
         self._controller: PipelineController = controller
@@ -139,7 +139,9 @@ class Pipeline(object):
 
     def _update_status(self):
 
-        if not self.inputs.items_are_valid():
+        if self.inputs is None:
+            new_state = StepStatus.STALE
+        elif not self.inputs.items_are_valid():
             new_state = StepStatus.STALE
         elif not self.outputs.items_are_valid():
             new_state = StepStatus.INPUTS_READY
@@ -173,10 +175,10 @@ class Pipeline(object):
 
             for output_name, output_point in step_outputs.items():
 
-                init_output_value_item = self._data_registry.create_value(
+                init_output_value_item = self._data_registry.register_data(
                     value_schema=output_point.value_schema
                 )
-                output_value_slot = self._data_registry.register_slot(
+                output_value_slot = self._data_registry.register_alias(
                     value_or_schema=init_output_value_item, callbacks=[self]
                 )
                 value_refs.setdefault(output_value_slot, []).append(output_point)
@@ -226,12 +228,12 @@ class Pipeline(object):
                                 pipeline_input_field.value_name, SpecialValue.NOT_SET
                             )
 
-                        init_pipeline_input_value = self._data_registry.create_value(
+                        init_pipeline_input_value = self._data_registry.register_data(
                             value_data=init_value,
                             value_schema=pipeline_input_field.value_schema,
-                            is_constant=pipeline_input_field.is_constant,
                         )
-                        pipeline_input_slot = self._data_registry.register_slot(
+                        # TODO: check whether it's a constant?
+                        pipeline_input_slot = self._data_registry.register_alias(
                             value_or_schema=init_pipeline_input_value, callbacks=[self]
                         )
                         value_refs.setdefault(pipeline_input_slot, []).append(
@@ -348,6 +350,10 @@ class Pipeline(object):
         # print("===================================================")
 
         self._update_status()
+
+        if self._value_refs is None:
+            # means init is not finished yet
+            return
 
         for item in items:
 

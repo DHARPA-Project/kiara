@@ -20,11 +20,20 @@ class ValueSet(typing.MutableMapping[str, "Value"]):
         self,
         read_only: bool,
         title: typing.Optional[str] = None,
+        kiara: typing.Optional["Kiara"] = None,
     ):
 
         # from kiara.data.values import ValueSchema
         # schema = ValueSchema(type="any", default=None, doc="-- n/a --")
         # self._schema = schema
+
+        if kiara is None:
+            from kiara.kiara import Kiara
+
+            kiara = Kiara.instance()
+
+        self._kiara: "Kiara" = kiara
+
         self._read_only: bool = read_only
         if title is None:
             title = "-- n/a --"
@@ -89,7 +98,16 @@ class ValueSet(typing.MutableMapping[str, "Value"]):
                 f"No value item(s) with name(s) {', '.join(invalid)} available, valid names: {', '.join(self.get_all_field_names())}"
             )
 
-        self._set_values(**values)
+        resolved_values = {}
+        for field_name, data in values.items():
+            if isinstance(data, str) and data.startswith("value:"):
+                v = self._kiara.get_value(data)
+
+                resolved_values[field_name] = v
+            else:
+                resolved_values[field_name] = data
+
+        self._set_values(**resolved_values)
 
         result = {}
         for field in values.keys():
@@ -247,6 +265,12 @@ class SlottedValueSet(ValueSet):
         registry: typing.Optional[DataRegistry] = None,
     ) -> "SlottedValueSet":
 
+        if kiara is None:
+            kiara = Kiara.instance()
+
+        if registry is None:
+            registry = kiara.data_registry
+
         values = {}
         for field_name, schema in schemas.items():
 
@@ -260,7 +284,10 @@ class SlottedValueSet(ValueSet):
                 _init_value = initial_values[field_name]
 
             if not isinstance(_init_value, Value):
-                value: Value = Value(value_schema=schema, value_data=_init_value, kiara=kiara, registry=registry)  # type: ignore
+                value: Value = registry.register_data(
+                    value_data=_init_value, value_schema=schema
+                )
+                # value: Value = Value(value_schema=schema, value_data=_init_value, registry=registry)  # type: ignore
             else:
                 value = _init_value
 
@@ -286,14 +313,7 @@ class SlottedValueSet(ValueSet):
         if not items:
             raise ValueError("Can't create ValueSet: no values provided")
 
-        super().__init__(read_only=read_only, title=title)
-
-        if kiara is None:
-            from kiara.kiara import Kiara
-
-            kiara = Kiara.instance()
-
-        self._kiara: "Kiara" = kiara
+        super().__init__(read_only=read_only, title=title, kiara=kiara)
 
         if registry is None:
             registry = self._kiara.data_registry
@@ -313,7 +333,7 @@ class SlottedValueSet(ValueSet):
                 raise ValueError(f"Invalid value name '{item}'.")
 
             if isinstance(value, Value):
-                slot = self._registry.register_slot(value)
+                slot = self._registry.register_alias(value)
             elif isinstance(value, ValueSlot):
                 slot = value
             else:

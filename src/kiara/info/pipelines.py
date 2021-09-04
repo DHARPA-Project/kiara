@@ -692,10 +692,7 @@ class PipelineState(KiaraInfoModel):
             else:
                 req_string = "[bold]yes[/bold]"
 
-            if value.is_constant:
-                status = "-- constant --"
-                valid = "[green]yes[/green]"
-            elif value.is_set:
+            if value.is_set:
                 status = "-- set --"
                 valid = "[green]yes[/green]"
             elif value.is_streaming:
@@ -734,10 +731,7 @@ class PipelineState(KiaraInfoModel):
             else:
                 req_string = "[bold]yes[/bold]"
 
-            if value.is_constant:
-                status = "-- constant --"
-                valid = "[green]yes[/green]"
-            elif value.is_set:
+            if value.is_set:
                 status = "-- set --"
                 valid = "[green]yes[/green]"
             elif value.is_streaming:
@@ -829,9 +823,7 @@ def create_pipeline_step_table(
     in_fields = []
     for field_name, details in pipeline_state.step_inputs[step.step_id].values.items():
 
-        if details.is_constant:
-            status_str = "[green]-- constant --[/green]"
-        elif details.is_streaming:
+        if details.is_streaming:
             status_str = "[yellow]-- streaming --[/yellow]"
         elif details.is_set:
             status_str = "[green]-- set --[/green]"
@@ -848,9 +840,7 @@ def create_pipeline_step_table(
     out_fields = []
     for field_name, details in pipeline_state.step_outputs[step.step_id].values.items():
 
-        if details.is_constant:
-            status_str = "[green]-- constant --[/green]"
-        elif details.is_streaming:
+        if details.is_streaming:
             status_str = "[yellow]-- streaming --[/yellow]"
         elif details.is_set:
             status_str = "[green]-- set --[/green]"

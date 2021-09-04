@@ -43,11 +43,14 @@ class StepInputs(ValueSet):
     """
 
     def __init__(
-        self, inputs: typing.Mapping[str, Value], title: typing.Optional[str] = None
+        self,
+        inputs: typing.Mapping[str, Value],
+        title: typing.Optional[str] = None,
+        kiara: typing.Optional["Kiara"] = None,
     ):
 
         self._inputs: typing.Mapping[str, Value] = inputs
-        super().__init__(read_only=True, title=title)
+        super().__init__(read_only=True, title=title, kiara=kiara)
 
     def get_all_field_names(self) -> typing.Iterable[str]:
         """All field names included in this ValueSet."""
@@ -98,11 +101,16 @@ class StepOutputs(ValueSet):
         outputs (ValueSet): the output values of a pipeline step
     """
 
-    def __init__(self, outputs: ValueSet, title: typing.Optional[str] = None):
+    def __init__(
+        self,
+        outputs: ValueSet,
+        title: typing.Optional[str] = None,
+        kiara: typing.Optional["Kiara"] = None,
+    ):
 
         self._outputs_staging: typing.Dict[str, typing.Any] = {}
         self._outputs: ValueSet = outputs
-        super().__init__(read_only=False, title=title)
+        super().__init__(read_only=False, title=title, kiara=kiara)
 
     def get_all_field_names(self) -> typing.Iterable[str]:
         """All field names included in this ValueSet."""
@@ -580,21 +588,27 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
                     )
                 if k in self.input_schemas.keys():
                     schema = self.input_schemas[k]
-                    value = Value(
-                        value_data=value,  # type: ignore
-                        value_schema=schema,
-                        is_constant=False,
-                        kiara=self._kiara,  # type: ignore
-                        registry=self._kiara.data_registry,  # type: ignore
+                    value = self._kiara.data_registry.register_data(
+                        value_data=value, value_schema=schema
                     )
+                    # value = Value(
+                    #     value_data=value,  # type: ignore
+                    #     value_schema=schema,
+                    #     is_constant=False,
+                    #     registry=self._kiara.data_registry,  # type: ignore
+                    # )
                 else:
                     schema = self.constants[k]
-                    value = Value(
+                    value = self._kiara.data_registry.register_data(
+                        value_data=SpecialValue.NOT_SET,
                         value_schema=schema,
-                        is_constant=False,
-                        kiara=self._kiara,  # type: ignore
-                        registry=self._kiara.data_registry,  # type: ignore
                     )
+                    # value = Value(
+                    #     value_schema=schema,
+                    #     is_constant=False,
+                    #     kiara=self._kiara,  # type: ignore
+                    #     registry=self._kiara.data_registry,  # type: ignore
+                    # )
             resolved_inputs[k] = value
 
         return resolved_inputs

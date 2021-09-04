@@ -54,8 +54,8 @@ class ThreadPoolProcessor(ModuleProcessor):
     ):
 
         # need to wrap again, since this runs in it's own thread
-        wrapped_inputs = StepInputs(inputs=inputs)
-        wrapped_outputs = StepOutputs(outputs=outputs)
+        wrapped_inputs = StepInputs(inputs=inputs, kiara=self._kiara)
+        wrapped_outputs = StepOutputs(outputs=outputs, kiara=self._kiara)
 
         self.job_status_updated(job_id=job_id, status=JobStatus.STARTED)
         try:

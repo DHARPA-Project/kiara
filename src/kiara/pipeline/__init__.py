@@ -22,7 +22,6 @@ class PipelineValueInfo(BaseModel):
             value_schema=value.value_schema,
             is_valid=value.item_is_valid(),
             is_set=value.is_set,
-            is_constant=value.is_constant,
             # value_metadata=value.value_metadata,
             # last_update=value.last_update,
             # value_hash=value.value_hash,
@@ -40,9 +39,9 @@ class PipelineValueInfo(BaseModel):
     )
     is_set: bool = Field(description="Whether the value is set.")
     value_schema: ValueSchema = Field(description="The schema of this value.")
-    is_constant: bool = Field(
-        description="Whether this value is a constant.", default=False
-    )
+    # is_constant: bool = Field(
+    #     description="Whether this value is a constant.", default=False
+    # )
     # value_metadata: ValueMetadata = Field(
     #     description="The metadata of the value itself (not the actual data)."
     # )

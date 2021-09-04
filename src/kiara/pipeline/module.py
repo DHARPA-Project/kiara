@@ -43,7 +43,7 @@ class PipelineModule(KiaraModule[PipelineConfig]):
         if controller is None:
             from kiara.pipeline.controller.batch import BatchController
 
-            controller = BatchController()
+            controller = BatchController(kiara=kiara)
 
         self._pipeline_controller: PipelineController = controller
         super().__init__(

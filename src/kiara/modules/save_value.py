@@ -5,6 +5,7 @@ from pydantic import Field
 from kiara import KiaraModule
 from kiara.data import ValueSet
 from kiara.data.values import ValueSchema
+from kiara.exceptions import KiaraProcessingException
 from kiara.module_config import ModuleTypeConfigSchema
 
 
@@ -54,11 +55,11 @@ class SaveValueModule(KiaraModule):
         value = inputs.get_value_obj("value_item")
         aliases = inputs.get_value_data("aliases")
 
-        value_md = self._kiara.data_store.save_value(
-            value=value, aliases=aliases, value_type=self.get_config_value("value_type")
-        )
+        assert value.type_name == self.get_config_value("value_type")
 
-        outputs.set_value("value_id", value_md.value_id)
+        value = value.save(aliases=aliases)
+
+        outputs.set_value("value_id", value.id)
 
 
 class LoadValueModule(KiaraModule):
@@ -95,8 +96,10 @@ class LoadValueModule(KiaraModule):
 
     def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
 
-        value_id = inputs.get_value_data("value_id")
+        value_id: str = inputs.get_value_data("value_id")  # type: ignore
 
-        value = self._kiara.data_store.load_value(value_id)
+        value = self._kiara.data_store.get_value_obj(value_id)
+        if value is None:
+            raise KiaraProcessingException(f"Can't find value for value id: {value_id}")
         # TODO: make this so we don't have to actually load the data, but can use a reference
         outputs.set_value("value_item", value.get_value_data())

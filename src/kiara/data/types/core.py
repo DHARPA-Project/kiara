@@ -2,12 +2,11 @@
 import json
 import typing
 
-from kiara.data.store import SavedValueMetadata
 from kiara.data.types import ValueType
 from kiara.metadata.data import LoadConfig
 
 if typing.TYPE_CHECKING:
-    from kiara.data.values import Value
+    from kiara.data.values import Value, ValueInfo
 
 
 class ValueLoadConfig(ValueType):
@@ -64,7 +63,7 @@ class ValueMetadata(ValueType):
 
     @classmethod
     def candidate_python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
-        return [SavedValueMetadata]
+        return [ValueInfo]
 
     @classmethod
     def type_name(cls):
@@ -74,20 +73,20 @@ class ValueMetadata(ValueType):
     def parse_value(self, value: typing.Any) -> typing.Any:
 
         if isinstance(value, typing.Mapping):
-            _value = SavedValueMetadata(**value)
+            _value = ValueInfo(**value)
             return _value
 
     @classmethod
     def validate(cls, value: typing.Any) -> None:
 
-        if not isinstance(value, SavedValueMetadata):
+        if not isinstance(value, ValueInfo):
             raise Exception(f"Invalid type for value_metadata: {type(value)}.")
 
     def pretty_print_as_renderables(
         self, value: "Value", print_config: typing.Mapping[str, typing.Any]
     ) -> typing.Any:
 
-        data: SavedValueMetadata = value.get_value_data()
+        data: ValueInfo = value.get_value_data()
         _temp = data.dict()
         md = data.get_metadata_items()
         _temp["metadata"] = md

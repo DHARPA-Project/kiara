@@ -295,7 +295,7 @@ class ModuleConfig(KiaraInfoModel):
         self,
         kiara: typing.Optional["Kiara"] = None,
         module_id: typing.Optional[str] = None,
-    ):
+    ) -> "KiaraModule":
         """Create a module instance from this configuration."""
 
         if module_id and not isinstance(module_id, str):

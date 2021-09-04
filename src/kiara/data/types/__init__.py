@@ -117,6 +117,10 @@ class ValueType(object):
         #     typing.Mapping[str, typing.Mapping[str, typing.Any]]
         # ] = None
 
+    @property
+    def type_config(self) -> typing.Mapping[str, typing.Any]:
+        return self._type_config
+
     def import_value(self, value: typing.Any) -> typing.Any:
 
         assert value is not None

@@ -25,14 +25,17 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
 
-from kiara.data.store import SavedValueMetadata
 from kiara.data.types import ValueType
 from kiara.defaults import SpecialValue
 from kiara.module_config import ModuleConfig
-from kiara.utils import StringYAML
+from kiara.utils import StringYAML, log_message
 
 if typing.TYPE_CHECKING:
-    from kiara.data.registry import DataRegistry, ValueSlotUpdateHandler
+    from kiara.data.registry import (
+        BaseDataRegistry,
+        DataRegistry,
+        ValueSlotUpdateHandler,
+    )
     from kiara.kiara import Kiara
 
 log = logging.getLogger("kiara")
@@ -120,6 +123,15 @@ class ModuleValueSeed(ModuleConfig):
     )
 
 
+class ValueHash(BaseModel):
+
+    hash: str = Field(description="The value hash.")
+    hash_type: str = Field(description="The value hash method.")
+
+
+NO_ID_YET_MARKER = "__no_id_yet__"
+
+
 class Value(BaseModel, JupyterMixin):
     """The underlying base class for all values.
 
@@ -131,78 +143,63 @@ class Value(BaseModel, JupyterMixin):
         extra = Extra.forbid
         use_enum_values = True
 
-    def __init__(self, value_data: typing.Any = SpecialValue.NOT_SET, value_schema: typing.Optional[ValueSchema] = None, is_constant: typing.Optional[bool] = False, value_seed: typing.Optional[ValueSeed] = None, kiara: typing.Optional["Kiara"] = None, registry: typing.Optional["DataRegistry"] = None):  # type: ignore
+    def __init__(self, registry: "BaseDataRegistry", value_schema: ValueSchema, type_obj: ValueType, is_set: bool, is_none: bool, hashes: typing.Optional[typing.Dict[str, ValueHash]] = None, metadata: typing.Optional[typing.Mapping[str, typing.Dict[str, typing.Any]]] = None, register_token: typing.Optional[uuid.UUID] = None):  # type: ignore
 
-        if kiara is None:
-            from kiara.kiara import Kiara
+        if not register_token:
+            raise Exception("No register token provided.")
 
-            kiara = Kiara.instance()
+        if not registry._check_register_token(register_token):
+            raise Exception(
+                f"Value registration with token '{register_token}' not allowed."
+            )
 
         if value_schema is None:
             raise NotImplementedError()
 
-        if value_schema.is_constant and value_data not in [
-            SpecialValue.NO_VALUE,
-            SpecialValue.NOT_SET,
-            None,
-        ]:
-            raise Exception(
-                "Can't create value. Is a constant, but value data was provided."
-            )
-
-        cls = kiara.get_value_type_cls(value_schema.type)
-        _type_obj = cls(**value_schema.type_config)
-
-        if value_data not in [SpecialValue.NO_VALUE, SpecialValue.NOT_SET, None]:
-            # TODO: should we keep the original value?
-            value_data = _type_obj.import_value(value_data)
-
-        self._kiara = kiara
-        if registry is None:
-            registry = self._kiara.data_registry
+        assert registry
         self._registry = registry
+        self._kiara = self._registry._kiara
 
         kwargs: typing.Dict[str, typing.Any] = {}
-        kwargs["id"] = str(uuid.uuid4())
+        kwargs["id"] = NO_ID_YET_MARKER
 
         kwargs["value_schema"] = value_schema
-        if value_schema.is_constant:
-            value_data = value_schema.default
-            is_constant = True
 
-        kwargs["is_constant"] = is_constant
-
-        if value_seed is None:
-            value_seed = ValueSeed()
-
-        kwargs["value_seed"] = value_seed
+        # if value_seed is None:
+        #     value_seed = ValueSeed()
+        #
+        # kwargs["value_seed"] = value_seed
 
         kwargs["is_streaming"] = False  # not used yet
-        kwargs["metadata"] = {}
         kwargs["creation_date"] = datetime.now()
+        kwargs["is_set"] = is_set
+        kwargs["is_none"] = is_none
+
+        if hashes:
+            kwargs["hashes"] = dict(hashes)
+
+        if metadata:
+            kwargs["metadata"] = dict(metadata)
+        else:
+            kwargs["metadata"] = {}
 
         super().__init__(**kwargs)
 
-        self._type_obj = _type_obj
-
-        self._registry._register_value(self, data=value_data)
-
-        self.is_set = value_data != SpecialValue.NOT_SET
-        self.is_none = value_data in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]
+        self._type_obj = type_obj
 
     _kiara: "Kiara" = PrivateAttr()
-    _registry: "DataRegistry" = PrivateAttr()
-    _type_obj: ValueType = PrivateAttr(default=None)
-    _hash_cache: typing.Optional[str] = PrivateAttr(default=None)
+    _registry: "BaseDataRegistry" = PrivateAttr()
+    _type_obj: ValueType = PrivateAttr()
+    # _hash_cache: typing.Optional[str] = PrivateAttr(default=None)
 
     id: str = Field(description="A unique id for this value.")
     value_schema: ValueSchema = Field(description="The schema of this value.")
-    value_seed: typing.Optional[ValueSeed] = Field(
-        description="Information about how this value was created."
-    )
-    is_constant: bool = Field(
-        description="Hint whether this value is a constant.", default=False
-    )
+    # value_seed: typing.Optional[ValueSeed] = Field(
+    #     description="Information about how this value was created."
+    # )
+    # is_constant: bool = Field(
+    #     description="Hint whether this value is a constant.", default=False
+    # )
     creation_date: typing.Optional[datetime] = Field(
         description="The time this value was created value happened."
     )
@@ -215,9 +212,14 @@ class Value(BaseModel, JupyterMixin):
         default=False,
     )
     is_none: bool = Field(description="Whether the value is 'None'.", default=True)
+    hashes: typing.Dict[str, ValueHash] = Field(
+        description="Available hashes relating to the actual value data. This attribute is not populated by default, use the 'get_hashes()' method to request one or several hash items, afterwards those hashes will be reflected in this attribute.",
+        default_factory=dict,
+    )
 
     metadata: typing.Dict[str, typing.Dict[str, typing.Any]] = Field(
-        description="Currently available relating to the actual data (size, no. of rows, etc. -- depending on data type). This attribute is not populated by default, use the 'get_metadata()' method to request one or several metadata items."
+        description="Available metadata relating to the actual value data (size, no. of rows, etc. -- depending on data type). This attribute is not populated by default, use the 'get_metadata()' method to request one or several metadata items, afterwards those metadata items will be reflected in this attribute.",
+        default_factory=dict,
     )
 
     @property
@@ -226,18 +228,36 @@ class Value(BaseModel, JupyterMixin):
 
     @property
     def type_obj(self):
-        # if self._type_obj is None:
-        #     cls = self._kiara.get_value_type_cls(self.value_schema.type)
-        #     self._type_obj = cls(**self.value_schema.type_config)
+        """Return the object that contains all the type information for this value."""
         return self._type_obj
 
-    def calculate_hash(self, hash_type: str) -> str:
+    def get_hash(self, hash_type: str) -> ValueHash:
         """Calculate the hash of a specified type for this value. Hashes are cached."""
-        if self._hash_cache is None:
-            self._hash_cache = self.type_obj.calculate_value_hash(
-                self.get_value_data(), hash_type=hash_type
-            )
-        return self._hash_cache
+
+        hashes = self.get_hashes(hash_type)
+        return hashes[hash_type]
+
+    def get_hashes(self, *hash_types: str) -> typing.Dict[str, ValueHash]:
+
+        if not hash_types:
+            try:
+                hash_types = self.type_obj.get_supported_hash_types()
+            except Exception as e:
+                log_message(str(e))
+
+            if not hash_types:
+                return {}
+
+        result = {}
+        for hash_type in hash_types:
+            if self.hashes.get(hash_type, None) is None:
+                hash_str = self.type_obj.calculate_value_hash(
+                    data=self.get_value_data(), hash_type=hash_type
+                )
+                self.hashes[hash_type] = ValueHash(hash_type=hash_type, hash=hash_str)
+            result[hash_type] = self.hashes[hash_type]
+
+        return result
 
     def item_is_valid(self) -> bool:
         """Check whether the current value is valid"""
@@ -250,6 +270,10 @@ class Value(BaseModel, JupyterMixin):
     def get_value_data(self) -> typing.Any:
 
         return self._registry.get_value_data(self)
+
+    def get_value_seed(self) -> typing.Optional[ValueSeed]:
+
+        return self._registry.get_value_seed(self)
 
     # def update_value(self, data: typing.Any) -> "Value":
     #
@@ -270,7 +294,7 @@ class Value(BaseModel, JupyterMixin):
         table.add_row("type", self.value_schema.type)
         table.add_row("desc", self.value_schema.doc)
         table.add_row("is set", "yes" if self.item_is_valid() else "no")
-        table.add_row("is constant", "yes" if self.is_constant else "no")
+        # table.add_row("is constant", "yes" if self.is_constant else "no")
 
         # if isinstance(self.value_hash, int):
         #     vh = str(self.value_hash)
@@ -336,12 +360,16 @@ class Value(BaseModel, JupyterMixin):
                 result[k] = v["metadata_item"]
         return result
 
-    def save(
-        self, aliases: typing.Optional[typing.Iterable[str]] = None
-    ) -> SavedValueMetadata:
+    def save(self, aliases: typing.Optional[typing.Iterable[str]] = None) -> "Value":
         """Save this value, under the specified alias(es)."""
 
-        return self._kiara.data_store.save_value(self, aliases=aliases)
+        value = self._kiara.data_store.register_data(self)
+        if aliases:
+            self._kiara.data_store.register_aliases(
+                value_or_schema=value, aliases=aliases
+            )
+
+        return value
 
     def __eq__(self, other):
 
@@ -356,7 +384,7 @@ class Value(BaseModel, JupyterMixin):
 
     def __repr__(self):
 
-        return f"Value(id={self.id}, type={self.type_name}, is_set={self.is_set}, is_none={self.is_none}, is_constant={self.is_constant}"
+        return f"Value(id={self.id}, type={self.type_name}, is_set={self.is_set}, is_none={self.is_none}"
 
     def __str__(self):
 
@@ -420,6 +448,10 @@ class ValueSlot(BaseModel):
         description="The values of this slot, with versions as key.",
         default_factory=dict,
     )
+    tags: typing.Dict[str, int] = Field(
+        description="The tags for this value slot (tag name as key, linked version as value.",
+        default_factory=dict,
+    )
 
     @property
     def latest_version_nr(self) -> int:
@@ -456,17 +488,27 @@ class ValueSlot(BaseModel):
 
             self._callbacks[cb_id] = cb
 
-    def add_value(self, value: Value, trigger_callbacks: bool = True) -> int:
+    def add_value(
+        self,
+        value: Value,
+        trigger_callbacks: bool = True,
+        tags: typing.Optional[typing.Iterable[str]] = None,
+    ) -> int:
         """Add a value to this slot."""
 
         if self.latest_version_nr != 0 and value.id == self.get_latest_value().id:
             return self.latest_version_nr
 
         # TODO: check value data equality
+        if self.value_schema.is_constant:
+            raise Exception("Can't add value: value slot marked as 'constant'.")
 
         version = self.latest_version_nr + 1
         assert version not in self.values.keys()
         self.values[version] = value
+        if tags:
+            for tag in tags:
+                self.tags[tag] = version
 
         if trigger_callbacks:
             for cb in self._callbacks.values():
@@ -478,6 +520,26 @@ class ValueSlot(BaseModel):
 
         return value.id == self.get_latest_value().id
 
+    def find_linked_aliases(
+        self, value_item: typing.Union[Value, str]
+    ) -> typing.List["ValueAlias"]:
+
+        if isinstance(value_item, Value):
+            value_item = value_item.id
+
+        result = []
+        for _version, _value in self.values.items():
+            if _value.id == value_item:
+                va = ValueAlias(alias=self.id, version=_version)
+                result.append(va)
+                if _version in self.tags.values():
+                    for _tag, _tag_version in self.tags.items():
+                        if _tag_version == _version:
+                            va = ValueAlias(alias=self.id, tag=_tag)
+                            result.append(va)
+
+        return result
+
     def __eq__(self, other):
 
         if not isinstance(other, ValueSlot):
@@ -488,3 +550,133 @@ class ValueSlot(BaseModel):
     def __hash__(self):
 
         return hash(self.id)
+
+
+class ValueAlias(BaseModel):
+    @classmethod
+    def from_string(
+        self, value_alias: str, default_repo_name: typing.Optional[str] = None
+    ) -> "ValueAlias":
+
+        if not isinstance(value_alias, str):
+            raise Exception("Invalid id_or_alias: not a string.")
+        if not value_alias:
+            raise Exception("Invalid id_or_alias: can't be empty string.")
+
+        _repo_name: typing.Optional[str] = default_repo_name
+        _version: typing.Optional[int] = None
+        _tag: typing.Optional[str] = None
+
+        if "#" in value_alias:
+            _repo_name, _value_alias = value_alias.split("#", maxsplit=1)
+        else:
+            _value_alias = value_alias
+
+        if "@" in _value_alias:
+            _alias, _postfix = _value_alias.split("@", maxsplit=1)
+
+            try:
+                _version = int(_postfix)
+            except ValueError:
+                if not _postfix.isidentifier():
+                    raise Exception(
+                        f"Invalid format for version/tag element of id_or_alias: {_tag}"
+                    )
+                _tag = _postfix
+        else:
+            _alias = _value_alias
+
+        return ValueAlias(
+            repo_name=_repo_name, alias=_alias, version=_version, tag=_tag
+        )
+
+    @classmethod
+    def from_strings(
+        cls, *value_aliases: typing.Union[str, "ValueAlias"]
+    ) -> typing.List["ValueAlias"]:
+
+        result = []
+        for va in value_aliases:
+            if isinstance(va, str):
+                result.append(ValueAlias.from_string(va))
+            elif isinstance(va, ValueAlias):
+                result.append(va)
+            else:
+                raise TypeError(
+                    f"Invalid type '{type(va)}' for type alias, expected 'str' or 'ValueAlias'."
+                )
+        return result
+
+    repo_name: typing.Optional[str] = Field(
+        description="The name of the data repo the value lives in.", default=None
+    )
+    alias: str = Field("The alias name.")
+    version: typing.Optional[int] = Field(
+        description="The version of this alias.", default=None
+    )
+    tag: typing.Optional[str] = Field(
+        description="The tag for the alias.", default=None
+    )
+
+    @property
+    def full_alias(self):
+        if self.tag is not None:
+            return f"{self.alias}@{self.tag}"
+        elif self.version is not None:
+            return f"{self.alias}@{self.version}"
+        else:
+            return self.alias
+
+
+class ValueInfo(BaseModel):
+
+    value_id: str = Field(description="The value id.")
+    value_type: str = Field(description="The type of the value.")
+    value_type_config: typing.Dict[str, typing.Any] = Field(
+        description="The value type configuration."
+    )
+    aliases: typing.List[ValueAlias] = Field(
+        description="All aliases for this value.", default_factory=list
+    )
+    # tags: typing.List[str] = Field(
+    #     description="All tags for this value.", default_factory=list
+    # )
+    # created: str = Field(description="The time the data was created.")
+    hashes: typing.Dict[str, ValueHash] = Field(
+        description="All available hashes for this value.", default_factory=dict
+    )
+    metadata: typing.Dict[str, typing.Dict[str, typing.Any]] = Field(
+        description="The metadata associated with this value."
+    )
+
+    def get_metadata_items(self, *keys: str) -> typing.Dict[str, typing.Any]:
+
+        if not keys:
+            _keys: typing.Iterable[str] = self.metadata.keys()
+        else:
+            _keys = keys
+
+        result = {}
+        for k in _keys:
+            md = self.metadata.get(k)
+            if md is None:
+                raise Exception(f"No metadata for key '{k}' available.")
+            result[k] = md["metadata_item"]
+
+        return result
+
+    def get_metadata_schemas(self, *keys: str) -> typing.Dict[str, typing.Any]:
+
+        if not keys:
+            _keys: typing.Iterable[str] = self.metadata.keys()
+        else:
+            _keys = keys
+
+        result = {}
+        for k in _keys:
+            md = self.metadata.get(k)
+            if md is None:
+                raise Exception(f"No metadata for key '{k}' available.")
+            result[k] = md["metadata_schema"]
+
+        return result

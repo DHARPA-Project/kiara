@@ -182,7 +182,7 @@ async def run(ctx, module, inputs, module_config, output, explain, save):
 
         for alias in full_aliases:
             for field_name in workflow.outputs.get_all_field_names():
-                final_aliases.setdefault(field_name, []).append(f"{alias}.{field_name}")
+                final_aliases.setdefault(field_name, []).append(f"{alias}_{field_name}")
 
         if invalid_fields:
             print()

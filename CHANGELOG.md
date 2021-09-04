@@ -13,19 +13,20 @@
     - PipelineOutputField -> PipelineOutputRef
   - kiara.pipeline.values -> kiara.data.registry:
     - ValueField -> ValueRef
-    - PipelineValue -> RegisteredValue
-    - DataValue -> RegisteredValue (merged with former base class)
-    - LinkedValue -> LinkedValue
+    - PipelineValue -> removed
+    - DataValue -> removed
+    - LinkedValue -> removed
     - ValueUpdateHandler -> ValueUpdateHandler
   - kiara.data.values.ValueSet*-related -> kiara.data.values.value_set
 - removed 'pipeline_id' attribute from 'PipelineStructure' class, but 'Pipeline" has 'id' and 'title' fields now instead
 - refactored 'DataRegistry' and 'Value' object:
-  - 'Value' objects are now immutable, data must be set when they are constructed
+  - 'Value' objects are now immutable, and can only be created via a registry
   - all subclasses of 'Value' are removed, there is only one 'Value' type now, which is always connected to a data registry (which handles versioning and actual storage of the payload)
   - removed linked values, replaced by 'ValueSlot' class
   - 'ValueSlot' basically contains the history of all (immutable) Value objects on a specific spot (mostly within a pipeline, but can be used elsewhere)
-  - 'set_value_data' on 'Value' class is removed
+  - 'set_value_data' on 'Value' class is removed (since values are no immutable)
   - the interface of 'ValueSet' however is mostly unchanged, and all 'set/get value_obj/value_data' methods should still work as before
+- data store is now just a 'DataRegistry' subclass that persists to disk instead of memory
 
 ### Version 0.0.13
 

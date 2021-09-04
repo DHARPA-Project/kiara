@@ -20,17 +20,21 @@ if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
 
 try:
-
-    class ValueSlotUpdateHandler(typing.Protocol):
-        """The call signature for callbacks that can be registered as value update handlers."""
-
-        def values_updated(self, *items: "ValueSlot") -> typing.Any:
-            ...
-
-
+    from typing import Protocol
 except Exception:
-    # there is some issue with older Python only_latest, typing.Protocol, and Pydantic
-    ValueUpdateHandler = typing.Callable  # type:ignore
+    from typing_extensions import Protocol  # type: ignore
+
+
+class ValueSlotUpdateHandler(Protocol):
+    """The call signature for callbacks that can be registered as value update handlers."""
+
+    def values_updated(self, *items: "ValueSlot") -> typing.Any:
+        ...
+
+
+# except Exception:
+#     there is some issue with older Python only_latest, typing.Protocol, and Pydantic
+# ValueUpdateHandler = typing.Any  # type:ignore
 
 
 class BaseDataRegistry(abc.ABC):

@@ -61,37 +61,76 @@ class MergedModuleManager(ModuleManager):
         ] = None,
     ):
 
-        self._modules: typing.Dict[str, ModuleManager] = {}
+        self._modules: typing.Optional[typing.Dict[str, ModuleManager]] = None
         self._module_cls_cache: typing.Dict[str, typing.Type[KiaraModule]] = {}
 
-        self._default_python_mgr = PythonModuleManager()
-        self._default_pipeline_mgr = PipelineModuleManager(folders=None)
-        self._custom_pipelines_mgr = PipelineModuleManager(folders={})
+        self._default_python_mgr: typing.Optional[PythonModuleManager] = None
+        self._default_pipeline_mgr: typing.Optional[PipelineModuleManager] = None
+        self._custom_pipelines_mgr: typing.Optional[PipelineModuleManager] = None
 
-        _mms = [
-            self._default_python_mgr,
-            self._default_pipeline_mgr,
-            self._custom_pipelines_mgr,
-        ]
         if module_managers:
 
             raise NotImplementedError()
+            # for mmc in module_managers:
+            #     mm = ModuleManager.from_config(mmc)
+            #     _mms.append(mm)
 
-            for mmc in module_managers:
-                mm = ModuleManager.from_config(mmc)
-                _mms.append(mm)
+        self._module_mgrs: typing.Optional[typing.List[ModuleManager]] = None
 
-        self._module_mgrs: typing.List[ModuleManager] = [
-            self._default_python_mgr,
-            self._default_pipeline_mgr,
+    @property
+    def module_managers(self) -> typing.Iterable[ModuleManager]:
+
+        if self._module_mgrs is not None:
+            return self._module_mgrs
+
+        _mms = [
+            self.default_python_module_manager,
+            self.default_pipeline_module_manager,
+            self.default_custom_pipelines_mgr,
         ]
+        self._module_mgrs = []
+        self._modules = {}
         for mm in _mms:
             self.add_module_manager(mm)
+
+        return self._module_mgrs
+
+    @property
+    def module_map(self) -> typing.MutableMapping[str, ModuleManager]:
+
+        if self._modules is not None:
+            return self._modules
+
+        # make sure module managers are initialized before this
+        # this will also initialize the _modules attribute
+        self.module_managers  # noqa
+        return self._modules  # type: ignore
+
+    @property
+    def default_python_module_manager(self) -> PythonModuleManager:
+
+        if self._default_python_mgr is None:
+            self._default_python_mgr = PythonModuleManager()
+        return self._default_python_mgr
+
+    @property
+    def default_pipeline_module_manager(self) -> PipelineModuleManager:
+
+        if self._default_pipeline_mgr is None:
+            self._default_pipeline_mgr = PipelineModuleManager(folders=None)
+        return self._default_pipeline_mgr
+
+    @property
+    def default_custom_pipelines_mgr(self) -> PipelineModuleManager:
+
+        if self._custom_pipelines_mgr is None:
+            self._custom_pipelines_mgr = PipelineModuleManager(folders={})
+        return self._custom_pipelines_mgr
 
     @property
     def available_module_types(self) -> typing.List[str]:
         """Return the names of all available modules"""
-        return sorted(set(self._modules.keys()))
+        return sorted(set(self.module_map.keys()))
 
     @property
     def available_non_pipeline_module_types(self) -> typing.List[str]:
@@ -126,15 +165,18 @@ class MergedModuleManager(ModuleManager):
 
     def add_module_manager(self, module_manager: ModuleManager):
 
+        if self._module_mgrs is None:
+            self.module_managers  # noqa
+
         for module_type in module_manager.get_module_types():
-            if module_type in self._modules.keys():
+            if module_type in self.module_map.keys():
                 log.warning(
                     f"Duplicate module name '{module_type}'. Ignoring all but the first."
                 )
                 continue
-            self._modules[module_type] = module_manager
+            self.module_map[module_type] = module_manager
 
-        self._module_mgrs.append(module_manager)
+        self._module_mgrs.append(module_manager)  # type: ignore
         self._value_types = None
 
     def register_pipeline_description(
@@ -145,16 +187,16 @@ class MergedModuleManager(ModuleManager):
         raise_exception: bool = False,
     ) -> typing.Optional[str]:
 
-        name = self._custom_pipelines_mgr.register_pipeline(
+        name = self.default_custom_pipelines_mgr.register_pipeline(
             data=data, module_type_name=module_type_name, namespace=namespace
         )
-        if name in self._modules.keys():
+        if name in self.module_map.keys():
             if raise_exception:
                 raise Exception(f"Duplicate module name: {name}")
             log.warning(f"Duplicate module name '{name}'. Ignoring all but the first.")
             return None
         else:
-            self._modules[name] = self._custom_pipelines_mgr
+            self.module_map[name] = self.default_pipeline_module_manager
             return name
 
     def get_module_class(self, module_type: str) -> typing.Type["KiaraModule"]:
@@ -164,7 +206,7 @@ class MergedModuleManager(ModuleManager):
 
             return PipelineModule
 
-        mm = self._modules.get(module_type, None)
+        mm = self.module_map.get(module_type, None)
         if mm is None:
             raise Exception(f"No module '{module_type}' available.")
 
@@ -198,7 +240,7 @@ class MergedModuleManager(ModuleManager):
         parent_id: typing.Optional[str] = None,
     ) -> "KiaraModule":
 
-        mm = self._modules.get(module_type, None)
+        mm = self.module_map.get(module_type, None)
         if mm is None:
             raise Exception(
                 f"No module '{module_type}' registered. Available modules: {', '.join(self.available_module_types)}"

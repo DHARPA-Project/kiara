@@ -175,18 +175,30 @@ class OperationMgmt(object):
 
         self._kiara: "Kiara" = kiara
 
-        if operation_type_classes is None:
-            from kiara.utils.class_loading import find_all_operation_types
+        self._operation_type_classes: typing.Optional[
+            typing.Dict[str, typing.Type["OperationType"]]
+        ] = None
 
-            self._operation_type_classes: typing.Dict[
-                str, typing.Type["OperationType"]
-            ] = find_all_operation_types()
-        else:
+        if operation_type_classes is not None:
             self._operation_type_classes = dict(operation_type_classes)
+
         self._operation_types: typing.Optional[typing.Dict[str, OperationType]] = None
 
         self._profiles: typing.Optional[typing.Dict[str, Operation]] = None
         self._operations: typing.Optional[typing.Dict[str, typing.List[str]]] = None
+
+    @property
+    def operation_type_classes(
+        self,
+    ) -> typing.Mapping[str, typing.Type["OperationType"]]:
+
+        if self._operation_type_classes is not None:
+            return self._operation_type_classes
+
+        from kiara.utils.class_loading import find_all_operation_types
+
+        self._operation_type_classes = find_all_operation_types()
+        return self._operation_type_classes
 
     @property
     def operation_ids(self) -> typing.List[str]:
@@ -256,7 +268,7 @@ class OperationMgmt(object):
 
         # TODO: support op type config
         _operation_types = {}
-        for op_name, op_cls in self._operation_type_classes.items():
+        for op_name, op_cls in self.operation_type_classes.items():
             _operation_types[op_name] = op_cls(kiara=self._kiara)
 
         self._operation_types = _operation_types

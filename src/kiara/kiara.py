@@ -7,7 +7,6 @@ import typing
 import zmq
 from pathlib import Path
 from threading import Thread
-from zmq import Context
 from zmq.devices import ThreadDevice
 
 from kiara.config import KiaraConfig
@@ -99,15 +98,15 @@ class Kiara(object):
 
         self._config: KiaraConfig = config
 
-        self._zmq_context: Context = Context.instance()
+        # self._zmq_context: Context = Context.instance()
 
         self._operation_mgmt = OperationMgmt(kiara=self)
         self._metadata_mgmt = MetadataMgmt(kiara=self)
+
         self._data_store = LocalDataStore(kiara=self, base_path=config.data_store)
 
         # self.start_zmq_device()
         # self.start_log_thread()
-
         self._default_processor: ModuleProcessor = ModuleProcessor.from_config(
             config.default_processor, kiara=self
         )
@@ -115,7 +114,6 @@ class Kiara(object):
         self._type_mgmt_obj: TypeMgmt = TypeMgmt(self)
 
         self._data_registry: InMemoryDataRegistry = InMemoryDataRegistry(self)
-
         self._module_mgr: MergedModuleManager = MergedModuleManager(
             config.module_managers
         )

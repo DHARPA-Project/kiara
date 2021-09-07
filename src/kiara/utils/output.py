@@ -200,6 +200,7 @@ def create_table_from_base_model(model_cls: typing.Type[BaseModel]):
     table = RichTable(box=box.SIMPLE)
     table.add_column("Field")
     table.add_column("Type")
+    table.add_column("Description")
     table.add_column("Required")
 
     props = model_cls.schema().get("properties", {})
@@ -215,6 +216,8 @@ def create_table_from_base_model(model_cls: typing.Type[BaseModel]):
         if p_type is None:
             p_type = "-- check source --"
         row.append(p_type)
+        desc = p.get("description", "")
+        row.append(desc)
         row.append("yes" if field.required else "no")
         table.add_row(*row)
 

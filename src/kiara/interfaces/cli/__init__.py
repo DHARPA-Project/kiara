@@ -8,6 +8,7 @@ from kiara import Kiara
 from kiara.utils import is_develop
 
 from .data.commands import data
+from .explain import explain
 from .info.commands import info
 from .metadata.commands import metadata
 from .module.commands import module
@@ -35,6 +36,7 @@ def cli(ctx):
     ctx.obj["kiara"] = Kiara()
 
 
+cli.add_command(explain)
 cli.add_command(run)
 cli.add_command(data)
 cli.add_command(metadata)

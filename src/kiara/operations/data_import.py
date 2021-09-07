@@ -53,10 +53,10 @@ class DataImportModule(KiaraModule):
             if not attr.startswith("import_from_"):
                 continue
 
-            tokens = attr[12:].rsplit("_", maxsplit=1)
+            tokens = attr[12:].rsplit("__", maxsplit=1)
             if len(tokens) != 2:
                 log_message(
-                    f"Can't determine source name and type from string, ignoring method: {attr}"
+                    f"Can't determine source name and type from string in module {cls._module_type_id}, ignoring method: {attr}"  # type: ignore
                 )
 
             source_name, source_type = tokens

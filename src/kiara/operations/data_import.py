@@ -120,7 +120,7 @@ class DataImportModule(KiaraModule):
         if aliases is None:
             aliases = []
 
-        func_name = f"import_from_{source_name}_{source_type}"
+        func_name = f"import_from_{source_name}__{source_type}"
         if not hasattr(self, func_name):
             raise Exception(
                 f"Can't import value of type '{value_type}': missing function '{func_name}'. This is most likely a bug."

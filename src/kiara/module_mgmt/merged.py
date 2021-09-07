@@ -86,7 +86,7 @@ class MergedModuleManager(ModuleManager):
         _mms = [
             self.default_python_module_manager,
             self.default_pipeline_module_manager,
-            self.default_custom_pipelines_mgr,
+            self.default_custom_pipelines_manager,
         ]
         self._module_mgrs = []
         self._modules = {}
@@ -121,7 +121,7 @@ class MergedModuleManager(ModuleManager):
         return self._default_pipeline_mgr
 
     @property
-    def default_custom_pipelines_mgr(self) -> PipelineModuleManager:
+    def default_custom_pipelines_manager(self) -> PipelineModuleManager:
 
         if self._custom_pipelines_mgr is None:
             self._custom_pipelines_mgr = PipelineModuleManager(folders={})
@@ -187,7 +187,7 @@ class MergedModuleManager(ModuleManager):
         raise_exception: bool = False,
     ) -> typing.Optional[str]:
 
-        name = self.default_custom_pipelines_mgr.register_pipeline(
+        name = self.default_custom_pipelines_manager.register_pipeline(
             data=data, module_type_name=module_type_name, namespace=namespace
         )
         if name in self.module_map.keys():
@@ -196,7 +196,8 @@ class MergedModuleManager(ModuleManager):
             log.warning(f"Duplicate module name '{name}'. Ignoring all but the first.")
             return None
         else:
-            self.module_map[name] = self.default_pipeline_module_manager
+            self.module_map[name] = self.default_custom_pipelines_manager
+
             return name
 
     def get_module_class(self, module_type: str) -> typing.Type["KiaraModule"]:
@@ -222,7 +223,6 @@ class MergedModuleManager(ModuleManager):
         assert module_type.endswith(cls._module_type_name)  # type: ignore
 
         if hasattr(cls, "_module_type_id") and cls._module_type_id != "pipeline" and cls._module_type_id != module_type:  # type: ignore
-            print(module_type)
             raise Exception(
                 f"Can't create module class '{cls}', it already has a _module_type_id attribute and it's different to the module name '{module_type}': {cls._module_type_id}"  # type: ignore
             )

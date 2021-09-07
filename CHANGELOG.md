@@ -2,6 +2,7 @@
 
 ## Version 0.0.14 (Upcoming)
 
+- this version contains a rather large refactoring of the data registry and how values are handled, so expect some breakage. Please submit issues for anything that worked, but doesn't anymore. Also, you'll have to delete the kiara shared local data (`~/.local/share/kiara` on linux) when upgrading.
 - renamed:
   - kiara.pipeline.config.PipelineModuleConfig -> kiara.pipeline.config.PipelineConfig
   - kiara.module_config.ModuleTypeConfig -> kiara.module_config.ModuleTypeConfigSchema
@@ -28,6 +29,9 @@
   - the interface of 'ValueSet' however is mostly unchanged, and all 'set/get value_obj/value_data' methods should still work as before
 - data store is now just a 'DataRegistry' subclass that persists to disk instead of memory
 - aliases can now only contain alphanumeric characters, '_' and '-"
+- rudimentary data lineage support
+- performance improvement for cli, because more stuff is now lazily loaded
+- tests
 
 ### Version 0.0.13
 

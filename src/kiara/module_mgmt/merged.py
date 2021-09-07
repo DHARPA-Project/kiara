@@ -187,9 +187,12 @@ class MergedModuleManager(ModuleManager):
         raise_exception: bool = False,
     ) -> typing.Optional[str]:
 
+        # making sure the module_map attribute is populated
+        self.module_map  # noqa
         name = self.default_custom_pipelines_manager.register_pipeline(
             data=data, module_type_name=module_type_name, namespace=namespace
         )
+
         if name in self.module_map.keys():
             if raise_exception:
                 raise Exception(f"Duplicate module name: {name}")

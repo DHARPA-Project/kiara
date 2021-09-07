@@ -61,6 +61,17 @@ if is_develop():
     def dev(ctx):
 
         print("HELLO")
+        # import dearpygui.dearpygui as dpg
+        #
+        # from kiara import Kiara
+        #
+        # kiara = Kiara.instance()
+        #
+        # with dpg.window(width=300):
+        #     dpg.add_listbox(kiara.available_module_types)
+        #
+        # dpg.start_dearpygui()
+
         # kiara: Kiara = ctx.obj["kiara"]
 
         # mod = kiara.create_module("logic.and", module_config={"constants": {"a": True}})

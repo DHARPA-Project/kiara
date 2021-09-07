@@ -5,6 +5,7 @@ from datetime import datetime
 from enum import Enum
 from pydantic import BaseModel, Field, validator
 
+from kiara.metadata.core_models import DocumentationMetadataModel
 from kiara.pipeline import PipelineValuesInfo
 
 try:
@@ -65,6 +66,9 @@ class Job(BaseModel):
     module_type: str = Field(description="The module type name.")
     module_config: typing.Dict[str, typing.Any] = Field(
         description="The module configuration."
+    )
+    module_doc: DocumentationMetadataModel = Field(
+        description="Documentation for the module that runs the job."
     )
     inputs: PipelineValuesInfo = Field(description="The input values.")
     outputs: PipelineValuesInfo = Field(description="The output values.")

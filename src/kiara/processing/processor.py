@@ -7,6 +7,7 @@ from datetime import datetime
 from pydantic import BaseSettings
 from zmq import Context, Socket
 
+from kiara.data.values import ValueInfo, ValueLineage
 from kiara.data.values.value_set import ValueSet
 from kiara.exceptions import KiaraProcessingException
 from kiara.module import KiaraModule, StepInputs, StepOutputs
@@ -128,6 +129,7 @@ class ModuleProcessor(abc.ABC):
             step_id=step_id,
             module_type=module._module_type_id,  # type: ignore
             module_config=module.config.dict(),
+            module_doc=module.get_type_metadata().documentation,
             inputs=PipelineValuesInfo.from_value_set(inputs),
             outputs=PipelineValuesInfo.from_value_set(outputs),
         )
@@ -201,6 +203,24 @@ class ModuleProcessor(abc.ABC):
         for j_id in job_ids:
             d = self._outputs[j_id]
             d.sync()
+
+            job_inputs = self._inputs[j_id]
+            job_details = self.get_job_details(j_id)
+            if not job_details:
+                raise Exception(f"Can't sync outputs, no job with id: {j_id}")
+
+            input_infos: typing.Dict[str, ValueInfo] = {
+                k: v.get_info() for k, v in job_inputs.items()
+            }
+            for field_name, value in d.items():
+                value_lineage = ValueLineage.create(
+                    module_type=job_details.module_type,
+                    module_config=job_details.module_config,
+                    module_doc=job_details.module_doc,
+                    output_name=field_name,
+                    inputs=input_infos,
+                )
+                value.set_value_lineage(value_lineage)
 
     def wait_for(self, *job_ids: str, sync_outputs: bool = True):
         """Wait for the jobs with the specified ids, also optionally sync their outputs with the pipeline value state."""

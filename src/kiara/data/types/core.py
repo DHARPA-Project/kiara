@@ -1,15 +1,98 @@
 # -*- coding: utf-8 -*-
-import json
 import typing
+from pydantic import BaseModel
+from rich.syntax import Syntax
 
 from kiara.data.types import ValueType
-from kiara.metadata.data import LoadConfig
+from kiara.data.values import ValueInfo, ValueLineage
+from kiara.metadata.data import DeserializeConfig, LoadConfig
 
 if typing.TYPE_CHECKING:
-    from kiara.data.values import Value, ValueInfo
+    from kiara.data.values import Value
 
 
-class ValueLoadConfig(ValueType):
+class KiaraInternalValueType(ValueType):
+    def pretty_print_as_renderables(
+        self, value: "Value", print_config: typing.Mapping[str, typing.Any]
+    ) -> typing.Any:
+
+        _value: BaseModel = value.get_value_data()
+        return Syntax(_value.json(exclude_none=True, indent=2), "json")
+
+
+class ValueInfoData(KiaraInternalValueType):
+    """A dictionary representing a kiara ValueInfo object."""
+
+    @classmethod
+    def candidate_python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
+        return [typing.Mapping, ValueInfo]
+
+    @classmethod
+    def type_name(cls):
+        return "value_info"
+
+    def parse_value(self, value: typing.Any) -> typing.Any:
+
+        if isinstance(value, typing.Mapping):
+            _value = ValueInfo(**value)
+            return _value
+
+    def validate(cls, value: typing.Any) -> None:
+
+        if not isinstance(value, ValueInfo):
+            raise Exception(f"Invalid type for value info: {type(value)}.")
+
+
+class ValueLineageData(KiaraInternalValueType):
+    """A dictionary representing a kiara ValueLineage."""
+
+    @classmethod
+    def candidate_python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
+        return [typing.Mapping, ValueLineage]
+
+    @classmethod
+    def type_name(cls):
+        return "value_lineage"
+
+    def parse_value(self, value: typing.Any) -> typing.Any:
+
+        if isinstance(value, typing.Mapping):
+            _value = ValueLineage(**value)
+            return _value
+
+    def validate(cls, value: typing.Any) -> None:
+
+        if not isinstance(value, ValueLineage):
+            raise Exception(f"Invalid type for value seed: {type(value)}.")
+
+
+class DeserializeConfigData(KiaraInternalValueType):
+    """A dictionary representing a configuration to deserialize a value.
+
+    This contains all inputs necessary to re-create the value.
+    """
+
+    @classmethod
+    def candidate_python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
+        return [typing.Mapping, DeserializeConfig]
+
+    @classmethod
+    def type_name(cls):
+        return "deserialize_config"
+
+    def parse_value(self, value: typing.Any) -> typing.Any:
+
+        if isinstance(value, typing.Mapping):
+            _value = DeserializeConfig(**value)
+            return _value
+
+    def validate(cls, value: typing.Any) -> None:
+
+        if not isinstance(value, DeserializeConfig):
+            raise Exception(f"Invalid type for deserialize config: {type(value)}.")
+
+
+class LoadConfigData(KiaraInternalValueType):
     """A dictionary representing load config for a *kiara* value.
 
     The load config schema itself can be looked up via the wrapper class  '[LoadConfig][kiara.data.persistence.LoadConfig]'.
@@ -23,22 +106,6 @@ class ValueLoadConfig(ValueType):
     def type_name(cls):
         return "load_config"
 
-    #     @classmethod
-    #     def doc(cls):
-    #
-    #         desc = cls.desc()
-    #         schema = LoadConfig.schema_json(indent=2)
-    #
-    #         doc = "A load config is a dictionary that contains instructions on how to load a *kiara* value. Those instructions include a *kiara* module name, an optional module config, and values for the inputs to use when running the value. In addition, an output name can be specified, which indicates to *kiara* which of the output fields (if multiple) contains the desired value."
-    #
-    #         result = f"""{desc}\n\n{doc}\n\nThe schema for a load config is:
-    #
-    # ```
-    # {schema}
-    # ```
-    # """
-    #         return result
-
     def parse_value(self, value: typing.Any) -> typing.Any:
 
         if isinstance(value, typing.Mapping):
@@ -50,44 +117,27 @@ class ValueLoadConfig(ValueType):
         if not isinstance(value, LoadConfig):
             raise Exception(f"Invalid type for load config: {type(value)}.")
 
-    def pretty_print_as_renderables(
-        self, value: "Value", print_config: typing.Mapping[str, typing.Any]
-    ) -> typing.Any:
 
-        data: LoadConfig = value.get_value_data()
-        return data.json(indent=2)
-
-
-class ValueMetadata(ValueType):
-    """Metadata of a value that was stored in a kiara data store."""
-
-    @classmethod
-    def candidate_python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
-        return [ValueInfo]
-
-    @classmethod
-    def type_name(cls):
-        return "value_metadata"
-
-    @classmethod
-    def parse_value(self, value: typing.Any) -> typing.Any:
-
-        if isinstance(value, typing.Mapping):
-            _value = ValueInfo(**value)
-            return _value
-
-    @classmethod
-    def validate(cls, value: typing.Any) -> None:
-
-        if not isinstance(value, ValueInfo):
-            raise Exception(f"Invalid type for value_metadata: {type(value)}.")
-
-    def pretty_print_as_renderables(
-        self, value: "Value", print_config: typing.Mapping[str, typing.Any]
-    ) -> typing.Any:
-
-        data: ValueInfo = value.get_value_data()
-        _temp = data.dict()
-        md = data.get_metadata_items()
-        _temp["metadata"] = md
-        return json.dumps(_temp, indent=2)
+# class ValueMetadataData(ValueType):
+#     """Metadata of a value that was stored in a kiara data store."""
+#
+#     @classmethod
+#     def candidate_python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
+#         return [ValueInfo]
+#
+#     @classmethod
+#     def type_name(cls):
+#         return "value_metadata"
+#
+#     @classmethod
+#     def parse_value(self, value: typing.Any) -> typing.Any:
+#
+#         if isinstance(value, typing.Mapping):
+#             _value = ValueInfo(**value)
+#             return _value
+#
+#     @classmethod
+#     def validate(cls, value: typing.Any) -> None:
+#
+#         if not isinstance(value, ValueInfo):
+#             raise Exception(f"Invalid type for value_metadata: {type(value)}.")

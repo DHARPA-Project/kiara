@@ -37,10 +37,14 @@ class LocalDataStore(DataRegistry):
         self._value_slots: typing.Dict[str, ValueSlot] = {}
         super().__init__(kiara=kiara)
 
-    def _get_value_obj_for_id(self, value_id: str) -> Value:
+        for value_id in self.value_ids:
+            value_info = self._get_saved_value_info(value_id=value_id)
+            # for hash_obj in value_info.hashes:
+            #     self._hashes.setdefault(hash_obj.hash_type, {})[hash_obj.hash] = value_id
 
-        if value_id in self._value_obj_cache.keys():
-            return self._value_obj_cache[value_id]
+            self._lineages[value_id] = value_info.lineage
+
+    def _get_saved_value_info(self, value_id: str) -> SavedValueInfo:
 
         metadata_path = self.get_metadata_path(value_id=value_id)
         if not metadata_path.exists():
@@ -48,13 +52,23 @@ class LocalDataStore(DataRegistry):
 
         info_content = metadata_path.read_text()
         info_dict = json.loads(info_content)
+
         value_info = SavedValueInfo(**info_dict)
 
         assert value_info.value_id == value_id
 
-        value_schema = ValueSchema(
-            type=value_info.value_type, type_config=value_info.value_type_config
-        )
+        return value_info
+
+    def _get_value_obj_for_id(self, value_id: str) -> Value:
+
+        if value_id in self._value_obj_cache.keys():
+            return self._value_obj_cache[value_id]
+
+        value_info: SavedValueInfo = self._get_saved_value_info(value_id)
+        value_schema = value_info.value_schema
+        # value_schema = ValueSchema(
+        #     type=value_info.value_type, type_config=value_info.value_type_config
+        # )
 
         value_obj = self._create_value_obj(
             value_schema=value_schema,
@@ -67,8 +81,8 @@ class LocalDataStore(DataRegistry):
         self._register_new_value_obj(
             value_obj=value_obj,
             value_data=SpecialValue.IGNORE,
-            value_seed=None,
-            value_hashes=value_info.hashes,
+            value_lineage=value_info.lineage,
+            # value_hashes=value_info.hashes,
         )
         self._value_obj_cache[value_obj.id] = value_obj
         return value_obj
@@ -78,14 +92,15 @@ class LocalDataStore(DataRegistry):
         if value_id in self._data_cache.keys():
             return self._data_cache[value_id].get_value_data()
 
-        # value_obj = self.get_value_obj(value_item=value_id)
-        metadata_path = self.get_metadata_path(value_id=value_id)
-        if not metadata_path.exists():
-            raise Exception(f"No value with id '{value_id}' registered.")
-
-        info_content = metadata_path.read_text()
-        info_dict = json.loads(info_content)
-        value_info = SavedValueInfo(**info_dict)
+        # # value_obj = self.get_value_obj(value_item=value_id)
+        # metadata_path = self.get_metadata_path(value_id=value_id)
+        # if not metadata_path.exists():
+        #     raise Exception(f"No value with id '{value_id}' registered.")
+        #
+        # info_content = metadata_path.read_text()
+        # info_dict = json.loads(info_content)
+        # value_info = SavedValueInfo(**info_dict)
+        value_info = self._get_saved_value_info(value_id=value_id)
 
         assert value_info.value_id == value_id
 
@@ -120,7 +135,7 @@ class LocalDataStore(DataRegistry):
         #     value.get_metadata(also_return_schema=True)
         # )
 
-    def _register_remote_value(self, value: Value) -> typing.Optional[Value]:
+    def _register_remote_value(self, value: Value) -> Value:
 
         value_metadata_path = self.get_metadata_path(value.id)
         if value_metadata_path.exists():
@@ -143,14 +158,15 @@ class LocalDataStore(DataRegistry):
 
         value_info = SavedValueInfo(
             value_id=value.id,
-            value_type=value.type_name,
-            value_type_config=value.type_obj.type_config,
+            value_schema=value.value_schema,
+            is_valid=value.item_is_valid(),
             hashes=value.get_hashes(),
+            lineage=value.get_lineage(),
             metadata=value.get_metadata(also_return_schema=True),
             load_config=load_config_data,
         )
 
-        value_metadata_path.write_text(json.dumps(value_info.dict()))
+        value_metadata_path.write_text(value_info.json())
 
         copied_value = value.copy()
         copied_value._registry = self
@@ -223,9 +239,10 @@ class LocalDataStore(DataRegistry):
         value_slot = ValueSlot(
             id=alias_name, value_schema=value_schema, kiara=self._kiara, registry=self
         )
+        value_slot.register_callbacks(self)
 
-        for version in sorted(alias_data["versions"].keys()):
-            value_id = alias_data["versions"][version]
+        for version in sorted((int(x) for x in alias_data["versions"].keys())):
+            value_id = alias_data["versions"][str(version)]
             value_obj = self.get_value_obj(value_item=value_id)
             if value_obj is None:
                 raise Exception(f"Can't find value with id: {value_id}")

@@ -27,6 +27,7 @@
   - 'set_value_data' on 'Value' class is removed (since values are no immutable)
   - the interface of 'ValueSet' however is mostly unchanged, and all 'set/get value_obj/value_data' methods should still work as before
 - data store is now just a 'DataRegistry' subclass that persists to disk instead of memory
+- aliases can now only contain alphanumeric characters, '_' and '-"
 
 ### Version 0.0.13
 

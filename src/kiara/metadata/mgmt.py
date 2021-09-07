@@ -59,6 +59,11 @@ class MetadataMgmt(object):
         self, value: Value, *metadata_keys: str, also_return_schema: bool = False
     ):
 
+        if value.is_none:
+            return {
+                k: {"metadata_item": {}, "metadata_schema": ""} for k in metadata_keys
+            }
+
         value_type = value.value_schema.type
         # TODO: validate type exists
 
@@ -112,7 +117,7 @@ class MetadataMgmt(object):
                 )
 
             md_module: ExtractMetadataModule = op_config.module  # type: ignore
-            md_result = md_module.run(value_item=value)
+            md_result = md_module.run(_attach_lineage=False, value_item=value)
             result[mk] = md_result.get_all_value_data()
 
         if also_return_schema:

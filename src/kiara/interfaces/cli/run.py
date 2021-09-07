@@ -204,6 +204,9 @@ async def run(ctx, module, inputs, module_config, output, explain, save):
             workflow.inputs.set_values(**workflow_input)
 
     except Exception as e:
+        import traceback
+
+        traceback.print_exc()
         print()
         rich_print(f"[bold red]Input value error[/bold red]: {e}")
         sys.exit(1)
@@ -264,7 +267,9 @@ async def run(ctx, module, inputs, module_config, output, explain, save):
                                 print(e)
                             renderables = [str(value.get_value_data())]
 
-                        if isinstance(renderables, str):
+                        if isinstance(renderables, str) or not isinstance(
+                            renderables, typing.Iterable
+                        ):
                             renderables = [renderables]
                         p = Panel(
                             RenderGroup(*renderables),

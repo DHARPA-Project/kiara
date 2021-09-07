@@ -95,7 +95,7 @@ class ValueSet(typing.MutableMapping[str, "Value"]):
 
         if invalid:
             raise ValueError(
-                f"No value item(s) with name(s) {', '.join(invalid)} available, valid names: {', '.join(self.get_all_field_names())}"
+                f"No field(s) with name(s) {', '.join(invalid)} available, valid names: {', '.join(self.get_all_field_names())}"
             )
 
         resolved_values = {}

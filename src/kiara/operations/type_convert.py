@@ -41,6 +41,7 @@ class ConvertValueModule(KiaraModule):
                 log_message(
                     f"Ignoring type convert operation for source type '{value_type}': type not available"
                 )
+                continue
 
             for target_type in cls.get_target_value_types():
 
@@ -48,6 +49,7 @@ class ConvertValueModule(KiaraModule):
                     log_message(
                         f"Ignoring type convert operation for target type '{target_type}': type not available"
                     )
+                    continue
 
                 mod_conf = {
                     "source_type": value_type,

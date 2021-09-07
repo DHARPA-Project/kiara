@@ -10,7 +10,7 @@ from rich import box
 from rich.console import Console, ConsoleOptions, RenderGroup, RenderResult
 from rich.panel import Panel
 
-from kiara.data.values import Value, ValueSchema
+from kiara.data.values import Value, ValueLineage, ValueSchema
 from kiara.data.values.value_set import SlottedValueSet, ValueSet
 from kiara.defaults import SpecialValue
 from kiara.exceptions import KiaraModuleConfigException
@@ -613,7 +613,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
 
         return resolved_inputs
 
-    def run(self, **inputs: typing.Any) -> ValueSet:
+    def run(self, _attach_lineage: bool = True, **inputs: typing.Any) -> ValueSet:
         """Execute the module with the provided inputs directly.
 
         Arguments:
@@ -634,6 +634,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         )
 
         if not input_value_set.items_are_valid():
+
             raise Exception(
                 f"Can't process module '{self._module_type_name}': Inputs not valid."  # type: ignore
             )
@@ -646,13 +647,35 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
             default_value=SpecialValue.NOT_SET,
         )
 
-        # m_inputs = StepInputs(inputs=input_value_set)
-        # m_outputs = StepOutputs(outputs=output_value_set)
-
         self.process(inputs=input_value_set, outputs=output_value_set)  # type: ignore
 
+        result_outputs: typing.MutableMapping[str, Value] = {}
+        if _attach_lineage:
+            input_infos = {k: v.get_info() for k, v in resolved_inputs.items()}
+            for field_name, output in output_value_set.items():
+                value_lineage = ValueLineage.from_module_and_inputs(
+                    module=self, output_name=field_name, inputs=input_infos
+                )
+                # value_lineage = None
+                output_val = self._kiara.data_registry.register_data(
+                    value_data=output, value_lineage=value_lineage
+                )
+                result_outputs[field_name] = output_val
+        else:
+            result_outputs = output_value_set
+
+        result_set = SlottedValueSet.from_schemas(
+            kiara=self._kiara,
+            schemas=self.output_schemas,
+            read_only=True,
+            initial_values=result_outputs,
+            title=f"{self._module_type_name}_module_outputs_{self.id}",  # type: ignore
+        )
+
+        return result_set
+
         # result = output_value_set.get_all_value_objects()
-        return output_value_set
+        # return output_value_set
         # return ValueSetImpl(items=result, read_only=True)
 
     @property

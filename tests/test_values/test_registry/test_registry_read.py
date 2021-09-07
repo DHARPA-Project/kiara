@@ -83,7 +83,7 @@ def test_read_registry_subclass(kiara: Kiara):
     assert value_2.id == "yyy"
     assert set(reg.alias_names) == set(["alias_1", "alias_2"])
 
-    assert len(reg.find_aliases_for_value_id("yyy")) == 2
+    assert len(reg.find_aliases_for_value("yyy")) == 2
     assert reg.get_versions_for_alias("alias_1") == [1]
 
     value_3 = reg.register_data(
@@ -150,6 +150,6 @@ def test_default_data_registry_aliases(kiara: Kiara):
     assert val_1.id == value_slot_1.get_latest_value().id
 
     reg.register_alias(value_or_schema=string_schema, alias_name="yyy")
-    aliases = reg.find_aliases_for_value_id(val_1.id)
+    aliases = reg.find_aliases_for_value(val_1.id)
     assert len(aliases) == 1
     assert aliases[0].alias == "xxx"

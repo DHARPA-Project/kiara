@@ -10,11 +10,12 @@ from kiara.data.values import (
     NO_ID_YET_MARKER,
     ValueAlias,
     ValueHash,
+    ValueLineage,
     ValueSchema,
-    ValueSeed,
     ValueSlot,
 )
 from kiara.defaults import SpecialValue
+from kiara.utils import log_message
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -50,8 +51,8 @@ class BaseDataRegistry(abc.ABC):
 
         self._id: str = str(uuid.uuid4())
         self._kiara: Kiara = kiara
-        self._hashes: typing.Dict[str, typing.Dict[str, str]] = {}
-        self._seeds: typing.Dict[str, typing.Optional[ValueSeed]] = {}
+        # self._hashes: typing.Dict[str, typing.Dict[str, str]] = {}
+        self._lineages: typing.Dict[str, typing.Optional[ValueLineage]] = {}
         self._register_tokens: typing.Set = set()
 
     @property
@@ -79,7 +80,7 @@ class BaseDataRegistry(abc.ABC):
         """
 
     @abc.abstractmethod
-    def _register_remote_value(self, value: Value) -> typing.Optional[Value]:
+    def _register_remote_value(self, value: Value) -> Value:
         """Register an existing value from a different registry into this one.
 
         Arguments:
@@ -109,6 +110,19 @@ class BaseDataRegistry(abc.ABC):
     def _get_value_slot_for_alias(self, alias_name: str) -> ValueSlot:
         pass
 
+    def _find_value_for_hashes(self, *hashes: ValueHash) -> typing.Optional[Value]:
+        """Return a value that matches one of the provided hashes.
+
+        This method does not need to be overwritten, but it is recommended that it is done for performance reasons.
+
+        Arguments:
+            hashes: a collection of hashes,
+        Returns:
+            A (registered) value that matches one of the hashes
+        """
+
+        return None
+
     # -----------------------------------------------------------------------
     # main value retrieval methods
 
@@ -118,7 +132,7 @@ class BaseDataRegistry(abc.ABC):
         is_set: bool,
         is_none: bool,
         type_obj: typing.Optional[ValueType] = None,
-        value_hashes: typing.Optional[typing.Mapping[str, ValueHash]] = None,
+        value_hashes: typing.Optional[typing.Iterable[ValueHash]] = None,
         metadata: typing.Optional[
             typing.Mapping[str, typing.Mapping[str, typing.Any]]
         ] = None,
@@ -158,8 +172,8 @@ class BaseDataRegistry(abc.ABC):
         self,
         value_obj: Value,
         value_data: typing.Any,
-        value_seed: typing.Optional[ValueSeed],
-        value_hashes: typing.Optional[typing.Mapping[str, ValueHash]] = None,
+        value_lineage: typing.Optional[ValueLineage],
+        # value_hashes: typing.Optional[typing.Mapping[str, ValueHash]] = None,
     ):
 
         # assert value_obj.id == NO_ID_YET_MARKER
@@ -186,12 +200,12 @@ class BaseDataRegistry(abc.ABC):
                 f"Value id '{value_id}' wasn't registered propertly in registry. This is most likely a bug."
             )
 
-        if value_seed:
-            self._seeds[value_id] = value_seed
-        if value_hashes is None:
-            value_hashes = {}
-        for hash_type, value_hash in value_hashes.items():
-            self._hashes.setdefault(hash_type, {})[value_hash.hash] = value_id
+        if value_lineage:
+            self._lineages[value_id] = value_lineage
+        # if value_hashes is None:
+        #     value_hashes = {}
+        # for hash_type, value_hash in value_hashes.items():
+        #     self._hashes.setdefault(hash_type, {})[value_hash.hash] = value_id
 
         return value_obj
 
@@ -199,7 +213,7 @@ class BaseDataRegistry(abc.ABC):
         self,
         value_data: typing.Any = SpecialValue.NOT_SET,
         value_schema: typing.Optional[ValueSchema] = None,
-        value_seed: typing.Optional[ValueSeed] = None,
+        value_lineage: typing.Optional[ValueLineage] = None,
     ) -> Value:
 
         value_id = str(uuid.uuid4())
@@ -223,58 +237,70 @@ class BaseDataRegistry(abc.ABC):
         cls = self._kiara.get_value_type_cls(value_schema.type)
         _type_obj = cls(**value_schema.type_config)
 
+        existing_value: typing.Optional[Value] = None
         if isinstance(value_data, Value):
             if value_data._registry == self and value_data.id in self.value_ids:
+                if value_lineage:
+                    existing_lineage = self._lineages.get(value_data.id, None)
+                    if existing_lineage:
+                        log_message(
+                            f"Overwriting existing value lineage for: {value_data.id}"
+                        )
+
+                    self._lineages[value_data.id] = value_lineage
+
                 # TODO: check it's really the same
                 return value_data
-            else:
-                copied_value = self._register_remote_value(value_data)
 
-                if value_data.id not in self.value_ids:
-                    raise Exception(
-                        f"Value with id '{value_data.id}' wasn't successfully registered. This is most likely a bug."
-                    )
+            existing_value = self._find_value_for_hashes(*value_data.get_hashes())
 
-                if copied_value is None:
-                    copied_value = value_data.copy()
-                    copied_value._registry = self
-                    copied_value._kiara = self._kiara
-                else:
-                    # TODO: make sure _registry and _kiara attributes are correct?
-                    pass
+            if existing_value:
+                if value_lineage and self._lineages.get(existing_value.id, None):
+                    log_message(f"Overwriting value lineage for: {existing_value.id}")
 
-                if value_data.id != copied_value.id:
-                    raise Exception(
-                        f"Imported value object with id '{value_data.id}' resulted in copied value with different id. This is a bug."
-                    )
+                if value_lineage:
+                    self._lineages[existing_value.id] = value_lineage
 
-                for hash_type, value_hash in copied_value.get_hashes().items():
-                    self._hashes.setdefault(hash_type, {})[value_hash.hash] = value_id
-                self._seeds[copied_value.id] = value_data.get_value_seed()
-                return copied_value
+                return existing_value
 
-        existing_value: typing.Optional[Value] = None
-        value_hashes = {}
+            copied_value = self._register_remote_value(value_data)
+
+            if value_data.id not in self.value_ids:
+                raise Exception(
+                    f"Value with id '{value_data.id}' wasn't successfully registered. This is most likely a bug."
+                )
+
+            assert copied_value._registry == self
+            assert copied_value._kiara == self._kiara
+
+            if value_data.id != copied_value.id:
+                raise Exception(
+                    f"Imported value object with id '{value_data.id}' resulted in copied value with different id. This is a bug."
+                )
+
+            # for hash_type, value_hash in copied_value.get_hashes().items():
+            #     self._hashes.setdefault(hash_type, {})[value_hash.hash] = value_id
+            self._lineages[copied_value.id] = value_data.get_lineage()
+            return copied_value
 
         if value_data not in [None, SpecialValue.NOT_SET, SpecialValue.NO_VALUE]:
+
             for hash_type in _type_obj.get_supported_hash_types():
                 hash_str = _type_obj.calculate_value_hash(
                     value=value_data, hash_type=hash_type
                 )
-                if hash_str in self._hashes.get(hash_type, {}).keys():
-                    existing_value_id = self._hashes[hash_type][hash_str]
-                    existing_value = self.get_value_obj(existing_value_id)
+                existing_value = self._find_value_for_hashes(
+                    ValueHash(hash_type=hash_type, hash=hash_str)
+                )
+                if existing_value:
                     break
-                else:
-                    value_hashes[hash_type] = ValueHash(
-                        hash=hash_str, hash_type=hash_type
-                    )
 
         if existing_value:
-            if existing_value.id in self._seeds.keys() and value_seed:
-                raise NotImplementedError()
+            if value_lineage and self._lineages.get(existing_value.id, None):
+                log_message(f"Overwriting lineage for value '{existing_value.id}'.")
 
-            # self._seeds[existing_value.id].append(value_seed)
+            if value_lineage:
+                self._lineages[existing_value.id] = value_lineage
             return existing_value
 
         if value_schema.is_constant:
@@ -285,22 +311,37 @@ class BaseDataRegistry(abc.ABC):
         is_set = value_data != SpecialValue.NOT_SET
         is_none = value_data in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]
 
+        # value_hashes: typing.Dict[str] = {}
         value = self._create_value_obj(
             value_schema=value_schema,
             is_set=is_set,
             is_none=is_none,
             type_obj=_type_obj,
-            value_hashes=value_hashes,
+            value_hashes=None,
         )
 
         self._register_new_value_obj(
             value_obj=value,
             value_data=value_data,
-            value_seed=value_seed,
-            value_hashes=value_hashes,
+            value_lineage=value_lineage,
+            # value_hashes=value_hashes,
         )
 
+        # if not value.is_none:
+        # value.get_metadata()
+        #     metadata = self._kiara.metadata_mgmt.get_value_metadata(value=value, also_return_schema=True)
+        #     print(metadata)
+
         return value
+
+    def set_value_lineage(
+        self, value_item: typing.Union[str, Value], value_lineage: ValueLineage
+    ):
+
+        value_obj = self.get_value_obj(value_item)
+        if value_obj is None:
+            raise Exception(f"No value available for: {value_item}")
+        self._lineages[value_obj.id] = value_lineage
 
     def _check_register_token(self, register_token: uuid.UUID):
 
@@ -376,8 +417,7 @@ class BaseDataRegistry(abc.ABC):
         ):
             return value_obj.value_schema.default
         elif not value_obj.is_set:
-            # return None
-            raise Exception("Value not set.")
+            raise Exception(f"Value not set: {value_obj.id}")
 
         data = self._get_value_data_for_id(value_obj.id)
         if data == SpecialValue.NO_VALUE:
@@ -387,14 +427,14 @@ class BaseDataRegistry(abc.ABC):
         else:
             return data
 
-    def get_value_seed(
+    def get_lineage(
         self, value_item: typing.Union[str, Value, ValueSlot]
-    ) -> typing.Optional[ValueSeed]:
+    ) -> typing.Optional[ValueLineage]:
 
         value_obj = self.get_value_obj(value_item=value_item)
         if value_obj is None:
             raise Exception(f"No value registered for: {value_item}")
-        return self._seeds.get(value_obj.id, None)
+        return self._lineages.get(value_obj.id, None)
 
     # def get_value_info(self, value_item: typing.Union[str, Value, ValueAlias]) -> ValueInfo:
     #
@@ -418,28 +458,28 @@ class BaseDataRegistry(abc.ABC):
         return self._get_value_slot_for_alias(alias_name=alias)
 
     # -----------------------------------------------------------------------
-    def _resolve_hash_to_value(
-        self, hash_str: str, hash_type: typing.Optional[str] = None
-    ) -> typing.Optional[Value]:
-
-        matches: typing.Set[str] = set()
-        if hash_type is None:
-            for hash_type, details in self._hashes.items():
-                if hash_str in details.keys():
-                    matches.add(details[hash_str])
-        else:
-            hashes_for_type = self._hashes.get(hash_type, {})
-            if hash_str in hashes_for_type.keys():
-                matches.add(hashes_for_type[hash_str])
-
-        if len(matches) == 0:
-            return None
-        elif len(matches) > 1:
-            raise Exception(f"Multiple values found for hash '{hash_str}'.")
-
-        match_id = next(iter(matches))
-        value = self.get_value_obj(match_id)
-        return value
+    # def _resolve_hash_to_value(
+    #     self, hash_str: str, hash_type: typing.Optional[str] = None
+    # ) -> typing.Optional[Value]:
+    #
+    #     matches: typing.Set[str] = set()
+    #     if hash_type is None:
+    #         for hash_type, details in self._hashes.items():
+    #             if hash_str in details.keys():
+    #                 matches.add(details[hash_str])
+    #     else:
+    #         hashes_for_type = self._hashes.get(hash_type, {})
+    #         if hash_str in hashes_for_type.keys():
+    #             matches.add(hashes_for_type[hash_str])
+    #
+    #     if len(matches) == 0:
+    #         return None
+    #     elif len(matches) > 1:
+    #         raise Exception(f"Multiple values found for hash '{hash_str}'.")
+    #
+    #     match_id = next(iter(matches))
+    #     value = self.get_value_obj(match_id)
+    #     return value
 
     # alias-related methods
     def _resolve_alias_to_value(self, alias: ValueAlias) -> typing.Optional[Value]:
@@ -489,14 +529,19 @@ class BaseDataRegistry(abc.ABC):
 
         return value_slot.tags.keys()
 
-    def find_aliases_for_value_id(
+    def find_aliases_for_value(
         self,
-        value_id: str,
+        value_item: typing.Union[str, Value],
         include_all_versions: bool = False,
         include_tags: bool = False,
     ) -> typing.List[ValueAlias]:
 
-        aliases = self._find_aliases_for_value_id(value_id=value_id)
+        value = self.get_value_obj(value_item)
+
+        if value is None:
+            raise Exception(f"Can't find registered value for: {value_item}")
+
+        aliases = self._find_aliases_for_value_id(value_id=value.id)
         result = []
         latest_cache: typing.Dict[str, int] = {}
         for alias in aliases:
@@ -581,6 +626,57 @@ VALID_ALIAS_PATTERN = re.compile("^[A-Za-z0-9_-]*$")
 
 
 class DataRegistry(BaseDataRegistry):
+    def link_alias(
+        self,
+        value: typing.Union[str, Value],
+        alias: str,
+        register_missing_alias: bool = True,
+    ) -> None:
+
+        value_obj = self.get_value_obj(value)
+        if value_obj is None:
+            raise Exception(f"No value for: {value}")
+
+        value_slot = self.get_value_slot(alias=alias)
+        if value_slot is None:
+            if not register_missing_alias:
+                raise Exception(
+                    f"Can't link value to alias '{alias}': alias not registered."
+                )
+            else:
+                self.register_alias(value_or_schema=value_obj, alias_name=alias)
+        else:
+            value_alias = ValueAlias.from_string(alias)
+            if value_alias.tag:
+                value_slot.add_value(value_obj, tags=[value_alias.tag])
+            else:
+                value_slot.add_value(value_obj)
+
+    def link_aliases(
+        self,
+        value: typing.Union[str, Value],
+        *aliases: str,
+        register_missing_aliases: bool = True,
+    ) -> None:
+
+        value_obj = self.get_value_obj(value)
+        if value_obj is None:
+            raise Exception(f"No value for: {value}")
+
+        if not register_missing_aliases:
+            invalid = []
+            for alias in aliases:
+                if alias not in self.alias_names:
+                    invalid.append(alias)
+
+            if invalid:
+                raise Exception(
+                    f"Can't link value(s), invalid alias(es): {', '.join(invalid)}"
+                )
+
+        for alias in aliases:
+            self.link_alias(value_obj, alias=alias)
+
     @abc.abstractmethod
     def _register_alias(self, alias_name: str, value_schema: ValueSchema) -> ValueSlot:
         pass
@@ -701,7 +797,7 @@ class DataRegistry(BaseDataRegistry):
         self,
         value_slot: typing.Union[str, Value, ValueSlot],
         data: typing.Any,
-        value_seed: typing.Optional[ValueSeed] = None,
+        value_lineage: typing.Optional[ValueLineage] = None,
     ) -> bool:
 
         # first, resolve a potential string into a value_slot or value
@@ -720,7 +816,7 @@ class DataRegistry(BaseDataRegistry):
             value_slot = _value_slot
 
         if isinstance(value_slot, Value):
-            aliases = self.find_aliases_for_value_id(value_slot.id)
+            aliases = self.find_aliases_for_value(value_slot.id)
             # slots = self.find_value_slots(value_slot)
             if len(aliases) == 0:
                 raise Exception(f"No value slot found for value '{value_slot.id}'.")
@@ -739,19 +835,19 @@ class DataRegistry(BaseDataRegistry):
         assert _value_slot_2 is not None
 
         if isinstance(data, Value):
-            if value_seed:
-                raise Exception("Can't update value slot with new value seed data.")
+            if value_lineage:
+                raise Exception("Can't update value slot with new value lineage data.")
             _value: Value = data
         else:
             _value = self.register_data(
                 value_data=data,
                 value_schema=value_slot.value_schema,
-                value_seed=value_seed,
+                value_lineage=value_lineage,
             )
             # _value = self.create_value(
             #     value_data=data,
             #     value_schema=_value_slot.value_schema,
-            #     value_seed=value_seed,
+            #     value_lineage=value_lineage,
             # )
 
         return self._update_value_slot(
@@ -797,7 +893,7 @@ class DataRegistry(BaseDataRegistry):
             if isinstance(value_item, Value):
                 _value_item: Value = value_item
                 if _value_item._registry != self:
-                    raise NotImplementedError()
+                    _value_item = self.register_data(_value_item)
             else:
                 _value_item = self.register_data(
                     value_data=value_item, value_schema=value_slot.value_schema
@@ -848,9 +944,18 @@ class InMemoryDataRegistry(DataRegistry):
 
         return value_id
 
-    def _register_remote_value(self, value: Value) -> None:
+    def _register_remote_value(self, value: Value) -> Value:
 
-        raise NotImplementedError()
+        copied_value = value.copy()
+        copied_value._registry = self
+        copied_value._kiara = self._kiara
+
+        assert copied_value.id not in self._values.keys()
+
+        self._values[copied_value.id] = copied_value
+        self._value_data[copied_value.id] = value.get_value_data()
+
+        return copied_value
 
     def _get_available_value_ids(self) -> typing.Iterable[str]:
 

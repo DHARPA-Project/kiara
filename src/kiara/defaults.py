@@ -96,3 +96,16 @@ NO_VALUE_ID_MARKER = "--no-value-id--"
 DEFAULT_TO_JSON_CONFIG: typing.Mapping[str, typing.Any] = {
     "indent": 2,
 }
+
+COLOR_LIST = [
+    "green",
+    "blue",
+    "bright_magenta",
+    "dark_red",
+    "gold3",
+    "cyan",
+    "orange1",
+    "light_yellow3",
+    "light_slate_grey",
+    "deep_pink4",
+]

@@ -11,7 +11,6 @@ Each Value has a unique id, which can be used to retrieve the data (whole, or pa
 In addition, that id can be used to subscribe to change events for a value (published whenever the data that is associated with a value was changed).
 """
 
-import abc
 import json
 import logging
 import typing
@@ -19,16 +18,20 @@ import uuid
 from datetime import datetime
 from pydantic import BaseModel, Extra, Field, PrivateAttr
 from rich import box
-from rich.console import Console, ConsoleOptions, RenderResult
+from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.jupyter import JupyterMixin
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
+from rich.tree import Tree
 
 from kiara.data.types import ValueType
-from kiara.defaults import SpecialValue
+from kiara.defaults import COLOR_LIST, SpecialValue
+from kiara.info import KiaraInfoModel
+from kiara.metadata.core_models import DocumentationMetadataModel
+from kiara.metadata.data import DeserializeConfig
 from kiara.module_config import ModuleConfig
-from kiara.utils import StringYAML, log_message
+from kiara.utils import StringYAML, is_debug, log_message
 
 if typing.TYPE_CHECKING:
     from kiara.data.registry import (
@@ -37,6 +40,8 @@ if typing.TYPE_CHECKING:
         ValueSlotUpdateHandler,
     )
     from kiara.kiara import Kiara
+    from kiara.module import KiaraModule
+    from kiara.operations.serialize import SerializeValueOperationType
 
 log = logging.getLogger("kiara")
 yaml = StringYAML()
@@ -109,18 +114,126 @@ class ValueSchema(BaseModel):
         return hash((self.type, self.default))
 
 
-class ValueSeed(BaseModel, abc.ABC):
-    pass
+class ValueLineage(ModuleConfig):
+    @classmethod
+    def from_module_and_inputs(
+        cls,
+        module: "KiaraModule",
+        output_name: str,
+        inputs: typing.Mapping[str, typing.Union["Value", "ValueInfo"]],
+    ):
 
+        module_type = module._module_type_id  # type: ignore
+        module_config = module.config.dict()
+        doc = module.get_type_metadata().documentation
 
-class ModuleValueSeed(ModuleConfig):
+        _inputs = {}
+        for field_name, value in inputs.items():
+            if isinstance(value, Value):
+                _inputs[field_name] = value.get_info()
+            else:
+                _inputs[field_name] = value
 
-    result_name: str = Field(
+        return ValueLineage.construct(
+            module_type=module_type,
+            module_config=module_config,
+            doc=doc,
+            output_name=output_name,
+            inputs=_inputs,
+        )
+
+    @classmethod
+    def create(
+        cls,
+        module_type: str,
+        module_config: typing.Mapping[str, typing.Any],
+        module_doc: DocumentationMetadataModel,
+        output_name: str,
+        inputs: typing.Mapping[str, typing.Union["Value", "ValueInfo"]],
+    ):
+
+        _inputs = {}
+        for field_name, value in inputs.items():
+            if isinstance(value, Value):
+                _inputs[field_name] = value.get_info()
+            else:
+                _inputs[field_name] = value
+
+        return ValueLineage.construct(
+            module_type=module_type,
+            module_config=dict(module_config),
+            doc=module_doc,
+            output_name=output_name,
+            inputs=_inputs,
+        )
+
+    output_name: str = Field(
         description="The result field name for the value this refers to."
     )
-    inputs: typing.Dict[str, "Value"] = Field(
+    inputs: typing.Dict[str, "ValueInfo"] = Field(
         description="The inputs that were used to create the value this refers to."
     )
+
+    def create_renderable(self, **config: typing.Any) -> RenderableType:
+
+        all_ids = sorted(find_all_ids_in_lineage(self))
+        id_color_map = {}
+        for idx, v_id in enumerate(all_ids):
+            id_color_map[v_id] = COLOR_LIST[idx % len(COLOR_LIST)]
+
+        show_ids = config.get("include_ids", False)
+
+        tree = fill_lineage_tree(self, include_ids=show_ids)
+        return tree
+
+
+def find_all_ids_in_lineage(lineage: ValueLineage, ids: typing.Set[str] = None):
+
+    if ids is None:
+        ids = set()
+
+    if not lineage:
+        return ids
+
+    for input_name, value_info in lineage.inputs.items():
+        ids.add(value_info.value_id)
+        if value_info.lineage:
+            find_all_ids_in_lineage(value_info.lineage, ids=ids)
+
+    return ids
+
+
+def fill_lineage_tree(
+    lineage: ValueLineage,
+    node: typing.Optional[Tree] = None,
+    include_ids: bool = False,
+    level=0,
+):
+
+    color = COLOR_LIST[level % len(COLOR_LIST)]
+    if node is None:
+        main = Tree(f"[b {color}]{lineage.module_type}[/b {color}]")
+    else:
+        main = node.add(f"[b {color}]{lineage.module_type}[/b {color}]")
+
+    for input_name in sorted(lineage.inputs.keys()):
+
+        value_info = lineage.inputs[input_name]
+
+        value_type = value_info.value_schema.type
+        if include_ids:
+            v_id_str = f" = {value_info.value_id}"
+        else:
+            v_id_str = ""
+        input_node = main.add(
+            f"input: [i {color}]{input_name} ({value_type})[/i {color}]{v_id_str}"
+        )
+        if value_info.lineage:
+            fill_lineage_tree(
+                value_info.lineage, input_node, level=level + 1, include_ids=include_ids
+            )
+
+    return main
 
 
 class ValueHash(BaseModel):
@@ -143,7 +256,7 @@ class Value(BaseModel, JupyterMixin):
         extra = Extra.forbid
         use_enum_values = True
 
-    def __init__(self, registry: "BaseDataRegistry", value_schema: ValueSchema, type_obj: ValueType, is_set: bool, is_none: bool, hashes: typing.Optional[typing.Dict[str, ValueHash]] = None, metadata: typing.Optional[typing.Mapping[str, typing.Dict[str, typing.Any]]] = None, register_token: typing.Optional[uuid.UUID] = None):  # type: ignore
+    def __init__(self, registry: "BaseDataRegistry", value_schema: ValueSchema, type_obj: ValueType, is_set: bool, is_none: bool, hashes: typing.Optional[typing.Iterable[ValueHash]] = None, metadata: typing.Optional[typing.Mapping[str, typing.Dict[str, typing.Any]]] = None, register_token: typing.Optional[uuid.UUID] = None):  # type: ignore
 
         if not register_token:
             raise Exception("No register token provided.")
@@ -165,18 +278,18 @@ class Value(BaseModel, JupyterMixin):
 
         kwargs["value_schema"] = value_schema
 
-        # if value_seed is None:
-        #     value_seed = ValueSeed()
+        # if value_lineage is None:
+        #     value_lineage = ValueLineage()
         #
-        # kwargs["value_seed"] = value_seed
+        # kwargs["value_lineage"] = value_lineage
 
-        kwargs["is_streaming"] = False  # not used yet
+        # kwargs["is_streaming"] = False  # not used yet
         kwargs["creation_date"] = datetime.now()
         kwargs["is_set"] = is_set
         kwargs["is_none"] = is_none
 
         if hashes:
-            kwargs["hashes"] = dict(hashes)
+            kwargs["hashes"] = list(hashes)
 
         if metadata:
             kwargs["metadata"] = dict(metadata)
@@ -184,37 +297,30 @@ class Value(BaseModel, JupyterMixin):
             kwargs["metadata"] = {}
 
         super().__init__(**kwargs)
-
         self._type_obj = type_obj
 
     _kiara: "Kiara" = PrivateAttr()
     _registry: "BaseDataRegistry" = PrivateAttr()
     _type_obj: ValueType = PrivateAttr()
-    # _hash_cache: typing.Optional[str] = PrivateAttr(default=None)
+    _value_info: "ValueInfo" = PrivateAttr(default=None)
 
     id: str = Field(description="A unique id for this value.")
     value_schema: ValueSchema = Field(description="The schema of this value.")
-    # value_seed: typing.Optional[ValueSeed] = Field(
-    #     description="Information about how this value was created."
-    # )
-    # is_constant: bool = Field(
-    #     description="Hint whether this value is a constant.", default=False
-    # )
     creation_date: typing.Optional[datetime] = Field(
         description="The time this value was created value happened."
     )
-    is_streaming: bool = Field(
-        default=False,
-        description="Whether the value is currently streamed into this object.",
-    )
+    # is_streaming: bool = Field(
+    #     default=False,
+    #     description="Whether the value is currently streamed into this object.",
+    # )
     is_set: bool = Field(
         description="Whether the value was set (in some way: user input, default, constant...).",
         default=False,
     )
     is_none: bool = Field(description="Whether the value is 'None'.", default=True)
-    hashes: typing.Dict[str, ValueHash] = Field(
+    hashes: typing.List[ValueHash] = Field(
         description="Available hashes relating to the actual value data. This attribute is not populated by default, use the 'get_hashes()' method to request one or several hash items, afterwards those hashes will be reflected in this attribute.",
-        default_factory=dict,
+        default_factory=list,
     )
 
     metadata: typing.Dict[str, typing.Dict[str, typing.Any]] = Field(
@@ -235,27 +341,39 @@ class Value(BaseModel, JupyterMixin):
         """Calculate the hash of a specified type for this value. Hashes are cached."""
 
         hashes = self.get_hashes(hash_type)
-        return hashes[hash_type]
+        return list(hashes)[0]
 
-    def get_hashes(self, *hash_types: str) -> typing.Dict[str, ValueHash]:
+    def get_hashes(self, *hash_types: str) -> typing.Iterable[ValueHash]:
 
+        all_hash_types = self.type_obj.get_supported_hash_types()
         if not hash_types:
             try:
-                hash_types = self.type_obj.get_supported_hash_types()
+                hash_types = all_hash_types
             except Exception as e:
                 log_message(str(e))
 
             if not hash_types:
-                return {}
+                return []
 
-        result = {}
-        for hash_type in hash_types:
-            if self.hashes.get(hash_type, None) is None:
-                hash_str = self.type_obj.calculate_value_hash(
-                    data=self.get_value_data(), hash_type=hash_type
+        result = []
+        missing = list(hash_types)
+        for hash_obj in self.hashes:
+            if hash_obj.hash_type in hash_types:
+                result.append(hash_obj)
+                missing.remove(hash_obj.hash_type)
+
+        for hash_type in missing:
+            if hash_type not in all_hash_types:
+                raise Exception(
+                    f"Hash type '{hash_type}' not supported for '{self.type_name}'"
                 )
-                self.hashes[hash_type] = ValueHash(hash_type=hash_type, hash=hash_str)
-            result[hash_type] = self.hashes[hash_type]
+
+            hash_str = self.type_obj.calculate_value_hash(
+                value=self.get_value_data(), hash_type=hash_type
+            )
+            hash_obj = ValueHash(hash_type=hash_type, hash=hash_str)
+            self.hashes.append(hash_obj)
+            result.append(hash_obj)
 
         return result
 
@@ -271,44 +389,25 @@ class Value(BaseModel, JupyterMixin):
 
         return self._registry.get_value_data(self)
 
-    def get_value_seed(self) -> typing.Optional[ValueSeed]:
+    def get_lineage(self) -> typing.Optional[ValueLineage]:
 
-        return self._registry.get_value_seed(self)
+        return self._registry.get_lineage(self)
 
-    # def update_value(self, data: typing.Any) -> "Value":
-    #
-    #     return self._registry.update_value_slot(value_slot=self, data=data)
+    def set_value_lineage(self, value_lineage: ValueLineage) -> None:
 
-    def _create_value_table(
-        self, padding=(0, 1), ensure_metadata: bool = False
-    ) -> Table:
+        return self._registry.set_value_lineage(self, value_lineage)
 
-        if ensure_metadata:
-            self.get_metadata()
+    def get_info(self) -> "ValueInfo":
 
-        table = Table(box=box.SIMPLE, show_header=False, padding=padding)
-        table.add_column("property", style="i")
-        table.add_column("value")
+        if self._value_info is None:
+            self._value_info = ValueInfo.from_value(self)
+        return self._value_info
 
-        table.add_row("id", self.id)  # type: ignore
-        table.add_row("type", self.value_schema.type)
-        table.add_row("desc", self.value_schema.doc)
-        table.add_row("is set", "yes" if self.item_is_valid() else "no")
-        # table.add_row("is constant", "yes" if self.is_constant else "no")
+    def create_info(self, include_deserialization_config: bool = False) -> "ValueInfo":
 
-        # if isinstance(self.value_hash, int):
-        #     vh = str(self.value_hash)
-        # else:
-        #     vh = self.value_hash.value
-        # table.add_row("hash", vh)
-        if self.metadata:
-            json_string = json.dumps(self.get_metadata(), indent=2)
-            metadata = Syntax(json_string, "json")
-            table.add_row("metadata", metadata)
-        else:
-            table.add_row("metadata", "-- no metadata --")
-
-        return table
+        return ValueInfo.from_value(
+            self, include_deserialization_config=include_deserialization_config
+        )
 
     def get_metadata(
         self, *metadata_keys: str, also_return_schema: bool = False
@@ -336,6 +435,7 @@ class Value(BaseModel, JupyterMixin):
             _metadata_keys = set(metadata_keys)
 
         result = {}
+
         missing = set()
         for metadata_key in _metadata_keys:
             if metadata_key in self.metadata.keys():
@@ -360,13 +460,25 @@ class Value(BaseModel, JupyterMixin):
                 result[k] = v["metadata_item"]
         return result
 
-    def save(self, aliases: typing.Optional[typing.Iterable[str]] = None) -> "Value":
+    def save(
+        self,
+        aliases: typing.Optional[typing.Iterable[str]] = None,
+        register_missing_aliases: bool = True,
+    ) -> "Value":
         """Save this value, under the specified alias(es)."""
+
+        # if self.get_value_lineage():
+        #     for field_name, value in self.get_value_lineage().inputs.items():
+        #         value_obj = self._registry.get_value_obj(value)
+        #         try:
+        #             value_obj.save()
+        #         except Exception as e:
+        #             print(e)
 
         value = self._kiara.data_store.register_data(self)
         if aliases:
-            self._kiara.data_store.register_aliases(
-                value_or_schema=value, aliases=aliases
+            self._kiara.data_store.link_aliases(
+                value, *aliases, register_missing_aliases=register_missing_aliases
             )
 
         return value
@@ -394,10 +506,10 @@ class Value(BaseModel, JupyterMixin):
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
 
-        table = self._create_value_table()
+        # table = self._create_value_table()
 
         title = "Value"
-        yield Panel(table, box=box.ROUNDED, title_align="left", title=title)
+        yield Panel(self.get_info(), box=box.ROUNDED, title_align="left", title=title)
 
 
 ValueSchema.update_forward_refs()
@@ -500,7 +612,12 @@ class ValueSlot(BaseModel):
             return self.latest_version_nr
 
         # TODO: check value data equality
-        if self.value_schema.is_constant:
+        if self.value_schema.is_constant and self.values:
+            if is_debug():
+                import traceback
+
+                traceback.print_stack()
+
             raise Exception("Can't add value: value slot marked as 'constant'.")
 
         version = self.latest_version_nr + 1
@@ -628,25 +745,58 @@ class ValueAlias(BaseModel):
             return self.alias
 
 
-class ValueInfo(BaseModel):
+class ValueInfo(KiaraInfoModel):
+    @classmethod
+    def from_value(cls, value: Value, include_deserialization_config: bool = False):
+
+        if value.id not in value._registry.value_ids:
+            raise Exception("Value not registered (yet).")
+
+        # aliases = value._registry.find_aliases_for_value(value)
+        hashes = value.get_hashes()
+        metadata = value.get_metadata(also_return_schema=True)
+        # metadata = value.metadata
+        value_lineage = value.get_lineage()
+
+        if include_deserialization_config:
+            serialize_operation: SerializeValueOperationType = (  # type: ignore
+                value._kiara.operation_mgmt.get_operation("serialize")  # type: ignore
+            )
+            print(serialize_operation)
+            raise NotImplementedError()
+        return ValueInfo(
+            value_id=value.id,
+            value_schema=value.value_schema,
+            hashes=hashes,
+            metadata=metadata,
+            lineage=value_lineage,
+            is_valid=value.item_is_valid(),
+        )
 
     value_id: str = Field(description="The value id.")
-    value_type: str = Field(description="The type of the value.")
-    value_type_config: typing.Dict[str, typing.Any] = Field(
-        description="The value type configuration."
-    )
-    aliases: typing.List[ValueAlias] = Field(
-        description="All aliases for this value.", default_factory=list
-    )
+    value_schema: ValueSchema = Field(description="The value schema.")
+    # aliases: typing.List[ValueAlias] = Field(
+    #     description="All aliases for this value.", default_factory=list
+    # )
     # tags: typing.List[str] = Field(
     #     description="All tags for this value.", default_factory=list
     # )
     # created: str = Field(description="The time the data was created.")
-    hashes: typing.Dict[str, ValueHash] = Field(
-        description="All available hashes for this value.", default_factory=dict
+    is_valid: bool = Field(
+        description="Whether the item is valid (in the context of its schema)."
+    )
+    hashes: typing.List[ValueHash] = Field(
+        description="All available hashes for this value.", default_factory=list
     )
     metadata: typing.Dict[str, typing.Dict[str, typing.Any]] = Field(
         description="The metadata associated with this value."
+    )
+    lineage: typing.Optional[ValueLineage] = Field(
+        description="Information about how the value was created.", default=None
+    )
+    deserialize_config: typing.Optional[DeserializeConfig] = Field(
+        description="The module config (incl. inputs) to deserialize the value.",
+        default=None,
     )
 
     def get_metadata_items(self, *keys: str) -> typing.Dict[str, typing.Any]:
@@ -658,9 +808,11 @@ class ValueInfo(BaseModel):
 
         result = {}
         for k in _keys:
+
             md = self.metadata.get(k)
             if md is None:
                 raise Exception(f"No metadata for key '{k}' available.")
+
             result[k] = md["metadata_item"]
 
         return result
@@ -680,3 +832,60 @@ class ValueInfo(BaseModel):
             result[k] = md["metadata_schema"]
 
         return result
+
+    def create_renderable(self, **config: typing.Any) -> RenderableType:
+
+        padding = config.get("padding", (0, 1))
+        skip_metadata = config.get("skip_metadata", False)
+        skip_value_lineage = config.get("skip_lineage", True)
+        include_ids = config.get("include_ids", False)
+
+        table = Table(box=box.SIMPLE, show_header=False, padding=padding)
+        table.add_column("property", style="i")
+        table.add_column("value")
+
+        table.add_row("id", self.value_id)  # type: ignore
+        table.add_row("type", self.value_schema.type)
+        if self.value_schema.type_config:
+            json_data = json.dumps(self.value_schema.type_config)
+            tc_content = Syntax(json_data, "json")
+            table.add_row("type config", tc_content)
+        table.add_row("desc", self.value_schema.doc)
+        table.add_row("is set", "yes" if self.is_valid else "no")
+        # table.add_row("is constant", "yes" if self.is_constant else "no")
+
+        # if isinstance(self.value_hash, int):
+        #     vh = str(self.value_hash)
+        # else:
+        #     vh = self.value_hash.value
+        # table.add_row("hash", vh)
+
+        if self.hashes:
+            hashes_dict = {hs.hash_type: hs.hash for hs in self.hashes}
+            yaml_string = yaml.dump(hashes_dict)
+            hases_str = Syntax(yaml_string, "yaml", background_color="default")
+            table.add_row("", "")
+            table.add_row("hashes", hases_str)
+
+        if not skip_metadata:
+            if self.metadata:
+                yaml_string = yaml.dump(data=self.get_metadata_items())
+                # json_string = json.dumps(self.get_metadata_items(), indent=2)
+                metadata = Syntax(yaml_string, "yaml", background_color="default")
+                table.add_row("metadata", metadata)
+            else:
+                table.add_row("metadata", "-- no metadata --")
+
+        if not skip_value_lineage and self.lineage:
+            if self.metadata:
+                table.add_row("", "")
+            # json_string = self.lineage.json(indent=2)
+            # seed_content = Syntax(json_string, "json")
+            table.add_row(
+                "lineage", self.lineage.create_renderable(include_ids=include_ids)
+            )
+
+        return table
+
+
+ValueLineage.update_forward_refs()

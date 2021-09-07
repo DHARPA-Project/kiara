@@ -4,6 +4,7 @@ import asyncclick as click
 import shutil
 import sys
 from rich import box
+from rich.panel import Panel
 from rich.table import Table
 
 from kiara import Kiara
@@ -63,7 +64,7 @@ def list_values(ctx, with_alias, only_latest, tags, all):
 
         value = kiara_obj.data_store.get_value_obj(v_id)
         value_type = value.type_name
-        aliases = kiara_obj.data_store.find_aliases_for_value_id(
+        aliases = kiara_obj.data_store.find_aliases_for_value(
             v_id, include_all_versions=not only_latest
         )
 
@@ -98,16 +99,41 @@ def list_values(ctx, with_alias, only_latest, tags, all):
 
 
 @data.command(name="explain")
-@click.argument("value_id", nargs=1, required=True)
+@click.argument("value_id", nargs=-1, required=True)
+@click.option(
+    "--no-metadata", "-nm", help="Don't display value metadata.", is_flag=True
+)
+@click.option(
+    "--lineage", "-l", help="Display lineage information for the value.", is_flag=True
+)
+@click.option(
+    "--include-ids", "-i", help="Include ids in lineage display.", is_flag=True
+)
 @click.pass_context
-def explain_value(ctx, value_id: str):
+def explain_value(
+    ctx, value_id: str, no_metadata: bool, lineage: bool, include_ids: bool
+):
     """Print the metadata of a stored value."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    print()
-    value = kiara_obj.data_store.get_value_obj(value_item=value_id)
-    rich_print(value)
+    for v_id in value_id:
+        print()
+        value = kiara_obj.data_store.get_value_obj(value_item=v_id)
+        if not value:
+            print(f"No saved value found for: {v_id}")
+            continue
+        table = value.get_info().create_renderable(
+            skip_metadata=no_metadata, skip_lineage=not lineage, include_ids=include_ids
+        )
+        rich_print(
+            Panel(
+                table,
+                box=box.ROUNDED,
+                title_align="left",
+                title=f"Value: [b]{v_id}[/b]",
+            )
+        )
 
 
 @data.command(name="load")

@@ -5,6 +5,16 @@ from pydantic import Field
 from kiara.module_config import ModuleConfig
 
 
+class DeserializeConfig(ModuleConfig):
+
+    # value_id: str = Field(description="The id of the value.")
+    serialization_type: str = Field(description="The serialization type.")
+    input: typing.Any = Field(
+        description="The inputs to use when running this module.", default_factory=dict
+    )
+    output_name: str = Field(description="The name of the output field for the value.")
+
+
 class LoadConfig(ModuleConfig):
 
     value_id: str = Field(description="The id of the value.")

@@ -14,7 +14,7 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
 
-from kiara.defaults import PIPELINE_PARENT_MARKER, SpecialValue
+from kiara.defaults import COLOR_LIST, PIPELINE_PARENT_MARKER, SpecialValue
 from kiara.info import KiaraInfoModel
 from kiara.metadata.module_models import KiaraModuleTypeMetadata
 from kiara.pipeline import PipelineValuesInfo, StepStatus
@@ -298,22 +298,9 @@ class PipelineStructureDesc(BaseModel):
         data_panel.append(outp)
         yield Panel(RenderGroup(*data_panel), box=box.SIMPLE)
 
-        color_list = [
-            "green",
-            "blue",
-            "bright_magenta",
-            "dark_red",
-            "gold3",
-            "cyan",
-            "orange1",
-            "light_yellow3",
-            "light_slate_grey",
-            "deep_pink4",
-        ]
-
         step_color_map = {}
         for i, s in enumerate(self.steps.values()):
-            step_color_map[s.step.step_id] = color_list[i % len(color_list)]
+            step_color_map[s.step.step_id] = COLOR_LIST[i % len(COLOR_LIST)]
 
         rg = []
         for nr, stage in enumerate(self.processing_stages):
@@ -695,9 +682,6 @@ class PipelineState(KiaraInfoModel):
             if value.is_set:
                 status = "-- set --"
                 valid = "[green]yes[/green]"
-            elif value.is_streaming:
-                status = "[yellow]-- streaming --[/yellow]"
-                valid = "[yellow]yes[/yellow]"
             else:
                 valid = "[green]yes[/green]" if value.is_valid else "[red]no[/red]"
                 if value.is_valid:
@@ -734,9 +718,6 @@ class PipelineState(KiaraInfoModel):
             if value.is_set:
                 status = "-- set --"
                 valid = "[green]yes[/green]"
-            elif value.is_streaming:
-                status = "[yellow]-- streaming --[/yellow]"
-                valid = "[yellow]yes[/yellow]"
             else:
                 valid = "[green]yes[/green]" if value.is_valid else "[red]no[/red]"
                 status = "-- not set --"
@@ -823,9 +804,7 @@ def create_pipeline_step_table(
     in_fields = []
     for field_name, details in pipeline_state.step_inputs[step.step_id].values.items():
 
-        if details.is_streaming:
-            status_str = "[yellow]-- streaming --[/yellow]"
-        elif details.is_set:
+        if details.is_set:
             status_str = "[green]-- set --[/green]"
         else:
             if details.is_valid:
@@ -840,9 +819,7 @@ def create_pipeline_step_table(
     out_fields = []
     for field_name, details in pipeline_state.step_outputs[step.step_id].values.items():
 
-        if details.is_streaming:
-            status_str = "[yellow]-- streaming --[/yellow]"
-        elif details.is_set:
+        if details.is_set:
             status_str = "[green]-- set --[/green]"
         else:
             if details.is_valid:

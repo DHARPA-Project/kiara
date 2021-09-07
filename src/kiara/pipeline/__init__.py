@@ -25,7 +25,7 @@ class PipelineValueInfo(BaseModel):
             # value_metadata=value.value_metadata,
             # last_update=value.last_update,
             # value_hash=value.value_hash,
-            is_streaming=value.is_streaming,
+            # is_streaming=value.is_streaming,
             metadata=value.metadata,
         )
 
@@ -51,10 +51,10 @@ class PipelineValueInfo(BaseModel):
     # value_hash: typing.Union[ValueHashMarker, int] = Field(
     #     description="The hash of the current value."
     # )
-    is_streaming: bool = Field(
-        default=False,
-        description="Whether the value is currently streamed into this object.",
-    )
+    # is_streaming: bool = Field(
+    #     default=False,
+    #     description="Whether the value is currently streamed into this object.",
+    # )
     metadata: typing.Dict[str, typing.Any] = Field(
         description="Metadata relating to the actual data (size, no. of rows, etc. -- depending on data type).",
         default_factory=dict,

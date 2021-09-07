@@ -132,14 +132,18 @@ class DataImportModule(KiaraModule):
         result = func(source, base_aliases=aliases)
         schema = ValueSchema(type=value_type, doc=f"Imported {value_type} value.")
 
+        value_lineage = None
+        # value_lineage = ValueLineage.from_module_and_inputs(module=self, output_name="value_item", inputs=inputs)
+        # value_lineage = ValueLineage(module_type=self._module_type_id, module_config=self.config.dict(), result_name="value_item", inputs={ k: v.id for k, v in inputs.items()})
+
         value: Value = self._kiara.data_registry.register_data(
-            value_data=result, value_schema=schema
+            value_data=result, value_schema=schema, value_lineage=value_lineage
         )
         # value: Value = Value(
         #     value_schema=schema, value_data=result, kiara=self._kiara  # type: ignore
         # )
         value_saved = self._kiara.data_store.register_data(value_data=value)
-        self._kiara.data_store.register_aliases(value_saved, aliases=aliases)
+        self._kiara.data_store.link_aliases(value_saved, *aliases)
 
         outputs.set_values(value_item=value)
 

@@ -413,7 +413,7 @@ async def explain(ctx, search_terms):
         else:
             raise Exception("Invalid result type. This is a bug.")
 
-        title = f"{title}: {result_id}"
+        title = f"{title}: [b]{result_id}[/b]"
         rich_print(
             Panel(result_value, title=title, title_align="left", box=box.ROUNDED)
         )

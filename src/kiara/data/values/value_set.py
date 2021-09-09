@@ -234,6 +234,17 @@ class ValueSet(typing.MutableMapping[str, "Value"]):
 
         return table
 
+    def __repr__(self):
+
+        title_str = ""
+        if self._title:
+            title_str = f" title='{self._title}'"
+        return f"{self.__class__.__name__}(field_names={list(self.keys())}{title_str})"
+
+    def __str__(self):
+
+        return self.__repr__()
+
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:

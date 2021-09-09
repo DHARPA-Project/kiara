@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import copy
 import dpath.util
 import importlib
@@ -342,3 +343,6 @@ def merge_dicts(
         dpath.util.merge(current, copy.deepcopy(d))
 
     return current
+
+
+string_types = (type(b""), type(""))

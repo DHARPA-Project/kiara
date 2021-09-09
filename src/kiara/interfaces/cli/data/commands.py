@@ -5,11 +5,14 @@ import shutil
 import sys
 from rich import box
 from rich.panel import Panel
+from rich.syntax import Syntax
 from rich.table import Table
 
 from kiara import Kiara
-from kiara.utils import is_debug, is_develop
+from kiara.utils import StringYAML, is_debug, is_develop
 from kiara.utils.output import rich_print
+
+yaml = StringYAML()
 
 
 @click.group()
@@ -134,6 +137,38 @@ def explain_value(
                 title=f"Value: [b]{v_id}[/b]",
             )
         )
+
+
+@data.command(name="explain-lineage")
+@click.argument("value_id", nargs=1, required=True)
+@click.pass_context
+def explain_lineage(ctx, value_id: str):
+
+    kiara_obj: Kiara = ctx.obj["kiara"]
+
+    value = kiara_obj.data_store.get_value_obj(value_item=value_id)
+    if value is None:
+        print(f"No value stored for: {value_id}")
+        sys.exit(1)
+
+    value_info = value.create_info()
+
+    lineage = value_info.lineage
+    if not lineage:
+        print(f"No lineage information associated to value '{value_id}'.")
+        sys.exit(0)
+
+    yaml_str = yaml.dump(lineage.to_minimal_dict())
+    syntax = Syntax(yaml_str, "yaml", background_color="default")
+    rich_print(
+        Panel(
+            syntax,
+            title=f"Lineage for: {value_id}",
+            title_align="left",
+            box=box.ROUNDED,
+            padding=(1, 0, 0, 2),
+        )
+    )
 
 
 @data.command(name="load")

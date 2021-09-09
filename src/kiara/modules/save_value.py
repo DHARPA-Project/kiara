@@ -2,11 +2,13 @@
 import typing
 from pydantic import Field
 
-from kiara import KiaraModule
 from kiara.data import ValueSet
-from kiara.data.values import ValueSchema
 from kiara.exceptions import KiaraProcessingException
+from kiara.module import KiaraModule
 from kiara.module_config import ModuleTypeConfigSchema
+
+if typing.TYPE_CHECKING:
+    from kiara.data.values import ValueSchema
 
 
 class SaveValueModuleConfig(ModuleTypeConfigSchema):
@@ -23,7 +25,7 @@ class SaveValueModule(KiaraModule):
     def create_input_schema(
         self,
     ) -> typing.Mapping[
-        str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
+        str, typing.Union["ValueSchema", typing.Mapping[str, typing.Any]]
     ]:
 
         return {
@@ -41,7 +43,7 @@ class SaveValueModule(KiaraModule):
     def create_output_schema(
         self,
     ) -> typing.Mapping[
-        str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
+        str, typing.Union["ValueSchema", typing.Mapping[str, typing.Any]]
     ]:
         return {
             "value_id": {
@@ -71,7 +73,7 @@ class LoadValueModule(KiaraModule):
     def create_input_schema(
         self,
     ) -> typing.Mapping[
-        str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
+        str, typing.Union["ValueSchema", typing.Mapping[str, typing.Any]]
     ]:
 
         return {
@@ -84,7 +86,7 @@ class LoadValueModule(KiaraModule):
     def create_output_schema(
         self,
     ) -> typing.Mapping[
-        str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
+        str, typing.Union["ValueSchema", typing.Mapping[str, typing.Any]]
     ]:
 
         return {

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+import sys
 import typing
 import uuid
 from rich.console import Console, ConsoleOptions, RenderResult
@@ -61,6 +62,12 @@ class Pipeline(object):
 
         self._value_refs: typing.Mapping[ValueSlot, typing.Iterable[ValueRef]] = None  # type: ignore
         self._status: StepStatus = StepStatus.STALE
+        self._steps_by_stage: typing.Optional[
+            typing.Dict[int, typing.Dict[str, PipelineStep]]
+        ] = None
+        self._inputs_by_stage: typing.Optional[
+            typing.Dict[int, typing.List[str]]
+        ] = None
 
         self._kiara: "Kiara" = self._structure._kiara
         self._data_registry: DataRegistry = self._kiara.data_registry
@@ -123,6 +130,45 @@ class Pipeline(object):
 
     def get_step(self, step_id: str) -> PipelineStep:
         return self._structure.get_step(step_id)
+
+    def get_steps_by_stage(
+        self,
+    ) -> typing.Mapping[int, typing.Mapping[str, PipelineStep]]:
+
+        if self._steps_by_stage is not None:
+            return self._steps_by_stage
+
+        result: typing.Dict[int, typing.Dict[str, PipelineStep]] = {}
+        for step_id in self.step_ids:
+            step = self.get_step(step_id)
+            stage = step.processing_stage
+            assert stage is not None
+            result.setdefault(stage, {})[step_id] = step
+
+        self._steps_by_stage = result
+        return self._steps_by_stage
+
+    def get_inputs_by_stage(self) -> typing.Mapping[int, typing.Iterable[str]]:
+
+        if self._inputs_by_stage is not None:
+            return self._inputs_by_stage
+
+        result: typing.Dict[int, typing.List[str]] = {}
+        for k, v in self.inputs._value_slots.items():  # type: ignore
+            refs = self._value_refs[v]
+            min_stage = sys.maxsize
+            for ref in refs:
+                if not isinstance(ref, StepInputRef):
+                    continue
+                step = self.get_step(ref.step_id)
+                stage = step.processing_stage
+                assert stage is not None
+                if stage < min_stage:
+                    min_stage = stage  # type: ignore
+                result.setdefault(min_stage, []).append(k)
+
+        self._inputs_by_stage = result
+        return self._inputs_by_stage
 
     def get_step_inputs(self, step_id: str) -> ValueSet:
         return self._step_inputs[step_id]
@@ -336,6 +382,8 @@ class Pipeline(object):
             )
 
         self._value_refs = value_refs
+        self._steps_by_stage = None
+        self._inputs_by_stage = None
 
     def values_updated(self, *items: ValueSlot) -> None:
 

@@ -174,6 +174,22 @@ class ValueLineage(ModuleConfig):
         description="The inputs that were used to create the value this refers to."
     )
 
+    def to_minimal_dict(
+        self,
+        include_metadata: bool = False,
+        include_module_doc: bool = False,
+        include_module_config: bool = True,
+    ) -> typing.Dict[str, typing.Any]:
+
+        full_dict = self.dict(exclude_none=True)
+        minimal_dict = filter_metadata_schema(
+            full_dict,
+            include_metadata=include_metadata,
+            include_module_doc=include_module_doc,
+            include_module_config=include_module_config,
+        )
+        return minimal_dict
+
     def create_renderable(self, **config: typing.Any) -> RenderableType:
 
         all_ids = sorted(find_all_ids_in_lineage(self))
@@ -185,6 +201,39 @@ class ValueLineage(ModuleConfig):
 
         tree = fill_lineage_tree(self, include_ids=show_ids)
         return tree
+
+
+def filter_metadata_schema(
+    data: typing.Mapping[str, typing.Any],
+    include_metadata: bool = False,
+    include_module_doc: bool = False,
+    include_module_config: bool = True,
+) -> typing.Dict[str, typing.Any]:
+
+    result = {}
+    for k, v in data.items():
+
+        if (
+            isinstance(v, typing.Mapping)
+            and "metadata_item" in v.keys()
+            and not include_metadata
+        ):
+            result[k] = v["metadata_item"]
+        elif isinstance(v, typing.Mapping):
+            if k == "doc" and not include_module_doc:
+                continue
+            elif k == "module_config" and not include_module_config:
+                continue
+            else:
+                result[k] = filter_metadata_schema(
+                    v,
+                    include_metadata=include_metadata,
+                    include_module_doc=include_module_doc,
+                )
+        else:
+            result[k] = v
+
+    return result
 
 
 def find_all_ids_in_lineage(lineage: ValueLineage, ids: typing.Set[str] = None):
@@ -395,7 +444,10 @@ class Value(BaseModel, JupyterMixin):
 
     def set_value_lineage(self, value_lineage: ValueLineage) -> None:
 
-        return self._registry.set_value_lineage(self, value_lineage)
+        if hasattr(self._registry, "set_value_lineage"):
+            return self._registry.set_value_lineage(self, value_lineage)  # type: ignore
+        else:
+            raise Exception("Can't set value lineage: registry is read only")
 
     def get_info(self) -> "ValueInfo":
 

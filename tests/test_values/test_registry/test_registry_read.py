@@ -4,11 +4,11 @@ import pytest
 import typing
 
 from kiara import Kiara
-from kiara.data.registry import BaseDataRegistry, InMemoryDataRegistry
+from kiara.data.registry import DataRegistry, InMemoryDataRegistry
 from kiara.data.values import NO_ID_YET_MARKER, Value, ValueSchema, ValueSlot
 
 
-class TestReadRegistry(BaseDataRegistry):
+class SimpleTestRegistry(DataRegistry):
     """Test implementation of read-only registry, which uses parts of the value data as id."""
 
     def __init__(self, kiara: Kiara):
@@ -61,10 +61,13 @@ class TestReadRegistry(BaseDataRegistry):
     def _get_value_slot_for_alias(self, alias_name: str) -> ValueSlot:
         return self._value_slots.get(alias_name, None)
 
+    def _register_alias(self, alias_name: str, value_schema: ValueSchema) -> ValueSlot:
+        raise NotImplementedError()
+
 
 def test_read_registry_subclass(kiara: Kiara):
 
-    reg = TestReadRegistry(kiara=kiara)
+    reg = SimpleTestRegistry(kiara=kiara)
 
     string_schema = ValueSchema(type="string")
     value = reg.register_data(value_data="xxx.", value_schema=string_schema)

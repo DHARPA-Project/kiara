@@ -12,7 +12,7 @@ from zmq.devices import ThreadDevice
 from kiara.config import KiaraConfig
 from kiara.data import Value
 from kiara.data.registry import DataRegistry, InMemoryDataRegistry
-from kiara.data.store.local import LocalDataStore
+from kiara.data.registry.store import LocalDataStore
 from kiara.data.types import ValueType
 from kiara.data.types.type_mgmt import TypeMgmt
 from kiara.data.values.value_set import ValueSet

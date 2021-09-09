@@ -71,13 +71,18 @@ class BatchController(PipelineController):
                         if is_debug():
                             import traceback
 
-                            traceback.print_stack()
+                            traceback.print_exc()
                         log.error(
                             f"Processing of step '{step_id}' from pipeline '{self.pipeline.id}' failed: {e}"
                         )
                         return False
 
                 self._processor.wait_for(*job_ids)
+                # for j_id in job_ids:
+                #     job = self._processor.get_job_details(j_id)
+                #     assert job is not None
+                #     if job.error:
+                #         print(job.error)
         finally:
             self._is_running = False
 
@@ -122,6 +127,14 @@ class BatchControllerManual(PipelineController):
         self._finished_until: typing.Optional[int] = None
         self._is_running: bool = False
         super().__init__(pipeline=pipeline, processor=processor, kiara=kiara)
+
+    @property
+    def last_finished_stage(self) -> int:
+
+        if self._finished_until is None:
+            return 0
+        else:
+            return self._finished_until
 
     def process_pipeline(self):
 

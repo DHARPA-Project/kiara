@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import asyncclick as click
+import os
 import sys
 import typing
 from rich import box, print as rich_print
@@ -8,6 +9,7 @@ from rich.table import Table
 
 from kiara import Kiara
 from kiara.operations import OperationType
+from kiara.utils import log_message
 
 
 @click.group()
@@ -135,6 +137,19 @@ def list(
 def explain(ctx, operation_id: str, source: bool):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
+
+    if os.path.isfile(os.path.realpath(operation_id)):
+        try:
+            _operation_id = kiara_obj.register_pipeline_description(data=operation_id)
+            if _operation_id is None:
+                print(
+                    f"Unknown error when trying to import '{operation_id}' as pipeline."
+                )
+                sys.exit(1)
+            else:
+                operation_id = _operation_id
+        except Exception as e:
+            log_message(f"Tried to import '{operation_id}' as pipeline, failed: {e}")
 
     op_config = kiara_obj.operation_mgmt.profiles.get(operation_id)
     if not op_config:

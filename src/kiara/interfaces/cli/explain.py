@@ -2,6 +2,7 @@
 """The 'run' subcommand for the cli."""
 import asyncclick as click
 import copy
+import os
 import typing
 from pydantic import Field, PrivateAttr
 from rich import box
@@ -17,6 +18,7 @@ from kiara.metadata.module_models import KiaraModuleTypeMetadata
 from kiara.metadata.operation_models import OperationsMetadata
 from kiara.module import KiaraModule
 from kiara.operations import Operation, OperationType
+from kiara.utils import log_message
 from kiara.utils.output import rich_print
 
 
@@ -388,6 +390,12 @@ async def explain(ctx, search_terms):
     result = KiaraEntityMatches(kiara=kiara_obj)
 
     for search_term in search_terms:
+
+        if os.path.isfile(os.path.realpath(search_term)):
+            try:
+                search_term = kiara_obj.register_pipeline_description(data=search_term)
+            except Exception as e:
+                log_message(f"Tried to import '{search_term}' as pipeline, failed: {e}")
 
         matches = KiaraEntityMatches.search(
             search_term=search_term,

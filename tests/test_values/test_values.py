@@ -25,14 +25,16 @@ def test_registry_values(kiara: Kiara):
         v.get_value_data()
 
     v = reg.register_data(value_data=None, value_schema=value_schema_1)
-    assert v.get_value_data() is None
+    v.get_value_data()
 
     v = reg.register_data(value_data=SpecialValue.NO_VALUE, value_schema=value_schema_1)
     assert v.get_value_data() is None
 
     v = reg.register_data(value_data=SpecialValue.NOT_SET, value_schema=value_schema_1)
-    with pytest.raises(Exception):
+    with pytest.raises(Exception) as e:
         v.get_value_data()
+
+    assert "Value not set" in str(e.value)
 
     v = reg.register_data(value_data="xxx", value_schema=value_schema_1)
     assert v.get_value_data() == "xxx"

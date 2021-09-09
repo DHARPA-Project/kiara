@@ -503,10 +503,15 @@ class DataRegistry(BaseDataRegistry):
             self._lineages[copied_value.id] = value_data.get_lineage()
             return copied_value
 
-        if (
-            value_data in [None, SpecialValue.NOT_SET, SpecialValue.NO_VALUE]
-            and value_schema.default is not None
-        ):
+        if value_data in [
+            None,
+            SpecialValue.NOT_SET,
+            SpecialValue.NO_VALUE,
+        ] and value_schema.default not in [
+            None,
+            SpecialValue.NOT_SET,
+            SpecialValue.NO_VALUE,
+        ]:
             value_data = copy.deepcopy(value_schema.default)
 
         if value_data not in [None, SpecialValue.NOT_SET, SpecialValue.NO_VALUE]:

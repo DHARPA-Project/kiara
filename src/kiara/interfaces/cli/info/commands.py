@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import asyncclick as click
+import click
 import sys
 from rich import print as rich_print
 

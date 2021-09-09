@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Type-related subcommands for the cli."""
-import asyncclick as click
+import click
 
 from kiara import Kiara
 from kiara.data.types import ValueTypesInfo

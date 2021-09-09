@@ -2,7 +2,7 @@
 
 """A command-line interface for *Kiara*.
 """
-import asyncclick as click
+import click
 
 from kiara import Kiara
 from kiara.utils import is_develop
@@ -17,14 +17,14 @@ from .pipeline.commands import pipeline
 from .run import run
 from .type.command import type_group
 
-try:
-    import uvloop
+# try:
+#     import uvloop
+#
+#     uvloop.install()
+# except Exception:
+#     pass
 
-    uvloop.install()
-except Exception:
-    pass
-
-click.anyio_backend = "asyncio"
+# click.anyio_backend = "asyncio"
 
 
 @click.group()

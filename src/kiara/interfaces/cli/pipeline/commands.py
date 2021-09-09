@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Pipeline-related subcommands for the cli."""
 
-import asyncclick as click
+import click
 import os.path
 import sys
 

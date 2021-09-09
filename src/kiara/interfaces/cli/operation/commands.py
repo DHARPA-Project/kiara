@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import asyncclick as click
+import click
 import os
 import sys
 import typing

@@ -81,11 +81,6 @@ def kiara() -> Kiara:
     return kiara
 
 
-@pytest.fixture
-def anyio_backend():
-    return "asyncio"
-
-
 @pytest.fixture(scope="module")
 def presseeded_data_store():
 

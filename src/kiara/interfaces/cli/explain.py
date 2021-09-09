@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """The 'run' subcommand for the cli."""
-import asyncclick as click
+import click
 import copy
 import os
 import typing

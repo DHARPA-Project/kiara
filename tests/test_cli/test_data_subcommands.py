@@ -1,29 +1,23 @@
 # -*- coding: utf-8 -*-
-import pytest
 
-import asyncclick as click
-from asyncclick.testing import CliRunner
+from click.testing import CliRunner
 
 from kiara import Kiara
 from kiara.interfaces.cli import cli
 
-click.anyio_backend = "asyncio"
 
-pytestmark = pytest.mark.anyio
-
-
-async def test_data_subcommand():
+def test_data_subcommand():
 
     runner = CliRunner()
-    result = await runner.invoke(cli, "data")
+    result = runner.invoke(cli, "data")
     assert result.exit_code == 0
     assert "Print the metadata" in result.stdout
 
 
-async def test_data_list_subcommand(presseeded_data_store: Kiara):
+def test_data_list_subcommand(presseeded_data_store: Kiara):
 
     runner = CliRunner()
-    result = await runner.invoke(
+    result = runner.invoke(
         cli,
         "data list --all",
         env={"KIARA_DATA_STORE": presseeded_data_store.config.data_store},

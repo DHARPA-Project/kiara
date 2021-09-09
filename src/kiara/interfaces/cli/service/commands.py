@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import asyncclick as click
+import click
 
 from kiara import Kiara
 from kiara.interfaces.rest_api import KiaraRestService

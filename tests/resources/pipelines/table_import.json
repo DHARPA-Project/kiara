@@ -1,0 +1,21 @@
+{
+  "module_type_name": "table_import",
+  "steps": [
+    {
+      "module_type": "file.import",
+      "module_config": {
+        "source_name": "local",
+        "source_type": "file_path",
+        "allow_save_input": false,
+        "save_default": false
+      },
+      "step_id": "import_file"
+    },
+    {
+      "module_type": "file.convert_to.table",
+      "step_id": "create_table_from_files",
+      "input_links": {
+        "value_item": "import_file.value_item"
+      }
+    }]
+}

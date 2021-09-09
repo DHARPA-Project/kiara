@@ -161,6 +161,8 @@ class PipelineModuleManager(ModuleManager):
         if isinstance(data, Path):
             _name, _data = get_pipeline_details_from_path(data)
             _data = check_doc_sidecar(data, _data)
+            if module_type_name:
+                _name = module_type_name
 
         elif isinstance(data, typing.Mapping):
             _data = dict(data)

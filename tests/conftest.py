@@ -94,15 +94,20 @@ def presseeded_data_store():
     instance_data_store = os.path.join(TEMP_DIR, f"instance_{session_id}")
     conf = KiaraConfig(data_store=instance_data_store)
 
+    pipeline_file = os.path.join(PIPELINES_FOLDER, "table_import.json")
+
     kiara = Kiara(config=conf)
-    kiara.run(
-        "table.import_from.file_path.string",
+    kiara.register_pipeline_description(pipeline_file, module_type_name="preseed")
+    results = kiara.run(
+        "preseed",
         inputs={
-            "source": os.path.join(
+            "import_file__source": os.path.join(
                 ROOT_DIR, "examples", "data", "journals", "JournalNodes1902.csv"
-            ),
-            "aliases": ["journal_nodes"],
+            )
         },
     )
+
+    table_value = results.get_value_obj("create_table_from_files__value_item")
+    table_value.save(aliases=["journal_nodes"])
 
     return kiara

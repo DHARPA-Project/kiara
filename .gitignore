@@ -60,3 +60,4 @@ docs/api-documentation.md
 .envrc
 build.sh
 onefile.spec
+.kiara_complete.zsh.zwc

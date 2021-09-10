@@ -97,7 +97,6 @@ jobs:
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: FAIL_DOC_BUILD_ON_ERROR=true mike deploy --push --update-alias ${RELEASE_VERSION} stable
 
-
   publish_package:
     name: publish python package
     runs-on: ubuntu-latest
@@ -131,4 +130,5 @@ jobs:
         if: startsWith(github.ref, 'refs/tags')
         uses: pypa/gh-action-pypi-publish@master
         with:
+          user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}

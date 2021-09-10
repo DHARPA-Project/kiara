@@ -42,6 +42,10 @@ nav:
     - Decisions: architecture/decisions.md
     - Assumptions: architecture/assumptions.md
 
+extra:
+  version:
+    provider: mike
+
 plugins:
 - search
 - mknotebooks

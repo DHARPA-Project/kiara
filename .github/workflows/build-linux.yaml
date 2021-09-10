@@ -71,7 +71,7 @@ jobs:
         run: make flake
 
   build-docs:
-    name: build documentation
+    name: build 'latest' documentation
     if: ${{ github.ref == 'refs/heads/develop' }}
     runs-on: ubuntu-latest
     needs:
@@ -90,6 +90,8 @@ jobs:
         run: pip install -U --pre  --extra-index-url https://gitlab.com/api/v4/projects/25344049/packages/pypi/simple --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_documentation]
 #      - name: create documentation
 #        run: FAIL_DOC_BUILD_ON_ERROR=true make docs
+      - run: git config --global user.email "markus@frkl.io"
+      - run: git config --global user.name "Markus Binsteiner"
       - name: create documentation
         run: FAIL_DOC_BUILD_ON_ERROR=true mike deploy --push latest
 #      - name: deploy documentation to gh-pages

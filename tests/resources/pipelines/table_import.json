@@ -4,7 +4,7 @@
     {
       "module_type": "file.import",
       "module_config": {
-        "source_name": "local",
+        "source_profile": "local",
         "source_type": "file_path",
         "allow_save_input": false,
         "save_default": false

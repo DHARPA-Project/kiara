@@ -19,7 +19,8 @@ class LoadConfig(ModuleConfig):
 
     value_id: str = Field(description="The id of the value.")
     base_path_input_name: str = Field(
-        description="The base path where the value is stored.", default="base_path"
+        description="The name of the input that stores the base_path where the value is saved.",
+        default="base_path",
     )
     inputs: typing.Dict[str, typing.Any] = Field(
         description="The inputs to use when running this module.", default_factory=dict

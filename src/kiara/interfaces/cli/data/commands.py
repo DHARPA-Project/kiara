@@ -188,6 +188,7 @@ def load_value(ctx, value_id: str):
     try:
         renderables = kiara_obj.pretty_print(value, "renderables")
     except Exception as e:
+
         if is_debug():
             print(e)
         renderables = [str(value.get_value_data())]

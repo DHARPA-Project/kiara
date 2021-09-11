@@ -18,8 +18,8 @@ log = logging.getLogger("kiara")
 class DataImportModuleConfig(ModuleTypeConfigSchema):
 
     # value_type: str = Field(description="The type of the value to be imported.")
-    source_name: str = Field(
-        description="A description of the source data (e.g. 'path', 'url', ...)."
+    source_profile: str = Field(
+        description="The name of the source profile. Used to distinguish different input categories for the same input type."
     )
     source_type: str = Field(description="The type of the source to import from.")
     allow_save_input: bool = Field(
@@ -74,18 +74,18 @@ class DataImportModule(KiaraModule):
                     f"Can't determine source name and type from string in module {cls._module_type_id}, ignoring method: {attr}"  # type: ignore
                 )
 
-            source_name, source_type = tokens
+            source_profile, source_type = tokens
 
             op_config = {
                 "module_type": cls._module_type_id,  # type: ignore
                 "module_config": {
-                    "source_name": source_name,
+                    "source_profile": source_profile,
                     "source_type": source_type,
                 },
-                "doc": f"Import data of type '{sup_type}' from a {source_name} {source_type} and save it to the kiara data store.",
+                "doc": f"Import data of type '{sup_type}' from a {source_profile} {source_type} and save it to the kiara data store.",
             }
             all_metadata_profiles[
-                f"{sup_type}.import_from.{source_name}.{source_type}"
+                f"{sup_type}.import_from.{source_profile}.{source_type}"
             ] = op_config
 
         return all_metadata_profiles
@@ -99,7 +99,7 @@ class DataImportModule(KiaraModule):
         inputs: typing.Dict[str, typing.Any] = {
             "source": {
                 "type": self.get_config_value("source_type"),
-                "doc": f"A {self.get_config_value('source_name')} '{self.get_config_value('source_type')}' value.",
+                "doc": f"A {self.get_config_value('source_profile')} '{self.get_config_value('source_type')}' value.",
             },
         }
 
@@ -151,13 +151,13 @@ class DataImportModule(KiaraModule):
 
         source: str = inputs.get_value_data("source")
 
-        source_name: str = self.get_config_value("source_name")
+        source_profile: str = self.get_config_value("source_profile")
         source_type: str = self.get_config_value("source_type")
 
-        func_name = f"import_from__{source_name}__{source_type}"
+        func_name = f"import_from__{source_profile}__{source_type}"
         if not hasattr(self, func_name):
             raise Exception(
-                f"Can't import 'file' value: missing function '{func_name}'. This is most likely a bug."
+                f"Can't import '{source_type}' value: missing function '{func_name}' in class '{self.__class__.__name__}'. Please check this modules documentation or source code to determine which source types and profiles are supported."
             )
 
         allow_save = self.get_config_value("allow_save_input")
@@ -234,9 +234,9 @@ class FileImportOperationType(OperationType):
         for op_config in self.operation_configs.values():
 
             source_type = op_config.module_config["source_type"]
-            source_name = op_config.module_config["source_name"]
+            source_profile = op_config.module_config["source_profile"]
 
-            result.setdefault(source_type, {})[source_name] = op_config
+            result.setdefault(source_type, {})[source_profile] = op_config
 
         return result
 
@@ -268,8 +268,8 @@ class FileBundleImportOperationType(OperationType):
         for op_config in self.operation_configs.values():
 
             source_type = op_config.module_config["source_type"]
-            source_name = op_config.module_config["source_name"]
+            source_profile = op_config.module_config["source_profile"]
 
-            result.setdefault(source_type, {})[source_name] = op_config
+            result.setdefault(source_type, {})[source_profile] = op_config
 
         return result

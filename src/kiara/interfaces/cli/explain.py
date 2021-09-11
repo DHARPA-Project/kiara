@@ -377,7 +377,7 @@ class KiaraEntityMatches(KiaraInfoModel):
 @click.command()
 @click.argument("search_terms", required=True, nargs=-1, metavar="search_term")
 @click.pass_context
-async def explain(ctx, search_terms):
+def explain(ctx, search_terms):
     """Find and explain any entity in kiara."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]

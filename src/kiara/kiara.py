@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """Main module."""
+import copy
 import logging
 import os
 import typing
@@ -344,18 +345,25 @@ class Kiara(object):
             module_type not in self.available_module_types
             and module_type in self.operation_mgmt.operation_ids
         ):
-            if module_config:
-                raise NotImplementedError()
             op = self.operation_mgmt.get_operation(module_type)
             assert op is not None
             module_type = op.module_type
-            module_config = op.module_config
+            op_config = op.module_config
+            if not module_config:
+                _module_config: typing.Optional[
+                    typing.Mapping[str, typing.Any]
+                ] = op_config
+            else:
+                _module_config = copy.copy(op_config)
+                _module_config.update(module_config)
+        else:
+            _module_config = module_config
 
         return self._module_mgr.create_module(
             kiara=self,
             id=id,
             module_type=module_type,
-            module_config=module_config,
+            module_config=_module_config,
             parent_id=parent_id,
         )
 

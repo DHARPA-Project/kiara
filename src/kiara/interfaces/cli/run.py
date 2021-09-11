@@ -24,7 +24,7 @@ from kiara.utils.output import OutputDetails, rich_print
 
 
 @click.command()
-@click.argument("module", nargs=1)
+@click.argument("module", nargs=1, metavar="MODULE_OR_OPERATION")
 @click.argument("inputs", nargs=-1, required=False)
 @click.option(
     "--module-config",
@@ -45,12 +45,12 @@ from kiara.utils.output import OutputDetails, rich_print
 @click.option(
     "--save",
     "-s",
-    help="Save one or several of the outputs of this run. If the argument contains a '=', the format is [output_name]=[alias], if not, the values will be saved as '[alias].[output_name]'.",
+    help="Save one or several of the outputs of this run. If the argument contains a '=', the format is [output_name]=[alias], if not, the values will be saved as '[alias]-[output_name]'.",
     required=False,
     multiple=True,
 )
 @click.pass_context
-async def run(ctx, module, inputs, module_config, output, explain, save):
+def run(ctx, module, inputs, module_config, output, explain, save):
     """Execute a workflow run."""
 
     if module_config:
@@ -247,10 +247,13 @@ async def run(ctx, module, inputs, module_config, output, explain, save):
             )
             for s_id, msg in failed.items():
                 rich_print(f" - [bold]{s_id}[/bold]: {msg}")
+
+            sys.exit(3)
         else:
             rich_print(
                 "Workflow results not ready: one or several inputs missing or invalid."
             )
+            sys.exit(3)
     else:
         if not silent:
 

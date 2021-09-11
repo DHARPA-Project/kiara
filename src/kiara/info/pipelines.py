@@ -59,7 +59,7 @@ class StepsInfo(KiaraInfoModel):
                 if hasattr(step.step.module, "instance_doc"):
                     doc = step.step.module.module_instance_doc
                 else:
-                    doc = step.step.module.get_type_metadata().model_doc()
+                    doc = step.step.module.get_type_metadata().documentation.full_doc
                 row: typing.List[typing.Any] = []
                 if i == 0:
                     row.append(str(nr))
@@ -377,7 +377,7 @@ class PipelineModuleInfo(KiaraModuleTypeMetadata):
         my_table.add_row("class", self.python_class.full_name)
         my_table.add_row("is pipeline", "yes")
 
-        my_table.add_row("doc", self.model_doc())
+        my_table.add_row("doc", self.get_type_metadata().documentation.full_doc)
         my_table.add_row("config class", self.config.python_class.full_name)
         my_table.add_row(
             "config",
@@ -408,7 +408,7 @@ class PipelineModuleInfo(KiaraModuleTypeMetadata):
             for s_id in stage:
                 step = structure.get_step(s_id)
                 mc = self._kiara.get_module_class(step.module_type)
-                desc = mc.get_type_metadata().model_doc()
+                desc = mc.get_type_metadata().documentation.full_doc
                 inputs: typing.Dict["ValueRef", typing.List[str]] = {}
                 for inp in structure.steps_inputs.values():
                     if inp.step_id != s_id:
@@ -522,7 +522,7 @@ def create_step_table(
     else:
         module_str = step.module_type
 
-    table.add_row("", f"\n{step.module.get_type_metadata().model_doc()}\n")
+    table.add_row("", f"\n{step.module.get_type_metadata().documentation.full_doc}\n")
     table.add_row("type", module_str)
 
     table.add_row(

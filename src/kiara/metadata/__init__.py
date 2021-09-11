@@ -6,7 +6,6 @@ from rich.console import RenderableType
 from rich.table import Table
 
 from kiara.info import KiaraInfoModel, extract_renderable
-from kiara.utils import merge_dicts
 
 if typing.TYPE_CHECKING:
     from kiara import Kiara
@@ -14,6 +13,8 @@ if typing.TYPE_CHECKING:
 
 
 class MetadataModel(KiaraInfoModel):
+    """Base class for classes that represent value metadata in kiara."""
+
     # @classmethod
     # def get_model_cls_metadata(cls) -> "MetadataModelMetadata":
     #
@@ -27,23 +28,23 @@ class MetadataModel(KiaraInfoModel):
 
         return MetadataModelMetadata.from_model_class(model_cls=cls)
 
-    @classmethod
-    def model_doc(cls) -> str:
+    # @classmethod
+    # def model_doc(cls) -> str:
+    #
+    #     return extract_doc_from_cls(cls)
+    #
+    # @classmethod
+    # def model_desc(cls) -> str:
+    #     return extract_doc_from_cls(cls, only_first_line=True)
 
-        return cls.get_type_metadata().documentation.full_doc
-
-    @classmethod
-    def model_desc(cls) -> str:
-        return cls.get_type_metadata().documentation.description
-
-    @classmethod
-    def from_dicts(cls, *dicts: typing.Mapping[str, typing.Any]):
-
-        if not dicts:
-            return cls()
-
-        merged = merge_dicts(*dicts)
-        return cls.parse_obj(merged)
+    # @classmethod
+    # def from_dicts(cls, *dicts: typing.Mapping[str, typing.Any]):
+    #
+    #     if not dicts:
+    #         return cls()
+    #
+    #     merged = merge_dicts(*dicts)
+    #     return cls.parse_obj(merged)
 
     def create_renderable(self, **config: typing.Any) -> RenderableType:
 

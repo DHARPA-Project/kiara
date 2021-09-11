@@ -27,6 +27,7 @@ class MetadataMgmt(object):
 
         if self._metadata_models is None:
             self._metadata_models = find_all_metadata_schemas()
+
         return self._metadata_models
 
     def find_all_schemas_for_package(
@@ -35,7 +36,7 @@ class MetadataMgmt(object):
 
         result = {}
         for name, schema in self.all_schemas.items():
-            schema_md = schema.get_model_cls_metadata()
+            schema_md = schema.get_type_metadata()
             package = schema_md.context.labels.get("package")
             if package == package_name:
                 result[name] = schema
@@ -44,16 +45,26 @@ class MetadataMgmt(object):
 
     def get_metadata_keys_for_type(self, value_type: str) -> typing.Set[str]:
 
+        all_profiles_for_type: typing.Mapping[
+            str, Operation
+        ] = self.get_metadata_operations_for_value_type(value_type=value_type)
+
+        if not all_profiles_for_type:
+            return set()
+        else:
+            return set(all_profiles_for_type.keys())
+
+    def get_metadata_operations_for_value_type(
+        self, value_type: str
+    ) -> typing.Mapping[str, Operation]:
+
         metadata_operations: ExtractMetadataOperationType = self._kiara.operation_mgmt.get_operations("extract_metadata")  # type: ignore
 
         all_profiles_for_type: typing.Mapping[
             str, Operation
         ] = metadata_operations.get_all_operations_for_type(value_type)
 
-        if not all_profiles_for_type:
-            return set()
-        else:
-            return set(all_profiles_for_type.keys())
+        return all_profiles_for_type
 
     def get_value_metadata(
         self, value: Value, *metadata_keys: str, also_return_schema: bool = False

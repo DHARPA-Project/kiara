@@ -1,21 +1,12 @@
 # -*- coding: utf-8 -*-
 import typing
+from pydantic import BaseModel, Field
 from rich import box
-from rich.console import (
-    Console,
-    ConsoleOptions,
-    RenderableType,
-    RenderGroup,
-    RenderResult,
-)
-from rich.markdown import Markdown
-from rich.panel import Panel
+from rich.console import RenderableType
 from rich.table import Table
 
 from kiara.info import KiaraInfoModel, extract_renderable
 from kiara.utils import merge_dicts
-from kiara.utils.doc import extract_doc_from_cls
-from kiara.utils.output import first_line
 
 if typing.TYPE_CHECKING:
     from kiara import Kiara
@@ -23,21 +14,27 @@ if typing.TYPE_CHECKING:
 
 
 class MetadataModel(KiaraInfoModel):
+    # @classmethod
+    # def get_model_cls_metadata(cls) -> "MetadataModelMetadata":
+    #
+    #     return MetadataModelMetadata.from_model_class(cls)
+
     @classmethod
-    def get_model_cls_metadata(cls) -> "MetadataModelMetadata":
+    def get_type_metadata(cls) -> "MetadataModelMetadata":
+        """Return all metadata associated with this module type."""
 
         from kiara.metadata.core_models import MetadataModelMetadata
 
-        return MetadataModelMetadata.from_model_class(cls)
+        return MetadataModelMetadata.from_model_class(model_cls=cls)
 
     @classmethod
     def model_doc(cls) -> str:
 
-        return extract_doc_from_cls(cls)
+        return cls.get_type_metadata().documentation.full_doc
 
     @classmethod
     def model_desc(cls) -> str:
-        return extract_doc_from_cls(cls, only_first_line=True)
+        return cls.get_type_metadata().documentation.description
 
     @classmethod
     def from_dicts(cls, *dicts: typing.Mapping[str, typing.Any]):
@@ -65,45 +62,6 @@ class MetadataModel(KiaraInfoModel):
             table.add_row("operations", "\n".join(ids))
 
         return table
-
-
-class MetadataSchemaInfo(object):
-    def __init__(
-        self, model_cls: typing.Type[MetadataModel], display_schema: bool = False
-    ):
-        self._model_cls: typing.Type[MetadataModel] = model_cls
-        self._display_schema: bool = display_schema
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-
-        table = Table(show_header=True, box=box.SIMPLE)
-        table.add_column("Field name", style="i")
-        table.add_column("Type")
-        table.add_column("Required")
-        table.add_column("Description")
-
-        for field_name, details in self._model_cls.__fields__.items():
-            field_type = self._model_cls.schema()["properties"][field_name]["type"]
-            req = "yes" if details.required else "no"
-            info = details.field_info.description
-            table.add_row(field_name, field_type, req, info)
-
-        md = Markdown(self._model_cls.model_doc())
-        rg_list: typing.List[typing.Any] = [md]
-
-        rg_list.append(table)
-
-        if self._display_schema:
-            md_string = f"\n**JSON schema for ``{self._model_cls._metadata_key}``:**\n\n```\n{self._model_cls.schema_json(indent=2)}\n```"  # type: ignore
-            schema_md = Markdown(md_string)
-            rg_list.append(schema_md)
-
-        rg = RenderGroup(*rg_list)
-
-        panel = Panel(rg, title=f"Metadata schema: [b]{self._model_cls._metadata_key}[/b]", title_align="left", padding=(1, 1))  # type: ignore
-        yield panel
 
 
 class MetadataSet(object):
@@ -138,29 +96,11 @@ class MetadataSet(object):
         self._metadata[metadata_key] = metadata_model_obj
         return self._metadata[metadata_key]
 
-    def get_schema(self, metadata_key) -> MetadataSchemaInfo:
+    def get_schema(self, metadata_key) -> "MetadataModelMetadata":
         pass
 
 
-class MetadataSchemasInfo(object):
-    def __init__(
-        self, metadata_schemas: typing.Mapping[str, typing.Type[MetadataModel]]
-    ):
+class ValueTypeAndDescription(BaseModel):
 
-        self._schemas: typing.Mapping[
-            str, typing.Type[MetadataModel]
-        ] = metadata_schemas
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-
-        table = Table(show_header=False, box=box.SIMPLE)
-        table.add_column("Schema name", style="b")
-        table.add_column("Description", style="i")
-
-        for name, schema in self._schemas.items():
-            table.add_row(name, first_line(schema.model_doc()))
-
-        panel = Panel(table, title="Available schemas", title_align="left")  # type: ignore
-        yield panel
+    description: str = Field(description="The description for the value.")
+    type: str = Field(description="The value type.")

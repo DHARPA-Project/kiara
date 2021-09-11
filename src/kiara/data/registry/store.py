@@ -166,6 +166,7 @@ class LocalDataStore(DataRegistry):
             load_config=load_config_data,
         )
 
+        value_metadata_path.parent.mkdir(parents=True, exist_ok=True)
         value_metadata_path.write_text(value_info.json())
 
         copied_value = value.copy()

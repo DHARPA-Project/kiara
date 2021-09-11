@@ -155,7 +155,7 @@ def load_all_subclasses_for_entry_point(
                 if hasattr(module_cls, set_id_attribute):
                     if not getattr(module_cls, set_id_attribute) == name:
                         log.warning(
-                            f"Item id mismatch for type {entry_point_name}: {getattr(module_cls, set_id_attribute)} != {name}, entry point key takes precedence {name})"
+                            f"Item id mismatch for type {entry_point_name}: {getattr(module_cls, set_id_attribute)} != {name}, entry point key takes precedence: {name})"
                         )
                         setattr(module_cls, set_id_attribute, name)
 

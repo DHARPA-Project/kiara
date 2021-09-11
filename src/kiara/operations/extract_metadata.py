@@ -180,7 +180,8 @@ class ExtractMetadataOperationType(OperationType):
 
         result = {}
         for op_config in self.operation_configs.values():
-            if op_config.module_config["value_type"] != value_type:
+            v_t = op_config.module_config["value_type"]
+            if v_t != value_type:
                 continue
             module_cls: ExtractMetadataModule = op_config.module_cls  # type: ignore
             md_key = module_cls.get_metadata_key()

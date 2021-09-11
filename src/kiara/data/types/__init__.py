@@ -19,18 +19,25 @@ be discouraged, since this might not be trivial and there are quite a few things
 
 """
 
+import deepdiff
 import typing
+from pydantic import BaseModel, Extra, Field, PrivateAttr, ValidationError
+from pydantic.schema import (
+    get_flat_models_from_model,
+    get_model_name_map,
+    model_process_schema,
+)
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
 
-from kiara.exceptions import KiaraValueException
+from kiara.defaults import DEFAULT_NO_DESC_VALUE
+from kiara.exceptions import KiaraValueException, ValueTypeConfigException
+from kiara.metadata import MetadataModel, ValueTypeAndDescription
+from kiara.metadata.core_models import PythonClassMetadata
 from kiara.metadata.type_models import ValueTypeMetadata
-
-if typing.TYPE_CHECKING:
-    pass
 
 
 def get_type_name(obj: typing.Any):
@@ -42,7 +49,111 @@ def get_type_name(obj: typing.Any):
         return f"{obj.__class__.__module__}.{obj.__class__.__name__}"
 
 
-class ValueType(object):
+class ValueTypeConfigSchema(BaseModel):
+    """Base class that describes the configuration a [``ValueType``][kiara.data.types.ValueType] class accepts.
+
+    This is stored in the ``_config_cls`` class attribute in each ``ValueType`` class. By default,
+    a ``ValueType`` is not configurable, unless the ``_config_cls`` class attribute points to a sub-class of this class.
+    """
+
+    @classmethod
+    def requires_config(cls) -> bool:
+        """Return whether this class can be used as-is, or requires configuration before an instance can be created."""
+
+        for field_name, field in cls.__fields__.items():
+            if field.required and field.default is None:
+                return True
+        return False
+
+    _config_hash: str = PrivateAttr(default=None)
+
+    class Config:
+        extra = Extra.forbid
+        allow_mutation = False
+
+    def get(self, key: str) -> typing.Any:
+        """Get the value for the specified configuation key."""
+
+        if key not in self.__fields__:
+            raise Exception(
+                f"No config value '{key}' in module config class '{self.__class__.__name__}'."
+            )
+
+        return getattr(self, key)
+
+    @property
+    def config_hash(self):
+
+        if self._config_hash is None:
+            _d = self.dict()
+            hashes = deepdiff.DeepHash(_d)
+            self._config_hash = hashes[_d]
+        return self._config_hash
+
+    def __eq__(self, other):
+
+        if self.__class__ != other.__class__:
+            return False
+
+        return self.dict() == other.dict()
+
+    def __hash__(self):
+
+        return hash(self.config_hash)
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+
+        my_table = Table(box=box.MINIMAL, show_header=False)
+        my_table.add_column("Field name", style="i")
+        my_table.add_column("Value")
+        for field in self.__fields__:
+            my_table.add_row(field, getattr(self, field))
+
+        yield my_table
+
+
+TYPE_CONFIG = typing.TypeVar("TYPE_CONFIG", bound=ValueTypeConfigSchema)
+
+
+class ValueTypeConfigMetadata(MetadataModel):
+    @classmethod
+    def from_config_class(
+        cls,
+        config_cls: typing.Type[ValueTypeConfigSchema],
+    ):
+
+        flat_models = get_flat_models_from_model(config_cls)
+        model_name_map = get_model_name_map(flat_models)
+        m_schema, _, _ = model_process_schema(config_cls, model_name_map=model_name_map)
+        fields = m_schema["properties"]
+
+        config_values = {}
+        for field_name, details in fields.items():
+            type_str = "-- n/a --"
+            if "type" in details.keys():
+                type_str = details["type"]
+
+            desc = details.get("description", DEFAULT_NO_DESC_VALUE)
+            config_values[field_name] = ValueTypeAndDescription(
+                description=desc, type=type_str
+            )
+
+        python_cls = PythonClassMetadata.from_class(config_cls)
+        return ValueTypeConfigMetadata(
+            python_class=python_cls, config_values=config_values
+        )
+
+    python_class: PythonClassMetadata = Field(
+        description="The Python class for this configuration."
+    )
+    config_values: typing.Dict[str, ValueTypeAndDescription] = Field(
+        description="The available configuration values."
+    )
+
+
+class ValueType(typing.Generic[TYPE_CONFIG]):
     """Base class that all *kiara* types must inherit from.
 
     *kiara* types have 3 main responsibilities:
@@ -59,6 +170,8 @@ class ValueType(object):
      module needs the input data to do processing on it -- and even then it might be that it only requests a part of the
      data, say a single column of a table. Or when a frontend needs to display/visualize the data.
     """
+
+    _config_class: typing.Type[TYPE_CONFIG] = ValueTypeConfigSchema  # type: ignore
 
     @classmethod
     def get_type_metadata(cls) -> ValueTypeMetadata:
@@ -112,13 +225,22 @@ class ValueType(object):
 
     def __init__(self, **type_config: typing.Any):
 
-        self._type_config: typing.Mapping[str, typing.Any] = type_config
+        try:
+            self._type_config = self.__class__._config_class(**type_config)
+        except ValidationError as ve:
+            raise ValueTypeConfigException(
+                f"Error creating object for value_type: {ve}",
+                self.__class__,
+                type_config,
+                ve,
+            )
+        # self._type_config: typing.Mapping[str, typing.Any] = self
         # self._transformations: typing.Optional[
         #     typing.Mapping[str, typing.Mapping[str, typing.Any]]
         # ] = None
 
     @property
-    def type_config(self) -> typing.Mapping[str, typing.Any]:
+    def type_config(self) -> TYPE_CONFIG:
         return self._type_config
 
     def import_value(self, value: typing.Any) -> typing.Any:
@@ -200,7 +322,7 @@ class ValueTypesInfo(object):
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
 
-        table = Table(show_header=True, box=box.SIMPLE, show_lines=True)
+        table = Table(show_header=True, box=box.SIMPLE, show_lines=False)
         table.add_column("Type name", style="i")
         table.add_column("Description")
 

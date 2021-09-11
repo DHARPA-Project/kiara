@@ -233,6 +233,7 @@ class OperationMgmt(object):
                         profile_id = f"{module_id}.{profile_name}"
                     else:
                         profile_id = profile_name
+
                     if profile_id in _profiles.keys():
                         raise Exception(
                             f"Duplicate operation id '{profile_id}': {_profiles[profile_id].dict()} -- {config}"

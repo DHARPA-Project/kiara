@@ -33,6 +33,28 @@ class KiaraModuleConfigException(Exception):
         super().__init__(_msg)
 
 
+class ValueTypeConfigException(Exception):
+    def __init__(
+        self,
+        msg: str,
+        type_cls: typing.Type["ValueType"],
+        config: typing.Mapping[str, typing.Any],
+        parent: typing.Optional[Exception] = None,
+    ):
+
+        self._type_cls = type_cls
+        self._config = config
+
+        self._parent: typing.Optional[Exception] = parent
+
+        if not msg.endswith("."):
+            _msg = msg + "."
+        else:
+            _msg = msg
+
+        super().__init__(_msg)
+
+
 class KiaraValueException(Exception):
     def __init__(
         self,

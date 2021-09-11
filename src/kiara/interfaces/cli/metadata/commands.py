@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 import click
 import sys
+from rich.panel import Panel
+from rich.syntax import Syntax
 
 from kiara import Kiara
-from kiara.metadata import MetadataSchemaInfo, MetadataSchemasInfo
+from kiara.info.metadata import MetadataModelsInfo
+from kiara.metadata.core_models import MetadataModelMetadata
 from kiara.utils.class_loading import find_all_metadata_schemas
+from kiara.utils.output import rich_print
 
 
 @click.group()
@@ -20,10 +24,12 @@ def list_metadata(ctx):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    schemas = kiara_obj.metadata_mgmt.all_schemas
-
-    info = MetadataSchemasInfo(metadata_schemas=schemas)
-    kiara_obj.explain(info)
+    keys = kiara_obj.metadata_mgmt.all_schemas.keys()
+    print()
+    info = MetadataModelsInfo.from_metadata_keys(*keys, kiara=kiara_obj)
+    kiara_obj.explain(
+        Panel(info, title="Available metadata schemas", title_align="left")
+    )
 
 
 @metadata.command(name="explain")
@@ -39,7 +45,7 @@ def list_metadata(ctx):
 def explain_metadata(ctx, metadata_key, json_schema, details):
     """Print details for a specific metadata schema."""
 
-    kiara_obj: Kiara = ctx.obj["kiara"]
+    # kiara_obj: Kiara = ctx.obj["kiara"]
 
     schemas = find_all_metadata_schemas()
     if metadata_key not in schemas.keys():
@@ -48,8 +54,19 @@ def explain_metadata(ctx, metadata_key, json_schema, details):
         sys.exit(1)
 
     if not json_schema:
-        info = MetadataSchemaInfo(schemas[metadata_key], display_schema=details)
+        info = MetadataModelMetadata.from_model_class(schemas[metadata_key])
         print()
-        kiara_obj.explain(info)
+        title = f"Metadata schema: [b]{metadata_key}[/b]"
+        renderable = Panel(
+            info.create_renderable(display_schema=details),
+            title=title,
+            title_align="left",
+        )
     else:
-        print(schemas[metadata_key].schema_json(indent=2))
+        renderable = Syntax(
+            schemas[metadata_key].schema_json(indent=2),
+            "json",
+            background_color="default",
+        )
+
+    rich_print(renderable)

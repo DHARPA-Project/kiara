@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 """Main module."""
-import copy
 import logging
 import os
 import typing
@@ -354,7 +353,7 @@ class Kiara(object):
                     typing.Mapping[str, typing.Any]
                 ] = op_config
             else:
-                _module_config = copy.copy(op_config)
+                _module_config = dict(op_config)
                 _module_config.update(module_config)
         else:
             _module_config = module_config
@@ -411,6 +410,8 @@ class Kiara(object):
             if module_config:
                 raise NotImplementedError()
             module = module_type.module
+        else:
+            raise Exception(f"Invalid class for module_type: {type(module_type)}")
 
         return self.run_module(
             module=module,

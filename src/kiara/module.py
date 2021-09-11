@@ -430,40 +430,43 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
 
     def _create_input_schemas(self) -> None:
 
-        _input_schemas_data = self.create_input_schema()
-
-        if not _input_schemas_data:
-            raise Exception(
-                f"Invalid module implementation for '{self.__class__.__name__}': empty input schema"
-            )
-
         try:
-            _input_schemas = create_schemas(
-                schema_config=_input_schemas_data, kiara=self._kiara
+            _input_schemas_data = self.create_input_schema()
+
+            if not _input_schemas_data:
+                raise Exception(
+                    f"Invalid module implementation for '{self.__class__.__name__}': empty input schema"
+                )
+
+            try:
+                _input_schemas = create_schemas(
+                    schema_config=_input_schemas_data, kiara=self._kiara
+                )
+            except Exception as e:
+                raise Exception(
+                    f"Can't create input schemas for module {self.full_id}: {e}"
+                )
+
+            defaults = self.config.defaults
+            constants = self.config.constants
+
+            for k, v in defaults.items():
+                if k not in _input_schemas.keys():
+                    raise Exception(
+                        f"Can't create inputs for module '{self._module_type_id}', invalid default field name '{k}'. Available field names: '{', '.join(_input_schemas.keys())}'"  # type: ignore
+                    )
+
+            for k, v in constants.items():
+                if k not in _input_schemas.keys():
+                    raise Exception(
+                        f"Can't create inputs for module '{self._module_type_id}', invalid constant field name '{k}'. Available field names: '{', '.join(_input_schemas.keys())}'"  # type: ignore
+                    )
+
+            self._input_schemas, self._constants = overlay_constants_and_defaults(
+                _input_schemas, defaults=defaults, constants=constants
             )
         except Exception as e:
-            raise Exception(
-                f"Can't create input schemas for module {self.full_id}: {e}"
-            )
-
-        defaults = self.config.defaults
-        constants = self.config.constants
-
-        for k, v in defaults.items():
-            if k not in _input_schemas.keys():
-                raise Exception(
-                    f"Can't create inputs for module '{self._module_type_id}', invalid default field name '{k}'. Available field names: '{', '.join(_input_schemas.keys())}'"  # type: ignore
-                )
-
-        for k, v in constants.items():
-            if k not in _input_schemas.keys():
-                raise Exception(
-                    f"Can't create inputs for module '{self._module_type_id}', invalid constant field name '{k}'. Available field names: '{', '.join(_input_schemas.keys())}'"  # type: ignore
-                )
-
-        self._input_schemas, self._constants = overlay_constants_and_defaults(
-            _input_schemas, defaults=defaults, constants=constants
-        )
+            raise Exception(f"Can't create input schemas for module of type '{self.__class__._module_type_id}': {e}")  # type: ignore
 
     @property
     def output_schemas(self) -> typing.Mapping[str, ValueSchema]:
@@ -472,23 +475,26 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         if self._output_schemas is not None:
             return self._output_schemas
 
-        _output_schema = self.create_output_schema()
-
-        if not _output_schema:
-            raise Exception(
-                f"Invalid module implementation for '{self.__class__.__name__}': empty output schema"
-            )
-
         try:
-            self._output_schemas = create_schemas(
-                schema_config=_output_schema, kiara=self._kiara
-            )
-        except Exception as e:
-            raise Exception(
-                f"Can't create output schemas for module {self.full_id}: {e}"
-            )
+            _output_schema = self.create_output_schema()
 
-        return self._output_schemas
+            if not _output_schema:
+                raise Exception(
+                    f"Invalid module implementation for '{self.__class__.__name__}': empty output schema"
+                )
+
+            try:
+                self._output_schemas = create_schemas(
+                    schema_config=_output_schema, kiara=self._kiara
+                )
+            except Exception as e:
+                raise Exception(
+                    f"Can't create output schemas for module {self.full_id}: {e}"
+                )
+
+            return self._output_schemas
+        except Exception as e:
+            raise Exception(f"Can't create output schemas for module of type '{self.__class__._module_type_id}': {e}")  # type: ignore
 
     @property
     def input_names(self) -> typing.Iterable[str]:

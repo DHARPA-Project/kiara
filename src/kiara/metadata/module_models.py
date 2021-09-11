@@ -3,7 +3,7 @@ import inspect
 import json
 import textwrap
 import typing
-from pydantic import BaseModel, Field, validator
+from pydantic import Field, validator
 from pydantic.schema import (
     get_flat_models_from_model,
     get_model_name_map,
@@ -17,7 +17,7 @@ from rich.table import Table
 
 from kiara.data.values import ValueSchema
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
-from kiara.metadata import MetadataModel
+from kiara.metadata import MetadataModel, ValueTypeAndDescription
 from kiara.metadata.core_models import (
     ContextMetadataModel,
     DocumentationMetadataModel,
@@ -31,12 +31,6 @@ from kiara.utils.output import create_table_from_base_model
 
 if typing.TYPE_CHECKING:
     from kiara import KiaraModule
-
-
-class ValueTypeAndDescription(BaseModel):
-
-    description: str = Field(description="The description for the value.")
-    type: str = Field(description="The value type.")
 
 
 class KiaraModuleConfigMetadata(MetadataModel):
@@ -229,8 +223,10 @@ class KiaraModuleTypeMetadata(MetadataModel):
         table.add_row("Context", self.context.create_renderable())
 
         if include_config_schema:
-            config_cls = self.config.python_class.get_class()
-            table.add_row("Module config", create_table_from_base_model(config_cls))
+            if self.config:
+                config_cls = self.config.python_class.get_class()
+                table.add_row("Module config", create_table_from_base_model(config_cls))
+            table.add_row("Module config", "-- no config --")
 
         table.add_row("Python class", self.python_class.create_renderable())
 

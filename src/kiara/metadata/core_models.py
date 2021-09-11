@@ -6,6 +6,8 @@ from pydantic import AnyUrl, BaseModel, EmailStr, Field
 from rich import box
 from rich.console import RenderableType
 from rich.markdown import Markdown
+from rich.panel import Panel
+from rich.syntax import Syntax
 from rich.table import Table
 from types import ModuleType
 
@@ -13,33 +15,6 @@ from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.metadata import MetadataModel
 from kiara.utils import merge_dicts
 from kiara.utils.global_metadata import get_metadata_for_python_module_or_class
-
-
-class PythonClassMetadata(MetadataModel):
-    @classmethod
-    def from_class(cls, item_cls: typing.Type):
-
-        conf: typing.Dict[str, typing.Any] = {
-            "class_name": item_cls.__name__,
-            "module_name": item_cls.__module__,
-            "full_name": f"{item_cls.__module__}.{item_cls.__name__}",
-        }
-        return PythonClassMetadata(**conf)
-
-    class_name: str = Field(description="The name of the Python class.")
-    module_name: str = Field(
-        description="The name of the Python module this class lives in."
-    )
-    full_name: str = Field(description="The full class namespace.")
-
-    def get_class(self) -> typing.Type:
-        m = self.get_module()
-        return getattr(m, self.class_name)
-
-    def get_module(self) -> ModuleType:
-        m = importlib.import_module(self.module_name)
-        return m
-
 
 # class HashMetadata(MetadataModel):
 #
@@ -249,6 +224,36 @@ class OriginMetadataModel(MetadataModel):
         return table
 
 
+class PythonClassMetadata(MetadataModel):
+    """Python class and module information."""
+
+    _metadata_key: typing.ClassVar[str] = "python_class"
+
+    @classmethod
+    def from_class(cls, item_cls: typing.Type):
+
+        conf: typing.Dict[str, typing.Any] = {
+            "class_name": item_cls.__name__,
+            "module_name": item_cls.__module__,
+            "full_name": f"{item_cls.__module__}.{item_cls.__name__}",
+        }
+        return PythonClassMetadata(**conf)
+
+    class_name: str = Field(description="The name of the Python class.")
+    module_name: str = Field(
+        description="The name of the Python module this class lives in."
+    )
+    full_name: str = Field(description="The full class namespace.")
+
+    def get_class(self) -> typing.Type:
+        m = self.get_module()
+        return getattr(m, self.class_name)
+
+    def get_module(self) -> ModuleType:
+        m = importlib.import_module(self.module_name)
+        return m
+
+
 class MetadataModelMetadata(MetadataModel):
     @classmethod
     def from_model_class(cls, model_cls: typing.Type[MetadataModel]):
@@ -279,3 +284,58 @@ class MetadataModelMetadata(MetadataModel):
     python_class: PythonClassMetadata = Field(
         description="The Python class for this value type."
     )
+
+    def create_fields_table(
+        self, show_header: bool = True, show_required: bool = True
+    ) -> Table:
+
+        type_cls = self.python_class.get_class()
+
+        fields_table = Table(show_header=show_header, box=box.SIMPLE)
+        fields_table.add_column("Field name", style="i")
+        fields_table.add_column("Type")
+        if show_required:
+            fields_table.add_column("Required")
+        fields_table.add_column("Description")
+        for field_name, details in type_cls.__fields__.items():
+            field_type = type_cls.schema()["properties"][field_name]["type"]
+            info = details.field_info.description
+            if show_required:
+                req = "yes" if details.required else "no"
+                fields_table.add_row(field_name, field_type, req, info)
+            else:
+                fields_table.add_row(field_name, field_type, info)
+
+        return fields_table
+
+    def create_renderable(self, **config: typing.Any) -> RenderableType:
+
+        include_schema = config.get("display_schema", False)
+        include_doc = config.get("include_doc", True)
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("Property", style="i")
+        table.add_column("Value")
+
+        if include_doc:
+            table.add_row(
+                "Documentation",
+                Panel(self.documentation.create_renderable(), box=box.SIMPLE),
+            )
+        table.add_row("Origin", self.origin.create_renderable())
+        table.add_row("Context", self.context.create_renderable())
+
+        table.add_row("Python class", self.python_class.create_renderable())
+
+        fields_table = self.create_fields_table()
+        table.add_row("Fields", fields_table)
+
+        if include_schema:
+            json_str = Syntax(
+                self.python_class.get_class().schema_json(indent=2),
+                "json",
+                background_color="default",
+            )
+            table.add_row("Json Schema", json_str)
+
+        return table

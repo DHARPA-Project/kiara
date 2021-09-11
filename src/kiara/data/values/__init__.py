@@ -41,7 +41,6 @@ if typing.TYPE_CHECKING:
     )
     from kiara.kiara import Kiara
     from kiara.module import KiaraModule
-    from kiara.operations.serialize import SerializeValueOperationType
 
 log = logging.getLogger("kiara")
 yaml = StringYAML()
@@ -811,10 +810,9 @@ class ValueInfo(KiaraInfoModel):
         value_lineage = value.get_lineage()
 
         if include_deserialization_config:
-            serialize_operation: SerializeValueOperationType = (  # type: ignore
-                value._kiara.operation_mgmt.get_operation("serialize")  # type: ignore
-            )
-            print(serialize_operation)
+            # serialize_operation: SerializeValueOperationType = (  # type: ignore
+            #     value._kiara.operation_mgmt.get_operation("serialize")  # type: ignore
+            # )
             raise NotImplementedError()
         return ValueInfo(
             value_id=value.id,

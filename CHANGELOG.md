@@ -1,6 +1,8 @@
 # Changelog
 
-## Version 0.0.14 (Upcoming)
+## Version 0.0.15 (Upcoming)
+
+## Version 0.0.14
 
 - this version contains a rather large refactoring of the data registry and how values are handled, so expect some breakage. Please submit issues for anything that worked, but doesn't anymore. Also, you'll have to delete the kiara shared local data (`~/.local/share/kiara` on linux) when upgrading.
 - renamed:
@@ -27,7 +29,7 @@
   - 'ValueSlot' basically contains the history of all (immutable) Value objects on a specific spot (mostly within a pipeline, but can be used elsewhere)
   - 'set_value_data' on 'Value' class is removed (since values are no immutable)
   - the interface of 'ValueSet' however is mostly unchanged, and all 'set/get value_obj/value_data' methods should still work as before
-- data store is now just a 'DataRegistry' subclass that persists to disk instead of memory
+- data store is now just a 'DataRegistry' subclass that persists to disk instead of memory, this means that getting data into the data store now uses the 'register_data' method, and getting it out uses 'get_value_obj'
 - aliases can now only contain alphanumeric characters, '_' and '-"
 - rudimentary data lineage support
 - performance improvement for cli, because more stuff is now lazily loaded

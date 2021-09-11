@@ -2,6 +2,7 @@
 import typing
 
 from kiara.data.values import ValueSchema
+from kiara.defaults import INVALID_VALUE_NAMES
 from kiara.utils import check_valid_field_names
 
 if typing.TYPE_CHECKING:
@@ -18,7 +19,7 @@ def create_schemas(
     invalid = check_valid_field_names(*schema_config.keys())
     if invalid:
         raise Exception(
-            f"Can't assemble schema, contains invalid input field name(s): {', '.join(invalid)}"
+            f"Can't assemble schema because it contains invalid input field name(s) '{', '.join(invalid)}'. Change the input schema to not contain any of the reserved keywords: {', '.join(INVALID_VALUE_NAMES)}"
         )
 
     result = {}

@@ -122,7 +122,7 @@ class SaveValueTypeModule(KiaraModule):
 
         lc = LoadConfig(**load_config)
 
-        if lc.base_path_input_name not in lc.inputs.keys():
+        if lc.base_path_input_name and lc.base_path_input_name not in lc.inputs.keys():
             raise KiaraProcessingException(
                 f"Invalid load config: base path '{lc.base_path_input_name}' not part of inputs."
             )

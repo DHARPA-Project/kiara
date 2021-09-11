@@ -25,8 +25,7 @@ if typing.TYPE_CHECKING:
 class ModuleTypeConfigSchema(BaseModel):
     """Base class that describes the configuration a [``KiaraModule``][kiara.module.KiaraModule] class accepts.
 
-    This is stored in the ``_config_cls`` class attribute in each ``KiaraModule`` class. By default,
-    such a ``KiaraModule`` is not configurable.
+    This is stored in the ``_config_cls`` class attribute in each ``KiaraModule`` class.
 
     There are two config options every ``KiaraModule`` supports:
 

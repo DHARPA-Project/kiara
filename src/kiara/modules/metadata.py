@@ -18,7 +18,7 @@ class ExtractPythonClass(ExtractMetadataModule):
 
     @classmethod
     def get_metadata_key(cls) -> str:
-        return "python_cls"
+        return "python_class"
 
     def _get_metadata_schema(
         self, type: str

@@ -166,7 +166,7 @@ def define_env(env):
         )
         result = []
         for name, info in metadata_schemas.items():
-            type_md = info.get_model_cls_metadata()
+            type_md = info.get_type_metadata()
             result.append(f"  - ``{name}``: {type_md.documentation.description}")
 
         return "\n".join(result)

@@ -1,6 +1,12 @@
 # Changelog
 
-## Version 0.0.15 (Upcoming)
+## Version 0.0.16 (Upcoming)
+
+
+## Version 0.0.15
+
+- support for saving values of type string, integer, float, bool
+- some CI improvements when a tag is pushed: release to PyPi, auto-create versioned documentation
 
 ## Version 0.0.14
 

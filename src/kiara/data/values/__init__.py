@@ -172,6 +172,10 @@ class ValueLineage(ModuleConfig):
     inputs: typing.Dict[str, "ValueInfo"] = Field(
         description="The inputs that were used to create the value this refers to."
     )
+    value_index: typing.Optional[typing.Dict[str, "ValueInfo"]] = Field(
+        description="Index of all values that are associated with this value lineage.",
+        default=None,
+    )
 
     def to_minimal_dict(
         self,

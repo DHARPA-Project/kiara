@@ -15,10 +15,12 @@ if typing.TYPE_CHECKING:
 class MetadataModel(KiaraInfoModel):
     """Base class for classes that represent value metadata in kiara."""
 
-    # @classmethod
-    # def get_model_cls_metadata(cls) -> "MetadataModelMetadata":
-    #
-    #     return MetadataModelMetadata.from_model_class(cls)
+    @classmethod
+    def get_model_cls_metadata(cls) -> "MetadataModelMetadata":
+
+        from kiara.metadata.core_models import MetadataModelMetadata
+
+        return MetadataModelMetadata.from_model_class(cls)
 
     @classmethod
     def get_type_metadata(cls) -> "MetadataModelMetadata":

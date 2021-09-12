@@ -85,9 +85,9 @@ def calculate_class_doc_url(base_url: str, module_type_name: str, pipeline: bool
 
     module_type_name = module_type_name.replace(".", "")
     if not pipeline:
-        url = f"{base_url}/modules_list.html#{module_type_name}"
+        url = f"{base_url}/latest/modules_list/#{module_type_name}"
     else:
-        url = f"{base_url}/pipelines_list.html#{module_type_name}"
+        url = f"{base_url}/latest/pipelines_list/#{module_type_name}"
 
     return url
 

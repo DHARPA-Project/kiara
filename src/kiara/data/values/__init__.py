@@ -114,6 +114,8 @@ class ValueSchema(BaseModel):
 
 
 class ValueLineage(ModuleConfig):
+    """Model containing the lineage of a value."""
+
     @classmethod
     def from_module_and_inputs(
         cls,

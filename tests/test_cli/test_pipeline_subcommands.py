@@ -32,7 +32,7 @@ def test_pipeline_explain_subcommand():
         "logic_3.json",
     )
     abs_path = os.path.abspath(pipeline_file)
-    result = runner.invoke(cli, f"pipeline explain {abs_path}")
+    result = runner.invoke(cli, f"pipeline explain '{abs_path}'")
 
     assert result.exit_code == 0
     assert "Pipeline structure" in result.stdout
@@ -58,7 +58,7 @@ def test_pipeline_explain_steps_subcommand():
         "logic_3.json",
     )
     abs_path = os.path.abspath(pipeline_file)
-    result = runner.invoke(cli, f"pipeline explain {abs_path}")
+    result = runner.invoke(cli, f"pipeline explain '{abs_path}'")
 
     assert result.exit_code == 0
     assert "logic.and" in result.stdout

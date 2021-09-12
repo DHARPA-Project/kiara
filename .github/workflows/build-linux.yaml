@@ -91,7 +91,7 @@ jobs:
       - run: git config --global user.name "Markus Binsteiner"
       - name: create latest documentation
         if: ${{ ( github.ref == 'refs/heads/develop') }}
-        run: FAIL_DOC_BUILD_ON_ERROR=true mike deploy --push latest
+        run: FAIL_DOC_BUILD_ON_ERROR=true mike deploy --push latest && mike set-default --push latest
       - name: extract tag name
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - name: create stable documentation

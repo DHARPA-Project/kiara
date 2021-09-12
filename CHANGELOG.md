@@ -1,6 +1,12 @@
 # Changelog
 
-## Version 0.0.16 (Upcoming)
+## Version 0.1.1 (Upcoming)
+
+## Version 0.1.0
+
+- first 'official' release on Pypi.org
+- the code and its API in this release can by no means be considered stable, but the largest pieces of its architecture should be in place by now
+- there are still some refactorings to be made, and lots of features to implement, but this version should be good enough to do some very basic processing and data management
 
 
 ## Version 0.0.15
@@ -37,6 +43,7 @@
   - the interface of 'ValueSet' however is mostly unchanged, and all 'set/get value_obj/value_data' methods should still work as before
 - data store is now just a 'DataRegistry' subclass that persists to disk instead of memory, this means that getting data into the data store now uses the 'register_data' method, and getting it out uses 'get_value_obj'
 - aliases can now only contain alphanumeric characters, '_' and '-"
+- removed some data import modules/operations until I settled on a data onboarding strategy (current one was leaky). This is mostly relevant for the operation that imports a table from a (path) string -- use a mini-pipeline as replacement and save the table manually, something like: https://github.com/DHARPA-Project/kiara/blob/main/tests/resources/pipelines/table_import.json
 - rudimentary data lineage support
 - performance improvement for cli, because more stuff is now lazily loaded
 - tests

@@ -131,3 +131,24 @@ jobs:
         with:
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
+
+  merge_tag_to_main:
+    name: merge current tag to main branch
+    runs-on: ubuntu-latest
+    if: ${{ startsWith(github.ref, 'refs/tags') }}
+    needs:
+      - test-linux
+      - mypy-linux
+      - flake8-linux
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - run: git config --global user.email "markus@frkl.io"
+    - run: git config --global user.name "Markus Binsteiner"
+    - uses: Embraser01/update-git-branch-action@v1.0.0
+      if: github.ref == 'refs/heads/master'
+      with:
+        branch: main
+        force: 0
+        githubToken: ${{ github.token }} # Github Token

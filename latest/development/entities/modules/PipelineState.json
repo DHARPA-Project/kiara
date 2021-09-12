@@ -1,0 +1,452 @@
+{
+  "title": "PipelineState",
+  "description": "Describes the current state of a pipeline.\n\nThis includes the structure of the pipeline (how the internal modules/steps are connected to each other), as well\nas all current input/output values for the pipeline itself, as well as for all internal steps.\n\nUse the ``dict`` or ``json`` methods to convert this object into a generic data structure.",
+  "type": "object",
+  "properties": {
+    "structure": {
+      "title": "Structure",
+      "description": "The structure (interconnections of modules/steps) of the pipeline.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/PipelineStructureDesc"
+        }
+      ]
+    },
+    "pipeline_inputs": {
+      "title": "Pipeline Inputs",
+      "description": "The current (externally facing) input values of this pipeline.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/PipelineValuesInfo"
+        }
+      ]
+    },
+    "pipeline_outputs": {
+      "title": "Pipeline Outputs",
+      "description": "The current (externally facing) output values of this pipeline.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/PipelineValuesInfo"
+        }
+      ]
+    },
+    "step_states": {
+      "description": "The status of each step.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/StepStatus"
+      }
+    },
+    "step_inputs": {
+      "title": "Step Inputs",
+      "description": "The current (internal) input values of each step of this pipeline.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/PipelineValuesInfo"
+      }
+    },
+    "step_outputs": {
+      "title": "Step Outputs",
+      "description": "The current (internal) output values of each step of this pipeline.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/PipelineValuesInfo"
+      }
+    },
+    "status": {
+      "description": "The current overal status of the pipeline.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/StepStatus"
+        }
+      ]
+    }
+  },
+  "required": [
+    "structure",
+    "pipeline_inputs",
+    "pipeline_outputs",
+    "step_states",
+    "step_inputs",
+    "step_outputs",
+    "status"
+  ],
+  "definitions": {
+    "StepValueAddress": {
+      "title": "StepValueAddress",
+      "description": "Small model to describe the address of a value of a step, within a Pipeline/PipelineStructure.",
+      "type": "object",
+      "properties": {
+        "step_id": {
+          "title": "Step Id",
+          "description": "The id of a step within a pipeline.",
+          "type": "string"
+        },
+        "value_name": {
+          "title": "Value Name",
+          "description": "The name of the value (output name or pipeline input name).",
+          "type": "string"
+        },
+        "sub_value": {
+          "title": "Sub Value",
+          "description": "A reference to a subitem of a value (e.g. column, list item)",
+          "type": "object"
+        }
+      },
+      "required": [
+        "step_id",
+        "value_name"
+      ],
+      "additionalProperties": false
+    },
+    "PipelineStep": {
+      "title": "PipelineStep",
+      "description": "A step within a pipeline-structure, includes information about it's connection(s) and other metadata.",
+      "type": "object",
+      "properties": {
+        "step_id": {
+          "title": "Step Id",
+          "type": "string"
+        },
+        "module_type": {
+          "title": "Module Type",
+          "description": "The module type.",
+          "type": "string"
+        },
+        "module_config": {
+          "title": "Module Config",
+          "description": "The module config.",
+          "type": "object"
+        },
+        "required": {
+          "title": "Required",
+          "description": "Whether this step is required within the workflow.\n\nIn some cases, when none of the pipeline outputs have a required input that connects to a step, then it is not necessary for this step to have been executed, even if it is placed before a step in the execution hierarchy. This also means that the pipeline inputs that are connected to this step might not be required.",
+          "default": true,
+          "type": "boolean"
+        },
+        "processing_stage": {
+          "title": "Processing Stage",
+          "description": "The stage number this step is executed within the pipeline.",
+          "type": "integer"
+        },
+        "input_links": {
+          "title": "Input Links",
+          "description": "The links that connect to inputs of the module.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/StepValueAddress"
+            }
+          }
+        }
+      },
+      "required": [
+        "step_id",
+        "module_type"
+      ],
+      "additionalProperties": false
+    },
+    "StepDesc": {
+      "title": "StepDesc",
+      "description": "Details of a single [PipelineStep][kiara.pipeline.structure.PipelineStep] (which lives within a [Pipeline][kiara.pipeline.pipeline.Pipeline]",
+      "type": "object",
+      "properties": {
+        "step": {
+          "title": "Step",
+          "description": "Attributes of the step itself.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/PipelineStep"
+            }
+          ]
+        },
+        "processing_stage": {
+          "title": "Processing Stage",
+          "description": "The processing stage of this step within a Pipeline.",
+          "type": "integer"
+        },
+        "input_connections": {
+          "title": "Input Connections",
+          "description": "A map that explains what elements connect to this steps inputs. A connection could either be a Pipeline input (indicated by the ``__pipeline__`` token), or another steps output.\n\nExample:\n``` json\ninput_connections: {\n    \"a\": [\"__pipeline__.a\"],\n    \"b\": [\"step_one.a\"]\n}\n\n```\n        ",
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "output_connections": {
+          "title": "Output Connections",
+          "description": "A map that explains what elemnts connect to this steps outputs. A connection could be either a Pipeline output, or another steps input.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": {
+          "title": "Required",
+          "description": "Whether this step is always required, or potentially could be skipped in case some inputs are not available.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "step",
+        "processing_stage",
+        "input_connections",
+        "output_connections",
+        "required"
+      ],
+      "additionalProperties": false
+    },
+    "ValueSchema": {
+      "title": "ValueSchema",
+      "description": "The schema of a value.\n\nThe schema contains the [ValueType][kiara.data.values.ValueType] of a value, as well as an optional default that\nwill be used if no user input was given (yet) for a value.\n\nFor more complex container types like array, tables, unions etc, types can also be configured with values from the ``type_config`` field.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "title": "Type",
+          "description": "The type of the value.",
+          "type": "string"
+        },
+        "type_config": {
+          "title": "Type Config",
+          "description": "Configuration for the type, in case it's complex.",
+          "type": "object"
+        },
+        "default": {
+          "title": "Default",
+          "description": "A default value.",
+          "default": "__not_set__"
+        },
+        "optional": {
+          "title": "Optional",
+          "description": "Whether this value is required (True), or whether 'None' value is allowed (False).",
+          "default": false,
+          "type": "boolean"
+        },
+        "is_constant": {
+          "title": "Is Constant",
+          "description": "Whether the value is a constant.",
+          "default": false,
+          "type": "boolean"
+        },
+        "doc": {
+          "title": "Doc",
+          "description": "A description for the value of this input field.",
+          "default": "-- n/a --",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "PipelineInputRef": {
+      "title": "PipelineInputRef",
+      "description": "An input to a pipeline.",
+      "type": "object",
+      "properties": {
+        "value_name": {
+          "title": "Value Name",
+          "type": "string"
+        },
+        "value_schema": {
+          "$ref": "#/definitions/ValueSchema"
+        },
+        "connected_inputs": {
+          "title": "Connected Inputs",
+          "description": "The step inputs that are connected to this pipeline input",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StepValueAddress"
+          }
+        },
+        "is_constant": {
+          "title": "Is Constant",
+          "default": "Whether this input is a constant and can't be changed by the user.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "value_name",
+        "value_schema"
+      ],
+      "additionalProperties": false
+    },
+    "PipelineOutputRef": {
+      "title": "PipelineOutputRef",
+      "description": "An output to a pipeline.",
+      "type": "object",
+      "properties": {
+        "value_name": {
+          "title": "Value Name",
+          "type": "string"
+        },
+        "value_schema": {
+          "$ref": "#/definitions/ValueSchema"
+        },
+        "connected_output": {
+          "title": "Connected Output",
+          "description": "Connected step outputs.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/StepValueAddress"
+            }
+          ]
+        }
+      },
+      "required": [
+        "value_name",
+        "value_schema",
+        "connected_output"
+      ],
+      "additionalProperties": false
+    },
+    "PipelineStructureDesc": {
+      "title": "PipelineStructureDesc",
+      "description": "Outlines the internal structure of a [Pipeline][kiara.pipeline.pipeline.Pipeline].",
+      "type": "object",
+      "properties": {
+        "steps": {
+          "title": "Steps",
+          "description": "The steps contained in this pipeline, with the 'step_id' as key.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/StepDesc"
+          }
+        },
+        "processing_stages": {
+          "title": "Processing Stages",
+          "description": "The order in which this pipeline has to be processed (basically the dependencies of each step on other steps, if any).",
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "pipeline_input_connections": {
+          "title": "Pipeline Input Connections",
+          "description": "The connections of this pipelines input fields. One input field can be connected to one or several step input fields.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "pipeline_output_connections": {
+          "title": "Pipeline Output Connections",
+          "description": "The connections of this pipelines output fields. Each pipeline output is connected to exactly one step output field.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "pipeline_inputs": {
+          "title": "Pipeline Inputs",
+          "description": "The pipeline inputs.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/PipelineInputRef"
+          }
+        },
+        "pipeline_outputs": {
+          "title": "Pipeline Outputs",
+          "description": "The pipeline outputs.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/PipelineOutputRef"
+          }
+        }
+      },
+      "required": [
+        "steps",
+        "processing_stages",
+        "pipeline_input_connections",
+        "pipeline_output_connections",
+        "pipeline_inputs",
+        "pipeline_outputs"
+      ],
+      "additionalProperties": false
+    },
+    "PipelineValueInfo": {
+      "title": "PipelineValueInfo",
+      "description": "Convenience wrapper to make the [PipelineState][kiara.pipeline.pipeline.PipelineState] json/dict export prettier.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "description": "A unique id for this value.",
+          "type": "string"
+        },
+        "is_valid": {
+          "title": "Is Valid",
+          "description": "Whether the value is set and valid.",
+          "default": false,
+          "type": "boolean"
+        },
+        "is_set": {
+          "title": "Is Set",
+          "description": "Whether the value is set.",
+          "type": "boolean"
+        },
+        "value_schema": {
+          "title": "Value Schema",
+          "description": "The schema of this value.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/ValueSchema"
+            }
+          ]
+        },
+        "metadata": {
+          "title": "Metadata",
+          "description": "Metadata relating to the actual data (size, no. of rows, etc. -- depending on data type).",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "is_set",
+        "value_schema"
+      ],
+      "additionalProperties": false
+    },
+    "PipelineValuesInfo": {
+      "title": "PipelineValuesInfo",
+      "description": "Convenience wrapper to make the [PipelineState][kiara.pipeline.pipeline.PipelineState] json/dict export prettier.\n\nThis is basically just a simplified version of the [ValueSet][kiara.data.values.ValueSet] class that is using\npydantic, in order to make it easy to export to json.",
+      "type": "object",
+      "properties": {
+        "values": {
+          "title": "Values",
+          "description": "Field names are keys, and the data as values.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/PipelineValueInfo"
+          }
+        }
+      },
+      "required": [
+        "values"
+      ]
+    },
+    "StepStatus": {
+      "title": "StepStatus",
+      "description": "Enum to describe the state of a workflow.",
+      "enum": [
+        "stale",
+        "inputs_ready",
+        "processing",
+        "results_ready"
+      ]
+    }
+  }
+}

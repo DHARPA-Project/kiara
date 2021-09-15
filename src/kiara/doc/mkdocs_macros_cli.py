@@ -57,7 +57,10 @@ def define_env(env):
 
         hashes = DeepHash(command)
         hash_str = hashes[command]
+        hashes_env = DeepHash(extra_env)
+        hashes_env_str = hashes_env[extra_env]
 
+        hash_str = hash_str + "_" + hashes_env_str
         if cache_key:
             hash_str = hash_str + "_" + cache_key
 

@@ -165,6 +165,7 @@ def create_step_value_address(
             raise NotImplementedError()
 
     elif isinstance(value_address_config, collections.abc.Mapping):
+        print(value_address_config)
         step_id = value_address_config["step_id"]
         output_name = value_address_config["output_name"]
         sub_value = value_address_config.get("sub_value", None)

@@ -7,7 +7,7 @@ from pydantic import Field
 
 from kiara.data import Value
 from kiara.data.registry import DataRegistry
-from kiara.data.values import ValueInfo, ValueSchema, ValueSlot
+from kiara.data.values import ValueInfo, ValueLineage, ValueSchema, ValueSlot
 from kiara.defaults import SpecialValue
 from kiara.metadata.data import LoadConfig, SaveConfig
 from kiara.utils import log_message
@@ -32,19 +32,16 @@ class LocalDataStore(DataRegistry):
 
         self._base_path: Path = base_path
         self._value_obj_cache: typing.Dict[str, Value] = {}
+        self._value_info_cache: typing.Dict[str, SavedValueInfo] = {}
         self._data_cache: typing.Dict[str, Value] = {}
         self._metadata_cache: typing.Dict[str, typing.Any] = {}
         self._value_slots: typing.Dict[str, ValueSlot] = {}
         super().__init__(kiara=kiara)
 
-        for value_id in self.value_ids:
-            value_info = self._get_saved_value_info(value_id=value_id)
-            # for hash_obj in value_info.hashes:
-            #     self._hashes.setdefault(hash_obj.hash_type, {})[hash_obj.hash] = value_id
-
-            self._lineages[value_id] = value_info.lineage
-
     def _get_saved_value_info(self, value_id: str) -> SavedValueInfo:
+
+        if value_id in self._value_info_cache.keys():
+            return self._value_info_cache[value_id]
 
         metadata_path = self.get_metadata_path(value_id=value_id)
         if not metadata_path.exists():
@@ -57,6 +54,7 @@ class LocalDataStore(DataRegistry):
 
         assert value_info.value_id == value_id
 
+        self._value_info_cache[value_id] = value_info
         return value_info
 
     def _get_value_obj_for_id(self, value_id: str) -> Value:
@@ -108,6 +106,10 @@ class LocalDataStore(DataRegistry):
         value: Value = self._kiara.run(**load_config.dict(exclude={"value_id", "base_path_input_name", "doc"}))  # type: ignore
         self._data_cache[value_id] = value
         return value.get_value_data()
+
+    def _get_value_lineage(self, value_id: str) -> typing.Optional[ValueLineage]:
+
+        return self._get_saved_value_info(value_id).lineage
 
     def _register_value_and_data(self, value: Value, data: typing.Any) -> str:
 

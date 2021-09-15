@@ -54,7 +54,6 @@ class BaseDataRegistry(abc.ABC):
         self._id: str = str(uuid.uuid4())
         self._kiara: Kiara = kiara
         # self._hashes: typing.Dict[str, typing.Dict[str, str]] = {}
-        self._lineages: typing.Dict[str, typing.Optional[ValueLineage]] = {}
         self._register_tokens: typing.Set = set()
 
     @property
@@ -90,6 +89,10 @@ class BaseDataRegistry(abc.ABC):
 
     @abc.abstractmethod
     def _get_value_slot_for_alias(self, alias_name: str) -> ValueSlot:
+        pass
+
+    @abc.abstractmethod
+    def _get_value_lineage(self, value_id: str) -> typing.Optional[ValueLineage]:
         pass
 
     def _find_value_for_hashes(self, *hashes: ValueHash) -> typing.Optional[Value]:
@@ -198,7 +201,7 @@ class BaseDataRegistry(abc.ABC):
         value_obj = self.get_value_obj(value_item=value_item)
         if value_obj is None:
             raise Exception(f"No value registered for: {value_item}")
-        return self._lineages.get(value_obj.id, None)
+        return self._get_value_lineage(value_obj.id)
 
     # def get_value_info(self, value_item: typing.Union[str, Value, ValueAlias]) -> ValueInfo:
     #
@@ -409,6 +412,11 @@ VALID_ALIAS_PATTERN = re.compile("^[A-Za-z0-9_-]*$")
 
 
 class DataRegistry(BaseDataRegistry):
+    def __init__(self, kiara: "Kiara"):
+
+        self._lineages: typing.Dict[str, typing.Optional[ValueLineage]] = {}
+        super().__init__(kiara=kiara)
+
     @abc.abstractmethod
     def _register_value_and_data(self, value: Value, data: typing.Any) -> str:
         """Register data into this registry.
@@ -567,6 +575,10 @@ class DataRegistry(BaseDataRegistry):
         #     print(metadata)
 
         return value
+
+    def _get_value_lineage(self, value_id: str) -> typing.Optional[ValueLineage]:
+
+        return self._lineages.get(value_id, None)
 
     def _create_value_obj(
         self,

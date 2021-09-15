@@ -111,9 +111,12 @@ class PrettyPrintValueModule(KiaraModule):
                 f"Type '{value_type}' can't be pretty printed as '{target_type}'. This is most likely a bug."
             )
 
-        func = getattr(value_obj.type_obj, func_name)
-        # TODO: check signature
-        printed = func(value=value_obj, print_config=print_config)
+        if not value_obj.is_set:
+            printed = "-- not set --"
+        else:
+            func = getattr(value_obj.type_obj, func_name)
+            # TODO: check signature
+            printed = func(value=value_obj, print_config=print_config)
 
         outputs.set_value("printed", printed)
 

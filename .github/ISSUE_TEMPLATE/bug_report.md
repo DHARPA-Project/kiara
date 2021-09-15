@@ -20,7 +20,7 @@ A clear and concise description of what you expected to happen.
  - OS: [e.g. iOS]
  - Python: [e.g. 3.9.1]
  - Versions of relevant packages (`kiara`, `kiara_modules.core`, etc.)
- - Python environment used (e.g. system, conda, ...) 
+ - Python environment used (e.g. system, conda, ...)
 
 **Additional context**
 Add any other context about the problem here.

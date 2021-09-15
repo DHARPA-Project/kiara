@@ -1791,7 +1791,10 @@
 
         <span class="n">hashes</span> <span class="o">=</span> <span class="n">DeepHash</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
         <span class="n">hash_str</span> <span class="o">=</span> <span class="n">hashes</span><span class="p">[</span><span class="n">command</span><span class="p">]</span>
+        <span class="n">hashes_env</span> <span class="o">=</span> <span class="n">DeepHash</span><span class="p">(</span><span class="n">extra_env</span><span class="p">)</span>
+        <span class="n">hashes_env_str</span> <span class="o">=</span> <span class="n">hashes_env</span><span class="p">[</span><span class="n">extra_env</span><span class="p">]</span>
 
+        <span class="n">hash_str</span> <span class="o">=</span> <span class="n">hash_str</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">hashes_env_str</span>
         <span class="k">if</span> <span class="n">cache_key</span><span class="p">:</span>
             <span class="n">hash_str</span> <span class="o">=</span> <span class="n">hash_str</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">cache_key</span>
 

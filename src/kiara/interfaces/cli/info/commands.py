@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import click
 import sys
-from rich import print as rich_print
 
 from kiara.info.kiara import KiaraInfo
+from kiara.utils.output import rich_print
 
 
 @click.command()

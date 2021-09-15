@@ -3,13 +3,14 @@ import click
 import os
 import sys
 import typing
-from rich import box, print as rich_print
+from rich import box
 from rich.panel import Panel
 from rich.table import Table
 
 from kiara import Kiara
 from kiara.operations import OperationType
 from kiara.utils import log_message
+from kiara.utils.output import rich_print
 
 
 @click.group()

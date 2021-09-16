@@ -2216,7 +2216,9 @@
                 <span class="n">result_dynamic</span><span class="p">[</span><span class="n">_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t load subclasses for entry point </span><span class="si">{</span><span class="n">entry_point_name</span><span class="si">}</span><span class="s2"> and base class </span><span class="si">{</span><span class="n">base_class</span><span class="si">}</span><span class="s2">: invalid plugin type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
 
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">result_dynamic</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">result_entrypoints</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>

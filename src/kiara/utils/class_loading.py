@@ -178,7 +178,9 @@ def load_all_subclasses_for_entry_point(
                 result_dynamic[_name] = v
 
         else:
-            raise NotImplementedError()
+            raise Exception(
+                f"Can't load subclasses for entry point {entry_point_name} and base class {base_class}: invalid plugin type {type(plugin.plugin)}"
+            )
 
     for k, v in result_dynamic.items():
         if k in result_entrypoints.keys():
@@ -457,7 +459,9 @@ def find_all_kiara_pipeline_paths() -> typing.Dict[
             result_dynamic[name] = pipeline_path_tuple
 
         elif isinstance(plugin.plugin, str):
-            raise NotImplementedError()
+            raise NotImplementedError(
+                f"Finding pipeline paths using item '{plugin.plugin}' not supported."
+            )
             # module_name = plugin.plugin
             # try:
             #     m = importlib.import_module(module_name)
@@ -468,13 +472,19 @@ def find_all_kiara_pipeline_paths() -> typing.Dict[
             #     )
             # result_entrypoints[name] = pipeline_path_tuple
         elif isinstance(plugin.plugin, typing.Mapping):
-            raise NotImplementedError()
+            raise NotImplementedError(
+                f"Finding pipeline paths for mapping '{plugin.plugin}' not supported."
+            )
         elif isinstance(plugin.plugin, typing.Iterable):
-            raise NotImplementedError()
+            raise NotImplementedError(
+                f"Finding pipeline paths for iterable '{plugin.plugin}' not supported."
+            )
             result_entrypoints[name] = plugin.plugin
         elif isinstance(plugin.plugin, ModuleType):
-            print(f"Entrypoint type not supported yet: {plugin.plugin}")
-            raise NotImplementedError()
+            # print(f"Entrypoint type not supported yet: {plugin.plugin}")
+            raise NotImplementedError(
+                f"Pipeline entrypoint lookup ModuleType not supported yet: {plugin.plugin}"
+            )
             # result_entrypoints[name] = _find_pipeline_folders_using_callable(
             #     plugin.plugin
             # )

@@ -2,6 +2,8 @@
 
 ## Version 0.1.1 (Upcoming)
 
+- bug-fix release: fix error when trying to print value that wasn't set
+
 ## Version 0.1.0
 
 - first 'official' release on Pypi.org

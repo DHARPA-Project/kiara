@@ -424,9 +424,9 @@ def find_pipeline_base_path_for_module(
     return path
 
 
-def find_all_kiara_pipeline_paths() -> typing.Dict[
-    str, typing.List[typing.Tuple[typing.Optional[str], str]]
-]:
+def find_all_kiara_pipeline_paths(
+    skip_errors: bool = False,
+) -> typing.Dict[str, typing.List[typing.Tuple[typing.Optional[str], str]]]:
 
     log2 = logging.getLogger("stevedore")
     out_hdlr = logging.StreamHandler(sys.stdout)
@@ -459,6 +459,9 @@ def find_all_kiara_pipeline_paths() -> typing.Dict[
             result_dynamic[name] = pipeline_path_tuple
 
         elif isinstance(plugin.plugin, str):
+            if skip_errors:
+                continue
+
             raise NotImplementedError(
                 f"Finding pipeline paths using item '{plugin.plugin}' not supported."
             )
@@ -472,15 +475,21 @@ def find_all_kiara_pipeline_paths() -> typing.Dict[
             #     )
             # result_entrypoints[name] = pipeline_path_tuple
         elif isinstance(plugin.plugin, typing.Mapping):
+            if skip_errors:
+                continue
             raise NotImplementedError(
                 f"Finding pipeline paths for mapping '{plugin.plugin}' not supported."
             )
         elif isinstance(plugin.plugin, typing.Iterable):
+            if skip_errors:
+                continue
             raise NotImplementedError(
                 f"Finding pipeline paths for iterable '{plugin.plugin}' not supported."
             )
             result_entrypoints[name] = plugin.plugin
         elif isinstance(plugin.plugin, ModuleType):
+            if skip_errors:
+                continue
             # print(f"Entrypoint type not supported yet: {plugin.plugin}")
             raise NotImplementedError(
                 f"Pipeline entrypoint lookup ModuleType not supported yet: {plugin.plugin}"
@@ -489,6 +498,8 @@ def find_all_kiara_pipeline_paths() -> typing.Dict[
             #     plugin.plugin
             # )
         else:
+            if skip_errors:
+                continue
             raise Exception(
                 f"Can't load pipelines for entrypoint '{name}': invalid type '{type(plugin.plugin)}'"
             )

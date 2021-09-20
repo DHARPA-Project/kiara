@@ -269,6 +269,7 @@ class SlottedValueSet(ValueSet):
         cls,
         schemas: typing.Mapping[str, "ValueSchema"],
         read_only: bool = True,
+        check_for_sameness=True,
         initial_values: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         title: typing.Optional[str] = None,
         default_value: typing.Any = SpecialValue.NO_VALUE,
@@ -277,6 +278,8 @@ class SlottedValueSet(ValueSet):
     ) -> "SlottedValueSet":
 
         if kiara is None:
+            from kiara.kiara import Kiara
+
             kiara = Kiara.instance()
 
         if registry is None:
@@ -308,6 +311,7 @@ class SlottedValueSet(ValueSet):
             items=values,
             title=title,
             read_only=read_only,
+            check_for_sameness=check_for_sameness,
             kiara=kiara,
             registry=registry,
         )
@@ -316,13 +320,27 @@ class SlottedValueSet(ValueSet):
         self,
         items: typing.Mapping[str, typing.Union["ValueSlot", "Value"]],
         read_only: bool,
+        check_for_sameness: bool = False,
         title: typing.Optional[str] = None,
         kiara: typing.Optional["Kiara"] = None,
         registry: typing.Optional[DataRegistry] = None,
     ):
+        """A `ValueSet` implementation that keeps a history of each fields value.
+
+        Arguments:
+            items: the value slots
+            read_only: whether it is allowed to set new values to fields in this set
+            check_for_sameness: whether a check should be performed that checks for equality of the new and old values, if equal, skip the update
+            title: An optional title for this value set
+            kiara: the kiara context
+            registry: the registry to use to register the values to
+
+        """
 
         if not items:
             raise ValueError("Can't create ValueSet: no values provided")
+
+        self._check_for_sameness: bool = check_for_sameness
 
         super().__init__(read_only=read_only, title=title, kiara=kiara)
 
@@ -369,6 +387,15 @@ class SlottedValueSet(ValueSet):
         for k, v in values.items():
 
             item: ValueSlot = self._value_slots[k]
+            if self._check_for_sameness:
+                latest_val = item.get_latest_value()
+                if isinstance(v, Value):
+                    if latest_val.id == v.id:
+                        continue
+                else:
+                    if latest_val.is_set and latest_val.get_value_data() == v:
+                        continue
+
             registries.setdefault(item._registry, {})[item] = v  # type: ignore
 
         for registry, v in registries.items():

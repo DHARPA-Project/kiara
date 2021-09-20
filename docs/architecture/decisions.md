@@ -57,6 +57,7 @@ Disadvantages:
 - more abstraction layers than strictly necessary
 - other, usual disadvantages associated with subclassing/inheritance
 
+
 ## Separating data from the Python objects that describe them / Data registry
 
 TBD

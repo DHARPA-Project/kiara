@@ -467,7 +467,8 @@ class DataRegistry(BaseDataRegistry):
 
         existing_value: typing.Optional[Value] = None
         if isinstance(value_data, Value):
-            if value_data._registry == self and value_data.id in self.value_ids:
+
+            if value_data.id in self.value_ids:
                 if value_lineage:
                     existing_lineage = self._lineages.get(value_data.id, None)
                     if existing_lineage:
@@ -478,7 +479,12 @@ class DataRegistry(BaseDataRegistry):
                     self._lineages[value_data.id] = value_lineage
 
                 # TODO: check it's really the same
-                return value_data
+                our_value = self.get_value_obj(value_data.id)
+                if our_value is None:
+                    raise Exception(
+                        "Could not retrieve cloned value, this is probably a bug."
+                    )
+                return our_value
 
             existing_value = self._find_value_for_hashes(*value_data.get_hashes())
 

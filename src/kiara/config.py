@@ -71,6 +71,10 @@ class KiaraConfig(BaseSettings):
         description="The path to the local kiara data store.",
         default=KIARA_DATA_STORE_DIR,
     )
+    ignore_errors: bool = Field(
+        description="If set, kiara will try to ignore most errors (that can be ignored).",
+        default=False,
+    )
 
     @validator("module_managers", pre=True)
     def _validate_managers(cls, v):

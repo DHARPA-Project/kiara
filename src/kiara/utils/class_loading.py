@@ -458,51 +458,51 @@ def find_all_kiara_pipeline_paths(
             pipeline_path_tuple = _find_pipeline_folders_using_callable(plugin.plugin)
             result_dynamic[name] = pipeline_path_tuple
 
-        elif isinstance(plugin.plugin, str):
-            if skip_errors:
-                continue
-
-            raise NotImplementedError(
-                f"Finding pipeline paths using item '{plugin.plugin}' not supported."
-            )
-            # module_name = plugin.plugin
-            # try:
-            #     m = importlib.import_module(module_name)
-            #     pipeline_path_tuple = _find_pipeline_folders_using_callable(m)
-            # except Exception:
-            #     raise Exception(
-            #         f"Can't load pipelines for module '{module_name}': module does not exist"
-            #     )
-            # result_entrypoints[name] = pipeline_path_tuple
-        elif isinstance(plugin.plugin, typing.Mapping):
-            if skip_errors:
-                continue
-            raise NotImplementedError(
-                f"Finding pipeline paths for mapping '{plugin.plugin}' not supported."
-            )
-        elif isinstance(plugin.plugin, typing.Iterable):
-            if skip_errors:
-                continue
-            raise NotImplementedError(
-                f"Finding pipeline paths for iterable '{plugin.plugin}' not supported."
-            )
-            result_entrypoints[name] = plugin.plugin
-        elif isinstance(plugin.plugin, ModuleType):
-            if skip_errors:
-                continue
-            # print(f"Entrypoint type not supported yet: {plugin.plugin}")
-            raise NotImplementedError(
-                f"Pipeline entrypoint lookup ModuleType not supported yet: {plugin.plugin}"
-            )
-            # result_entrypoints[name] = _find_pipeline_folders_using_callable(
-            #     plugin.plugin
-            # )
+        # elif isinstance(plugin.plugin, str):
+        #     if skip_errors:
+        #         continue
+        #
+        #     raise NotImplementedError(
+        #         f"Finding pipeline paths using item '{plugin.plugin}' not supported."
+        #     )
+        #     # module_name = plugin.plugin
+        #     # try:
+        #     #     m = importlib.import_module(module_name)
+        #     #     pipeline_path_tuple = _find_pipeline_folders_using_callable(m)
+        #     # except Exception:
+        #     #     raise Exception(
+        #     #         f"Can't load pipelines for module '{module_name}': module does not exist"
+        #     #     )
+        #     # result_entrypoints[name] = pipeline_path_tuple
+        # elif isinstance(plugin.plugin, typing.Mapping):
+        #     if skip_errors:
+        #         continue
+        #     raise NotImplementedError(
+        #         f"Finding pipeline paths for mapping '{plugin.plugin}' not supported."
+        #     )
+        # elif isinstance(plugin.plugin, typing.Iterable):
+        #     if skip_errors:
+        #         continue
+        #     raise NotImplementedError(
+        #         f"Finding pipeline paths for iterable '{plugin.plugin}' not supported."
+        #     )
+        #     result_entrypoints[name] = plugin.plugin
+        # elif isinstance(plugin.plugin, ModuleType):
+        #     if skip_errors:
+        #         continue
+        #     # print(f"Entrypoint type not supported yet: {plugin.plugin}")
+        #     raise NotImplementedError(
+        #         f"Pipeline entrypoint lookup ModuleType not supported yet: {plugin.plugin}"
+        #     )
+        #     # result_entrypoints[name] = _find_pipeline_folders_using_callable(
+        #     #     plugin.plugin
+        #     # )
         else:
+            msg = f"Can't load pipelines for entrypoint '{name}': invalid plugin type '{type(plugin.plugin)}'"
             if skip_errors:
+                log_message(msg)
                 continue
-            raise Exception(
-                f"Can't load pipelines for entrypoint '{name}': invalid type '{type(plugin.plugin)}'"
-            )
+            raise Exception(msg)
 
     result: typing.Dict[str, typing.List[typing.Tuple[typing.Optional[str], str]]] = {}
 

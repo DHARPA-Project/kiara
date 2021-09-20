@@ -114,6 +114,7 @@ class PipelineModuleManager(ModuleManager):
                 str, typing.Union[str, Path, typing.Iterable[typing.Union[str, Path]]]
             ]
         ] = None,
+        ignore_errors: bool = False,
     ):
 
         if folders is None:
@@ -121,7 +122,7 @@ class PipelineModuleManager(ModuleManager):
 
             folders_map: typing.Dict[
                 str, typing.List[typing.Tuple[typing.Optional[str], str]]
-            ] = find_all_kiara_pipeline_paths()
+            ] = find_all_kiara_pipeline_paths(skip_errors=ignore_errors)
             if os.path.exists(USER_PIPELINES_FOLDER):
                 folders_map["user"] = [(None, USER_PIPELINES_FOLDER)]
         elif not folders:

@@ -115,7 +115,7 @@ class Kiara(object):
 
         self._data_registry: InMemoryDataRegistry = InMemoryDataRegistry(self)
         self._module_mgr: MergedModuleManager = MergedModuleManager(
-            config.module_managers
+            config.module_managers, ignore_errors=self._config.ignore_errors
         )
 
     @property

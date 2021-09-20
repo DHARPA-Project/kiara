@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 0.1.3 (Upcoming)
+
+## Version 0.1.2
+
+- module development helper subcommand (very bare bones)
+- option to skip errors due to misconfigured pipeline entrypoints
+
 ## Version 0.1.1 (Upcoming)
 
 - bug-fix release: fix error when trying to print value that wasn't set

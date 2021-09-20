@@ -59,6 +59,7 @@ class MergedModuleManager(ModuleManager):
                 typing.Union[PythonModuleManagerConfig, PipelineModuleManagerConfig]
             ]
         ] = None,
+        ignore_errors: bool = False,
     ):
 
         self._modules: typing.Optional[typing.Dict[str, ModuleManager]] = None
@@ -67,6 +68,7 @@ class MergedModuleManager(ModuleManager):
         self._default_python_mgr: typing.Optional[PythonModuleManager] = None
         self._default_pipeline_mgr: typing.Optional[PipelineModuleManager] = None
         self._custom_pipelines_mgr: typing.Optional[PipelineModuleManager] = None
+        self._ignore_errors: bool = ignore_errors
 
         if module_managers:
 
@@ -117,14 +119,18 @@ class MergedModuleManager(ModuleManager):
     def default_pipeline_module_manager(self) -> PipelineModuleManager:
 
         if self._default_pipeline_mgr is None:
-            self._default_pipeline_mgr = PipelineModuleManager(folders=None)
+            self._default_pipeline_mgr = PipelineModuleManager(
+                folders=None, ignore_errors=self._ignore_errors
+            )
         return self._default_pipeline_mgr
 
     @property
     def default_custom_pipelines_manager(self) -> PipelineModuleManager:
 
         if self._custom_pipelines_mgr is None:
-            self._custom_pipelines_mgr = PipelineModuleManager(folders={})
+            self._custom_pipelines_mgr = PipelineModuleManager(
+                folders={}, ignore_errors=self._ignore_errors
+            )
         return self._custom_pipelines_mgr
 
     @property

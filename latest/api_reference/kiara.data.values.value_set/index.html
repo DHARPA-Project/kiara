@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.data.values.value_set/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.6">
+      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.8">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.802231af.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.92558b1b.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -596,6 +596,26 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kiara.data.values.value_set.SlottedValueSet" class="md-nav__link">
+    SlottedValueSet
+  </a>
+  
+    <nav class="md-nav" aria-label="SlottedValueSet">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.value_set.SlottedValueSet.__init__" class="md-nav__link">
+    __init__()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kiara.data.values.value_set.ValueSet" class="md-nav__link">
     ValueSet
   </a>
@@ -834,6 +854,18 @@
     <li class="md-nav__item">
       <a href="../kiara.interfaces.cli.data.commands/" class="md-nav__link">
         ➜ interfaces.cli.data.commands
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.dev.commands/" class="md-nav__link">
+        ➜ interfaces.cli.dev.commands
       </a>
     </li>
   
@@ -1706,6 +1738,26 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kiara.data.values.value_set.SlottedValueSet" class="md-nav__link">
+    SlottedValueSet
+  </a>
+  
+    <nav class="md-nav" aria-label="SlottedValueSet">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.value_set.SlottedValueSet.__init__" class="md-nav__link">
+    __init__()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kiara.data.values.value_set.ValueSet" class="md-nav__link">
     ValueSet
   </a>
@@ -1759,6 +1811,175 @@
 
 
 
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h2 id="kiara.data.values.value_set.SlottedValueSet" class="doc doc-heading">
+        <code>SlottedValueSet</code>
+
+
+
+<a href="#kiara.data.values.value_set.SlottedValueSet" class="headerlink" title="Permanent link">&para;</a></h2>
+
+    <div class="doc doc-contents ">
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.values.value_set.SlottedValueSet.__init__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">read_only</span><span class="p">,</span> <span class="n">check_for_sameness</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">registry</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-special"><code>special</code></small>
+  </span>
+
+<a href="#kiara.data.values.value_set.SlottedValueSet.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>A <code>ValueSet</code> implementation that keeps a history of each fields value.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>items</code></td>
+        <td><code>Mapping[str, Union[ValueSlot, Value]]</code></td>
+        <td><p>the value slots</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>read_only</code></td>
+        <td><code>bool</code></td>
+        <td><p>whether it is allowed to set new values to fields in this set</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>check_for_sameness</code></td>
+        <td><code>bool</code></td>
+        <td><p>whether a check should be performed that checks for equality of the new and old values, if equal, skip the update</p></td>
+        <td><code>False</code></td>
+      </tr>
+      <tr>
+        <td><code>title</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>An optional title for this value set</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>kiara</code></td>
+        <td><code>Optional[Kiara]</code></td>
+        <td><p>the kiara context</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>registry</code></td>
+        <td><code>Optional[kiara.data.registry.DataRegistry]</code></td>
+        <td><p>the registry to use to register the values to</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/values/value_set.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">items</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="s2">&quot;ValueSlot&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">]],</span>
+    <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">check_for_sameness</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">kiara</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">registry</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">DataRegistry</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A `ValueSet` implementation that keeps a history of each fields value.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        items: the value slots</span>
+<span class="sd">        read_only: whether it is allowed to set new values to fields in this set</span>
+<span class="sd">        check_for_sameness: whether a check should be performed that checks for equality of the new and old values, if equal, skip the update</span>
+<span class="sd">        title: An optional title for this value set</span>
+<span class="sd">        kiara: the kiara context</span>
+<span class="sd">        registry: the registry to use to register the values to</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">items</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t create ValueSet: no values provided&quot;</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_check_for_sameness</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">check_for_sameness</span>
+
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="n">read_only</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">registry</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">registry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span><span class="p">:</span> <span class="n">DataRegistry</span> <span class="o">=</span> <span class="n">registry</span>
+
+    <span class="n">_value_slots</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSlot</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t create value set, item &#39;</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&#39; does not have a value (yet).&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Value name can&#39;t start with &#39;_&#39;: </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">INVALID_VALUE_NAMES</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid value name &#39;</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Value</span><span class="p">):</span>
+            <span class="n">slot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span><span class="o">.</span><span class="n">register_alias</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ValueSlot</span><span class="p">):</span>
+            <span class="n">slot</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid type: &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+        <span class="n">_value_slots</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="n">slot</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_value_slots</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSlot</span><span class="p">]</span> <span class="o">=</span> <span class="n">_value_slots</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
 
 
 
@@ -1958,10 +2179,10 @@ in which case an Exception will be raised (obviously).</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.409db549.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.94ec81fe.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.756773cc.min.js"></script>
+      <script src="../../assets/javascripts/bundle.48dfec6c.min.js"></script>
       
     
   </body>

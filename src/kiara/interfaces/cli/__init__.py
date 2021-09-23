@@ -54,11 +54,11 @@ try:
 except ModuleNotFoundError:
     pass
 
-if is_develop():
-
-    from .dev.commands import dev
-
-    cli.add_command(dev)
+# if is_develop():
+#
+#     from .dev.commands import dev
+#
+#     cli.add_command(dev)
 
 if __name__ == "__main__":
     cli()

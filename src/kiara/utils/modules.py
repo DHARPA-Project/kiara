@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import typing
 
 from kiara.data.values import ValueSchema
@@ -74,3 +75,46 @@ def overlay_constants_and_defaults(
             input_schemas[k] = v
 
     return input_schemas, constants
+
+
+def find_file_for_module(
+    module_name: str, kiara: typing.Optional["Kiara"] = None
+) -> str:
+    """Find the python file a module belongs to."""
+
+    if kiara is None:
+        from kiara.kiara import Kiara
+
+        kiara = Kiara.instance()
+
+    m_cls = kiara.get_module_class(module_type=module_name)
+    python_module = m_cls.get_type_metadata().python_class.get_module()
+
+    # TODO: some sanity checks
+    if python_module.__file__.endswith("__init__.py"):
+        extra_bit = (
+            python_module.__name__.replace(".", os.path.sep)
+            + os.path.sep
+            + "__init__.py"
+        )
+    else:
+        extra_bit = python_module.__name__.replace(".", os.path.sep) + ".py"
+    python_file_path = python_module.__file__[0 : -len(extra_bit)]  # noqa
+
+    return python_file_path
+
+
+def find_all_module_python_files(
+    kiara: typing.Optional["Kiara"] = None,
+) -> typing.Set[str]:
+
+    if kiara is None:
+        from kiara.kiara import Kiara
+
+        kiara = Kiara.instance()
+
+    all_paths = set()
+    for module_name in kiara.available_non_pipeline_module_types:
+        path = find_file_for_module(module_name=module_name, kiara=kiara)
+        all_paths.add(path)
+    return all_paths

@@ -11,7 +11,8 @@ from kiara.defaults import KIARA_RESOURCES_FOLDER
 from kiara.info.modules import ModuleTypesGroupInfo
 from kiara.interfaces.cli.utils import _create_module_instance
 from kiara.metadata.module_models import KiaraModuleTypeMetadata
-from kiara.utils import dict_from_cli_args, is_develop
+from kiara.utils import dict_from_cli_args, is_develop, log_message
+from kiara.utils.modules import find_all_module_python_files, find_file_for_module
 from kiara.utils.output import rich_print
 
 
@@ -151,6 +152,94 @@ def explain_module(ctx, module_type: str, module_config: typing.Iterable[typing.
     rich_print()
     rich_print(module_obj)
 
+
+try:
+
+    from kiara_streamlit.defaults import MODULE_DEV_STREAMLIT_FILE  # type: ignore
+    from streamlit import bootstrap
+    from streamlit.cli import ACCEPTED_FILE_EXTENSIONS, _main_run, configurator_options
+
+    @module.command("dev")
+    @configurator_options
+    @click.argument("module_name", required=False, nargs=1)
+    @click.argument("args", nargs=-1)
+    @click.pass_context
+    def dev_ui(ctx, module_name, args=None, **kwargs):
+        """Auto-render web-ui to help with module development.
+
+        If no module name is provided, a selection box will displayed in the published app.
+
+        This subcommand uses [streamlit](https://streamlit.io) to auto-render a UI for a (single) module, incl. input fields,
+        input previews, output previews, and debug messages. Its main purpose is to aid module development, but it can be
+        used as a module execution UI in a pinch.
+        """
+
+        kiara_obj: Kiara = ctx.obj["kiara"]
+
+        if module_name:
+
+            if module_name not in kiara_obj.available_module_types:
+                print()
+                print(
+                    f"Can't launch dev UI for module '{module_name}': module not available."
+                )
+                sys.exit(1)
+
+            python_path_to_watch = find_file_for_module(
+                module_name=module_name, kiara=kiara_obj
+            )
+
+            _python_path = os.environ.get("PYTHONPATH", None)
+            if _python_path is None:
+                python_path = []
+            else:
+                python_path = _python_path.split(":")
+
+            if python_path_to_watch not in python_path:
+                python_path.append(python_path_to_watch)
+
+            os.environ["DEV_MODULE_NAME"] = module_name
+
+        else:
+            all_paths = find_all_module_python_files(kiara=kiara_obj)
+            _python_path = os.environ.get("PYTHONPATH", None)
+            if _python_path is None:
+                python_path = []
+            else:
+                python_path = _python_path.split(":")
+
+            filtered = (
+                p for p in all_paths if f"{os.sep}kiara{os.sep}src{os.sep}" not in p
+            )
+            python_path.extend(filtered)
+
+        python_path_export = ":".join(python_path)
+        os.environ["PYTHONPATH"] = python_path_export
+
+        bootstrap.load_config_options(flag_options=kwargs)
+        target = MODULE_DEV_STREAMLIT_FILE
+
+        _, extension = os.path.splitext(target)
+        if extension[1:] not in ACCEPTED_FILE_EXTENSIONS:
+            if extension[1:] == "":
+                raise click.BadArgumentUsage(
+                    "Streamlit requires raw Python (.py) files, but the provided file has no extension.\nFor more information, please see https://docs.streamlit.io"
+                )
+            else:
+                raise click.BadArgumentUsage(
+                    "Streamlit requires raw Python (.py) files, not %s.\nFor more information, please see https://docs.streamlit.io"
+                    % extension
+                )
+
+        if not os.path.exists(target):
+            raise click.BadParameter("File does not exist: {}".format(target))
+        _main_run(target, args, flag_options=kwargs)
+
+
+except Exception:
+    log_message(
+        "'kiara.streamlit' package not installed, not offering streamlit debug sub-command"
+    )
 
 if is_develop():
     try:

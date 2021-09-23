@@ -65,6 +65,8 @@ class ModuleProcessor(abc.ABC):
             proc = ThreadPoolProcessor(
                 kiara=kiara, **config.dict(exclude={"module_processor_type"})
             )
+        else:
+            raise TypeError(f"Invalid processor config class: {type(config)}")
 
         return proc
 
@@ -159,9 +161,12 @@ class ModuleProcessor(abc.ABC):
             if isinstance(e, KiaraProcessingException):
                 e._module = module
                 e._inputs = inputs
+                job._exception = e
                 raise e
             else:
-                raise KiaraProcessingException(e, module=module, inputs=inputs)
+                kpe = KiaraProcessingException(e, module=module, inputs=inputs)
+                job._exception = kpe
+                raise kpe
 
     def job_status_updated(
         self, job_id: str, status: typing.Union[JobStatus, str, Exception]
@@ -188,12 +193,14 @@ class ModuleProcessor(abc.ABC):
                 job.error = status
             elif isinstance(status, Exception):
                 job.error = str(status)
+                job._exception = status
             job = self._active_jobs.pop(job_id)
             self._finished_jobs[job_id] = job
             self._socket.send_string(Job.create_event_msg(job))
         elif status == JobStatus.STARTED:
             job.job_log.add_log("job started")
             job.status = JobStatus.STARTED
+            job.started = datetime.now()
             self._socket.send_string(Job.create_event_msg(job))
         else:
             raise ValueError(f"Invalid value for status: {status}")

@@ -3,7 +3,7 @@ import logging
 import typing
 from datetime import datetime
 from enum import Enum
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, PrivateAttr, validator
 
 from kiara.metadata.core_models import DocumentationMetadataModel
 from kiara.pipeline import PipelineValuesInfo
@@ -59,6 +59,8 @@ class Job(BaseModel):
     class Config:
         use_enum_values = True
 
+    _exception: typing.Optional[Exception] = PrivateAttr(default=None)
+
     id: str = Field(description="The id of the job.")
     pipeline_id: str = Field(description="The id of the pipeline this jobs runs for.")
     pipeline_name: str = Field(description="The name/type of the pipeline.")
@@ -89,6 +91,19 @@ class Job(BaseModel):
         default=JobStatus.CREATED,
     )
     error: typing.Optional[str] = Field(description="Potential error message.")
+
+    @property
+    def exception(self) -> typing.Optional[Exception]:
+        return self._exception
+
+    @property
+    def runtime(self) -> typing.Optional[float]:
+
+        if self.started is None or self.finished is None:
+            return None
+
+        runtime = self.finished - self.started
+        return runtime.total_seconds()
 
     @validator("status")
     def _validate_status(cls, v):

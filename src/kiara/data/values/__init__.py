@@ -101,6 +101,12 @@ class ValueSchema(BaseModel):
                 f"Invalid value type '{self.type}', available types: {kiara.value_type_names}"
             )
 
+    @property
+    def desc(self):
+        """The first line of the 'doc' value."""
+
+        return self.doc.split("\n")[0]
+
     def __eq__(self, other):
 
         if not isinstance(other, ValueSchema):

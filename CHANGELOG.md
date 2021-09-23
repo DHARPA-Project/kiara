@@ -1,6 +1,11 @@
 # Changelog
 
-## Version 0.1.3 (Upcoming)
+## Version 0.1.4 (Upcoming)
+
+## Version 0.1.3
+
+- add sample operation type
+- some minor bug fixes
 
 ## Version 0.1.2
 

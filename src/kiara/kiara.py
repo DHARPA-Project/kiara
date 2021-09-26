@@ -115,7 +115,9 @@ class Kiara(object):
 
         self._data_registry: InMemoryDataRegistry = InMemoryDataRegistry(self)
         self._module_mgr: MergedModuleManager = MergedModuleManager(
-            config.module_managers, ignore_errors=self._config.ignore_errors
+            config.module_managers,
+            extra_pipeline_folders=self._config.extra_pipeline_folders,
+            ignore_errors=self._config.ignore_errors,
         )
 
     @property
@@ -445,7 +447,7 @@ class Kiara(object):
 
     def create_pipeline(
         self,
-        config: typing.Union[ModuleConfig, typing.Mapping[str, typing.Any], str],
+        config: typing.Union[PipelineConfig, typing.Mapping[str, typing.Any], str],
         controller: typing.Optional[PipelineController] = None,
     ) -> Pipeline:
 

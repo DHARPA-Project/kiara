@@ -54,7 +54,15 @@ def get_pipeline_details_from_path(
     path: typing.Union[str, Path],
     module_type_name: typing.Optional[str] = None,
     base_module: typing.Optional[str] = None,
-):
+) -> typing.Tuple[typing.Optional[str], typing.Mapping[str, typing.Any]]:
+    """Load a pipeline description, save it's content, and determine it the pipeline base name.
+
+    Arguments:
+        path: the path to the pipeline file
+        module_type_name: if specifies, overwrites any auto-detected or assigned pipeline name
+        base_module: overrides the base module the assembled pipeline module will be located in the python hierarchy
+
+    """
 
     if isinstance(path, str):
         path = Path(os.path.expanduser(path))
@@ -107,6 +115,13 @@ def check_doc_sidecar(
 
 
 class PipelineModuleManager(ModuleManager):
+    """Module manager that discovers pipeline descriptions, and create modules out of them.
+
+    Arguments:
+        folders: a list of folders to search for pipeline descriptions, if 'None', 'kiara.pipelines' entrypoints are searched, as well as the user config
+        ignore_errors: ignore any errors that occur during pipeline discovery (as much as that is possible)
+    """
+
     def __init__(
         self,
         folders: typing.Optional[
@@ -130,8 +145,16 @@ class PipelineModuleManager(ModuleManager):
         else:
             assert isinstance(folders, typing.Mapping)
             assert "user" not in folders.keys()
-            folders_map = folders  # type: ignore
-            raise NotImplementedError()
+            folders_map = {}
+            for k, _folders in folders.items():
+                if not isinstance(_folders, str) and isinstance(
+                    _folders, typing.Iterable
+                ):
+                    raise NotImplementedError(
+                        f"Invalid folder configuration (must be an iterable): {_folders}"
+                    )
+                for _f in _folders:  # type: ignore
+                    folders_map.setdefault(k, []).append((None, _f))
 
         self._pipeline_desc_folders: typing.List[Path] = []
         self._pipeline_descs: typing.Dict[str, typing.Mapping[str, typing.Any]] = {}
@@ -182,10 +205,14 @@ class PipelineModuleManager(ModuleManager):
                 f"Can't register pipeline, must be dict-like data, not {type(data)}"
             )
 
+        if not _name:
+            raise Exception("No pipeline name set.")
+
         if not namespace:
             full_name = _name
         else:
             full_name = f"{namespace}.{_name}"
+
         if full_name.startswith("core."):
             full_name = full_name[5:]
         if full_name in self._pipeline_descs.keys():
@@ -208,6 +235,7 @@ class PipelineModuleManager(ModuleManager):
         Arguments:
             namespace: the namespace the pipeline modules found under this path will be part of, if it starts with '_' it will be omitted
             path: the path to a pipeline description file, or folder which contains some
+            base_module: the base module the assembled pipeline modules under this path will be located at in the Python namespace
         Returns:
             a list of module type names that were added
         """
@@ -249,6 +277,10 @@ class PipelineModuleManager(ModuleManager):
                         else:
                             _rel_path = rel_path.replace(os.path.sep, ".")
                             ns_name = f"{_rel_path}.{name}"
+                        if not ns_name:
+                            raise Exception(
+                                f"Could not determine namespace for pipeline file '{filename}'."
+                            )
                         if ns_name in files.keys():
                             raise Exception(
                                 f"Duplicate workflow name in namespace '{namespace}': {ns_name}"
@@ -263,6 +295,8 @@ class PipelineModuleManager(ModuleManager):
                 path=path, base_module=base_module
             )
             data = check_doc_sidecar(path, data)
+            if not name:
+                raise Exception(f"Could not determine pipeline name for: {path}")
             files = {name: data}
 
         result = {}

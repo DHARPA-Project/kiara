@@ -608,7 +608,13 @@ class DataRegistry(BaseDataRegistry):
         #     )
 
         if type_obj is None:
-            type_cls = self._kiara.get_value_type_cls(value_schema.type)
+            if value_schema.type not in self._kiara.value_types:
+                log_message(
+                    f"Value type '{value_schema.type}' not supported in this kiara environment, changing type to 'any'."
+                )
+                type_cls = self._kiara.get_value_type_cls("any")
+            else:
+                type_cls = self._kiara.get_value_type_cls(value_schema.type)
             type_obj = type_cls(**value_schema.type_config)
 
         register_token = uuid.uuid4()

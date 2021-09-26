@@ -172,6 +172,17 @@ class ValueSet(typing.MutableMapping[str, "Value"]):
             raise_exception_when_unset=raise_exception_when_unset,
         )
 
+    def save_all(self, aliases: typing.Optional[typing.Iterable[str]] = None):
+
+        if aliases:
+            aliases = set(aliases)
+
+        for k, v in self.items():
+            field_aliases = None
+            if aliases:
+                field_aliases = [f"{a}__{k}" for a in aliases]
+            v.save(aliases=field_aliases)
+
     def __getitem__(self, item: str) -> "Value":
 
         return self.get_value_obj(item)

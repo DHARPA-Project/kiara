@@ -234,12 +234,13 @@ class PipelineController(PipelineListener):
         self._job_ids[step_id] = job_id
         return job_id
 
-    def get_job_details(self, step_id: str) -> typing.Optional[Job]:
+    def get_job_details(self, step_or_job_id: str) -> typing.Optional[Job]:
+        """Returns job details for a job id, or in case a step_id was provided, the last execution of this step."""
 
-        if self._job_ids.get(step_id, None) is None:
-            return None
-
-        return self._processor.get_job_details(self._job_ids[step_id])
+        if self._job_ids.get(step_or_job_id, None) is None:
+            return self._processor.get_job_details(step_or_job_id)
+        else:
+            return self._processor.get_job_details(self._job_ids[step_or_job_id])
 
     def step_is_ready(self, step_id: str) -> bool:
         """Return whether the step with the provided id is ready to be processed.

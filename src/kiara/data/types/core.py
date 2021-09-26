@@ -11,6 +11,19 @@ if typing.TYPE_CHECKING:
     from kiara.data.values import Value
 
 
+class AnyType(ValueType):
+    """Any type / No type information."""
+
+    _value_type_name = "any"
+
+    def pretty_print_as_renderables(
+        self, value: "Value", print_config: typing.Mapping[str, typing.Any]
+    ) -> typing.Any:
+
+        data = value.get_value_data()
+        return [str(data)]
+
+
 class KiaraInternalValueType(ValueType):
     def pretty_print_as_renderables(
         self, value: "Value", print_config: typing.Mapping[str, typing.Any]

@@ -54,8 +54,8 @@ class Pipeline(object):
         self._title: str = title
         self._structure: PipelineStructure = structure
 
-        self._pipeline_inputs: ValueSet = None  # type: ignore
-        self._pipeline_outputs: ValueSet = None  # type: ignore
+        self._pipeline_inputs: SlottedValueSet = None  # type: ignore
+        self._pipeline_outputs: SlottedValueSet = None  # type: ignore
 
         self._step_inputs: typing.Mapping[str, ValueSet] = None  # type: ignore
         self._step_outputs: typing.Mapping[str, ValueSet] = None  # type: ignore
@@ -66,6 +66,9 @@ class Pipeline(object):
             typing.Dict[int, typing.Dict[str, PipelineStep]]
         ] = None
         self._inputs_by_stage: typing.Optional[
+            typing.Dict[int, typing.List[str]]
+        ] = None
+        self._outputs_by_stage: typing.Optional[
             typing.Dict[int, typing.List[str]]
         ] = None
 
@@ -169,6 +172,36 @@ class Pipeline(object):
 
         self._inputs_by_stage = result
         return self._inputs_by_stage
+
+    def get_outputs_by_stage(self) -> typing.Mapping[int, typing.Iterable[str]]:
+
+        if self._outputs_by_stage is not None:
+            return self._outputs_by_stage
+
+        result: typing.Dict[int, typing.List[str]] = {}
+        for k, v in self.outputs._value_slots.items():  # type: ignore
+            refs = self._value_refs[v]
+            min_stage = sys.maxsize
+            for ref in refs:
+                if not isinstance(ref, StepOutputRef):
+                    continue
+                step = self.get_step(ref.step_id)
+                stage = step.processing_stage
+                assert stage is not None
+                if stage < min_stage:
+                    min_stage = stage  # type: ignore
+                result.setdefault(min_stage, []).append(k)
+
+        self._outputs_by_stage = result
+        return self._outputs_by_stage
+
+    def get_inputs_for_stage(self, stage: int) -> typing.Iterable[str]:
+
+        return self.get_inputs_by_stage().get(stage, [])
+
+    def get_outputs_for_stage(self, stage: int) -> typing.Iterable[str]:
+
+        return self.get_outputs_by_stage().get(stage, [])
 
     def get_step_inputs(self, step_id: str) -> ValueSet:
         return self._step_inputs[step_id]

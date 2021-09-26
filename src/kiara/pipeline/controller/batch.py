@@ -191,17 +191,24 @@ class BatchControllerManual(PipelineController):
             # TODO: check if something is running
             self._is_running = False
 
-    def process_stage(self, stage_nr: int):
+    def process_stage(
+        self, stage_nr: int
+    ) -> typing.Mapping[int, typing.Mapping[str, typing.Union[None, str, Exception]]]:
 
         if self._is_running:
             log.debug("Pipeline running, doing nothing.")
             raise Exception("Pipeline already running.")
 
         self._is_running = True
+        result: typing.Dict[
+            int, typing.Dict[str, typing.Union[None, str, Exception]]
+        ] = {}
         try:
             for idx, stage in enumerate(self.processing_stages):
 
-                if idx + 1 > stage_nr:
+                current_stage = idx + 1
+
+                if current_stage > stage_nr:
                     break
 
                 if self._finished_until is not None and idx <= self._finished_until:
@@ -209,16 +216,20 @@ class BatchControllerManual(PipelineController):
 
                 job_ids = []
                 for step_id in stage:
+
                     if not self.can_be_processed(step_id):
                         if self.can_be_skipped(step_id):
+                            result.setdefault(current_stage, {})[step_id] = None
                             continue
                         else:
-                            raise Exception(
+                            exc = Exception(
                                 f"Required pipeline step '{step_id}' can't be processed, inputs not ready yet: {', '.join(self.invalid_inputs(step_id))}"
                             )
+                            result.setdefault(current_stage, {})[step_id] = exc
                     try:
                         job_id = self.process_step(step_id)
                         job_ids.append(job_id)
+                        result.setdefault(current_stage, {})[step_id] = job_id
                     except Exception as e:
                         # TODO: cancel running jobs?
                         if is_debug():
@@ -228,8 +239,11 @@ class BatchControllerManual(PipelineController):
                         log.error(
                             f"Processing of step '{step_id}' from pipeline '{self.pipeline.title}' failed: {e}"
                         )
-                        return False
+                        result.setdefault(current_stage, {})[step_id] = e
+
                 self._processor.wait_for(*job_ids)
                 self._finished_until = idx
         finally:
             self._is_running = False
+
+        return result

@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 """Pipeline-related subcommands for the cli."""
-
 import click
 import os.path
 import sys
+import typing
+from rich.panel import Panel
 
+from kiara import Kiara
+from kiara.info.modules import ModuleTypesGroupInfo
 from kiara.info.pipelines import PipelineModuleInfo
 from kiara.utils.output import rich_print
 
@@ -13,6 +16,62 @@ from kiara.utils.output import rich_print
 @click.pass_context
 def pipeline(ctx):
     """Pipeline-related sub-commands."""
+
+
+@pipeline.command(name="list")
+@click.option(
+    "--full-doc",
+    "-d",
+    is_flag=True,
+    help="Display the full documentation for every module type.",
+)
+@click.argument("filter", nargs=-1, required=False)
+@click.pass_context
+def list_pipelines(
+    ctx,
+    full_doc: bool,
+    filter: typing.Iterable[str],
+):
+    """List available module types."""
+
+    kiara_obj: Kiara = ctx.obj["kiara"]
+
+    if filter:
+        module_types = []
+
+        for m in kiara_obj.available_pipeline_module_types:
+            match = True
+
+            for f in filter:
+
+                if f.lower() not in m.lower():
+                    match = False
+                    break
+                else:
+                    m_cls = kiara_obj.get_module_class(m)
+                    doc = m_cls.get_type_metadata().documentation.full_doc
+
+                    if f.lower() not in doc.lower():
+                        match = False
+                        break
+
+            if match:
+                module_types.append(m)
+    else:
+        module_types = kiara_obj.available_pipeline_module_types
+
+    renderable = ModuleTypesGroupInfo.create_renderable_from_type_names(
+        kiara=kiara_obj,
+        type_names=module_types,
+        ignore_non_pipeline_modules=True,
+        ignore_pipeline_modules=False,
+        include_full_doc=full_doc,
+    )
+    title = "Available pipeline modules"
+
+    p = Panel(renderable, title_align="left", title=title)
+    print()
+    kiara_obj.explain(p)
 
 
 @pipeline.command()

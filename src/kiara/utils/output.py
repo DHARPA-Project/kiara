@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import typing
-from pyarrow import Table
 from pydantic import BaseModel, Field, root_validator
 from rich import box
 from rich.console import RenderableType
@@ -8,6 +7,9 @@ from rich.table import Table as RichTable
 
 from kiara.interfaces import get_console
 from kiara.utils import dict_from_cli_args
+
+if typing.TYPE_CHECKING:
+    from pyarrow import Table
 
 
 class OutputDetails(BaseModel):
@@ -62,7 +64,7 @@ class OutputDetails(BaseModel):
 
 
 def pretty_print_arrow_table(
-    table: Table,
+    table: "Table",
     rows_head: typing.Optional[int] = None,
     rows_tail: typing.Optional[int] = None,
     max_row_height: typing.Optional[int] = None,

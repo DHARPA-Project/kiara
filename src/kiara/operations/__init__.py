@@ -7,6 +7,7 @@ from rich.console import RenderableType, RenderGroup
 from rich.syntax import Syntax
 from rich.table import Table
 
+from kiara.data import ValueSet
 from kiara.data.values import ValueSchema
 from kiara.metadata.operation_models import OperationsMetadata
 from kiara.module_config import ModuleConfig
@@ -69,6 +70,10 @@ class Operation(ModuleConfig):
     @property
     def module_cls(self) -> typing.Type["KiaraModule"]:
         return self.kiara.get_module_class(self.module_type)
+
+    def run(self, _attach_lineage: bool = True, **inputs: typing.Any) -> ValueSet:
+
+        return self.module.run(_attach_lineage=_attach_lineage, **inputs)
 
     def create_renderable(self, **config: typing.Any) -> RenderableType:
         """Create a printable overview of this operations details.

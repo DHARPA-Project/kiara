@@ -3,8 +3,10 @@
 """A command-line interface for *Kiara*.
 """
 import click
+import typing
 
 from kiara import Kiara
+from kiara.config import KiaraConfig
 from kiara.utils import is_develop
 
 from .data.commands import data
@@ -28,12 +30,23 @@ from .type.command import type_group
 
 
 @click.group()
+@click.option(
+    "--pipeline-folder",
+    "-p",
+    help="Folder(s) that contain extra pipelines.",
+    multiple=True,
+    required=False,
+)
 @click.pass_context
-def cli(ctx):
+def cli(ctx, pipeline_folder: typing.Tuple[str]):
     """Main cli entry-point, contains all the sub-commands."""
 
     ctx.obj = {}
-    ctx.obj["kiara"] = Kiara()
+    kc = KiaraConfig()
+    if pipeline_folder:
+        kc.extra_pipeline_folders = list(pipeline_folder)
+
+    ctx.obj["kiara"] = Kiara(config=kc)
 
 
 cli.add_command(explain)

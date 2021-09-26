@@ -71,6 +71,10 @@ class KiaraConfig(BaseSettings):
         description="The path to the local kiara data store.",
         default=KIARA_DATA_STORE_DIR,
     )
+    extra_pipeline_folders: typing.List[str] = Field(
+        description="Paths to local folders that contain kiara pipelines.",
+        default_factory=list,
+    )
     ignore_errors: bool = Field(
         description="If set, kiara will try to ignore most errors (that can be ignored).",
         default=False,

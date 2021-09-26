@@ -7,7 +7,8 @@ set -ex
 set -o pipefail
 
 INPUT_SUBDIR=$1
-INPUT_DRY_RUN=$2
+INPUT_VERSION=$2
+INPUT_DRY_RUN=$3
 if [ -z "$INPUT_DRY_RUN" ]; then
   INPUT_DRY_RUN="true"
 fi
@@ -24,11 +25,19 @@ go_to_build_dir() {
     fi
 }
 
-check_if_meta_yaml_file_exists() {
-    if [ ! -f meta.yaml ]; then
-        echo "meta.yaml must exist in the directory that is being packaged and published."
+check_if_meta_yaml_template_file_exists() {
+    if [ ! -f meta.yaml.template ]; then
+        echo "meta.yaml.template must exist in the directory that is being packaged and published."
         exit 1
     fi
+}
+
+create_meta_yaml() {
+    if [ ! -z $INPUT_VERSION ]; then
+        echo "No version specified."
+        exit 1
+    fi
+    sed "s/__VERSION__/${INPUT_VERSION}/" meta.yaml.template >> meta.yaml
 }
 
 build_package(){
@@ -127,6 +136,7 @@ upload_package(){
 }
 
 go_to_build_dir
-check_if_meta_yaml_file_exists
+check_if_meta_yaml_template_file_exists
+create_meta_yaml
 build_package
 upload_package

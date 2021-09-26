@@ -62,3 +62,4 @@ build.sh
 onefile.spec
 .kiara_complete.zsh.zwc
 ci/conda/**/build
+ci/conda/kiara/meta.yaml

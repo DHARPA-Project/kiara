@@ -147,20 +147,19 @@ jobs:
   publish_conda_package:
     name: publish conda package
     runs-on: ubuntu-latest
+    env:
+      ANACONDA_PUSH_TOKEN: ${{ secrets.ANACONDA_PUSH_TOKEN }}
 #      needs:
 #        - test-linux
 #        - mypy-linux
 #        - flake8-linux
     steps:
       - uses: actions/checkout@v1
+      - uses: conda-incubator/setup-miniconda@v2
+      - name: install conda build packages
+        run: conda install conda-build
       - name: publish-to-conda
-        uses: MichaelsJP/conda-package-publish-action@v1.0.0
-        with:
-          subDir: 'ci/conda/kiara'
-          AnacondaToken: ${{ secrets.ANACONDA_PUSH_TOKEN }}
-          platforms: 'all'
-          override: false
-          dry_run: true
+        run: cd ci/conda/ && ./build-conda-packages.sh kiara
 
   merge_tag_to_main:
     name: merge current tag to main branch

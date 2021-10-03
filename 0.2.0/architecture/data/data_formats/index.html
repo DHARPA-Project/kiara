@@ -1,0 +1,2744 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Kiara project">
+      
+      
+      
+        <meta name="author" content="Markus Binsteiner">
+      
+      
+        <link rel="canonical" href="https://dharpa.org/kiara/0.2.0/architecture/data/data_formats/">
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.3.0">
+    
+    
+      
+        <title>Formats - Kiara</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.8b42a75e.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.3f5d1f46.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../css/ansi-colours.css">
+    
+      <link rel="stylesheet" href="../../../css/jupyter-cells.css">
+    
+      <link rel="stylesheet" href="../../../css/pandas-dataframe.css">
+    
+    
+      
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    <script>function __prefix(e){return new URL("../../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#data-serialization-and-storage" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Kiara" class="md-header__button md-logo" aria-label="Kiara" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Kiara
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Formats
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/DHARPA-Project/kiara/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Kiara" class="md-nav__button md-logo" aria-label="Kiara" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Kiara
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/DHARPA-Project/kiara/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../install/" class="md-nav__link">
+        Install
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Architecture
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Architecture" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Architecture
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2">
+          Data
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Data" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Data
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Formats
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Formats
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#data-serialization-and-storage" class="md-nav__link">
+    Data serialization and storage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tabular-data-serialization-formats" class="md-nav__link">
+    Tabular data (serialization) formats
+  </a>
+  
+    <nav class="md-nav" aria-label="Tabular data (serialization) formats">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#serialization-deserialization" class="md-nav__link">
+    Serialization / deserialization
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format-types" class="md-nav__link">
+    Format types
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schema" class="md-nav__link">
+    Schema
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#streaming-zero-copy-memory-mapping" class="md-nav__link">
+    Streaming, zero-copy, memory-mapping
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#some-random-benchmarks-to-illustrate" class="md-nav__link">
+    Some random benchmarks, to illustrate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#structured-binary-data-layout-strategies" class="md-nav__link">
+    Structured (binary) data layout strategies
+  </a>
+  
+    <nav class="md-nav" aria-label="Structured (binary) data layout strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#row-oriented-databases" class="md-nav__link">
+    Row-oriented databases
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#column-oriented-databases" class="md-nav__link">
+    Column-oriented databases
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#row-basedcolumn-based-in-data-science" class="md-nav__link">
+    Row-based/column-based in data science
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#more-random-benchmarks-this-time-with-pandas" class="md-nav__link">
+    More random benchmarks, this time with Pandas
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3">
+          Workflows
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Workflows" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          Workflows
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflows/" class="md-nav__link">
+        Workflows
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflows/modularity/modularity/" class="md-nav__link">
+        Modularity
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../metadata/" class="md-nav__link">
+        Metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/" class="md-nav__link">
+        Decisions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../assumptions/" class="md-nav__link">
+        Assumptions
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          API reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="API reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          API reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara/" class="md-nav__link">
+        kiara
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.config/" class="md-nav__link">
+        ➜ config
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.data/" class="md-nav__link">
+        ➜ data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.data.onboarding/" class="md-nav__link">
+        ➜ data.onboarding
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.data.onboarding.batch/" class="md-nav__link">
+        ➜ data.onboarding.batch
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.data.registry/" class="md-nav__link">
+        ➜ data.registry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.data.registry.store/" class="md-nav__link">
+        ➜ data.registry.store
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.data.types/" class="md-nav__link">
+        ➜ data.types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.data.types.core/" class="md-nav__link">
+        ➜ data.types.core
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.data.types.type_mgmt/" class="md-nav__link">
+        ➜ data.types.type_mgmt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.data.values/" class="md-nav__link">
+        ➜ data.values
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.data.values.value_set/" class="md-nav__link">
+        ➜ data.values.value_set
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.defaults/" class="md-nav__link">
+        ➜ defaults
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.doc/" class="md-nav__link">
+        ➜ doc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.doc.generate_api_doc/" class="md-nav__link">
+        ➜ doc.generate_api_doc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.doc.mkdocs_macros_cli/" class="md-nav__link">
+        ➜ doc.mkdocs_macros_cli
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.doc.mkdocs_macros_kiara/" class="md-nav__link">
+        ➜ doc.mkdocs_macros_kiara
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.events/" class="md-nav__link">
+        ➜ events
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.examples.example_controller/" class="md-nav__link">
+        ➜ examples.example_controller
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.exceptions/" class="md-nav__link">
+        ➜ exceptions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.info/" class="md-nav__link">
+        ➜ info
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.info.kiara/" class="md-nav__link">
+        ➜ info.kiara
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.info.metadata/" class="md-nav__link">
+        ➜ info.metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.info.modules/" class="md-nav__link">
+        ➜ info.modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.info.operations/" class="md-nav__link">
+        ➜ info.operations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.info.pipelines/" class="md-nav__link">
+        ➜ info.pipelines
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.info.types/" class="md-nav__link">
+        ➜ info.types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.interfaces/" class="md-nav__link">
+        ➜ interfaces
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.interfaces.cli/" class="md-nav__link">
+        ➜ interfaces.cli
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.interfaces.cli.data.commands/" class="md-nav__link">
+        ➜ interfaces.cli.data.commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.interfaces.cli.dev.commands/" class="md-nav__link">
+        ➜ interfaces.cli.dev.commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.interfaces.cli.explain/" class="md-nav__link">
+        ➜ interfaces.cli.explain
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.interfaces.cli.info.commands/" class="md-nav__link">
+        ➜ interfaces.cli.info.commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.interfaces.cli.metadata/" class="md-nav__link">
+        ➜ interfaces.cli.metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.interfaces.cli.metadata.commands/" class="md-nav__link">
+        ➜ interfaces.cli.metadata.commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.interfaces.cli.module.commands/" class="md-nav__link">
+        ➜ interfaces.cli.module.commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.interfaces.cli.operation.commands/" class="md-nav__link">
+        ➜ interfaces.cli.operation.commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.interfaces.cli.pipeline.commands/" class="md-nav__link">
+        ➜ interfaces.cli.pipeline.commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.interfaces.cli.run/" class="md-nav__link">
+        ➜ interfaces.cli.run
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.interfaces.cli.service.commands/" class="md-nav__link">
+        ➜ interfaces.cli.service.commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.interfaces.cli.type.command/" class="md-nav__link">
+        ➜ interfaces.cli.type.command
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.interfaces.cli.utils/" class="md-nav__link">
+        ➜ interfaces.cli.utils
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.interfaces.python_api/" class="md-nav__link">
+        ➜ interfaces.python_api
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.interfaces.python_api.controller/" class="md-nav__link">
+        ➜ interfaces.python_api.controller
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.interfaces.rest_api/" class="md-nav__link">
+        ➜ interfaces.rest_api
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.kiara/" class="md-nav__link">
+        ➜ kiara
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.metadata/" class="md-nav__link">
+        ➜ metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.metadata.core_models/" class="md-nav__link">
+        ➜ metadata.core_models
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.metadata.data/" class="md-nav__link">
+        ➜ metadata.data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.metadata.mgmt/" class="md-nav__link">
+        ➜ metadata.mgmt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.metadata.module_models/" class="md-nav__link">
+        ➜ metadata.module_models
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.metadata.operation_models/" class="md-nav__link">
+        ➜ metadata.operation_models
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.metadata.type_models/" class="md-nav__link">
+        ➜ metadata.type_models
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.module/" class="md-nav__link">
+        ➜ module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.module_config/" class="md-nav__link">
+        ➜ module_config
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.module_mgmt/" class="md-nav__link">
+        ➜ module_mgmt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.module_mgmt.merged/" class="md-nav__link">
+        ➜ module_mgmt.merged
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.module_mgmt.pipelines/" class="md-nav__link">
+        ➜ module_mgmt.pipelines
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.module_mgmt.python_classes/" class="md-nav__link">
+        ➜ module_mgmt.python_classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.modules/" class="md-nav__link">
+        ➜ modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.modules.metadata/" class="md-nav__link">
+        ➜ modules.metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.modules.pipelines/" class="md-nav__link">
+        ➜ modules.pipelines
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.modules.save_value/" class="md-nav__link">
+        ➜ modules.save_value
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.modules.type_conversion/" class="md-nav__link">
+        ➜ modules.type_conversion
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.operations/" class="md-nav__link">
+        ➜ operations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.operations.calculate_hash/" class="md-nav__link">
+        ➜ operations.calculate_hash
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.operations.data_import/" class="md-nav__link">
+        ➜ operations.data_import
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.operations.extract_metadata/" class="md-nav__link">
+        ➜ operations.extract_metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.operations.merge_values/" class="md-nav__link">
+        ➜ operations.merge_values
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.operations.pretty_print/" class="md-nav__link">
+        ➜ operations.pretty_print
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.operations.sample/" class="md-nav__link">
+        ➜ operations.sample
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.operations.save_value/" class="md-nav__link">
+        ➜ operations.save_value
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.operations.serialize/" class="md-nav__link">
+        ➜ operations.serialize
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.operations.type_convert/" class="md-nav__link">
+        ➜ operations.type_convert
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.pipeline/" class="md-nav__link">
+        ➜ pipeline
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.pipeline.config/" class="md-nav__link">
+        ➜ pipeline.config
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.pipeline.controller/" class="md-nav__link">
+        ➜ pipeline.controller
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.pipeline.controller.batch/" class="md-nav__link">
+        ➜ pipeline.controller.batch
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.pipeline.listeners/" class="md-nav__link">
+        ➜ pipeline.listeners
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.pipeline.module/" class="md-nav__link">
+        ➜ pipeline.module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.pipeline.pipeline/" class="md-nav__link">
+        ➜ pipeline.pipeline
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.pipeline.structure/" class="md-nav__link">
+        ➜ pipeline.structure
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.pipeline.utils/" class="md-nav__link">
+        ➜ pipeline.utils
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.pipeline.values/" class="md-nav__link">
+        ➜ pipeline.values
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.processing/" class="md-nav__link">
+        ➜ processing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.processing.parallel/" class="md-nav__link">
+        ➜ processing.parallel
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.processing.processor/" class="md-nav__link">
+        ➜ processing.processor
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.processing.synchronous/" class="md-nav__link">
+        ➜ processing.synchronous
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.rendering.pipeline/" class="md-nav__link">
+        ➜ rendering.pipeline
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.rendering.workflow/" class="md-nav__link">
+        ➜ rendering.workflow
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.rendering.workflow.terminal/" class="md-nav__link">
+        ➜ rendering.workflow.terminal
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.sessions/" class="md-nav__link">
+        ➜ sessions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.utils/" class="md-nav__link">
+        ➜ utils
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.utils.class_loading/" class="md-nav__link">
+        ➜ utils.class_loading
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.utils.concurrency/" class="md-nav__link">
+        ➜ utils.concurrency
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.utils.doc/" class="md-nav__link">
+        ➜ utils.doc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.utils.global_metadata/" class="md-nav__link">
+        ➜ utils.global_metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.utils.jupyter/" class="md-nav__link">
+        ➜ utils.jupyter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.utils.modules/" class="md-nav__link">
+        ➜ utils.modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.utils.output/" class="md-nav__link">
+        ➜ utils.output
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.workflow.kiara_workflow/" class="md-nav__link">
+        ➜ workflow.kiara_workflow
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/kiara.workflow.wrapped/" class="md-nav__link">
+        ➜ workflow.wrapped
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#data-serialization-and-storage" class="md-nav__link">
+    Data serialization and storage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tabular-data-serialization-formats" class="md-nav__link">
+    Tabular data (serialization) formats
+  </a>
+  
+    <nav class="md-nav" aria-label="Tabular data (serialization) formats">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#serialization-deserialization" class="md-nav__link">
+    Serialization / deserialization
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format-types" class="md-nav__link">
+    Format types
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schema" class="md-nav__link">
+    Schema
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#streaming-zero-copy-memory-mapping" class="md-nav__link">
+    Streaming, zero-copy, memory-mapping
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#some-random-benchmarks-to-illustrate" class="md-nav__link">
+    Some random benchmarks, to illustrate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#structured-binary-data-layout-strategies" class="md-nav__link">
+    Structured (binary) data layout strategies
+  </a>
+  
+    <nav class="md-nav" aria-label="Structured (binary) data layout strategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#row-oriented-databases" class="md-nav__link">
+    Row-oriented databases
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#column-oriented-databases" class="md-nav__link">
+    Column-oriented databases
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#row-basedcolumn-based-in-data-science" class="md-nav__link">
+    Row-based/column-based in data science
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#more-random-benchmarks-this-time-with-pandas" class="md-nav__link">
+    More random benchmarks, this time with Pandas
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/DHARPA-Project/kiara/edit/master/docs/architecture/data/data_formats.ipynb" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>
+(function() {
+  function addWidgetsRenderer() {
+    var requireJsScript = document.createElement('script');
+    requireJsScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js';
+
+    var mimeElement = document.querySelector('script[type="application/vnd.jupyter.widget-view+json"]');
+    var jupyterWidgetsScript = document.createElement('script');
+    var widgetRendererSrc = 'https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js';
+    var widgetState;
+
+    // Fallback for older version:
+    try {
+      widgetState = mimeElement && JSON.parse(mimeElement.innerHTML);
+
+      if (widgetState && (widgetState.version_major < 2 || !widgetState.version_major)) {
+        widgetRendererSrc = 'jupyter-js-widgets@*/dist/embed.js';
+      }
+    } catch(e) {}
+
+    jupyterWidgetsScript.src = widgetRendererSrc;
+
+    document.body.appendChild(requireJsScript);
+    document.body.appendChild(jupyterWidgetsScript);
+  }
+
+  document.addEventListener('DOMContentLoaded', addWidgetsRenderer);
+}());
+</script>
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">dharpa.benchmarking.data</span> <span class="kn">import</span> <span class="n">clear_system_cache</span><span class="p">,</span> <span class="n">MemoryRecorder</span><span class="p">,</span> <span class="n">get_example_file</span>
+
+<span class="kn">from</span> <span class="nn">rich.jupyter</span> <span class="kn">import</span> <span class="nb">print</span>
+</code></pre></div>
+
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This document is a primer on data formats and structures, and how and why those affect our project. I have no idea about how much of this is common knowledge, and how much is news to the majority. I have noticed a few common misconceptions and assumptions about some of the topics in here, so I figured it makes sense to try to get everyone on the same page. I've tried to keep this simple and short, so there are some things in here that are over-simplified bordering on incorrect.</p>
+<p>My educated guess is that in our project we will mostly be concerned about structured, tabular data, which is why I'll be focussing on that. I might add a companion document about 'binary-blob' data later on.</p>
+<h2 id="data-serialization-and-storage">Data serialization and storage<a class="headerlink" href="#data-serialization-and-storage" title="Permanent link">&para;</a></h2>
+<ul>
+<li>data lives in memory or on disk</li>
+<li>lots of 0's and 1's -- binary format</li>
+<li>only 'decoding' gets you a useful representation</li>
+<li>'text' is just an often used encoding format</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The natural habitat of (digital) data is computer memory or on disk. Data is always stored in binary form, and there is always some sort of decoding involved to make data usable in one way or another (with the exception of booleans maybe). Even when we talk about text files (seemingly implying that those are not binary since they are 'text'), we are dealing with binary data. It's just such a standard data encoding format that tools to decode that sort of data are available everywhere. Decoding text is by no means trivial, but luckily our tools have evolved so much by now -- and we have standards like utf-8 commonly available -- that we as users hardly ever come across decoding issues anymore. At least not to the extent we used to. It still happens, and I would imagine quite a bit more in the Digital Humanities than in your everyday 'business' use-case. So it helps to be aware of at least the basics involved in text encoding standards, and I would recommend anyone doing any sort of programming to read up on it.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="tabular-data-serialization-formats">Tabular data (serialization) formats<a class="headerlink" href="#tabular-data-serialization-formats" title="Permanent link">&para;</a></h1>
+<ul>
+<li>serialization/deserialization</li>
+<li>binary or not, here I come:</li>
+<li>avro, protobuf, pickle</li>
+<li>csv, json, yaml, xml</li>
+<li>'structured formats' with schema, or without:</li>
+<li>avro, protobuf, thrift, flatbuffers, xml</li>
+<li>csv, json, yaml, messagepack, pickle</li>
+<li>zero-copy, memory-mapping?</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The (arguably) most important type of data we'll be dealing with is structured, tabular data. So it pays to think about how its digital form is represented in memory, and what issues are involved when trying to store, manipulate and transfer it.</p>
+<p>In our context, tabular data is always a 2 dimensional matrix (rows, columns), where each column has the same number of items, and each column contains items of the same data type (or union of data types). Tabular data can have a column that can be used as index, but that is optional. Each table can be described with a schema, which is basically a list of column names, and the data types associated with each of those columns.</p>
+<h3 id="serialization-deserialization">Serialization / deserialization<a class="headerlink" href="#serialization-deserialization" title="Permanent link">&para;</a></h3>
+<p>Every programming language represents its basic data types differently in memory. That's especially true for the arguably most common data type: the string. Also, that in-memory representation is (almost) always different to the format of the (functially) same data when exported into a file on disk.</p>
+<p>This means that, if we want to export our data in our code, we need to do a step that is called 'serializing' (or 'marshalling'): we convert the data into a commonly accepted representation of a commonly accepted set of data-types. This serialization is usually expensive, computationally speaking. We want to avoid it, if at all possible, or at least always postpone it until the last possible moment, when we are sure the data won't change anymore, so we only have to do it once.
+The same goes for de-serializing data, just in the other direction: we only want to do it once, then keep it in memory in our native representation (if the size of the data allows it), so we don't have to read it again. Even if the content of a file is in the OS (page) cache (which would mean we don't actually have to read the file-content from disk) we'd still have to spend the cpu-cycles for de-serialization. So, big no-no, bad data-scientist!</p>
+<h3 id="format-types">Format types<a class="headerlink" href="#format-types" title="Permanent link">&para;</a></h3>
+<p>For serialization, we have two basic options: text, and binary (let's just not nitpick and assume that this distinction makes sense).</p>
+<h4 id="text-based-formats">Text-based formats<a class="headerlink" href="#text-based-formats" title="Permanent link">&para;</a></h4>
+<p>Serializing into a text-based format usually means taking all the elements our tabular data consists of, one by one, then serialize each element into its textual representation (like for example <code>"hello world"</code> for a string, <code>5</code> for an integer, <code>true</code> for a boolean in json), and then assembling one big 'meta'-string out of all those sub-elements. For csv, that might include a header-row, and adding delimiters like ',' in between the elements. For json it would be adding list ('<code>[</code>', '<code>]</code>') or dictionary ('<code>{</code>', '<code>}</code>') indicators, as well as deliminters and other elements as outlined in the JSON specification.</p>
+<p>I haven't done any research on it, but I'd imagine csv would be one of the oldest widely-used data storage formats. Csv is a text based tabular format, and it allows you to specify an optional header to describe column names. It allows for different deliminters between row cells (whole rows are delimited by the end-of-line special character). Other commonly used text-based formats are json, yaml, toml, xml. Those are not strictly tabular data formats, they can also contain just scalars, dictionaries, or lists (tabular data is always a list of dictionaries of the same shape).</p>
+<h4 id="binary-formats">Binary formats<a class="headerlink" href="#binary-formats" title="Permanent link">&para;</a></h4>
+<p>Serializing into a binary format is usually very specific to the format itself, so there are not really any common tools to read more than one of them (like there are for text-based formats, where you could use any text editor and at least display the content in a meaningful way), and different formats have different priorites (like small size of the resulting blob, quick random read/write access, suitability for streaming, etc). Binary formats often have compression built-in, whereas text formats never have (but can be usually compressed well enough by external tools due to certain characteristics of encoded strings). Also, they usually are a lot easier on the cpu for serialization/deserialization purposes, since it's easier to optimize them for that scenario.</p>
+<p>Binary formats existed for a long time, but in recent years they are used more widely again. Decentralized software architecture (microservices) as well as 'big(-ish) data' played a huge part in that. Because, as it turns out that, while serializing a few items of data per seconds into json and back is not that much of a problem, doing the same thing for millions of large (or even small) chunks of data actually is. In some cases that serialization step can take more time than the actual computation that was done on the data. To counter that issue, people came up with formats like 'Avro', 'Thrift', 'ProtoBuf'. Pythons 'pickle' can also be considerd a binary serialization format.</p>
+<h3 id="schema">Schema<a class="headerlink" href="#schema" title="Permanent link">&para;</a></h3>
+<p>Another useful way to separate data formats is to check whether they include a (native) schema that describes the value types of the data they hold, or not. If schema information is present, it can either be included in the resulting file, or be stored elsewhere.</p>
+<p>Having schema information for a dataset is highly desirable, because it tells us exactly what type of data we are dealing with (is it a string, integer, float? what precision?). Whereas most text-based data formats don't include a schema definition format, there are sometimes external efforts to remedy that (JSON-schema, for example). None of the text-based formats I can think of at the top of my head include the schema in a resulting file. This is important, because the complexity of tools that handle data increases if they need to worry about secondary, 'side-car' files for incoming data.</p>
+<h4 id="slight-detour-csv">Slight detour: csv<a class="headerlink" href="#slight-detour-csv" title="Permanent link">&para;</a></h4>
+<p>Csv is bit special in that it can contain a 'header' row in the first line, which can be used to determine column names. Since this row is optional, it is not always present which of course complicates the import process. Because csv files are so common in data science, most of the tools we use include some csv-import method that more or less smartly determines the (text-)encoding of the file, whether it has a header row, as well as the schema of the included data. This method usually serializes the data into the appropriate internal representations of the column types after it is reasonably sure the inferred schema is correct-ish. Without a definite, (externally provided) schema it is not possible to guess this reliably in every case, so a developer should always assert the correct types are present after such an import.</p>
+<h3 id="streaming-zero-copy-memory-mapping">Streaming, zero-copy, memory-mapping<a class="headerlink" href="#streaming-zero-copy-memory-mapping" title="Permanent link">&para;</a></h3>
+<p>One thing that everyone working semi-seriously in data science and handling big-ish data should be aware of is that in most OS'es you can read (or 'load') data in more ways than one. The 'one' way is usually something like:</p>
+<div class="highlight"><pre><span></span><code><span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;dataset.csv&#39;</span><span class="p">)</span>
+<span class="n">lines</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>  <span class="c1"># or file.readlines()</span>
+</code></pre></div>
+<p>When using Pandas, it'll probably take the form of:
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;dataset.csv&#39;</span><span class="p">)</span>
+</code></pre></div></p>
+<p>Both of those read the whole file into memory. Which will be fine if the dataset is small or there is a need for it to be
+in memory in full. Depending on the situation, it might be wasteful, though. For example when calculating the mean for a column of integers. In that case it's a better strategy to read one line of the file, process the column we are interested in, eject the line from memory, then read the next line, only keeping the current total and the number of items we processed so far. That way we'll never allocate more memory than what is needed for a single line. We can even process datasets that are larger than the available memory of or our workstation.</p>
+<p>As a matter of fact, we could do even better if we would know the offset and length of the column we are interested in, in that case, we would only have to read the bytes that hold the integer value we need, and could ignore the other cells of a row completely. Again, this might or might be an issue depending on the size of the data in a row, but if we have a dataset with a lot of large columns, the I/O operations we would not have to do by only reading the exact data we need could improve the speed of processing considerably. Doing that doesn't really work for csv files, for example. Since there is no good way for us to know the exact offset of length of the column we are interested in. There are data formats that support that kind of operation though.</p>
+<p>Along with those fairly simple strategies to deal with data efficiently, there are more advanced ones that also deal with data and how it is handled in a system memory as well as on disk. For those of you who are interested, I would recommend looking up the terms 'memory-mapping', and 'zero-copy'.</p>
+<h3 id="some-random-benchmarks-to-illustrate">Some random benchmarks, to illustrate<a class="headerlink" href="#some-random-benchmarks-to-illustrate" title="Permanent link">&para;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="highlight"><pre><span></span><code><span class="n">clear_system_cache</span><span class="p">()</span>
+<span class="n">file_path</span> <span class="o">=</span> <span class="n">get_example_file</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">count_lines</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># ignores &#39;\n&#39; characters</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="n">counter</span> <span class="o">=</span> <span class="n">counter</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">length</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;no_lines&quot;</span><span class="p">:</span> <span class="n">counter</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="n">length</span><span class="p">}</span>
+
+<span class="n">profile_count_lines</span> <span class="o">=</span> <span class="n">MemoryRecorder</span><span class="o">.</span><span class="n">profile_func</span><span class="p">(</span><span class="s2">&quot;Reading the whole file&quot;</span><span class="p">,</span> <span class="s2">&quot;This iterates through all lines in memory, keeping all of them in memory at the same time.&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">count_lines</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">profile_count_lines</span><span class="o">.</span><span class="n">report</span><span class="p">)</span>
+</code></pre></div>
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_html rendered_html output_subarea ">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">-- <span style="font-style: italic">system cache cleared</span> --
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_html rendered_html output_subarea ">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">╭───────────────────────────────────────────────────────────────────────────────────────────╮
+│ <span style="font-weight: bold">Reading the whole file</span>                                                                    │
+│                                                                                           │
+│                                                                                           │
+│ This iterates through all lines in memory, keeping all of them in memory at the same      │
+│ time.                                                                                     │
+│                                                                                           │
+│                                                                                           │
+│                     ╷                                                                     │
+│  <span style="font-weight: bold"> Profiled function </span>│<span style="font-weight: bold"> count_lines </span>                                                        │
+│ ╶───────────────────┼─────────────╴                                                       │
+│  <span style="font-style: italic">        max memory </span>│    53.75 MB                                                         │
+│  <span style="font-style: italic">    execution time </span>│      144 ms                                                         │
+│                     ╵                                                                     │
+│ ╭─ Code ────────────────────────────────────────────────────────────────────────────────╮ │
+│ │                                                                                       │ │
+│ │ <span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">def</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> </span><span style="color: #00a000; text-decoration-color: #00a000; background-color: #f8f8f8">count_lines</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">(path):</span><span style="background-color: #f8f8f8">                                                               </span> │ │
+│ │ <span style="background-color: #f8f8f8">                                                                                     </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    f </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">=</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8">open</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">(path)</span><span style="background-color: #f8f8f8">                                                                   </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    counter </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">=</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">0</span><span style="background-color: #f8f8f8">                                                                      </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    length </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">=</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">0</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">  </span><span style="color: #008800; text-decoration-color: #008800; background-color: #f8f8f8; font-style: italic"># ignores '\n' characters</span><span style="background-color: #f8f8f8">                                            </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    lines </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">=</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> f</span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">.</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">readlines()</span><span style="background-color: #f8f8f8">                                                            </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">for</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> line </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">in</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> lines:</span><span style="background-color: #f8f8f8">                                                               </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">        counter </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">=</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> counter </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">+</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">1</span><span style="background-color: #f8f8f8">                                                        </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">        length </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">=</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> length </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">+</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8">len</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">(line)</span><span style="background-color: #f8f8f8">                                                  </span> │ │
+│ │ <span style="background-color: #f8f8f8">                                                                                     </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">return</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> {</span><span style="color: #bb4444; text-decoration-color: #bb4444; background-color: #f8f8f8">"no_lines"</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">: counter, </span><span style="color: #bb4444; text-decoration-color: #bb4444; background-color: #f8f8f8">"size"</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">: length}</span><span style="background-color: #f8f8f8">                                     </span> │ │
+│ │                                                                                       │ │
+│ ╰───────────────────────────────────────────────────────────────────────────────────────╯ │
+╰───────────────────────────────────────────────────────────────────────────────────────────╯
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="highlight"><pre><span></span><code><span class="n">clear_system_cache</span><span class="p">()</span>
+
+<span class="n">file_obj</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">buffering</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">count_lines</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># ignores &#39;\n&#39; characters</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>   <span class="c1"># when using open like we do here, it returns an iterator not a materialized list</span>
+        <span class="n">counter</span> <span class="o">=</span> <span class="n">counter</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">length</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;no_lines&quot;</span><span class="p">:</span> <span class="n">counter</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="n">length</span><span class="p">}</span>
+
+<span class="n">profile_count_lines</span> <span class="o">=</span> <span class="n">MemoryRecorder</span><span class="o">.</span><span class="n">profile_func</span><span class="p">(</span><span class="s2">&quot;Reading the file line by line&quot;</span><span class="p">,</span> <span class="s2">&quot;This allocates only very little memory, since once a line is read and processed, it will be disregarded.&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">count_lines</span><span class="p">,</span> <span class="n">file_obj</span><span class="p">)</span>
+<span class="n">file_obj</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">profile_count_lines</span><span class="o">.</span><span class="n">report</span><span class="p">)</span>
+</code></pre></div>
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_html rendered_html output_subarea ">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">-- <span style="font-style: italic">system cache cleared</span> --
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_html rendered_html output_subarea ">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">╭───────────────────────────────────────────────────────────────────────────────────────────╮
+│ <span style="font-weight: bold">Reading the file line by line</span>                                                             │
+│                                                                                           │
+│                                                                                           │
+│ This allocates only very little memory, since once a line is read and processed, it will  │
+│ be disregarded.                                                                           │
+│                                                                                           │
+│                                                                                           │
+│                     ╷                                                                     │
+│  <span style="font-weight: bold"> Profiled function </span>│<span style="font-weight: bold"> count_lines </span>                                                        │
+│ ╶───────────────────┼─────────────╴                                                       │
+│  <span style="font-style: italic">        max memory </span>│      0.0 MB                                                         │
+│  <span style="font-style: italic">    execution time </span>│      115 ms                                                         │
+│                     ╵                                                                     │
+│ ╭─ Code ────────────────────────────────────────────────────────────────────────────────╮ │
+│ │                                                                                       │ │
+│ │ <span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">def</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> </span><span style="color: #00a000; text-decoration-color: #00a000; background-color: #f8f8f8">count_lines</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">(f):</span><span style="background-color: #f8f8f8">                                                                  </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    counter </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">=</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">0</span><span style="background-color: #f8f8f8">                                                                      </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    length </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">=</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">0</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">  </span><span style="color: #008800; text-decoration-color: #008800; background-color: #f8f8f8; font-style: italic"># ignores '\n' characters</span><span style="background-color: #f8f8f8">                                            </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">for</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> line </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">in</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> f:   </span><span style="color: #008800; text-decoration-color: #008800; background-color: #f8f8f8; font-style: italic"># when using open like we do here, it returns an iterator not a </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">        counter </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">=</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> counter </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">+</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">1</span><span style="background-color: #f8f8f8">                                                        </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">        length </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">=</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> length </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">+</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8">len</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">(line)</span><span style="background-color: #f8f8f8">                                                  </span> │ │
+│ │ <span style="background-color: #f8f8f8">                                                                                     </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">return</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> {</span><span style="color: #bb4444; text-decoration-color: #bb4444; background-color: #f8f8f8">"no_lines"</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">: counter, </span><span style="color: #bb4444; text-decoration-color: #bb4444; background-color: #f8f8f8">"size"</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">: length}</span><span style="background-color: #f8f8f8">                                     </span> │ │
+│ │                                                                                       │ │
+│ ╰───────────────────────────────────────────────────────────────────────────────────────╯ │
+╰───────────────────────────────────────────────────────────────────────────────────────────╯
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="structured-binary-data-layout-strategies">Structured (binary) data layout strategies<a class="headerlink" href="#structured-binary-data-layout-strategies" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Row-based:<ul>
+<li>(most commonly used dbs): sqlite, Postgres, MySQL, ...</li>
+<li>Avro</li>
+</ul>
+</li>
+<li>Column-based<ul>
+<li>OLAP dbs: duckdb, ClickHouse, BigQuery, Snowflake ...</li>
+<li>pandas dataframe</li>
+<li>parquet, feather</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In order to use the more advanced operations on data I described earlier, the data formats we use need to support them. None of the simple formats like csv, json, yaml do. There is one category of applications that had to deal with those things for decades though: databases. So I think it pays to look a bit at how they handle storing data, and what kind of trade-offs they are making. Basically, a database is a system that lets you persist (mostly) structured data on disk, and gives you an easy, memory- and processing-efficient way to query and retrieve it back. To do that, they have different ways to persist data, add indexes, cache 'hot' data, and so on. As it turns out, there are 2 main ways data can be stored on disk for efficient retrieval: row-based, and column-based (I'm ignoring document/'nosql' databases here, since -- for almost all practical use-cases -- they are inferior to relational ones).</p>
+<p><img src="https://i0.wp.com/filipjaniszewski.com/wp-content/uploads/2017/11/row-vs-column.png?w=400"></p>
+<h3 id="row-oriented-databases">Row-oriented databases<a class="headerlink" href="#row-oriented-databases" title="Permanent link">&para;</a></h3>
+<p>The most common database type is 'row-oriented'. This means that data is stored in a way so that each row represents a continuous block of disk (or memory). Data is quick and easy to read (if you are  interested in a subset of rows) and it is very easy and fast to add new rows/records. This fits the most common requirements businesses have for a database, since new items are added constantly, which is why most databases we encounter in the wild are row-based. Examples for such databases are: Postgres, sqlite, MySQL.</p>
+<h3 id="column-oriented-databases">Column-oriented databases<a class="headerlink" href="#column-oriented-databases" title="Permanent link">&para;</a></h3>
+<p>Column-oriented databases have existed for a long time, but they are not as prevalent as their row-based cousins, and often ignored by developers who haven't been exposed to them and their advantages. Instead of storing data row-by-row, they store data column-by-column. This means that column-cells are layed out next to each other on disk, and different columns occupy different regions of the storage (not necessarily close to each other at all). The querying logic is quite different for this type of database, the main advantage is that a certain type of analytical query is really fast (speedups of 10x or even 100x are quite possible), also it is very easy to request whole columns from such a database without it having to access any irrelevant parts of the data. Compressing data is also easier with column-oriented databases, so usually those occupy less disk space than their row-based peers. The disadvantage of those databases is that it's harder and slower to add new data, so they are more common for situations where one either has a fixed dataset, or updates are rare, and come in big(er) batches. Also, certain types of queries are less suited for that layout, which makes it always a good idea to think about what you need out of your data before deciding on a database/database type.</p>
+<h3 id="row-basedcolumn-based-in-data-science">Row-based/column-based in data science<a class="headerlink" href="#row-basedcolumn-based-in-data-science" title="Permanent link">&para;</a></h3>
+<p>How is this relevant? Well, because in data science we are dealing mostly with fixed datasets, and the queries we do on them are mostly analytical in a way that fits column-oriented data layouts; although exceptions from that rule are not uncommon. So it makes sense to depart from the 'common wisdom' of using a row-based approach. In fact, Numpy arrays and Pandas dataframes (which depend on them) are kept in memory using the column-based approach. This is important to know, because it helps us using and querying data correctly in our code. For example, it's not a good idea and very slow to add 'rows' to a Pandas dataframe. Instead, we should initialize the Dataframe with the whole dataset once at the beginning, and then only add columns to it (which is very fast), but no new rows if at all possible.</p>
+<p>One issue with Numpy/Pandas is that commonly a dataset is loaded into memory as a whole. There are ways around that (for example by processing a csv file in batches), but very often those are not used. In reality, it's probably not that big an issue in the DH field, since datasets seem to be smaller on average. But it is still a good idea to be as efficient as possible in this regard, esp. for our purpose, since we won't have any knowledge or guarantees in advance about the data we'll be handling (which might very well be bigger than the availble memory). Also, since we are building an interactive application, it makes a difference whether a query comes back within a second, or ten.</p>
+<h3 id="more-random-benchmarks-this-time-with-pandas">More random benchmarks, this time with Pandas<a class="headerlink" href="#more-random-benchmarks-this-time-with-pandas" title="Permanent link">&para;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="highlight"><pre><span></span><code><span class="n">clear_system_cache</span><span class="p">()</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="k">def</span> <span class="nf">load_csv</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;year_month&quot;</span><span class="p">]:</span>
+        <span class="n">counter</span> <span class="o">=</span> <span class="n">counter</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">counter</span>
+
+<span class="n">profile_read_csv</span> <span class="o">=</span> <span class="n">MemoryRecorder</span><span class="o">.</span><span class="n">profile_func</span><span class="p">(</span><span class="s2">&quot;Reading a csv file with Pandas as a whole.&quot;</span><span class="p">,</span> <span class="s2">&quot;This is ok, as long as the dataset is not too big.&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">load_csv</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">profile_read_csv</span><span class="o">.</span><span class="n">report</span><span class="p">)</span>
+</code></pre></div>
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_html rendered_html output_subarea ">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">-- <span style="font-style: italic">system cache cleared</span> --
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_html rendered_html output_subarea ">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">╭───────────────────────────────────────────────────────────────────────────────────────────╮
+│ <span style="font-weight: bold">Reading a csv file with Pandas as a whole.</span>                                                │
+│                                                                                           │
+│                                                                                           │
+│ This is ok, as long as the dataset is not too big.                                        │
+│                                                                                           │
+│                                                                                           │
+│                     ╷                                                                     │
+│  <span style="font-weight: bold"> Profiled function </span>│<span style="font-weight: bold">  load_csv </span>                                                          │
+│ ╶───────────────────┼───────────╴                                                         │
+│  <span style="font-style: italic">        max memory </span>│ 63.625 MB                                                           │
+│  <span style="font-style: italic">    execution time </span>│    342 ms                                                           │
+│                     ╵                                                                     │
+│ ╭─ Code ────────────────────────────────────────────────────────────────────────────────╮ │
+│ │                                                                                       │ │
+│ │ <span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">def</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> </span><span style="color: #00a000; text-decoration-color: #00a000; background-color: #f8f8f8">load_csv</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">(path):</span><span style="background-color: #f8f8f8">                                                                  </span> │ │
+│ │ <span style="background-color: #f8f8f8">                                                                                     </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    counter </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">=</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">0</span><span style="background-color: #f8f8f8">                                                                      </span> │ │
+│ │ <span style="background-color: #f8f8f8">                                                                                     </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    df </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">=</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> pd</span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">.</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">read_csv(path)</span><span style="background-color: #f8f8f8">                                                           </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">for</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> _ </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">in</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> df[</span><span style="color: #bb4444; text-decoration-color: #bb4444; background-color: #f8f8f8">"year_month"</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">]:</span><span style="background-color: #f8f8f8">                                                       </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">        counter </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">=</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> counter </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">+</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">1</span><span style="background-color: #f8f8f8">                                                        </span> │ │
+│ │ <span style="background-color: #f8f8f8">                                                                                     </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">return</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> counter</span><span style="background-color: #f8f8f8">                                                                   </span> │ │
+│ │                                                                                       │ │
+│ ╰───────────────────────────────────────────────────────────────────────────────────────╯ │
+╰───────────────────────────────────────────────────────────────────────────────────────────╯
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="highlight"><pre><span></span><code><span class="n">clear_system_cache</span><span class="p">()</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="k">def</span> <span class="nf">load_csv</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="n">counter</span> <span class="o">=</span> <span class="n">counter</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">counter</span>
+
+<span class="n">profile_read_csv</span> <span class="o">=</span> <span class="n">MemoryRecorder</span><span class="o">.</span><span class="n">profile_func</span><span class="p">(</span><span class="s2">&quot;Reading a csv file with Pandas, iterating over rows&quot;</span><span class="p">,</span> <span class="s2">&quot;As one can see, this is very very slow, and not a good idea at all to do in Pandas.&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">load_csv</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">profile_read_csv</span><span class="o">.</span><span class="n">report</span><span class="p">)</span>
+</code></pre></div>
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_html rendered_html output_subarea ">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">-- <span style="font-style: italic">system cache cleared</span> --
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_html rendered_html output_subarea ">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">╭───────────────────────────────────────────────────────────────────────────────────────────╮
+│ <span style="font-weight: bold">Reading a csv file with Pandas, iterating over rows</span>                                       │
+│                                                                                           │
+│                                                                                           │
+│ As one can see, this is very very slow, and not a good idea at all to do in Pandas.       │
+│                                                                                           │
+│                                                                                           │
+│                     ╷                                                                     │
+│  <span style="font-weight: bold"> Profiled function </span>│<span style="font-weight: bold">  load_csv </span>                                                          │
+│ ╶───────────────────┼───────────╴                                                         │
+│  <span style="font-style: italic">        max memory </span>│ 80.875 MB                                                           │
+│  <span style="font-style: italic">    execution time </span>│  21704 ms                                                           │
+│                     ╵                                                                     │
+│ ╭─ Code ────────────────────────────────────────────────────────────────────────────────╮ │
+│ │                                                                                       │ │
+│ │ <span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">def</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> </span><span style="color: #00a000; text-decoration-color: #00a000; background-color: #f8f8f8">load_csv</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">(path):</span><span style="background-color: #f8f8f8">                                                                  </span> │ │
+│ │ <span style="background-color: #f8f8f8">                                                                                     </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    counter </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">=</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">0</span><span style="background-color: #f8f8f8">                                                                      </span> │ │
+│ │ <span style="background-color: #f8f8f8">                                                                                     </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    df </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">=</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> pd</span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">.</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">read_csv(path)</span><span style="background-color: #f8f8f8">                                                           </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">for</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> index, row </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">in</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> df</span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">.</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">iterrows():</span><span style="background-color: #f8f8f8">                                                 </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">        counter </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">=</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> counter </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">+</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">1</span><span style="background-color: #f8f8f8">                                                        </span> │ │
+│ │ <span style="background-color: #f8f8f8">                                                                                     </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">return</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> counter</span><span style="background-color: #f8f8f8">                                                                   </span> │ │
+│ │                                                                                       │ │
+│ ╰───────────────────────────────────────────────────────────────────────────────────────╯ │
+╰───────────────────────────────────────────────────────────────────────────────────────────╯
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">load_csv_in_chunks</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">chunksize</span><span class="o">=</span><span class="mi">1000</span>
+    <span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">)</span> <span class="k">as</span> <span class="n">reader</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">chunk_df</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">chunk_df</span><span class="p">[</span><span class="s2">&quot;year_month&quot;</span><span class="p">]:</span>
+                <span class="n">counter</span> <span class="o">=</span> <span class="n">counter</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">counter</span>
+
+<span class="n">profile_read_csv</span> <span class="o">=</span> <span class="n">MemoryRecorder</span><span class="o">.</span><span class="n">profile_func</span><span class="p">(</span><span class="s2">&quot;Reading a csv file with Pandas, in chunks.&quot;</span><span class="p">,</span> <span class="s2">&quot;This is a good approach when dealing with a dataset that is large, and we don&#39;t need it except for a single operation on a single column. We can optimize the execution-time/memory-usage by adjusting the &#39;chunksize&#39; value.&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">load_csv_in_chunks</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">profile_read_csv</span><span class="o">.</span><span class="n">report</span><span class="p">)</span>
+</code></pre></div>
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_html rendered_html output_subarea ">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">╭───────────────────────────────────────────────────────────────────────────────────────────╮
+│ <span style="font-weight: bold">Reading a csv file with Pandas, in chunks.</span>                                                │
+│                                                                                           │
+│                                                                                           │
+│ This is a good approach when dealing with a dataset that is large, and we don't need it   │
+│ except for a single operation on a single column. We can optimize the                     │
+│ execution-time/memory-usage by adjusting the 'chunksize' value.                           │
+│                                                                                           │
+│                                                                                           │
+│                     ╷                                                                     │
+│  <span style="font-weight: bold"> Profiled function </span>│<span style="font-weight: bold"> load_csv_in_chunks </span>                                                 │
+│ ╶───────────────────┼────────────────────╴                                                │
+│  <span style="font-style: italic">        max memory </span>│       6.0390625 MB                                                  │
+│  <span style="font-style: italic">    execution time </span>│             892 ms                                                  │
+│                     ╵                                                                     │
+│ ╭─ Code ────────────────────────────────────────────────────────────────────────────────╮ │
+│ │                                                                                       │ │
+│ │ <span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">def</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> </span><span style="color: #00a000; text-decoration-color: #00a000; background-color: #f8f8f8">load_csv_in_chunks</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">(path):</span><span style="background-color: #f8f8f8">                                                        </span> │ │
+│ │ <span style="background-color: #f8f8f8">                                                                                     </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    counter </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">=</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">0</span><span style="background-color: #f8f8f8">                                                                      </span> │ │
+│ │ <span style="background-color: #f8f8f8">                                                                                     </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    chunksize</span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">=1000</span><span style="background-color: #f8f8f8">                                                                   </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">with</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> pd</span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">.</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">read_csv(path, chunksize</span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">=</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">chunksize) </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">as</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> reader:</span><span style="background-color: #f8f8f8">                           </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">        </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">for</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> chunk_df </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">in</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> reader:</span><span style="background-color: #f8f8f8">                                                      </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">            </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">for</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> _ </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">in</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> chunk_df[</span><span style="color: #bb4444; text-decoration-color: #bb4444; background-color: #f8f8f8">"year_month"</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">]:</span><span style="background-color: #f8f8f8">                                         </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">                counter </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">=</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> counter </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">+</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> </span><span style="color: #666666; text-decoration-color: #666666; background-color: #f8f8f8">1</span><span style="background-color: #f8f8f8">                                                </span> │ │
+│ │ <span style="background-color: #f8f8f8">                                                                                     </span> │ │
+│ │ <span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8">    </span><span style="color: #aa22ff; text-decoration-color: #aa22ff; background-color: #f8f8f8; font-weight: bold">return</span><span style="color: #000000; text-decoration-color: #000000; background-color: #f8f8f8"> counter</span><span style="background-color: #f8f8f8">                                                                   </span> │ │
+│ │                                                                                       │ │
+│ ╰───────────────────────────────────────────────────────────────────────────────────────╯ │
+╰───────────────────────────────────────────────────────────────────────────────────────────╯
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Overview" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Overview
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../../workflows/" class="md-footer__link md-footer__link--next" aria-label="Next: Workflows" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Workflows
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            DHARPA project
+          </div>
+        
+        
+          Made with
+          <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+            Material for MkDocs
+          </a>
+        
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,9 +1,10 @@
 # Changelog
 
-## Version 0.1.4
+## Version 0.2.0
 
 - add conda packages
 - support for extra pipeline folders via KiaraConfig & cli
+- moved 'any' type into this package
 
 ## Version 0.1.3
 

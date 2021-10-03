@@ -7,7 +7,7 @@
 
 # kiara
 
-*A research data management and orchestration engine.*
+*A research data management and orchestration framework.*
 
  - *kiara* user documentation: [https://dharpa.org/kiara.documentation](https://dharpa.org/kiara.documentation/)
  - Code: [https://github.com/DHARPA-Project/kiara](https://github.com/DHARPA-Project/kiara)

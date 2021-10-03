@@ -1,6 +1,9 @@
 # Changelog
 
-## Version 0.1.4 (Upcoming)
+## Version 0.1.4
+
+- add conda packages
+- support for extra pipeline folders via KiaraConfig & cli
 
 ## Version 0.1.3
 

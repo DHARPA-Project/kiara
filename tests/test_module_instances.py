@@ -37,7 +37,7 @@ def test_module_instance_run(kiara: Kiara):
     with pytest.raises(Exception) as e_info:
         l_and.run()
 
-    assert "Inputs not valid" in str(e_info.value)
+    assert "input field(s) not valid" in str(e_info.value)
 
     with pytest.raises(Exception) as e_info:
         l_and.run(x=True)
@@ -50,7 +50,7 @@ def test_module_instance_run(kiara: Kiara):
 
     with pytest.raises(Exception) as e_info:
         result = l_xor.run()
-    assert "Inputs not valid" in str(e_info.value)
+    assert "input field(s) not valid" in str(e_info.value)
 
     with pytest.raises(Exception) as e_info:
         l_xor.run(x=True)

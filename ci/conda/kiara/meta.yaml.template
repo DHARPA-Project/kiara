@@ -1,7 +1,6 @@
 {% set name = "kiara" %}
 {% set version = "__VERSION__" %}
 
-
 package:
   name: "{{ name|lower }}"
   version: "{{ version }}"

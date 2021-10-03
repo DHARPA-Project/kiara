@@ -38,6 +38,10 @@ class LocalDataStore(DataRegistry):
         self._value_slots: typing.Dict[str, ValueSlot] = {}
         super().__init__(kiara=kiara)
 
+    @property
+    def base_path(self) -> Path:
+        return self._base_path
+
     def _get_saved_value_info(self, value_id: str) -> SavedValueInfo:
 
         if value_id in self._value_info_cache.keys():

@@ -234,6 +234,13 @@ class ModuleProcessor(abc.ABC):
 
         self._wait_for(*job_ids)
 
+        for job_id in job_ids:
+            job = self.get_job_details(job_id)
+            if job is None:
+                raise Exception(f"Can't find job with id: {job_id}")
+            if job.status == JobStatus.SUCCESS:
+                job.job_log.percent_finished = 100
+
         if sync_outputs:
             self.sync_outputs(*job_ids)
 

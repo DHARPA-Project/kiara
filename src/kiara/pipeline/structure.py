@@ -366,7 +366,7 @@ class PipelineStructure(object):
 
         return d["step"]
 
-    def get_step_inputs(self, step_id: str) -> typing.Iterable[StepInputRef]:
+    def get_step_inputs(self, step_id: str) -> typing.Mapping[str, StepInputRef]:
 
         d = self.steps_details.get(step_id, None)
         if d is None:
@@ -374,7 +374,7 @@ class PipelineStructure(object):
 
         return d["inputs"]
 
-    def get_step_outputs(self, step_id: str) -> typing.Iterable[StepOutputRef]:
+    def get_step_outputs(self, step_id: str) -> typing.Mapping[str, StepOutputRef]:
 
         d = self.steps_details.get(step_id, None)
         if d is None:
@@ -744,7 +744,7 @@ class PipelineStructure(object):
             step = self.get_step(step_id)
             step_nodes.remove(step)
 
-            for s_inp in self.get_step_inputs(step_id).values():
+            for k, s_inp in self.get_step_inputs(step_id).items():
                 if not s_inp.value_schema.is_required():
                     continue
                 all_required_inputs.append(s_inp)

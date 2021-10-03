@@ -78,7 +78,9 @@ class StepInputs(ValueSet):
                 )
         return value
 
-    def _set_values(self, **values: typing.Any) -> typing.Dict[Value, bool]:
+    def _set_values(
+        self, **values: typing.Any
+    ) -> typing.Mapping[str, typing.Union[bool, Exception]]:
         raise Exception("Inputs are read-only.")
 
 
@@ -117,7 +119,9 @@ class StepOutputs(ValueSet):
 
         return self._outputs.get_all_field_names()
 
-    def _set_values(self, **values: typing.Any):
+    def _set_values(
+        self, **values: typing.Any
+    ) -> typing.Mapping[str, typing.Union[bool, Exception]]:
 
         wrong = []
         for key in values.keys():
@@ -130,6 +134,7 @@ class StepOutputs(ValueSet):
                 f"Can't set output value(s), invalid key name(s): {', '.join(wrong)}. Available: {av}"
             )
 
+        result = {}
         for output_name, value in values.items():
             # value_obj = self._outputs.get_value_obj(output_name)
             if (
@@ -137,6 +142,11 @@ class StepOutputs(ValueSet):
                 or value != self._outputs_staging[output_name]  # type: ignore
             ):
                 self._outputs_staging[output_name] = value  # type: ignore
+                result[output_name] = True
+            else:
+                result[output_name] = False
+
+        return result
 
     def _get_value_obj(self, output_name):
         """Retrieve the value object for the specified field."""
@@ -641,8 +651,9 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
 
         if not input_value_set.items_are_valid():
 
+            invalid_details = input_value_set.check_invalid()
             raise Exception(
-                f"Can't process module '{self._module_type_name}': Inputs not valid."  # type: ignore
+                f"Can't process module '{self._module_type_name}', input field(s) not valid: {', '.join(invalid_details.keys())}"  # type: ignore
             )
 
         output_value_set = SlottedValueSet.from_schemas(

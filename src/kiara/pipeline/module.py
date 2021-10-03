@@ -3,9 +3,10 @@ import typing
 
 from kiara.data.values import ValueSchema
 from kiara.data.values.value_set import ValueSet
+from kiara.exceptions import KiaraProcessingException
 from kiara.module import KiaraModule
+from kiara.pipeline import StepStatus
 from kiara.pipeline.config import PipelineConfig
-from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.structure import PipelineStructure
 from kiara.utils import StringYAML
 
@@ -32,20 +33,15 @@ class PipelineModule(KiaraModule[PipelineConfig]):
         module_config: typing.Union[
             None, PipelineConfig, typing.Mapping[str, typing.Any]
         ] = None,
-        controller: typing.Union[
-            None, PipelineController, str, typing.Type[PipelineController]
-        ] = None,
+        # controller: typing.Union[
+        #     None, PipelineController, str, typing.Type[PipelineController]
+        # ] = None,
         kiara: typing.Optional["Kiara"] = None,
     ):
 
-        if controller is not None and not isinstance(controller, PipelineController):
-            raise NotImplementedError()
-        if controller is None:
-            from kiara.pipeline.controller.batch import BatchController
-
-            controller = BatchController(kiara=kiara)
-
-        self._pipeline_controller: PipelineController = controller
+        # if controller is not None and not isinstance(controller, PipelineController):
+        #     raise NotImplementedError()
+        # if controller is None:
         super().__init__(
             id=id,
             parent_id=parent_id,
@@ -77,9 +73,16 @@ class PipelineModule(KiaraModule[PipelineConfig]):
 
         from kiara import Pipeline
 
-        # TODO: check for Value objects
-        pipeline = Pipeline(structure=self.structure)
-        inps = inputs.get_all_value_data()
-        pipeline.inputs.set_values(**inps)
+        # controller = BatchController(auto_process=False, kiara=self._kiara)
 
-        outputs.set_values(**pipeline.outputs.get_all_value_data())
+        pipeline = Pipeline(structure=self.structure)
+        pipeline.inputs.set_values(**inputs)
+
+        if not pipeline.inputs.items_are_valid():
+            raise KiaraProcessingException(f"Can't start processing of {self._module_type_id} pipeline: one or several inputs missing or invalid.")  # type: ignore
+
+        if not pipeline.status == StepStatus.RESULTS_READY:
+            # TODO: error details
+            raise KiaraProcessingException(f"Error when running pipeline of type '{self._module_type_id}'.")  # type: ignore
+
+        outputs.set_values(**pipeline.outputs)

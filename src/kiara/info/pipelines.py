@@ -805,12 +805,12 @@ def create_pipeline_step_table(
     for field_name, details in pipeline_state.step_inputs[step.step_id].values.items():
 
         if details.is_set:
-            status_str = "[green]-- set --[/green]"
+            status_str = f"[green]-- {details.status} --[/green]"
         else:
             if details.is_valid:
-                status_str = "[green]-- not set (not required) --[/green]"
+                status_str = f"[green]-- {details.status} --[/green]"
             else:
-                status_str = "[red]-- not set --[/red]"
+                status_str = f"[red]-- {details.status} --[/red]"
         name = f"[b]{field_name}[/b] [i](type: {details.value_schema.type})[/i]"
         if len(name) > max_field_name_len:
             max_field_name_len = len(name)

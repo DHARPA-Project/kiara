@@ -117,11 +117,13 @@ class Pipeline(object):
         return self._controller
 
     @property
-    def inputs(self) -> ValueSet:
+    def inputs(self) -> SlottedValueSet:
+        """All (pipeline) input values of this pipeline."""
         return self._pipeline_inputs
 
     @property
-    def outputs(self) -> ValueSet:
+    def outputs(self) -> SlottedValueSet:
+        """All (pipeline) output values of this pipeline."""
         return self._pipeline_outputs
 
     # def set_pipeline_inputs(self, **inputs: typing.Any):
@@ -129,14 +131,17 @@ class Pipeline(object):
 
     @property
     def step_ids(self) -> typing.Iterable[str]:
+        """Return all ids of the steps of this pipeline."""
         return self._structure.step_ids
 
     def get_step(self, step_id: str) -> PipelineStep:
+        """Return the object representing a step in this workflow, identified by the step id."""
         return self._structure.get_step(step_id)
 
     def get_steps_by_stage(
         self,
     ) -> typing.Mapping[int, typing.Mapping[str, PipelineStep]]:
+        """Return a all pipeline steps, ordered by stage they belong to."""
 
         if self._steps_by_stage is not None:
             return self._steps_by_stage
@@ -151,7 +156,8 @@ class Pipeline(object):
         self._steps_by_stage = result
         return self._steps_by_stage
 
-    def get_inputs_by_stage(self) -> typing.Mapping[int, typing.Iterable[str]]:
+    def get_pipeline_inputs_by_stage(self) -> typing.Mapping[int, typing.Iterable[str]]:
+        """Return a list of pipeline input names, ordered by stage they are first required."""
 
         if self._inputs_by_stage is not None:
             return self._inputs_by_stage
@@ -173,7 +179,10 @@ class Pipeline(object):
         self._inputs_by_stage = result
         return self._inputs_by_stage
 
-    def get_outputs_by_stage(self) -> typing.Mapping[int, typing.Iterable[str]]:
+    def get_pipeline_outputs_by_stage(
+        self,
+    ) -> typing.Mapping[int, typing.Iterable[str]]:
+        """Return a list of pipeline input names, ordered by the stage that needs to be executed before they are available."""
 
         if self._outputs_by_stage is not None:
             return self._outputs_by_stage
@@ -195,28 +204,88 @@ class Pipeline(object):
         self._outputs_by_stage = result
         return self._outputs_by_stage
 
-    def get_inputs_for_stage(self, stage: int) -> typing.Iterable[str]:
+    def get_pipeline_inputs_for_stage(self, stage: int) -> typing.Iterable[str]:
+        """Return a list of pipeline inputs that are required for a stage to be processed.
 
-        return self.get_inputs_by_stage().get(stage, [])
+        The result of this method does not include inputs that were required earlier already.
+        """
 
-    def get_outputs_for_stage(self, stage: int) -> typing.Iterable[str]:
+        return self.get_pipeline_inputs_by_stage().get(stage, [])
 
-        return self.get_outputs_by_stage().get(stage, [])
+    def get_stage_for_pipeline_input(self, input_name: str) -> int:
+
+        for stage, input_names in self.get_pipeline_inputs_by_stage().items():
+            if input_name in input_names:
+                return stage
+
+        raise Exception(
+            f"No input name '{input_name}'. Available inputs: {', '.join(self.inputs.keys())}"
+        )
+
+    def stage_for_pipeline_output(self, output_name: str) -> int:
+
+        for stage, output_names in self.get_pipeline_outputs_by_stage().items():
+            if output_name in output_names:
+                return stage
+
+        raise Exception(
+            f"No output name '{output_name}'. Available outputs: {', '.join(self.outputs.keys())}"
+        )
+
+    def get_pipeline_outputs_for_stage(self, stage: int) -> typing.Iterable[str]:
+        """Return a list of pipeline outputs that are first available after the specified stage completed processing."""
+
+        return self.get_pipeline_outputs_by_stage().get(stage, [])
+
+    def get_pipeline_inputs_for_step(self, step_id: str) -> typing.List[str]:
+
+        result = []
+        for field_name, value_slot in self.inputs._value_slots.items():
+            refs = self._value_refs[value_slot]
+            for ref in refs:
+                if not isinstance(ref, PipelineInputRef):
+                    continue
+                for ci in ref.connected_inputs:
+                    if ci.step_id == step_id and ref.value_name not in result:
+                        result.append(ref.value_name)
+
+        return result
+
+    def get_pipeline_outputs_for_step(self, step_id: str) -> typing.List[str]:
+
+        result = []
+        for field_name, value_slot in self.outputs._value_slots.items():
+            refs = self._value_refs[value_slot]
+            for ref in refs:
+                if not isinstance(ref, PipelineOutputRef):
+                    continue
+                if (
+                    ref.connected_output.step_id == step_id
+                    and ref.value_name not in result
+                ):
+                    result.append(ref.value_name)
+
+        return result
 
     def get_step_inputs(self, step_id: str) -> ValueSet:
+        """Return all inputs for a step id (incl. inputs that are not pipeline inputs but connected to other modules output)."""
         return self._step_inputs[step_id]
 
     def get_step_outputs(self, step_id: str) -> ValueSet:
+        """Return all outputs for a step id (incl. outputs that are not pipeline outputs)."""
         return self._step_outputs[step_id]
 
     def add_listener(self, listener: PipelineListener) -> None:
+        """Add a listener taht gets notified on any internal pipeline input/output events."""
         self._listeners.append(listener)
 
     @property
     def status(self) -> StepStatus:
+        """Return the current status of this pipeline."""
         return self._state
 
     def _update_status(self):
+        """Make sure internal state variable is up to date."""
 
         if self.inputs is None:
             new_state = StepStatus.STALE

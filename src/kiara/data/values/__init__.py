@@ -445,6 +445,40 @@ class Value(BaseModel, JupyterMixin):
         else:
             return self.is_set and not self.is_none
 
+    def item_status(self) -> str:
+        """Print a human readable short description of this values status."""
+
+        if self.value_schema.optional:
+            if self.is_set:
+                if self.is_none:
+                    return "no value (not required)"
+                else:
+                    if self.value_schema.default and self.type_name in [
+                        "string",
+                        "integer",
+                        "boolean",
+                    ]:
+                        if self.get_value_data() == self.value_schema.default:
+                            return "set (default)"
+                    return "set"
+            else:
+                return "not set (not required)"
+        else:
+            if self.is_set:
+                if self.is_none:
+                    return "no value"
+                else:
+                    if self.value_schema.default and self.type_name in [
+                        "string",
+                        "integer",
+                        "boolean",
+                    ]:
+                        if self.get_value_data() == self.value_schema.default:
+                            return "set (default)"
+                    return "set"
+            else:
+                return "not set"
+
     def get_value_data(self) -> typing.Any:
 
         return self._registry.get_value_data(self)

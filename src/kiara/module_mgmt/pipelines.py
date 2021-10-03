@@ -147,13 +147,15 @@ class PipelineModuleManager(ModuleManager):
             assert "user" not in folders.keys()
             folders_map = {}
             for k, _folders in folders.items():
-                if not isinstance(_folders, str) and isinstance(
+                if isinstance(_folders, str) or not isinstance(
                     _folders, typing.Iterable
                 ):
                     raise NotImplementedError(
                         f"Invalid folder configuration (must be an iterable): {_folders}"
                     )
                 for _f in _folders:  # type: ignore
+                    if isinstance(_f, Path):
+                        _f = _f.as_posix()
                     folders_map.setdefault(k, []).append((None, _f))
 
         self._pipeline_desc_folders: typing.List[Path] = []

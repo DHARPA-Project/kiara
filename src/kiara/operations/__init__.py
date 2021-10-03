@@ -25,7 +25,7 @@ class ClassAttributes(object):
 
 class Operation(ModuleConfig):
     @classmethod
-    def create_operation_config(
+    def create_operation(
         cls,
         kiara: "Kiara",
         operation_id: str,
@@ -222,7 +222,7 @@ class OperationMgmt(object):
             mod_cls = self._kiara.get_module_class(module_id)
             mod_conf = mod_cls._config_cls
             if not mod_conf.requires_config():
-                _profiles[module_id] = Operation.create_operation_config(
+                _profiles[module_id] = Operation.create_operation(
                     operation_id=module_id,
                     config={
                         "module_type": module_id,
@@ -245,7 +245,7 @@ class OperationMgmt(object):
                         )
 
                     if not isinstance(config, Operation):
-                        config = Operation.create_operation_config(
+                        config = Operation.create_operation(
                             operation_id=profile_id, config=config, kiara=self._kiara
                         )
                     _profiles[profile_id] = config

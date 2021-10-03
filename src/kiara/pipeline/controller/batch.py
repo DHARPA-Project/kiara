@@ -184,6 +184,23 @@ class BatchControllerManual(PipelineController):
     def pipeline_inputs_changed(self, event: "PipelineInputEvent"):
 
         self._finished_until = None
+        # print("============================")
+        # min_stage_to_clear = sys.maxsize
+        # for inp in event.updated_pipeline_inputs:
+        #     stage = self.pipeline.get_stage_for_pipeline_input(inp)
+        #     if stage < min_stage_to_clear:
+        #         min_stage_to_clear = stage
+        #
+        # for stage, steps in self.pipeline.get_steps_by_stage().items():
+        #     if stage < min_stage_to_clear:
+        #         continue
+        #     for step_id, step in steps.items():
+        #         step_inputs = self.get_step_inputs(step_id)
+        #         empty = { k: None for k in step_inputs.keys() }
+        #         step_inputs.set_values(**empty)
+        #         step_outputs = self.get_step_outputs(step_id)
+        #         empty = { k: None for k in step_outputs.keys() }
+        #         step_outputs.set_values(**empty)
 
     def pipeline_outputs_changed(self, event: "PipelineOutputEvent"):
 
@@ -242,8 +259,14 @@ class BatchControllerManual(PipelineController):
                         result.setdefault(current_stage, {})[step_id] = e
 
                 self._processor.wait_for(*job_ids)
+                # for job_id in job_ids:
+                #     job = self.get_job_details(job_id)
+                #     dbg(job.dict())
+
                 self._finished_until = idx
         finally:
             self._is_running = False
+
+        print("BATCH FINISHED")
 
         return result

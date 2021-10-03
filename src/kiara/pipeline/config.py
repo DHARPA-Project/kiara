@@ -76,12 +76,12 @@ class PipelineStepConfig(ModuleConfig):
         return result
 
 
-class PipelineStructureConfig(BaseModel):
-
-    parent_id: str = Field(description="The id of the parent of this structure.")
-    steps: typing.List[PipelineStepConfig]
-    input_aliases: typing.Union[None, str, typing.Dict[str, str]] = None
-    output_aliases: typing.Union[None, str, typing.Dict[str, str]] = None
+# class PipelineStructureConfig(BaseModel):
+#
+#     parent_id: str = Field(description="The id of the parent of this structure.")
+#     steps: typing.List[PipelineStepConfig] = Field(description="The steps and their connections that define this pipeline.")
+#     input_aliases: typing.Union[None, str, typing.Dict[str, str]] = Field(description="A map that allows to rename the auto-generated inputs of this pipeline.", default=None)
+#     output_aliases: typing.Union[None, str, typing.Dict[str, str]] = Field(description="A map that allows to rename the auto-generated outputs of this pipeline.", default=None)
 
 
 class PipelineConfig(ModuleTypeConfigSchema):
@@ -274,7 +274,6 @@ class PipelineConfig(ModuleTypeConfigSchema):
         self,
         module_id: typing.Optional[str] = None,
         parent_id: typing.Optional[str] = None,
-        controller: typing.Optional["PipelineController"] = None,
         kiara: typing.Optional["Kiara"] = None,
     ) -> "PipelineModule":
 
@@ -289,7 +288,6 @@ class PipelineConfig(ModuleTypeConfigSchema):
             id=module_id,
             parent_id=parent_id,
             module_config=self,
-            controller=controller,
             kiara=kiara,
         )
         return module

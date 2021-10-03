@@ -16,6 +16,10 @@ class TypeConversionModuleConfig(ModuleTypeConfigSchema):
 
     source_type: str = Field(description="The type of the source value.")
     target_type: str = Field(description="The type of the converted value.")
+    allow_none_input: bool = Field(
+        description="Whether to allow 'none' source values, if one is encountered 'none' is returned.",
+        default=False,
+    )
 
 
 class ConvertValueModule(KiaraModule):
@@ -160,12 +164,16 @@ class ConvertValueModule(KiaraModule):
                     f"Can't create input schema for module '{self._module_type_id}': converstion to target value type '{target_type}' not supported."  # type: ignore
                 )
 
-        return {
+        schema: typing.Dict[str, typing.Dict[str, typing.Any]] = {
             "value_item": {
                 "type": source_type,
                 "doc": f"The '{source_type}' value to be converted.",
             }
         }
+        if self.get_config_value("allow_none_input"):
+            schema["value_item"]["optional"] = True
+
+        return schema
 
     def create_output_schema(
         self,
@@ -184,12 +192,16 @@ class ConvertValueModule(KiaraModule):
                     f"Can't create output schema for module '{self._module_type_id}': conversion from source value type '{source_type}' not supported."  # type: ignore
                 )
 
-        return {
+        schema: typing.Dict[str, typing.Dict[str, typing.Any]] = {
             "value_item": {
                 "type": target_type,
                 "doc": f"The converted '{source_type}' value as '{target_type}'.",
             }
         }
+        if self.get_config_value("allow_none_input"):
+            schema["value_item"]["optional"] = True
+
+        return schema
 
     def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
 
@@ -197,11 +209,20 @@ class ConvertValueModule(KiaraModule):
         source_type: str = self.get_config_value("source_type")
         target_type: str = self.get_config_value("target_type")
 
+        allow_none: bool = self.get_config_value("allow_none_input")
+
         source: Value = inputs.get_value_obj("value_item")
         if source_type != source.type_name:
             raise KiaraProcessingException(
                 f"Invalid type ({source.type_name}) of source value: expected '{source_type}'."
             )
+
+        if not source.is_set or source.is_none:
+            if allow_none:
+                outputs.set_value("value_item", None)
+                return
+            else:
+                raise KiaraProcessingException("No source value set.")
 
         if source_type in supported_types:
             # means this is a 'to' conversion

@@ -66,7 +66,7 @@ class BaseDataRegistry(abc.ABC):
 
     @property
     def alias_names(self) -> typing.List[str]:
-        return list(self._get_available_aliases())
+        return sorted(self._get_available_aliases())
 
     # ======================================================================
     # main abstract methods
@@ -914,12 +914,12 @@ class DataRegistry(BaseDataRegistry):
 
     def update_value_slots(
         self, updated_values: typing.Mapping[typing.Union[str, ValueSlot], typing.Any]
-    ) -> typing.Mapping[ValueSlot, bool]:
+    ) -> typing.Mapping[ValueSlot, typing.Union[bool, Exception]]:
 
         updated: typing.Dict[str, typing.List[ValueSlot]] = {}
         cb_map: typing.Dict[str, ValueSlotUpdateHandler] = {}
 
-        result = {}
+        result: typing.Dict[ValueSlot, typing.Union[bool, Exception]] = {}
 
         invalid: typing.Set[str] = set()
         for alias, value_item in updated_values.items():
@@ -944,27 +944,40 @@ class DataRegistry(BaseDataRegistry):
                 alias = alias.id
 
             value_slot = self.get_value_slot(alias)
-
             if value_slot is None:
                 raise Exception(f"Can't retrieve value slot for alias: {alias}")
 
-            if isinstance(value_item, Value):
-                _value_item: Value = value_item
-                if _value_item._registry != self:
-                    _value_item = self.register_data(_value_item)
-            else:
-                _value_item = self.register_data(
-                    value_data=value_item, value_schema=value_slot.value_schema
-                )
+        for alias, value_item in updated_values.items():
 
-            updated_item = self._update_value_slot(
-                value_slot=value_slot, new_value=_value_item, trigger_callbacks=False
-            )
-            result[value_slot] = updated_item
-            if updated_item:
-                for cb_id, cb in value_slot._callbacks.items():
-                    cb_map[cb_id] = cb
-                    updated.setdefault(cb_id, []).append(value_slot)
+            if isinstance(alias, ValueSlot):
+                alias = alias.id
+
+            value_slot = self.get_value_slot(alias)
+            if value_slot is None:
+                raise Exception(f"No value slot for alias: {alias}.")
+
+            try:
+                if isinstance(value_item, Value):
+                    _value_item: Value = value_item
+                    if _value_item._registry != self:
+                        _value_item = self.register_data(_value_item)
+                else:
+                    _value_item = self.register_data(
+                        value_data=value_item, value_schema=value_slot.value_schema
+                    )
+
+                updated_item = self._update_value_slot(
+                    value_slot=value_slot,
+                    new_value=_value_item,
+                    trigger_callbacks=False,
+                )
+                result[value_slot] = updated_item
+                if updated_item:
+                    for cb_id, cb in value_slot._callbacks.items():
+                        cb_map[cb_id] = cb
+                        updated.setdefault(cb_id, []).append(value_slot)
+            except Exception as e:
+                result[value_slot] = e
 
         for cb_id, value_slots in updated.items():
             cb = cb_map[cb_id]

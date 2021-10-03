@@ -14,7 +14,7 @@ def test_simple_module_exec(kiara: Kiara):
     with pytest.raises(Exception) as e:
         and_mod.run(**inputs)
 
-    assert "Inputs not valid" in str(e.value)
+    assert "input field(s) not valid" in str(e.value)
 
     # inp_a = Value(value_data=True, value_schema=boolean_schema, kiara=kiara)
     # inp_b = Value(value_data=True, value_schema=boolean_schema, kiara=kiara)

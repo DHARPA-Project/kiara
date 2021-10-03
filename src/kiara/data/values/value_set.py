@@ -15,6 +15,14 @@ if typing.TYPE_CHECKING:
     from kiara.pipeline import PipelineValuesInfo
 
 
+def check_valueset_valid(value_set: typing.Mapping[str, "Value"]) -> bool:
+
+    for field_name, item in value_set.items():
+        if not item.item_is_valid():
+            return False
+    return True
+
+
 class ValueSet(typing.MutableMapping[str, "Value"]):
     def __init__(
         self,
@@ -48,7 +56,9 @@ class ValueSet(typing.MutableMapping[str, "Value"]):
         pass
 
     @abc.abstractmethod
-    def _set_values(self, **values: typing.Any):
+    def _set_values(
+        self, **values: typing.Any
+    ) -> typing.Mapping[str, typing.Union[bool, Exception]]:
         pass
 
     def get_value_obj(
@@ -81,9 +91,14 @@ class ValueSet(typing.MutableMapping[str, "Value"]):
     def set_value(self, key: str, value: typing.Any) -> Value:
 
         result = self.set_values(**{key: value})
-        return result[key]
+        if isinstance(result[key], Exception):
+            raise result[key]  # type: ignore
+        return result[key]  # type: ignore
 
-    def set_values(self, **values: typing.Any) -> typing.Dict[str, Value]:
+    def set_values(
+        self, **values: typing.Any
+    ) -> typing.Mapping[str, typing.Union[Value, Exception]]:
+
         if self.is_read_only():
             raise Exception("Can't set values: this value set is read-only.")
 
@@ -107,11 +122,14 @@ class ValueSet(typing.MutableMapping[str, "Value"]):
             else:
                 resolved_values[field_name] = data
 
-        self._set_values(**resolved_values)
+        value_set_result = self._set_values(**resolved_values)
 
-        result = {}
+        result: typing.Dict[str, typing.Union[Value, Exception]] = {}
         for field in values.keys():
-            result[field] = self.get_value_obj(field)
+            if isinstance(value_set_result[field], Exception):
+                result[field] = value_set_result[field]  # type: ignore
+            else:
+                result[field] = self.get_value_obj(field)
         return result
 
     def is_read_only(self):
@@ -119,11 +137,30 @@ class ValueSet(typing.MutableMapping[str, "Value"]):
 
     def items_are_valid(self) -> bool:
 
-        for field_name in self.get_all_field_names():
-            item = self.get_value_obj(field_name)
+        return check_valueset_valid(self)
+        # for field_name in self.get_all_field_names():
+        #     item = self.get_value_obj(field_name)
+        #     if not item.item_is_valid():
+        #         return False
+        # return True
+
+    def check_invalid(self) -> typing.Optional[typing.Dict[str, str]]:
+        """Check whether the value set is invalid, if it is, return a description of what's wrong."""
+
+        invalid = {}
+        for field_name, item in self.items():
             if not item.item_is_valid():
-                return False
-        return True
+                if item.value_schema.is_required():
+                    if not item.is_set:
+                        msg = "not set"
+                    elif item.is_none:
+                        msg = "no value"
+                    else:
+                        msg = "n/a"
+                else:
+                    msg = "n/a"
+                invalid[field_name] = msg
+        return invalid
 
     def get_all_value_objects(self) -> typing.Mapping[str, typing.Any]:
         return {fn: self.get_value_obj(fn) for fn in self.get_all_field_names()}
@@ -391,26 +428,46 @@ class SlottedValueSet(ValueSet):
         slot = self._value_slots[field_name]
         return slot.get_latest_value()
 
-    def _set_values(self, **values: typing.Any) -> None:
+    def _set_values(
+        self, **values: typing.Any
+    ) -> typing.Mapping[str, typing.Union[bool, Exception]]:
 
         # we want to set all registry-type values seperately, in one go, because it's more efficient
-        registries: typing.Dict[DataRegistry, typing.Dict["Value", typing.Any]] = {}
-        for k, v in values.items():
+        registries: typing.Dict[
+            DataRegistry, typing.Dict[ValueSlot, typing.Union["Value", typing.Any]]
+        ] = {}
+        field_slot_map: typing.Dict[ValueSlot, str] = {}
 
-            item: ValueSlot = self._value_slots[k]
+        result: typing.Dict[str, typing.Union[bool, Exception]] = {}
+
+        for field_name, value_or_data in values.items():
+
+            value_slot: ValueSlot = self._value_slots[field_name]
             if self._check_for_sameness:
-                latest_val = item.get_latest_value()
-                if isinstance(v, Value):
-                    if latest_val.id == v.id:
+                latest_val = value_slot.get_latest_value()
+                if isinstance(value_or_data, Value):
+                    if latest_val.id == value_or_data.id:
+                        result[field_name] = False
                         continue
                 else:
-                    if latest_val.is_set and latest_val.get_value_data() == v:
+                    if (
+                        latest_val.is_set
+                        and latest_val.get_value_data() == value_or_data
+                    ):
+                        result[field_name] = False
                         continue
 
-            registries.setdefault(item._registry, {})[item] = v  # type: ignore
+            registries.setdefault(value_slot._registry, {})[value_slot] = value_or_data
+            field_slot_map[value_slot] = field_name
 
-        for registry, v in registries.items():
-            registry.update_value_slots(v)
+        for registry, value_slots_details in registries.items():
+
+            _r = registry.update_value_slots(value_slots_details)  # type: ignore
+
+            for value_slot, details in _r.items():
+                result[field_slot_map[value_slot]] = details
+
+        return result
 
 
 class ValuesInfo(object):

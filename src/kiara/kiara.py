@@ -4,6 +4,7 @@
 import logging
 import os
 import typing
+import uuid
 import zmq
 from pathlib import Path
 from threading import Thread
@@ -95,6 +96,8 @@ class Kiara(object):
 
         if not config:
             config = KiaraConfig()
+
+        self._id: str = str(uuid.uuid4())
 
         self._config: KiaraConfig = config
 
@@ -336,8 +339,7 @@ class Kiara(object):
         if module_type == "pipeline":
             from kiara import PipelineModule
 
-            module_cls = PipelineModule
-            module = module_cls(
+            module = PipelineModule(
                 id=id, parent_id=parent_id, module_config=module_config, kiara=self
             )
             return module
@@ -357,6 +359,28 @@ class Kiara(object):
             else:
                 _module_config = dict(op_config)
                 _module_config.update(module_config)
+        elif (
+            module_type not in self.available_module_types
+            and isinstance(module_type, str)
+            and os.path.isfile(os.path.realpath(os.path.expanduser(module_type)))
+        ):
+
+            if module_config:
+                raise Exception(
+                    "Creating pipeline module from file with extra module_config not supported (yet)."
+                )
+
+            path = os.path.expanduser(module_type)
+            pipeline_config_data = get_data_from_file(path)
+            pipeline_config = PipelineConfig(**pipeline_config_data)
+
+            from kiara import PipelineModule
+
+            module = PipelineModule(
+                id=id, parent_id=parent_id, module_config=pipeline_config, kiara=self
+            )
+            return module
+
         else:
             _module_config = module_config
 
@@ -404,6 +428,13 @@ class Kiara(object):
                     raise NotImplementedError()
                 op = self.operation_mgmt.profiles[module_type]
                 module = op.module
+            elif os.path.isfile(os.path.realpath(os.path.expanduser(module_type))):
+                path = os.path.expanduser(module_type)
+                pipeline_config_data = get_data_from_file(path)
+                # pipeline_config = PipelineConfig(**pipeline_config_data)
+                module = self.create_module(
+                    "pipeline", module_config=pipeline_config_data
+                )
             else:
                 raise Exception(
                     f"Can't run operation: invalid module type '{module_type}'"
@@ -470,7 +501,7 @@ class Kiara(object):
                     ]
                 }
                 pipeline_config = PipelineConfig(**config_data)
-            elif os.path.isfile(os.path.expanduser(config)):
+            elif os.path.isfile(os.path.realpath(os.path.expanduser(config))):
                 path = os.path.expanduser(config)
                 pipeline_config_data = get_data_from_file(path)
                 pipeline_config = PipelineConfig(**pipeline_config_data)

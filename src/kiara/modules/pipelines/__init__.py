@@ -4,6 +4,7 @@
 from pipeline descriptions in the ``pipelines`` folder."""
 import importlib
 import typing
+from pydantic import BaseModel
 
 # TODO: add classloader for those classes to runtime
 from types import ModuleType
@@ -26,9 +27,20 @@ def create_pipeline_class(
     def init(self, id: str, **kwargs):
         # TODO: merge config
         if kwargs.get("module_config", None):
-            raise Exception(
-                f"Can't dynamically create PipelineModuleClass, 'module_config' provided externally: {pipeline_desc}"
-            )
+            mc = kwargs["module_config"]
+            if isinstance(mc, BaseModel):
+                mc = mc.dict(exclude={"documentation", "context"})
+            empty = True
+            for k, v in mc.items():
+                if v or isinstance(v, bool):
+                    empty = False
+                    break
+            if not empty:
+                raise Exception(
+                    f"Can't dynamically create PipelineModuleClass, 'module_config' provided externally: {pipeline_desc}"
+                )
+            else:
+                kwargs["module_config"] = None
         kwargs["module_config"] = pipeline_desc
         super(self.__class__, self).__init__(id=id, **kwargs)
 

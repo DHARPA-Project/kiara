@@ -165,6 +165,10 @@ class PipelineController(PipelineListener):
 
         return self.pipeline._pipeline_outputs
 
+    def wait_for_jobs(self, *job_ids: str, sync_outputs: bool = True):
+
+        self._processor.wait_for(*job_ids, sync_outputs=sync_outputs)
+
     def can_be_processed(self, step_id: str) -> bool:
         """Check whether the step with the provided id is ready to be processed."""
 
@@ -203,7 +207,7 @@ class PipelineController(PipelineListener):
 
         return invalid
 
-    def process_step(self, step_id: str) -> str:
+    def process_step(self, step_id: str, raise_exception: bool = False) -> str:
         """Kick off processing for the step with the provided id.
 
         Arguments:

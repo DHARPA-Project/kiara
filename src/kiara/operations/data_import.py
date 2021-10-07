@@ -7,7 +7,6 @@ from pydantic import Field
 from kiara import Kiara, KiaraModule
 from kiara.data.values import Value, ValueLineage, ValueSchema
 from kiara.data.values.value_set import ValueSet
-from kiara.exceptions import KiaraProcessingException
 from kiara.module_config import ModuleTypeConfigSchema
 from kiara.operations import Operation, OperationType
 from kiara.utils import log_message
@@ -22,21 +21,21 @@ class DataImportModuleConfig(ModuleTypeConfigSchema):
         description="The name of the source profile. Used to distinguish different input categories for the same input type."
     )
     source_type: str = Field(description="The type of the source to import from.")
-    allow_save_input: bool = Field(
-        description="Allow the user to choose whether to save the imported item or not.",
-        default=True,
-    )
-    save_default: bool = Field(
-        description="The default of the 'save' input if not specified by the user.",
-        default=False,
-    )
-    allow_aliases_input: typing.Optional[bool] = Field(
-        description="Allow the user to choose aliases for the saved value.",
-        default=None,
-    )
-    aliases_default: typing.List[str] = Field(
-        description="Default value for aliases.", default_factory=list
-    )
+    # allow_save_input: bool = Field(
+    #     description="Allow the user to choose whether to save the imported item or not.",
+    #     default=True,
+    # )
+    # save_default: bool = Field(
+    #     description="The default of the 'save' input if not specified by the user.",
+    #     default=False,
+    # )
+    # allow_aliases_input: typing.Optional[bool] = Field(
+    #     description="Allow the user to choose aliases for the saved value.",
+    #     default=None,
+    # )
+    # aliases_default: typing.List[str] = Field(
+    #     description="Default value for aliases.", default_factory=list
+    # )
 
 
 class DataImportModule(KiaraModule):
@@ -103,33 +102,33 @@ class DataImportModule(KiaraModule):
             },
         }
 
-        allow_save = self.get_config_value("allow_save_input")
-        save_default = self.get_config_value("save_default")
-        if allow_save:
-            inputs["save"] = {
-                "type": "boolean",
-                "doc": "Whether to save the imported value, or not.",
-                "default": save_default,
-            }
-
-        allow_aliases: typing.Optional[bool] = self.get_config_value(
-            "allow_aliases_input"
-        )
-        if allow_aliases is None:
-            allow_aliases = allow_save
-
-        if allow_aliases and not allow_save and not save_default:
-            raise Exception(
-                "Invalid module configuration: allowing aliases input does not make sense if save is disabled."
-            )
-
-        if allow_aliases:
-            default_aliases = self.get_config_value("aliases_default")
-            inputs["aliases"] = {
-                "type": "list",
-                "doc": "A list of aliases to use when storing the value (only applicable if 'save' is set).",
-                "default": default_aliases,
-            }
+        # allow_save = self.get_config_value("allow_save_input")
+        # save_default = self.get_config_value("save_default")
+        # if allow_save:
+        #     inputs["save"] = {
+        #         "type": "boolean",
+        #         "doc": "Whether to save the imported value, or not.",
+        #         "default": save_default,
+        #     }
+        #
+        # allow_aliases: typing.Optional[bool] = self.get_config_value(
+        #     "allow_aliases_input"
+        # )
+        # if allow_aliases is None:
+        #     allow_aliases = allow_save
+        #
+        # if allow_aliases and not allow_save and not save_default:
+        #     raise Exception(
+        #         "Invalid module configuration: allowing aliases input does not make sense if save is disabled."
+        #     )
+        #
+        # if allow_aliases:
+        #     default_aliases = self.get_config_value("aliases_default")
+        #     inputs["aliases"] = {
+        #         "type": "list",
+        #         "doc": "A list of aliases to use when storing the value (only applicable if 'save' is set).",
+        #         "default": default_aliases,
+        #     }
 
         return inputs
 
@@ -160,30 +159,30 @@ class DataImportModule(KiaraModule):
                 f"Can't import '{source_type}' value: missing function '{func_name}' in class '{self.__class__.__name__}'. Please check this modules documentation or source code to determine which source types and profiles are supported."
             )
 
-        allow_save = self.get_config_value("allow_save_input")
-        if allow_save:
-            save = inputs.get_value_data("save")
-        else:
-            save = self.get_config_value("save_default")
-
-        allow_aliases: typing.Optional[bool] = self.get_config_value(
-            "allow_aliases_input"
-        )
-        if allow_aliases is None:
-            allow_aliases = allow_save
-
-        if allow_aliases:
-            aliases = inputs.get_value_data("aliases")
-        else:
-            aliases = self.get_config_value("aliases_default")
-
-        if aliases and not save:
-            raise KiaraProcessingException(
-                f"Can't import file from '{source}': 'aliases' specified, but not 'save', this does not make sense."
-            )
-
-        if aliases is None:
-            aliases = []
+        # allow_save = self.get_config_value("allow_save_input")
+        # if allow_save:
+        #     save = inputs.get_value_data("save")
+        # else:
+        #     save = self.get_config_value("save_default")
+        #
+        # allow_aliases: typing.Optional[bool] = self.get_config_value(
+        #     "allow_aliases_input"
+        # )
+        # if allow_aliases is None:
+        #     allow_aliases = allow_save
+        #
+        # if allow_aliases:
+        #     aliases = inputs.get_value_data("aliases")
+        # else:
+        #     aliases = self.get_config_value("aliases_default")
+        #
+        # if aliases and not save:
+        #     raise KiaraProcessingException(
+        #         f"Can't import file from '{source}': 'aliases' specified, but not 'save', this does not make sense."
+        #     )
+        #
+        # if aliases is None:
+        #     aliases = []
 
         func = getattr(self, func_name)
         # TODO: check signature?
@@ -197,12 +196,12 @@ class DataImportModule(KiaraModule):
             module=self, output_name="value_item", inputs=inputs
         )
         value: Value = self._kiara.data_registry.register_data(
-            value_data=result, value_schema=schema, value_lineage=value_lineage
+            value_data=result, value_schema=schema, lineage=value_lineage
         )
 
-        if save:
-            value_saved = self._kiara.data_store.register_data(value_data=value)
-            self._kiara.data_store.link_aliases(value_saved, *aliases)
+        # if save:
+        #     value_saved = self._kiara.data_store.register_data(value_data=value)
+        #     self._kiara.data_store.link_aliases(value_saved, *aliases)
 
         outputs.set_values(value_item=value)
 

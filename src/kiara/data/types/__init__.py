@@ -136,8 +136,17 @@ class ValueTypeConfigMetadata(MetadataModel):
                 type_str = details["type"]
 
             desc = details.get("description", DEFAULT_NO_DESC_VALUE)
+
+            default = config_cls.__fields__[field_name].default
+
+            if default is None:
+                if callable(config_cls.__fields__[field_name].default_factory):
+                    default = config_cls.__fields__[field_name].default_factory()  # type: ignore
+
+            req = config_cls.__fields__[field_name].required
+
             config_values[field_name] = ValueTypeAndDescription(
-                description=desc, type=type_str
+                description=desc, type=type_str, value_default=default, required=req
             )
 
         python_cls = PythonClassMetadata.from_class(config_cls)

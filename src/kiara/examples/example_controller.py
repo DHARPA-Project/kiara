@@ -38,8 +38,10 @@ class ExampleController(PipelineController):
     def execute(self):
 
         print("Executing steps: 'and', 'not'...")
-        self.process_step("and")
-        self.process_step("not")
+        and_job_id = self.process_step("and")
+        self.wait_for_jobs(and_job_id)
+        not_job_id = self.process_step("not")
+        self.wait_for_jobs(not_job_id)
 
 
 def execute_pipeline_with_example_controller():

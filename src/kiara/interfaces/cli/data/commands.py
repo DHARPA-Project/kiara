@@ -4,6 +4,7 @@ import click
 import shutil
 import sys
 from rich import box
+from rich.console import RenderGroup
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
@@ -193,7 +194,13 @@ def load_value(ctx, value_id: str):
             print(e)
         renderables = [str(value.get_value_data())]
 
-    rich_print(*renderables)
+    if len(renderables) == 0:
+        return
+    elif len(renderables) == 1:
+        rich_print(renderables[0])
+    else:
+        rg = RenderGroup(*renderables)
+        rich_print(rg)
 
 
 if is_develop():

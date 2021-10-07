@@ -100,3 +100,7 @@ class ValueTypeAndDescription(BaseModel):
 
     description: str = Field(description="The description for the value.")
     type: str = Field(description="The value type.")
+    value_default: typing.Any = Field(
+        description="Default for the value.", default=None
+    )
+    required: bool = Field(description="Whether this value is required")

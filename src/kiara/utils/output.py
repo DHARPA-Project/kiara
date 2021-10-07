@@ -75,7 +75,7 @@ def pretty_print_arrow_table(
     for cn in table.column_names:
         rich_table.add_column(cn)
 
-    num_split_rows = 1
+    num_split_rows = 2
 
     if rows_head is not None:
 

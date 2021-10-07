@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.2.1 (Upcoming)
+
+- removed 'save' and 'aliases' config/input options from import operations (it turns out its much better overall to do saving explicitely, not within modules)
+
 ## Version 0.2.0
 
 - add conda packages

@@ -62,7 +62,7 @@ class ThreadPoolProcessor(ModuleProcessor):
             module.process_step(
                 inputs=wrapped_inputs, outputs=wrapped_outputs, job_log=job_log
             )
-            wrapped_outputs.sync()
+            wrapped_outputs.sync(lineage=None)
             self.job_status_updated(job_id=job_id, status=JobStatus.SUCCESS)
         except Exception as e:
             self.job_status_updated(job_id=job_id, status=e)

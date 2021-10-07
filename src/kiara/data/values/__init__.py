@@ -13,6 +13,7 @@ In addition, that id can be used to subscribe to change events for a value (publ
 
 import json
 import logging
+import networkx as nx
 import typing
 import uuid
 from datetime import datetime
@@ -155,8 +156,8 @@ class ValueLineage(ModuleConfig):
         module_type: str,
         module_config: typing.Mapping[str, typing.Any],
         module_doc: DocumentationMetadataModel,
-        output_name: str,
         inputs: typing.Mapping[str, typing.Union["Value", "ValueInfo"]],
+        output_name: typing.Optional[str] = None,
     ):
 
         _inputs = {}
@@ -174,7 +175,7 @@ class ValueLineage(ModuleConfig):
             inputs=_inputs,
         )
 
-    output_name: str = Field(
+    output_name: typing.Optional[str] = Field(
         description="The result field name for the value this refers to."
     )
     inputs: typing.Dict[str, "ValueInfo"] = Field(
@@ -212,6 +213,10 @@ class ValueLineage(ModuleConfig):
 
         tree = fill_lineage_tree(self, include_ids=show_ids)
         return tree
+
+    def create_graph(self) -> nx.DiGraph:
+
+        return create_lineage_graph(self)
 
 
 def filter_metadata_schema(
@@ -294,6 +299,21 @@ def fill_lineage_tree(
             )
 
     return main
+
+
+def create_lineage_graph(
+    lineage: ValueLineage, graph: nx.Graph = None, node=None, level=0
+):
+
+    if graph is None:
+        assert node is None
+        graph = nx.DiGraph()
+        # node = graph.add_node(lineage.output_name)
+        # module_type_node = graph.add_edge(node, lineage.module_type)
+        # for field_name, value in lineage.inputs.items():
+        #     graph.add_edge(module_type_node, value.value_id)
+
+    return graph
 
 
 class ValueHash(BaseModel):
@@ -534,7 +554,7 @@ class Value(BaseModel, JupyterMixin):
         result = {}
 
         missing = set()
-        for metadata_key in _metadata_keys:
+        for metadata_key in sorted(_metadata_keys):
             if metadata_key in self.metadata.keys():
                 if also_return_schema:
                     result[metadata_key] = self.metadata[metadata_key]
@@ -555,7 +575,7 @@ class Value(BaseModel, JupyterMixin):
                 result[k] = v
             else:
                 result[k] = v["metadata_item"]
-        return result
+        return {k: result[k] for k in sorted(result.keys())}
 
     def save(
         self,

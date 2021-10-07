@@ -7,8 +7,10 @@ from rich.panel import Panel
 from rich.table import Table
 
 from kiara.data.registry import DataRegistry
-from kiara.data.values import Value, ValueSchema, ValueSlot
+from kiara.data.values import Value, ValueInfo, ValueLineage, ValueSchema, ValueSlot
 from kiara.defaults import INVALID_VALUE_NAMES, SpecialValue
+from kiara.metadata import MetadataModel
+from kiara.utils import is_debug, log_message
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -57,7 +59,10 @@ class ValueSet(typing.MutableMapping[str, "Value"]):
 
     @abc.abstractmethod
     def _set_values(
-        self, **values: typing.Any
+        self,
+        metadata: typing.Optional[typing.Mapping[str, MetadataModel]] = None,
+        lineage: typing.Optional[ValueLineage] = None,
+        **values: typing.Any,
     ) -> typing.Mapping[str, typing.Union[bool, Exception]]:
         pass
 
@@ -65,7 +70,7 @@ class ValueSet(typing.MutableMapping[str, "Value"]):
         self,
         field_name: str,
         ensure_metadata: typing.Union[bool, typing.Iterable[str], str] = False,
-    ):
+    ) -> Value:
 
         if field_name not in list(self.get_all_field_names()):
             raise KeyError(
@@ -88,19 +93,35 @@ class ValueSet(typing.MutableMapping[str, "Value"]):
 
         return obj
 
-    def set_value(self, key: str, value: typing.Any) -> Value:
+    def set_value(
+        self,
+        key: str,
+        value: typing.Any,
+        metadata: typing.Optional[typing.Mapping[str, MetadataModel]] = None,
+        lineage: typing.Optional[ValueLineage] = None,
+    ) -> Value:
 
-        result = self.set_values(**{key: value})
+        result = self.set_values(metadata=metadata, lineage=lineage, **{key: value})
         if isinstance(result[key], Exception):
             raise result[key]  # type: ignore
         return result[key]  # type: ignore
 
     def set_values(
-        self, **values: typing.Any
+        self,
+        metadata: typing.Optional[typing.Mapping[str, MetadataModel]] = None,
+        lineage: typing.Optional[ValueLineage] = None,
+        **values: typing.Any,
     ) -> typing.Mapping[str, typing.Union[Value, Exception]]:
+        """Batch set several values.
+
+        If metadata is provided, it is added to all values.
+        """
 
         if self.is_read_only():
             raise Exception("Can't set values: this value set is read-only.")
+
+        if not values:
+            return {}
 
         invalid: typing.List[str] = []
 
@@ -117,12 +138,21 @@ class ValueSet(typing.MutableMapping[str, "Value"]):
         for field_name, data in values.items():
             if isinstance(data, str) and data.startswith("value:"):
                 v = self._kiara.get_value(data)
-
                 resolved_values[field_name] = v
             else:
                 resolved_values[field_name] = data
 
-        value_set_result = self._set_values(**resolved_values)
+        try:
+            value_set_result = self._set_values(
+                metadata=metadata, lineage=lineage, **resolved_values
+            )
+        except Exception as e:
+            log_message(str(e))
+            if is_debug():
+                import traceback
+
+                traceback.print_exc()
+            raise e
 
         result: typing.Dict[str, typing.Union[Value, Exception]] = {}
         for field in values.keys():
@@ -429,7 +459,10 @@ class SlottedValueSet(ValueSet):
         return slot.get_latest_value()
 
     def _set_values(
-        self, **values: typing.Any
+        self,
+        metadata: typing.Optional[typing.Mapping[str, MetadataModel]] = None,
+        lineage: typing.Optional[ValueLineage] = None,
+        **values: typing.Any,
     ) -> typing.Mapping[str, typing.Union[bool, Exception]]:
 
         # we want to set all registry-type values seperately, in one go, because it's more efficient
@@ -439,11 +472,10 @@ class SlottedValueSet(ValueSet):
         field_slot_map: typing.Dict[ValueSlot, str] = {}
 
         result: typing.Dict[str, typing.Union[bool, Exception]] = {}
-
         for field_name, value_or_data in values.items():
 
             value_slot: ValueSlot = self._value_slots[field_name]
-            if self._check_for_sameness:
+            if not metadata and self._check_for_sameness:
                 latest_val = value_slot.get_latest_value()
                 if isinstance(value_or_data, Value):
                     if latest_val.id == value_or_data.id:
@@ -462,7 +494,7 @@ class SlottedValueSet(ValueSet):
 
         for registry, value_slots_details in registries.items():
 
-            _r = registry.update_value_slots(value_slots_details)  # type: ignore
+            _r = registry.update_value_slots(value_slots_details, metadata=metadata, lineage=lineage)  # type: ignore
 
             for value_slot, details in _r.items():
                 result[field_slot_map[value_slot]] = details
@@ -485,11 +517,11 @@ class ValuesInfo(object):
         table.add_column("Value info")
 
         for field_name in self._value_set.get_all_field_names():
-            details = self._value_set.get_value_obj(field_name)
+            details: Value = self._value_set.get_value_obj(field_name)
             if not details.is_set:
                 if details.item_is_valid():
                     value_info: typing.Union[
-                        str, Table
+                        str, Table, ValueInfo
                     ] = "[green]-- not set --[/green]"
                 else:
                     value_info = "[red]-- not set --[/red]"
@@ -502,7 +534,7 @@ class ValuesInfo(object):
                 if ensure_metadata:
                     details.get_metadata()
 
-                value_info = details._create_value_table()
+                value_info = details.create_info()
             table.add_row(field_name, value_info)
 
         return table

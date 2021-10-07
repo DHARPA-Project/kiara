@@ -83,7 +83,7 @@ class LocalDataStore(DataRegistry):
         self._register_new_value_obj(
             value_obj=value_obj,
             value_data=SpecialValue.IGNORE,
-            value_lineage=value_info.lineage,
+            lineage=value_info.lineage,
             # value_hashes=value_info.hashes,
         )
         self._value_obj_cache[value_obj.id] = value_obj
@@ -162,13 +162,14 @@ class LocalDataStore(DataRegistry):
 
         load_config_data = load_config_value.get_value_data()
 
+        metadata = value.get_metadata(also_return_schema=True)
         value_info = SavedValueInfo(
             value_id=value.id,
             value_schema=value.value_schema,
             is_valid=value.item_is_valid(),
             hashes=value.get_hashes(),
             lineage=value.get_lineage(),
-            metadata=value.get_metadata(also_return_schema=True),
+            metadata=metadata,
             load_config=load_config_data,
         )
 

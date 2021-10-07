@@ -251,7 +251,7 @@ def run(ctx, module, inputs, module_config, output, explain, save):
             sys.exit(3)
         else:
             rich_print(
-                "Workflow results not ready: one or several inputs missing or invalid."
+                f"Workflow results not ready: {', '.join(workflow.outputs.check_invalid().keys())} output(s) missing or invalid"
             )
             sys.exit(3)
     else:

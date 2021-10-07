@@ -50,6 +50,7 @@ INVALID_VALUE_NAMES = [
     "data",
     "callbacks",
     "trigger_callbacks",
+    "shared_metadata",
 ]
 """List of reserved names, inputs/outputs can't use those."""
 

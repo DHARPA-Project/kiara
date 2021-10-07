@@ -12,7 +12,7 @@ from kiara.data.values.value_set import ValueSet
 from kiara.exceptions import KiaraProcessingException
 from kiara.module import KiaraModule, StepInputs, StepOutputs
 from kiara.pipeline import PipelineValuesInfo
-from kiara.processing import Job, JobLog, JobStatus
+from kiara.processing import Job, JobLog, JobStatus, ProcessingInfo
 from kiara.utils import is_debug
 
 try:
@@ -208,26 +208,25 @@ class ModuleProcessor(abc.ABC):
     def sync_outputs(self, *job_ids: str):
 
         for j_id in job_ids:
-            d = self._outputs[j_id]
-            d.sync()
 
-            job_inputs = self._inputs[j_id]
             job_details = self.get_job_details(j_id)
             if not job_details:
                 raise Exception(f"Can't sync outputs, no job with id: {j_id}")
-
+            job_inputs = self._inputs[j_id]
+            proc_info = ProcessingInfo(**job_details.dict())
             input_infos: typing.Dict[str, ValueInfo] = {
                 k: v.get_info() for k, v in job_inputs.items()
             }
-            for field_name, value in d.items():
-                value_lineage = ValueLineage.create(
-                    module_type=job_details.module_type,
-                    module_config=job_details.module_config,
-                    module_doc=job_details.module_doc,
-                    output_name=field_name,
-                    inputs=input_infos,
-                )
-                value.set_value_lineage(value_lineage)
+            # for field_name, value in d.items():
+            value_lineage = ValueLineage.create(
+                module_type=job_details.module_type,
+                module_config=job_details.module_config,
+                module_doc=job_details.module_doc,
+                # output_name=field_name,
+                inputs=input_infos,
+            )
+            d = self._outputs[j_id]
+            d.sync(proccessing_info=proc_info, lineage=value_lineage)
 
     def wait_for(self, *job_ids: str, sync_outputs: bool = True):
         """Wait for the jobs with the specified ids, also optionally sync their outputs with the pipeline value state."""

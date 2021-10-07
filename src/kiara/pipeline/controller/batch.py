@@ -56,6 +56,7 @@ class BatchController(PipelineController):
             for stage in self.processing_stages:
                 job_ids = []
                 for step_id in stage:
+
                     if not self.can_be_processed(step_id):
                         if self.can_be_skipped(step_id):
                             continue

@@ -5,6 +5,7 @@ from datetime import datetime
 from enum import Enum
 from pydantic import BaseModel, Field, PrivateAttr, validator
 
+from kiara.metadata import MetadataModel
 from kiara.metadata.core_models import DocumentationMetadataModel
 from kiara.pipeline import PipelineValuesInfo
 
@@ -47,7 +48,31 @@ class JobLog(BaseModel):
         self.log[len(self.log)] = _msg
 
 
-class Job(BaseModel):
+class ProcessingInfo(MetadataModel):
+
+    id: str = Field(description="The id of the job.")
+    module_type: str = Field(description="The module type name.")
+    module_config: typing.Dict[str, typing.Any] = Field(
+        description="The module configuration."
+    )
+    module_doc: DocumentationMetadataModel = Field(
+        description="Documentation for the module that runs the job."
+    )
+    job_log: JobLog = Field(
+        description="Details about the job progress.", default_factory=JobLog
+    )
+    submitted: datetime = Field(
+        description="When the job was submitted.", default_factory=datetime.now
+    )
+    started: typing.Optional[datetime] = Field(
+        description="When the job was started.", default=None
+    )
+    finished: typing.Optional[datetime] = Field(
+        description="When the job was finished.", default=None
+    )
+
+
+class Job(ProcessingInfo):
     @classmethod
     def create_event_msg(cls, job: "Job"):
 
@@ -61,31 +86,12 @@ class Job(BaseModel):
 
     _exception: typing.Optional[Exception] = PrivateAttr(default=None)
 
-    id: str = Field(description="The id of the job.")
     pipeline_id: str = Field(description="The id of the pipeline this jobs runs for.")
     pipeline_name: str = Field(description="The name/type of the pipeline.")
     step_id: str = Field(description="The id of the step within the pipeline.")
-    module_type: str = Field(description="The module type name.")
-    module_config: typing.Dict[str, typing.Any] = Field(
-        description="The module configuration."
-    )
-    module_doc: DocumentationMetadataModel = Field(
-        description="Documentation for the module that runs the job."
-    )
+
     inputs: PipelineValuesInfo = Field(description="The input values.")
     outputs: PipelineValuesInfo = Field(description="The output values.")
-    job_log: JobLog = Field(
-        description="Details about the job progress.", default_factory=JobLog
-    )
-    submitted: datetime = Field(
-        description="When the job was submitted.", default_factory=datetime.now
-    )
-    started: typing.Optional[datetime] = Field(
-        description="When the job was started.", default=None
-    )
-    finished: typing.Optional[datetime] = Field(
-        description="When the job was finished.", default=None
-    )
     status: JobStatus = Field(
         description="The current status of the job.",
         default=JobStatus.CREATED,

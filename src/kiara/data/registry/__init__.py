@@ -17,7 +17,8 @@ from kiara.data.values import (
     ValueSlot,
 )
 from kiara.defaults import SpecialValue
-from kiara.utils import log_message
+from kiara.metadata import MetadataModel
+from kiara.utils import is_debug, log_message
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -441,8 +442,12 @@ class DataRegistry(BaseDataRegistry):
         self,
         value_data: typing.Any = SpecialValue.NOT_SET,
         value_schema: typing.Optional[ValueSchema] = None,
-        value_lineage: typing.Optional[ValueLineage] = None,
+        metadata: typing.Optional[typing.Mapping[str, MetadataModel]] = None,
+        lineage: typing.Optional[ValueLineage] = None,
     ) -> Value:
+
+        # if lineage and not lineage.output_name:
+        #     raise Exception(f"Value lineage for data of type '{value_data.value_schema.type}' does not have 'output_name' field set.")
 
         value_id = str(uuid.uuid4())
 
@@ -468,15 +473,16 @@ class DataRegistry(BaseDataRegistry):
         existing_value: typing.Optional[Value] = None
         if isinstance(value_data, Value):
 
-            if value_data.id in self.value_ids:
-                if value_lineage:
+            if value_data.id in self.value_ids and not metadata:
+
+                if lineage:
                     existing_lineage = self._lineages.get(value_data.id, None)
                     if existing_lineage:
                         log_message(
                             f"Overwriting existing value lineage for: {value_data.id}"
                         )
 
-                    self._lineages[value_data.id] = value_lineage
+                    self._lineages[value_data.id] = lineage
 
                 # TODO: check it's really the same
                 our_value = self.get_value_obj(value_data.id)
@@ -488,14 +494,43 @@ class DataRegistry(BaseDataRegistry):
 
             existing_value = self._find_value_for_hashes(*value_data.get_hashes())
 
-            if existing_value:
-                if value_lineage and self._lineages.get(existing_value.id, None):
+            if existing_value and not metadata:
+
+                if lineage and self._lineages.get(existing_value.id, None):
                     log_message(f"Overwriting value lineage for: {existing_value.id}")
 
-                if value_lineage:
-                    self._lineages[existing_value.id] = value_lineage
+                if lineage:
+                    self._lineages[existing_value.id] = lineage
 
                 return existing_value
+
+            if value_data.id in self.value_ids and metadata:
+                _metadata: typing.Optional[
+                    typing.Dict[str, typing.Dict[str, typing.Any]]
+                ] = None
+                if metadata:
+                    _metadata = {}
+                    for k, v in metadata.items():
+                        _metadata[k] = {}
+                        _metadata[k]["metadata_item"] = v.dict()
+                        _metadata[k]["metadata_schema"] = v.schema_json()
+
+                # TODO: not resolve value_data ?
+                cloned_new_metadata = self._create_value_obj(
+                    value_schema=value_data.value_schema,
+                    is_set=value_data.is_set,
+                    is_none=value_data.is_none,
+                    type_obj=value_data.type_obj,
+                    metadata=_metadata,
+                    value_hashes=None,
+                )
+                r = self._register_new_value_obj(
+                    value_obj=cloned_new_metadata,
+                    value_data=value_data.get_value_data(),
+                    lineage=lineage,
+                    # value_hashes=value_hashes,
+                )
+                return r
 
             copied_value = self._register_remote_value(value_data)
 
@@ -526,10 +561,13 @@ class DataRegistry(BaseDataRegistry):
             SpecialValue.NOT_SET,
             SpecialValue.NO_VALUE,
         ]:
+
+            if metadata:
+                raise NotImplementedError()
             value_data = copy.deepcopy(value_schema.default)
 
         if value_data not in [None, SpecialValue.NOT_SET, SpecialValue.NO_VALUE]:
-
+            # TODO: actually implement that
             for hash_type in _type_obj.get_supported_hash_types():
                 hash_str = _type_obj.calculate_value_hash(
                     value=value_data, hash_type=hash_type
@@ -541,11 +579,13 @@ class DataRegistry(BaseDataRegistry):
                     break
 
         if existing_value:
-            if value_lineage and self._lineages.get(existing_value.id, None):
+            if metadata:
+                raise NotImplementedError()
+            if lineage and self._lineages.get(existing_value.id, None):
                 log_message(f"Overwriting lineage for value '{existing_value.id}'.")
 
-            if value_lineage:
-                self._lineages[existing_value.id] = value_lineage
+            if lineage:
+                self._lineages[existing_value.id] = lineage
             return existing_value
 
         if value_schema.is_constant:
@@ -559,19 +599,28 @@ class DataRegistry(BaseDataRegistry):
         is_set = value_data != SpecialValue.NOT_SET
         is_none = value_data in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]
 
+        _metadata = None
+        if metadata:
+            _metadata = {}
+            for k, v in metadata.items():
+                _metadata[k] = {}
+                _metadata[k]["metadata_item"] = v.dict()
+                _metadata[k]["metadata_schema"] = v.schema_json()
+
         # value_hashes: typing.Dict[str] = {}
         value = self._create_value_obj(
             value_schema=value_schema,
             is_set=is_set,
             is_none=is_none,
             type_obj=_type_obj,
+            metadata=_metadata,
             value_hashes=None,
         )
 
         self._register_new_value_obj(
             value_obj=value,
             value_data=value_data,
-            value_lineage=value_lineage,
+            lineage=lineage,
             # value_hashes=value_hashes,
         )
 
@@ -638,7 +687,7 @@ class DataRegistry(BaseDataRegistry):
         self,
         value_obj: Value,
         value_data: typing.Any,
-        value_lineage: typing.Optional[ValueLineage],
+        lineage: typing.Optional[ValueLineage],
         # value_hashes: typing.Optional[typing.Mapping[str, ValueHash]] = None,
     ):
 
@@ -666,8 +715,8 @@ class DataRegistry(BaseDataRegistry):
                 f"Value id '{value_id}' wasn't registered propertly in registry. This is most likely a bug."
             )
 
-        if value_lineage:
-            self._lineages[value_id] = value_lineage
+        if lineage:
+            self._lineages[value_id] = lineage
         # if value_hashes is None:
         #     value_hashes = {}
         # for hash_type, value_hash in value_hashes.items():
@@ -900,7 +949,7 @@ class DataRegistry(BaseDataRegistry):
             _value = self.register_data(
                 value_data=data,
                 value_schema=value_slot.value_schema,
-                value_lineage=value_lineage,
+                lineage=value_lineage,
             )
             # _value = self.create_value(
             #     value_data=data,
@@ -913,7 +962,10 @@ class DataRegistry(BaseDataRegistry):
         )
 
     def update_value_slots(
-        self, updated_values: typing.Mapping[typing.Union[str, ValueSlot], typing.Any]
+        self,
+        updated_values: typing.Mapping[typing.Union[str, ValueSlot], typing.Any],
+        metadata: typing.Optional[typing.Mapping[str, MetadataModel]] = None,
+        lineage: typing.Optional[ValueLineage] = None,
     ) -> typing.Mapping[ValueSlot, typing.Union[bool, Exception]]:
 
         updated: typing.Dict[str, typing.List[ValueSlot]] = {}
@@ -960,10 +1012,19 @@ class DataRegistry(BaseDataRegistry):
                 if isinstance(value_item, Value):
                     _value_item: Value = value_item
                     if _value_item._registry != self:
-                        _value_item = self.register_data(_value_item)
+                        _value_item = self.register_data(
+                            _value_item, metadata=metadata, lineage=lineage
+                        )
+                    elif metadata:
+                        _value_item = self.register_data(
+                            _value_item, metadata=metadata, lineage=lineage
+                        )
                 else:
                     _value_item = self.register_data(
-                        value_data=value_item, value_schema=value_slot.value_schema
+                        value_data=value_item,
+                        value_schema=value_slot.value_schema,
+                        metadata=metadata,
+                        lineage=lineage,
                     )
 
                 updated_item = self._update_value_slot(
@@ -977,6 +1038,11 @@ class DataRegistry(BaseDataRegistry):
                         cb_map[cb_id] = cb
                         updated.setdefault(cb_id, []).append(value_slot)
             except Exception as e:
+                log_message(str(e))
+                if is_debug():
+                    import traceback
+
+                    traceback.print_exc()
                 result[value_slot] = e
 
         for cb_id, value_slots in updated.items():

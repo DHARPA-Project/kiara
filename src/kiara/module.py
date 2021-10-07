@@ -14,6 +14,7 @@ from kiara.data.values import Value, ValueLineage, ValueSchema
 from kiara.data.values.value_set import SlottedValueSet, ValueSet
 from kiara.defaults import SpecialValue
 from kiara.exceptions import KiaraModuleConfigException
+from kiara.metadata import MetadataModel
 from kiara.metadata.module_models import (
     KiaraModuleInstanceMetadata,
     KiaraModuleTypeMetadata,
@@ -79,7 +80,10 @@ class StepInputs(ValueSet):
         return value
 
     def _set_values(
-        self, **values: typing.Any
+        self,
+        metadata: typing.Optional[typing.Mapping[str, MetadataModel]] = None,
+        lineage: typing.Optional[ValueLineage] = None,
+        **values: typing.Any,
     ) -> typing.Mapping[str, typing.Union[bool, Exception]]:
         raise Exception("Inputs are read-only.")
 
@@ -120,7 +124,10 @@ class StepOutputs(ValueSet):
         return self._outputs.get_all_field_names()
 
     def _set_values(
-        self, **values: typing.Any
+        self,
+        metadata: typing.Optional[typing.Mapping[str, MetadataModel]] = None,
+        lineage: typing.Optional[ValueLineage] = None,
+        **values: typing.Any,
     ) -> typing.Mapping[str, typing.Union[bool, Exception]]:
 
         wrong = []
@@ -133,6 +140,12 @@ class StepOutputs(ValueSet):
             raise Exception(
                 f"Can't set output value(s), invalid key name(s): {', '.join(wrong)}. Available: {av}"
             )
+
+        if metadata:
+            raise NotImplementedError()
+
+        if lineage:
+            raise NotImplementedError()
 
         result = {}
         for output_name, value in values.items():
@@ -151,13 +164,15 @@ class StepOutputs(ValueSet):
     def _get_value_obj(self, output_name):
         """Retrieve the value object for the specified field."""
 
-        self.sync()
+        # self.sync()
         return self._outputs.get_value_obj(output_name)
 
-    def sync(self):
+    def sync(
+        self, lineage: typing.Optional[ValueLineage] = None, **metadata: MetadataModel
+    ):
         """Sync this value sets 'shadow' values with the ones a user would retrieve."""
 
-        self._outputs.set_values(**self._outputs_staging)  # type: ignore
+        self._outputs.set_values(lineage=lineage, metadata=metadata, **self._outputs_staging)  # type: ignore
         self._outputs_staging.clear()  # type: ignore
 
 
@@ -675,7 +690,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
                 )
                 # value_lineage = None
                 output_val = self._kiara.data_registry.register_data(
-                    value_data=output, value_lineage=value_lineage
+                    value_data=output, lineage=value_lineage
                 )
                 result_outputs[field_name] = output_val
         else:

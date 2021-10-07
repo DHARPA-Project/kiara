@@ -38,12 +38,18 @@ class ModuleTypeConfigSchema(BaseModel):
     """
 
     @classmethod
-    def requires_config(cls) -> bool:
+    def requires_config(
+        cls, config: typing.Optional[typing.Mapping[str, typing.Any]] = None
+    ) -> bool:
         """Return whether this class can be used as-is, or requires configuration before an instance can be created."""
 
         for field_name, field in cls.__fields__.items():
             if field.required and field.default is None:
-                return True
+                if config:
+                    if config.get(field_name, None) is None:
+                        return True
+                else:
+                    return True
         return False
 
     _config_hash: str = PrivateAttr(default=None)

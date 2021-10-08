@@ -7,8 +7,10 @@ import typing
 from rich.panel import Panel
 
 from kiara import Kiara
+from kiara.defaults import KIARA_RESOURCES_FOLDER
 from kiara.info.modules import ModuleTypesGroupInfo
 from kiara.info.pipelines import PipelineModuleInfo
+from kiara.utils import log_message
 from kiara.utils.output import rich_print
 
 
@@ -175,3 +177,25 @@ def data_flow_graph(ctx, pipeline_type: str, full: bool):
     info = PipelineModuleInfo.from_type_name(pipeline_type, kiara=kiara_obj)
 
     info.print_data_flow_graph(simplified=not full)
+
+
+try:
+    import black
+    import jupytext
+
+    @pipeline.command()
+    @click.argument("pipeline", nargs=1)
+    @click.option("--template", "-t", help="The template to use. Defaults to 'notebook'.", default="notebook")
+    @click.pass_context
+    def render(ctx, pipeline, template):
+
+        kiara_obj: Kiara = ctx.obj["kiara"]
+
+        # pipeline = "/home/markus/projects/dharpa/kiara-playground/examples/streamlit/geolocation_prototype/pipelines/geolocation_1.yml"
+        # template = os.path.join(KIARA_RESOURCES_FOLDER, "templates", "python_script.py.j2")
+        rendered = kiara_obj.template_mgmt.render("pipeline", module=pipeline, template=template)
+
+        print(rendered)
+
+except Exception:
+    log_message("'black' or 'jupytext' not installed, not adding 'pipeline render' subcommand.")

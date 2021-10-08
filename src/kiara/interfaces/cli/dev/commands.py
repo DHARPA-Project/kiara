@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
+import os
+
 import click
 
 from kiara import Kiara
+from kiara.defaults import KIARA_RESOURCES_FOLDER
+from kiara.rendering import JinjaPipelineRenderer
 
 
 @click.group("dev")
@@ -15,7 +19,13 @@ def dev_group(ctx):
 def test(ctx):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
-    print(kiara_obj)
+
+    pipeline = "/home/markus/projects/dharpa/kiara-playground/examples/streamlit/geolocation_prototype/pipelines/geolocation_1.yml"
+
+    template = os.path.join(KIARA_RESOURCES_FOLDER, "templates", "python_script.py.j2")
+    rendered = kiara_obj.template_mgmt.render("pipeline_notebook", module=pipeline, template=template)
+
+    print(rendered)
 
     # inputs = {
     #     "edges_file_path": "/home/markus/projects/dharpa/kiara-playground/examples/data/journals/JournalEdges1902.csv",

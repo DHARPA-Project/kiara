@@ -29,6 +29,7 @@ from kiara.pipeline.controller import PipelineController
 from kiara.pipeline.pipeline import Pipeline
 from kiara.processing import Job
 from kiara.processing.processor import ModuleProcessor
+from kiara.rendering.mgmt import TemplateRenderingMgmt
 from kiara.utils import (
     create_valid_identifier,
     get_auto_workflow_alias,
@@ -122,6 +123,8 @@ class Kiara(object):
             extra_pipeline_folders=self._config.extra_pipeline_folders,
             ignore_errors=self._config.ignore_errors,
         )
+
+        self._template_mgmt: TemplateRenderingMgmt = TemplateRenderingMgmt.create(kiara=self)
 
     @property
     def config(self) -> KiaraConfig:
@@ -254,6 +257,10 @@ class Kiara(object):
     @property
     def operation_mgmt(self) -> OperationMgmt:
         return self._operation_mgmt
+
+    @property
+    def template_mgmt(self) -> TemplateRenderingMgmt:
+        return self._template_mgmt
 
     def get_module_class(self, module_type: str) -> typing.Type["KiaraModule"]:
         return self._module_mgr.get_module_class(module_type=module_type)

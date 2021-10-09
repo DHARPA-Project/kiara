@@ -532,6 +532,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.data.onboarding/" class="md-nav__link">
+        ➜ data.onboarding
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.data.onboarding.batch/" class="md-nav__link">
+        ➜ data.onboarding.batch
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.data.registry/" class="md-nav__link">
         ➜ data.registry
       </a>
@@ -1022,8 +1050,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../kiara.interfaces.cli.type.command/" class="md-nav__link">
-        ➜ interfaces.cli.type.command
+      <a href="../kiara.interfaces.cli.type.commands/" class="md-nav__link">
+        ➜ interfaces.cli.type.commands
       </a>
     </li>
   
@@ -1623,6 +1651,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.pipeline.controller.__init__.PipelineController.get_job_details" class="md-nav__link">
+    get_job_details()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.pipeline.controller.__init__.PipelineController.get_step" class="md-nav__link">
     get_step()
   </a>
@@ -1875,6 +1910,34 @@
     <li class="md-nav__item">
       <a href="../kiara.processing.synchronous/" class="md-nav__link">
         ➜ processing.synchronous
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.rendering/" class="md-nav__link">
+        ➜ rendering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.rendering.mgmt/" class="md-nav__link">
+        ➜ rendering.mgmt
       </a>
     </li>
   
@@ -2168,6 +2231,13 @@
           <li class="md-nav__item">
   <a href="#kiara.pipeline.controller.__init__.PipelineController.get_current_pipeline_state" class="md-nav__link">
     get_current_pipeline_state()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.pipeline.controller.__init__.PipelineController.get_job_details" class="md-nav__link">
+    get_job_details()
   </a>
   
 </li>
@@ -2597,6 +2667,36 @@ the pipeline structure as well as metadata about pipeline as well as step inputs
 
 
 
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.pipeline.controller.__init__.PipelineController.get_job_details" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_job_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_or_job_id</span><span class="p">)</span></code>
+
+
+<a href="#kiara.pipeline.controller.__init__.PipelineController.get_job_details" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Returns job details for a job id, or in case a step_id was provided, the last execution of this step.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/pipeline/controller/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_job_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_or_job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Job</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Returns job details for a job id, or in case a step_id was provided, the last execution of this step.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job_ids</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">step_or_job_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_processor</span><span class="o">.</span><span class="n">get_job_details</span><span class="p">(</span><span class="n">step_or_job_id</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_processor</span><span class="o">.</span><span class="n">get_job_details</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_ids</span><span class="p">[</span><span class="n">step_or_job_id</span><span class="p">])</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
 
   <div class="doc doc-object doc-method">
 
@@ -2924,7 +3024,7 @@ pipeline can be processed.</p>
 
 
 <h3 id="kiara.pipeline.controller.__init__.PipelineController.process_step" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">process_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">process_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">,</span> <span class="n">raise_exception</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 <a href="#kiara.pipeline.controller.__init__.PipelineController.process_step" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -2954,7 +3054,7 @@ pipeline can be processed.</p>
 </table>
         <details class="quote">
           <summary>Source code in <code>kiara/pipeline/controller/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">raise_exception</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Kick off processing for the step with the provided id.</span>
 
 <span class="sd">    Arguments:</span>
@@ -3241,6 +3341,7 @@ since the last time processing was done.</p>
     </div>
 
   </div>
+
 
 
 

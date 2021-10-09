@@ -532,6 +532,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.data.onboarding/" class="md-nav__link">
+        ➜ data.onboarding
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.data.onboarding.batch/" class="md-nav__link">
+        ➜ data.onboarding.batch
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.data.registry/" class="md-nav__link">
         ➜ data.registry
       </a>
@@ -1022,8 +1050,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../kiara.interfaces.cli.type.command/" class="md-nav__link">
-        ➜ interfaces.cli.type.command
+      <a href="../kiara.interfaces.cli.type.commands/" class="md-nav__link">
+        ➜ interfaces.cli.type.commands
       </a>
     </li>
   
@@ -1922,6 +1950,34 @@
     <li class="md-nav__item">
       <a href="../kiara.processing.synchronous/" class="md-nav__link">
         ➜ processing.synchronous
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.rendering/" class="md-nav__link">
+        ➜ rendering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.rendering.mgmt/" class="md-nav__link">
+        ➜ rendering.mgmt
       </a>
     </li>
   
@@ -3324,8 +3380,9 @@ as well as wrapping input/output-data related functionality.</p>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">input_value_set</span><span class="o">.</span><span class="n">items_are_valid</span><span class="p">():</span>
 
+        <span class="n">invalid_details</span> <span class="o">=</span> <span class="n">input_value_set</span><span class="o">.</span><span class="n">check_invalid</span><span class="p">()</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Can&#39;t process module &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_module_type_name</span><span class="si">}</span><span class="s2">&#39;: Inputs not valid.&quot;</span>  <span class="c1"># type: ignore</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t process module &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_module_type_name</span><span class="si">}</span><span class="s2">&#39;, input field(s) not valid: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">invalid_details</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># type: ignore</span>
         <span class="p">)</span>
 
     <span class="n">output_value_set</span> <span class="o">=</span> <span class="n">SlottedValueSet</span><span class="o">.</span><span class="n">from_schemas</span><span class="p">(</span>
@@ -3347,7 +3404,7 @@ as well as wrapping input/output-data related functionality.</p>
             <span class="p">)</span>
             <span class="c1"># value_lineage = None</span>
             <span class="n">output_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">register_data</span><span class="p">(</span>
-                <span class="n">value_data</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">value_lineage</span><span class="o">=</span><span class="n">value_lineage</span>
+                <span class="n">value_data</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">lineage</span><span class="o">=</span><span class="n">value_lineage</span>
             <span class="p">)</span>
             <span class="n">result_outputs</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_val</span>
     <span class="k">else</span><span class="p">:</span>
@@ -3562,7 +3619,7 @@ because that could potentially involve unnecessary data transfer and I/O.</p>
 
 
 <h3 id="kiara.module.StepOutputs.sync" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">sync</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">sync</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lineage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span><span class="p">)</span></code>
 
 
 <a href="#kiara.module.StepOutputs.sync" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -3573,10 +3630,12 @@ because that could potentially involve unnecessary data transfer and I/O.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/module.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">sync</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">sync</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">lineage</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ValueLineage</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span><span class="p">:</span> <span class="n">MetadataModel</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Sync this value sets &#39;shadow&#39; values with the ones a user would retrieve.&quot;&quot;&quot;</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span><span class="o">.</span><span class="n">set_values</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_outputs_staging</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span><span class="o">.</span><span class="n">set_values</span><span class="p">(</span><span class="n">lineage</span><span class="o">=</span><span class="n">lineage</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_outputs_staging</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_outputs_staging</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
 </code></pre></div>
         </details>

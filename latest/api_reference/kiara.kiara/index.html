@@ -532,6 +532,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.data.onboarding/" class="md-nav__link">
+        ➜ data.onboarding
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.data.onboarding.batch/" class="md-nav__link">
+        ➜ data.onboarding.batch
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.data.registry/" class="md-nav__link">
         ➜ data.registry
       </a>
@@ -1022,8 +1050,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../kiara.interfaces.cli.type.command/" class="md-nav__link">
-        ➜ interfaces.cli.type.command
+      <a href="../kiara.interfaces.cli.type.commands/" class="md-nav__link">
+        ➜ interfaces.cli.type.commands
       </a>
     </li>
   
@@ -1803,6 +1831,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.rendering/" class="md-nav__link">
+        ➜ rendering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.rendering.mgmt/" class="md-nav__link">
+        ➜ rendering.mgmt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.rendering.pipeline/" class="md-nav__link">
         ➜ rendering.pipeline
       </a>
@@ -2308,6 +2364,7 @@ how something was created, and in which environment.</p>
 
 
 
+
   <div class="doc doc-object doc-method">
 
 
@@ -2403,8 +2460,7 @@ and module_config will be resolved via the operation management.</p>
     <span class="k">if</span> <span class="n">module_type</span> <span class="o">==</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span>
         <span class="kn">from</span> <span class="nn">kiara</span> <span class="kn">import</span> <span class="n">PipelineModule</span>
 
-        <span class="n">module_cls</span> <span class="o">=</span> <span class="n">PipelineModule</span>
-        <span class="n">module</span> <span class="o">=</span> <span class="n">module_cls</span><span class="p">(</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">PipelineModule</span><span class="p">(</span>
             <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">parent_id</span><span class="o">=</span><span class="n">parent_id</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">module_config</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">module</span>
@@ -2424,6 +2480,28 @@ and module_config will be resolved via the operation management.</p>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">_module_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">op_config</span><span class="p">)</span>
             <span class="n">_module_config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">module_config</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span>
+        <span class="n">module_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_module_types</span>
+        <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">module_type</span><span class="p">)))</span>
+    <span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">module_config</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;Creating pipeline module from file with extra module_config not supported (yet).&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">module_type</span><span class="p">)</span>
+        <span class="n">pipeline_config_data</span> <span class="o">=</span> <span class="n">get_data_from_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="p">(</span><span class="o">**</span><span class="n">pipeline_config_data</span><span class="p">)</span>
+
+        <span class="kn">from</span> <span class="nn">kiara</span> <span class="kn">import</span> <span class="n">PipelineModule</span>
+
+        <span class="n">module</span> <span class="o">=</span> <span class="n">PipelineModule</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">parent_id</span><span class="o">=</span><span class="n">parent_id</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">pipeline_config</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">module</span>
+
     <span class="k">else</span><span class="p">:</span>
         <span class="n">_module_config</span> <span class="o">=</span> <span class="n">module_config</span>
 

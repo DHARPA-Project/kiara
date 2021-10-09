@@ -532,6 +532,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.data.onboarding/" class="md-nav__link">
+        ➜ data.onboarding
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.data.onboarding.batch/" class="md-nav__link">
+        ➜ data.onboarding.batch
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.data.registry/" class="md-nav__link">
         ➜ data.registry
       </a>
@@ -1022,8 +1050,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../kiara.interfaces.cli.type.command/" class="md-nav__link">
-        ➜ interfaces.cli.type.command
+      <a href="../kiara.interfaces.cli.type.commands/" class="md-nav__link">
+        ➜ interfaces.cli.type.commands
       </a>
     </li>
   
@@ -1809,6 +1837,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.rendering/" class="md-nav__link">
+        ➜ rendering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.rendering.mgmt/" class="md-nav__link">
+        ➜ rendering.mgmt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.rendering.pipeline/" class="md-nav__link">
         ➜ rendering.pipeline
       </a>
@@ -2282,6 +2338,7 @@ It waits until all inputs are set, after which it executes all pipeline steps in
         <span class="k">for</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">:</span>
             <span class="n">job_ids</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">stage</span><span class="p">:</span>
+
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_be_processed</span><span class="p">(</span><span class="n">step_id</span><span class="p">):</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_be_skipped</span><span class="p">(</span><span class="n">step_id</span><span class="p">):</span>
                         <span class="k">continue</span>
@@ -2484,6 +2541,23 @@ you can choose to only implement the <code>step_inputs_changed</code> method if 
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">pipeline_inputs_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="s2">&quot;PipelineInputEvent&quot;</span><span class="p">):</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_finished_until</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># print(&quot;============================&quot;)</span>
+    <span class="c1"># min_stage_to_clear = sys.maxsize</span>
+    <span class="c1"># for inp in event.updated_pipeline_inputs:</span>
+    <span class="c1">#     stage = self.pipeline.get_stage_for_pipeline_input(inp)</span>
+    <span class="c1">#     if stage &lt; min_stage_to_clear:</span>
+    <span class="c1">#         min_stage_to_clear = stage</span>
+    <span class="c1">#</span>
+    <span class="c1"># for stage, steps in self.pipeline.get_steps_by_stage().items():</span>
+    <span class="c1">#     if stage &lt; min_stage_to_clear:</span>
+    <span class="c1">#         continue</span>
+    <span class="c1">#     for step_id, step in steps.items():</span>
+    <span class="c1">#         step_inputs = self.get_step_inputs(step_id)</span>
+    <span class="c1">#         empty = { k: None for k in step_inputs.keys() }</span>
+    <span class="c1">#         step_inputs.set_values(**empty)</span>
+    <span class="c1">#         step_outputs = self.get_step_outputs(step_id)</span>
+    <span class="c1">#         empty = { k: None for k in step_outputs.keys() }</span>
+    <span class="c1">#         step_outputs.set_values(**empty)</span>
 </code></pre></div>
         </details>
     </div>

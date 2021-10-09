@@ -532,6 +532,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.data.onboarding/" class="md-nav__link">
+        ➜ data.onboarding
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.data.onboarding.batch/" class="md-nav__link">
+        ➜ data.onboarding.batch
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.data.registry/" class="md-nav__link">
         ➜ data.registry
       </a>
@@ -1022,8 +1050,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../kiara.interfaces.cli.type.command/" class="md-nav__link">
-        ➜ interfaces.cli.type.command
+      <a href="../kiara.interfaces.cli.type.commands/" class="md-nav__link">
+        ➜ interfaces.cli.type.commands
       </a>
     </li>
   
@@ -1593,6 +1621,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#kiara.operations.type_convert.TypeConversionModuleConfig.allow_none_input" class="md-nav__link">
+    allow_none_input
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.operations.type_convert.TypeConversionModuleConfig.source_type" class="md-nav__link">
     source_type
   </a>
@@ -1810,6 +1845,34 @@
     <li class="md-nav__item">
       <a href="../kiara.processing.synchronous/" class="md-nav__link">
         ➜ processing.synchronous
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.rendering/" class="md-nav__link">
+        ➜ rendering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.rendering.mgmt/" class="md-nav__link">
+        ➜ rendering.mgmt
       </a>
     </li>
   
@@ -2120,6 +2183,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#kiara.operations.type_convert.TypeConversionModuleConfig.allow_none_input" class="md-nav__link">
+    allow_none_input
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.operations.type_convert.TypeConversionModuleConfig.source_type" class="md-nav__link">
     source_type
   </a>
@@ -2244,12 +2314,16 @@
                 <span class="sa">f</span><span class="s2">&quot;Can&#39;t create input schema for module &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_module_type_id</span><span class="si">}</span><span class="s2">&#39;: converstion to target value type &#39;</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&#39; not supported.&quot;</span>  <span class="c1"># type: ignore</span>
             <span class="p">)</span>
 
-    <span class="k">return</span> <span class="p">{</span>
+    <span class="n">schema</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;value_item&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span>
             <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;The &#39;</span><span class="si">{</span><span class="n">source_type</span><span class="si">}</span><span class="s2">&#39; value to be converted.&quot;</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">}</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;allow_none_input&quot;</span><span class="p">):</span>
+        <span class="n">schema</span><span class="p">[</span><span class="s2">&quot;value_item&quot;</span><span class="p">][</span><span class="s2">&quot;optional&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="n">schema</span>
 </code></pre></div>
         </details>
     </div>
@@ -2300,12 +2374,16 @@
                 <span class="sa">f</span><span class="s2">&quot;Can&#39;t create output schema for module &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_module_type_id</span><span class="si">}</span><span class="s2">&#39;: conversion from source value type &#39;</span><span class="si">{</span><span class="n">source_type</span><span class="si">}</span><span class="s2">&#39; not supported.&quot;</span>  <span class="c1"># type: ignore</span>
             <span class="p">)</span>
 
-    <span class="k">return</span> <span class="p">{</span>
+    <span class="n">schema</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;value_item&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">target_type</span><span class="p">,</span>
             <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;The converted &#39;</span><span class="si">{</span><span class="n">source_type</span><span class="si">}</span><span class="s2">&#39; value as &#39;</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">}</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;allow_none_input&quot;</span><span class="p">):</span>
+        <span class="n">schema</span><span class="p">[</span><span class="s2">&quot;value_item&quot;</span><span class="p">][</span><span class="s2">&quot;optional&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="n">schema</span>
 </code></pre></div>
         </details>
     </div>
@@ -2577,6 +2655,28 @@
 
 
 
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.operations.type_convert.TypeConversionModuleConfig.allow_none_input" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">allow_none_input</span><span class="p">:</span> <span class="nb">bool</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.operations.type_convert.TypeConversionModuleConfig.allow_none_input" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Whether to allow 'none' source values, if one is encountered 'none' is returned.</p>
+    </div>
+
+  </div>
 
 
 

@@ -393,6 +393,11 @@
           "default": false,
           "type": "boolean"
         },
+        "status": {
+          "title": "Status",
+          "description": "The value status string",
+          "type": "string"
+        },
         "is_set": {
           "title": "Is Set",
           "description": "Whether the value is set.",
@@ -415,6 +420,7 @@
       },
       "required": [
         "id",
+        "status",
         "is_set",
         "value_schema"
       ],

@@ -532,6 +532,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.data.onboarding/" class="md-nav__link">
+        ➜ data.onboarding
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.data.onboarding.batch/" class="md-nav__link">
+        ➜ data.onboarding.batch
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.data.registry/" class="md-nav__link">
         ➜ data.registry
       </a>
@@ -1022,8 +1050,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../kiara.interfaces.cli.type.command/" class="md-nav__link">
-        ➜ interfaces.cli.type.command
+      <a href="../kiara.interfaces.cli.type.commands/" class="md-nav__link">
+        ➜ interfaces.cli.type.commands
       </a>
     </li>
   
@@ -1754,6 +1782,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.rendering/" class="md-nav__link">
+        ➜ rendering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.rendering.mgmt/" class="md-nav__link">
+        ➜ rendering.mgmt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.rendering.pipeline/" class="md-nav__link">
         ➜ rendering.pipeline
       </a>
@@ -2092,6 +2148,13 @@
     <span class="sd">&quot;&quot;&quot;Wait for the jobs with the specified ids, also optionally sync their outputs with the pipeline value state.&quot;&quot;&quot;</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for</span><span class="p">(</span><span class="o">*</span><span class="n">job_ids</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="n">job_ids</span><span class="p">:</span>
+        <span class="n">job</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_job_details</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">job</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t find job with id: </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">job</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span>
+            <span class="n">job</span><span class="o">.</span><span class="n">job_log</span><span class="o">.</span><span class="n">percent_finished</span> <span class="o">=</span> <span class="mi">100</span>
 
     <span class="k">if</span> <span class="n">sync_outputs</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sync_outputs</span><span class="p">(</span><span class="o">*</span><span class="n">job_ids</span><span class="p">)</span>

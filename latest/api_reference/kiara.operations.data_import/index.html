@@ -532,6 +532,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.data.onboarding/" class="md-nav__link">
+        ➜ data.onboarding
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.data.onboarding.batch/" class="md-nav__link">
+        ➜ data.onboarding.batch
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.data.registry/" class="md-nav__link">
         ➜ data.registry
       </a>
@@ -1022,8 +1050,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../kiara.interfaces.cli.type.command/" class="md-nav__link">
-        ➜ interfaces.cli.type.command
+      <a href="../kiara.interfaces.cli.type.commands/" class="md-nav__link">
+        ➜ interfaces.cli.type.commands
       </a>
     </li>
   
@@ -1468,34 +1496,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.operations.data_import.DataImportModuleConfig.aliases_default" class="md-nav__link">
-    aliases_default
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.operations.data_import.DataImportModuleConfig.allow_aliases_input" class="md-nav__link">
-    allow_aliases_input
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.operations.data_import.DataImportModuleConfig.allow_save_input" class="md-nav__link">
-    allow_save_input
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.operations.data_import.DataImportModuleConfig.save_default" class="md-nav__link">
-    save_default
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#kiara.operations.data_import.DataImportModuleConfig.source_profile" class="md-nav__link">
     source_profile
   </a>
@@ -1877,6 +1877,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.rendering/" class="md-nav__link">
+        ➜ rendering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.rendering.mgmt/" class="md-nav__link">
+        ➜ rendering.mgmt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.rendering.pipeline/" class="md-nav__link">
         ➜ rendering.pipeline
       </a>
@@ -2148,34 +2176,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.operations.data_import.DataImportModuleConfig.aliases_default" class="md-nav__link">
-    aliases_default
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.operations.data_import.DataImportModuleConfig.allow_aliases_input" class="md-nav__link">
-    allow_aliases_input
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.operations.data_import.DataImportModuleConfig.allow_save_input" class="md-nav__link">
-    allow_save_input
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.operations.data_import.DataImportModuleConfig.save_default" class="md-nav__link">
-    save_default
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#kiara.operations.data_import.DataImportModuleConfig.source_profile" class="md-nav__link">
     source_profile
   </a>
@@ -2351,33 +2351,33 @@
         <span class="p">},</span>
     <span class="p">}</span>
 
-    <span class="n">allow_save</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;allow_save_input&quot;</span><span class="p">)</span>
-    <span class="n">save_default</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;save_default&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">allow_save</span><span class="p">:</span>
-        <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;save&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;boolean&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;Whether to save the imported value, or not.&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="n">save_default</span><span class="p">,</span>
-        <span class="p">}</span>
-
-    <span class="n">allow_aliases</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span>
-        <span class="s2">&quot;allow_aliases_input&quot;</span>
-    <span class="p">)</span>
-    <span class="k">if</span> <span class="n">allow_aliases</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">allow_aliases</span> <span class="o">=</span> <span class="n">allow_save</span>
-
-    <span class="k">if</span> <span class="n">allow_aliases</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">allow_save</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">save_default</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-            <span class="s2">&quot;Invalid module configuration: allowing aliases input does not make sense if save is disabled.&quot;</span>
-        <span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">allow_aliases</span><span class="p">:</span>
-        <span class="n">default_aliases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;aliases_default&quot;</span><span class="p">)</span>
-        <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;aliases&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;A list of aliases to use when storing the value (only applicable if &#39;save&#39; is set).&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="n">default_aliases</span><span class="p">,</span>
-        <span class="p">}</span>
+    <span class="c1"># allow_save = self.get_config_value(&quot;allow_save_input&quot;)</span>
+    <span class="c1"># save_default = self.get_config_value(&quot;save_default&quot;)</span>
+    <span class="c1"># if allow_save:</span>
+    <span class="c1">#     inputs[&quot;save&quot;] = {</span>
+    <span class="c1">#         &quot;type&quot;: &quot;boolean&quot;,</span>
+    <span class="c1">#         &quot;doc&quot;: &quot;Whether to save the imported value, or not.&quot;,</span>
+    <span class="c1">#         &quot;default&quot;: save_default,</span>
+    <span class="c1">#     }</span>
+    <span class="c1">#</span>
+    <span class="c1"># allow_aliases: typing.Optional[bool] = self.get_config_value(</span>
+    <span class="c1">#     &quot;allow_aliases_input&quot;</span>
+    <span class="c1"># )</span>
+    <span class="c1"># if allow_aliases is None:</span>
+    <span class="c1">#     allow_aliases = allow_save</span>
+    <span class="c1">#</span>
+    <span class="c1"># if allow_aliases and not allow_save and not save_default:</span>
+    <span class="c1">#     raise Exception(</span>
+    <span class="c1">#         &quot;Invalid module configuration: allowing aliases input does not make sense if save is disabled.&quot;</span>
+    <span class="c1">#     )</span>
+    <span class="c1">#</span>
+    <span class="c1"># if allow_aliases:</span>
+    <span class="c1">#     default_aliases = self.get_config_value(&quot;aliases_default&quot;)</span>
+    <span class="c1">#     inputs[&quot;aliases&quot;] = {</span>
+    <span class="c1">#         &quot;type&quot;: &quot;list&quot;,</span>
+    <span class="c1">#         &quot;doc&quot;: &quot;A list of aliases to use when storing the value (only applicable if &#39;save&#39; is set).&quot;,</span>
+    <span class="c1">#         &quot;default&quot;: default_aliases,</span>
+    <span class="c1">#     }</span>
 
     <span class="k">return</span> <span class="n">inputs</span>
 </code></pre></div>
@@ -2539,94 +2539,6 @@
 
 
 
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="kiara.operations.data_import.DataImportModuleConfig.aliases_default" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">aliases_default</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-  </span>
-
-<a href="#kiara.operations.data_import.DataImportModuleConfig.aliases_default" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-      <p>Default value for aliases.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="kiara.operations.data_import.DataImportModuleConfig.allow_aliases_input" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">allow_aliases_input</span><span class="p">:</span> <span class="nb">bool</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-  </span>
-
-<a href="#kiara.operations.data_import.DataImportModuleConfig.allow_aliases_input" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-      <p>Allow the user to choose aliases for the saved value.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="kiara.operations.data_import.DataImportModuleConfig.allow_save_input" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">allow_save_input</span><span class="p">:</span> <span class="nb">bool</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-  </span>
-
-<a href="#kiara.operations.data_import.DataImportModuleConfig.allow_save_input" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-      <p>Allow the user to choose whether to save the imported item or not.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="kiara.operations.data_import.DataImportModuleConfig.save_default" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">save_default</span><span class="p">:</span> <span class="nb">bool</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-  </span>
-
-<a href="#kiara.operations.data_import.DataImportModuleConfig.save_default" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-      <p>The default of the 'save' input if not specified by the user.</p>
-    </div>
-
-  </div>
 
 
 

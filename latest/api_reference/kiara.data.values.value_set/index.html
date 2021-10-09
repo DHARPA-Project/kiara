@@ -532,6 +532,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.data.onboarding/" class="md-nav__link">
+        ➜ data.onboarding
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.data.onboarding.batch/" class="md-nav__link">
+        ➜ data.onboarding.batch
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.data.registry/" class="md-nav__link">
         ➜ data.registry
       </a>
@@ -684,8 +712,22 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#kiara.data.values.value_set.ValueSet.check_invalid" class="md-nav__link">
+    check_invalid()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.data.values.value_set.ValueSet.get_value_data_for_fields" class="md-nav__link">
     get_value_data_for_fields()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.value_set.ValueSet.set_values" class="md-nav__link">
+    set_values()
   </a>
   
 </li>
@@ -1102,8 +1144,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../kiara.interfaces.cli.type.command/" class="md-nav__link">
-        ➜ interfaces.cli.type.command
+      <a href="../kiara.interfaces.cli.type.commands/" class="md-nav__link">
+        ➜ interfaces.cli.type.commands
       </a>
     </li>
   
@@ -1774,6 +1816,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.rendering/" class="md-nav__link">
+        ➜ rendering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.rendering.mgmt/" class="md-nav__link">
+        ➜ rendering.mgmt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.rendering.pipeline/" class="md-nav__link">
         ➜ rendering.pipeline
       </a>
@@ -2031,8 +2101,22 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#kiara.data.values.value_set.ValueSet.check_invalid" class="md-nav__link">
+    check_invalid()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.data.values.value_set.ValueSet.get_value_data_for_fields" class="md-nav__link">
     get_value_data_for_fields()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.value_set.ValueSet.set_values" class="md-nav__link">
+    set_values()
   </a>
   
 </li>
@@ -2284,6 +2368,47 @@
 
 
 
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.values.value_set.ValueSet.check_invalid" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">check_invalid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.data.values.value_set.ValueSet.check_invalid" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Check whether the value set is invalid, if it is, return a description of what's wrong.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/values/value_set.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">check_invalid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Check whether the value set is invalid, if it is, return a description of what&#39;s wrong.&quot;&quot;&quot;</span>
+
+    <span class="n">invalid</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">item_is_valid</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">is_required</span><span class="p">():</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;not set&quot;</span>
+                <span class="k">elif</span> <span class="n">item</span><span class="o">.</span><span class="n">is_none</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;no value&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;n/a&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;n/a&quot;</span>
+            <span class="n">invalid</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span>
+    <span class="k">return</span> <span class="n">invalid</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
 
 
 
@@ -2347,6 +2472,86 @@ in which case an Exception will be raised (obviously).</p>
 
 
 
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.values.value_set.ValueSet.set_values" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">set_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lineage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">values</span><span class="p">)</span></code>
+
+
+<a href="#kiara.data.values.value_set.ValueSet.set_values" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Batch set several values.</p>
+<p>If metadata is provided, it is added to all values.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/values/value_set.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_values</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MetadataModel</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">lineage</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ValueLineage</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">values</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Value</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Batch set several values.</span>
+
+<span class="sd">    If metadata is provided, it is added to all values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_read_only</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Can&#39;t set values: this value set is read-only.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">values</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="n">invalid</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_field_names</span><span class="p">():</span>
+            <span class="n">invalid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">invalid</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;No field(s) with name(s) </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">invalid</span><span class="p">)</span><span class="si">}</span><span class="s2"> available, valid names: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_all_field_names</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">resolved_values</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;value:&quot;</span><span class="p">):</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">resolved_values</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">resolved_values</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">value_set_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_values</span><span class="p">(</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span> <span class="n">lineage</span><span class="o">=</span><span class="n">lineage</span><span class="p">,</span> <span class="o">**</span><span class="n">resolved_values</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">log_message</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
+            <span class="kn">import</span> <span class="nn">traceback</span>
+
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">e</span>
+
+    <span class="n">result</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Value</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value_set_result</span><span class="p">[</span><span class="n">field</span><span class="p">],</span> <span class="ne">Exception</span><span class="p">):</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_set_result</span><span class="p">[</span><span class="n">field</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
 
 
 
@@ -2355,6 +2560,7 @@ in which case an Exception will be raised (obviously).</p>
     </div>
 
   </div>
+
 
 
 

@@ -26,6 +26,8 @@ jobs:
           python-version: "${{ matrix.python_version }}"
       - uses: syphar/restore-virtualenv@v1
         id: cache-test-virtualenv
+        with:
+          requirement_files: setup.cfg
       - uses: actions/checkout@v2
       - name: install kiara
         run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]
@@ -44,6 +46,8 @@ jobs:
           python-version: 3.9
       - uses: syphar/restore-virtualenv@v1
         id: cache-coverage-virtualenv
+        with:
+          requirement_files: setup.cfg
       - uses: actions/checkout@v2
       - name: install kiara
         run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]
@@ -69,6 +73,8 @@ jobs:
           python-version: "${{ matrix.python_version }}"
       - uses: syphar/restore-virtualenv@v1
         id: cache-mypy-virtualenv
+        with:
+          requirement_files: setup.cfg
       - uses: actions/checkout@v2
       - name: install kiara
         run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]
@@ -83,6 +89,10 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
+      - uses: syphar/restore-virtualenv@v1
+        id: cache-mypy-virtualenv
+        with:
+          requirement_files: setup.cfg
       - uses: actions/checkout@v2
       - name: install kiara
         run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]

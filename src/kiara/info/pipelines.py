@@ -24,8 +24,8 @@ from kiara.pipeline.values import PipelineInputRef, PipelineOutputRef, ValueRef
 from kiara.utils import (
     StringYAML,
     create_table_from_config_class,
-    print_ascii_graph,
     log_message,
+    print_ascii_graph,
 )
 
 if typing.TYPE_CHECKING:

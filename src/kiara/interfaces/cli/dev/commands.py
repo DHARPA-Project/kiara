@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-import os
-
 import click
+import os
 
 from kiara import Kiara
 from kiara.defaults import KIARA_RESOURCES_FOLDER
-from kiara.rendering import JinjaPipelineRenderer
 
 
 @click.group("dev")

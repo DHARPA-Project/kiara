@@ -77,12 +77,12 @@ class JinjaRenderer(KiaraRenderer):
 class JinjaPipelineRenderer(JinjaRenderer):
     def _augment_inputs(self, **inputs: typing.Any) -> typing.Mapping[str, typing.Any]:
 
-        pipeline_input = inputs.get("inputs", None)
+        # pipeline_input = inputs.get("inputs", None)
         module = inputs.get("module")
         module_config = inputs.get("module_config", None)
 
-        module_obj: "PipelineModule" = self._kiara.create_module(
-            module_type=module, module_config=module_config
+        module_obj: "PipelineModule" = self._kiara.create_module(  # type: ignore
+            module_type=module, module_config=module_config  # type: ignore
         )
 
         if not module_obj.is_pipeline():

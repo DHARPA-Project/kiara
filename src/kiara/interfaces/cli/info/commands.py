@@ -2,10 +2,6 @@
 import click
 import sys
 
-import json as _json
-
-from rich.syntax import Syntax
-
 from kiara.info.kiara import KiaraContext
 from kiara.utils.output import rich_print
 

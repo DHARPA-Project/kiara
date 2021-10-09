@@ -12,13 +12,13 @@ from kiara.utils import is_develop
 from .data.commands import data
 from .dev.commands import dev_group
 from .explain import explain
+from .info.commands import info
 from .metadata.commands import metadata
 from .module.commands import module
 from .operation.commands import operation
 from .pipeline.commands import pipeline
 from .run import run
 from .type.commands import type_group
-from .info.commands import info
 
 # try:
 #     import uvloop

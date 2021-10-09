@@ -7,7 +7,6 @@ import typing
 from rich.panel import Panel
 
 from kiara import Kiara
-from kiara.defaults import KIARA_RESOURCES_FOLDER
 from kiara.info.modules import ModuleTypesGroupInfo
 from kiara.info.pipelines import PipelineModuleInfo
 from kiara.utils import log_message
@@ -180,8 +179,7 @@ def data_flow_graph(ctx, pipeline_type: str, full: bool):
 
 
 try:
-    import black
-    import jupytext
+    pass
 
     @pipeline.command()
     @click.argument("pipeline", nargs=1)

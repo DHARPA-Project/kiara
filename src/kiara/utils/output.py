@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 import typing
 from pydantic import BaseModel, Field, root_validator
 from rich import box

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import typing
 
-from kiara.rendering import KiaraRenderer, JinjaPipelineRenderer
+from kiara.rendering import JinjaPipelineRenderer, KiaraRenderer
 
 if typing.TYPE_CHECKING:
     from kiara import Kiara
@@ -14,7 +14,7 @@ class TemplateRenderingMgmt(object):
     def create(
         cls,
         templates: typing.Optional[
-            typing.Mapping[str, typing.Mapping[str, typing.Any]]
+            typing.Mapping[str, typing.Union[typing.Mapping[str, typing.Any], str]]
         ] = None,
         kiara: typing.Optional["Kiara"] = None,
     ) -> "TemplateRenderingMgmt":
@@ -22,9 +22,9 @@ class TemplateRenderingMgmt(object):
         if not templates:
             templates = DEFAULT_TEMPLATES
 
-        _templates: typing.Dict[str, typing.Dict[typing.Any]] = {}
+        _templates: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
         for template_name, config in templates.items():
-            if isinstance(config, typing.Type) and issubclass(config, KiaraRenderer):
+            if isinstance(config, type) and issubclass(config, KiaraRenderer):
                 _templates[template_name] = {
                     "renderer_cls": config,
                     "renderer_config": {},
@@ -44,7 +44,7 @@ class TemplateRenderingMgmt(object):
 
     def __init__(
         self,
-        templates: typing.Mapping[str, KiaraRenderer],
+        templates: typing.Mapping[str, typing.Mapping[str, typing.Any]],
         kiara: typing.Optional["Kiara"] = None,
     ):
 
@@ -54,7 +54,9 @@ class TemplateRenderingMgmt(object):
             kiara = Kiara.instance()
 
         self._kiara: Kiara = kiara
-        self._templates: typing.Mapping[str, KiaraRenderer] = templates
+        self._templates: typing.Mapping[
+            str, typing.Mapping[str, typing.Any]
+        ] = templates
 
     def render(self, template_name: str, **inputs: typing.Any) -> typing.Any:
 

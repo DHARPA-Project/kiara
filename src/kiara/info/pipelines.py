@@ -21,7 +21,12 @@ from kiara.pipeline import PipelineValuesInfo, StepStatus
 from kiara.pipeline.config import StepDesc
 from kiara.pipeline.utils import generate_step_alias
 from kiara.pipeline.values import PipelineInputRef, PipelineOutputRef, ValueRef
-from kiara.utils import StringYAML, create_table_from_config_class, print_ascii_graph, log_message
+from kiara.utils import (
+    StringYAML,
+    create_table_from_config_class,
+    print_ascii_graph,
+    log_message,
+)
 
 if typing.TYPE_CHECKING:
     from kiara import Kiara
@@ -455,11 +460,7 @@ class PipelineTypesGroupInfo(KiaraInfoModel):
     __root__: typing.Dict[str, PipelineModuleInfo]
 
     @classmethod
-    def create(
-        cls,
-        kiara: "Kiara",
-        ignore_errors: bool=False
-    ):
+    def create(cls, kiara: "Kiara", ignore_errors: bool = False):
 
         type_names = kiara.available_pipeline_module_types
 

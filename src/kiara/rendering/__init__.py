@@ -13,11 +13,15 @@ if typing.TYPE_CHECKING:
 
 
 class KiaraRenderer(abc.ABC):
-
-    def __init__(self, config: typing.Optional[typing.Mapping[str, typing.Any]]=None, kiara: typing.Optional["Kiara"] = None):
+    def __init__(
+        self,
+        config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+        kiara: typing.Optional["Kiara"] = None,
+    ):
 
         if kiara is None:
             from kiara import Kiara
+
             kiara = Kiara.instance()
 
         self._kiara: Kiara = kiara
@@ -28,7 +32,9 @@ class KiaraRenderer(abc.ABC):
     def _augment_inputs(self, **inputs: typing.Any) -> typing.Mapping[str, typing.Any]:
         return inputs
 
-    def _post_process(self, rendered: typing.Any, inputs: typing.Mapping[str, typing.Any]) -> typing.Any:
+    def _post_process(
+        self, rendered: typing.Any, inputs: typing.Mapping[str, typing.Any]
+    ) -> typing.Any:
         return rendered
 
     def render(self, **inputs: typing.Mapping[str, typing.Any]):
@@ -44,8 +50,6 @@ class KiaraRenderer(abc.ABC):
 
 
 class JinjaRenderer(KiaraRenderer):
-
-
     def _render_template(self, inputs: typing.Mapping[str, typing.Any]):
 
         template = inputs.get("template", None)
@@ -71,7 +75,6 @@ class JinjaRenderer(KiaraRenderer):
 
 
 class JinjaPipelineRenderer(JinjaRenderer):
-
     def _augment_inputs(self, **inputs: typing.Any) -> typing.Mapping[str, typing.Any]:
 
         pipeline_input = inputs.get("inputs", None)
@@ -104,12 +107,16 @@ class JinjaPipelineRenderer(JinjaRenderer):
             template = "notebook"
 
         if template in ["notebook", "python-script"]:
-            template = os.path.join(KIARA_RESOURCES_FOLDER, "templates", f"{template}.j2")
+            template = os.path.join(
+                KIARA_RESOURCES_FOLDER, "templates", f"{template}.j2"
+            )
 
         result["template"] = template
         return result
 
-    def _post_process(self, rendered: typing.Any, inputs: typing.Mapping[str, typing.Any]):
+    def _post_process(
+        self, rendered: typing.Any, inputs: typing.Mapping[str, typing.Any]
+    ):
 
         template: str = inputs["template"]
         if template.endswith("notebook.j2"):
@@ -119,6 +126,7 @@ class JinjaPipelineRenderer(JinjaRenderer):
         elif template.endswith("python-script.j2"):
             import black
             from black import Mode
+
             cleaned = black.format_str(rendered, mode=Mode())
             return cleaned
 

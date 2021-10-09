@@ -23,7 +23,9 @@ def test(ctx):
     pipeline = "/home/markus/projects/dharpa/kiara-playground/examples/streamlit/geolocation_prototype/pipelines/geolocation_1.yml"
 
     template = os.path.join(KIARA_RESOURCES_FOLDER, "templates", "python_script.py.j2")
-    rendered = kiara_obj.template_mgmt.render("pipeline_notebook", module=pipeline, template=template)
+    rendered = kiara_obj.template_mgmt.render(
+        "pipeline_notebook", module=pipeline, template=template
+    )
 
     print(rendered)
 

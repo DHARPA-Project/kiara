@@ -124,7 +124,9 @@ class Kiara(object):
             ignore_errors=self._config.ignore_errors,
         )
 
-        self._template_mgmt: TemplateRenderingMgmt = TemplateRenderingMgmt.create(kiara=self)
+        self._template_mgmt: TemplateRenderingMgmt = TemplateRenderingMgmt.create(
+            kiara=self
+        )
 
     @property
     def config(self) -> KiaraConfig:

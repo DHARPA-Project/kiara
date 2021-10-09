@@ -14,7 +14,12 @@ from kiara.utils.output import rich_print
 @click.argument("topic", nargs=1, required=False)
 @click.option("--ignore-errors", "-i", help="Ignore errors.", is_flag=True)
 @click.option("--json", "-j", help="Print the result in json format", is_flag=True)
-@click.option("--json-schema", "-s", help="Print the (json) schema of the output of this command.", is_flag=True)
+@click.option(
+    "--json-schema",
+    "-s",
+    help="Print the (json) schema of the output of this command.",
+    is_flag=True,
+)
 @click.pass_context
 def info(ctx, topic, ignore_errors, json, json_schema):
     """kiara context information"""
@@ -44,4 +49,3 @@ def info(ctx, topic, ignore_errors, json, json_schema):
         print(info.json(indent=2))
     else:
         rich_print(info)
-

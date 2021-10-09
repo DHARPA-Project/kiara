@@ -185,7 +185,12 @@ try:
 
     @pipeline.command()
     @click.argument("pipeline", nargs=1)
-    @click.option("--template", "-t", help="The template to use. Defaults to 'notebook'.", default="notebook")
+    @click.option(
+        "--template",
+        "-t",
+        help="The template to use. Defaults to 'notebook'.",
+        default="notebook",
+    )
     @click.pass_context
     def render(ctx, pipeline, template):
 
@@ -193,9 +198,14 @@ try:
 
         # pipeline = "/home/markus/projects/dharpa/kiara-playground/examples/streamlit/geolocation_prototype/pipelines/geolocation_1.yml"
         # template = os.path.join(KIARA_RESOURCES_FOLDER, "templates", "python_script.py.j2")
-        rendered = kiara_obj.template_mgmt.render("pipeline", module=pipeline, template=template)
+        rendered = kiara_obj.template_mgmt.render(
+            "pipeline", module=pipeline, template=template
+        )
 
         print(rendered)
 
+
 except Exception:
-    log_message("'black' or 'jupytext' not installed, not adding 'pipeline render' subcommand.")
+    log_message(
+        "'black' or 'jupytext' not installed, not adding 'pipeline render' subcommand."
+    )

@@ -59,7 +59,7 @@ class OperationsInfo(KiaraInfoModel):
 
 class OperationsGroupInfo(KiaraInfoModel):
     @classmethod
-    def create(cls, kiara: "Kiara", ignore_errors: bool=False):
+    def create(cls, kiara: "Kiara", ignore_errors: bool = False):
 
         operation_types = OperationsInfo.create_all(kiara=kiara)
         operation_configs = operation_types.pop("all")

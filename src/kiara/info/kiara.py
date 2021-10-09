@@ -16,12 +16,12 @@ if typing.TYPE_CHECKING:
 
 class ModulesGroup(KiaraInfoModel):
     @classmethod
-    def create(cls, kiara: "Kiara"):
+    def create(cls, kiara: "Kiara", ignore_errors: bool=False):
 
         module_types = ModuleTypesGroupInfo.from_type_names(
             kiara=kiara, ignore_pipeline_modules=True
         )
-        pipeline_types = PipelineTypesGroupInfo.create(kiara=kiara)
+        pipeline_types = PipelineTypesGroupInfo.create(kiara=kiara, ignore_errors=ignore_errors)
 
         return ModulesGroup(module_types=module_types, pipelines=pipeline_types)
 
@@ -44,13 +44,13 @@ class ModulesGroup(KiaraInfoModel):
         return table
 
 
-class KiaraInfo(KiaraInfoModel):
+class KiaraContext(KiaraInfoModel):
     @classmethod
-    def create(cls, kiara: "Kiara"):
+    def create(cls, kiara: "Kiara", ignore_errors: bool = False):
 
-        modules = ModulesGroup.create(kiara=kiara)
-        op_group = OperationsGroupInfo.create(kiara=kiara)
-        return KiaraInfo(
+        modules = ModulesGroup.create(kiara=kiara, ignore_errors=ignore_errors)
+        op_group = OperationsGroupInfo.create(kiara=kiara, ignore_errors=ignore_errors)
+        return KiaraContext(
             modules=modules,
             operations=op_group,
         )

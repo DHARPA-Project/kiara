@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 import typing
 from pydantic import BaseModel, Field, root_validator
 from rich import box
@@ -182,7 +183,6 @@ def pretty_print_arrow_table(
 
 
 def rich_print(msg: typing.Any = None) -> None:
-
     if msg is None:
         msg = ""
     console = get_console()

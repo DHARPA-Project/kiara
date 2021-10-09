@@ -21,7 +21,7 @@ from kiara.pipeline import PipelineValuesInfo, StepStatus
 from kiara.pipeline.config import StepDesc
 from kiara.pipeline.utils import generate_step_alias
 from kiara.pipeline.values import PipelineInputRef, PipelineOutputRef, ValueRef
-from kiara.utils import StringYAML, create_table_from_config_class, print_ascii_graph
+from kiara.utils import StringYAML, create_table_from_config_class, print_ascii_graph, log_message
 
 if typing.TYPE_CHECKING:
     from kiara import Kiara
@@ -458,15 +458,23 @@ class PipelineTypesGroupInfo(KiaraInfoModel):
     def create(
         cls,
         kiara: "Kiara",
+        ignore_errors: bool=False
     ):
 
         type_names = kiara.available_pipeline_module_types
 
         classes = {}
         for tn in type_names:
-            classes[tn] = PipelineModuleInfo.from_type_name(
-                module_type_name=tn, kiara=kiara
-            )
+            try:
+                classes[tn] = PipelineModuleInfo.from_type_name(
+                    module_type_name=tn, kiara=kiara
+                )
+            except Exception as e:
+                msg = f"Can't assemble pipeline '{tn}': {e}"
+                if ignore_errors:
+                    log_message(msg)
+                    continue
+                raise Exception(msg)
 
         return PipelineTypesGroupInfo(__root__=classes)
 

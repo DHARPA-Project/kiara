@@ -119,6 +119,12 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.9.1
+      - name: pip cache
+        id: pip-cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*') }}
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
@@ -149,6 +155,12 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.9.1
+      - name: pip cache
+        id: pip-cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*') }}
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
@@ -186,7 +198,7 @@ jobs:
       - name: install conda build packages
         run: conda install conda-build anaconda-client
       - name: build conda package
-        run: cd ci/conda/ && ./build-conda-packages.sh kiara 0.0.1
+        run: cd ci/conda/ && ./build-conda-packages.sh kiara develop
 
   publish_conda_package:
     name: publish conda package

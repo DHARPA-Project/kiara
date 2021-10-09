@@ -29,5 +29,5 @@ jobs:
         run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]
       - name: install kiara_modules.core
         run: pip install -U --pre --extra-index-url https://pypi.fury.io/dharpa/ kiara_modules.core[all]
-      - name: Test with pytest
+      - name: test with pytest
         run: make test

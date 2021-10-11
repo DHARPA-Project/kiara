@@ -1,0 +1,18 @@
+# %% [markdown]
+# # Pipeline information <a class="anchor" id="pipeline_info"></a>
+
+After our pipeline is wired up, we look can look at its structure, and other properties.
+
+For that, we need to retrieve the dynamically assembled pipeline object. We could do this from every one of the pipeline steps,
+since they all share the same pipeline:
+
+# %%
+workflow = step_{{ ns.last_step_id }}.workflow
+
+# %% [markdown]
+# ## Pipeline execution graph
+
+Let's look at the current execution graph for our pipeline:
+
+# %%
+graph_to_image(workflow.structure.execution_graph)

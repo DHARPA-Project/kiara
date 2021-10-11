@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import typing
 
-from kiara.rendering import JinjaPipelineRenderer, KiaraRenderer
+from kiara.rendering import KiaraRenderer
+from kiara.rendering.jinja import JinjaPipelineRenderer
 
 if typing.TYPE_CHECKING:
     from kiara import Kiara

@@ -184,6 +184,45 @@ class PipelineController(PipelineListener):
 
         return result
 
+    def check_inputs_status(
+        self,
+    ) -> typing.Mapping[int, typing.Mapping[str, typing.Mapping[str, typing.Any]]]:
+        """Check the status of all stages/steps, and whether they are ready to be processed.
+
+        The result dictionary uses stage numbers as keys, and a secondary dictionary as values which in turn uses
+        the step_id as key, and a dict with details (keys: 'ready', 'invalid_inputs', 'required') as values.
+        """
+
+        result: typing.Dict[int, typing.Dict[str, typing.Dict[str, typing.Any]]] = {}
+        for idx, stage in enumerate(self.processing_stages, start=1):
+            for step_id in stage:
+                if not self.can_be_processed(step_id):
+                    if self.can_be_skipped(step_id):
+                        result.setdefault(idx, {})[step_id] = {
+                            "ready": True,
+                            "required": False,
+                            "invalid_inputs": [
+                                f"{step_id}.{ii}" for ii in self.invalid_inputs(step_id)
+                            ],
+                        }
+                    else:
+                        result.setdefault(idx, {})[step_id] = {
+                            "ready": False,
+                            "invalid_inputs": [
+                                f"{step_id}.{ii}" for ii in self.invalid_inputs(step_id)
+                            ],
+                            "required": True,
+                        }
+                else:
+                    if self.can_be_skipped(step_id):
+                        result.setdefault(idx, {})[step_id] = {
+                            "ready": True,
+                            "required": True,
+                            "invalid_inputs": [],
+                        }
+
+        return result
+
     def can_be_skipped(self, step_id: str) -> bool:
         """Check whether the processing of a step can be skipped."""
 
@@ -207,7 +246,9 @@ class PipelineController(PipelineListener):
 
         return invalid
 
-    def process_step(self, step_id: str, raise_exception: bool = False) -> str:
+    def process_step(
+        self, step_id: str, raise_exception: bool = False, wait: bool = False
+    ) -> str:
         """Kick off processing for the step with the provided id.
 
         Arguments:
@@ -218,8 +259,10 @@ class PipelineController(PipelineListener):
 
         # if the inputs are not valid, ignore this step
         if not step_inputs.items_are_valid():
+            status = step_inputs.check_invalid()
+            assert status is not None
             raise Exception(
-                f"Can't execute step '{step_id}': it does not have valid input set."
+                f"Can't execute step '{step_id}'invalid inputs: {', '.join(status.keys())}"
             )
 
         # get the output 'holder' objects, which we'll need to pass to the module
@@ -236,6 +279,10 @@ class PipelineController(PipelineListener):
             outputs=step_outputs,
         )
         self._job_ids[step_id] = job_id
+
+        if wait:
+            self.wait_for_jobs(job_id, sync_outputs=True)
+
         return job_id
 
     def get_job_details(self, step_or_job_id: str) -> typing.Optional[Job]:

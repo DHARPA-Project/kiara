@@ -1,0 +1,20 @@
+{% macro print_link_assignment(link) %}step_{{ link.step_id }}.output.{{ link.value_name }}{% if link.sub_value %}.{{ link.sub_value['config'] }}{% endif %}{%  endmacro %}
+
+{% macro create_links_list(links) -%}
+{%  for link in links %}    {{ print_link_assignment(link) }},
+{%  endfor -%}{%- endmacro -%}
+
+{% macro add_links(step, input_links) -%}
+# %% [markdown]
+# #### Connecting inputs for: ``{{ step.step_id }}``
+
+{%  for input_name, links in input_links.items() -%}
+# %%
+{% if links |length == 1 -%}
+step_{{ step.step_id }}.input.{{ input_name }} = {{ print_link_assignment(links[0]) }}
+{% else %}
+step_{{ step.step_id }}.input.{{ input_name }} = [
+{{ create_links_list(links) }}]
+{%  endif %}
+{%  endfor -%}
+{%- endmacro %}

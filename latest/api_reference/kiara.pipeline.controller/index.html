@@ -1644,6 +1644,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.pipeline.controller.__init__.PipelineController.check_inputs_status" class="md-nav__link">
+    check_inputs_status()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.pipeline.controller.__init__.PipelineController.get_current_pipeline_state" class="md-nav__link">
     get_current_pipeline_state()
   </a>
@@ -1936,50 +1943,22 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.rendering.jinja/" class="md-nav__link">
+        ➜ rendering.jinja
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.rendering.mgmt/" class="md-nav__link">
         ➜ rendering.mgmt
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../kiara.rendering.pipeline/" class="md-nav__link">
-        ➜ rendering.pipeline
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../kiara.rendering.workflow/" class="md-nav__link">
-        ➜ rendering.workflow
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../kiara.rendering.workflow.terminal/" class="md-nav__link">
-        ➜ rendering.workflow.terminal
       </a>
     </li>
   
@@ -2224,6 +2203,13 @@
           <li class="md-nav__item">
   <a href="#kiara.pipeline.controller.__init__.PipelineController.can_be_skipped" class="md-nav__link">
     can_be_skipped()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.pipeline.controller.__init__.PipelineController.check_inputs_status" class="md-nav__link">
+    check_inputs_status()
   </a>
   
 </li>
@@ -2605,6 +2591,70 @@ every subsequent attempt to set a pipeline will raise an Exception.</p>
     <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_step</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">required</span><span class="p">:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_be_processed</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.pipeline.controller.__init__.PipelineController.check_inputs_status" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">check_inputs_status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.pipeline.controller.__init__.PipelineController.check_inputs_status" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Check the status of all stages/steps, and whether they are ready to be processed.</p>
+<p>The result dictionary uses stage numbers as keys, and a secondary dictionary as values which in turn uses
+the step_id as key, and a dict with details (keys: 'ready', 'invalid_inputs', 'required') as values.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/pipeline/controller/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">check_inputs_status</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]]:</span>
+    <span class="sd">&quot;&quot;&quot;Check the status of all stages/steps, and whether they are ready to be processed.</span>
+
+<span class="sd">    The result dictionary uses stage numbers as keys, and a secondary dictionary as values which in turn uses</span>
+<span class="sd">    the step_id as key, and a dict with details (keys: &#39;ready&#39;, &#39;invalid_inputs&#39;, &#39;required&#39;) as values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">result</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">stage</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">stage</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_be_processed</span><span class="p">(</span><span class="n">step_id</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_be_skipped</span><span class="p">(</span><span class="n">step_id</span><span class="p">):</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">{})[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;ready&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                        <span class="s2">&quot;invalid_inputs&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">ii</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">invalid_inputs</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
+                        <span class="p">],</span>
+                    <span class="p">}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">{})[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;ready&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                        <span class="s2">&quot;invalid_inputs&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">ii</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">invalid_inputs</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="p">}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_be_skipped</span><span class="p">(</span><span class="n">step_id</span><span class="p">):</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">{})[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;ready&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="s2">&quot;invalid_inputs&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                    <span class="p">}</span>
 
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
@@ -3024,7 +3074,7 @@ pipeline can be processed.</p>
 
 
 <h3 id="kiara.pipeline.controller.__init__.PipelineController.process_step" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">process_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">,</span> <span class="n">raise_exception</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">process_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">,</span> <span class="n">raise_exception</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 <a href="#kiara.pipeline.controller.__init__.PipelineController.process_step" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -3054,7 +3104,9 @@ pipeline can be processed.</p>
 </table>
         <details class="quote">
           <summary>Source code in <code>kiara/pipeline/controller/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">raise_exception</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process_step</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">raise_exception</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Kick off processing for the step with the provided id.</span>
 
 <span class="sd">    Arguments:</span>
@@ -3065,8 +3117,10 @@ pipeline can be processed.</p>
 
     <span class="c1"># if the inputs are not valid, ignore this step</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">step_inputs</span><span class="o">.</span><span class="n">items_are_valid</span><span class="p">():</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">step_inputs</span><span class="o">.</span><span class="n">check_invalid</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">status</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Can&#39;t execute step &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39;: it does not have valid input set.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t execute step &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39;, invalid inputs: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">status</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
     <span class="c1"># get the output &#39;holder&#39; objects, which we&#39;ll need to pass to the module</span>
@@ -3083,6 +3137,10 @@ pipeline can be processed.</p>
         <span class="n">outputs</span><span class="o">=</span><span class="n">step_outputs</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_job_ids</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_id</span>
+
+    <span class="k">if</span> <span class="n">wait</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait_for_jobs</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="n">sync_outputs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">job_id</span>
 </code></pre></div>
         </details>

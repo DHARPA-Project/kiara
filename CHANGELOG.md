@@ -1,9 +1,13 @@
 # Changelog
 
-## Version 0.2.1 (Upcoming)
+## Version 0.2.2 (Upcoming)
+
+## Version 0.2.1
 
 - removed 'save' and 'aliases' config/input options from import operations (it turns out its much better overall to do saving explicitely, not within modules)
 - processing metrics and information will be added to value metadata
+- rudimentary rendering template management
+- 'kiara info' subcommand, displaying the current context (incl. all modules & operations)
 
 ## Version 0.2.0
 

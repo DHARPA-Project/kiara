@@ -262,7 +262,7 @@ class PipelineController(PipelineListener):
             status = step_inputs.check_invalid()
             assert status is not None
             raise Exception(
-                f"Can't execute step '{step_id}'invalid inputs: {', '.join(status.keys())}"
+                f"Can't execute step '{step_id}', invalid inputs: {', '.join(status.keys())}"
             )
 
         # get the output 'holder' objects, which we'll need to pass to the module

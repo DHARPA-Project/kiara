@@ -2058,6 +2058,7 @@
 
 
 
+
   <div class="doc doc-object doc-function">
 
 
@@ -2187,6 +2188,10 @@
             <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - ``</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">``: </span><span class="si">{</span><span class="n">type_md</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="nd">@env</span><span class="o">.</span><span class="n">macro</span>
+    <span class="k">def</span> <span class="nf">get_kiara_context</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">KiaraContext</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">kiara_context</span>
 </code></pre></div>
         </details>
     </div>

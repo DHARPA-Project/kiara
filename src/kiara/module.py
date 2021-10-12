@@ -400,6 +400,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
 
         If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):
 
+        ```
         {
           "[input_field_name]: {
               "type": "[value_type]",
@@ -409,6 +410,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
               "type: ...
               ...
           }
+          ```
 
         """
 
@@ -422,6 +424,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
 
         If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):
 
+        ```
         {
           "[output_field_name]: {
               "type": "[value_type]",
@@ -430,6 +433,7 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
               "type: ...
               ...
           }
+        ```
         """
 
     @property

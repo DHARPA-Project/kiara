@@ -65,11 +65,17 @@ class PrettyPrintValueModule(KiaraModule):
         str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
     ]:
 
+        value_type = self.get_config_value("value_type")
+
+        if value_type == "all":
+            input_name = "value_item"
+            doc = "A value of any type."
+        else:
+            input_name = value_type
+            doc = f"A value of type '{value_type}'."
+
         inputs: typing.Mapping[str, typing.Any] = {
-            "value_item": {
-                "type": self.get_config_value("value_type"),
-                "doc": f"A value of type '{self.get_config_value('value_type')}'.",
-            },
+            input_name: {"type": value_type, "doc": doc},
             "print_config": {
                 "type": "dict",
                 "doc": "Optional print configuration.",
@@ -95,14 +101,19 @@ class PrettyPrintValueModule(KiaraModule):
 
     def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
 
-        value_obj: Value = inputs.get_value_obj("value_item")
+        value_type: str = self.get_config_value("value_type")
+        target_type: str = self.get_config_value("target_type")
+
+        if value_type == "all":
+            input_name = "value_item"
+        else:
+            input_name = value_type
+
+        value_obj: Value = inputs.get_value_obj(input_name)
         print_config = dict(DEFAULT_PRETTY_PRINT_CONFIG)
         config: typing.Mapping = inputs.get_value_data("print_config")
         if config:
             print_config.update(config)
-
-        value_type: str = self.get_config_value("value_type")
-        target_type: str = self.get_config_value("target_type")
 
         func_name = f"pretty_print_as_{target_type}"
 
@@ -122,6 +133,33 @@ class PrettyPrintValueModule(KiaraModule):
 
 
 class PrettyPrintOperationType(OperationType):
+    """This operation type renders values of any type into human readable output for different targets (e.g. terminal, html, ...).
+
+    The main purpose of this operation type is to show the user as much content of the data as possible for the specific
+    rendering target, without giving any guarantees that all information contained in the data is shown. It may print
+    out the whole content (if the content is small, or the available space large enough), or
+    just a few bits and pieces from the start and/or end of the data, whatever makes most sense for the data itself. For example,
+    for large tables it might be a good idea to print out the first and last 30 rows, so users can see which columns are available,
+    and get a rough overview of the content itself. For network graphs it might make sense to print out some graph properties
+    (number of nodes, edges, available attributes, ...) on the terminal, but render the graph itself when using html as target.
+
+    Currently, it is only possible to implement a `pretty_print` renderer if you have access to the source code of the value
+    type you want to render. To add a new render method, add a new instance method to the `ValueType` class in question,
+    in the format:
+
+    ```
+    def pretty_print_as_<TARGET_TYPE>(value: Value, print_config: typing.Mapping[str, typing.Any]) -> typing.Any:
+       ...
+       ...
+    ```
+
+    *kiara* will look at all available `ValueType` classes for methods that match this signature, and auto-generate
+    operations following this naming template: `<SOURCE_TYPE>.pretty_print_as.<TARGET_TYPE>`.
+
+    Currently, only the type `renderables` is implemented as target type (for printing out to the terminal). It is planned to
+    add output suitable for use in Jupyter notebooks in the near future.
+    """
+
     def is_matching_operation(self, op_config: Operation) -> bool:
 
         return issubclass(op_config.module_cls, PrettyPrintValueModule)
@@ -159,7 +197,11 @@ class PrettyPrintOperationType(OperationType):
         ops_config = self.get_pretty_print_operation(
             value_type=value.type_name, target_type=target_type
         )
-        result = ops_config.module.run(value_item=value, print_config=print_config)
+        inputs: typing.Mapping[str, typing.Any] = {
+            value.type_name: value,
+            "print_config": print_config,
+        }
+        result = ops_config.module.run(**inputs)
         printed = result.get_value_data("printed")
 
         return printed

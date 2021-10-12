@@ -8,7 +8,7 @@ docs: ## build documentation
 	mkdocs build
 
 serve-docs: ## serve and watch documentation
-	mkdocs serve -a 0.0.0.0:8000
+	mkdocs serve --dirtyreload -a 0.0.0.0:8000
 
 clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
 

@@ -122,8 +122,12 @@ class ExtractMetadataModule(KiaraModule):
         str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
     ]:
 
+        input_name = self.value_type
+        if input_name == "any":
+            input_name = "value_item"
+
         inputs = {
-            "value_item": {
+            input_name: {
                 "type": self.value_type,
                 "doc": f"A value of type '{self.value_type}'",
                 "optional": False,
@@ -151,7 +155,11 @@ class ExtractMetadataModule(KiaraModule):
 
     def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
 
-        value = inputs.get_value_obj("value_item")
+        input_name = self.value_type
+        if input_name == "any":
+            input_name = "value_item"
+
+        value = inputs.get_value_obj(input_name)
         if self.value_type != "any" and value.type_name != self.value_type:
             raise KiaraProcessingException(
                 f"Can't extract metadata for value of type '{value.value_schema.type}'. Expected type '{self.value_type}'."
@@ -162,14 +170,29 @@ class ExtractMetadataModule(KiaraModule):
         outputs.set_value("metadata_item_schema", self.metadata_schema)
         metadata = self.extract_metadata(value)
         if isinstance(metadata, BaseModel):
-            metadata = metadata.dict()
+            metadata = metadata.dict(exclude_none=True)
 
         # TODO: validate metadata?
         outputs.set_value("metadata_item", metadata)
 
 
 class ExtractMetadataOperationType(OperationType):
-    """Extract metadata from a dataset."""
+    """Extract metadata from a dataset.
+
+    The purpose of this operation type is to be able to extract arbitrary, type-specific metadata from value data. In general,
+    *kiara* wants to collect (and store along the value) as much metadata related to data as possible, but the extraction
+    process should not take a lot of processing time (since this is done whenever a value is registered into a data registry).
+
+    As its hard to predict all the types of metadata of a specific type that could be interesting in specific scenarios, *kiara*
+    supports a pluggable mechanism to add new metadata extraction processes by extending the base class [`ExtractMetadataModule`](http://dharpa.org/kiara/latest/api_reference/kiara.operations.extract_metadata/#kiara.operations.extract_metadata.ExtractMetadataModule)
+    and adding that implementation somewhere *kiara* can find it. Once that is done, *kiara* will automatically add a new
+    operation with an id that follows this template: `<VALUE_TYPE>.extract_metadata.<METADATA_KEY>`, where `METADATA_KEY` is a name
+    under which the metadata will be stored within the value object.
+
+    By default, every value type should have at least one metadata extraction module where the `METADATA_KEY` is the same
+    as the value type name, and which contains basic, type-specific metadata (e.g. for a 'table', that would be number of rows,
+    column names, column types, etc.).
+    """
 
     def is_matching_operation(self, op_config: Operation) -> bool:
         return issubclass(op_config.module_cls, ExtractMetadataModule)

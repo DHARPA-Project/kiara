@@ -128,7 +128,14 @@ class MetadataMgmt(object):
                 )
 
             md_module: ExtractMetadataModule = op_config.module  # type: ignore
-            md_result = md_module.run(_attach_lineage=False, value_item=value)
+            input_name = value.type_name
+            if input_name == "any":
+                input_name = "value_item"
+            inputs: typing.Dict[str, typing.Any] = {
+                "_attach_lineage": False,
+                input_name: value,
+            }
+            md_result = md_module.run(**inputs)
             result[mk] = md_result.get_all_value_data()
 
         if also_return_schema:

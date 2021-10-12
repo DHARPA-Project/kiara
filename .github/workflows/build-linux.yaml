@@ -188,6 +188,7 @@ jobs:
   test_conda_package_build:
     name: test conda package build
     runs-on: ubuntu-latest
+    if: ${{ startsWith(github.ref, 'refs/tags') != true }}
     env:
       ANACONDA_PUSH_TOKEN: ${{ secrets.ANACONDA_PUSH_TOKEN }}
 #      needs:

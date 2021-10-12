@@ -15,6 +15,7 @@ import typing
 import uuid
 
 from kiara.config import KiaraConfig
+from kiara.data.onboarding.batch import BatchOnboard
 from kiara.kiara import Kiara
 from kiara.pipeline.config import PipelineConfig
 
@@ -82,7 +83,7 @@ def kiara() -> Kiara:
 
 
 @pytest.fixture(scope="module")
-def presseeded_data_store():
+def presseeded_data_store_minimal() -> Kiara:
 
     session_id = str(uuid.uuid4())
 
@@ -104,5 +105,49 @@ def presseeded_data_store():
 
     table_value = results.get_value_obj("create_table_from_files__value_item")
     table_value.save(aliases=["journal_nodes"])
+
+    return kiara
+
+
+@pytest.fixture(scope="module")
+def preseeded_data_store() -> Kiara:
+
+    session_id = str(uuid.uuid4())
+
+    instance_data_store = os.path.join(TEMP_DIR, f"instance_{session_id}")
+    conf = KiaraConfig(data_store=instance_data_store)
+    kiara = Kiara(config=conf)
+
+    base_folder = os.path.dirname(__file__)
+    data_folder = os.path.join(base_folder, "..", "examples", "data")
+    pipeline_folder = PIPELINES_FOLDER
+
+    inputs = {
+        "edges_file_path": os.path.join(data_folder, "journals/JournalEdges1902.csv"),
+        "nodes_file_path": os.path.join(data_folder, "journals/JournalNodes1902.csv"),
+        "journals_folder_path": os.path.join(data_folder, "journals"),
+        "text_corpus_folder_path": os.path.join(data_folder, "text_corpus"),
+        "city_column_name": "City",
+        "label_column_name": "Label",
+    }
+    pipeline = os.path.join(pipeline_folder, "test_preseed_1.yaml")
+
+    store_config_dict = {"outputs": [{"alias_template": "{{ field_name }}"}]}
+
+    onboard_config = {
+        "module_type": pipeline,
+        "inputs": inputs,
+        "store_config": store_config_dict,
+    }
+
+    # store_config = ValueStoreConfig(**store_config_dict)
+    onboarder = BatchOnboard.create(kiara=kiara, **onboard_config)
+    print(f"kiara data store: {kiara.data_store.base_path}")
+
+    results = onboarder.run("tests_1")
+    aliases = set()
+    for _a in results.values():
+        aliases.update(_a)
+    print(f"Onboarded example data, available aliases: {', '.join(aliases)}")
 
     return kiara

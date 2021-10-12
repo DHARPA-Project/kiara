@@ -14,13 +14,13 @@ def test_data_subcommand():
     assert "Print the metadata" in result.stdout
 
 
-def test_data_list_subcommand(presseeded_data_store: Kiara):
+def test_data_list_subcommand(presseeded_data_store_minimal: Kiara):
 
     runner = CliRunner()
     result = runner.invoke(
         cli,
         "data list --all",
-        env={"KIARA_DATA_STORE": presseeded_data_store.config.data_store},
+        env={"KIARA_DATA_STORE": presseeded_data_store_minimal.config.data_store},
     )
 
     assert result.exit_code == 0

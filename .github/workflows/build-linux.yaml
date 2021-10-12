@@ -165,7 +165,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: install kiara
-        run: pip install -U --extra-index-url https://gitlab.com/api/v4/projects/25344049/packages/pypi/simple --extra-index-url https://pypi.fury.io/dharpa/ -e .[all]
+        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ -e .
       - name: install 'wheel' package
         run: pip install -U wheel
       - name: create packages

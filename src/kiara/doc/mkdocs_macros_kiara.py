@@ -7,6 +7,7 @@ from pydoc import locate
 
 from kiara import Kiara
 from kiara.data.values import Value, ValueSchema
+from kiara.info.kiara import KiaraContext
 from kiara.info.pipelines import PipelineState, PipelineStructureDesc
 from kiara.metadata.module_models import KiaraModuleTypeMetadata
 from kiara.module_config import ModuleConfig, ModuleTypeConfigSchema
@@ -59,6 +60,7 @@ KIARA_MODEL_CLASSES: typing.Mapping[str, typing.List[typing.Type[BaseModel]]] = 
 
 yaml = StringYAML()
 kiara_obj = Kiara.instance()
+kiara_context = KiaraContext.create(kiara=kiara_obj)
 
 
 def define_env(env):
@@ -170,6 +172,10 @@ def define_env(env):
             result.append(f"  - ``{name}``: {type_md.documentation.description}")
 
         return "\n".join(result)
+
+    @env.macro
+    def get_kiara_context() -> KiaraContext:
+        return kiara_context
 
 
 def on_post_build(env):

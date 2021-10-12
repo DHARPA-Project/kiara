@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import jupytext
 import os
 import typing
 from jinja2 import Environment, FileSystemLoader, Template
@@ -81,6 +80,8 @@ class JinjaPipelineRenderer(JinjaRenderer):
 
         template: str = inputs["template"]
         if template.endswith("notebook.j2"):
+            import jupytext
+
             notebook = jupytext.reads(rendered, fmt="py:percent")
             converted = jupytext.writes(notebook, fmt="notebook")
             return converted

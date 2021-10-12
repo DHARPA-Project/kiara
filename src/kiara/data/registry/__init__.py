@@ -441,7 +441,7 @@ class DataRegistry(BaseDataRegistry):
     def register_data(
         self,
         value_data: typing.Any = SpecialValue.NOT_SET,
-        value_schema: typing.Optional[ValueSchema] = None,
+        value_schema: typing.Union[None, ValueSchema, str] = None,
         metadata: typing.Optional[typing.Mapping[str, MetadataModel]] = None,
         lineage: typing.Optional[ValueLineage] = None,
     ) -> Value:
@@ -466,6 +466,8 @@ class DataRegistry(BaseDataRegistry):
                 value_schema = value_data.value_schema
             else:
                 raise Exception(f"No value schema provided for value: {value_data}")
+        elif isinstance(value_schema, str):
+            value_schema = ValueSchema(type=value_schema)
 
         cls = self._kiara.get_value_type_cls(value_schema.type)
         _type_obj = cls(**value_schema.type_config)

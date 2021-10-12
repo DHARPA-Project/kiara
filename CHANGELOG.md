@@ -1,6 +1,10 @@
 # Changelog
 
-## Version 0.2.2 (Upcoming)
+## Version 0.3.0 (Upcoming)
+
+- refactoring of operation type input names -- this replaces most instances where the input name was 'value_item' (or similar). I've decided that using the value type as input name increases usability of those operations more than the costs associated with having different input names for operations of the same type:
+  - pretty_print: 'value_item' -> type name of the value to pretty print
+  - extract_metadata: 'value_item' -> type name of the value to extract metadata from
 
 ## Version 0.2.1
 

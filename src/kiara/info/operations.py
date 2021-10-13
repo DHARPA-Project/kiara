@@ -26,9 +26,7 @@ class OperationsInfo(KiaraInfoModel):
     def create(cls, operations: OperationType):
 
         info = OperationsMetadata.from_operations_class(operations.__class__)
-        return OperationsInfo(
-            info=info, operation_configs=dict(operations.operation_configs)
-        )
+        return OperationsInfo(info=info, operation_configs=dict(operations.operations))
 
     @classmethod
     def create_renderable_from_operations_map(

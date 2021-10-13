@@ -169,7 +169,7 @@ class PrettyPrintOperationType(OperationType):
     ) -> Operation:
 
         result = []
-        for op_config in self.operation_configs.values():
+        for op_config in self.operations.values():
             if op_config.module_config["value_type"] != value_type:
                 continue
             if op_config.module_config["target_type"] != target_type:

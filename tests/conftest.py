@@ -24,6 +24,8 @@ from .utils import INVALID_PIPELINES_FOLDER, MODULE_CONFIGS_FOLDER, PIPELINES_FO
 TEMP_DIR = os.path.join(tempfile.gettempdir(), "kiara_tests")
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
+DATA_FOLDER = os.path.join(ROOT_DIR, "examples", "data")
+
 
 @pytest.fixture
 def pipeline_paths():
@@ -118,15 +120,13 @@ def preseeded_data_store() -> Kiara:
     conf = KiaraConfig(data_store=instance_data_store)
     kiara = Kiara(config=conf)
 
-    base_folder = os.path.dirname(__file__)
-    data_folder = os.path.join(base_folder, "..", "examples", "data")
     pipeline_folder = PIPELINES_FOLDER
 
     inputs = {
-        "edges_file_path": os.path.join(data_folder, "journals/JournalEdges1902.csv"),
-        "nodes_file_path": os.path.join(data_folder, "journals/JournalNodes1902.csv"),
-        "journals_folder_path": os.path.join(data_folder, "journals"),
-        "text_corpus_folder_path": os.path.join(data_folder, "text_corpus"),
+        "edges_file_path": os.path.join(DATA_FOLDER, "journals/JournalEdges1902.csv"),
+        "nodes_file_path": os.path.join(DATA_FOLDER, "journals/JournalNodes1902.csv"),
+        "journals_folder_path": os.path.join(DATA_FOLDER, "journals"),
+        "text_corpus_folder_path": os.path.join(DATA_FOLDER, "text_corpus"),
         "city_column_name": "City",
         "label_column_name": "Label",
     }

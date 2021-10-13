@@ -160,7 +160,7 @@ class OperationType(object):
         return True
 
     @property
-    def operation_configs(self) -> typing.Mapping[str, Operation]:
+    def operations(self) -> typing.Mapping[str, Operation]:
         return self._operations
 
 
@@ -292,7 +292,7 @@ class OperationMgmt(object):
 
         result = set()
         for ops_ty, ops in self.operation_types.items():
-            if operation_id in ops.operation_configs.keys():
+            if operation_id in ops.operations.keys():
                 result.add(ops_ty)
         return result
 

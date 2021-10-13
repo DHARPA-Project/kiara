@@ -57,7 +57,7 @@ def list(
             operation_details: OperationType = all_operations_types[operation_name]
             first_line_value = True
 
-            for op_id, op_config in sorted(operation_details.operation_configs.items()):
+            for op_id, op_config in sorted(operation_details.operations.items()):
 
                 if full_doc:
                     desc = op_config.doc.full_doc

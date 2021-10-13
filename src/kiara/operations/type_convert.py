@@ -262,7 +262,7 @@ class ConvertValueOperationType(OperationType):
         """
 
         result: typing.Dict[str, Operation] = {}
-        for o_id, op in self.operation_configs.items():
+        for o_id, op in self.operations.items():
             source_type = op.module_config["source_type"]
             if source_type == value_type:
                 target_type = op.module_config["target_type"]
@@ -283,7 +283,7 @@ class ConvertValueOperationType(OperationType):
         """
 
         result: typing.Dict[str, Operation] = {}
-        for o_id, op in self.operation_configs.items():
+        for o_id, op in self.operations.items():
             target_type = op.module_config["target_type"]
             if target_type == value_type:
                 source_type = op.module_config["source_type"]

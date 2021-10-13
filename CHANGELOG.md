@@ -6,6 +6,7 @@
   - pretty_print: 'value_item' -> type name of the value to pretty print
   - extract_metadata: 'value_item' -> type name of the value to extract metadata from
   - import: 'source' input -> input file type, 'value_item' output -> target file type
+  - save_value: 'value_item' input -> file type of value to save
 
 ## Version 0.2.1
 

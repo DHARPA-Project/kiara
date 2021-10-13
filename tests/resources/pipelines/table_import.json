@@ -13,7 +13,7 @@
       "module_type": "file.convert_to.table",
       "step_id": "create_table_from_files",
       "input_links": {
-        "value_item": "import_file.value_item"
+        "value_item": "import_file.file"
       }
     }]
 }

@@ -10,7 +10,7 @@ from kiara import Kiara
 from kiara.info.modules import ModuleTypesGroupInfo
 from kiara.interfaces.cli.utils import _create_module_instance
 from kiara.metadata.module_models import KiaraModuleTypeMetadata
-from kiara.utils import dict_from_cli_args, is_debug, log_message
+from kiara.utils import dict_from_cli_args, log_message
 from kiara.utils.output import rich_print
 
 
@@ -210,10 +210,6 @@ try:
 
 
 except Exception as e:  # noqa
-    if is_debug():
-        import traceback
-
-        traceback.print_exc()
     log_message(
         "'kiara.streamlit' package not installed, not offering streamlit debug sub-command"
     )

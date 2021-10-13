@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.operations.serialize/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
     
     
       
@@ -2534,7 +2534,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">result</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">o_id</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_configs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">o_id</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">source_type</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">module_config</span><span class="p">[</span><span class="s2">&quot;value_type&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">source_type</span> <span class="o">==</span> <span class="n">value_type</span><span class="p">:</span>
             <span class="n">target_type</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">module_config</span><span class="p">[</span><span class="s2">&quot;serialization_type&quot;</span><span class="p">]</span>

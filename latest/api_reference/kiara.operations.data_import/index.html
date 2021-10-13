@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.operations.data_import/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
     
     
       
@@ -1522,26 +1522,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.operations.data_import.FileBundleImportOperationType" class="md-nav__link">
-    FileBundleImportOperationType
-  </a>
-  
-    <nav class="md-nav" aria-label="FileBundleImportOperationType">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kiara.operations.data_import.FileBundleImportOperationType.get_import_operations" class="md-nav__link">
-    get_import_operations()
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#kiara.operations.data_import.FileImportModule" class="md-nav__link">
     FileImportModule
   </a>
@@ -1549,16 +1529,23 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.operations.data_import.FileImportOperationType" class="md-nav__link">
-    FileImportOperationType
+  <a href="#kiara.operations.data_import.ImportDataOperationType" class="md-nav__link">
+    ImportDataOperationType
   </a>
   
-    <nav class="md-nav" aria-label="FileImportOperationType">
+    <nav class="md-nav" aria-label="ImportDataOperationType">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.operations.data_import.FileImportOperationType.get_import_operations" class="md-nav__link">
-    get_import_operations()
+  <a href="#kiara.operations.data_import.ImportDataOperationType.get_import_operations_for_target_type" class="md-nav__link">
+    get_import_operations_for_target_type()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.operations.data_import.ImportDataOperationType.get_import_operations_per_target_type" class="md-nav__link">
+    get_import_operations_per_target_type()
   </a>
   
 </li>
@@ -2174,26 +2161,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.operations.data_import.FileBundleImportOperationType" class="md-nav__link">
-    FileBundleImportOperationType
-  </a>
-  
-    <nav class="md-nav" aria-label="FileBundleImportOperationType">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kiara.operations.data_import.FileBundleImportOperationType.get_import_operations" class="md-nav__link">
-    get_import_operations()
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#kiara.operations.data_import.FileImportModule" class="md-nav__link">
     FileImportModule
   </a>
@@ -2201,16 +2168,23 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.operations.data_import.FileImportOperationType" class="md-nav__link">
-    FileImportOperationType
+  <a href="#kiara.operations.data_import.ImportDataOperationType" class="md-nav__link">
+    ImportDataOperationType
   </a>
   
-    <nav class="md-nav" aria-label="FileImportOperationType">
+    <nav class="md-nav" aria-label="ImportDataOperationType">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.operations.data_import.FileImportOperationType.get_import_operations" class="md-nav__link">
-    get_import_operations()
+  <a href="#kiara.operations.data_import.ImportDataOperationType.get_import_operations_for_target_type" class="md-nav__link">
+    get_import_operations_for_target_type()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.operations.data_import.ImportDataOperationType.get_import_operations_per_target_type" class="md-nav__link">
+    get_import_operations_per_target_type()
   </a>
   
 </li>
@@ -2316,8 +2290,11 @@
     <span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span>
 <span class="p">]:</span>
 
+    <span class="n">input_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">input_name</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
+        <span class="n">input_name</span> <span class="o">=</span> <span class="s2">&quot;value_item&quot;</span>
     <span class="n">inputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="n">input_name</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">),</span>
             <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;A </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s1">&#39;source_profile&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s1">&#39;source_type&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; value.&quot;</span><span class="p">,</span>
         <span class="p">},</span>
@@ -2392,8 +2369,12 @@
     <span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span>
 <span class="p">]:</span>
 
+    <span class="n">output_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_target_value_type</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">output_name</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
+        <span class="n">output_name</span> <span class="o">=</span> <span class="s2">&quot;value_item&quot;</span>
+
     <span class="n">outputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;value_item&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="n">output_name</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_target_value_type</span><span class="p">(),</span>
             <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;The imported </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_target_value_type</span><span class="p">()</span><span class="si">}</span><span class="s2"> value.&quot;</span><span class="p">,</span>
         <span class="p">},</span>
@@ -2620,88 +2601,6 @@
 
 
 
-<h2 id="kiara.operations.data_import.FileBundleImportOperationType" class="doc doc-heading">
-        <code>FileBundleImportOperationType</code>
-
-
-
-<a href="#kiara.operations.data_import.FileBundleImportOperationType" class="headerlink" title="Permanent link">&para;</a></h2>
-
-    <div class="doc doc-contents ">
-
-      <p>Save a value into a data store.</p>
-
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h3 id="kiara.operations.data_import.FileBundleImportOperationType.get_import_operations" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_import_operations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
-
-
-<a href="#kiara.operations.data_import.FileBundleImportOperationType.get_import_operations" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-      <p>Return all available import operataions for a value type.</p>
-<p>The result dictionary uses the source type as first level key, a source name/description as 2nd level key,
-and the Operation object as value.</p>
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/operations/data_import.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_import_operations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]]:</span>
-    <span class="sd">&quot;&quot;&quot;Return all available import operataions for a value type.</span>
-
-<span class="sd">    The result dictionary uses the source type as first level key, a source name/description as 2nd level key,</span>
-<span class="sd">    and the Operation object as value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">result</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
-
-    <span class="k">for</span> <span class="n">op_config</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_configs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-
-        <span class="n">source_type</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">module_config</span><span class="p">[</span><span class="s2">&quot;source_type&quot;</span><span class="p">]</span>
-        <span class="n">source_profile</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">module_config</span><span class="p">[</span><span class="s2">&quot;source_profile&quot;</span><span class="p">]</span>
-
-        <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">source_type</span><span class="p">,</span> <span class="p">{})[</span><span class="n">source_profile</span><span class="p">]</span> <span class="o">=</span> <span class="n">op_config</span>
-
-    <span class="k">return</span> <span class="n">result</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
 <h2 id="kiara.operations.data_import.FileImportModule" class="doc doc-heading">
         <code>FileImportModule</code>
 
@@ -2741,16 +2640,35 @@ and the Operation object as value.</p>
 
 
 
-<h2 id="kiara.operations.data_import.FileImportOperationType" class="doc doc-heading">
-        <code>FileImportOperationType</code>
+<h2 id="kiara.operations.data_import.ImportDataOperationType" class="doc doc-heading">
+        <code>ImportDataOperationType</code>
 
 
 
-<a href="#kiara.operations.data_import.FileImportOperationType" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#kiara.operations.data_import.ImportDataOperationType" class="headerlink" title="Permanent link">&para;</a></h2>
 
     <div class="doc doc-contents ">
 
-      <p>Save a value into a data store.</p>
+      <p>Import data into <em>kiara</em>.</p>
+<p>Operations of this type take external data, and register it into <em>kiara</em>. External data is different in that it usually
+does not come with any metadata on how it was created, who created it, when, etc.</p>
+<p>Import operations are created by implementing a class that inherits from <a href="http://dharpa.org/kiara/latest/api_reference/kiara.operations.data_import/#kiara.operations.data_import.DataImportModule">DataImportModule</a>, <em>kiara</em> will
+register it under an operation id following this template:</p>
+<div class="highlight"><pre><span></span><code>&lt;IMPORTED_DATA_TYPE&gt;.import_from.&lt;IMPORT_PROFILE&gt;.&lt;INPUT_TYPE&gt;
+</code></pre></div>
+<p>The meaning of the templated fields is:</p>
+<ul>
+<li><code>IMPORTED_DATA_TYPE</code>: the data type of the imported value</li>
+<li><code>IMPORT_PROFILE</code>: a short, free-form description of where from (or how) the data is imported</li>
+<li><code>INPUT_TYPE</code>: the data type of the user input that points to the data (like a file path, url, query, etc.) -- in most cases this will be some form of a string or uri</li>
+</ul>
+<p>There are two main scenarios when an operation of this type is used:</p>
+<ul>
+<li>'onboard' data that was created by a 3rd party, or using external processes</li>
+<li>'re-import' data that as created in <em>kiara</em>, then exported to be transformed in an external process, and then imported again into <em>kiara</em></li>
+</ul>
+<p>In both of those scenarios, we'll need to have a way to add metadata to fill out 'holes' in the metadata 'chold chain'. We don't have a concept
+yet as to how to do that, but that is planned for the future.</p>
 
 
 
@@ -2769,35 +2687,71 @@ and the Operation object as value.</p>
 
 
 
-<h3 id="kiara.operations.data_import.FileImportOperationType.get_import_operations" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_import_operations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+<h3 id="kiara.operations.data_import.ImportDataOperationType.get_import_operations_for_target_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_import_operations_for_target_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_type</span><span class="p">)</span></code>
 
 
-<a href="#kiara.operations.data_import.FileImportOperationType.get_import_operations" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#kiara.operations.data_import.ImportDataOperationType.get_import_operations_for_target_type" class="headerlink" title="Permanent link">&para;</a></h3>
 
     <div class="doc doc-contents ">
 
-      <p>Return all available import operataions for a value type.</p>
+      <p>Return all available import operations that produce data of the specified type.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/operations/data_import.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_import_operations_for_target_type</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">value_type</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Return all available import operations that produce data of the specified type.&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_import_operations_per_target_type</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">value_type</span><span class="p">,</span> <span class="p">{})</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.operations.data_import.ImportDataOperationType.get_import_operations_per_target_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_import_operations_per_target_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.operations.data_import.ImportDataOperationType.get_import_operations_per_target_type" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Return all available import operations per value type.</p>
 <p>The result dictionary uses the source type as first level key, a source name/description as 2nd level key,
 and the Operation object as value.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/operations/data_import.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_import_operations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]]:</span>
-    <span class="sd">&quot;&quot;&quot;Return all available import operataions for a value type.</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_import_operations_per_target_type</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]]]:</span>
+    <span class="sd">&quot;&quot;&quot;Return all available import operations per value type.</span>
 
 <span class="sd">    The result dictionary uses the source type as first level key, a source name/description as 2nd level key,</span>
 <span class="sd">    and the Operation object as value.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">result</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">result</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">for</span> <span class="n">op_config</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_configs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">op_config</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+
+        <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">module_cls</span><span class="o">.</span><span class="n">get_target_value_type</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
 
         <span class="n">source_type</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">module_config</span><span class="p">[</span><span class="s2">&quot;source_type&quot;</span><span class="p">]</span>
         <span class="n">source_profile</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">module_config</span><span class="p">[</span><span class="s2">&quot;source_profile&quot;</span><span class="p">]</span>
 
-        <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">source_type</span><span class="p">,</span> <span class="p">{})[</span><span class="n">source_profile</span><span class="p">]</span> <span class="o">=</span> <span class="n">op_config</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">target_type</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">source_type</span><span class="p">,</span> <span class="p">{})[</span>
+            <span class="n">source_profile</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="n">op_config</span>
 
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>

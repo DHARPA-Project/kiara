@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.data.registry.store/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
     
     
       
@@ -614,6 +614,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kiara.data.registry.store.LocalDataStore" class="md-nav__link">
+    LocalDataStore
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kiara.data.registry.store.SavedValueInfo" class="md-nav__link">
     SavedValueInfo
   </a>
@@ -624,6 +631,13 @@
           <li class="md-nav__item">
   <a href="#kiara.data.registry.store.SavedValueInfo.load_config" class="md-nav__link">
     load_config
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.registry.store.SavedValueInfo.save_lineage" class="md-nav__link">
+    save_lineage
   </a>
   
 </li>
@@ -2011,6 +2025,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kiara.data.registry.store.LocalDataStore" class="md-nav__link">
+    LocalDataStore
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kiara.data.registry.store.SavedValueInfo" class="md-nav__link">
     SavedValueInfo
   </a>
@@ -2021,6 +2042,13 @@
           <li class="md-nav__item">
   <a href="#kiara.data.registry.store.SavedValueInfo.load_config" class="md-nav__link">
     load_config
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.registry.store.SavedValueInfo.save_lineage" class="md-nav__link">
+    save_lineage
   </a>
   
 </li>
@@ -2064,6 +2092,50 @@
 
 
 
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h2 id="kiara.data.registry.store.LocalDataStore" class="doc doc-heading">
+        <code>LocalDataStore</code>
+
+
+
+<a href="#kiara.data.registry.store.LocalDataStore" class="headerlink" title="Permanent link">&para;</a></h2>
+
+    <div class="doc doc-contents ">
+
+      <p>An implementation of a <em>kiara</em> data registry that stores data locally, so it can be accessed across sessions.</p>
+<p>Data is stored under the value for the configured 'base_path' attribute, along with <a href="../kiara.metadata.data/#kiara.metadata.data.LoadConfig">LoadConfig</a> data
+that describes how the data can be re-loaded into memory.</p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
 
 
 
@@ -2112,6 +2184,29 @@
     <div class="doc doc-contents ">
 
       <p>The configuration to load this value from disk (or however it is stored).</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.registry.store.SavedValueInfo.save_lineage" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">save_lineage</span><span class="p">:</span> <span class="n">ValueLineage</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.data.registry.store.SavedValueInfo.save_lineage" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Information about how the value was saved.</p>
     </div>
 
   </div>

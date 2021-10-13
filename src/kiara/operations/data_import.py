@@ -5,7 +5,7 @@ import typing
 from pydantic import Field
 
 from kiara import Kiara, KiaraModule
-from kiara.data.values import Value, ValueLineage, ValueSchema
+from kiara.data.values import ValueSchema
 from kiara.data.values.value_set import ValueSet
 from kiara.module_config import ModuleTypeConfigSchema
 from kiara.operations import Operation, OperationType
@@ -178,18 +178,16 @@ class DataImportModule(KiaraModule):
         # TODO: check signature?
 
         result = func(source)
-        schema = ValueSchema(
-            type=self.get_target_value_type(), doc="Imported file value."
-        )
+        # schema = ValueSchema(type=self.get_target_value_type(), doc="Imported dataset.")
 
-        value_lineage = ValueLineage.from_module_and_inputs(
-            module=self, output_name=output_key, inputs=inputs
-        )
-        value: Value = self._kiara.data_registry.register_data(
-            value_data=result, value_schema=schema, lineage=value_lineage
-        )
+        # value_lineage = ValueLineage.from_module_and_inputs(
+        #     module=self, output_name=output_key, inputs=inputs
+        # )
+        # value: Value = self._kiara.data_registry.register_data(
+        #     value_data=result, value_schema=schema, lineage=None
+        # )
 
-        outputs.set_values(metadata=None, lineage=None, **{output_key: value})
+        outputs.set_value(output_key, result)
 
 
 class FileImportModule(DataImportModule):

@@ -99,7 +99,7 @@ def presseeded_data_store_minimal() -> Kiara:
     results = kiara.run(
         "preseed",
         inputs={
-            "import_file__source": os.path.join(
+            "import_file__file_path": os.path.join(
                 ROOT_DIR, "examples", "data", "journals", "JournalNodes1902.csv"
             )
         },

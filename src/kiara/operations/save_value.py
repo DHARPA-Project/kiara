@@ -73,12 +73,16 @@ class SaveValueTypeModule(KiaraModule):
         str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
     ]:
 
+        field_name = self.get_config_value("value_type")
+        if field_name == "any":
+            field_name = "value_item"
+
         inputs: typing.Mapping[str, typing.Any] = {
             "value_id": {
                 "type": "string",
                 "doc": "The id to use when saving the value.",
             },
-            "value_item": {
+            field_name: {
                 "type": self.get_config_value("value_type"),
                 "doc": f"A value of type '{self.get_config_value('value_type')}'.",
             },
@@ -96,17 +100,30 @@ class SaveValueTypeModule(KiaraModule):
         str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
     ]:
 
+        field_name = self.get_config_value("value_type")
+        if field_name == "any":
+            field_name = "value_item"
+
         outputs: typing.Mapping[str, typing.Any] = {
+            field_name: {
+                "type": self.get_config_value("value_type"),
+                "doc": "The original or cloned (if applicable) value that was saved.",
+            },
             "load_config": {
                 "type": "load_config",
                 "doc": "The configuration to use with kiara to load the saved value.",
-            }
+            },
         }
 
         return outputs
 
     @abc.abstractmethod
-    def save_value(self, value: Value, base_path: str) -> typing.Dict[str, typing.Any]:
+    def save_value(
+        self, value: Value, base_path: str
+    ) -> typing.Union[
+        typing.Tuple[typing.Dict[str, typing.Any], typing.Any],
+        typing.Dict[str, typing.Any],
+    ]:
         """Save the value, and return the load config needed to load it again."""
 
     def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
@@ -114,10 +131,29 @@ class SaveValueTypeModule(KiaraModule):
         value_id: str = inputs.get_value_data("value_id")
         if not value_id:
             raise KiaraProcessingException("No value id provided.")
-        value_obj: Value = inputs.get_value_obj("value_item")
+
+        field_name = self.get_config_value("value_type")
+        if field_name == "any":
+            field_name = "value_item"
+
+        value_obj: Value = inputs.get_value_obj(field_name)
         base_path: str = inputs.get_value_data("base_path")
 
-        load_config = self.save_value(value=value_obj, base_path=base_path)
+        result = self.save_value(value=value_obj, base_path=base_path)
+        if isinstance(result, typing.Mapping):
+            load_config = result
+            result_value = value_obj
+        elif isinstance(result, tuple):
+            load_config = result[0]
+            if result[1]:
+                result_value = result[1]
+            else:
+                result_value = value_obj
+        else:
+            raise KiaraProcessingException(
+                f"Invalid result type for 'save_value' method in class '{self.__class__.__name__}'. This is a bug."
+            )
+
         load_config["value_id"] = value_id
 
         lc = LoadConfig(**load_config)
@@ -127,11 +163,19 @@ class SaveValueTypeModule(KiaraModule):
                 f"Invalid load config: base path '{lc.base_path_input_name}' not part of inputs."
             )
 
-        outputs.set_values(load_config=lc)
+        outputs.set_values(
+            metadata=None, lineage=None, **{"load_config": lc, field_name: result_value}
+        )
 
 
 class SaveOperationType(OperationType):
-    """Save a value into a data store."""
+    """Save a value into a local data store.
+
+    This is a special operation type, that is used internally by the [LocalDataStore](http://dharpa.org/kiara/latest/api_reference/kiara.data.registry.store/#kiara.data.registry.store.LocalDataStore] data registry implementation.
+
+    For each value type that should be supported by the persistent *kiara* data store, there must be an implementation of the [SaveValueTypeModule](http://dharpa.org/kiara/latest/api_reference/kiara.operations.save_value/#kiara.operations.save_value.SaveValueTypeModule) class, which handles the
+    actual persisting on disk. In most cases, end users won't need to interact with this type of operation.
+    """
 
     def is_matching_operation(self, op_config: Operation) -> bool:
 

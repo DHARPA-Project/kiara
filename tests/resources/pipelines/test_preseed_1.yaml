@@ -11,11 +11,11 @@ steps:
   - module_type: file.convert_to.table
     step_id: create_edges_table
     input_links:
-      value_item: import_edges_file.value_item
+      value_item: import_edges_file.file
   - module_type: file.convert_to.table
     step_id: create_nodes_table
     input_links:
-      value_item: import_nodes_file.value_item
+      value_item: import_nodes_file.file
   - module_type: table.cut_column
     step_id: create_city_array
     input_links:
@@ -25,17 +25,17 @@ steps:
     input_links:
       table: create_nodes_table.value_item
 input_aliases:
-  import_edges_file__source: edges_file_path
-  import_nodes_file__source: nodes_file_path
-  import_journal_csvs__source: journals_folder_path
-  import_text_corpus__source: text_corpus_folder_path
+  import_edges_file__file_path: edges_file_path
+  import_nodes_file__file_path: nodes_file_path
+  import_journal_csvs__folder_path: journals_folder_path
+  import_text_corpus__folder_path: text_corpus_folder_path
   create_city_array__column_name: city_column_name
   create_label_array__column_name: label_column_name
 output_aliases:
-  import_edges_file__value_item: journal_edges_file
-  import_nodes_file__value_item: journal_nodes_file
-  import_journal_csvs__value_item: journals_file_bundle
-  import_text_corpus__value_item: text_corpus_file_bundle
+  import_edges_file__file: journal_edges_file
+  import_nodes_file__file: journal_nodes_file
+  import_journal_csvs__file_bundle: journals_file_bundle
+  import_text_corpus__file_bundle: text_corpus_file_bundle
   create_edges_table__value_item: journal_edges_table
   create_nodes_table__value_item: journal_nodes_table
   create_city_array__array: cities_array

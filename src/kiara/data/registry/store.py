@@ -22,9 +22,18 @@ class SavedValueInfo(ValueInfo):
     load_config: LoadConfig = Field(
         description="The configuration to load this value from disk (or however it is stored)."
     )
+    save_lineage: ValueLineage = Field(
+        description="Information about how the value was saved."
+    )
 
 
 class LocalDataStore(DataRegistry):
+    """An implementation of a *kiara* data registry that stores data locally, so it can be accessed across sessions.
+
+    Data is stored under the value for the configured 'base_path' attribute, along with [LoadConfig][kiara.metadata.data.LoadConfig] data
+    that describes how the data can be re-loaded into memory.
+    """
+
     def __init__(self, kiara: "Kiara", base_path: typing.Union[str, Path]):
 
         if isinstance(base_path, str):
@@ -158,17 +167,24 @@ class LocalDataStore(DataRegistry):
 
         save_module = save_config.create_module(kiara=self._kiara)
         result = save_module.run(**save_config.inputs)
+
         load_config_value: Value = result.get_value_obj("load_config")
+        field_name = value_type
+        if field_name == "any":
+            field_name = "value_item"
+        saved_value: Value = result.get_value_obj(field_name)
 
         load_config_data = load_config_value.get_value_data()
 
-        metadata = value.get_metadata(also_return_schema=True)
+        metadata = saved_value.get_metadata(also_return_schema=True)
+
         value_info = SavedValueInfo(
             value_id=value.id,
-            value_schema=value.value_schema,
-            is_valid=value.item_is_valid(),
-            hashes=value.get_hashes(),
+            value_schema=saved_value.value_schema,
+            is_valid=saved_value.item_is_valid(),
+            hashes=saved_value.get_hashes(),
             lineage=value.get_lineage(),
+            save_lineage=saved_value.get_lineage(),
             metadata=metadata,
             load_config=load_config_data,
         )
@@ -176,9 +192,13 @@ class LocalDataStore(DataRegistry):
         value_metadata_path.parent.mkdir(parents=True, exist_ok=True)
         value_metadata_path.write_text(value_info.json())
 
-        copied_value = value.copy()
+        copied_value = saved_value.copy()
         copied_value._registry = self
         copied_value._kiara = self._kiara
+
+        if copied_value.id != value.id:
+            log_message(f"Saved value id different to original id '{value.id}.")
+            copied_value.id = value.id
 
         self._value_obj_cache[copied_value.id] = copied_value
 
@@ -205,8 +225,11 @@ class LocalDataStore(DataRegistry):
                 f"Can't save value, metadata file already exists: {metadata_path}"
             )
 
+        input_name = value.type_name
+        if input_name == "any":
+            input_name = "value_item"
         inputs = {
-            "value_item": value.get_value_data(),
+            input_name: value.get_value_data(),
             "base_path": target_path.as_posix(),
             "value_id": value_id,
         }  # type: ignore

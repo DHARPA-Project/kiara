@@ -545,6 +545,9 @@ class DataRegistry(BaseDataRegistry):
             assert copied_value._kiara == self._kiara
 
             if value_data.id != copied_value.id:
+                log_message(
+                    f"Value id for value of type {copied_value.type_name} changed when registering in other registry."
+                )
                 raise Exception(
                     f"Imported value object with id '{value_data.id}' resulted in copied value with different id. This is a bug."
                 )

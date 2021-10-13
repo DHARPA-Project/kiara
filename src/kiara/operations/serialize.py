@@ -160,7 +160,7 @@ class SerializeValueOperationType(OperationType):
         """
 
         result: typing.Dict[str, Operation] = {}
-        for o_id, op in self.operation_configs.items():
+        for o_id, op in self.operations.items():
             source_type = op.module_config["value_type"]
             if source_type == value_type:
                 target_type = op.module_config["serialization_type"]

@@ -141,7 +141,7 @@ class SaveOperationType(OperationType):
 
         result = []
 
-        for op_config in self.operation_configs.values():
+        for op_config in self.operations.values():
             if op_config.module_config["value_type"] == value_type:
                 result.append(op_config)
 

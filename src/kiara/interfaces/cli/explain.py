@@ -71,7 +71,7 @@ def find_operations(
 
         operation_details: OperationType = all_operations_types[operation_name]
 
-        for op_id, op_config in sorted(operation_details.operation_configs.items()):
+        for op_id, op_config in sorted(operation_details.operations.items()):
 
             if item in op_id:
                 matches[op_id] = op_config

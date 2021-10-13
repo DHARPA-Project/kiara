@@ -95,8 +95,11 @@ class DataImportModule(KiaraModule):
         str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
     ]:
 
+        input_name = self.get_config_value("source_type")
+        if input_name == "any":
+            input_name = "value_item"
         inputs: typing.Dict[str, typing.Any] = {
-            "source": {
+            input_name: {
                 "type": self.get_config_value("source_type"),
                 "doc": f"A {self.get_config_value('source_profile')} '{self.get_config_value('source_type')}' value.",
             },
@@ -138,8 +141,12 @@ class DataImportModule(KiaraModule):
         str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
     ]:
 
+        output_name = self.get_target_value_type()
+        if output_name == "any":
+            output_name = "value_item"
+
         outputs: typing.Mapping[str, typing.Any] = {
-            "value_item": {
+            output_name: {
                 "type": self.get_target_value_type(),
                 "doc": f"The imported {self.get_target_value_type()} value.",
             },
@@ -148,41 +155,24 @@ class DataImportModule(KiaraModule):
 
     def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
 
-        source: str = inputs.get_value_data("source")
-
         source_profile: str = self.get_config_value("source_profile")
         source_type: str = self.get_config_value("source_type")
+
+        if source_type == "any":
+            source: str = inputs.get_value_data("value_item")
+        else:
+            source = inputs.get_value_data(source_type)
+
+        if self.get_target_value_type() == "any":
+            output_key: str = "value_item"
+        else:
+            output_key = self.get_target_value_type()
 
         func_name = f"import_from__{source_profile}__{source_type}"
         if not hasattr(self, func_name):
             raise Exception(
                 f"Can't import '{source_type}' value: missing function '{func_name}' in class '{self.__class__.__name__}'. Please check this modules documentation or source code to determine which source types and profiles are supported."
             )
-
-        # allow_save = self.get_config_value("allow_save_input")
-        # if allow_save:
-        #     save = inputs.get_value_data("save")
-        # else:
-        #     save = self.get_config_value("save_default")
-        #
-        # allow_aliases: typing.Optional[bool] = self.get_config_value(
-        #     "allow_aliases_input"
-        # )
-        # if allow_aliases is None:
-        #     allow_aliases = allow_save
-        #
-        # if allow_aliases:
-        #     aliases = inputs.get_value_data("aliases")
-        # else:
-        #     aliases = self.get_config_value("aliases_default")
-        #
-        # if aliases and not save:
-        #     raise KiaraProcessingException(
-        #         f"Can't import file from '{source}': 'aliases' specified, but not 'save', this does not make sense."
-        #     )
-        #
-        # if aliases is None:
-        #     aliases = []
 
         func = getattr(self, func_name)
         # TODO: check signature?
@@ -193,17 +183,13 @@ class DataImportModule(KiaraModule):
         )
 
         value_lineage = ValueLineage.from_module_and_inputs(
-            module=self, output_name="value_item", inputs=inputs
+            module=self, output_name=output_key, inputs=inputs
         )
         value: Value = self._kiara.data_registry.register_data(
             value_data=result, value_schema=schema, lineage=value_lineage
         )
 
-        # if save:
-        #     value_saved = self._kiara.data_store.register_data(value_data=value)
-        #     self._kiara.data_store.link_aliases(value_saved, *aliases)
-
-        outputs.set_values(value_item=value)
+        outputs.set_values(metadata=None, lineage=None, **{output_key: value})
 
 
 class FileImportModule(DataImportModule):
@@ -214,32 +200,6 @@ class FileImportModule(DataImportModule):
         return "file"
 
 
-class FileImportOperationType(OperationType):
-    """Save a value into a data store."""
-
-    def is_matching_operation(self, op_config: Operation) -> bool:
-
-        return issubclass(op_config.module_cls, FileImportModule)
-
-    def get_import_operations(self) -> typing.Dict[str, typing.Dict[str, Operation]]:
-        """Return all available import operataions for a value type.
-
-        The result dictionary uses the source type as first level key, a source name/description as 2nd level key,
-        and the Operation object as value.
-        """
-
-        result: typing.Dict[str, typing.Dict[str, Operation]] = {}
-
-        for op_config in self.operation_configs.values():
-
-            source_type = op_config.module_config["source_type"]
-            source_profile = op_config.module_config["source_profile"]
-
-            result.setdefault(source_type, {})[source_profile] = op_config
-
-        return result
-
-
 class FileBundleImportModule(DataImportModule):
     """Import a file, optionally saving it to the data store."""
 
@@ -248,27 +208,91 @@ class FileBundleImportModule(DataImportModule):
         return "file_bundle"
 
 
-class FileBundleImportOperationType(OperationType):
-    """Save a value into a data store."""
+class ImportDataOperationType(OperationType):
+    """Import data into *kiara*.
+
+    Operations of this type take external data, and register it into *kiara*. External data is different in that it usually
+    does not come with any metadata on how it was created, who created it, when, etc.
+
+    Import operations are created by implementing a class that inherits from [DataImportModule](http://dharpa.org/kiara/latest/api_reference/kiara.operations.data_import/#kiara.operations.data_import.DataImportModule), *kiara* will
+    register it under an operation id following this template:
+
+    ```
+    <IMPORTED_DATA_TYPE>.import_from.<IMPORT_PROFILE>.<INPUT_TYPE>
+    ```
+
+    The meaning of the templated fields is:
+
+    - `IMPORTED_DATA_TYPE`: the data type of the imported value
+    - `IMPORT_PROFILE`: a short, free-form description of where from (or how) the data is imported
+    - `INPUT_TYPE`: the data type of the user input that points to the data (like a file path, url, query, etc.) -- in most cases this will be some form of a string or uri
+
+    There are two main scenarios when an operation of this type is used:
+
+    - 'onboard' data that was created by a 3rd party, or using external processes
+    - 're-import' data that as created in *kiara*, then exported to be transformed in an external process, and then imported again into *kiara*
+
+    In both of those scenarios, we'll need to have a way to add metadata to fill out 'holes' in the metadata 'chold chain'. We don't have a concept
+    yet as to how to do that, but that is planned for the future.
+    """
 
     def is_matching_operation(self, op_config: Operation) -> bool:
 
-        return issubclass(op_config.module_cls, FileBundleImportModule)
+        return issubclass(op_config.module_cls, DataImportModule)
 
-    def get_import_operations(self) -> typing.Dict[str, typing.Dict[str, Operation]]:
-        """Return all available import operataions for a value type.
+    def get_import_operations_per_target_type(
+        self,
+    ) -> typing.Dict[str, typing.Dict[str, typing.Dict[str, Operation]]]:
+        """Return all available import operations per value type.
 
         The result dictionary uses the source type as first level key, a source name/description as 2nd level key,
         and the Operation object as value.
         """
 
-        result: typing.Dict[str, typing.Dict[str, Operation]] = {}
+        result: typing.Dict[str, typing.Dict[str, typing.Dict[str, Operation]]] = {}
 
-        for op_config in self.operation_configs.values():
+        for op_config in self.operations.values():
+
+            target_type: str = op_config.module_cls.get_target_value_type()  # type: ignore
 
             source_type = op_config.module_config["source_type"]
             source_profile = op_config.module_config["source_profile"]
 
-            result.setdefault(source_type, {})[source_profile] = op_config
+            result.setdefault(target_type, {}).setdefault(source_type, {})[
+                source_profile
+            ] = op_config
 
         return result
+
+    def get_import_operations_for_target_type(
+        self, value_type: str
+    ) -> typing.Dict[str, typing.Dict[str, Operation]]:
+        """Return all available import operations that produce data of the specified type."""
+
+        return self.get_import_operations_per_target_type().get(value_type, {})
+
+
+# class FileBundleImportOperationType(OperationType):
+#     """Save a value into a data store."""
+#
+#     def is_matching_operation(self, op_config: Operation) -> bool:
+#
+#         return issubclass(op_config.module_cls, FileBundleImportModule)
+#
+#     def get_import_operations(self) -> typing.Dict[str, typing.Dict[str, Operation]]:
+#         """Return all available import operataions for a value type.
+#
+#         The result dictionary uses the source type as first level key, a source name/description as 2nd level key,
+#         and the Operation object as value.
+#         """
+#
+#         result: typing.Dict[str, typing.Dict[str, Operation]] = {}
+#
+#         for op_config in self.operation_configs.values():
+#
+#             source_type = op_config.module_config["source_type"]
+#             source_profile = op_config.module_config["source_profile"]
+#
+#             result.setdefault(source_type, {})[source_profile] = op_config
+#
+#         return result

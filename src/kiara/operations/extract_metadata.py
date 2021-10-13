@@ -202,7 +202,7 @@ class ExtractMetadataOperationType(OperationType):
     ) -> typing.Mapping[str, Operation]:
 
         result = {}
-        for op_config in self.operation_configs.values():
+        for op_config in self.operations.values():
             v_t = op_config.module_config["value_type"]
             if v_t != value_type:
                 continue

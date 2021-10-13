@@ -132,7 +132,7 @@ class SampleValueOperationType(OperationType):
         """
 
         result: typing.Dict[str, Operation] = {}
-        for o_id, op in self.operation_configs.items():
+        for o_id, op in self.operations.items():
             sample_op_module_cls: typing.Type[SampleValueModule] = op.module_cls  # type: ignore
             source_type = sample_op_module_cls.get_value_type()
             if source_type == value_type:

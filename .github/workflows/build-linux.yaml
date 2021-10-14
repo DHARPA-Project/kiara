@@ -129,7 +129,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: install kiara
-        run: pip install -U --extra-index-url https://gitlab.com/api/v4/projects/25344049/packages/pypi/simple --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_documentation]
+        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_documentation]
       - run: git config --global user.email "markus@frkl.io"
       - run: git config --global user.name "Markus Binsteiner"
       - name: create latest documentation

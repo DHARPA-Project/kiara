@@ -20,6 +20,7 @@ class SerializeValueModuleConfig(ModuleTypeConfigSchema):
 
 
 class SerializeValueModule(KiaraModule):
+    """Base class for 'serialize' operations."""
 
     _config_cls = SerializeValueModuleConfig
 
@@ -147,6 +148,11 @@ class SerializeValueModule(KiaraModule):
 
 
 class SerializeValueOperationType(OperationType):
+    """Operations that serialize data into formats that can be used for data exchange.
+
+    NOT USED YET
+    """
+
     def is_matching_operation(self, op_config: Operation) -> bool:
 
         return issubclass(op_config.module_cls, SerializeValueModule)

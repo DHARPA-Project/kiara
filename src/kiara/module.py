@@ -401,17 +401,16 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):
 
         ```
-        {
-          "[input_field_name]: {
-              "type": "[value_type]",
-              "doc*": "[a description of this input]",
-              "optional*': [boolean whether this input is optional or required (defaults to 'False')]
-          "[other_input_field_name]: {
-              "type: ...
-              ...
-          }
-          ```
-
+            {
+              "[input_field_name]: {
+                  "type": "[value_type]",
+                  "doc*": "[a description of this input]",
+                  "optional*': [boolean whether this input is optional or required (defaults to 'False')]
+              "[other_input_field_name]: {
+                  "type: ...
+                  ...
+              }
+              ```
         """
 
     @abstractmethod
@@ -425,15 +424,15 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
         If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):
 
         ```
-        {
-          "[output_field_name]: {
-              "type": "[value_type]",
-              "doc*": "[a description of this output]"
-          "[other_input_field_name]: {
-              "type: ...
-              ...
-          }
-        ```
+            {
+              "[output_field_name]: {
+                  "type": "[value_type]",
+                  "doc*": "[a description of this output]"
+              "[other_input_field_name]: {
+                  "type: ...
+                  ...
+              }
+            ```
         """
 
     @property

@@ -57,8 +57,12 @@ class CalculateValueHashModule(KiaraModule):
         str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
     ]:
 
+        input_name = self.get_config_value("value_type")
+        if input_name == "any":
+            input_name = "value_item"
+
         return {
-            "value_item": {
+            input_name: {
                 "type": self.get_config_value("value_type"),
                 "doc": f"A value of type '{self.get_config_value('value_type')}'.",
             }
@@ -73,14 +77,20 @@ class CalculateValueHashModule(KiaraModule):
 
     def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
 
-        value: Value = inputs.get_value_obj("value_item")
+        input_name = self.get_config_value("value_type")
+        if input_name == "any":
+            input_name = "value_item"
+        value: Value = inputs.get_value_obj(input_name)
 
         value_hash = value.get_hash(hash_type=self.get_config_value("hash_type"))
-        outputs.set_value("hash", value_hash)
+        outputs.set_value("hash", value_hash.hash)
 
 
 class CalculateHashOperationType(OperationType):
-    """Calculate a hash for a dataset."""
+    """Operation type to calculate hash(es) for data.
+
+    This is mostly used internally, so users usually won't be exposed to operations of this type.
+    """
 
     def is_matching_operation(self, op_config: Operation) -> bool:
 

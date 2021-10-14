@@ -16,18 +16,18 @@ from kiara.utils import log_message
 log = logging.getLogger("kiara")
 
 
-class SaveValueModuleConfig(ModuleTypeConfigSchema):
+class StoreValueModuleConfig(ModuleTypeConfigSchema):
 
     value_type: str = Field(description="The type of the value to save.")
 
 
-class SaveValueTypeModule(KiaraModule):
+class StoreValueTypeModule(KiaraModule):
     """Save a specific value type.
 
     This is used internally.
     """
 
-    _config_cls = SaveValueModuleConfig
+    _config_cls = StoreValueModuleConfig
 
     @classmethod
     def get_supported_value_types(cls) -> typing.Set[str]:
@@ -118,7 +118,7 @@ class SaveValueTypeModule(KiaraModule):
         return outputs
 
     @abc.abstractmethod
-    def save_value(
+    def store_value(
         self, value: Value, base_path: str
     ) -> typing.Union[
         typing.Tuple[typing.Dict[str, typing.Any], typing.Any],
@@ -139,7 +139,7 @@ class SaveValueTypeModule(KiaraModule):
         value_obj: Value = inputs.get_value_obj(field_name)
         base_path: str = inputs.get_value_data("base_path")
 
-        result = self.save_value(value=value_obj, base_path=base_path)
+        result = self.store_value(value=value_obj, base_path=base_path)
         if isinstance(result, typing.Mapping):
             load_config = result
             result_value = value_obj
@@ -151,7 +151,7 @@ class SaveValueTypeModule(KiaraModule):
                 result_value = value_obj
         else:
             raise KiaraProcessingException(
-                f"Invalid result type for 'save_value' method in class '{self.__class__.__name__}'. This is a bug."
+                f"Invalid result type for 'store_value' method in class '{self.__class__.__name__}'. This is a bug."
             )
 
         load_config["value_id"] = value_id
@@ -168,20 +168,20 @@ class SaveValueTypeModule(KiaraModule):
         )
 
 
-class SaveOperationType(OperationType):
-    """Save a value into a local data store.
+class StoreOperationType(OperationType):
+    """Store a value into a local data store.
 
     This is a special operation type, that is used internally by the [LocalDataStore](http://dharpa.org/kiara/latest/api_reference/kiara.data.registry.store/#kiara.data.registry.store.LocalDataStore] data registry implementation.
 
-    For each value type that should be supported by the persistent *kiara* data store, there must be an implementation of the [SaveValueTypeModule](http://dharpa.org/kiara/latest/api_reference/kiara.operations.save_value/#kiara.operations.save_value.SaveValueTypeModule) class, which handles the
+    For each value type that should be supported by the persistent *kiara* data store, there must be an implementation of the [StoreValueTypeModule](http://dharpa.org/kiara/latest/api_reference/kiara.operations.store_value/#kiara.operations.store_value.StoreValueTypeModule) class, which handles the
     actual persisting on disk. In most cases, end users won't need to interact with this type of operation.
     """
 
     def is_matching_operation(self, op_config: Operation) -> bool:
 
-        return issubclass(op_config.module_cls, SaveValueTypeModule)
+        return issubclass(op_config.module_cls, StoreValueTypeModule)
 
-    def get_save_operation_for_type(self, value_type: str) -> Operation:
+    def get_store_operation_for_type(self, value_type: str) -> Operation:
 
         result = []
 
@@ -190,10 +190,12 @@ class SaveOperationType(OperationType):
                 result.append(op_config)
 
         if not result:
-            raise Exception(f"No save operation for type '{value_type}' registered.")
+            raise Exception(
+                f"No 'store_value' operation for type '{value_type}' registered."
+            )
         elif len(result) != 1:
             raise Exception(
-                f"Multiple save operations for type '{value_type}' registered."
+                f"Multiple 'store_value' operations for type '{value_type}' registered."
             )
 
         return result[0]

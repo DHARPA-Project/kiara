@@ -23,6 +23,7 @@ class TypeConversionModuleConfig(ModuleTypeConfigSchema):
 
 
 class ConvertValueModule(KiaraModule):
+    """Base class for 'convert' type operations."""
 
     _config_cls = TypeConversionModuleConfig
 
@@ -249,6 +250,8 @@ class ConvertValueModule(KiaraModule):
 
 
 class ConvertValueOperationType(OperationType):
+    """Operations that convert one data type into another, without loosing any information in the process."""
+
     def is_matching_operation(self, op_config: Operation) -> bool:
 
         return issubclass(op_config.module_cls, ConvertValueModule)

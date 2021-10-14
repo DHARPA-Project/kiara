@@ -16,6 +16,11 @@ class ValueMergeModuleConfig(ModuleTypeConfigSchema):
 
 
 class ValueMergeModule(KiaraModule):
+    """Base class for operations that merge several values into one.
+
+    NOT USED YET.
+    """
+
     def create_input_schema(
         self,
     ) -> typing.Mapping[

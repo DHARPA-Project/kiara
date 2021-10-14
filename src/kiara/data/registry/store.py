@@ -14,7 +14,7 @@ from kiara.utils import log_message
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
-    from kiara.operations.save_value import SaveOperationType
+    from kiara.operations.store_value import StoreOperationType
 
 
 class SavedValueInfo(ValueInfo):
@@ -208,9 +208,9 @@ class LocalDataStore(DataRegistry):
         self, value_id: str, value_type: str, value: "Value"
     ) -> SaveConfig:
 
-        save_operations: SaveOperationType = self._kiara.operation_mgmt.get_operations("save_value")  # type: ignore
+        store_operations: StoreOperationType = self._kiara.operation_mgmt.get_operations("store_value")  # type: ignore
 
-        op_config = save_operations.get_save_operation_for_type(value_type)
+        op_config = store_operations.get_store_operation_for_type(value_type)
 
         if not op_config:
             raise Exception(

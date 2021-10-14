@@ -18,6 +18,7 @@ class SampleValueModuleConfig(ModuleTypeConfigSchema):
 
 
 class SampleValueModule(KiaraModule):
+    """Base class for operations that take samples of data."""
 
     _config_cls = SampleValueModuleConfig
 
@@ -79,8 +80,12 @@ class SampleValueModule(KiaraModule):
         str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
     ]:
 
+        input_name = self.get_value_type()
+        if input_name == "any":
+            input_name = "value_item"
+
         return {
-            "value_item": {
+            input_name: {
                 "type": self.get_value_type(),
                 "doc": "The value to sample.",
             },
@@ -110,7 +115,10 @@ class SampleValueModule(KiaraModule):
                 f"Invalid sample size '{sample_size}': can't be negative."
             )
 
-        value: Value = inputs.get_value_obj("value_item")
+        input_name = self.get_value_type()
+        if input_name == "any":
+            input_name = "value_item"
+        value: Value = inputs.get_value_obj(input_name)
 
         func = getattr(self, f"sample_{sample_type}")
         result = func(value=value, sample_size=sample_size)
@@ -119,6 +127,17 @@ class SampleValueModule(KiaraModule):
 
 
 class SampleValueOperationType(OperationType):
+    """Operation type for sampling data of different types.
+
+    This is useful to reduce the size of some datasets in test-runs, while adjusting parameters and the like. Operations of this
+    type can implement very simple or complex ways to take samples of the data they are fed. The most important ones are
+    sampling operations relating to tables and arrays, but it might also make sense to sample texts, image-sets and so on.
+
+    Modules that implement sampling should inherit from [SampleValueModule](https://dharpa.org/kiara/latest/api_reference/kiara.operations.sample/#kiara.operations.sample.SampleValueModule), and will
+    get auto-registered with operation ids following this template: `<VALUE_TYPE>.sample.<SAMPLE_TYPE_NAME>`, where `SAMPLE_TYPE_NAME` is a descriptive name
+    what will be sampled, or how sampling will be done.
+    """
+
     def is_matching_operation(self, op_config: Operation) -> bool:
 
         return issubclass(op_config.module_cls, SampleValueModule)

@@ -1626,8 +1626,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../kiara.operations.save_value/" class="md-nav__link">
-        ➜ operations.save_value
+      <a href="../kiara.operations.serialize/" class="md-nav__link">
+        ➜ operations.serialize
       </a>
     </li>
   
@@ -1640,8 +1640,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../kiara.operations.serialize/" class="md-nav__link">
-        ➜ operations.serialize
+      <a href="../kiara.operations.store_value/" class="md-nav__link">
+        ➜ operations.store_value
       </a>
     </li>
   
@@ -2273,14 +2273,14 @@
       <p>Abstract method to implement by child classes, returns a description of the input schema of this module.</p>
 <p>If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):</p>
 <p><code>{
-  "[input_field_name]: {
-      "type": "[value_type]",
-      "doc*": "[a description of this input]",
-      "optional*': [boolean whether this input is optional or required (defaults to 'False')]
-  "[other_input_field_name]: {
-      "type: ...
-      ...
-  }</code></p>
+      "[input_field_name]: {
+          "type": "[value_type]",
+          "doc*": "[a description of this input]",
+          "optional*': [boolean whether this input is optional or required (defaults to 'False')]
+      "[other_input_field_name]: {
+          "type: ...
+          ...
+      }</code></p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/operations/data_import.py</code></summary>
@@ -2290,9 +2290,7 @@
     <span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span>
 <span class="p">]:</span>
 
-    <span class="n">input_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">input_name</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
-        <span class="n">input_name</span> <span class="o">=</span> <span class="s2">&quot;value_item&quot;</span>
+    <span class="n">input_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_profile&quot;</span><span class="p">)</span>
     <span class="n">inputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">input_name</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">),</span>
@@ -2351,15 +2349,14 @@
 
       <p>Abstract method to implement by child classes, returns a description of the output schema of this module.</p>
 <p>If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):</p>
-<div class="highlight"><pre><span></span><code>{
-  &quot;[output_field_name]: {
-      &quot;type&quot;: &quot;[value_type]&quot;,
-      &quot;doc*&quot;: &quot;[a description of this output]&quot;
-  &quot;[other_input_field_name]: {
-      &quot;type: ...
-      ...
-  }
-</code></pre></div>
+<p><code>{
+      "[output_field_name]: {
+          "type": "[value_type]",
+          "doc*": "[a description of this output]"
+      "[other_input_field_name]: {
+          "type: ...
+          ...
+      }</code></p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/operations/data_import.py</code></summary>
@@ -2447,7 +2444,7 @@
             <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Import data of type &#39;</span><span class="si">{</span><span class="n">sup_type</span><span class="si">}</span><span class="s2">&#39; from a </span><span class="si">{</span><span class="n">source_profile</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">source_type</span><span class="si">}</span><span class="s2"> and save it to the kiara data store.&quot;</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="n">all_metadata_profiles</span><span class="p">[</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sup_type</span><span class="si">}</span><span class="s2">.import_from.</span><span class="si">{</span><span class="n">source_profile</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">source_type</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sup_type</span><span class="si">}</span><span class="s2">.import_from.</span><span class="si">{</span><span class="n">source_profile</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">]</span> <span class="o">=</span> <span class="n">op_config</span>
 
     <span class="k">return</span> <span class="n">all_metadata_profiles</span>

@@ -1605,8 +1605,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../kiara.operations.save_value/" class="md-nav__link">
-        ➜ operations.save_value
+      <a href="../kiara.operations.serialize/" class="md-nav__link">
+        ➜ operations.serialize
       </a>
     </li>
   
@@ -1619,8 +1619,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../kiara.operations.serialize/" class="md-nav__link">
-        ➜ operations.serialize
+      <a href="../kiara.operations.store_value/" class="md-nav__link">
+        ➜ operations.store_value
       </a>
     </li>
   
@@ -2201,6 +2201,7 @@
 
     <div class="doc doc-contents ">
 
+      <p>Base class for operations that take samples of data.</p>
 
 
 
@@ -2230,14 +2231,14 @@
       <p>Abstract method to implement by child classes, returns a description of the input schema of this module.</p>
 <p>If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):</p>
 <p><code>{
-  "[input_field_name]: {
-      "type": "[value_type]",
-      "doc*": "[a description of this input]",
-      "optional*': [boolean whether this input is optional or required (defaults to 'False')]
-  "[other_input_field_name]: {
-      "type: ...
-      ...
-  }</code></p>
+      "[input_field_name]: {
+          "type": "[value_type]",
+          "doc*": "[a description of this input]",
+          "optional*': [boolean whether this input is optional or required (defaults to 'False')]
+      "[other_input_field_name]: {
+          "type: ...
+          ...
+      }</code></p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/operations/sample.py</code></summary>
@@ -2247,8 +2248,12 @@
     <span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span>
 <span class="p">]:</span>
 
+    <span class="n">input_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value_type</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">input_name</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
+        <span class="n">input_name</span> <span class="o">=</span> <span class="s2">&quot;value_item&quot;</span>
+
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;value_item&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="n">input_name</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value_type</span><span class="p">(),</span>
             <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to sample.&quot;</span><span class="p">,</span>
         <span class="p">},</span>
@@ -2280,15 +2285,14 @@
 
       <p>Abstract method to implement by child classes, returns a description of the output schema of this module.</p>
 <p>If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):</p>
-<div class="highlight"><pre><span></span><code>{
-  &quot;[output_field_name]: {
-      &quot;type&quot;: &quot;[value_type]&quot;,
-      &quot;doc*&quot;: &quot;[a description of this output]&quot;
-  &quot;[other_input_field_name]: {
-      &quot;type: ...
-      ...
-  }
-</code></pre></div>
+<p><code>{
+      "[output_field_name]: {
+          "type": "[value_type]",
+          "doc*": "[a description of this output]"
+      "[other_input_field_name]: {
+          "type: ...
+          ...
+      }</code></p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/operations/sample.py</code></summary>
@@ -2488,6 +2492,13 @@
 
     <div class="doc doc-contents ">
 
+      <p>Operation type for sampling data of different types.</p>
+<p>This is useful to reduce the size of some datasets in test-runs, while adjusting parameters and the like. Operations of this
+type can implement very simple or complex ways to take samples of the data they are fed. The most important ones are
+sampling operations relating to tables and arrays, but it might also make sense to sample texts, image-sets and so on.</p>
+<p>Modules that implement sampling should inherit from <a href="https://dharpa.org/kiara/latest/api_reference/kiara.operations.sample/#kiara.operations.sample.SampleValueModule">SampleValueModule</a>, and will
+get auto-registered with operation ids following this template: <code>&lt;VALUE_TYPE&gt;.sample.&lt;SAMPLE_TYPE_NAME&gt;</code>, where <code>SAMPLE_TYPE_NAME</code> is a descriptive name
+what will be sampled, or how sampling will be done.</p>
 
 
 
@@ -2605,13 +2616,13 @@
       
       
         
-        <a href="../kiara.operations.save_value/" class="md-footer__link md-footer__link--next" aria-label="Next: ➜ operations.save_value" rel="next">
+        <a href="../kiara.operations.serialize/" class="md-footer__link md-footer__link--next" aria-label="Next: ➜ operations.serialize" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              ➜ operations.save_value
+              ➜ operations.serialize
             </div>
           </div>
           <div class="md-footer__button md-icon">

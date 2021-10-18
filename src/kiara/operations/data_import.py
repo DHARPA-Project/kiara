@@ -84,7 +84,7 @@ class DataImportModule(KiaraModule):
                 "doc": f"Import data of type '{sup_type}' from a {source_profile} {source_type} and save it to the kiara data store.",
             }
             all_metadata_profiles[
-                f"{sup_type}.import_from.{source_profile}.{source_type}"
+                f"{sup_type}.import_from.{source_profile}"
             ] = op_config
 
         return all_metadata_profiles
@@ -95,9 +95,7 @@ class DataImportModule(KiaraModule):
         str, typing.Union[ValueSchema, typing.Mapping[str, typing.Any]]
     ]:
 
-        input_name = self.get_config_value("source_type")
-        if input_name == "any":
-            input_name = "value_item"
+        input_name = self.get_config_value("source_profile")
         inputs: typing.Dict[str, typing.Any] = {
             input_name: {
                 "type": self.get_config_value("source_type"),
@@ -158,10 +156,7 @@ class DataImportModule(KiaraModule):
         source_profile: str = self.get_config_value("source_profile")
         source_type: str = self.get_config_value("source_type")
 
-        if source_type == "any":
-            source: str = inputs.get_value_data("value_item")
-        else:
-            source = inputs.get_value_data(source_type)
+        source = inputs.get_value_data(source_profile)
 
         if self.get_target_value_type() == "any":
             output_key: str = "value_item"

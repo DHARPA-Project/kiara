@@ -17,7 +17,7 @@ def test_save_file_data(kiara: Kiara):
 
     import_ops = op_type.get_import_operations_for_target_type("file")
 
-    from_local_file_path_op: DataImportModule = import_ops["file_path"]["local"]
+    from_local_file_path_op: DataImportModule = import_ops["string"]["file_path"]
 
     result = from_local_file_path_op.run(file_path=nodes_file)
     file_value: Value = result.get_value_obj("file")
@@ -38,7 +38,7 @@ def test_import_file_bundle(kiara: Kiara):
 
     import_ops = op_type.get_import_operations_for_target_type("file_bundle")
 
-    from_local_file_path_op: DataImportModule = import_ops["folder_path"]["local"]
+    from_local_file_path_op: DataImportModule = import_ops["string"]["folder_path"]
 
     result = from_local_file_path_op.run(folder_path=journals_folder)
     bundle_value: Value = result.get_value_obj("file_bundle")

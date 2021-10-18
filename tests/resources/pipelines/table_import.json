@@ -4,8 +4,8 @@
     {
       "module_type": "file.import",
       "module_config": {
-        "source_profile": "local",
-        "source_type": "file_path"
+        "source_profile": "file_path",
+        "source_type": "string"
       },
       "step_id": "import_file"
     },

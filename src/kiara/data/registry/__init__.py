@@ -789,6 +789,11 @@ class DataRegistry(BaseDataRegistry):
         for alias in aliases:
             self.link_alias(value_obj, alias=alias)
 
+    def _check_valid_alias(self, alias_name: str):
+
+        match = bool(re.match(VALID_ALIAS_PATTERN, alias_name))
+        return True if match else False
+
     @abc.abstractmethod
     def _register_alias(self, alias_name: str, value_schema: ValueSchema) -> ValueSlot:
         pass
@@ -799,6 +804,16 @@ class DataRegistry(BaseDataRegistry):
         aliases: typing.Iterable[str],
         callbacks: typing.Optional[typing.Iterable[ValueSlotUpdateHandler]] = None,
     ) -> typing.Mapping[str, ValueSlot]:
+
+        invalid = []
+        for alias in aliases:
+            if not self._check_valid_alias(alias_name=alias):
+                invalid.append(alias)
+
+        if invalid:
+            raise Exception(
+                f"Invalid alias(es), only alphanumeric characters, '-', and '_' allowed in alias name: {', '.join(invalid)}"
+            )
 
         result = {}
         for alias in aliases:
@@ -833,7 +848,7 @@ class DataRegistry(BaseDataRegistry):
         if not alias_name:
             raise Exception("Empty alias name not allowed.")
 
-        match = bool(re.match(VALID_ALIAS_PATTERN, alias_name))
+        match = self._check_valid_alias(alias_name)
         if not match:
             raise Exception(
                 f"Invalid alias '{alias_name}': only alphanumeric characters, '-', and '_' allowed in alias name."

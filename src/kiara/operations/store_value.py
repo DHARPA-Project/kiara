@@ -22,7 +22,7 @@ class StoreValueModuleConfig(ModuleTypeConfigSchema):
 
 
 class StoreValueTypeModule(KiaraModule):
-    """Save a specific value type.
+    """Store a specific value type.
 
     This is used internally.
     """
@@ -57,11 +57,12 @@ class StoreValueTypeModule(KiaraModule):
                 log_message(
                     f"Ignoring save operation for type '{sup_type}': type not available"
                 )
+                continue
 
             op_config = {
                 "module_type": cls._module_type_id,  # type: ignore
                 "module_config": {"value_type": sup_type},
-                "doc": f"Save value of type '{sup_type}'.",
+                "doc": f"Store a value of type '{sup_type}'.",
             }
             all_metadata_profiles[f"{sup_type}.save"] = op_config
 

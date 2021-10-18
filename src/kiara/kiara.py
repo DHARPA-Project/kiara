@@ -500,6 +500,9 @@ class Kiara(object):
                     "Can't create pipeline from 'pipeline' module type without further configuration."
                 )
 
+            # TODO: if already a pipeline, don't wrap
+            # if config in self.available_pipeline_module_types:
+            #     pass
             if config in self.available_module_types:
                 config_data = {
                     "steps": [

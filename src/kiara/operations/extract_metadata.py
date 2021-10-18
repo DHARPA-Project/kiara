@@ -50,7 +50,7 @@ class ExtractMetadataModule(KiaraModule):
             op_config = {
                 "module_type": cls._module_type_id,  # type: ignore
                 "module_config": {"value_type": value_type},
-                "doc": f"Extract '{metadata_key}' for value of type '{value_type}'.",
+                "doc": f"Extract '{metadata_key}' metadata for value of type '{value_type}'.",
             }
 
             all_metadata_profiles[

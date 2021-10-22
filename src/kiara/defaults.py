@@ -86,7 +86,7 @@ class SpecialValue(Enum):
 
 DEFAULT_PRETTY_PRINT_CONFIG = {
     "max_no_rows": 32,
-    "max_row_height": 2,
+    "max_row_height": 1,
     "max_cell_length": 80,
 }
 

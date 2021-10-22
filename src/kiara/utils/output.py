@@ -114,7 +114,7 @@ def pretty_print_arrow_table(
                     if max_row_height == 1:
                         lines = lines[0:1]
                     else:
-                        half = int(len(lines) / 2)
+                        half = int(max_row_height / 2)
                         lines = lines[0:half] + [".."] + lines[-half:]
                 cell_str = "\n".join(lines)
 
@@ -122,7 +122,7 @@ def pretty_print_arrow_table(
                 lines = []
                 for line in cell_str.split("\n"):
                     if len(line) > max_cell_length:
-                        line = line[0:(max_cell_length)] + " ..."
+                        line = line[0:max_cell_length] + " ..."
                     else:
                         line = line
                     lines.append(line)
@@ -150,6 +150,7 @@ def pretty_print_arrow_table(
 
                 row = []
                 for cn in table.column_names:
+
                     cell = table_dict[cn][i]
                     cell_str = str(cell)
 

@@ -1,0 +1,34 @@
+{
+  "title": "StepInputEvent",
+  "description": "Event that gets fired when one or several inputs for steps within a pipeline have changed.",
+  "type": "object",
+  "properties": {
+    "pipeline_id": {
+      "title": "Pipeline Id",
+      "type": "string"
+    },
+    "type": {
+      "title": "Type",
+      "default": "step_input",
+      "enum": [
+        "step_input"
+      ],
+      "type": "string"
+    },
+    "updated_step_inputs": {
+      "title": "Updated Step Inputs",
+      "description": "steps (keys) with updated inputs which need re-processing (value is list of updated input names)",
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "required": [
+    "pipeline_id",
+    "updated_step_inputs"
+  ]
+}

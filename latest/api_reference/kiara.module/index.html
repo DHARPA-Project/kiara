@@ -1724,8 +1724,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../kiara.operations.serialize/" class="md-nav__link">
-        ➜ operations.serialize
+      <a href="../kiara.operations.save_value/" class="md-nav__link">
+        ➜ operations.save_value
       </a>
     </li>
   
@@ -1738,8 +1738,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../kiara.operations.store_value/" class="md-nav__link">
-        ➜ operations.store_value
+      <a href="../kiara.operations.serialize/" class="md-nav__link">
+        ➜ operations.serialize
       </a>
     </li>
   
@@ -2823,15 +2823,15 @@ it is assumed that a module configuration is not changed once set, this also mig
 
       <p>Abstract method to implement by child classes, returns a description of the input schema of this module.</p>
 <p>If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):</p>
-<p><code>{
-      "[input_field_name]: {
-          "type": "[value_type]",
-          "doc*": "[a description of this input]",
-          "optional*': [boolean whether this input is optional or required (defaults to 'False')]
-      "[other_input_field_name]: {
-          "type: ...
-          ...
-      }</code></p>
+<p>{
+  "[input_field_name]: {
+      "type": "[value_type]",
+      "doc<em>": "[a description of this input]",
+      "optional</em>': [boolean whether this input is optional or required (defaults to 'False')]
+  "[other_input_field_name]: {
+      "type: ...
+      ...
+  }</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/module.py</code></summary>
@@ -2845,17 +2845,16 @@ it is assumed that a module configuration is not changed once set, this also mig
 
 <span class="sd">    If returning a dictionary of dictionaries, the format of the return value is as follows (items with &#39;*&#39; are optional):</span>
 
-<span class="sd">    ```</span>
-<span class="sd">        {</span>
-<span class="sd">          &quot;[input_field_name]: {</span>
-<span class="sd">              &quot;type&quot;: &quot;[value_type]&quot;,</span>
-<span class="sd">              &quot;doc*&quot;: &quot;[a description of this input]&quot;,</span>
-<span class="sd">              &quot;optional*&#39;: [boolean whether this input is optional or required (defaults to &#39;False&#39;)]</span>
-<span class="sd">          &quot;[other_input_field_name]: {</span>
-<span class="sd">              &quot;type: ...</span>
-<span class="sd">              ...</span>
-<span class="sd">          }</span>
-<span class="sd">          ```</span>
+<span class="sd">    {</span>
+<span class="sd">      &quot;[input_field_name]: {</span>
+<span class="sd">          &quot;type&quot;: &quot;[value_type]&quot;,</span>
+<span class="sd">          &quot;doc*&quot;: &quot;[a description of this input]&quot;,</span>
+<span class="sd">          &quot;optional*&#39;: [boolean whether this input is optional or required (defaults to &#39;False&#39;)]</span>
+<span class="sd">      &quot;[other_input_field_name]: {</span>
+<span class="sd">          &quot;type: ...</span>
+<span class="sd">          ...</span>
+<span class="sd">      }</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 </code></pre></div>
         </details>
@@ -2981,14 +2980,14 @@ inehreting sub-classes. You can't do both, though.</p>
 
       <p>Abstract method to implement by child classes, returns a description of the output schema of this module.</p>
 <p>If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):</p>
-<p><code>{
-      "[output_field_name]: {
-          "type": "[value_type]",
-          "doc*": "[a description of this output]"
-      "[other_input_field_name]: {
-          "type: ...
-          ...
-      }</code></p>
+<p>{
+  "[output_field_name]: {
+      "type": "[value_type]",
+      "doc*": "[a description of this output]"
+  "[other_input_field_name]: {
+      "type: ...
+      ...
+  }</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/module.py</code></summary>
@@ -3002,16 +3001,14 @@ inehreting sub-classes. You can't do both, though.</p>
 
 <span class="sd">    If returning a dictionary of dictionaries, the format of the return value is as follows (items with &#39;*&#39; are optional):</span>
 
-<span class="sd">    ```</span>
-<span class="sd">        {</span>
-<span class="sd">          &quot;[output_field_name]: {</span>
-<span class="sd">              &quot;type&quot;: &quot;[value_type]&quot;,</span>
-<span class="sd">              &quot;doc*&quot;: &quot;[a description of this output]&quot;</span>
-<span class="sd">          &quot;[other_input_field_name]: {</span>
-<span class="sd">              &quot;type: ...</span>
-<span class="sd">              ...</span>
-<span class="sd">          }</span>
-<span class="sd">        ```</span>
+<span class="sd">    {</span>
+<span class="sd">      &quot;[output_field_name]: {</span>
+<span class="sd">          &quot;type&quot;: &quot;[value_type]&quot;,</span>
+<span class="sd">          &quot;doc*&quot;: &quot;[a description of this output]&quot;</span>
+<span class="sd">      &quot;[other_input_field_name]: {</span>
+<span class="sd">          &quot;type: ...</span>
+<span class="sd">          ...</span>
+<span class="sd">      }</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 </code></pre></div>
         </details>
@@ -3081,7 +3078,12 @@ inehreting sub-classes. You can't do both, though.</p>
 <span class="sd">        the value for the provided key</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Error accessing config value &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; in module </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_module_type_id</span><span class="si">}</span><span class="s2">.&quot;</span>  <span class="c1"># type: ignore</span>
+        <span class="p">)</span>
 </code></pre></div>
         </details>
     </div>

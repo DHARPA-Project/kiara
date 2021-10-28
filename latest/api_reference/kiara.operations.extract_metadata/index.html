@@ -1585,8 +1585,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../kiara.operations.serialize/" class="md-nav__link">
-        ➜ operations.serialize
+      <a href="../kiara.operations.save_value/" class="md-nav__link">
+        ➜ operations.save_value
       </a>
     </li>
   
@@ -1599,8 +1599,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../kiara.operations.store_value/" class="md-nav__link">
-        ➜ operations.store_value
+      <a href="../kiara.operations.serialize/" class="md-nav__link">
+        ➜ operations.serialize
       </a>
     </li>
   
@@ -2194,15 +2194,15 @@
 
       <p>Abstract method to implement by child classes, returns a description of the input schema of this module.</p>
 <p>If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):</p>
-<p><code>{
-      "[input_field_name]: {
-          "type": "[value_type]",
-          "doc*": "[a description of this input]",
-          "optional*': [boolean whether this input is optional or required (defaults to 'False')]
-      "[other_input_field_name]: {
-          "type: ...
-          ...
-      }</code></p>
+<p>{
+  "[input_field_name]: {
+      "type": "[value_type]",
+      "doc<em>": "[a description of this input]",
+      "optional</em>': [boolean whether this input is optional or required (defaults to 'False')]
+  "[other_input_field_name]: {
+      "type: ...
+      ...
+  }</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/operations/extract_metadata.py</code></summary>
@@ -2212,12 +2212,8 @@
     <span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span>
 <span class="p">]:</span>
 
-    <span class="n">input_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_type</span>
-    <span class="k">if</span> <span class="n">input_name</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
-        <span class="n">input_name</span> <span class="o">=</span> <span class="s2">&quot;value_item&quot;</span>
-
     <span class="n">inputs</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">input_name</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;value_item&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_type</span><span class="p">,</span>
             <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;A value of type &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_type</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
             <span class="s2">&quot;optional&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
@@ -2246,14 +2242,14 @@
 
       <p>Abstract method to implement by child classes, returns a description of the output schema of this module.</p>
 <p>If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):</p>
-<p><code>{
-      "[output_field_name]: {
-          "type": "[value_type]",
-          "doc*": "[a description of this output]"
-      "[other_input_field_name]: {
-          "type: ...
-          ...
-      }</code></p>
+<p>{
+  "[output_field_name]: {
+      "type": "[value_type]",
+      "doc*": "[a description of this output]"
+  "[other_input_field_name]: {
+      "type: ...
+      ...
+  }</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/operations/extract_metadata.py</code></summary>
@@ -2331,7 +2327,7 @@
         <span class="n">op_config</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_module_type_id</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
             <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="n">value_type</span><span class="p">},</span>
-            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Extract &#39;</span><span class="si">{</span><span class="n">metadata_key</span><span class="si">}</span><span class="s2">&#39; metadata for value of type &#39;</span><span class="si">{</span><span class="n">value_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Extract &#39;</span><span class="si">{</span><span class="n">metadata_key</span><span class="si">}</span><span class="s2">&#39; for value of type &#39;</span><span class="si">{</span><span class="n">value_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="n">all_metadata_profiles</span><span class="p">[</span>
@@ -2371,17 +2367,6 @@
     <div class="doc doc-contents ">
 
       <p>Extract metadata from a dataset.</p>
-<p>The purpose of this operation type is to be able to extract arbitrary, type-specific metadata from value data. In general,
-<em>kiara</em> wants to collect (and store along the value) as much metadata related to data as possible, but the extraction
-process should not take a lot of processing time (since this is done whenever a value is registered into a data registry).</p>
-<p>As its hard to predict all the types of metadata of a specific type that could be interesting in specific scenarios, <em>kiara</em>
-supports a pluggable mechanism to add new metadata extraction processes by extending the base class <a href="http://dharpa.org/kiara/latest/api_reference/kiara.operations.extract_metadata/#kiara.operations.extract_metadata.ExtractMetadataModule"><code>ExtractMetadataModule</code></a>
-and adding that implementation somewhere <em>kiara</em> can find it. Once that is done, <em>kiara</em> will automatically add a new
-operation with an id that follows this template: <code>&lt;VALUE_TYPE&gt;.extract_metadata.&lt;METADATA_KEY&gt;</code>, where <code>METADATA_KEY</code> is a name
-under which the metadata will be stored within the value object.</p>
-<p>By default, every value type should have at least one metadata extraction module where the <code>METADATA_KEY</code> is the same
-as the value type name, and which contains basic, type-specific metadata (e.g. for a 'table', that would be number of rows,
-column names, column types, etc.).</p>
 
 
 

@@ -25,6 +25,8 @@ if typing.TYPE_CHECKING:
     from kiara.pipeline.config import PipelineConfig, PipelineStepConfig
     from kiara.pipeline.pipeline import Pipeline
 
+0
+
 
 class PipelineStep(BaseModel):
     """A step within a pipeline-structure, includes information about it's connection(s) and other metadata."""
@@ -123,7 +125,7 @@ class PipelineStep(BaseModel):
                         module_config=self.module_config,
                     )
             except Exception as e:
-                raise Exception(f"Can't assemble pipeline structure: {e}")
+                raise Exception(f"Can't assemble pipeline step '{self.step_id}': {e}")
 
         return self._module
 

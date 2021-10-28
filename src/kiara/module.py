@@ -383,7 +383,12 @@ class KiaraModule(typing.Generic[KIARA_CONFIG], abc.ABC):
             the value for the provided key
         """
 
-        return self.config.get(key)
+        try:
+            return self.config.get(key)
+        except Exception:
+            raise Exception(
+                f"Error accessing config value '{key}' in module {self.__class__._module_type_id}."  # type: ignore
+            )
 
     @abstractmethod
     def create_input_schema(

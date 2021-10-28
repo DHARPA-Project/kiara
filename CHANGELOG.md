@@ -1,6 +1,11 @@
 # Changelog
 
-## Version 0.2.2 (Upcoming)
+## Version 0.2.3 (Upcoming)
+
+## Version 0.2.2
+
+- fixes for cli pretty printing
+- auto-publish kiara conda package
 
 ## Version 0.2.1
 

@@ -46,7 +46,7 @@ class CalculateValueHashModule(KiaraModule):
                     "doc": f"Calculate '{ht}' hash for value type '{value_type_name}'.",
                 }
                 all_metadata_profiles[
-                    f"{value_type_name}.calculate_hash.{ht}"
+                    f"calculate_hash.{ht}.for.{value_type_name}"
                 ] = op_config
 
         return all_metadata_profiles

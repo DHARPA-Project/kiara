@@ -54,7 +54,7 @@ class PrettyPrintValueModule(KiaraModule):
                     "doc": f"Pretty print a value of type '{value_type_name}' as '{target_type}'.",
                 }
                 all_metadata_profiles[
-                    f"{value_type_name}.pretty_print_as.{target_type}"
+                    f"pretty_print.{value_type_name}.as.{target_type}"
                 ] = op_config
 
         return all_metadata_profiles

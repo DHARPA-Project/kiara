@@ -9,6 +9,9 @@ if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
 
 
+TYPE_PROFILE_MAP = {"csv_file": "file", "text_file_bundle": "file_bundle"}
+
+
 class TypeMgmt(object):
     def __init__(self, kiara: "Kiara"):
 
@@ -57,6 +60,13 @@ class TypeMgmt(object):
 
         self._registered_python_classes = registered_types
         return self._registered_python_classes
+
+    def get_type_config_for_data_profile(
+        self, profile_name: str
+    ) -> typing.Mapping[str, typing.Any]:
+
+        type_name = TYPE_PROFILE_MAP[profile_name]
+        return {"type": type_name, "type_config": {}}
 
     def determine_type(self, data: typing.Any) -> typing.Optional[ValueType]:
 

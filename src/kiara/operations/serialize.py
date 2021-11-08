@@ -53,7 +53,7 @@ class SerializeValueModule(KiaraModule):
                 "module_config": mod_conf,
                 "doc": f"Serialize value of type '{value_type}' to '{serialization_type}'.",
             }
-            key = f"{value_type}.serialize_to.{serialization_type}"
+            key = f"serialize.{value_type}.as.{serialization_type}"
             if key in all_profiles.keys():
                 raise Exception(f"Duplicate profile key: {key}")
             all_profiles[key] = op_config

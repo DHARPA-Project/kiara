@@ -105,7 +105,7 @@ def presseeded_data_store_minimal() -> Kiara:
         },
     )
 
-    table_value = results.get_value_obj("create_table_from_files__value_item")
+    table_value = results.get_value_obj("create_table_from_files__table")
     table_value.save(aliases=["journal_nodes"])
 
     return kiara

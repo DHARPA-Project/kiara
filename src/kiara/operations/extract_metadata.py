@@ -54,7 +54,7 @@ class ExtractMetadataModule(KiaraModule):
             }
 
             all_metadata_profiles[
-                f"{value_type}.extract_metadata.{metadata_key}"
+                f"extract.{metadata_key}.metadata.from.{value_type}"
             ] = op_config
 
         return all_metadata_profiles

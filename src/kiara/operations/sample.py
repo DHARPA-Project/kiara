@@ -51,7 +51,7 @@ class SampleValueModule(KiaraModule):
                 "module_config": {"sample_type": sample_type},
                 "doc": f"Sample value of type '{value_type}' using method: {sample_type}.",
             }
-            key = f"{value_type}.sample.{sample_type}"
+            key = f"sample.{value_type}.{sample_type}"
             if key in all_metadata_profiles.keys():
                 raise Exception(f"Duplicate profile key: {key}")
             all_metadata_profiles[key] = op_config

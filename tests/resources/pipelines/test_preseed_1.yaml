@@ -1,29 +1,29 @@
 module_type_name: gallery_onboarding
 steps:
-  - module_type: file.import_from.file_path
+  - module_type: import.file.from.file_path
     step_id: import_edges_file
-  - module_type: file.import_from.file_path
+  - module_type: import.file.from.file_path
     step_id: import_nodes_file
-  - module_type: file_bundle.import_from.folder_path
+  - module_type: import.file_bundle.from.folder_path
     step_id: import_journal_csvs
-  - module_type: file_bundle.import_from.folder_path
+  - module_type: import.file_bundle.from.folder_path
     step_id: import_text_corpus
-  - module_type: file.convert_to.table
+  - module_type: create.table.from.csv_file
     step_id: create_edges_table
     input_links:
-      value_item: import_edges_file.file
-  - module_type: file.convert_to.table
+      csv_file: import_edges_file.file
+  - module_type: create.table.from.csv_file
     step_id: create_nodes_table
     input_links:
-      value_item: import_nodes_file.file
+      csv_file: import_nodes_file.file
   - module_type: table.cut_column
     step_id: create_city_array
     input_links:
-      table: create_nodes_table.value_item
+      table: create_nodes_table.table
   - module_type: table.cut_column
     step_id: create_label_array
     input_links:
-      table: create_nodes_table.value_item
+      table: create_nodes_table.table
 input_aliases:
   import_edges_file__file_path: edges_file_path
   import_nodes_file__file_path: nodes_file_path
@@ -36,7 +36,7 @@ output_aliases:
   import_nodes_file__file: journal_nodes_file
   import_journal_csvs__file_bundle: journals_file_bundle
   import_text_corpus__file_bundle: text_corpus_file_bundle
-  create_edges_table__value_item: journal_edges_table
-  create_nodes_table__value_item: journal_nodes_table
+  create_edges_table__table: journal_edges_table
+  create_nodes_table__table: journal_nodes_table
   create_city_array__array: cities_array
   create_label_array__array: labels_array

@@ -84,7 +84,7 @@ class DataImportModule(KiaraModule):
                 "doc": f"Import data of type '{sup_type}' from a {source_profile} {source_type} and save it to the kiara data store.",
             }
             all_metadata_profiles[
-                f"{sup_type}.import_from.{source_profile}"
+                f"import.{sup_type}.from.{source_profile}"
             ] = op_config
 
         return all_metadata_profiles

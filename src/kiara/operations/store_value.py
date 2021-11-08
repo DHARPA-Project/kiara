@@ -64,7 +64,7 @@ class StoreValueTypeModule(KiaraModule):
                 "module_config": {"value_type": sup_type},
                 "doc": f"Store a value of type '{sup_type}'.",
             }
-            all_metadata_profiles[f"{sup_type}.save"] = op_config
+            all_metadata_profiles[f"store.{sup_type}"] = op_config
 
         return all_metadata_profiles
 

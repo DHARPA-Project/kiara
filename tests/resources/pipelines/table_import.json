@@ -10,10 +10,10 @@
       "step_id": "import_file"
     },
     {
-      "module_type": "file.convert_to.table",
+      "module_type": "create.table.from.csv_file",
       "step_id": "create_table_from_files",
       "input_links": {
-        "value_item": "import_file.file"
+        "csv_file": "import_file.file"
       }
     }]
 }

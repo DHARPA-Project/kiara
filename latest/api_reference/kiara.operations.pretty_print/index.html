@@ -1414,6 +1414,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.operations.create_value/" class="md-nav__link">
+        ➜ operations.create_value
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.operations.data_import/" class="md-nav__link">
         ➜ operations.data_import
       </a>
@@ -1523,6 +1537,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kiara.operations.pretty_print.PrettyPrintOperationType" class="md-nav__link">
+    PrettyPrintOperationType
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kiara.operations.pretty_print.PrettyPrintValueModule" class="md-nav__link">
     PrettyPrintValueModule
   </a>
@@ -1585,20 +1606,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../kiara.operations.save_value/" class="md-nav__link">
-        ➜ operations.save_value
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../kiara.operations.serialize/" class="md-nav__link">
         ➜ operations.serialize
       </a>
@@ -1613,8 +1620,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../kiara.operations.type_convert/" class="md-nav__link">
-        ➜ operations.type_convert
+      <a href="../kiara.operations.store_value/" class="md-nav__link">
+        ➜ operations.store_value
       </a>
     </li>
   
@@ -2079,6 +2086,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kiara.operations.pretty_print.PrettyPrintOperationType" class="md-nav__link">
+    PrettyPrintOperationType
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kiara.operations.pretty_print.PrettyPrintValueModule" class="md-nav__link">
     PrettyPrintValueModule
   </a>
@@ -2236,6 +2250,64 @@
 
 
 
+  <div class="doc doc-object doc-class">
+
+
+
+<h2 id="kiara.operations.pretty_print.PrettyPrintOperationType" class="doc doc-heading">
+        <code>PrettyPrintOperationType</code>
+
+
+
+<a href="#kiara.operations.pretty_print.PrettyPrintOperationType" class="headerlink" title="Permanent link">&para;</a></h2>
+
+    <div class="doc doc-contents ">
+
+      <p>This operation type renders values of any type into human readable output for different targets (e.g. terminal, html, ...).</p>
+<p>The main purpose of this operation type is to show the user as much content of the data as possible for the specific
+rendering target, without giving any guarantees that all information contained in the data is shown. It may print
+out the whole content (if the content is small, or the available space large enough), or
+just a few bits and pieces from the start and/or end of the data, whatever makes most sense for the data itself. For example,
+for large tables it might be a good idea to print out the first and last 30 rows, so users can see which columns are available,
+and get a rough overview of the content itself. For network graphs it might make sense to print out some graph properties
+(number of nodes, edges, available attributes, ...) on the terminal, but render the graph itself when using html as target.</p>
+<p>Currently, it is only possible to implement a <code>pretty_print</code> renderer if you have access to the source code of the value
+type you want to render. To add a new render method, add a new instance method to the <code>ValueType</code> class in question,
+in the format:</p>
+<div class="highlight"><pre><span></span><code>def pretty_print_as_&lt;TARGET_TYPE&gt;(value: Value, print_config: typing.Mapping[str, typing.Any]) -&gt; typing.Any:
+   ...
+   ...
+</code></pre></div>
+<p><em>kiara</em> will look at all available <code>ValueType</code> classes for methods that match this signature, and auto-generate
+operations following this naming template: <code>&lt;SOURCE_TYPE&gt;.pretty_print_as.&lt;TARGET_TYPE&gt;</code>.</p>
+<p>Currently, only the type <code>renderables</code> is implemented as target type (for printing out to the terminal). It is planned to
+add output suitable for use in Jupyter notebooks in the near future.</p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
 
   <div class="doc doc-object doc-class">
 
@@ -2278,15 +2350,15 @@
 
       <p>Abstract method to implement by child classes, returns a description of the input schema of this module.</p>
 <p>If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):</p>
-<p>{
-  "[input_field_name]: {
-      "type": "[value_type]",
-      "doc<em>": "[a description of this input]",
-      "optional</em>': [boolean whether this input is optional or required (defaults to 'False')]
-  "[other_input_field_name]: {
-      "type: ...
-      ...
-  }</p>
+<p><code>{
+      "[input_field_name]: {
+          "type": "[value_type]",
+          "doc*": "[a description of this input]",
+          "optional*': [boolean whether this input is optional or required (defaults to 'False')]
+      "[other_input_field_name]: {
+          "type: ...
+          ...
+      }</code></p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/operations/pretty_print.py</code></summary>
@@ -2296,11 +2368,17 @@
     <span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span>
 <span class="p">]:</span>
 
+    <span class="n">value_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;value_type&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">value_type</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+        <span class="n">input_name</span> <span class="o">=</span> <span class="s2">&quot;value_item&quot;</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="s2">&quot;A value of any type.&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">input_name</span> <span class="o">=</span> <span class="n">value_type</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;A value of type &#39;</span><span class="si">{</span><span class="n">value_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+
     <span class="n">inputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;value_item&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;value_type&quot;</span><span class="p">),</span>
-            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;A value of type &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s1">&#39;value_type&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span>
-        <span class="p">},</span>
+        <span class="n">input_name</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">value_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="p">},</span>
         <span class="s2">&quot;print_config&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;dict&quot;</span><span class="p">,</span>
             <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;Optional print configuration.&quot;</span><span class="p">,</span>
@@ -2331,14 +2409,14 @@
 
       <p>Abstract method to implement by child classes, returns a description of the output schema of this module.</p>
 <p>If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):</p>
-<p>{
-  "[output_field_name]: {
-      "type": "[value_type]",
-      "doc*": "[a description of this output]"
-  "[other_input_field_name]: {
-      "type: ...
-      ...
-  }</p>
+<p><code>{
+      "[output_field_name]: {
+          "type": "[value_type]",
+          "doc*": "[a description of this output]"
+      "[other_input_field_name]: {
+          "type: ...
+          ...
+      }</code></p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/operations/pretty_print.py</code></summary>
@@ -2415,7 +2493,7 @@
                 <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Pretty print a value of type &#39;</span><span class="si">{</span><span class="n">value_type_name</span><span class="si">}</span><span class="s2">&#39; as &#39;</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span>
             <span class="p">}</span>
             <span class="n">all_metadata_profiles</span><span class="p">[</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value_type_name</span><span class="si">}</span><span class="s2">.pretty_print_as.</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;pretty_print.</span><span class="si">{</span><span class="n">value_type_name</span><span class="si">}</span><span class="s2">.as.</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">]</span> <span class="o">=</span> <span class="n">op_config</span>
 
     <span class="k">return</span> <span class="n">all_metadata_profiles</span>

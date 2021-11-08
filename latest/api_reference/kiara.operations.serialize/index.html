@@ -1414,6 +1414,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.operations.create_value/" class="md-nav__link">
+        ➜ operations.create_value
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.operations.data_import/" class="md-nav__link">
         ➜ operations.data_import
       </a>
@@ -1472,20 +1486,6 @@
     <li class="md-nav__item">
       <a href="../kiara.operations.sample/" class="md-nav__link">
         ➜ operations.sample
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../kiara.operations.save_value/" class="md-nav__link">
-        ➜ operations.save_value
       </a>
     </li>
   
@@ -1633,8 +1633,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../kiara.operations.type_convert/" class="md-nav__link">
-        ➜ operations.type_convert
+      <a href="../kiara.operations.store_value/" class="md-nav__link">
+        ➜ operations.store_value
       </a>
     </li>
   
@@ -2201,6 +2201,7 @@
 
     <div class="doc doc-contents ">
 
+      <p>Base class for 'serialize' operations.</p>
 
 
 
@@ -2229,15 +2230,15 @@
 
       <p>Abstract method to implement by child classes, returns a description of the input schema of this module.</p>
 <p>If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):</p>
-<p>{
-  "[input_field_name]: {
-      "type": "[value_type]",
-      "doc<em>": "[a description of this input]",
-      "optional</em>': [boolean whether this input is optional or required (defaults to 'False')]
-  "[other_input_field_name]: {
-      "type: ...
-      ...
-  }</p>
+<p><code>{
+      "[input_field_name]: {
+          "type": "[value_type]",
+          "doc*": "[a description of this input]",
+          "optional*': [boolean whether this input is optional or required (defaults to 'False')]
+      "[other_input_field_name]: {
+          "type: ...
+          ...
+      }</code></p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/operations/serialize.py</code></summary>
@@ -2278,14 +2279,14 @@
 
       <p>Abstract method to implement by child classes, returns a description of the output schema of this module.</p>
 <p>If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):</p>
-<p>{
-  "[output_field_name]: {
-      "type": "[value_type]",
-      "doc*": "[a description of this output]"
-  "[other_input_field_name]: {
-      "type: ...
-      ...
-  }</p>
+<p><code>{
+      "[output_field_name]: {
+          "type": "[value_type]",
+          "doc*": "[a description of this output]"
+      "[other_input_field_name]: {
+          "type: ...
+          ...
+      }</code></p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/operations/serialize.py</code></summary>
@@ -2367,7 +2368,7 @@
             <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="n">mod_conf</span><span class="p">,</span>
             <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Serialize value of type &#39;</span><span class="si">{</span><span class="n">value_type</span><span class="si">}</span><span class="s2">&#39; to &#39;</span><span class="si">{</span><span class="n">serialization_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value_type</span><span class="si">}</span><span class="s2">.serialize_to.</span><span class="si">{</span><span class="n">serialization_type</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;serialize.</span><span class="si">{</span><span class="n">value_type</span><span class="si">}</span><span class="s2">.as.</span><span class="si">{</span><span class="n">serialization_type</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_profiles</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Duplicate profile key: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">all_profiles</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">op_config</span>
@@ -2493,6 +2494,8 @@
 
     <div class="doc doc-contents ">
 
+      <p>Operations that serialize data into formats that can be used for data exchange.</p>
+<p>NOT USED YET</p>
 
 
 
@@ -2533,7 +2536,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">result</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">o_id</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_configs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">o_id</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">source_type</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">module_config</span><span class="p">[</span><span class="s2">&quot;value_type&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">source_type</span> <span class="o">==</span> <span class="n">value_type</span><span class="p">:</span>
             <span class="n">target_type</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">module_config</span><span class="p">[</span><span class="s2">&quot;serialization_type&quot;</span><span class="p">]</span>
@@ -2593,7 +2596,7 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../kiara.operations.save_value/" class="md-footer__link md-footer__link--prev" aria-label="Previous: ➜ operations.save_value" rel="prev">
+        <a href="../kiara.operations.sample/" class="md-footer__link md-footer__link--prev" aria-label="Previous: ➜ operations.sample" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -2602,20 +2605,20 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              ➜ operations.save_value
+              ➜ operations.sample
             </div>
           </div>
         </a>
       
       
         
-        <a href="../kiara.operations.type_convert/" class="md-footer__link md-footer__link--next" aria-label="Next: ➜ operations.type_convert" rel="next">
+        <a href="../kiara.operations.store_value/" class="md-footer__link md-footer__link--next" aria-label="Next: ➜ operations.store_value" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              ➜ operations.type_convert
+              ➜ operations.store_value
             </div>
           </div>
           <div class="md-footer__button md-icon">

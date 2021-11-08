@@ -336,6 +336,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://dharpa.org/kiara/latest/api_reference/kiara.operations.create_value/</loc>
+         <lastmod>2021-11-08</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://dharpa.org/kiara/latest/api_reference/kiara.operations.data_import/</loc>
          <lastmod>2021-11-08</lastmod>
          <changefreq>daily</changefreq>
@@ -366,17 +371,12 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://dharpa.org/kiara/latest/api_reference/kiara.operations.save_value/</loc>
-         <lastmod>2021-11-08</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://dharpa.org/kiara/latest/api_reference/kiara.operations.serialize/</loc>
          <lastmod>2021-11-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://dharpa.org/kiara/latest/api_reference/kiara.operations.type_convert/</loc>
+         <loc>https://dharpa.org/kiara/latest/api_reference/kiara.operations.store_value/</loc>
          <lastmod>2021-11-08</lastmod>
          <changefreq>daily</changefreq>
     </url>

@@ -37,7 +37,7 @@ def test_pipeline_script_rendering(kiara: Kiara):
     assert rendered
 
     with pytest.raises(Exception) as e:
-        exec(rendered)
+        exec(compile(rendered, "ignore_file_name", "exec"))
 
     assert "Required pipeline step 'and_1_1'" in str(e.value)
 

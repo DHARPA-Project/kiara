@@ -2,6 +2,8 @@
 import pytest
 
 from kiara import Kiara
+from kiara.pipeline.controller.batch import BatchController
+from kiara.processing.processor import ModuleProcessor
 
 
 def test_pipeline_default_controller(kiara: Kiara):
@@ -36,3 +38,34 @@ def test_pipeline_default_controller_invalid_outputs(kiara: Kiara):
 
     assert "logic_nand__y1" in str(e.value)
     assert "logic_nand__y" in str(e.value)
+
+
+# TODO: more complex pipelines
+
+
+def test_pipeline_default_controller_synchronous_processing(kiara: Kiara):
+
+    processor = ModuleProcessor.from_config(
+        config={"module_processor_type": "synchronous"}
+    )
+    controller = BatchController(processor=processor)
+    pipeline = kiara.create_pipeline("logic.nand", controller=controller)
+
+    pipeline.inputs.set_values(logic_nand__a=True, logic_nand__b=True)
+
+    result = pipeline.outputs.get_all_value_data()
+    assert result == {"logic_nand__y": False}
+
+
+def test_pipeline_default_controller_threaded_processing(kiara: Kiara):
+
+    processor = ModuleProcessor.from_config(
+        config={"module_processor_type": "multi-threaded"}
+    )
+    controller = BatchController(processor=processor)
+    pipeline = kiara.create_pipeline("logic.nand", controller=controller)
+
+    pipeline.inputs.set_values(logic_nand__a=True, logic_nand__b=True)
+
+    result = pipeline.outputs.get_all_value_data()
+    assert result == {"logic_nand__y": False}

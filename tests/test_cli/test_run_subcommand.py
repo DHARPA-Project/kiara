@@ -38,9 +38,12 @@ def test_run_with_valid_inputs():
     assert "True" in result.stdout
 
 
-# def test_run_with_save():
-#
-#     runner = CliRunner()
-#     result = runner.invoke(cli, "run logic.and a=true b=true")
-#     assert result.exit_code == 0
-#     assert "True" in result.stdout
+def test_run_with_save():
+
+    runner = CliRunner()
+    result = runner.invoke(cli, "run logic.and a=true b=true --save test_save")
+    assert result.exit_code == 0
+    assert "True" in result.stdout
+
+    result_data = runner.invoke(cli, "data list")
+    assert "test_save" in result_data.stdout

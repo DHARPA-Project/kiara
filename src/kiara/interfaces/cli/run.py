@@ -7,7 +7,7 @@ import sys
 import typing
 from pathlib import Path
 from rich import box
-from rich.console import Console, RenderGroup
+from rich.console import RenderGroup
 from rich.panel import Panel
 from rich.syntax import Syntax
 
@@ -328,41 +328,41 @@ def run(ctx, module, inputs, module_config, output, explain, save):
 
             else:
                 raise NotImplementedError()
-
-                if output_details.format == "terminal":
-
-                    renderables = kiara_obj.pretty_print(value=value)
-                    output = Panel(RenderGroup(*renderables), box=box.SIMPLE)
-                    with open(target_file, "wt") as f:
-                        console = Console(record=True, file=f)
-                        console.print(output)
-                else:
-
-                    format = output_details.format
-                    available_formats = kiara_obj.get_convert_target_types(
-                        source_type="value_set"
-                    )
-                    if format not in available_formats:
-                        print()
-                        print(
-                            f"Can't convert to output format '{format}', this format is not supported. Available formats: {', '.join(available_formats)}."
-                        )
-                        sys.exit(1)
-
-                    config = {}
-                    config.update(DEFAULT_TO_JSON_CONFIG)
-
-                    transformed = kiara_obj.transform_data(
-                        workflow.outputs,
-                        source_type="value_set",
-                        target_type=format,
-                        config=config,
-                    )
-                    transformed_value = transformed.get_value_data()
-
-                    target_file.parent.mkdir(parents=True, exist_ok=True)
-                    # TODO: check whether to write text or bytes
-                    target_file.write_text(transformed_value)
+                #
+                # if output_details.format == "terminal":
+                #
+                #     renderables = kiara_obj.pretty_print(value=value)
+                #     output = Panel(RenderGroup(*renderables), box=box.SIMPLE)
+                #     with open(target_file, "wt") as f:
+                #         console = Console(record=True, file=f)
+                #         console.print(output)
+                # else:
+                #
+                #     format = output_details.format
+                #     available_formats = kiara_obj.get_convert_target_types(
+                #         source_type="value_set"
+                #     )
+                #     if format not in available_formats:
+                #         print()
+                #         print(
+                #             f"Can't convert to output format '{format}', this format is not supported. Available formats: {', '.join(available_formats)}."
+                #         )
+                #         sys.exit(1)
+                #
+                #     config = {}
+                #     config.update(DEFAULT_TO_JSON_CONFIG)
+                #
+                #     transformed = kiara_obj.transform_data(
+                #         workflow.outputs,
+                #         source_type="value_set",
+                #         target_type=format,
+                #         config=config,
+                #     )
+                #     transformed_value = transformed.get_value_data()
+                #
+                #     target_file.parent.mkdir(parents=True, exist_ok=True)
+                #     # TODO: check whether to write text or bytes
+                #     target_file.write_text(transformed_value)
 
         if save:
 

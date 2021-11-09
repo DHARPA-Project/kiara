@@ -23,24 +23,6 @@ class MetadataModel(KiaraInfoModel):
 
         return MetadataModelMetadata.from_model_class(model_cls=cls)
 
-    # @classmethod
-    # def model_doc(cls) -> str:
-    #
-    #     return extract_doc_from_cls(cls)
-    #
-    # @classmethod
-    # def model_desc(cls) -> str:
-    #     return extract_doc_from_cls(cls, only_first_line=True)
-
-    # @classmethod
-    # def from_dicts(cls, *dicts: typing.Mapping[str, typing.Any]):
-    #
-    #     if not dicts:
-    #         return cls()
-    #
-    #     merged = merge_dicts(*dicts)
-    #     return cls.parse_obj(merged)
-
     def create_renderable(self, **config: typing.Any) -> RenderableType:
 
         table = Table(show_header=False, box=box.SIMPLE)

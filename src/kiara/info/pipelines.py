@@ -382,12 +382,12 @@ class PipelineModuleInfo(KiaraModuleTypeMetadata):
         my_table.add_row("class", self.python_class.full_name)
         my_table.add_row("is pipeline", "yes")
 
-        my_table.add_row("doc", self.get_type_metadata().documentation.full_doc)
+        my_table.add_row("doc", self.documentation.full_doc)
         my_table.add_row("config class", self.config.python_class.full_name)
         my_table.add_row(
             "config",
             create_table_from_config_class(
-                self.config.python_class.get_class()._config_class,  # type: ignore
+                self.config.python_class.get_class(),  # type: ignore
                 remove_pipeline_config=True,
             ),
         )

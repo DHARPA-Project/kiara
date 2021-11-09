@@ -11,11 +11,6 @@ from kiara.processing.parallel import ThreadPoolProcessorConfig
 from kiara.processing.synchronous import SynchronousProcessorConfig
 from kiara.utils import get_data_from_file
 
-try:
-    pass
-except Exception:
-    pass
-
 
 def yaml_config_settings_source(settings: BaseSettings) -> typing.Dict[str, typing.Any]:
     """

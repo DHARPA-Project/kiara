@@ -18,6 +18,9 @@ def test_pipeline_current_state(kiara: Kiara):
 
     pipeline = kiara.create_pipeline("logic.nand")
     state = pipeline.get_current_state()
+
+    rich_print(state)
+
     state_dict = state.dict()
 
     assert "structure" in state_dict.keys()

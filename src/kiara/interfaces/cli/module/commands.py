@@ -67,13 +67,13 @@ def list_modules(
                 if f.lower() not in m.lower():
                     match = False
                     break
-                else:
-                    m_cls = kiara_obj.get_module_class(m)
-                    doc = m_cls.get_type_metadata().documentation.full_doc
-
-                    if f.lower() not in doc.lower():
-                        match = False
-                        break
+                # else:
+                #     m_cls = kiara_obj.get_module_class(m)
+                #     doc = m_cls.get_type_metadata().documentation.full_doc
+                #
+                #     if f.lower() not in doc.lower():
+                #         match = False
+                #         break
 
             if match:
                 module_types.append(m)
@@ -213,74 +213,3 @@ except Exception as e:  # noqa
     log_message(
         "'kiara.streamlit' package not installed, not offering streamlit debug sub-command"
     )
-
-# if is_develop():
-#     try:
-#         from jupytext import jupytext
-#
-#         @module.command("render")
-#         @click.argument("module_type", nargs=1)
-#         @click.argument("inputs", nargs=-1, required=False)
-#         @click.option(
-#             "--module-config",
-#             "-c",
-#             required=False,
-#             help="(Optional) module configuration.",
-#             multiple=True,
-#         )
-#         @click.pass_context
-#         def render(
-#             ctx,
-#             module_type: str,
-#             module_config: typing.Iterable[typing.Any],
-#             inputs: typing.Any,
-#         ):
-#             """Render a workflow into a jupyter notebook."""
-#
-#             if module_config:
-#                 module_config = dict_from_cli_args(*module_config)
-#
-#             module_obj: PipelineModule = _create_module_instance(  # type: ignore
-#                 ctx, module_type=module_type, module_config=module_config
-#             )
-#             if not module_obj.is_pipeline():
-#                 print("Only pipeline modules supported (for now).")
-#                 sys.exit(1)
-#
-#             structure = module_obj.structure
-#
-#             list_keys = []
-#             for name, value_schema in module_obj.input_schemas.items():
-#                 if value_schema.type in ["array", "list"]:
-#                     list_keys.append(name)
-#             workflow_input = dict_from_cli_args(*inputs, list_keys=list_keys)
-#
-#             renderer = PipelineRenderer(structure=structure)
-#             path = os.path.join(
-#                 KIARA_RESOURCES_FOLDER, "templates", "notebook.ipynb.j2"
-#             )
-#             # path = os.path.join(KIARA_RESOURCES_FOLDER, "templates", "python_script.py.j2")
-#
-#             step_inputs: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
-#             for k, v in workflow_input.items():
-#                 pi = structure.pipeline_inputs.get(k)
-#                 assert pi
-#                 if len(pi.connected_inputs) != 1:
-#                     raise NotImplementedError()
-#
-#                 ci = pi.connected_inputs[0]
-#                 if isinstance(v, str):
-#                     v = f'"{v}"'
-#                 step_inputs.setdefault(ci.step_id, {})[ci.value_name] = v
-#
-#             rendered = renderer.render_from_path(path, inputs=step_inputs)
-#             print()
-#             # print(rendered)
-#             # return
-#             # print(rendered)
-#             notebook = jupytext.reads(rendered, fmt="py:percent")
-#             converted = jupytext.writes(notebook, fmt="notebook")
-#             print(converted)
-#
-#     except ModuleNotFoundError:
-#         pass

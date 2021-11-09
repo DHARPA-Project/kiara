@@ -20,7 +20,35 @@ def test_logic_list_subcommand():
 
     assert result.exit_code == 0
     assert "logic.xor" in result.stdout
-    assert "table.import_from.file_path.string" not in result.stdout
+
+
+def test_logic_list_filter_subcommand():
+
+    runner = CliRunner()
+    result = runner.invoke(cli, "module list logic")
+
+    assert result.exit_code == 0
+    assert "logic.xor" in result.stdout
+
+
+def test_logic_list_only_non_pipelines_subcommand():
+
+    runner = CliRunner()
+    result = runner.invoke(cli, "module list -c")
+
+    assert result.exit_code == 0
+    assert "logic.xor" not in result.stdout
+    assert "logic.and" in result.stdout
+
+
+def test_logic_list_only_pipelines_subcommand():
+
+    runner = CliRunner()
+    result = runner.invoke(cli, "module list -p")
+
+    assert result.exit_code == 0
+    assert "logic.xor" in result.stdout
+    assert "logic.and" not in result.stdout
 
 
 def test_module_explain_subcommand():

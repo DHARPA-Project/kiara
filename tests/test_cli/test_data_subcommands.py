@@ -28,6 +28,32 @@ def test_data_list_subcommand(presseeded_data_store_minimal: Kiara):
     assert "journal_nodes@1" in result.stdout
 
 
+def test_data_load_subcommand(presseeded_data_store_minimal: Kiara):
+
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        "data load journal_nodes",
+        env={"KIARA_DATA_STORE": presseeded_data_store_minimal.config.data_store},
+    )
+
+    # assert "Psychiatrische en neurologische bladen" in result.stdout
+    assert "City" in result.stdout
+
+
+def test_data_explain_subcommand(presseeded_data_store_minimal: Kiara):
+
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        "data explain journal_nodes",
+        env={"KIARA_DATA_STORE": presseeded_data_store_minimal.config.data_store},
+    )
+
+    assert "Latitude" in result.stdout
+    assert "arrow_type_name" in result.stdout
+
+
 # async def test_data_explain_subcommand(presseeded_data_store: Kiara):
 #
 #     runner = CliRunner()

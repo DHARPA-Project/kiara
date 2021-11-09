@@ -62,18 +62,5 @@ cli.add_command(type_group)
 if is_develop():
     cli.add_command(dev_group)
 
-try:
-    from .service.commands import service
-
-    cli.add_command(service)
-except ModuleNotFoundError:
-    pass
-
-# if is_develop():
-#
-#     from .dev.commands import dev
-#
-#     cli.add_command(dev)
-
 if __name__ == "__main__":
     cli()

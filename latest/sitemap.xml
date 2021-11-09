@@ -196,11 +196,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://dharpa.org/kiara/latest/api_reference/kiara.interfaces.cli.service.commands/</loc>
-         <lastmod>2021-11-09</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://dharpa.org/kiara/latest/api_reference/kiara.interfaces.cli.type.commands/</loc>
          <lastmod>2021-11-09</lastmod>
          <changefreq>daily</changefreq>
@@ -222,11 +217,6 @@
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/api_reference/kiara.interfaces.python_api/</loc>
-         <lastmod>2021-11-09</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://dharpa.org/kiara/latest/api_reference/kiara.interfaces.rest_api/</loc>
          <lastmod>2021-11-09</lastmod>
          <changefreq>daily</changefreq>
     </url>

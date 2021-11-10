@@ -43,10 +43,16 @@ create_meta_yaml() {
 }
 
 build_package(){
-    # Build for Linux
-    conda build ${CHANNEL_ARGS} --output-folder build .
 
-    cd build
+    local PYTHON_VERSION=$1
+    local build_folder="build_${PYTHON_VERSION}"
+
+    rm -rf "${build_folder}"
+
+    # Build for Linux
+    conda build --py ${PYTHON_VERSION} ${CHANNEL_ARGS} --output-folder "${build_folder}" .
+
+    cd "${build_folder}"
 
     # Convert to other platforms
     if [[ $INPUT_PLATFORMS == *"all"* || $INPUT_PLATFORMS == *"osx-64"* ]]; then
@@ -87,6 +93,10 @@ build_package(){
 }
 
 upload_package(){
+
+    local PYTHON_VERSION=$1
+    local build_folder="build_${PYTHON_VERSION}"
+
     export ANACONDA_API_TOKEN=$ANACONDA_PUSH_TOKEN
     ANACONDA_FORCE_UPLOAD=""
 
@@ -99,40 +109,40 @@ upload_package(){
     exit 0
     fi
 
-    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main build/linux-64/*.tar.bz2
+    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main ${build_folder}/linux-64/*.tar.bz2
 
     if [[ $INPUT_PLATFORMS == *"all"* || $INPUT_PLATFORMS == *"osx-64"* ]]; then
-    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main build/osx-64/*.tar.bz2
+    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main ${build_folder}/osx-64/*.tar.bz2
     fi
     if [[ $INPUT_PLATFORMS == *"all"* || $INPUT_PLATFORMS == *"osx-arm64"* ]]; then
-    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main build/osx-arm64/*.tar.bz2
+    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main ${build_folder}/osx-arm64/*.tar.bz2
     fi
     if [[ $INPUT_PLATFORMS == *"all"* || $INPUT_PLATFORMS == *"linux-32"* ]]; then
-    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main build/linux-32/*.tar.bz2
+    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main ${build_folder}/linux-32/*.tar.bz2
     fi
     if [[ $INPUT_PLATFORMS == *"all"* || $INPUT_PLATFORMS == *"linux-ppc64"* ]]; then
-    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main build/linux-ppc64/*.tar.bz2
+    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main ${build_folder}/linux-ppc64/*.tar.bz2
     fi
     if [[ $INPUT_PLATFORMS == *"all"* || $INPUT_PLATFORMS == *"linux-ppc64le"* ]]; then
-    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main build/linux-ppc64le/*.tar.bz2
+    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main ${build_folder}/linux-ppc64le/*.tar.bz2
     fi
     if [[ $INPUT_PLATFORMS == *"all"* || $INPUT_PLATFORMS == *"linux-s390x"* ]]; then
-    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main build/linux-s390x/*.tar.bz2
+    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main ${build_folder}/linux-s390x/*.tar.bz2
     fi
     if [[ $INPUT_PLATFORMS == *"all"* || $INPUT_PLATFORMS == *"linux-armv6l"* ]]; then
-    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main build/linux-armv6l/*.tar.bz2
+    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main ${build_folder}/linux-armv6l/*.tar.bz2
     fi
     if [[ $INPUT_PLATFORMS == *"all"* || $INPUT_PLATFORMS == *"linux-armv7l"* ]]; then
-    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main build/linux-armv7l/*.tar.bz2
+    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main ${build_folder}/linux-armv7l/*.tar.bz2
     fi
     if [[ $INPUT_PLATFORMS == *"all"* || $INPUT_PLATFORMS == *"linux-aarch64"* ]]; then
-    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main build/linux-aarch64/*.tar.bz2
+    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main ${build_folder}/linux-aarch64/*.tar.bz2
     fi
     if [[ $INPUT_PLATFORMS == *"all"* || $INPUT_PLATFORMS == *"win-32"* ]]; then
-    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main build/win-32/*.tar.bz2
+    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main ${build_folder}/win-32/*.tar.bz2
     fi
     if [[ $INPUT_PLATFORMS == *"all"* || $INPUT_PLATFORMS == *"win-64"* ]]; then
-    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main build/win-64/*.tar.bz2
+    anaconda upload -u ${ANACONDA_USER} $ANACONDA_FORCE_UPLOAD --label main ${build_folder}/win-64/*.tar.bz2
     fi
 
 }
@@ -140,5 +150,5 @@ upload_package(){
 go_to_build_dir
 check_if_meta_yaml_template_file_exists
 create_meta_yaml
-build_package
-upload_package
+build_package 3.7
+upload_package 3.7

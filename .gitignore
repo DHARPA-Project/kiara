@@ -61,7 +61,7 @@ docs/api-documentation.md
 build.sh
 onefile.spec
 .kiara_complete.zsh.zwc
-ci/conda/**/build
+ci/conda/**/build_*
 ci/conda/kiara/meta.yaml
 test.*
 .ipynb_checkpoints/

@@ -3,11 +3,12 @@
 ## Version 0.3.0 (Upcoming)
 
 - changed metadata format of stored value metadata: data store must be cleared when updating to this version
-- refactoring of operation type input names -- this replaces most instances where the input name was 'value_item' (or similar). I've decided that using the value type as input name increases usability of those operations more than the costs associated with having different input names for operations of the same type:
+- refactoring of operation type input names -- this replaces most instances where the input name was 'value_item' (or similar). I've decided that using the value type as input name increases usability of those operations more than the costs associated with having different input names for operations of the same type, for example:
   - pretty_print: 'value_item' -> type name of the value to pretty print
   - extract_metadata: 'value_item' -> type name of the value to extract metadata from
   - import: 'source' input -> input file type, 'value_item' output -> target file type
   - save_value: 'value_item' input -> file type of value to save
+  - convert (renamed to 'create'): value_item to source profile and target type
 
 ## Version 0.2.2
 

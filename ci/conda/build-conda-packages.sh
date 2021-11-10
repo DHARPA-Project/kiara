@@ -150,8 +150,8 @@ upload_package(){
 go_to_build_dir
 check_if_meta_yaml_template_file_exists
 create_meta_yaml
-build_package 3.9 &
-build_package 3.10 &
+build_package 3.9
+#build_package 3.10 &
 wait
 upload_package 3.9
-upload_package 3.10
+#upload_package 3.10

@@ -41,7 +41,6 @@ STEP_ID_KEY = "step_id"
 INVALID_VALUE_NAMES = [
     "kiara",
     "registry",
-    "dict",
     "items_are_valid",
     "set_values",
     "set_value",

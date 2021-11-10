@@ -40,10 +40,11 @@ def test_run_with_valid_inputs():
 
 def test_run_with_save():
 
-    runner = CliRunner()
+    runner = CliRunner(env={"KIARA_DATA_STORE": "/tmp/kiara_save_test"})
+    runner.invoke(cli, "data clear-data-store")
     result = runner.invoke(cli, "run logic.and a=true b=true --save test_save")
     assert result.exit_code == 0
     assert "True" in result.stdout
 
     result_data = runner.invoke(cli, "data list")
-    assert "test_save" in result_data.stdout
+    assert "test_save-y" in result_data.stdout

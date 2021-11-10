@@ -49,7 +49,7 @@ about:
   license: "Mozilla Public 2.0 (MPL 2.0)"
   license_family: MOZILLA
   license_file:
-  summary: "A workflow management and execution engine for the DHARPA project."
+  summary: "A data orchestration engine."
   doc_url: https://dharpa.org/kiara.documentation/
   dev_url: https://dharpa.org/kiara
 

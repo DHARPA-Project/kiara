@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-#  Copyright (c) 2020, Markus Binsteiner
+#  Copyright (c) 2020-2021, Markus Binsteiner
 #
 #  Mozilla Public License Version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 

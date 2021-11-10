@@ -1,0 +1,4809 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Kiara project">
+      
+      
+      
+        <meta name="author" content="Markus Binsteiner">
+      
+      
+        <link rel="canonical" href="https://dharpa.org/kiara/0.3.0/api_reference/kiara.data.values/">
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+    
+    
+      
+        <title>➜ data.values - Kiara</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../css/ansi-colours.css">
+    
+      <link rel="stylesheet" href="../../css/jupyter-cells.css">
+    
+      <link rel="stylesheet" href="../../css/pandas-dataframe.css">
+    
+    
+      
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    <script>function __prefix(e){return new URL("../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#kiaradatavalues" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Kiara" class="md-header__button md-logo" aria-label="Kiara" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Kiara
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ➜ data.values
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/DHARPA-Project/kiara/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Kiara" class="md-nav__button md-logo" aria-label="Kiara" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Kiara
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/DHARPA-Project/kiara/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/" class="md-nav__link">
+        Install
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Architecture
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Architecture" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Architecture
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2">
+          Data
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Data" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Data
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/data/" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/data/data_formats/" class="md-nav__link">
+        Formats
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3">
+          Workflows
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Workflows" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          Workflows
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/workflows/" class="md-nav__link">
+        Workflows
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/workflows/modularity/modularity/" class="md-nav__link">
+        Modularity
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/metadata/" class="md-nav__link">
+        Metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/decisions/" class="md-nav__link">
+        Decisions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/assumptions/" class="md-nav__link">
+        Assumptions
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          API reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="API reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          API reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara/" class="md-nav__link">
+        kiara
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.config/" class="md-nav__link">
+        ➜ config
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.data/" class="md-nav__link">
+        ➜ data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.data.onboarding/" class="md-nav__link">
+        ➜ data.onboarding
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.data.onboarding.batch/" class="md-nav__link">
+        ➜ data.onboarding.batch
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.data.registry/" class="md-nav__link">
+        ➜ data.registry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.data.registry.store/" class="md-nav__link">
+        ➜ data.registry.store
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.data.types/" class="md-nav__link">
+        ➜ data.types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.data.types.core/" class="md-nav__link">
+        ➜ data.types.core
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.data.types.type_mgmt/" class="md-nav__link">
+        ➜ data.types.type_mgmt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          ➜ data.values
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        ➜ data.values
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__" class="md-nav__link">
+    kiara.data.values.__init__
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value" class="md-nav__link">
+    Value
+  </a>
+  
+    <nav class="md-nav" aria-label="Value">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.creation_date" class="md-nav__link">
+    creation_date
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.hashes" class="md-nav__link">
+    hashes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.id" class="md-nav__link">
+    id
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.is_none" class="md-nav__link">
+    is_none
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.is_set" class="md-nav__link">
+    is_set
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.metadata" class="md-nav__link">
+    metadata
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.type_obj" class="md-nav__link">
+    type_obj
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.value_schema" class="md-nav__link">
+    value_schema
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.__eq__" class="md-nav__link">
+    __eq__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.__hash__" class="md-nav__link">
+    __hash__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.__repr__" class="md-nav__link">
+    __repr__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.__str__" class="md-nav__link">
+    __str__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.get_hash" class="md-nav__link">
+    get_hash()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.get_metadata" class="md-nav__link">
+    get_metadata()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.item_is_valid" class="md-nav__link">
+    item_is_valid()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.item_status" class="md-nav__link">
+    item_status()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.save" class="md-nav__link">
+    save()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueAlias" class="md-nav__link">
+    ValueAlias
+  </a>
+  
+    <nav class="md-nav" aria-label="ValueAlias">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueAlias.repo_name" class="md-nav__link">
+    repo_name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueAlias.tag" class="md-nav__link">
+    tag
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueAlias.version" class="md-nav__link">
+    version
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueHash" class="md-nav__link">
+    ValueHash
+  </a>
+  
+    <nav class="md-nav" aria-label="ValueHash">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueHash.hash" class="md-nav__link">
+    hash
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueHash.hash_type" class="md-nav__link">
+    hash_type
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueInfo" class="md-nav__link">
+    ValueInfo
+  </a>
+  
+    <nav class="md-nav" aria-label="ValueInfo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueInfo.deserialize_config" class="md-nav__link">
+    deserialize_config
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueInfo.hashes" class="md-nav__link">
+    hashes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueInfo.is_valid" class="md-nav__link">
+    is_valid
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueInfo.lineage" class="md-nav__link">
+    lineage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueInfo.metadata" class="md-nav__link">
+    metadata
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueInfo.value_id" class="md-nav__link">
+    value_id
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueInfo.value_schema" class="md-nav__link">
+    value_schema
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueLineage" class="md-nav__link">
+    ValueLineage
+  </a>
+  
+    <nav class="md-nav" aria-label="ValueLineage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueLineage.inputs" class="md-nav__link">
+    inputs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueLineage.output_name" class="md-nav__link">
+    output_name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueLineage.value_index" class="md-nav__link">
+    value_index
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueLineage.create_renderable" class="md-nav__link">
+    create_renderable()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSchema" class="md-nav__link">
+    ValueSchema
+  </a>
+  
+    <nav class="md-nav" aria-label="ValueSchema">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSchema.default" class="md-nav__link">
+    default
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSchema.desc" class="md-nav__link">
+    desc
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSchema.doc" class="md-nav__link">
+    doc
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSchema.is_constant" class="md-nav__link">
+    is_constant
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSchema.optional" class="md-nav__link">
+    optional
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSchema.type" class="md-nav__link">
+    type
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSchema.type_config" class="md-nav__link">
+    type_config
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSchema.__eq__" class="md-nav__link">
+    __eq__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSchema.__hash__" class="md-nav__link">
+    __hash__()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSlot" class="md-nav__link">
+    ValueSlot
+  </a>
+  
+    <nav class="md-nav" aria-label="ValueSlot">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSlot.id" class="md-nav__link">
+    id
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSlot.tags" class="md-nav__link">
+    tags
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSlot.value_schema" class="md-nav__link">
+    value_schema
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSlot.values" class="md-nav__link">
+    values
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSlot.__eq__" class="md-nav__link">
+    __eq__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSlot.__hash__" class="md-nav__link">
+    __hash__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSlot.add_value" class="md-nav__link">
+    add_value()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.data.values.value_set/" class="md-nav__link">
+        ➜ data.values.value_set
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.defaults/" class="md-nav__link">
+        ➜ defaults
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.doc/" class="md-nav__link">
+        ➜ doc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.doc.generate_api_doc/" class="md-nav__link">
+        ➜ doc.generate_api_doc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.doc.mkdocs_macros_cli/" class="md-nav__link">
+        ➜ doc.mkdocs_macros_cli
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.doc.mkdocs_macros_kiara/" class="md-nav__link">
+        ➜ doc.mkdocs_macros_kiara
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.events/" class="md-nav__link">
+        ➜ events
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.examples/" class="md-nav__link">
+        ➜ examples
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.examples.example_controller/" class="md-nav__link">
+        ➜ examples.example_controller
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.exceptions/" class="md-nav__link">
+        ➜ exceptions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.info/" class="md-nav__link">
+        ➜ info
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.info.kiara/" class="md-nav__link">
+        ➜ info.kiara
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.info.metadata/" class="md-nav__link">
+        ➜ info.metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.info.modules/" class="md-nav__link">
+        ➜ info.modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.info.operations/" class="md-nav__link">
+        ➜ info.operations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.info.pipelines/" class="md-nav__link">
+        ➜ info.pipelines
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.info.types/" class="md-nav__link">
+        ➜ info.types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces/" class="md-nav__link">
+        ➜ interfaces
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli/" class="md-nav__link">
+        ➜ interfaces.cli
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.data/" class="md-nav__link">
+        ➜ interfaces.cli.data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.data.commands/" class="md-nav__link">
+        ➜ interfaces.cli.data.commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.dev/" class="md-nav__link">
+        ➜ interfaces.cli.dev
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.dev.commands/" class="md-nav__link">
+        ➜ interfaces.cli.dev.commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.explain/" class="md-nav__link">
+        ➜ interfaces.cli.explain
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.info/" class="md-nav__link">
+        ➜ interfaces.cli.info
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.info.commands/" class="md-nav__link">
+        ➜ interfaces.cli.info.commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.metadata/" class="md-nav__link">
+        ➜ interfaces.cli.metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.metadata.commands/" class="md-nav__link">
+        ➜ interfaces.cli.metadata.commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.module/" class="md-nav__link">
+        ➜ interfaces.cli.module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.module.commands/" class="md-nav__link">
+        ➜ interfaces.cli.module.commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.operation/" class="md-nav__link">
+        ➜ interfaces.cli.operation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.operation.commands/" class="md-nav__link">
+        ➜ interfaces.cli.operation.commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.pipeline/" class="md-nav__link">
+        ➜ interfaces.cli.pipeline
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.pipeline.commands/" class="md-nav__link">
+        ➜ interfaces.cli.pipeline.commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.run/" class="md-nav__link">
+        ➜ interfaces.cli.run
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.type/" class="md-nav__link">
+        ➜ interfaces.cli.type
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.type.commands/" class="md-nav__link">
+        ➜ interfaces.cli.type.commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.utils/" class="md-nav__link">
+        ➜ interfaces.cli.utils
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.python_api/" class="md-nav__link">
+        ➜ interfaces.python_api
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.python_api.controller/" class="md-nav__link">
+        ➜ interfaces.python_api.controller
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.kiara/" class="md-nav__link">
+        ➜ kiara
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.metadata/" class="md-nav__link">
+        ➜ metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.metadata.core_models/" class="md-nav__link">
+        ➜ metadata.core_models
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.metadata.data/" class="md-nav__link">
+        ➜ metadata.data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.metadata.mgmt/" class="md-nav__link">
+        ➜ metadata.mgmt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.metadata.module_models/" class="md-nav__link">
+        ➜ metadata.module_models
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.metadata.operation_models/" class="md-nav__link">
+        ➜ metadata.operation_models
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.metadata.type_models/" class="md-nav__link">
+        ➜ metadata.type_models
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.module/" class="md-nav__link">
+        ➜ module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.module_config/" class="md-nav__link">
+        ➜ module_config
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.module_mgmt/" class="md-nav__link">
+        ➜ module_mgmt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.module_mgmt.merged/" class="md-nav__link">
+        ➜ module_mgmt.merged
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.module_mgmt.pipelines/" class="md-nav__link">
+        ➜ module_mgmt.pipelines
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.module_mgmt.python_classes/" class="md-nav__link">
+        ➜ module_mgmt.python_classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.modules/" class="md-nav__link">
+        ➜ modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.modules.metadata/" class="md-nav__link">
+        ➜ modules.metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.modules.pipelines/" class="md-nav__link">
+        ➜ modules.pipelines
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.modules.save_value/" class="md-nav__link">
+        ➜ modules.save_value
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.modules.type_conversion/" class="md-nav__link">
+        ➜ modules.type_conversion
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.operations/" class="md-nav__link">
+        ➜ operations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.operations.calculate_hash/" class="md-nav__link">
+        ➜ operations.calculate_hash
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.operations.create_value/" class="md-nav__link">
+        ➜ operations.create_value
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.operations.data_import/" class="md-nav__link">
+        ➜ operations.data_import
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.operations.extract_metadata/" class="md-nav__link">
+        ➜ operations.extract_metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.operations.merge_values/" class="md-nav__link">
+        ➜ operations.merge_values
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.operations.pretty_print/" class="md-nav__link">
+        ➜ operations.pretty_print
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.operations.sample/" class="md-nav__link">
+        ➜ operations.sample
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.operations.serialize/" class="md-nav__link">
+        ➜ operations.serialize
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.operations.store_value/" class="md-nav__link">
+        ➜ operations.store_value
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.pipeline/" class="md-nav__link">
+        ➜ pipeline
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.pipeline.config/" class="md-nav__link">
+        ➜ pipeline.config
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.pipeline.controller/" class="md-nav__link">
+        ➜ pipeline.controller
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.pipeline.controller.batch/" class="md-nav__link">
+        ➜ pipeline.controller.batch
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.pipeline.listeners/" class="md-nav__link">
+        ➜ pipeline.listeners
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.pipeline.module/" class="md-nav__link">
+        ➜ pipeline.module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.pipeline.pipeline/" class="md-nav__link">
+        ➜ pipeline.pipeline
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.pipeline.structure/" class="md-nav__link">
+        ➜ pipeline.structure
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.pipeline.utils/" class="md-nav__link">
+        ➜ pipeline.utils
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.pipeline.values/" class="md-nav__link">
+        ➜ pipeline.values
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.processing/" class="md-nav__link">
+        ➜ processing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.processing.parallel/" class="md-nav__link">
+        ➜ processing.parallel
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.processing.processor/" class="md-nav__link">
+        ➜ processing.processor
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.processing.synchronous/" class="md-nav__link">
+        ➜ processing.synchronous
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.rendering/" class="md-nav__link">
+        ➜ rendering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.rendering.jinja/" class="md-nav__link">
+        ➜ rendering.jinja
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.rendering.mgmt/" class="md-nav__link">
+        ➜ rendering.mgmt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.sessions/" class="md-nav__link">
+        ➜ sessions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.utils/" class="md-nav__link">
+        ➜ utils
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.utils.class_loading/" class="md-nav__link">
+        ➜ utils.class_loading
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.utils.concurrency/" class="md-nav__link">
+        ➜ utils.concurrency
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.utils.doc/" class="md-nav__link">
+        ➜ utils.doc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.utils.global_metadata/" class="md-nav__link">
+        ➜ utils.global_metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.utils.jupyter/" class="md-nav__link">
+        ➜ utils.jupyter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.utils.modules/" class="md-nav__link">
+        ➜ utils.modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.utils.output/" class="md-nav__link">
+        ➜ utils.output
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.workflow/" class="md-nav__link">
+        ➜ workflow
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.workflow.kiara_workflow/" class="md-nav__link">
+        ➜ workflow.kiara_workflow
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.workflow.wrapped/" class="md-nav__link">
+        ➜ workflow.wrapped
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__" class="md-nav__link">
+    kiara.data.values.__init__
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value" class="md-nav__link">
+    Value
+  </a>
+  
+    <nav class="md-nav" aria-label="Value">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.creation_date" class="md-nav__link">
+    creation_date
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.hashes" class="md-nav__link">
+    hashes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.id" class="md-nav__link">
+    id
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.is_none" class="md-nav__link">
+    is_none
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.is_set" class="md-nav__link">
+    is_set
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.metadata" class="md-nav__link">
+    metadata
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.type_obj" class="md-nav__link">
+    type_obj
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.value_schema" class="md-nav__link">
+    value_schema
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.__eq__" class="md-nav__link">
+    __eq__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.__hash__" class="md-nav__link">
+    __hash__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.__repr__" class="md-nav__link">
+    __repr__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.__str__" class="md-nav__link">
+    __str__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.get_hash" class="md-nav__link">
+    get_hash()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.get_metadata" class="md-nav__link">
+    get_metadata()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.item_is_valid" class="md-nav__link">
+    item_is_valid()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.item_status" class="md-nav__link">
+    item_status()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.Value.save" class="md-nav__link">
+    save()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueAlias" class="md-nav__link">
+    ValueAlias
+  </a>
+  
+    <nav class="md-nav" aria-label="ValueAlias">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueAlias.repo_name" class="md-nav__link">
+    repo_name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueAlias.tag" class="md-nav__link">
+    tag
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueAlias.version" class="md-nav__link">
+    version
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueHash" class="md-nav__link">
+    ValueHash
+  </a>
+  
+    <nav class="md-nav" aria-label="ValueHash">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueHash.hash" class="md-nav__link">
+    hash
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueHash.hash_type" class="md-nav__link">
+    hash_type
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueInfo" class="md-nav__link">
+    ValueInfo
+  </a>
+  
+    <nav class="md-nav" aria-label="ValueInfo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueInfo.deserialize_config" class="md-nav__link">
+    deserialize_config
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueInfo.hashes" class="md-nav__link">
+    hashes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueInfo.is_valid" class="md-nav__link">
+    is_valid
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueInfo.lineage" class="md-nav__link">
+    lineage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueInfo.metadata" class="md-nav__link">
+    metadata
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueInfo.value_id" class="md-nav__link">
+    value_id
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueInfo.value_schema" class="md-nav__link">
+    value_schema
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueLineage" class="md-nav__link">
+    ValueLineage
+  </a>
+  
+    <nav class="md-nav" aria-label="ValueLineage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueLineage.inputs" class="md-nav__link">
+    inputs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueLineage.output_name" class="md-nav__link">
+    output_name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueLineage.value_index" class="md-nav__link">
+    value_index
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueLineage.create_renderable" class="md-nav__link">
+    create_renderable()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSchema" class="md-nav__link">
+    ValueSchema
+  </a>
+  
+    <nav class="md-nav" aria-label="ValueSchema">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSchema.default" class="md-nav__link">
+    default
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSchema.desc" class="md-nav__link">
+    desc
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSchema.doc" class="md-nav__link">
+    doc
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSchema.is_constant" class="md-nav__link">
+    is_constant
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSchema.optional" class="md-nav__link">
+    optional
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSchema.type" class="md-nav__link">
+    type
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSchema.type_config" class="md-nav__link">
+    type_config
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSchema.__eq__" class="md-nav__link">
+    __eq__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSchema.__hash__" class="md-nav__link">
+    __hash__()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSlot" class="md-nav__link">
+    ValueSlot
+  </a>
+  
+    <nav class="md-nav" aria-label="ValueSlot">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSlot.id" class="md-nav__link">
+    id
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSlot.tags" class="md-nav__link">
+    tags
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSlot.value_schema" class="md-nav__link">
+    value_schema
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSlot.values" class="md-nav__link">
+    values
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSlot.__eq__" class="md-nav__link">
+    __eq__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSlot.__hash__" class="md-nav__link">
+    __hash__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.values.__init__.ValueSlot.add_value" class="md-nav__link">
+    add_value()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/DHARPA-Project/kiara/edit/master/src/kiara/data/values/__init__.py" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="kiaradatavalues">kiara.data.values<a class="headerlink" href="#kiaradatavalues" title="Permanent link">&para;</a></h1>
+
+
+  <div class="doc doc-object doc-module">
+
+<a id="kiara.data.values.__init__"></a>
+    <div class="doc doc-contents first">
+
+      <p>A module that contains value-related classes for <em>Kiara</em>.</p>
+<p>A value in Kiara-speak is a pointer to actual data (aka 'bytes'). It contains metadata about that data (like whether it's
+valid/set, what type/schema it has, when it was last modified, ...), but it does not contain the data itself. The reason for
+that is that such data can be fairly large, and in a lot of cases it is not necessary for the code involved to have
+access to it, access to the metadata is enough.</p>
+<p>Each Value has a unique id, which can be used to retrieve the data (whole, or parts of it) from a [DataRegistry][kiara.data.registry.DataRegistry].
+In addition, that id can be used to subscribe to change events for a value (published whenever the data that is associated with a value was changed).</p>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h2 id="kiara.data.values.__init__.Value" class="doc doc-heading">
+        <code>Value</code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.Value" class="headerlink" title="Permanent link">&para;</a></h2>
+
+    <div class="doc doc-contents ">
+
+      <p>The underlying base class for all values.</p>
+<p>The important subclasses here are the ones inheriting from 'PipelineValue', as those are registered in the data
+registry.</p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.Value.creation_date" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">creation_date</span><span class="p">:</span> <span class="n">datetime</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.Value.creation_date" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The time this value was created value happened.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.Value.hashes" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">hashes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">kiara</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="fm">__init__</span><span class="o">.</span><span class="n">ValueHash</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.Value.hashes" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Available hashes relating to the actual value data. This attribute is not populated by default, use the 'get_hashes()' method to request one or several hash items, afterwards those hashes will be reflected in this attribute.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.Value.id" class="doc doc-heading">
+<code class="highlight language-python"><span class="nb">id</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.Value.id" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>A unique id for this value.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.Value.is_none" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">is_none</span><span class="p">:</span> <span class="nb">bool</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.Value.is_none" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Whether the value is 'None'.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.Value.is_set" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">is_set</span><span class="p">:</span> <span class="nb">bool</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.Value.is_set" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Whether the value was set (in some way: user input, default, constant...).</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.Value.metadata" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.Value.metadata" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Available metadata relating to the actual value data (size, no. of rows, etc. -- depending on data type). This attribute is not populated by default, use the 'get_metadata()' method to request one or several metadata items, afterwards those metadata items will be reflected in this attribute.</p>
+    </div>
+
+  </div>
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.Value.type_obj" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">type_obj</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.Value.type_obj" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Return the object that contains all the type information for this value.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.Value.value_schema" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">value_schema</span><span class="p">:</span> <span class="n">ValueSchema</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.Value.value_schema" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The schema of this value.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.values.__init__.Value.__eq__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-special"><code>special</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.Value.__eq__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Return self==value.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/values/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+
+    <span class="c1"># TODO: compare all attributes if id is equal, just to make sure...</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">id</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.values.__init__.Value.__hash__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-special"><code>special</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.Value.__hash__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Return hash(self).</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/values/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.values.__init__.Value.__repr__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-special"><code>special</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.Value.__repr__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Return repr(self).</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/values/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Value(id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">, type=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="si">}</span><span class="s2">, is_set=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">is_set</span><span class="si">}</span><span class="s2">, is_none=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">is_none</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.values.__init__.Value.__str__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-special"><code>special</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.Value.__str__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Return str(self).</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/values/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.values.__init__.Value.get_hash" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hash_type</span><span class="p">)</span></code>
+
+
+<a href="#kiara.data.values.__init__.Value.get_hash" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Calculate the hash of a specified type for this value. Hashes are cached.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/values/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hash_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueHash</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the hash of a specified type for this value. Hashes are cached.&quot;&quot;&quot;</span>
+
+    <span class="n">hashes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_hashes</span><span class="p">(</span><span class="n">hash_type</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">hashes</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.values.__init__.Value.get_metadata" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">metadata_keys</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">also_return_schema</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+
+<a href="#kiara.data.values.__init__.Value.get_metadata" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Retrieve (if necessary) and return metadata for the specified keys.</p>
+<p>By default, the metadata is returned as a map (in case of a single key: single-item map) with metadata key as
+dict key, and the metadata as value. If 'also_return_schema' was set to <code>True</code>, the value will be a two-key
+map with the metadata under the <code>metadata_item</code> subkey, and the value schema under <code>metadata_schema</code>.</p>
+<p>If no metadata key is specified, all available metadata for this value type will be returned.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>metadata_keys</code></td>
+        <td><code>str</code></td>
+        <td><p>the metadata keys to retrieve metadata (empty for all available metadata)</p></td>
+        <td><code>()</code></td>
+      </tr>
+      <tr>
+        <td><code>also_return_schema</code></td>
+        <td><code>bool</code></td>
+        <td><p>whether to also return the schema for each metadata item</p></td>
+        <td><code>False</code></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/values/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_metadata</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">metadata_keys</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">also_return_schema</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Retrieve (if necessary) and return metadata for the specified keys.</span>
+
+<span class="sd">    By default, the metadata is returned as a map (in case of a single key: single-item map) with metadata key as</span>
+<span class="sd">    dict key, and the metadata as value. If &#39;also_return_schema&#39; was set to `True`, the value will be a two-key</span>
+<span class="sd">    map with the metadata under the ``metadata_item`` subkey, and the value schema under ``metadata_schema``.</span>
+
+<span class="sd">    If no metadata key is specified, all available metadata for this value type will be returned.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        metadata_keys: the metadata keys to retrieve metadata (empty for all available metadata)</span>
+<span class="sd">        also_return_schema: whether to also return the schema for each metadata item</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">metadata_keys</span><span class="p">:</span>
+        <span class="n">_metadata_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">metadata_mgmt</span><span class="o">.</span><span class="n">get_metadata_keys_for_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">_metadata_keys</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_metadata_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">metadata_keys</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">missing</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">metadata_key</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_metadata_keys</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">metadata_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">also_return_schema</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">metadata_key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">metadata_key</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">metadata_key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">metadata_key</span><span class="p">][</span><span class="s2">&quot;metadata_item&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">missing</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">metadata_key</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">missing</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="n">_md</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">metadata_mgmt</span><span class="o">.</span><span class="n">get_value_metadata</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">missing</span><span class="p">,</span> <span class="n">also_return_schema</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_md</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">if</span> <span class="n">also_return_schema</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;metadata_item&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">())}</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.values.__init__.Value.item_is_valid" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">item_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.data.values.__init__.Value.item_is_valid" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Check whether the current value is valid</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/values/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">item_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Check whether the current value is valid&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">optional</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_set</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_none</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.values.__init__.Value.item_status" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">item_status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.data.values.__init__.Value.item_status" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Print a human readable short description of this values status.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/values/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">item_status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Print a human readable short description of this values status.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">optional</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_none</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;no value (not required)&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">default</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span> <span class="ow">in</span> <span class="p">[</span>
+                    <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;boolean&quot;</span><span class="p">,</span>
+                <span class="p">]:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">default</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="s2">&quot;set (default)&quot;</span>
+                <span class="k">return</span> <span class="s2">&quot;set&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;not set (not required)&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_none</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;no value&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">default</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span> <span class="ow">in</span> <span class="p">[</span>
+                    <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;boolean&quot;</span><span class="p">,</span>
+                <span class="p">]:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">default</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="s2">&quot;set (default)&quot;</span>
+                <span class="k">return</span> <span class="s2">&quot;set&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;not set&quot;</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.values.__init__.Value.save" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">register_missing_aliases</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+
+<a href="#kiara.data.values.__init__.Value.save" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Save this value, under the specified alias(es).</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/values/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">save</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">aliases</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">register_missing_aliases</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Value&quot;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Save this value, under the specified alias(es).&quot;&quot;&quot;</span>
+
+    <span class="c1"># if self.get_value_lineage():</span>
+    <span class="c1">#     for field_name, value in self.get_value_lineage().inputs.items():</span>
+    <span class="c1">#         value_obj = self._registry.get_value_obj(value)</span>
+    <span class="c1">#         try:</span>
+    <span class="c1">#             value_obj.save()</span>
+    <span class="c1">#         except Exception as e:</span>
+    <span class="c1">#             print(e)</span>
+
+    <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_store</span><span class="o">.</span><span class="n">register_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">aliases</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_store</span><span class="o">.</span><span class="n">link_aliases</span><span class="p">(</span>
+            <span class="n">value</span><span class="p">,</span> <span class="o">*</span><span class="n">aliases</span><span class="p">,</span> <span class="n">register_missing_aliases</span><span class="o">=</span><span class="n">register_missing_aliases</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">value</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h2 id="kiara.data.values.__init__.ValueAlias" class="doc doc-heading">
+        <code>ValueAlias</code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueAlias" class="headerlink" title="Permanent link">&para;</a></h2>
+
+    <div class="doc doc-contents ">
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueAlias.repo_name" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">repo_name</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueAlias.repo_name" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The name of the data repo the value lives in.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueAlias.tag" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">tag</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueAlias.tag" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The tag for the alias.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueAlias.version" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">version</span><span class="p">:</span> <span class="nb">int</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueAlias.version" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The version of this alias.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h2 id="kiara.data.values.__init__.ValueHash" class="doc doc-heading">
+        <code>ValueHash</code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueHash" class="headerlink" title="Permanent link">&para;</a></h2>
+
+    <div class="doc doc-contents ">
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueHash.hash" class="doc doc-heading">
+<code class="highlight language-python"><span class="nb">hash</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueHash.hash" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The value hash.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueHash.hash_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">hash_type</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueHash.hash_type" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The value hash method.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h2 id="kiara.data.values.__init__.ValueInfo" class="doc doc-heading">
+        <code>ValueInfo</code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueInfo" class="headerlink" title="Permanent link">&para;</a></h2>
+
+    <div class="doc doc-contents ">
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueInfo.deserialize_config" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">deserialize_config</span><span class="p">:</span> <span class="n">DeserializeConfig</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueInfo.deserialize_config" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The module config (incl. inputs) to deserialize the value.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueInfo.hashes" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">hashes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">kiara</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="fm">__init__</span><span class="o">.</span><span class="n">ValueHash</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueInfo.hashes" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>All available hashes for this value.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueInfo.is_valid" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">is_valid</span><span class="p">:</span> <span class="nb">bool</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueInfo.is_valid" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Whether the item is valid (in the context of its schema).</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueInfo.lineage" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">lineage</span><span class="p">:</span> <span class="n">ValueLineage</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueInfo.lineage" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Information about how the value was created.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueInfo.metadata" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueInfo.metadata" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The metadata associated with this value.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueInfo.value_id" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">value_id</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueInfo.value_id" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The value id.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueInfo.value_schema" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">value_schema</span><span class="p">:</span> <span class="n">ValueSchema</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueInfo.value_schema" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The value schema.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h2 id="kiara.data.values.__init__.ValueLineage" class="doc doc-heading">
+        <code>ValueLineage</code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueLineage" class="headerlink" title="Permanent link">&para;</a></h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Model containing the lineage of a value.</p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueLineage.inputs" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueInfo</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueLineage.inputs" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The inputs that were used to create the value this refers to.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueLineage.output_name" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueLineage.output_name" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The result field name for the value this refers to.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueLineage.value_index" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">value_index</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueInfo</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueLineage.value_index" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Index of all values that are associated with this value lineage.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueLineage.create_renderable" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
+
+
+<a href="#kiara.data.values.__init__.ValueLineage.create_renderable" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Create a renderable for this module configuration.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/values/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+    <span class="n">all_ids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">find_all_ids_in_lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+    <span class="n">id_color_map</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">v_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">all_ids</span><span class="p">):</span>
+        <span class="n">id_color_map</span><span class="p">[</span><span class="n">v_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">COLOR_LIST</span><span class="p">[</span><span class="n">idx</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">COLOR_LIST</span><span class="p">)]</span>
+
+    <span class="n">show_ids</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_ids&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">fill_lineage_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_ids</span><span class="o">=</span><span class="n">show_ids</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tree</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h2 id="kiara.data.values.__init__.ValueSchema" class="doc doc-heading">
+        <code>ValueSchema</code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueSchema" class="headerlink" title="Permanent link">&para;</a></h2>
+
+    <div class="doc doc-contents ">
+
+      <p>The schema of a value.</p>
+<p>The schema contains the [ValueType][kiara.data.values.ValueType] of a value, as well as an optional default that
+will be used if no user input was given (yet) for a value.</p>
+<p>For more complex container types like array, tables, unions etc, types can also be configured with values from the <code>type_config</code> field.</p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueSchema.default" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">default</span><span class="p">:</span> <span class="n">Any</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueSchema.default" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>A default value.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueSchema.desc" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">desc</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueSchema.desc" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The first line of the 'doc' value.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueSchema.doc" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">doc</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueSchema.doc" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>A description for the value of this input field.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueSchema.is_constant" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">is_constant</span><span class="p">:</span> <span class="nb">bool</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueSchema.is_constant" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Whether the value is a constant.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueSchema.optional" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueSchema.optional" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Whether this value is required (True), or whether 'None' value is allowed (False).</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueSchema.type" class="doc doc-heading">
+<code class="highlight language-python"><span class="nb">type</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueSchema.type" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The type of the value.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueSchema.type_config" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">type_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueSchema.type_config" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Configuration for the type, in case it's complex.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueSchema.__eq__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-special"><code>special</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueSchema.__eq__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Return self==value.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/values/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">default</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueSchema.__hash__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-special"><code>special</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueSchema.__hash__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Return hash(self).</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/values/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span><span class="p">))</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h2 id="kiara.data.values.__init__.ValueSlot" class="doc doc-heading">
+        <code>ValueSlot</code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueSlot" class="headerlink" title="Permanent link">&para;</a></h2>
+
+    <div class="doc doc-contents ">
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueSlot.id" class="doc doc-heading">
+<code class="highlight language-python"><span class="nb">id</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueSlot.id" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The id for this slot.</p>
+    </div>
+
+  </div>
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueSlot.tags" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">tags</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueSlot.tags" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The tags for this value slot (tag name as key, linked version as value.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueSlot.value_schema" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">value_schema</span><span class="p">:</span> <span class="n">ValueSchema</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueSlot.value_schema" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The schema for the values of this slot.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueSlot.values" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="fm">__init__</span><span class="o">.</span><span class="n">Value</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueSlot.values" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The values of this slot, with versions as key.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueSlot.__eq__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-special"><code>special</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueSlot.__eq__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Return self==value.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/values/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">ValueSlot</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">id</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueSlot.__hash__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-special"><code>special</code></small>
+  </span>
+
+<a href="#kiara.data.values.__init__.ValueSlot.__hash__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Return hash(self).</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/values/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.values.__init__.ValueSlot.add_value" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">add_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">trigger_callbacks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+<a href="#kiara.data.values.__init__.ValueSlot.add_value" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Add a value to this slot.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/values/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">add_value</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span>
+    <span class="n">trigger_callbacks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Add a value to this slot.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">latest_version_nr</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_latest_value</span><span class="p">()</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">latest_version_nr</span>
+
+    <span class="c1"># TODO: check value data equality</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">is_constant</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
+            <span class="kn">import</span> <span class="nn">traceback</span>
+
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_stack</span><span class="p">()</span>
+
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Can&#39;t add value: value slot marked as &#39;constant&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="n">version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">latest_version_nr</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">version</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">version</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">if</span> <span class="n">tags</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">version</span>
+
+    <span class="k">if</span> <span class="n">trigger_callbacks</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">cb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">cb</span><span class="o">.</span><span class="n">values_updated</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">version</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../kiara.data.types.type_mgmt/" class="md-footer__link md-footer__link--prev" aria-label="Previous: ➜ data.types.type_mgmt" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              ➜ data.types.type_mgmt
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../kiara.data.values.value_set/" class="md-footer__link md-footer__link--next" aria-label="Next: ➜ data.values.value_set" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              ➜ data.values.value_set
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            DHARPA project
+          </div>
+        
+        
+          Made with
+          <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+            Material for MkDocs
+          </a>
+        
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      
+    
+  </body>
+</html>

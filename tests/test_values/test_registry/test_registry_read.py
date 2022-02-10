@@ -161,3 +161,33 @@ def test_default_data_registry_aliases(kiara: Kiara):
     aliases = reg.find_aliases_for_value(val_1.id)
     assert len(aliases) == 1
     assert aliases[0].alias == "xxx"
+
+
+# def test_default_data_registry_aliases_tags(kiara: Kiara):
+#
+#     reg = InMemoryDataRegistry(kiara=kiara)
+#
+#     string_schema = ValueSchema(type="string")
+#     value_slot_1 = reg.register_alias(value_or_schema=string_schema, alias_name="xxx@first_tag")
+#     assert len(reg.alias_names) == 1
+#     assert "xxx" in reg.alias_names
+#
+#     with pytest.raises(Exception) as exc_info:
+#         value_slot_1.get_latest_value()
+#
+#     assert "No value added" in str(exc_info.value)
+#
+#     value_ret = reg.get_value_obj("xxx")
+#     assert value_ret is None
+#
+#     val_1 = reg.register_data(value_data="xxx", value_schema=string_schema)
+#     value_slot_1.add_value(val_1)
+#
+#     assert value_slot_1.get_latest_value().get_value_data() == "xxx"
+#
+#     assert val_1.id == value_slot_1.get_latest_value().id
+#
+#     reg.register_alias(value_or_schema=string_schema, alias_name="yyy")
+#     aliases = reg.find_aliases_for_value(val_1.id)
+#     assert len(aliases) == 1
+#     assert aliases[0].alias == "xxx"

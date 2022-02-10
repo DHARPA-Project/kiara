@@ -44,8 +44,8 @@ CAMEL_TO_SNAKE_REGEX = re.compile(r"(?<!^)(?=[A-Z])")
 
 def is_debug() -> bool:
 
-    debug = os.environ.get("DEBUG", None)
-    if isinstance(debug, str) and debug.lower() == "true":
+    debug = os.environ.get("DEBUG", "")
+    if debug.lower() == "true":
         return True
     else:
         return False
@@ -53,8 +53,8 @@ def is_debug() -> bool:
 
 def is_develop() -> bool:
 
-    debug = os.environ.get("DEVELOP", None)
-    if isinstance(debug, str) and debug.lower() == "true":
+    debug = os.environ.get("DEVELOP", "")
+    if debug.lower() == "true":
         return True
     else:
         return False
@@ -348,6 +348,39 @@ def merge_dicts(
         dpath.util.merge(current, copy.deepcopy(d))
 
     return current
+
+
+def find_free_id(
+    stem: str,
+    current_ids: typing.Iterable[str],
+    sep="_",
+) -> str:
+    """Find a free var (or other name) based on a stem string, based on a list of provided existing names.
+
+    Args:
+        stem (str): the base string to use
+        current_ids (Iterable[str]): currently existing names
+        method (str): the method to create new names (allowed: 'count' -- for now)
+        method_args (dict): prototing_config for the creation method
+
+    Returns:
+        str: a free name
+    """
+
+    start_count = 1
+    if stem not in current_ids:
+        return stem
+
+    i = start_count
+
+    # new_name = None
+    while True:
+        new_name = f"{stem}{sep}{i}"
+        if new_name in current_ids:
+            i = i + 1
+            continue
+        break
+    return new_name
 
 
 string_types = (type(b""), type(""))

@@ -134,9 +134,12 @@ class SampleValueModule(KiaraModule):
 class SampleValueOperationType(OperationType):
     """Operation type for sampling data of different types.
 
-    This is useful to reduce the size of some datasets in test-runs, while adjusting parameters and the like. Operations of this
+    This is useful to reduce the size of some datasets in previews and test-runs, while adjusting parameters and the like. Operations of this
     type can implement very simple or complex ways to take samples of the data they are fed. The most important ones are
     sampling operations relating to tables and arrays, but it might also make sense to sample texts, image-sets and so on.
+
+    Operations of this type take the value to be sampled as input, as well as a sample size (integer), which can be, for example,
+    a number of rows, or percentage of the whole dataset, depending on sample type.
 
     Modules that implement sampling should inherit from [SampleValueModule](https://dharpa.org/kiara/latest/api_reference/kiara.operations.sample/#kiara.operations.sample.SampleValueModule), and will
     get auto-registered with operation ids following this template: `<VALUE_TYPE>.sample.<SAMPLE_TYPE_NAME>`, where `SAMPLE_TYPE_NAME` is a descriptive name

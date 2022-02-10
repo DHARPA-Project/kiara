@@ -15,7 +15,11 @@ if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
 
 
-TYPE_PROFILE_MAP = {"csv_file": "file", "text_file_bundle": "file_bundle"}
+TYPE_PROFILE_MAP = {
+    "csv_file": "file",
+    "text_file_bundle": "file_bundle",
+    "csv_file_bundle": "file_bundle",
+}
 
 
 class TypeMgmt(object):

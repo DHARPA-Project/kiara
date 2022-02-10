@@ -12,9 +12,10 @@ from kiara import Kiara, KiaraModule
 from kiara.data import ValueSet
 from kiara.data.values import Value, ValueSchema
 from kiara.defaults import DEFAULT_PRETTY_PRINT_CONFIG
+from kiara.exceptions import KiaraProcessingException
 from kiara.module_config import ModuleTypeConfigSchema
 from kiara.operations import Operation, OperationType
-from kiara.utils import log_message
+from kiara.utils import is_debug, log_message
 
 
 class PrettyPrintModuleConfig(ModuleTypeConfigSchema):
@@ -133,7 +134,14 @@ class PrettyPrintValueModule(KiaraModule):
         else:
             func = getattr(value_obj.type_obj, func_name)
             # TODO: check signature
-            printed = func(value=value_obj, print_config=print_config)
+            try:
+                printed = func(value=value_obj, print_config=print_config)
+            except Exception as e:
+                if is_debug():
+                    import traceback
+
+                    traceback.print_exc()
+                raise KiaraProcessingException(str(e))
 
         outputs.set_value("printed", printed)
 

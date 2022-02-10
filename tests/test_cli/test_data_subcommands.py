@@ -56,7 +56,7 @@ def test_data_explain_subcommand(presseeded_data_store_minimal: Kiara):
     )
 
     assert "Latitude" in result.stdout
-    assert "arrow_type_name" in result.stdout
+    assert "type_name" in result.stdout
 
 
 # async def test_data_explain_subcommand(presseeded_data_store: Kiara):

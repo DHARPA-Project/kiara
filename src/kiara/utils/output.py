@@ -6,6 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import typing
+from abc import ABC, abstractmethod
 from pydantic import BaseModel, Field, root_validator
 from rich import box
 from rich.console import RenderableType
@@ -69,123 +70,331 @@ class OutputDetails(BaseModel):
         return result
 
 
-def pretty_print_arrow_table(
-    table: "Table",
-    rows_head: typing.Optional[int] = None,
-    rows_tail: typing.Optional[int] = None,
-    max_row_height: typing.Optional[int] = None,
-    max_cell_length: typing.Optional[int] = None,
-) -> RenderableType:
+# def pretty_print_arrow_table(
+#     table: "Table",
+#     rows_head: typing.Optional[int] = None,
+#     rows_tail: typing.Optional[int] = None,
+#     max_row_height: typing.Optional[int] = None,
+#     max_cell_length: typing.Optional[int] = None,
+# ) -> RenderableType:
+#
+#     rich_table = RichTable(box=box.SIMPLE)
+#     for cn in table.column_names:
+#         rich_table.add_column(cn)
+#
+#     num_split_rows = 2
+#
+#     if rows_head is not None:
+#
+#         if rows_head < 0:
+#             rows_head = 0
+#
+#         if rows_head > table.num_rows:
+#             rows_head = table.num_rows
+#             rows_tail = None
+#             num_split_rows = 0
+#
+#         if rows_tail is not None:
+#             if rows_head + rows_tail >= table.num_rows:  # type: ignore
+#                 rows_head = table.num_rows
+#                 rows_tail = None
+#                 num_split_rows = 0
+#     else:
+#         num_split_rows = 0
+#
+#     if rows_head is not None:
+#         head = table.slice(0, rows_head)
+#         num_rows = rows_head
+#     else:
+#         head = table
+#         num_rows = table.num_rows
+#
+#     table_dict = head.to_pydict()
+#     for i in range(0, num_rows):
+#         row = []
+#         for cn in table.column_names:
+#             cell = table_dict[cn][i]
+#             cell_str = str(cell)
+#             if max_row_height and max_row_height > 0 and "\n" in cell_str:
+#                 lines = cell_str.split("\n")
+#                 if len(lines) > max_row_height:
+#                     if max_row_height == 1:
+#                         lines = lines[0:1]
+#                     else:
+#                         half = int(max_row_height / 2)
+#                         lines = lines[0:half] + [".."] + lines[-half:]
+#                 cell_str = "\n".join(lines)
+#
+#             if max_cell_length and max_cell_length > 0:
+#                 lines = []
+#                 for line in cell_str.split("\n"):
+#                     if len(line) > max_cell_length:
+#                         line = line[0:max_cell_length] + " ..."
+#                     else:
+#                         line = line
+#                     lines.append(line)
+#                 cell_str = "\n".join(lines)
+#
+#             row.append(cell_str)
+#
+#         rich_table.add_row(*row)
+#
+#     if num_split_rows:
+#         for i in range(0, num_split_rows):
+#             row = []
+#             for _ in table.column_names:
+#                 row.append("...")
+#             rich_table.add_row(*row)
+#
+#     if rows_head:
+#         if rows_tail is not None:
+#             if rows_tail < 0:
+#                 rows_tail = 0
+#
+#             tail = table.slice(table.num_rows - rows_tail)
+#             table_dict = tail.to_pydict()
+#             for i in range(0, num_rows):
+#
+#                 row = []
+#                 for cn in table.column_names:
+#
+#                     cell = table_dict[cn][i]
+#                     cell_str = str(cell)
+#
+#                     if max_row_height and max_row_height > 0 and "\n" in cell_str:
+#                         lines = cell_str.split("\n")
+#                         if len(lines) > max_row_height:
+#                             if max_row_height == 1:
+#                                 lines = lines[0:1]
+#                             else:
+#                                 half = int(len(lines) / 2)
+#                                 lines = lines[0:half] + [".."] + lines[-half:]
+#                         cell_str = "\n".join(lines)
+#
+#                     if max_cell_length and max_cell_length > 0:
+#                         lines = []
+#                         for line in cell_str.split("\n"):
+#
+#                             if len(line) > max_cell_length:
+#                                 line = line[0:(max_cell_length)] + " ..."
+#                             else:
+#                                 line = line
+#                             lines.append(line)
+#                         cell_str = "\n".join(lines)
+#
+#                     row.append(cell_str)
+#
+#                 rich_table.add_row(*row)
+#
+#     return rich_table
 
-    rich_table = RichTable(box=box.SIMPLE)
-    for cn in table.column_names:
-        rich_table.add_column(cn)
 
-    num_split_rows = 2
+class TabularWrap(ABC):
+    def __init__(self):
+        self._num_rows: typing.Optional[int] = None
+        self._column_names: typing.Optional[typing.Iterable[str]] = None
 
-    if rows_head is not None:
+    @property
+    def num_rows(self) -> int:
+        if self._num_rows is None:
+            self._num_rows = self.retrieve_number_of_rows()
+        return self._num_rows
 
-        if rows_head < 0:
-            rows_head = 0
+    @property
+    def column_names(self) -> typing.Iterable[str]:
+        if self._column_names is None:
+            self._column_names = self.retrieve_column_names()
+        return self._column_names
 
-        if rows_head > table.num_rows:
-            rows_head = table.num_rows
-            rows_tail = None
-            num_split_rows = 0
+    @abstractmethod
+    def retrieve_column_names(self) -> typing.Iterable[str]:
+        pass
 
-        if rows_tail is not None:
-            if rows_head + rows_tail >= table.num_rows:  # type: ignore
-                rows_head = table.num_rows
+    @abstractmethod
+    def retrieve_number_of_rows(self) -> int:
+        pass
+
+    @abstractmethod
+    def slice(
+        self, offset: int = 0, length: typing.Optional[int] = None
+    ) -> "TabularWrap":
+        pass
+
+    @abstractmethod
+    def to_pydict(self) -> typing.Mapping:
+        pass
+
+    def pretty_print(
+        self,
+        rows_head: typing.Optional[int] = None,
+        rows_tail: typing.Optional[int] = None,
+        max_row_height: typing.Optional[int] = None,
+        max_cell_length: typing.Optional[int] = None,
+    ) -> RenderableType:
+
+        rich_table = RichTable(box=box.SIMPLE)
+        for cn in self.retrieve_column_names():
+            rich_table.add_column(cn)
+
+        num_split_rows = 2
+
+        if rows_head is not None:
+
+            if rows_head < 0:
+                rows_head = 0
+
+            if rows_head > self.retrieve_number_of_rows():
+                rows_head = self.retrieve_number_of_rows()
                 rows_tail = None
                 num_split_rows = 0
-    else:
-        num_split_rows = 0
 
-    if rows_head is not None:
-        head = table.slice(0, rows_head)
-        num_rows = rows_head
-    else:
-        head = table
-        num_rows = table.num_rows
+            if rows_tail is not None:
+                if rows_head + rows_tail >= self.num_rows:  # type: ignore
+                    rows_head = self.retrieve_number_of_rows()
+                    rows_tail = None
+                    num_split_rows = 0
+        else:
+            num_split_rows = 0
 
-    table_dict = head.to_pydict()
-    for i in range(0, num_rows):
-        row = []
-        for cn in table.column_names:
-            cell = table_dict[cn][i]
-            cell_str = str(cell)
-            if max_row_height and max_row_height > 0 and "\n" in cell_str:
-                lines = cell_str.split("\n")
-                if len(lines) > max_row_height:
-                    if max_row_height == 1:
-                        lines = lines[0:1]
-                    else:
-                        half = int(max_row_height / 2)
-                        lines = lines[0:half] + [".."] + lines[-half:]
-                cell_str = "\n".join(lines)
+        if rows_head is not None:
+            head = self.slice(0, rows_head)
+            num_rows = rows_head
+        else:
+            head = self
+            num_rows = self.retrieve_number_of_rows()
 
-            if max_cell_length and max_cell_length > 0:
-                lines = []
-                for line in cell_str.split("\n"):
-                    if len(line) > max_cell_length:
-                        line = line[0:max_cell_length] + " ..."
-                    else:
-                        line = line
-                    lines.append(line)
-                cell_str = "\n".join(lines)
-
-            row.append(cell_str)
-
-        rich_table.add_row(*row)
-
-    if num_split_rows:
-        for i in range(0, num_split_rows):
+        table_dict = head.to_pydict()
+        for i in range(0, num_rows):
             row = []
-            for _ in table.column_names:
-                row.append("...")
+            for cn in self.retrieve_column_names():
+                cell = table_dict[cn][i]
+                cell_str = str(cell)
+                if max_row_height and max_row_height > 0 and "\n" in cell_str:
+                    lines = cell_str.split("\n")
+                    if len(lines) > max_row_height:
+                        if max_row_height == 1:
+                            lines = lines[0:1]
+                        else:
+                            half = int(max_row_height / 2)
+                            lines = lines[0:half] + [".."] + lines[-half:]
+                    cell_str = "\n".join(lines)
+
+                if max_cell_length and max_cell_length > 0:
+                    lines = []
+                    for line in cell_str.split("\n"):
+                        if len(line) > max_cell_length:
+                            line = line[0:max_cell_length] + " ..."
+                        else:
+                            line = line
+                        lines.append(line)
+                    cell_str = "\n".join(lines)
+
+                row.append(cell_str)
+
             rich_table.add_row(*row)
 
-    if rows_head:
-        if rows_tail is not None:
-            if rows_tail < 0:
-                rows_tail = 0
-
-            tail = table.slice(table.num_rows - rows_tail)
-            table_dict = tail.to_pydict()
-            for i in range(0, num_rows):
-
+        if num_split_rows:
+            for i in range(0, num_split_rows):
                 row = []
-                for cn in table.column_names:
-
-                    cell = table_dict[cn][i]
-                    cell_str = str(cell)
-
-                    if max_row_height and max_row_height > 0 and "\n" in cell_str:
-                        lines = cell_str.split("\n")
-                        if len(lines) > max_row_height:
-                            if max_row_height == 1:
-                                lines = lines[0:1]
-                            else:
-                                half = int(len(lines) / 2)
-                                lines = lines[0:half] + [".."] + lines[-half:]
-                        cell_str = "\n".join(lines)
-
-                    if max_cell_length and max_cell_length > 0:
-                        lines = []
-                        for line in cell_str.split("\n"):
-
-                            if len(line) > max_cell_length:
-                                line = line[0:(max_cell_length)] + " ..."
-                            else:
-                                line = line
-                            lines.append(line)
-                        cell_str = "\n".join(lines)
-
-                    row.append(cell_str)
-
+                for _ in self.retrieve_column_names():
+                    row.append("...")
                 rich_table.add_row(*row)
 
-    return rich_table
+        if rows_head:
+            if rows_tail is not None:
+                if rows_tail < 0:
+                    rows_tail = 0
+
+                tail = self.slice(self.retrieve_number_of_rows() - rows_tail)
+                table_dict = tail.to_pydict()
+                for i in range(0, num_rows):
+
+                    row = []
+                    for cn in self.retrieve_column_names():
+
+                        cell = table_dict[cn][i]
+                        cell_str = str(cell)
+
+                        if max_row_height and max_row_height > 0 and "\n" in cell_str:
+                            lines = cell_str.split("\n")
+                            if len(lines) > max_row_height:
+                                if max_row_height == 1:
+                                    lines = lines[0:1]
+                                else:
+                                    half = int(len(lines) / 2)
+                                    lines = lines[0:half] + [".."] + lines[-half:]
+                            cell_str = "\n".join(lines)
+
+                        if max_cell_length and max_cell_length > 0:
+                            lines = []
+                            for line in cell_str.split("\n"):
+
+                                if len(line) > max_cell_length:
+                                    line = line[0:(max_cell_length)] + " ..."
+                                else:
+                                    line = line
+                                lines.append(line)
+                            cell_str = "\n".join(lines)
+
+                        row.append(cell_str)
+
+                    rich_table.add_row(*row)
+
+        return rich_table
+
+
+class ArrowTabularWrap(TabularWrap):
+    def __init__(self, table: "Table"):
+        self._table: "Table" = table
+        super().__init__()
+
+    def retrieve_column_names(self) -> typing.Iterable[str]:
+        return self._table.column_names
+
+    def retrieve_number_of_rows(self) -> int:
+        return self._table.num_rows
+
+    def slice(self, offset: int = 0, length: typing.Optional[int] = None):
+        return self._table.slice(offset=offset, length=length)
+
+    def to_pydict(self) -> typing.Mapping:
+        return self._table.to_pydict()
+
+
+class DictTabularWrap(TabularWrap):
+    def __init__(self, data: typing.Mapping[str, typing.Any]):
+
+        self._data: typing.Mapping[str, typing.Any] = data
+
+    def retrieve_number_of_rows(self) -> int:
+        return len(self._data)
+
+    def retrieve_column_names(self) -> typing.Iterable[str]:
+        return self._data.keys()
+
+    def to_pydict(self) -> typing.Mapping:
+        return self._data
+
+    def slice(
+        self, offset: int = 0, length: typing.Optional[int] = None
+    ) -> "TabularWrap":
+
+        result = {}
+        start = None
+        end = None
+        for cn in self._data.keys():
+            if start is None:
+                if offset > len(self._data):
+                    return DictTabularWrap({cn: [] for cn in self._data.keys()})
+                start = offset
+                if not length:
+                    end = len(self._data)
+                else:
+                    end = start + length
+                    if end > len(self._data):
+                        end = len(self._data)
+            result[cn] = self._data[cn][start:end]
+        return DictTabularWrap(result)
 
 
 def rich_print(msg: typing.Any = None) -> None:

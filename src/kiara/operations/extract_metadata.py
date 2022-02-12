@@ -119,7 +119,9 @@ class ExtractMetadataModule(KiaraModule):
         """Create the metadata schema for the configured type."""
 
     @abc.abstractmethod
-    def extract_metadata(self, value: Value) -> typing.Mapping[str, typing.Any]:
+    def extract_metadata(
+        self, value: Value
+    ) -> typing.Union[typing.Mapping[str, typing.Any], BaseModel]:
         pass
 
     def create_input_schema(

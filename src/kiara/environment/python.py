@@ -39,7 +39,7 @@ class PythonRuntimeEnvironment(BaseRuntimeEnvironment):
                 dist = distribution(pkg)
                 packages.append({"name": name, "version": dist.version})
 
-        result = {
+        result: typing.Dict[str, typing.Any] = {
             "python_version": sys.version,
             "packages": sorted(packages, key=lambda x: x["name"]),
         }

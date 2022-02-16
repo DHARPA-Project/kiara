@@ -59,7 +59,7 @@ class PipelineStep(BaseModel):
                 module_type=step.module_type,
                 module_config=copy.deepcopy(step.module_config),
                 input_links=copy.deepcopy(step.input_links),
-                _kiara=kiara,
+                _kiara=kiara,  # type: ignore
             )
             result.append(_s)
 

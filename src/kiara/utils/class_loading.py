@@ -421,7 +421,9 @@ def find_pipeline_base_path_for_module(
     if isinstance(module, str):
         module = importlib.import_module(module)
 
-    path = os.path.dirname(module.__file__)
+    module_file = module.__file__
+    assert module_file is not None
+    path = os.path.dirname(module_file)
 
     if not os.path.exists:
         log_message(f"Pipelines folder '{path}' does not exist, ignoring...")

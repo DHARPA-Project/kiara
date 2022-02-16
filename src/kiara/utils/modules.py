@@ -39,8 +39,12 @@ def create_schemas(
             schema.validate_types(kiara)
             result[k] = schema
         else:
+            if v is None:
+                msg = "None"
+            else:
+                msg = v.__class__
             raise Exception(
-                f"Invalid return type '{v.__class__}' for field '{k}' when trying to create schema."
+                f"Invalid return type '{msg}' for field '{k}' when trying to create schema."
             )
 
     return result
@@ -97,7 +101,9 @@ def find_file_for_module(
     python_module = m_cls.get_type_metadata().python_class.get_module()
 
     # TODO: some sanity checks
-    if python_module.__file__.endswith("__init__.py"):
+    module_file = python_module.__file__
+    assert module_file is not None
+    if module_file.endswith("__init__.py"):
         extra_bit = (
             python_module.__name__.replace(".", os.path.sep)
             + os.path.sep
@@ -105,7 +111,7 @@ def find_file_for_module(
         )
     else:
         extra_bit = python_module.__name__.replace(".", os.path.sep) + ".py"
-    python_file_path = python_module.__file__[0 : -len(extra_bit)]  # noqa
+    python_file_path = module_file[0 : -len(extra_bit)]  # noqa
 
     return python_file_path
 

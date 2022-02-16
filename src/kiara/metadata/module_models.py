@@ -115,6 +115,7 @@ def calculate_class_source_url(
 
     m = python_class_info.get_module()
     m_file = m.__file__
+    assert m_file is not None
 
     base_url = f"{base_url}/blob/{branch}/src/{python_class_info.module_name.replace('.', '/')}"
 

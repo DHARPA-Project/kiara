@@ -728,6 +728,48 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.environment/" class="md-nav__link">
+        ➜ environment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.environment.operating_system/" class="md-nav__link">
+        ➜ environment.operating_system
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.environment.python/" class="md-nav__link">
+        ➜ environment.python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.events/" class="md-nav__link">
         ➜ events
       </a>
@@ -954,6 +996,34 @@
     <li class="md-nav__item">
       <a href="../kiara.interfaces.cli.dev.commands/" class="md-nav__link">
         ➜ interfaces.cli.dev.commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.environment/" class="md-nav__link">
+        ➜ interfaces.cli.environment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.environment.commands/" class="md-nav__link">
+        ➜ interfaces.cli.environment.commands
       </a>
     </li>
   
@@ -1909,6 +1979,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kiara.utils.__init__.find_free_id" class="md-nav__link">
+    find_free_id()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kiara.utils.__init__.get_auto_workflow_alias" class="md-nav__link">
     get_auto_workflow_alias()
   </a>
@@ -2110,6 +2187,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kiara.utils.__init__.find_free_id" class="md-nav__link">
+    find_free_id()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kiara.utils.__init__.get_auto_workflow_alias" class="md-nav__link">
     get_auto_workflow_alias()
   </a>
@@ -2145,6 +2229,7 @@
 
 
   <div class="doc doc-children">
+
 
 
 
@@ -2206,6 +2291,113 @@
 
 
 
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="kiara.utils.__init__.find_free_id" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">find_free_id</span><span class="p">(</span><span class="n">stem</span><span class="p">,</span> <span class="n">current_ids</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.__init__.find_free_id" class="headerlink" title="Permanent link">&para;</a></h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Find a free var (or other name) based on a stem string, based on a list of provided existing names.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>stem</code></td>
+        <td><code>str</code></td>
+        <td><p>the base string to use</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>current_ids</code></td>
+        <td><code>Iterable[str]</code></td>
+        <td><p>currently existing names</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>method</code></td>
+        <td><code>str</code></td>
+        <td><p>the method to create new names (allowed: 'count' -- for now)</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>method_args</code></td>
+        <td><code>dict</code></td>
+        <td><p>prototing_config for the creation method</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>str</code></td>
+      <td><p>str: a free name</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_free_id</span><span class="p">(</span>
+    <span class="n">stem</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">current_ids</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Find a free var (or other name) based on a stem string, based on a list of provided existing names.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stem (str): the base string to use</span>
+<span class="sd">        current_ids (Iterable[str]): currently existing names</span>
+<span class="sd">        method (str): the method to create new names (allowed: &#39;count&#39; -- for now)</span>
+<span class="sd">        method_args (dict): prototing_config for the creation method</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: a free name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">start_count</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">stem</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">current_ids</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">stem</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="n">start_count</span>
+
+    <span class="c1"># new_name = None</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">stem</span><span class="si">}{</span><span class="n">sep</span><span class="si">}{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">new_name</span> <span class="ow">in</span> <span class="n">current_ids</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">continue</span>
+        <span class="k">break</span>
+    <span class="k">return</span> <span class="n">new_name</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
 
 
 
@@ -2291,6 +2483,7 @@
     </div>
 
   </div>
+
 
 
 

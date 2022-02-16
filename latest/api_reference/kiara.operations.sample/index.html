@@ -728,6 +728,48 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.environment/" class="md-nav__link">
+        ➜ environment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.environment.operating_system/" class="md-nav__link">
+        ➜ environment.operating_system
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.environment.python/" class="md-nav__link">
+        ➜ environment.python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.events/" class="md-nav__link">
         ➜ events
       </a>
@@ -954,6 +996,34 @@
     <li class="md-nav__item">
       <a href="../kiara.interfaces.cli.dev.commands/" class="md-nav__link">
         ➜ interfaces.cli.dev.commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.environment/" class="md-nav__link">
+        ➜ interfaces.cli.environment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.environment.commands/" class="md-nav__link">
+        ➜ interfaces.cli.environment.commands
       </a>
     </li>
   
@@ -2591,9 +2661,11 @@
     <div class="doc doc-contents ">
 
       <p>Operation type for sampling data of different types.</p>
-<p>This is useful to reduce the size of some datasets in test-runs, while adjusting parameters and the like. Operations of this
+<p>This is useful to reduce the size of some datasets in previews and test-runs, while adjusting parameters and the like. Operations of this
 type can implement very simple or complex ways to take samples of the data they are fed. The most important ones are
 sampling operations relating to tables and arrays, but it might also make sense to sample texts, image-sets and so on.</p>
+<p>Operations of this type take the value to be sampled as input, as well as a sample size (integer), which can be, for example,
+a number of rows, or percentage of the whole dataset, depending on sample type.</p>
 <p>Modules that implement sampling should inherit from <a href="https://dharpa.org/kiara/latest/api_reference/kiara.operations.sample/#kiara.operations.sample.SampleValueModule">SampleValueModule</a>, and will
 get auto-registered with operation ids following this template: <code>&lt;VALUE_TYPE&gt;.sample.&lt;SAMPLE_TYPE_NAME&gt;</code>, where <code>SAMPLE_TYPE_NAME</code> is a descriptive name
 what will be sampled, or how sampling will be done.</p>

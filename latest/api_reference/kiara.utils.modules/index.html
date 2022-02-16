@@ -728,6 +728,48 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.environment/" class="md-nav__link">
+        ➜ environment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.environment.operating_system/" class="md-nav__link">
+        ➜ environment.operating_system
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.environment.python/" class="md-nav__link">
+        ➜ environment.python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.events/" class="md-nav__link">
         ➜ events
       </a>
@@ -954,6 +996,34 @@
     <li class="md-nav__item">
       <a href="../kiara.interfaces.cli.dev.commands/" class="md-nav__link">
         ➜ interfaces.cli.dev.commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.environment/" class="md-nav__link">
+        ➜ interfaces.cli.environment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.environment.commands/" class="md-nav__link">
+        ➜ interfaces.cli.environment.commands
       </a>
     </li>
   
@@ -2171,7 +2241,9 @@
     <span class="n">python_module</span> <span class="o">=</span> <span class="n">m_cls</span><span class="o">.</span><span class="n">get_type_metadata</span><span class="p">()</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_module</span><span class="p">()</span>
 
     <span class="c1"># TODO: some sanity checks</span>
-    <span class="k">if</span> <span class="n">python_module</span><span class="o">.</span><span class="vm">__file__</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;__init__.py&quot;</span><span class="p">):</span>
+    <span class="n">module_file</span> <span class="o">=</span> <span class="n">python_module</span><span class="o">.</span><span class="vm">__file__</span>
+    <span class="k">assert</span> <span class="n">module_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">module_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;__init__.py&quot;</span><span class="p">):</span>
         <span class="n">extra_bit</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">python_module</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
             <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span>
@@ -2179,7 +2251,7 @@
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">extra_bit</span> <span class="o">=</span> <span class="n">python_module</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.py&quot;</span>
-    <span class="n">python_file_path</span> <span class="o">=</span> <span class="n">python_module</span><span class="o">.</span><span class="vm">__file__</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">extra_bit</span><span class="p">)]</span>  <span class="c1"># noqa</span>
+    <span class="n">python_file_path</span> <span class="o">=</span> <span class="n">module_file</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">extra_bit</span><span class="p">)]</span>  <span class="c1"># noqa</span>
 
     <span class="k">return</span> <span class="n">python_file_path</span>
 </code></pre></div>

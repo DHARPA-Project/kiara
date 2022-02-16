@@ -728,6 +728,48 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.environment/" class="md-nav__link">
+        ➜ environment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.environment.operating_system/" class="md-nav__link">
+        ➜ environment.operating_system
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.environment.python/" class="md-nav__link">
+        ➜ environment.python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.events/" class="md-nav__link">
         ➜ events
       </a>
@@ -954,6 +996,34 @@
     <li class="md-nav__item">
       <a href="../kiara.interfaces.cli.dev.commands/" class="md-nav__link">
         ➜ interfaces.cli.dev.commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.environment/" class="md-nav__link">
+        ➜ interfaces.cli.environment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara.interfaces.cli.environment.commands/" class="md-nav__link">
+        ➜ interfaces.cli.environment.commands
       </a>
     </li>
   
@@ -2430,30 +2500,30 @@ to the shortest possible names for each case.</p>
                     <span class="p">}}</span>
 </code></pre></div>
 <p>Or, the same thing in json:</p>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-  <span class="nt">&quot;module_type_name&quot;</span><span class="p">:</span> <span class="s2">&quot;nand&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;Returns &#39;False&#39; if both inputs are &#39;True&#39;.&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;steps&quot;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;module_type&quot;</span><span class="p">:</span> <span class="s2">&quot;and&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;step_id&quot;</span><span class="p">:</span> <span class="s2">&quot;and&quot;</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;module_type&quot;</span><span class="p">:</span> <span class="s2">&quot;not&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;step_id&quot;</span><span class="p">:</span> <span class="s2">&quot;not&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;input_links&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;a&quot;</span><span class="p">:</span> <span class="s2">&quot;and.y&quot;</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">],</span>
-  <span class="nt">&quot;input_aliases&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;and__a&quot;</span><span class="p">:</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;and__b&quot;</span><span class="p">:</span> <span class="s2">&quot;b&quot;</span>
-  <span class="p">},</span>
-  <span class="nt">&quot;output_aliases&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;not__y&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span>
-  <span class="p">}</span>
-<span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;module_type_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nand&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;doc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Returns &#39;False&#39; if both inputs are &#39;True&#39;.&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;steps&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;module_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;and&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;step_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;and&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;module_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;not&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;step_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;not&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;input_links&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;a&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;and.y&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="p">],</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;input_aliases&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;and__a&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;and__b&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;b&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="p">},</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;output_aliases&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;not__y&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;y&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
 
@@ -2857,10 +2927,10 @@ to the shortest possible names for each case.</p>
 
 <p><strong>Examples:</strong></p>
     
-      <div class="highlight"><pre><span></span><code><span class="err">i</span><span class="kc">n</span><span class="err">pu</span><span class="kc">t</span><span class="err">_co</span><span class="kc">nne</span><span class="err">c</span><span class="kc">t</span><span class="err">io</span><span class="kc">ns</span><span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;a&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;__pipeline__.a&quot;</span><span class="p">],</span>
-    <span class="nt">&quot;b&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;step_one.a&quot;</span><span class="p">]</span>
-<span class="p">}</span>
+      <div class="highlight"><pre><span></span><code><span class="err">i</span><span class="kc">n</span><span class="err">pu</span><span class="kc">t</span><span class="err">_co</span><span class="kc">nne</span><span class="err">c</span><span class="kc">t</span><span class="err">io</span><span class="kc">ns</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;a&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;__pipeline__.a&quot;</span><span class="p">],</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;b&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;step_one.a&quot;</span><span class="p">]</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre></div>
     </div>
 

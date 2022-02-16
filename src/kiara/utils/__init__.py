@@ -41,6 +41,8 @@ if typing.TYPE_CHECKING:
 log = logging.getLogger("kiara")
 CAMEL_TO_SNAKE_REGEX = re.compile(r"(?<!^)(?=[A-Z])")
 
+WORD_REGEX_PATTERN = re.compile("[^A-Za-z]+")
+
 
 def is_debug() -> bool:
 
@@ -282,6 +284,12 @@ def dict_from_cli_args(
 
 def camel_case_to_snake_case(camel_text: str, repl: str = "_"):
     return CAMEL_TO_SNAKE_REGEX.sub(repl, camel_text).lower()
+
+
+def to_camel_case(text: str) -> str:
+
+    words = WORD_REGEX_PATTERN.split(text)
+    return "".join(w.title() for i, w in enumerate(words))
 
 
 class StringYAML(YAML):

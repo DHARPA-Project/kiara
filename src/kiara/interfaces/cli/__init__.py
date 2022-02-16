@@ -17,6 +17,7 @@ from kiara.utils import is_develop
 
 from .data.commands import data
 from .dev.commands import dev_group
+from .environment.commands import env_group
 from .explain import explain
 from .info.commands import info
 from .metadata.commands import metadata
@@ -65,6 +66,7 @@ cli.add_command(pipeline)
 cli.add_command(info)
 cli.add_command(metadata)
 cli.add_command(type_group)
+cli.add_command(env_group)
 if is_develop():
     cli.add_command(dev_group)
 

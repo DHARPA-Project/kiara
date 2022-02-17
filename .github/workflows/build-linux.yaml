@@ -214,7 +214,7 @@ jobs:
           auto-activate-base: false
           activate-environment: "anaconda-build-env"
       - name: install conda build packages
-        run: conda install -n anaconda-build-env conda-build anaconda-client boa
+        run: conda install -c conda-forge -n anaconda-build-env conda-build anaconda-client boa
       - name: build conda package
         shell: bash -l {0}
         run: conda activate anaconda-build-env && cd ci/conda/ && ./build-conda-packages.sh kiara "${GITHUB_REF#refs/*/}" "${{ matrix.python_version }}" false

@@ -6,12 +6,15 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import typing
+from bidict import bidict
 
 from kiara.data import Value
 from kiara.data.types import ValueType
 from kiara.utils.class_loading import find_all_value_types
 
 if typing.TYPE_CHECKING:
+    import networkx as nx
+
     from kiara.kiara import Kiara
 
 
@@ -20,6 +23,7 @@ TYPE_PROFILE_MAP = {
     "text_file_bundle": "file_bundle",
     "csv_file_bundle": "file_bundle",
     "table": "table",
+    "graphml_file": "file",
 }
 
 
@@ -27,13 +31,12 @@ class TypeMgmt(object):
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
-        self._value_types: typing.Optional[
-            typing.Dict[str, typing.Type[ValueType]]
-        ] = None
+        self._value_types: typing.Optional[bidict[str, typing.Type[ValueType]]] = None
         self._value_type_transformations: typing.Dict[
             str, typing.Dict[str, typing.Any]
         ] = {}
         self._registered_python_classes: typing.Dict[typing.Type, typing.List[str]] = None  # type: ignore
+        self._type_hierarchy: typing.Optional[nx.DiGraph] = None
 
     def invalidate_types(self):
 
@@ -42,13 +45,72 @@ class TypeMgmt(object):
         self._registered_python_classes = None
 
     @property
-    def value_types(self) -> typing.Mapping[str, typing.Type[ValueType]]:
+    def value_types(self) -> bidict[str, typing.Type[ValueType]]:
 
         if self._value_types is not None:
             return self._value_types
 
-        self._value_types = find_all_value_types()
+        self._value_types = bidict(find_all_value_types())
         return self._value_types
+
+    @property
+    def value_type_hierarchy(self) -> "nx.DiGraph":
+
+        if self._type_hierarchy is not None:
+            return self._type_hierarchy
+
+        def recursive_base_find(
+            cls: typing.Type, current: typing.Optional[typing.List[str]] = None
+        ):
+
+            if current is None:
+                current = []
+
+            for base in cls.__bases__:
+
+                if base in self.value_types.values():
+                    current.append(self.value_types.inverse[base])
+
+                recursive_base_find(base, current=current)
+
+            return current
+
+        bases = {}
+        for name, cls in self.value_types.items():
+            bases[name] = recursive_base_find(cls)
+        import networkx as nx
+
+        hierarchy = nx.DiGraph()
+        for name, _bases in bases.items():
+            hierarchy.add_node(name, cls=self.value_types[name])
+            if not _bases:
+                continue
+            # we only need the first parent, all others will be taken care of by the parent of the parent
+            hierarchy.add_edge(_bases[0], name)
+
+        self._type_hierarchy = hierarchy
+        return self._type_hierarchy
+
+    def get_type_lineage(self, value_type: str) -> typing.Iterable[str]:
+        """Returns the shortest path between the specified type and the 'any' type, in reverse direction starting from the specified type."""
+
+        if value_type not in self.value_types.keys():
+            raise Exception(f"No value type '{value_type}' registered.")
+
+        import networkx as nx
+
+        path = nx.shortest_path(self.value_type_hierarchy, "any", value_type)
+        return reversed(path)
+
+    def get_sub_types(self, value_type: str) -> typing.Set[str]:
+
+        if value_type not in self.value_types.keys():
+            raise Exception(f"No value type '{value_type}' registered.")
+
+        import networkx as nx
+
+        desc = nx.descendants(self.value_type_hierarchy, value_type)
+        return desc
 
     @property
     def value_type_names(self) -> typing.List[str]:

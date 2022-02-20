@@ -87,7 +87,12 @@ def pipeline_configs(pipeline_paths) -> typing.Mapping[str, PipelineConfig]:
 @pytest.fixture
 def kiara() -> Kiara:
 
-    kiara = Kiara()
+    session_id = str(uuid.uuid4())
+
+    instance_data_store = os.path.join(TEMP_DIR, f"instance_{session_id}")
+    conf = KiaraConfig(data_store=instance_data_store)
+
+    kiara = Kiara(config=conf)
     return kiara
 
 

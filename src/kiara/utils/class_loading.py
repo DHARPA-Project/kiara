@@ -205,7 +205,12 @@ def load_all_subclasses_for_entry_point(
                         k = k[len(rnt) :]  # noqa
 
         if k in result.keys():
-            raise Exception(f"Duplicate item name for base class {base_class}: {k}")
+            msg = ""
+            if set_id_attribute:
+                msg = f" Check whether '{v.__name__}' is missing the '{set_id_attribute}' class attribute (in case this is a sub-class), or it's '{k}' value is also set in another class?"
+            raise Exception(
+                f"Duplicate item name for base class {base_class}: {k}.{msg}"
+            )
         result[k] = v
 
     return result
@@ -272,7 +277,7 @@ def find_all_value_types() -> typing.Dict[str, typing.Type["ValueType"]]:
 
     all_value_types = load_all_subclasses_for_entry_point(
         entry_point_name="kiara.value_types",
-        base_class=ValueType,
+        base_class=ValueType,  # type: ignore
         set_id_attribute="_value_type_name",
         remove_namespace_tokens=True,
     )
@@ -388,7 +393,7 @@ def find_value_types_under(
 ) -> typing.Mapping[str, typing.Type[ValueType]]:
 
     return find_subclasses_under(
-        base_class=ValueType,
+        base_class=ValueType,  # type: ignore
         module=module,
         prefix=prefix,
         remove_namespace_tokens=[],

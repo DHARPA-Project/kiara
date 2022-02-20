@@ -23,7 +23,7 @@ using their own serializing functions), or will have to implement custom seriali
 be discouraged, since this might not be trivial and there are quite a few things to consider).
 
 """
-
+import abc
 import deepdiff
 import typing
 from pydantic import BaseModel, Extra, Field, PrivateAttr, ValidationError
@@ -119,7 +119,8 @@ class ValueTypeConfigSchema(BaseModel):
         yield my_table
 
 
-TYPE_CONFIG = typing.TypeVar("TYPE_CONFIG", bound=ValueTypeConfigSchema)
+TYPE_CONFIG_CLS = typing.TypeVar("TYPE_CONFIG_CLS", bound=ValueTypeConfigSchema)
+TYPE_PYTHON_CLS = typing.TypeVar("TYPE_PYTHON_CLS")
 
 
 class ValueTypeConfigMetadata(MetadataModel):
@@ -167,7 +168,7 @@ class ValueTypeConfigMetadata(MetadataModel):
     )
 
 
-class ValueType(typing.Generic[TYPE_CONFIG]):
+class ValueType(abc.ABC, typing.Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
     """Base class that all *kiara* types must inherit from.
 
     *kiara* types have 3 main responsibilities:
@@ -184,8 +185,6 @@ class ValueType(typing.Generic[TYPE_CONFIG]):
      module needs the input data to do processing on it -- and even then it might be that it only requests a part of the
      data, say a single column of a table. Or when a frontend needs to display/visualize the data.
     """
-
-    _config_class: typing.Type[TYPE_CONFIG] = ValueTypeConfigSchema  # type: ignore
 
     @classmethod
     def get_type_metadata(cls) -> ValueTypeMetadata:
@@ -221,6 +220,16 @@ class ValueType(typing.Generic[TYPE_CONFIG]):
         return None
 
     @classmethod
+    @abc.abstractmethod
+    def backing_python_type(cls) -> typing.Type[TYPE_PYTHON_CLS]:
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    def type_config_cls(cls) -> typing.Type[TYPE_CONFIG_CLS]:
+        pass
+
+    @classmethod
     def candidate_python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
         return None
 
@@ -240,7 +249,7 @@ class ValueType(typing.Generic[TYPE_CONFIG]):
     def __init__(self, **type_config: typing.Any):
 
         try:
-            self._type_config = self.__class__._config_class(**type_config)
+            self._type_config: TYPE_CONFIG_CLS = self.__class__.type_config_cls(**type_config)  # type: ignore  # TODO: double-check this is only a mypy issue
         except ValidationError as ve:
             raise ValueTypeConfigException(
                 f"Error creating object for value_type: {ve}",
@@ -254,7 +263,7 @@ class ValueType(typing.Generic[TYPE_CONFIG]):
         # ] = None
 
     @property
-    def type_config(self) -> TYPE_CONFIG:
+    def type_config(self) -> TYPE_CONFIG_CLS:
         return self._type_config
 
     def import_value(self, value: typing.Any) -> typing.Any:
@@ -289,7 +298,7 @@ class ValueType(typing.Generic[TYPE_CONFIG]):
         return None
 
     def validate(cls, value: typing.Any) -> None:
-        pass
+        """Validate the value. This expects an instance of the defined Python class (from 'backing_python_type)."""
 
     def get_type_hint(self, context: str = "python") -> typing.Optional[typing.Type]:
         """Return a type hint for this value type object.

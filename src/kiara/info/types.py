@@ -52,7 +52,7 @@ class ValueTypeInfo(KiaraInfoModel):
         properties_md = ContextMetadataModel.from_class(type_cls)
 
         value_type: str = type_cls._value_type_name  # type: ignore
-        config = ValueTypeConfigMetadata.from_config_class(type_cls._config_class)
+        config = ValueTypeConfigMetadata.from_config_class(type_cls.type_config_cls())
 
         metadata_keys = kiara.metadata_mgmt.get_metadata_keys_for_type(
             value_type=value_type

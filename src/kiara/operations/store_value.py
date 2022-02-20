@@ -57,13 +57,19 @@ class StoreValueTypeModule(KiaraModule):
             str, typing.Dict[str, typing.Dict[str, typing.Any]]
         ] = {}
 
+        all_types_and_subtypes = set()
         for sup_type in cls.get_supported_value_types():
-
             if sup_type not in kiara.type_mgmt.value_type_names:
                 log_message(
                     f"Ignoring save operation for type '{sup_type}': type not available"
                 )
                 continue
+
+            all_types_and_subtypes.add(sup_type)
+            sub_types = kiara.type_mgmt.get_sub_types(sup_type)
+            all_types_and_subtypes.update(sub_types)
+
+        for sup_type in all_types_and_subtypes:
 
             op_config = {
                 "module_type": cls._module_type_id,  # type: ignore
@@ -201,6 +207,10 @@ class StoreOperationType(OperationType):
                 f"No 'store_value' operation for type '{value_type}' registered."
             )
         elif len(result) != 1:
+            pass
+
+            for r in result:
+                print(r.json(indent=2))
             raise Exception(
                 f"Multiple 'store_value' operations for type '{value_type}' registered."
             )

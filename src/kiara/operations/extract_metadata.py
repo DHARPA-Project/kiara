@@ -45,6 +45,7 @@ class ExtractMetadataModule(KiaraModule):
             value_types = kiara.type_mgmt.value_type_names
 
         metadata_key = cls.get_metadata_key()
+        all_value_types = set()
         for value_type in value_types:
 
             if value_type not in kiara.type_mgmt.value_type_names:
@@ -52,6 +53,12 @@ class ExtractMetadataModule(KiaraModule):
                     f"Ignoring metadata-extract operation (metadata key: {metadata_key}) for type '{value_type}': type not available"
                 )
                 continue
+
+            all_value_types.add(value_type)
+            sub_types = kiara.type_mgmt.get_sub_types(value_type)
+            all_value_types.update(sub_types)
+
+        for value_type in all_value_types:
 
             op_config = {
                 "module_type": cls._module_type_id,  # type: ignore
@@ -92,9 +99,17 @@ class ExtractMetadataModule(KiaraModule):
         data_type = self.get_config_value("value_type")
         sup_types = self.get_supported_value_types()
         if "*" not in sup_types and data_type not in sup_types:
-            raise ValueError(
-                f"Invalid module configuration, type '{data_type}' not supported. Supported types: {', '.join(self.get_supported_value_types())}."
-            )
+            match = False
+            for sup_type in sup_types:
+                for sub_type in self._kiara.type_mgmt.get_sub_types(sup_type):
+                    if sub_type == data_type:
+                        match = True
+                        break
+
+            if not match:
+                raise ValueError(
+                    f"Invalid module configuration, type '{data_type}' not supported. Supported types: {', '.join(self.get_supported_value_types())}."
+                )
 
         return data_type
 

@@ -12,6 +12,7 @@ import click
 from kiara import Kiara
 from kiara.data.types import ValueTypesInfo
 from kiara.info.types import ValueTypeInfo
+from kiara.utils import print_ascii_graph
 from kiara.utils.output import rich_print
 
 
@@ -33,6 +34,21 @@ def list_types(ctx, details):
     value_types_info = ValueTypesInfo(kiara_obj.value_types, details=details)
 
     rich_print(value_types_info)
+
+
+@type_group.command(name="hierarchy")
+@click.option("--details", "-d", is_flag=True, help="Display full description.")
+@click.pass_context
+def hierarchy(ctx, details):
+    """List available types (work in progress)."""
+
+    kiara_obj: Kiara = ctx.obj["kiara"]
+
+    type_mgmt = kiara_obj.type_mgmt
+    print()
+
+    print(type_mgmt.value_type_hierarchy)
+    print_ascii_graph(type_mgmt.value_type_hierarchy)
 
 
 @type_group.command(name="explain")

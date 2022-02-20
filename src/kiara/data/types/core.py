@@ -4,23 +4,32 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
+import abc
 import typing
 from pydantic import BaseModel
 from rich.syntax import Syntax
 
-from kiara.data.types import ValueType
+from kiara.data.types import ValueType, ValueTypeConfigSchema
 from kiara.data.values import ValueInfo, ValueLineage
+from kiara.metadata import MetadataModel
 from kiara.metadata.data import DeserializeConfig, LoadConfig
 
 if typing.TYPE_CHECKING:
     from kiara.data.values import Value
 
 
-class AnyType(ValueType):
+class AnyType(ValueType[object, ValueTypeConfigSchema]):
     """Any type / No type information."""
 
     _value_type_name = "any"
+
+    @classmethod
+    def backing_python_type(cls) -> typing.Type:
+        return object
+
+    @classmethod
+    def type_config_cls(cls) -> typing.Type[ValueTypeConfigSchema]:
+        return ValueTypeConfigSchema
 
     def pretty_print_as_renderables(
         self, value: "Value", print_config: typing.Mapping[str, typing.Any]
@@ -30,7 +39,35 @@ class AnyType(ValueType):
         return [str(data)]
 
 
-class KiaraInternalValueType(ValueType):
+COMPLEX_VALUE_MODEL_TYPE = typing.TypeVar(
+    "COMPLEX_VALUE_MODEL_TYPE", bound=MetadataModel
+)
+
+
+class ComplexModelType(AnyType, typing.Generic[COMPLEX_VALUE_MODEL_TYPE]):
+    @classmethod
+    def backing_python_type(cls) -> typing.Type[COMPLEX_VALUE_MODEL_TYPE]:
+        return cls.backing_model_type()
+
+    @classmethod
+    @abc.abstractmethod
+    def backing_model_type(cls) -> typing.Type[COMPLEX_VALUE_MODEL_TYPE]:
+        pass
+
+    @classmethod
+    def candidate_python_types(cls) -> typing.Optional[typing.Iterable[typing.Type]]:
+        return [cls.backing_python_type()]
+
+
+class KiaraInternalValueType(ValueType[BaseModel, ValueTypeConfigSchema]):
+    @classmethod
+    def backing_python_type(cls) -> typing.Type[BaseModel]:
+        return BaseModel
+
+    @classmethod
+    def type_config_cls(cls) -> typing.Type[ValueTypeConfigSchema]:
+        return ValueTypeConfigSchema
+
     def pretty_print_as_renderables(
         self, value: "Value", print_config: typing.Mapping[str, typing.Any]
     ) -> typing.Any:

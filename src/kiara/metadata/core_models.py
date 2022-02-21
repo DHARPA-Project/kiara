@@ -220,7 +220,7 @@ class OriginMetadataModel(MetadataModel):
         table.add_column("Value")
 
         authors = []
-        for author in self.authors:
+        for author in reversed(self.authors):
             if author.email:
                 authors.append(f"{author.name} ({author.email})")
             else:

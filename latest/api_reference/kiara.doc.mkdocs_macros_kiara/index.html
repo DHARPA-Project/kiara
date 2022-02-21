@@ -1636,6 +1636,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.operations.data_export/" class="md-nav__link">
+        ➜ operations.data_export
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.operations.data_import/" class="md-nav__link">
         ➜ operations.data_import
       </a>
@@ -2345,9 +2359,9 @@
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
     <span class="nd">@env</span><span class="o">.</span><span class="n">macro</span>
-    <span class="k">def</span> <span class="nf">get_metadata_schemas_for_package</span><span class="p">(</span><span class="n">package_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_metadata_models_for_package</span><span class="p">(</span><span class="n">package_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 
-        <span class="n">metadata_schemas</span> <span class="o">=</span> <span class="n">kiara_obj</span><span class="o">.</span><span class="n">metadata_mgmt</span><span class="o">.</span><span class="n">find_all_schemas_for_package</span><span class="p">(</span>
+        <span class="n">metadata_schemas</span> <span class="o">=</span> <span class="n">kiara_obj</span><span class="o">.</span><span class="n">metadata_mgmt</span><span class="o">.</span><span class="n">find_all_models_for_package</span><span class="p">(</span>
             <span class="n">package_name</span>
         <span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>

@@ -663,6 +663,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#kiara.data.types.core.DeserializeConfigData.validate" class="md-nav__link">
+    validate()
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -679,6 +686,13 @@
           <li class="md-nav__item">
   <a href="#kiara.data.types.core.LoadConfigData.parse_value" class="md-nav__link">
     parse_value()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.types.core.LoadConfigData.validate" class="md-nav__link">
+    validate()
   </a>
   
 </li>
@@ -703,6 +717,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#kiara.data.types.core.ValueInfoData.validate" class="md-nav__link">
+    validate()
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -719,6 +740,13 @@
           <li class="md-nav__item">
   <a href="#kiara.data.types.core.ValueLineageData.parse_value" class="md-nav__link">
     parse_value()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.types.core.ValueLineageData.validate" class="md-nav__link">
+    validate()
   </a>
   
 </li>
@@ -1709,6 +1737,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.operations.data_export/" class="md-nav__link">
+        ➜ operations.data_export
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.operations.data_import/" class="md-nav__link">
         ➜ operations.data_import
       </a>
@@ -2267,6 +2309,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#kiara.data.types.core.DeserializeConfigData.validate" class="md-nav__link">
+    validate()
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2283,6 +2332,13 @@
           <li class="md-nav__item">
   <a href="#kiara.data.types.core.LoadConfigData.parse_value" class="md-nav__link">
     parse_value()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.types.core.LoadConfigData.validate" class="md-nav__link">
+    validate()
   </a>
   
 </li>
@@ -2307,6 +2363,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#kiara.data.types.core.ValueInfoData.validate" class="md-nav__link">
+    validate()
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2323,6 +2386,13 @@
           <li class="md-nav__item">
   <a href="#kiara.data.types.core.ValueLineageData.parse_value" class="md-nav__link">
     parse_value()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.types.core.ValueLineageData.validate" class="md-nav__link">
+    validate()
   </a>
   
 </li>
@@ -2368,6 +2438,7 @@
 
 
 
+
   <div class="doc doc-object doc-class">
 
 
@@ -2399,11 +2470,14 @@
 
 
 
+
+
   </div>
 
     </div>
 
   </div>
+
 
 
 
@@ -2502,6 +2576,33 @@ avoid adding or removing information from the data (e.g. by changing the resolut
   </div>
 
 
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.types.core.DeserializeConfigData.validate" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">validate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></code>
+
+
+<a href="#kiara.data.types.core.DeserializeConfigData.validate" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Validate the value. This expects an instance of the defined Python class (from 'backing_python_type).</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/types/core.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">DeserializeConfig</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid type for deserialize config: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
 
 
 
@@ -2613,6 +2714,33 @@ avoid adding or removing information from the data (e.g. by changing the resolut
 
 
 
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.types.core.LoadConfigData.validate" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">validate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></code>
+
+
+<a href="#kiara.data.types.core.LoadConfigData.validate" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Validate the value. This expects an instance of the defined Python class (from 'backing_python_type).</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/types/core.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">LoadConfig</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid type for load config: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
 
 
 
@@ -2720,6 +2848,33 @@ avoid adding or removing information from the data (e.g. by changing the resolut
 
 
 
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.types.core.ValueInfoData.validate" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">validate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></code>
+
+
+<a href="#kiara.data.types.core.ValueInfoData.validate" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Validate the value. This expects an instance of the defined Python class (from 'backing_python_type).</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/types/core.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ValueInfo</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid type for value info: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
 
 
 
@@ -2825,6 +2980,33 @@ avoid adding or removing information from the data (e.g. by changing the resolut
   </div>
 
 
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.types.core.ValueLineageData.validate" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">validate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></code>
+
+
+<a href="#kiara.data.types.core.ValueLineageData.validate" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Validate the value. This expects an instance of the defined Python class (from 'backing_python_type).</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/types/core.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ValueLineage</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid type for value seed: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
 
 
 

@@ -1582,6 +1582,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.operations.data_export/" class="md-nav__link">
+        ➜ operations.data_export
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.operations.data_import/" class="md-nav__link">
         ➜ operations.data_import
       </a>
@@ -1993,8 +2007,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.utils.class_loading.find_all_metadata_schemas" class="md-nav__link">
-    find_all_metadata_schemas()
+  <a href="#kiara.utils.class_loading.find_all_metadata_models" class="md-nav__link">
+    find_all_metadata_models()
   </a>
   
 </li>
@@ -2201,8 +2215,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.utils.class_loading.find_all_metadata_schemas" class="md-nav__link">
-    find_all_metadata_schemas()
+  <a href="#kiara.utils.class_loading.find_all_metadata_models" class="md-nav__link">
+    find_all_metadata_models()
   </a>
   
 </li>
@@ -2336,11 +2350,11 @@
 
 
 
-<h2 id="kiara.utils.class_loading.find_all_metadata_schemas" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">find_all_metadata_schemas</span><span class="p">()</span></code>
+<h2 id="kiara.utils.class_loading.find_all_metadata_models" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">find_all_metadata_models</span><span class="p">()</span></code>
 
 
-<a href="#kiara.utils.class_loading.find_all_metadata_schemas" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#kiara.utils.class_loading.find_all_metadata_models" class="headerlink" title="Permanent link">&para;</a></h2>
 
     <div class="doc doc-contents ">
 
@@ -2349,14 +2363,14 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/utils/class_loading.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_metadata_schemas</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;MetadataModel&quot;</span><span class="p">]]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_metadata_models</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;MetadataModel&quot;</span><span class="p">]]:</span>
     <span class="sd">&quot;&quot;&quot;Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.</span>
 
 <span class="sd">    TODO</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">load_all_subclasses_for_entry_point</span><span class="p">(</span>
-        <span class="n">entry_point_name</span><span class="o">=</span><span class="s2">&quot;kiara.metadata_schemas&quot;</span><span class="p">,</span>
+        <span class="n">entry_point_name</span><span class="o">=</span><span class="s2">&quot;kiara.metadata_models&quot;</span><span class="p">,</span>
         <span class="n">base_class</span><span class="o">=</span><span class="n">MetadataModel</span><span class="p">,</span>
         <span class="n">set_id_attribute</span><span class="o">=</span><span class="s2">&quot;_metadata_key&quot;</span><span class="p">,</span>
         <span class="n">remove_namespace_tokens</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;core.&quot;</span><span class="p">],</span>
@@ -2395,7 +2409,7 @@
 
     <span class="n">all_value_types</span> <span class="o">=</span> <span class="n">load_all_subclasses_for_entry_point</span><span class="p">(</span>
         <span class="n">entry_point_name</span><span class="o">=</span><span class="s2">&quot;kiara.value_types&quot;</span><span class="p">,</span>
-        <span class="n">base_class</span><span class="o">=</span><span class="n">ValueType</span><span class="p">,</span>
+        <span class="n">base_class</span><span class="o">=</span><span class="n">ValueType</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
         <span class="n">set_id_attribute</span><span class="o">=</span><span class="s2">&quot;_value_type_name&quot;</span><span class="p">,</span>
         <span class="n">remove_namespace_tokens</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
@@ -2710,7 +2724,12 @@
                         <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">rnt</span><span class="p">)</span> <span class="p">:]</span>  <span class="c1"># noqa</span>
 
         <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Duplicate item name for base class </span><span class="si">{</span><span class="n">base_class</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">if</span> <span class="n">set_id_attribute</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; Check whether &#39;</span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; is missing the &#39;</span><span class="si">{</span><span class="n">set_id_attribute</span><span class="si">}</span><span class="s2">&#39; class attribute (in case this is a sub-class), or it&#39;s &#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&#39; value is also set in another class?&quot;</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Duplicate item name for base class </span><span class="si">{</span><span class="n">base_class</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
         <span class="n">result</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
 
     <span class="k">return</span> <span class="n">result</span>

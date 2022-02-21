@@ -655,6 +655,26 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#kiara.data.types.type_mgmt.TypeMgmt" class="md-nav__link">
+    TypeMgmt
+  </a>
+  
+    <nav class="md-nav" aria-label="TypeMgmt">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.types.type_mgmt.TypeMgmt.get_type_lineage" class="md-nav__link">
+    get_type_lineage()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1622,6 +1642,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../kiara.operations.data_export/" class="md-nav__link">
+        ➜ operations.data_export
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../kiara.operations.data_import/" class="md-nav__link">
         ➜ operations.data_import
       </a>
@@ -2158,6 +2192,26 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#kiara.data.types.type_mgmt.TypeMgmt" class="md-nav__link">
+    TypeMgmt
+  </a>
+  
+    <nav class="md-nav" aria-label="TypeMgmt">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data.types.type_mgmt.TypeMgmt.get_type_lineage" class="md-nav__link">
+    get_type_lineage()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2193,6 +2247,87 @@
 
 
 
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h2 id="kiara.data.types.type_mgmt.TypeMgmt" class="doc doc-heading">
+        <code>TypeMgmt</code>
+
+
+
+<a href="#kiara.data.types.type_mgmt.TypeMgmt" class="headerlink" title="Permanent link">&para;</a></h2>
+
+    <div class="doc doc-contents ">
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kiara.data.types.type_mgmt.TypeMgmt.get_type_lineage" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_type_lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_type</span><span class="p">)</span></code>
+
+
+<a href="#kiara.data.types.type_mgmt.TypeMgmt.get_type_lineage" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Returns the shortest path between the specified type and the 'any' type, in reverse direction starting from the specified type.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/types/type_mgmt.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_type_lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Returns the shortest path between the specified type and the &#39;any&#39; type, in reverse direction starting from the specified type.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">value_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_types</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No value type &#39;</span><span class="si">{</span><span class="n">value_type</span><span class="si">}</span><span class="s2">&#39; registered.&quot;</span><span class="p">)</span>
+
+    <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+
+    <span class="n">path</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">shortest_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_type_hierarchy</span><span class="p">,</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span> <span class="n">value_type</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
 
 
 

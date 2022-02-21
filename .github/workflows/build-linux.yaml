@@ -35,7 +35,7 @@ jobs:
         run: pip install -U --pre --extra-index-url https://pypi.fury.io/dharpa/ kiara_modules.core[all]
       - name: install kiara
         run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]
-      - name: display installed kiara versions
+      - name: display installed kiara and module package versions
         run: pip list | grep kiara
       - name: test with pytest
         run: make test
@@ -59,6 +59,8 @@ jobs:
         run: pip install -U --pre --extra-index-url https://pypi.fury.io/dharpa/ kiara_modules.core[all]
       - name: install kiara
         run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]
+      - name: display installed kiara and module package versions
+        run: pip list | grep kiara
       - name: Run coverage
         run: coverage run -m pytest tests
       - name: Upload coverage data to coveralls.io

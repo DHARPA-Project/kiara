@@ -217,7 +217,6 @@ class LocalDataStore(DataRegistry):
         store_operations: StoreOperationType = self._kiara.operation_mgmt.get_operations("store_value")  # type: ignore
 
         op_config = store_operations.get_store_operation_for_type(value_type)
-
         if not op_config:
             raise Exception(
                 f"Can't save value: no save operation found for value type '{value_type}'"

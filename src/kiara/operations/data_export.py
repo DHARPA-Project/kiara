@@ -7,6 +7,7 @@
 
 import abc
 import logging
+import os
 import typing
 from pydantic import Field
 
@@ -85,6 +86,15 @@ class DataExportModule(KiaraModule):
                 "type": source_type,
                 "doc": f"A value of type '{source_type}'.",
             },
+            "base_path": {
+                "type": "string",
+                "doc": "The directory to export the file(s) to.",
+                "optional": True,
+            },
+            "name": {
+                "type": "string",
+                "doc": "The (base) name of the exported file(s).",
+            },
         }
 
         return inputs
@@ -116,10 +126,17 @@ class DataExportModule(KiaraModule):
                 f"Can't export '{source_type}' value: missing function '{func_name}' in class '{self.__class__.__name__}'. Please check this modules documentation or source code to determine which source types and profiles are supported."
             )
 
+        base_path = inputs.get_value_data("base_path")
+        if base_path is None:
+            base_path = os.getcwd()
+        name = inputs.get_value_data("name")
+
         func = getattr(self, func_name)
         # TODO: check signature?
 
-        result = func(source)
+        base_path = os.path.abspath(base_path)
+        os.makedirs(base_path, exist_ok=True)
+        result = func(value=source, base_path=base_path, name=name)
         # schema = ValueSchema(type=self.get_target_value_type(), doc="Imported dataset.")
 
         # value_lineage = ValueLineage.from_module_and_inputs(

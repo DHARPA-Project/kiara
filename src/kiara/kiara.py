@@ -478,6 +478,7 @@ class Kiara(object):
 
         if inputs is None:
             inputs = {}
+
         result = module.run(**inputs)
         if output_name is not None:
             v = result.get_value_obj(output_name)

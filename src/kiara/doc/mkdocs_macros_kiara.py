@@ -166,9 +166,9 @@ def define_env(env):
         return "\n".join(result)
 
     @env.macro
-    def get_metadata_schemas_for_package(package_name: str):
+    def get_metadata_models_for_package(package_name: str):
 
-        metadata_schemas = kiara_obj.metadata_mgmt.find_all_schemas_for_package(
+        metadata_schemas = kiara_obj.metadata_mgmt.find_all_models_for_package(
             package_name
         )
         result = []

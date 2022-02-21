@@ -255,14 +255,14 @@ def find_all_kiara_modules() -> typing.Dict[str, typing.Type["KiaraModule"]]:
     return result
 
 
-def find_all_metadata_schemas() -> typing.Dict[str, typing.Type["MetadataModel"]]:
+def find_all_metadata_models() -> typing.Dict[str, typing.Type["MetadataModel"]]:
     """Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.
 
     TODO
     """
 
     return load_all_subclasses_for_entry_point(
-        entry_point_name="kiara.metadata_schemas",
+        entry_point_name="kiara.metadata_models",
         base_class=MetadataModel,
         set_id_attribute="_metadata_key",
         remove_namespace_tokens=["core."],
@@ -375,7 +375,7 @@ def find_kiara_modules_under(
     )
 
 
-def find_metadata_schemas_under(
+def find_metadata_models_under(
     module: typing.Union[str, ModuleType], prefix: typing.Optional[str] = ""
 ) -> typing.Mapping[str, typing.Type[MetadataModel]]:
 

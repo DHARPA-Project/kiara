@@ -57,11 +57,11 @@ class ValueTypeInfo(KiaraInfoModel):
         metadata_keys = kiara.metadata_mgmt.get_metadata_keys_for_type(
             value_type=value_type
         )
-        metadata_schemas: typing.Dict[str, typing.Type[MetadataModel]] = {}
+        metadata_models: typing.Dict[str, typing.Type[MetadataModel]] = {}
         for metadata_key in metadata_keys:
             schema = kiara.metadata_mgmt.all_schemas.get(metadata_key)
             if schema is not None:
-                metadata_schemas[metadata_key] = MetadataModelMetadata.from_model_class(
+                metadata_models[metadata_key] = MetadataModelMetadata.from_model_class(
                     schema
                 )
 
@@ -72,7 +72,7 @@ class ValueTypeInfo(KiaraInfoModel):
             "context": properties_md,
             "python_class": python_class,
             "config": config,
-            "metadata_types": metadata_schemas,
+            "metadata_types": metadata_models,
         }
 
     type_name: str = Field(description="The name under which the type is registered.")

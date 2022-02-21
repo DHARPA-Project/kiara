@@ -13,7 +13,7 @@ from rich.syntax import Syntax
 from kiara import Kiara
 from kiara.info.metadata import MetadataModelsInfo
 from kiara.metadata.core_models import MetadataModelMetadata
-from kiara.utils.class_loading import find_all_metadata_schemas
+from kiara.utils.class_loading import find_all_metadata_models
 from kiara.utils.output import rich_print
 
 
@@ -53,7 +53,7 @@ def explain_metadata(ctx, metadata_key, json_schema, details):
 
     # kiara_obj: Kiara = ctx.obj["kiara"]
 
-    schemas = find_all_metadata_schemas()
+    schemas = find_all_metadata_models()
     if metadata_key not in schemas.keys():
         print()
         print(f"No metadata schema for key '{metadata_key}' found...")

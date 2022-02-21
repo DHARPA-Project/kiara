@@ -10,7 +10,7 @@ import typing
 from kiara.data import Value
 from kiara.metadata import MetadataModel
 from kiara.operations import Operation
-from kiara.utils.class_loading import find_all_metadata_schemas
+from kiara.utils.class_loading import find_all_metadata_models
 
 if typing.TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -32,11 +32,11 @@ class MetadataMgmt(object):
     def all_schemas(self) -> typing.Mapping[str, typing.Type[MetadataModel]]:
 
         if self._metadata_models is None:
-            self._metadata_models = find_all_metadata_schemas()
+            self._metadata_models = find_all_metadata_models()
 
         return self._metadata_models
 
-    def find_all_schemas_for_package(
+    def find_all_models_for_package(
         self, package_name: str
     ) -> typing.Dict[str, typing.Type[MetadataModel]]:
 

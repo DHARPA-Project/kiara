@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.data.types.core/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -621,6 +621,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2267,6 +2269,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2444,7 +2448,9 @@
 
 
 <h2 id="kiara.data.types.core.AnyType" class="doc doc-heading">
-        <code>AnyType</code>
+        <code>
+AnyType            (<span title="kiara.data.types.ValueType">ValueType</span>)
+        </code>
 
 
 
@@ -2454,6 +2460,29 @@
 
       <p>Any type / No type information.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/types/core.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">AnyType</span><span class="p">(</span><span class="n">ValueType</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span> <span class="n">ValueTypeConfigSchema</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Any type / No type information.&quot;&quot;&quot;</span>
+
+    <span class="n">_value_type_name</span> <span class="o">=</span> <span class="s2">&quot;any&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">backing_python_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">object</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">type_config_cls</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">ValueTypeConfigSchema</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">ValueTypeConfigSchema</span>
+
+    <span class="k">def</span> <span class="nf">pretty_print_as_renderables</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="n">print_config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">)]</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2486,7 +2515,9 @@
 
 
 <h2 id="kiara.data.types.core.DeserializeConfigData" class="doc doc-heading">
-        <code>DeserializeConfigData</code>
+        <code>
+DeserializeConfigData            (<span title="kiara.data.types.core.KiaraInternalValueType">KiaraInternalValueType</span>)
+        </code>
 
 
 
@@ -2497,6 +2528,34 @@
       <p>A dictionary representing a configuration to deserialize a value.</p>
 <p>This contains all inputs necessary to re-create the value.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/types/core.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">DeserializeConfigData</span><span class="p">(</span><span class="n">KiaraInternalValueType</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A dictionary representing a configuration to deserialize a value.</span>
+
+<span class="sd">    This contains all inputs necessary to re-create the value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">candidate_python_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">DeserializeConfig</span><span class="p">]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">type_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;deserialize_config&quot;</span>
+
+    <span class="k">def</span> <span class="nf">parse_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
+            <span class="n">_value</span> <span class="o">=</span> <span class="n">DeserializeConfig</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">_value</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">DeserializeConfig</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid type for deserialize config: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2541,7 +2600,7 @@ avoid adding or removing information from the data (e.g. by changing the resolut
   <tbody>
       <tr>
         <td><code>v</code></td>
-        <td><code></code></td>
+        <td></td>
         <td><p>the value</p></td>
         <td><em>required</em></td>
       </tr>
@@ -2622,7 +2681,9 @@ avoid adding or removing information from the data (e.g. by changing the resolut
 
 
 <h2 id="kiara.data.types.core.LoadConfigData" class="doc doc-heading">
-        <code>LoadConfigData</code>
+        <code>
+LoadConfigData            (<span title="kiara.data.types.core.KiaraInternalValueType">KiaraInternalValueType</span>)
+        </code>
 
 
 
@@ -2633,6 +2694,34 @@ avoid adding or removing information from the data (e.g. by changing the resolut
       <p>A dictionary representing load config for a <em>kiara</em> value.</p>
 <p>The load config schema itself can be looked up via the wrapper class  '[LoadConfig][kiara.data.persistence.LoadConfig]'.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/types/core.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">LoadConfigData</span><span class="p">(</span><span class="n">KiaraInternalValueType</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A dictionary representing load config for a *kiara* value.</span>
+
+<span class="sd">    The load config schema itself can be looked up via the wrapper class  &#39;[LoadConfig][kiara.data.persistence.LoadConfig]&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">candidate_python_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">LoadConfig</span><span class="p">]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">type_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;load_config&quot;</span>
+
+    <span class="k">def</span> <span class="nf">parse_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
+            <span class="n">_value</span> <span class="o">=</span> <span class="n">LoadConfig</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">_value</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">LoadConfig</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid type for load config: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2677,7 +2766,7 @@ avoid adding or removing information from the data (e.g. by changing the resolut
   <tbody>
       <tr>
         <td><code>v</code></td>
-        <td><code></code></td>
+        <td></td>
         <td><p>the value</p></td>
         <td><em>required</em></td>
       </tr>
@@ -2757,7 +2846,9 @@ avoid adding or removing information from the data (e.g. by changing the resolut
 
 
 <h2 id="kiara.data.types.core.ValueInfoData" class="doc doc-heading">
-        <code>ValueInfoData</code>
+        <code>
+ValueInfoData            (<span title="kiara.data.types.core.KiaraInternalValueType">KiaraInternalValueType</span>)
+        </code>
 
 
 
@@ -2767,6 +2858,31 @@ avoid adding or removing information from the data (e.g. by changing the resolut
 
       <p>A dictionary representing a kiara ValueInfo object.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/types/core.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueInfoData</span><span class="p">(</span><span class="n">KiaraInternalValueType</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A dictionary representing a kiara ValueInfo object.&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">candidate_python_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">ValueInfo</span><span class="p">]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">type_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;value_info&quot;</span>
+
+    <span class="k">def</span> <span class="nf">parse_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
+            <span class="n">_value</span> <span class="o">=</span> <span class="n">ValueInfo</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">_value</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ValueInfo</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid type for value info: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2811,7 +2927,7 @@ avoid adding or removing information from the data (e.g. by changing the resolut
   <tbody>
       <tr>
         <td><code>v</code></td>
-        <td><code></code></td>
+        <td></td>
         <td><p>the value</p></td>
         <td><em>required</em></td>
       </tr>
@@ -2891,7 +3007,9 @@ avoid adding or removing information from the data (e.g. by changing the resolut
 
 
 <h2 id="kiara.data.types.core.ValueLineageData" class="doc doc-heading">
-        <code>ValueLineageData</code>
+        <code>
+ValueLineageData            (<span title="kiara.data.types.core.KiaraInternalValueType">KiaraInternalValueType</span>)
+        </code>
 
 
 
@@ -2901,6 +3019,31 @@ avoid adding or removing information from the data (e.g. by changing the resolut
 
       <p>A dictionary representing a kiara ValueLineage.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/types/core.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueLineageData</span><span class="p">(</span><span class="n">KiaraInternalValueType</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A dictionary representing a kiara ValueLineage.&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">candidate_python_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">ValueLineage</span><span class="p">]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">type_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;value_lineage&quot;</span>
+
+    <span class="k">def</span> <span class="nf">parse_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
+            <span class="n">_value</span> <span class="o">=</span> <span class="n">ValueLineage</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">_value</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ValueLineage</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid type for value seed: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2945,7 +3088,7 @@ avoid adding or removing information from the data (e.g. by changing the resolut
   <tbody>
       <tr>
         <td><code>v</code></td>
-        <td><code></code></td>
+        <td></td>
         <td><p>the value</p></td>
         <td><em>required</em></td>
       </tr>
@@ -3107,10 +3250,10 @@ avoid adding or removing information from the data (e.g. by changing the resolut
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

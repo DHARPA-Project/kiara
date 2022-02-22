@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.processing/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -1853,6 +1853,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2351,6 +2353,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2611,7 +2615,9 @@
 
 
 <h2 id="kiara.processing.__init__.Job" class="doc doc-heading">
-        <code>Job</code>
+        <code>
+Job            (<a title="kiara.processing.__init__.ProcessingInfo" href="#kiara.processing.__init__.ProcessingInfo">ProcessingInfo</a>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2623,6 +2629,59 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/processing/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Job</span><span class="p">(</span><span class="n">ProcessingInfo</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_event_msg</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">job</span><span class="p">:</span> <span class="s2">&quot;Job&quot;</span><span class="p">):</span>
+
+        <span class="n">topic</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="n">payload</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">topic</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">job</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">payload</span>
+
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">use_enum_values</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">_exception</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">pipeline_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of the pipeline this jobs runs for.&quot;</span><span class="p">)</span>
+    <span class="n">pipeline_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The name/type of the pipeline.&quot;</span><span class="p">)</span>
+    <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of the step within the pipeline.&quot;</span><span class="p">)</span>
+
+    <span class="n">inputs</span><span class="p">:</span> <span class="n">PipelineValuesInfo</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The input values.&quot;</span><span class="p">)</span>
+    <span class="n">outputs</span><span class="p">:</span> <span class="n">PipelineValuesInfo</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The output values.&quot;</span><span class="p">)</span>
+    <span class="n">status</span><span class="p">:</span> <span class="n">JobStatus</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The current status of the job.&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">JobStatus</span><span class="o">.</span><span class="n">CREATED</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">error</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Potential error message.&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">exception</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">runtime</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">finished</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">runtime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">finished</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span>
+        <span class="k">return</span> <span class="n">runtime</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
+
+    <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_validate_status</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Status must be a status string, or an integer between 0 and 100.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">v</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2817,7 +2876,9 @@
 
 
 <h2 id="kiara.processing.__init__.JobLog" class="doc doc-heading">
-        <code>JobLog</code>
+        <code>
+JobLog            (<span title="pydantic.main.BaseModel">BaseModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2829,6 +2890,24 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/processing/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">JobLog</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+
+    <span class="n">log</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">LogMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The logs for this job.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span>
+    <span class="p">)</span>
+    <span class="n">percent_finished</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Describes how much of the job is finished. A negative number means the module does not support progress tracking.&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">log_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
+
+        <span class="n">_msg</span> <span class="o">=</span> <span class="n">LogMessage</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">)]</span> <span class="o">=</span> <span class="n">_msg</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2904,7 +2983,9 @@
 
 
 <h2 id="kiara.processing.__init__.JobStatus" class="doc doc-heading">
-        <code>JobStatus</code>
+        <code>
+JobStatus            (<span title="enum.Enum">Enum</span>)
+        </code>
 
 
 
@@ -2914,6 +2995,16 @@
 
       <p>An enumeration.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/processing/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">JobStatus</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+
+    <span class="n">CREATED</span> <span class="o">=</span> <span class="s2">&quot;__job_created__&quot;</span>
+    <span class="n">STARTED</span> <span class="o">=</span> <span class="s2">&quot;__job_started__&quot;</span>
+    <span class="n">SUCCESS</span> <span class="o">=</span> <span class="s2">&quot;__job_success__&quot;</span>
+    <span class="n">FAILED</span> <span class="o">=</span> <span class="s2">&quot;__job_failed__&quot;</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2946,7 +3037,9 @@
 
 
 <h2 id="kiara.processing.__init__.LogMessage" class="doc doc-heading">
-        <code>LogMessage</code>
+        <code>
+LogMessage            (<span title="pydantic.main.BaseModel">BaseModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2958,6 +3051,17 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/processing/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">LogMessage</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+
+    <span class="n">timestamp</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The time the message was logged.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span>
+    <span class="p">)</span>
+    <span class="n">log_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The log level.&quot;</span><span class="p">)</span>
+    <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The log message&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -3056,7 +3160,9 @@
 
 
 <h2 id="kiara.processing.__init__.ProcessingInfo" class="doc doc-heading">
-        <code>ProcessingInfo</code>
+        <code>
+ProcessingInfo            (<span title="kiara.metadata.MetadataModel">MetadataModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -3068,6 +3174,32 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/processing/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ProcessingInfo</span><span class="p">(</span><span class="n">MetadataModel</span><span class="p">):</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of the job.&quot;</span><span class="p">)</span>
+    <span class="n">module_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The module type name.&quot;</span><span class="p">)</span>
+    <span class="n">module_config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The module configuration.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">module_doc</span><span class="p">:</span> <span class="n">DocumentationMetadataModel</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Documentation for the module that runs the job.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">job_log</span><span class="p">:</span> <span class="n">JobLog</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Details about the job progress.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="n">JobLog</span>
+    <span class="p">)</span>
+    <span class="n">submitted</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;When the job was submitted.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span>
+    <span class="p">)</span>
+    <span class="n">started</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;When the job was started.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="n">finished</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;When the job was finished.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -3361,10 +3493,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

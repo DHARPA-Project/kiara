@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.operations.extract_metadata/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -1629,6 +1629,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2213,6 +2215,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2335,7 +2339,9 @@
 
 
 <h2 id="kiara.operations.extract_metadata.ExtractMetadataModule" class="doc doc-heading">
-        <code>ExtractMetadataModule</code>
+        <code>
+ExtractMetadataModule            (<a title="kiara.module.KiaraModule" href="../kiara.module/#kiara.module.KiaraModule">KiaraModule</a>)
+        </code>
 
 
 
@@ -2346,6 +2352,184 @@
       <p>Base class to use when writing a module to extract metadata from a file.</p>
 <p>It's possible to use any arbitrary <em>kiara</em> module for this purpose, but sub-classing this makes it easier.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/operations/extract_metadata.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ExtractMetadataModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class to use when writing a module to extract metadata from a file.</span>
+
+<span class="sd">    It&#39;s possible to use any arbitrary *kiara* module for this purpose, but sub-classing this makes it easier.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">MetadataModuleConfig</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_module_profiles</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span> <span class="n">Operation</span><span class="p">]]:</span>
+
+        <span class="n">all_metadata_profiles</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span>
+            <span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">value_types</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_supported_value_types</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;*&quot;</span> <span class="ow">in</span> <span class="n">value_types</span><span class="p">:</span>
+            <span class="n">value_types</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">type_mgmt</span><span class="o">.</span><span class="n">value_type_names</span>
+
+        <span class="n">metadata_key</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_metadata_key</span><span class="p">()</span>
+        <span class="n">all_value_types</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">value_type</span> <span class="ow">in</span> <span class="n">value_types</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">value_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">type_mgmt</span><span class="o">.</span><span class="n">value_type_names</span><span class="p">:</span>
+                <span class="n">log_message</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Ignoring metadata-extract operation (metadata key: </span><span class="si">{</span><span class="n">metadata_key</span><span class="si">}</span><span class="s2">) for type &#39;</span><span class="si">{</span><span class="n">value_type</span><span class="si">}</span><span class="s2">&#39;: type not available&quot;</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="n">all_value_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">value_type</span><span class="p">)</span>
+            <span class="n">sub_types</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">type_mgmt</span><span class="o">.</span><span class="n">get_sub_types</span><span class="p">(</span><span class="n">value_type</span><span class="p">)</span>
+            <span class="n">all_value_types</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sub_types</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">value_type</span> <span class="ow">in</span> <span class="n">all_value_types</span><span class="p">:</span>
+
+            <span class="n">op_config</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_module_type_id</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+                <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="n">value_type</span><span class="p">},</span>
+                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Extract &#39;</span><span class="si">{</span><span class="n">metadata_key</span><span class="si">}</span><span class="s2">&#39; metadata for value of type &#39;</span><span class="si">{</span><span class="n">value_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+
+            <span class="n">all_metadata_profiles</span><span class="p">[</span>
+                <span class="sa">f</span><span class="s2">&quot;extract.</span><span class="si">{</span><span class="n">metadata_key</span><span class="si">}</span><span class="s2">.metadata.from.</span><span class="si">{</span><span class="n">value_type</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">]</span> <span class="o">=</span> <span class="n">op_config</span>
+
+        <span class="k">return</span> <span class="n">all_metadata_profiles</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_get_supported_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_metadata_key</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_module_type_name</span>  <span class="c1"># type: ignore</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_supported_value_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="n">_types</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_supported_types</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_types</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">_types</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">_types</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata_schema</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">value_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">data_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;value_type&quot;</span><span class="p">)</span>
+        <span class="n">sup_types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_supported_value_types</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;*&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sup_types</span> <span class="ow">and</span> <span class="n">data_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sup_types</span><span class="p">:</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">sup_type</span> <span class="ow">in</span> <span class="n">sup_types</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">sub_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_mgmt</span><span class="o">.</span><span class="n">get_sub_types</span><span class="p">(</span><span class="n">sup_type</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">sub_type</span> <span class="o">==</span> <span class="n">data_type</span><span class="p">:</span>
+                        <span class="n">match</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">break</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Invalid module configuration, type &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39; not supported. Supported types: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_supported_value_types</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data_type</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">metadata_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata_schema</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata_schema</span>
+
+        <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metadata_schema</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">value_type</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+            <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">schema_json</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid type for metadata schema: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata_schema</span> <span class="o">=</span> <span class="n">schema</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata_schema</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_get_metadata_schema</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Create the metadata schema for the configured type.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">extract_metadata</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span> <span class="n">BaseModel</span><span class="p">]:</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">create_input_schema</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span>
+    <span class="p">]:</span>
+
+        <span class="n">input_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_type</span>
+        <span class="k">if</span> <span class="n">input_name</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
+            <span class="n">input_name</span> <span class="o">=</span> <span class="s2">&quot;value_item&quot;</span>
+
+        <span class="n">inputs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">input_name</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_type</span><span class="p">,</span>
+                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;A value of type &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_type</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;optional&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">inputs</span>
+
+    <span class="k">def</span> <span class="nf">create_output_schema</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span>
+    <span class="p">]:</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;metadata_item&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;dict&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The metadata for the provided value.&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;metadata_item_schema&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The (json) schema for the metadata.&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">outputs</span>
+
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueSet</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="n">input_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_type</span>
+        <span class="k">if</span> <span class="n">input_name</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
+            <span class="n">input_name</span> <span class="o">=</span> <span class="s2">&quot;value_item&quot;</span>
+
+        <span class="n">value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">input_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_type</span> <span class="o">!=</span> <span class="s2">&quot;any&quot;</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">type_name</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_type</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">KiaraProcessingException</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t extract metadata for value of type &#39;</span><span class="si">{</span><span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&#39;. Expected type &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># TODO: if type &#39;any&#39;, validate that the data is actually of the right type?</span>
+
+        <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;metadata_item_schema&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata_schema</span><span class="p">)</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_metadata</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># TODO: validate metadata?</span>
+        <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;metadata_item&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2551,7 +2735,9 @@
 
 
 <h2 id="kiara.operations.extract_metadata.ExtractMetadataOperationType" class="doc doc-heading">
-        <code>ExtractMetadataOperationType</code>
+        <code>
+ExtractMetadataOperationType            (<span title="kiara.operations.OperationType">OperationType</span>)
+        </code>
 
 
 
@@ -2572,6 +2758,44 @@ under which the metadata will be stored within the value object.</p>
 as the value type name, and which contains basic, type-specific metadata (e.g. for a 'table', that would be number of rows,
 column names, column types, etc.).</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/operations/extract_metadata.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ExtractMetadataOperationType</span><span class="p">(</span><span class="n">OperationType</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extract metadata from a dataset.</span>
+
+<span class="sd">    The purpose of this operation type is to be able to extract arbitrary, type-specific metadata from value data. In general,</span>
+<span class="sd">    *kiara* wants to collect (and store along the value) as much metadata related to data as possible, but the extraction</span>
+<span class="sd">    process should not take a lot of processing time (since this is done whenever a value is registered into a data registry).</span>
+
+<span class="sd">    As its hard to predict all the types of metadata of a specific type that could be interesting in specific scenarios, *kiara*</span>
+<span class="sd">    supports a pluggable mechanism to add new metadata extraction processes by extending the base class [`ExtractMetadataModule`](http://dharpa.org/kiara/latest/api_reference/kiara.operations.extract_metadata/#kiara.operations.extract_metadata.ExtractMetadataModule)</span>
+<span class="sd">    and adding that implementation somewhere *kiara* can find it. Once that is done, *kiara* will automatically add a new</span>
+<span class="sd">    operation with an id that follows this template: `&lt;VALUE_TYPE&gt;.extract_metadata.&lt;METADATA_KEY&gt;`, where `METADATA_KEY` is a name</span>
+<span class="sd">    under which the metadata will be stored within the value object.</span>
+
+<span class="sd">    By default, every value type should have at least one metadata extraction module where the `METADATA_KEY` is the same</span>
+<span class="sd">    as the value type name, and which contains basic, type-specific metadata (e.g. for a &#39;table&#39;, that would be number of rows,</span>
+<span class="sd">    column names, column types, etc.).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">is_matching_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op_config</span><span class="p">:</span> <span class="n">Operation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">op_config</span><span class="o">.</span><span class="n">module_cls</span><span class="p">,</span> <span class="n">ExtractMetadataModule</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_all_operations_for_type</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">value_type</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]:</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">op_config</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">v_t</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">module_config</span><span class="p">[</span><span class="s2">&quot;value_type&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">v_t</span> <span class="o">!=</span> <span class="n">value_type</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">module_cls</span><span class="p">:</span> <span class="n">ExtractMetadataModule</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">module_cls</span>  <span class="c1"># type: ignore</span>
+            <span class="n">md_key</span> <span class="o">=</span> <span class="n">module_cls</span><span class="o">.</span><span class="n">get_metadata_key</span><span class="p">()</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">md_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">op_config</span>
+        <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2602,7 +2826,9 @@ column names, column types, etc.).</p>
 
 
 <h2 id="kiara.operations.extract_metadata.MetadataModuleConfig" class="doc doc-heading">
-        <code>MetadataModuleConfig</code>
+        <code>
+MetadataModuleConfig            (<a title="kiara.module_config.ModuleTypeConfigSchema" href="../kiara.module_config/#kiara.module_config.ModuleTypeConfigSchema">ModuleTypeConfigSchema</a>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2614,6 +2840,13 @@ column names, column types, etc.).</p>
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/operations/extract_metadata.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MetadataModuleConfig</span><span class="p">(</span><span class="n">ModuleTypeConfigSchema</span><span class="p">):</span>
+
+    <span class="n">value_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The data type this module will be used for.&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2750,10 +2983,10 @@ column names, column types, etc.).</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

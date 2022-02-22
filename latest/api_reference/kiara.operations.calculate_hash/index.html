@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.operations.calculate_hash/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -1573,6 +1573,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -1601,33 +1603,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.operations.calculate_hash.CalculateValueHashesConfig" class="md-nav__link">
-    CalculateValueHashesConfig
-  </a>
-  
-    <nav class="md-nav" aria-label="CalculateValueHashesConfig">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kiara.operations.calculate_hash.CalculateValueHashesConfig.hash_type" class="md-nav__link">
-    hash_type
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.operations.calculate_hash.CalculateValueHashesConfig.value_type" class="md-nav__link">
-    value_type
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#kiara.operations.calculate_hash.CalculateValueHashModule" class="md-nav__link">
     CalculateValueHashModule
   </a>
@@ -1652,6 +1627,33 @@
           <li class="md-nav__item">
   <a href="#kiara.operations.calculate_hash.CalculateValueHashModule.retrieve_module_profiles" class="md-nav__link">
     retrieve_module_profiles()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.operations.calculate_hash.CalculateValueHashesConfig" class="md-nav__link">
+    CalculateValueHashesConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="CalculateValueHashesConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.operations.calculate_hash.CalculateValueHashesConfig.hash_type" class="md-nav__link">
+    hash_type
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.operations.calculate_hash.CalculateValueHashesConfig.value_type" class="md-nav__link">
+    value_type
   </a>
   
 </li>
@@ -2220,6 +2222,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2248,33 +2252,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.operations.calculate_hash.CalculateValueHashesConfig" class="md-nav__link">
-    CalculateValueHashesConfig
-  </a>
-  
-    <nav class="md-nav" aria-label="CalculateValueHashesConfig">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kiara.operations.calculate_hash.CalculateValueHashesConfig.hash_type" class="md-nav__link">
-    hash_type
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.operations.calculate_hash.CalculateValueHashesConfig.value_type" class="md-nav__link">
-    value_type
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#kiara.operations.calculate_hash.CalculateValueHashModule" class="md-nav__link">
     CalculateValueHashModule
   </a>
@@ -2299,6 +2276,33 @@
           <li class="md-nav__item">
   <a href="#kiara.operations.calculate_hash.CalculateValueHashModule.retrieve_module_profiles" class="md-nav__link">
     retrieve_module_profiles()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.operations.calculate_hash.CalculateValueHashesConfig" class="md-nav__link">
+    CalculateValueHashesConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="CalculateValueHashesConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.operations.calculate_hash.CalculateValueHashesConfig.hash_type" class="md-nav__link">
+    hash_type
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.operations.calculate_hash.CalculateValueHashesConfig.value_type" class="md-nav__link">
+    value_type
   </a>
   
 </li>
@@ -2349,7 +2353,9 @@
 
 
 <h2 id="kiara.operations.calculate_hash.CalculateHashOperationType" class="doc doc-heading">
-        <code>CalculateHashOperationType</code>
+        <code>
+CalculateHashOperationType            (<span title="kiara.operations.OperationType">OperationType</span>)
+        </code>
 
 
 
@@ -2360,101 +2366,36 @@
       <p>Operation type to calculate hash(es) for data.</p>
 <p>This is mostly used internally, so users usually won't be exposed to operations of this type.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/operations/calculate_hash.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">CalculateHashOperationType</span><span class="p">(</span><span class="n">OperationType</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Operation type to calculate hash(es) for data.</span>
+
+<span class="sd">    This is mostly used internally, so users usually won&#39;t be exposed to operations of this type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">is_matching_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op_config</span><span class="p">:</span> <span class="n">Operation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="n">op_config</span><span class="o">.</span><span class="n">module_cls</span> <span class="o">==</span> <span class="n">CalculateValueHashModule</span>
+
+    <span class="k">def</span> <span class="nf">get_hash_operations_for_type</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">value_type</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]:</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">op_config</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">op_config</span><span class="o">.</span><span class="n">module_config</span><span class="p">[</span><span class="s2">&quot;value_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">value_type</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">op_config</span><span class="o">.</span><span class="n">module_config</span><span class="p">[</span><span class="s2">&quot;hash_type&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">op_config</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+        </details>
 
 
 
   <div class="doc doc-children">
 
 
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h2 id="kiara.operations.calculate_hash.CalculateValueHashesConfig" class="doc doc-heading">
-        <code>CalculateValueHashesConfig</code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.operations.calculate_hash.CalculateValueHashesConfig" class="headerlink" title="Permanent link">&para;</a></h2>
-
-    <div class="doc doc-contents ">
-
-
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="kiara.operations.calculate_hash.CalculateValueHashesConfig.hash_type" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">hash_type</span><span class="p">:</span> <span class="nb">str</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.operations.calculate_hash.CalculateValueHashesConfig.hash_type" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-      <p>The hash type.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="kiara.operations.calculate_hash.CalculateValueHashesConfig.value_type" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">value_type</span><span class="p">:</span> <span class="nb">str</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.operations.calculate_hash.CalculateValueHashesConfig.value_type" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-      <p>The type of the value to calculate the hash for.</p>
-    </div>
-
-  </div>
 
 
 
@@ -2479,7 +2420,9 @@
 
 
 <h2 id="kiara.operations.calculate_hash.CalculateValueHashModule" class="doc doc-heading">
-        <code>CalculateValueHashModule</code>
+        <code>
+CalculateValueHashModule            (<a title="kiara.module.KiaraModule" href="../kiara.module/#kiara.module.KiaraModule">KiaraModule</a>)
+        </code>
 
 
 
@@ -2489,6 +2432,74 @@
 
       <p>Calculate the hash of a value.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/operations/calculate_hash.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">CalculateValueHashModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the hash of a value.&quot;&quot;&quot;</span>
+
+    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;value.hash&quot;</span>
+    <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">CalculateValueHashesConfig</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_module_profiles</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span> <span class="n">Operation</span><span class="p">]]:</span>
+
+        <span class="n">all_metadata_profiles</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span>
+            <span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">value_type_name</span><span class="p">,</span> <span class="n">value_type</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">type_mgmt</span><span class="o">.</span><span class="n">value_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="n">hash_types</span> <span class="o">=</span> <span class="n">value_type</span><span class="o">.</span><span class="n">get_supported_hash_types</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">ht</span> <span class="ow">in</span> <span class="n">hash_types</span><span class="p">:</span>
+                <span class="n">op_config</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_module_type_id</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+                    <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="n">value_type_name</span><span class="p">,</span> <span class="s2">&quot;hash_type&quot;</span><span class="p">:</span> <span class="n">ht</span><span class="p">},</span>
+                    <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Calculate &#39;</span><span class="si">{</span><span class="n">ht</span><span class="si">}</span><span class="s2">&#39; hash for value type &#39;</span><span class="si">{</span><span class="n">value_type_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span>
+                <span class="p">}</span>
+                <span class="n">all_metadata_profiles</span><span class="p">[</span>
+                    <span class="sa">f</span><span class="s2">&quot;calculate_hash.</span><span class="si">{</span><span class="n">ht</span><span class="si">}</span><span class="s2">.for.</span><span class="si">{</span><span class="n">value_type_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="n">op_config</span>
+
+        <span class="k">return</span> <span class="n">all_metadata_profiles</span>
+
+    <span class="k">def</span> <span class="nf">create_input_schema</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span>
+    <span class="p">]:</span>
+
+        <span class="n">input_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;value_type&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">input_name</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
+            <span class="n">input_name</span> <span class="o">=</span> <span class="s2">&quot;value_item&quot;</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">input_name</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;value_type&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;A value of type &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s1">&#39;value_type&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">create_output_schema</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span>
+    <span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;hash&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The hash string.&quot;</span><span class="p">}}</span>
+
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueSet</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="n">input_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;value_type&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">input_name</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
+            <span class="n">input_name</span> <span class="o">=</span> <span class="s2">&quot;value_item&quot;</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">input_name</span><span class="p">)</span>
+
+        <span class="n">value_hash</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">get_hash</span><span class="p">(</span><span class="n">hash_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;hash_type&quot;</span><span class="p">))</span>
+        <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;hash&quot;</span><span class="p">,</span> <span class="n">value_hash</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2654,6 +2665,107 @@
 
 
 
+  <div class="doc doc-object doc-class">
+
+
+
+<h2 id="kiara.operations.calculate_hash.CalculateValueHashesConfig" class="doc doc-heading">
+        <code>
+CalculateValueHashesConfig            (<a title="kiara.module_config.ModuleTypeConfigSchema" href="../kiara.module_config/#kiara.module_config.ModuleTypeConfigSchema">ModuleTypeConfigSchema</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.operations.calculate_hash.CalculateValueHashesConfig" class="headerlink" title="Permanent link">&para;</a></h2>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/operations/calculate_hash.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">CalculateValueHashesConfig</span><span class="p">(</span><span class="n">ModuleTypeConfigSchema</span><span class="p">):</span>
+
+    <span class="n">value_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The type of the value to calculate the hash for.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">hash_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The hash type.&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.operations.calculate_hash.CalculateValueHashesConfig.hash_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">hash_type</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.operations.calculate_hash.CalculateValueHashesConfig.hash_type" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The hash type.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.operations.calculate_hash.CalculateValueHashesConfig.value_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">value_type</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.operations.calculate_hash.CalculateValueHashesConfig.value_type" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The type of the value to calculate the hash for.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
 
 
 
@@ -2741,10 +2853,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.metadata.core_models/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -1321,6 +1321,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2369,6 +2371,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2647,7 +2651,9 @@
 
 
 <h2 id="kiara.metadata.core_models.AuthorModel" class="doc doc-heading">
-        <code>AuthorModel</code>
+        <code>
+AuthorModel            (<span title="pydantic.main.BaseModel">BaseModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2659,6 +2665,16 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/metadata/core_models.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">AuthorModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The full name of the author.&quot;</span><span class="p">)</span>
+    <span class="n">email</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">EmailStr</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The email address of the author&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2734,7 +2750,9 @@
 
 
 <h2 id="kiara.metadata.core_models.ContextMetadataModel" class="doc doc-heading">
-        <code>ContextMetadataModel</code>
+        <code>
+ContextMetadataModel            (<span title="kiara.metadata.MetadataModel">MetadataModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2746,6 +2764,73 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/metadata/core_models.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ContextMetadataModel</span><span class="p">(</span><span class="n">MetadataModel</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item_cls</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">):</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">get_metadata_for_python_module_or_class</span><span class="p">(</span><span class="n">item_cls</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="n">merged</span> <span class="o">=</span> <span class="n">merge_dicts</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">merged</span><span class="p">)</span>
+
+    <span class="n">_metadata_key</span> <span class="o">=</span> <span class="s2">&quot;properties&quot;</span>
+
+    <span class="n">references</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">LinkModel</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;References for the item.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span>
+    <span class="p">)</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A list of tags for the item.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">set</span>
+    <span class="p">)</span>
+    <span class="n">labels</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A list of labels for the item.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Key&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Tags&quot;</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[i]</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">[/i]: </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Labels&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">references</span><span class="p">:</span>
+            <span class="n">references</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">_k</span><span class="p">,</span> <span class="n">_v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">references</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">link</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[link=</span><span class="si">{</span><span class="n">_v</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">_v</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">[/link]&quot;</span>
+                <span class="n">references</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[i]</span><span class="si">{</span><span class="n">_k</span><span class="si">}</span><span class="s2">[/i]: </span><span class="si">{</span><span class="n">link</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;References&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">references</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">table</span>
+
+    <span class="k">def</span> <span class="nf">add_reference</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ref_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">desc</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">ref_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">references</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reference of type &#39;</span><span class="si">{</span><span class="n">ref_type</span><span class="si">}</span><span class="s2">&#39; already present.&quot;</span><span class="p">)</span>
+        <span class="n">link</span> <span class="o">=</span> <span class="n">LinkModel</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">references</span><span class="p">[</span><span class="n">ref_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">link</span>
+
+    <span class="k">def</span> <span class="nf">get_url_for_reference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+
+        <span class="n">link</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">references</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">link</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">link</span><span class="o">.</span><span class="n">url</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2847,7 +2932,9 @@
 
 
 <h2 id="kiara.metadata.core_models.DocumentationMetadataModel" class="doc doc-heading">
-        <code>DocumentationMetadataModel</code>
+        <code>
+DocumentationMetadataModel            (<span title="kiara.metadata.MetadataModel">MetadataModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2859,6 +2946,93 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/metadata/core_models.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">DocumentationMetadataModel</span><span class="p">(</span><span class="n">MetadataModel</span><span class="p">):</span>
+
+    <span class="n">_metadata_key</span> <span class="o">=</span> <span class="s2">&quot;documentation&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_class_doc</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item_cls</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">):</span>
+
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">item_cls</span><span class="o">.</span><span class="vm">__doc__</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">doc</span><span class="p">:</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">DEFAULT_NO_DESC_VALUE</span>
+
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">cleandoc</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">doc</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">doc</span><span class="p">:</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">DEFAULT_NO_DESC_VALUE</span>
+
+        <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">:</span>
+            <span class="n">desc</span><span class="p">,</span> <span class="n">doc</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">desc</span> <span class="o">=</span> <span class="n">doc</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">doc</span><span class="p">:</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">doc</span><span class="o">=</span><span class="n">doc</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
+
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">desc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">desc</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;desc&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">doc</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">desc</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">DEFAULT_NO_DESC_VALUE</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">doc</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">desc</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">desc</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">doc</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">desc</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DocumentationMetadataModel</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">doc</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">DEFAULT_NO_DESC_VALUE</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">DocumentationMetadataModel</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">item</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_class_doc</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t create documentation from type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Short description of the item.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">DEFAULT_NO_DESC_VALUE</span>
+    <span class="p">)</span>
+    <span class="n">doc</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Detailed documentation of the item (in markdown).&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">full_doc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">doc</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="se">\n\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">doc</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span>
+
+    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="n">Markdown</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">full_doc</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2940,7 +3114,9 @@
 
 
 <h2 id="kiara.metadata.core_models.LinkModel" class="doc doc-heading">
-        <code>LinkModel</code>
+        <code>
+LinkModel            (<span title="pydantic.main.BaseModel">BaseModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2952,6 +3128,17 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/metadata/core_models.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">LinkModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+
+    <span class="n">url</span><span class="p">:</span> <span class="n">AnyUrl</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The url.&quot;</span><span class="p">)</span>
+    <span class="n">desc</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A short description of the link content.&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">DEFAULT_NO_DESC_VALUE</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -3027,7 +3214,9 @@
 
 
 <h2 id="kiara.metadata.core_models.MetadataModelMetadata" class="doc doc-heading">
-        <code>MetadataModelMetadata</code>
+        <code>
+MetadataModelMetadata            (<span title="kiara.metadata.MetadataModel">MetadataModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -3039,6 +3228,95 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/metadata/core_models.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MetadataModelMetadata</span><span class="p">(</span><span class="n">MetadataModel</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_model_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_cls</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">MetadataModel</span><span class="p">]):</span>
+
+        <span class="n">origin_md</span> <span class="o">=</span> <span class="n">OriginMetadataModel</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">model_cls</span><span class="p">)</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">from_class_doc</span><span class="p">(</span><span class="n">model_cls</span><span class="p">)</span>
+        <span class="n">python_class</span> <span class="o">=</span> <span class="n">PythonClassMetadata</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">model_cls</span><span class="p">)</span>
+        <span class="n">properties_md</span> <span class="o">=</span> <span class="n">ContextMetadataModel</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">model_cls</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">MetadataModelMetadata</span><span class="p">(</span>
+            <span class="n">type_name</span><span class="o">=</span><span class="n">model_cls</span><span class="o">.</span><span class="n">_metadata_key</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+            <span class="n">documentation</span><span class="o">=</span><span class="n">doc</span><span class="p">,</span>
+            <span class="n">origin</span><span class="o">=</span><span class="n">origin_md</span><span class="p">,</span>
+            <span class="n">context</span><span class="o">=</span><span class="n">properties_md</span><span class="p">,</span>
+            <span class="n">python_class</span><span class="o">=</span><span class="n">python_class</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The registered name for this value type.&quot;</span><span class="p">)</span>
+    <span class="n">documentation</span><span class="p">:</span> <span class="n">DocumentationMetadataModel</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Documentation for the value type.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">origin</span><span class="p">:</span> <span class="n">OriginMetadataModel</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Information about the creator of this value type.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">context</span><span class="p">:</span> <span class="n">ContextMetadataModel</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Generic properties of this value type.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">python_class</span><span class="p">:</span> <span class="n">PythonClassMetadata</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The Python class for this value type.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_fields_table</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">show_header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">show_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
+
+        <span class="n">type_cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>
+
+        <span class="n">fields_table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="n">show_header</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+        <span class="n">fields_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Field name&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="n">fields_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Type&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">show_required</span><span class="p">:</span>
+            <span class="n">fields_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Required&quot;</span><span class="p">)</span>
+        <span class="n">fields_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Description&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">details</span> <span class="ow">in</span> <span class="n">type_cls</span><span class="o">.</span><span class="n">__fields__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">field_type</span> <span class="o">=</span> <span class="n">type_cls</span><span class="o">.</span><span class="n">schema</span><span class="p">()[</span><span class="s2">&quot;properties&quot;</span><span class="p">][</span><span class="n">field_name</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="n">details</span><span class="o">.</span><span class="n">field_info</span><span class="o">.</span><span class="n">description</span>
+            <span class="k">if</span> <span class="n">show_required</span><span class="p">:</span>
+                <span class="n">req</span> <span class="o">=</span> <span class="s2">&quot;yes&quot;</span> <span class="k">if</span> <span class="n">details</span><span class="o">.</span><span class="n">required</span> <span class="k">else</span> <span class="s2">&quot;no&quot;</span>
+                <span class="n">fields_table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="n">field_type</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">fields_table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="n">field_type</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">fields_table</span>
+
+    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+        <span class="n">include_schema</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;display_schema&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">include_doc</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_doc&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Property&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">include_doc</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
+                <span class="s2">&quot;Documentation&quot;</span><span class="p">,</span>
+                <span class="n">Panel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(),</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Origin&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">())</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Context&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">())</span>
+
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Python class&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">())</span>
+
+        <span class="n">fields_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_fields_table</span><span class="p">()</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Fields&quot;</span><span class="p">,</span> <span class="n">fields_table</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">include_schema</span><span class="p">:</span>
+            <span class="n">json_str</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span><span class="o">.</span><span class="n">schema_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+                <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+                <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Json Schema&quot;</span><span class="p">,</span> <span class="n">json_str</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">table</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -3188,7 +3466,9 @@
 
 
 <h2 id="kiara.metadata.core_models.OriginMetadataModel" class="doc doc-heading">
-        <code>OriginMetadataModel</code>
+        <code>
+OriginMetadataModel            (<span title="kiara.metadata.MetadataModel">MetadataModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -3200,6 +3480,40 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/metadata/core_models.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OriginMetadataModel</span><span class="p">(</span><span class="n">MetadataModel</span><span class="p">):</span>
+
+    <span class="n">_metadata_key</span> <span class="o">=</span> <span class="s2">&quot;origin&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item_cls</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">):</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">get_metadata_for_python_module_or_class</span><span class="p">(</span><span class="n">item_cls</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="n">merged</span> <span class="o">=</span> <span class="n">merge_dicts</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">merged</span><span class="p">)</span>
+
+    <span class="n">authors</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">AuthorModel</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The authors/creators of this item.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Key&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span>
+
+        <span class="n">authors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">author</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">authors</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">author</span><span class="o">.</span><span class="n">email</span><span class="p">:</span>
+                <span class="n">authors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">author</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">author</span><span class="o">.</span><span class="n">email</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">authors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">author</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Authors&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">authors</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">table</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -3255,7 +3569,9 @@
 
 
 <h2 id="kiara.metadata.core_models.PythonClassMetadata" class="doc doc-heading">
-        <code>PythonClassMetadata</code>
+        <code>
+PythonClassMetadata            (<span title="kiara.metadata.MetadataModel">MetadataModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -3268,6 +3584,38 @@
 
       <p>Python class and module information.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/metadata/core_models.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PythonClassMetadata</span><span class="p">(</span><span class="n">MetadataModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Python class and module information.&quot;&quot;&quot;</span>
+
+    <span class="n">_metadata_key</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;python_class&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item_cls</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">):</span>
+
+        <span class="n">conf</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;class_name&quot;</span><span class="p">:</span> <span class="n">item_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="s2">&quot;module_name&quot;</span><span class="p">:</span> <span class="n">item_cls</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span>
+            <span class="s2">&quot;full_name&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">item_cls</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">item_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">PythonClassMetadata</span><span class="p">(</span><span class="o">**</span><span class="n">conf</span><span class="p">)</span>
+
+    <span class="n">class_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The name of the Python class.&quot;</span><span class="p">)</span>
+    <span class="n">module_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The name of the Python module this class lives in.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">full_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The full class namespace.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_class</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">:</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_module</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_module</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleType</span><span class="p">:</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">module_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">m</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -3453,10 +3801,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

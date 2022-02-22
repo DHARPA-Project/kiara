@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.module_config/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -1419,6 +1419,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2269,6 +2271,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2449,7 +2453,9 @@
 
 
 <h2 id="kiara.module_config.ModuleConfig" class="doc doc-heading">
-        <code>ModuleConfig</code>
+        <code>
+ModuleConfig            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2462,6 +2468,111 @@
 
       <p>A class to hold the type and configuration for a module instance.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/module_config.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ModuleConfig</span><span class="p">(</span><span class="n">KiaraInfoModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A class to hold the type and configuration for a module instance.&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_module_config</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span>
+            <span class="s2">&quot;ModuleConfig&quot;</span><span class="p">,</span>
+            <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">,</span>
+            <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraModule&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;PipelineConfig&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">module_config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ModuleConfig&quot;</span><span class="p">:</span>
+
+        <span class="n">conf</span> <span class="o">=</span> <span class="n">parse_and_create_module_config</span><span class="p">(</span>
+            <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">module_config</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">conf</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_renderable_from_module_instance_configs</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">configs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;ModuleConfig&quot;</span><span class="p">],</span>
+        <span class="o">**</span><span class="n">render_config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convenience method to create a renderable for this module configuration, to be printed to terminal.&quot;&quot;&quot;</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Id&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="n">no_wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Description&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;omit_config&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Configuration&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">configs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">doc</span><span class="p">:</span>
+                <span class="n">doc</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">description</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">doc</span> <span class="o">=</span> <span class="n">DEFAULT_NO_DESC_VALUE</span>
+
+            <span class="n">row</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">id</span><span class="p">,</span> <span class="n">doc</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;omit_config&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="n">conf</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;doc&quot;</span><span class="p">},</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Syntax</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">))</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">table</span>
+
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
+        <span class="n">validate_all</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">_module</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;KiaraModule&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">module_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The module type.&quot;</span><span class="p">)</span>
+    <span class="n">module_config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The configuration for the module.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">doc</span><span class="p">:</span> <span class="n">DocumentationMetadataModel</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Documentation for this operation.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+
+    <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">create_doc</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_module</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">module_id</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create a module instance from this configuration.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">module_id</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid type, module_id must be a string, not: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">module_id</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">kiara</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">kiara.kiara</span> <span class="kn">import</span> <span class="n">Kiara</span>
+
+            <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_module</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span>
+                <span class="nb">id</span><span class="o">=</span><span class="n">module_id</span><span class="p">,</span>
+                <span class="n">module_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
+                <span class="n">module_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">module_config</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module</span>
+
+    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create a renderable for this module configuration.&quot;&quot;&quot;</span>
+
+        <span class="n">conf</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+            <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">conf</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2698,7 +2809,9 @@
 
 
 <h2 id="kiara.module_config.ModuleTypeConfigSchema" class="doc doc-heading">
-        <code>ModuleTypeConfigSchema</code>
+        <code>
+ModuleTypeConfigSchema            (<span title="pydantic.main.BaseModel">BaseModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2720,6 +2833,93 @@
  values that override the schema defaults, and those can be overwritten by users. If both a constant and a default
  value is set for an input field, an error is thrown.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/module_config.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ModuleTypeConfigSchema</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class that describes the configuration a [``KiaraModule``][kiara.module.KiaraModule] class accepts.</span>
+
+<span class="sd">    This is stored in the ``_config_cls`` class attribute in each ``KiaraModule`` class.</span>
+
+<span class="sd">    There are two config options every ``KiaraModule`` supports:</span>
+
+<span class="sd">     - ``constants``, and</span>
+<span class="sd">     - ``defaults``</span>
+
+<span class="sd">     Constants are pre-set inputs, and users can&#39;t change them and an error is thrown if they try. Defaults are default</span>
+<span class="sd">     values that override the schema defaults, and those can be overwritten by users. If both a constant and a default</span>
+<span class="sd">     value is set for an input field, an error is thrown.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">requires_config</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return whether this class can be used as-is, or requires configuration before an instance can be created.&quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__fields__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">required</span> <span class="ow">and</span> <span class="n">field</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">config</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">_config_hash</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">constants</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Value constants for this module.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">defaults</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Value defaults for this module.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
+        <span class="n">validate_assignment</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get the value for the specified configuation key.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields__</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No config value &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; in module config class &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">config_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config_hash</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+            <span class="n">hashes</span> <span class="o">=</span> <span class="n">deepdiff</span><span class="o">.</span><span class="n">DeepHash</span><span class="p">(</span><span class="n">_d</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_config_hash</span> <span class="o">=</span> <span class="n">hashes</span><span class="p">[</span><span class="n">_d</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config_hash</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="vm">__class__</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_hash</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__rich_console__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">console</span><span class="p">:</span> <span class="n">Console</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">ConsoleOptions</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderResult</span><span class="p">:</span>
+
+        <span class="n">my_table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">MINIMAL</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">my_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Field name&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="n">my_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields__</span><span class="p">:</span>
+            <span class="n">my_table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">))</span>
+
+        <span class="k">yield</span> <span class="n">my_table</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -3191,10 +3391,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

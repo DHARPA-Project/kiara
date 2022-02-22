@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.doc/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -691,6 +691,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2159,6 +2161,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2228,7 +2232,9 @@
 
 
 <h2 id="kiara.doc.__init__.FrklDocumentationPlugin" class="doc doc-heading">
-        <code>FrklDocumentationPlugin</code>
+        <code>
+FrklDocumentationPlugin            (<span title="mkdocs.plugins.BasePlugin">BasePlugin</span>)
+        </code>
 
 
 
@@ -2244,6 +2250,90 @@
 <p>This will add an <code>API reference</code> navigation item to your page navigation, with auto-generated entries for every
 Python module in your package.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/doc/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">FrklDocumentationPlugin</span><span class="p">(</span><span class="n">BasePlugin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;[mkdocs](https://www.mkdocs.org/) plugin to render API documentation for a project.</span>
+
+<span class="sd">    To add to a project, add this to the &#39;plugins&#39; section of a mkdocs config file:</span>
+
+<span class="sd">    ```yaml</span>
+<span class="sd">    - frkl-docgen:</span>
+<span class="sd">        main_module: &quot;module_name&quot;</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    This will add an ``API reference`` navigation item to your page navigation, with auto-generated entries for every</span>
+<span class="sd">    Python module in your package.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">config_scheme</span> <span class="o">=</span> <span class="p">((</span><span class="s2">&quot;main_module&quot;</span><span class="p">,</span> <span class="n">mkdocs</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">config_options</span><span class="o">.</span><span class="n">Type</span><span class="p">(</span><span class="nb">str</span><span class="p">)),)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_doc_paths</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;frkl_doc_gen_&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_doc_files</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">on_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">Files</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Files</span><span class="p">:</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_doc_paths</span> <span class="o">=</span> <span class="n">gen_pages_for_module</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;main_module&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_doc_files</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_doc_paths</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doc_paths</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
+            <span class="n">_file</span> <span class="o">=</span> <span class="n">File</span><span class="p">(</span>
+                <span class="n">k</span><span class="p">,</span>
+                <span class="n">src_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dir</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">dest_dir</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;site_dir&quot;</span><span class="p">],</span>
+                <span class="n">use_directory_urls</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;use_directory_urls&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">_file</span><span class="o">.</span><span class="n">abs_src_path</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">_file</span><span class="o">.</span><span class="n">abs_src_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_doc_files</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">_file</span>
+            <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_file</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">files</span>
+
+    <span class="k">def</span> <span class="nf">on_page_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">html</span><span class="p">,</span> <span class="n">page</span><span class="p">:</span> <span class="n">Page</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">Files</span><span class="p">):</span>
+
+        <span class="n">repo_url</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;repo_url&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">python_src</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;edit_uri&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">page</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">src_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doc_paths</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">src_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doc_paths</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">page</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">src_path</span><span class="p">)[</span><span class="s2">&quot;python_src&quot;</span><span class="p">][</span><span class="s2">&quot;rel_path&quot;</span><span class="p">]</span>
+            <span class="n">rel_base</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urljoin</span><span class="p">(</span><span class="n">repo_url</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">python_src</span><span class="si">}</span><span class="s2">/../src/</span><span class="si">{</span><span class="n">src_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">page</span><span class="o">.</span><span class="n">edit_url</span> <span class="o">=</span> <span class="n">rel_base</span>
+
+        <span class="k">return</span> <span class="n">html</span>
+
+    <span class="k">def</span> <span class="nf">on_nav</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nav</span><span class="p">:</span> <span class="n">Navigation</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">Files</span><span class="p">):</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">nav</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">title</span> <span class="ow">and</span> <span class="s2">&quot;Api reference&quot;</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">title</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">nav</span>
+
+        <span class="n">pages</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doc_files</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">pages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_file</span><span class="o">.</span><span class="n">page</span><span class="p">)</span>
+
+        <span class="n">section</span> <span class="o">=</span> <span class="n">Section</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;API reference&quot;</span><span class="p">,</span> <span class="n">children</span><span class="o">=</span><span class="n">pages</span><span class="p">)</span>
+        <span class="n">nav</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+        <span class="n">nav</span><span class="o">.</span><span class="n">pages</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">pages</span><span class="p">)</span>
+
+        <span class="n">_add_previous_and_next_links</span><span class="p">(</span><span class="n">nav</span><span class="o">.</span><span class="n">pages</span><span class="p">)</span>
+        <span class="n">_add_parent_links</span><span class="p">(</span><span class="n">nav</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">nav</span>
+
+    <span class="k">def</span> <span class="nf">on_post_build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dir</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2360,10 +2450,10 @@ Python module in your package.</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

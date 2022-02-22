@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.pipeline.pipeline/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -1797,6 +1797,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2256,6 +2258,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2422,7 +2426,8 @@
 
 
 <h2 id="kiara.pipeline.pipeline.Pipeline" class="doc doc-heading">
-        <code>Pipeline</code>
+        <code>
+Pipeline        </code>
 
 
 
@@ -2432,6 +2437,593 @@
 
       <p>An instance of a <a href="../kiara.pipeline.structure/#kiara.pipeline.structure.PipelineStructure">PipelineStructure</a> that holds state for all of the inputs/outputs of the steps within.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/pipeline/pipeline.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Pipeline</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An instance of a [PipelineStructure][kiara.pipeline.structure.PipelineStructure] that holds state for all of the inputs/outputs of the steps within.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">structure</span><span class="p">:</span> <span class="n">PipelineStructure</span><span class="p">,</span>
+        <span class="c1"># constants: typing.Optional[typing.Mapping[str, typing.Any]] = None,</span>
+        <span class="n">controller</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">PipelineController</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_structure</span><span class="p">:</span> <span class="n">PipelineStructure</span> <span class="o">=</span> <span class="n">structure</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_inputs</span><span class="p">:</span> <span class="n">SlottedValueSet</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_outputs</span><span class="p">:</span> <span class="n">SlottedValueSet</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_step_inputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSet</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_step_outputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSet</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_refs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="n">ValueSlot</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="n">ValueRef</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_status</span><span class="p">:</span> <span class="n">StepStatus</span> <span class="o">=</span> <span class="n">StepStatus</span><span class="o">.</span><span class="n">STALE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_steps_by_stage</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span>
+            <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PipelineStep</span><span class="p">]]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_by_stage</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span>
+            <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_outputs_by_stage</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span>
+            <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_structure</span><span class="o">.</span><span class="n">_kiara</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="p">:</span> <span class="n">DataRegistry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_values</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">controller</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">controller</span> <span class="o">=</span> <span class="n">BatchController</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">controller</span><span class="o">.</span><span class="n">set_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_controller</span><span class="p">:</span> <span class="n">PipelineController</span> <span class="o">=</span> <span class="n">controller</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">PipelineListener</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_status</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Pipeline</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_id</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">structure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineStructure</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_structure</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">controller</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineController</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controller</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No controller set (yet).&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controller</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SlottedValueSet</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;All (pipeline) input values of this pipeline.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_inputs</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SlottedValueSet</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;All (pipeline) output values of this pipeline.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_outputs</span>
+
+    <span class="c1"># def set_pipeline_inputs(self, **inputs: typing.Any):</span>
+    <span class="c1">#     self._controller.set_pipeline_inputs(**inputs)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">step_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return all ids of the steps of this pipeline.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_structure</span><span class="o">.</span><span class="n">step_ids</span>
+
+    <span class="k">def</span> <span class="nf">get_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineStep</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the object representing a step in this workflow, identified by the step id.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_structure</span><span class="o">.</span><span class="n">get_step</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_steps_by_stage</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PipelineStep</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Return a all pipeline steps, ordered by stage they belong to.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steps_by_stage</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steps_by_stage</span>
+
+        <span class="n">result</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PipelineStep</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_ids</span><span class="p">:</span>
+            <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_step</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
+            <span class="n">stage</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">processing_stage</span>
+            <span class="k">assert</span> <span class="n">stage</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="p">{})[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_steps_by_stage</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steps_by_stage</span>
+
+    <span class="k">def</span> <span class="nf">get_pipeline_inputs_by_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of pipeline input names, ordered by stage they are first required.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_by_stage</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_by_stage</span>
+
+        <span class="n">result</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">_value_slots</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>  <span class="c1"># type: ignore</span>
+            <span class="n">refs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_refs</span><span class="p">[</span><span class="n">v</span><span class="p">]</span>
+            <span class="n">min_stage</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span>
+            <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">refs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">StepInputRef</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_step</span><span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">step_id</span><span class="p">)</span>
+                <span class="n">stage</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">processing_stage</span>
+                <span class="k">assert</span> <span class="n">stage</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">stage</span> <span class="o">&lt;</span> <span class="n">min_stage</span><span class="p">:</span>
+                    <span class="n">min_stage</span> <span class="o">=</span> <span class="n">stage</span>  <span class="c1"># type: ignore</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">min_stage</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_by_stage</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_by_stage</span>
+
+    <span class="k">def</span> <span class="nf">get_pipeline_outputs_by_stage</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of pipeline input names, ordered by the stage that needs to be executed before they are available.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outputs_by_stage</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outputs_by_stage</span>
+
+        <span class="n">result</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">_value_slots</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>  <span class="c1"># type: ignore</span>
+            <span class="n">refs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_refs</span><span class="p">[</span><span class="n">v</span><span class="p">]</span>
+            <span class="n">min_stage</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span>
+            <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">refs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">StepOutputRef</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_step</span><span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">step_id</span><span class="p">)</span>
+                <span class="n">stage</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">processing_stage</span>
+                <span class="k">assert</span> <span class="n">stage</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">stage</span> <span class="o">&lt;</span> <span class="n">min_stage</span><span class="p">:</span>
+                    <span class="n">min_stage</span> <span class="o">=</span> <span class="n">stage</span>  <span class="c1"># type: ignore</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">min_stage</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_outputs_by_stage</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outputs_by_stage</span>
+
+    <span class="k">def</span> <span class="nf">get_pipeline_inputs_for_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of pipeline inputs that are required for a stage to be processed.</span>
+
+<span class="sd">        The result of this method does not include inputs that were required earlier already.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pipeline_inputs_by_stage</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="p">[])</span>
+
+    <span class="k">def</span> <span class="nf">get_stage_for_pipeline_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+
+        <span class="k">for</span> <span class="n">stage</span><span class="p">,</span> <span class="n">input_names</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pipeline_inputs_by_stage</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">input_name</span> <span class="ow">in</span> <span class="n">input_names</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">stage</span>
+
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;No input name &#39;</span><span class="si">{</span><span class="n">input_name</span><span class="si">}</span><span class="s2">&#39;. Available inputs: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">stage_for_pipeline_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+
+        <span class="k">for</span> <span class="n">stage</span><span class="p">,</span> <span class="n">output_names</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pipeline_outputs_by_stage</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">output_name</span> <span class="ow">in</span> <span class="n">output_names</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">stage</span>
+
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;No output name &#39;</span><span class="si">{</span><span class="n">output_name</span><span class="si">}</span><span class="s2">&#39;. Available outputs: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_pipeline_outputs_for_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of pipeline outputs that are first available after the specified stage completed processing.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pipeline_outputs_by_stage</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="p">[])</span>
+
+    <span class="k">def</span> <span class="nf">get_pipeline_inputs_for_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value_slot</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">_value_slots</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">refs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_refs</span><span class="p">[</span><span class="n">value_slot</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">refs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">PipelineInputRef</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="k">for</span> <span class="n">ci</span> <span class="ow">in</span> <span class="n">ref</span><span class="o">.</span><span class="n">connected_inputs</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">ci</span><span class="o">.</span><span class="n">step_id</span> <span class="o">==</span> <span class="n">step_id</span> <span class="ow">and</span> <span class="n">ref</span><span class="o">.</span><span class="n">value_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">value_name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">get_pipeline_outputs_for_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value_slot</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">_value_slots</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">refs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_refs</span><span class="p">[</span><span class="n">value_slot</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">refs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">PipelineOutputRef</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">ref</span><span class="o">.</span><span class="n">connected_output</span><span class="o">.</span><span class="n">step_id</span> <span class="o">==</span> <span class="n">step_id</span>
+                    <span class="ow">and</span> <span class="n">ref</span><span class="o">.</span><span class="n">value_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span>
+                <span class="p">):</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">value_name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">get_step_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSet</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return all inputs for a step id (incl. inputs that are not pipeline inputs but connected to other modules output).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step_inputs</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get_step_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSet</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return all outputs for a step id (incl. outputs that are not pipeline outputs).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step_outputs</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">add_listener</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listener</span><span class="p">:</span> <span class="n">PipelineListener</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add a listener taht gets notified on any internal pipeline input/output events.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">listener</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepStatus</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the current status of this pipeline.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span>
+
+    <span class="k">def</span> <span class="nf">_update_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Make sure internal state variable is up to date.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_state</span> <span class="o">=</span> <span class="n">StepStatus</span><span class="o">.</span><span class="n">STALE</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items_are_valid</span><span class="p">():</span>
+            <span class="n">new_state</span> <span class="o">=</span> <span class="n">StepStatus</span><span class="o">.</span><span class="n">STALE</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">items_are_valid</span><span class="p">():</span>
+            <span class="n">new_state</span> <span class="o">=</span> <span class="n">StepStatus</span><span class="o">.</span><span class="n">INPUTS_READY</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_state</span> <span class="o">=</span> <span class="n">StepStatus</span><span class="o">.</span><span class="n">RESULTS_READY</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">new_state</span>
+
+    <span class="k">def</span> <span class="nf">_init_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize this object. This should only be called once.</span>
+
+<span class="sd">        Basically, this goes through all the inputs and outputs of all steps, and &#39;allocates&#39; a PipelineValueInfo object</span>
+<span class="sd">        for each of them. In case where output/input or pipeline-input/input points are connected, only one</span>
+<span class="sd">        value item is allocated, since those refer to the same value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">pipeline_inputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSlot</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">pipeline_outputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSlot</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">all_step_inputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSlot</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">all_step_outputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSlot</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">value_refs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="n">ValueSlot</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ValueRef</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># create the value objects that are associated with step outputs</span>
+        <span class="c1"># all pipeline outputs are created here too, since the only place</span>
+        <span class="c1"># those can be associated are step outputs</span>
+        <span class="k">for</span> <span class="n">step_id</span><span class="p">,</span> <span class="n">step_details</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_structure</span><span class="o">.</span><span class="n">steps_details</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="n">step_outputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StepOutputRef</span><span class="p">]</span> <span class="o">=</span> <span class="n">step_details</span><span class="p">[</span><span class="s2">&quot;outputs&quot;</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">output_name</span><span class="p">,</span> <span class="n">output_point</span> <span class="ow">in</span> <span class="n">step_outputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+                <span class="n">init_output_value_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">register_data</span><span class="p">(</span>
+                    <span class="n">value_schema</span><span class="o">=</span><span class="n">output_point</span><span class="o">.</span><span class="n">value_schema</span>
+                <span class="p">)</span>
+                <span class="n">output_value_slot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">register_alias</span><span class="p">(</span>
+                    <span class="n">value_or_schema</span><span class="o">=</span><span class="n">init_output_value_item</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">value_refs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">output_value_slot</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output_point</span><span class="p">)</span>
+
+                <span class="n">all_step_outputs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">step_id</span><span class="p">,</span> <span class="p">{})[</span>
+                    <span class="n">output_name</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="n">output_value_slot</span>
+
+                <span class="c1"># not all step outputs necessarily need to be connected to a pipeline output</span>
+                <span class="k">if</span> <span class="n">output_point</span><span class="o">.</span><span class="n">pipeline_output</span><span class="p">:</span>
+
+                    <span class="n">pipeline_outputs</span><span class="p">[</span><span class="n">output_point</span><span class="o">.</span><span class="n">pipeline_output</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_value_slot</span>
+                    <span class="n">po</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_structure</span><span class="o">.</span><span class="n">pipeline_outputs</span><span class="p">[</span><span class="n">output_point</span><span class="o">.</span><span class="n">pipeline_output</span><span class="p">]</span>
+                    <span class="n">value_refs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">output_value_slot</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">po</span><span class="p">)</span>
+
+        <span class="c1"># create the value objects that are associated with step inputs</span>
+        <span class="k">for</span> <span class="n">step_id</span><span class="p">,</span> <span class="n">step_details</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_structure</span><span class="o">.</span><span class="n">steps_details</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="n">step_inputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StepInputRef</span><span class="p">]</span> <span class="o">=</span> <span class="n">step_details</span><span class="p">[</span><span class="s2">&quot;inputs&quot;</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">input_name</span><span class="p">,</span> <span class="n">input_point</span> <span class="ow">in</span> <span class="n">step_inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+                <span class="c1"># if this step input gets fed from a pipeline_input (meaning user input in most cases),</span>
+                <span class="c1"># we need to create a DataValue for that pipeline input</span>
+                <span class="c1"># vm = ValueMetadata(</span>
+                <span class="c1">#     origin=f&quot;{self.id}.steps.{step_id}.inputs.{input_point.value_name}&quot;</span>
+                <span class="c1"># )</span>
+                <span class="k">if</span> <span class="n">input_point</span><span class="o">.</span><span class="n">connected_pipeline_input</span><span class="p">:</span>
+                    <span class="n">connected_pipeline_input_name</span> <span class="o">=</span> <span class="n">input_point</span><span class="o">.</span><span class="n">connected_pipeline_input</span>
+                    <span class="n">pipeline_input_field</span><span class="p">:</span> <span class="n">PipelineInputRef</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_structure</span><span class="o">.</span><span class="n">pipeline_inputs</span><span class="p">[</span><span class="n">connected_pipeline_input_name</span><span class="p">]</span>
+                    <span class="p">)</span>
+                    <span class="n">pipeline_input_slot</span><span class="p">:</span> <span class="n">ValueSlot</span> <span class="o">=</span> <span class="n">pipeline_inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                        <span class="n">connected_pipeline_input_name</span><span class="p">,</span> <span class="kc">None</span>
+                    <span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">pipeline_input_slot</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="c1"># if the pipeline input wasn&#39;t created by another step input before,</span>
+                        <span class="c1"># we need to take care of it here</span>
+
+                        <span class="k">if</span> <span class="n">pipeline_input_field</span><span class="o">.</span><span class="n">is_constant</span><span class="p">:</span>
+                            <span class="n">init_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">constants</span><span class="p">[</span>
+                                <span class="n">pipeline_input_field</span><span class="o">.</span><span class="n">value_name</span>
+                            <span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">init_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                                <span class="n">pipeline_input_field</span><span class="o">.</span><span class="n">value_name</span><span class="p">,</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NOT_SET</span>
+                            <span class="p">)</span>
+
+                        <span class="n">init_pipeline_input_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">register_data</span><span class="p">(</span>
+                            <span class="n">value_data</span><span class="o">=</span><span class="n">init_value</span><span class="p">,</span>
+                            <span class="n">value_schema</span><span class="o">=</span><span class="n">pipeline_input_field</span><span class="o">.</span><span class="n">value_schema</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="c1"># TODO: check whether it&#39;s a constant?</span>
+                        <span class="n">pipeline_input_slot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">register_alias</span><span class="p">(</span>
+                            <span class="n">value_or_schema</span><span class="o">=</span><span class="n">init_pipeline_input_value</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+                        <span class="p">)</span>
+                        <span class="n">value_refs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">pipeline_input_slot</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="n">pipeline_input_field</span>
+                        <span class="p">)</span>
+
+                        <span class="n">pipeline_inputs</span><span class="p">[</span>
+                            <span class="n">connected_pipeline_input_name</span>
+                        <span class="p">]</span> <span class="o">=</span> <span class="n">pipeline_input_slot</span>
+
+                    <span class="n">all_step_inputs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">step_id</span><span class="p">,</span> <span class="p">{})[</span>
+                        <span class="n">input_name</span>
+                    <span class="p">]</span> <span class="o">=</span> <span class="n">pipeline_input_slot</span>
+                    <span class="n">value_refs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">pipeline_input_slot</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">input_point</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">input_point</span><span class="o">.</span><span class="n">connected_outputs</span><span class="p">:</span>
+
+                    <span class="k">for</span> <span class="n">co</span> <span class="ow">in</span> <span class="n">input_point</span><span class="o">.</span><span class="n">connected_outputs</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_point</span><span class="o">.</span><span class="n">connected_outputs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">co</span><span class="o">.</span><span class="n">sub_value</span><span class="p">:</span>
+                            <span class="c1"># this means the input is the same value as the connected output</span>
+                            <span class="n">output_value</span><span class="p">:</span> <span class="n">ValueSlot</span> <span class="o">=</span> <span class="n">all_step_outputs</span><span class="p">[</span><span class="n">co</span><span class="o">.</span><span class="n">step_id</span><span class="p">][</span>
+                                <span class="n">co</span><span class="o">.</span><span class="n">value_name</span>
+                            <span class="p">]</span>
+                            <span class="n">all_step_inputs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">input_point</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span> <span class="p">{})[</span>
+                                <span class="n">input_point</span><span class="o">.</span><span class="n">value_name</span>
+                            <span class="p">]</span> <span class="o">=</span> <span class="n">output_value</span>
+                            <span class="n">value_refs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">output_value</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">input_point</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="n">input_point</span><span class="o">.</span><span class="n">connected_outputs</span><span class="p">)</span>
+                            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+                            <span class="c1"># sub_value = co.sub_value</span>
+
+                            <span class="c1"># linked_values = {}</span>
+                            <span class="c1"># for co in input_point.connected_outputs:</span>
+                            <span class="c1">#     output_value = all_step_outputs[co.step_id][co.value_name]</span>
+                            <span class="c1">#     sub_value = co.sub_value</span>
+                            <span class="c1">#     if len(input_point.connected_outputs) &gt; 1 and not sub_value:</span>
+                            <span class="c1">#         raise NotImplementedError()</span>
+                            <span class="c1">#         sub_value = {&quot;config&quot;: co.step_id}</span>
+                            <span class="c1">#     if sub_value is not None:</span>
+                            <span class="c1">#         raise NotImplementedError</span>
+                            <span class="c1">#</span>
+                            <span class="c1">#     linked_values[output_value.id] = sub_value</span>
+                            <span class="c1">#</span>
+                            <span class="c1"># step_input = self._data_registry.register_linked_value(</span>
+                            <span class="c1">#     parent_id=self.id,</span>
+                            <span class="c1">#     linked_values=linked_values,</span>
+                            <span class="c1">#     value_schema=input_point.value_schema,</span>
+                            <span class="c1">#     value_refs=input_point,</span>
+                            <span class="c1"># )</span>
+                            <span class="c1"># self._data_registry.register_callback(</span>
+                            <span class="c1">#     self.values_updated, step_input</span>
+                            <span class="c1"># )</span>
+                            <span class="c1"># all_step_inputs.setdefault(input_point.step_id, {})[</span>
+                            <span class="c1">#     input_point.value_name</span>
+                            <span class="c1"># ] = step_input</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Invalid value point type for this location: </span><span class="si">{</span><span class="n">input_point</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pipeline_inputs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t init pipeline &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">&#39;: no pipeline inputs&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_inputs</span> <span class="o">=</span> <span class="n">SlottedValueSet</span><span class="p">(</span>
+            <span class="n">items</span><span class="o">=</span><span class="n">pipeline_inputs</span><span class="p">,</span>
+            <span class="n">read_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Inputs for pipeline &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
+            <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span>
+            <span class="n">registry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pipeline_outputs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t init pipeline &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">&#39;: no pipeline outputs&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_outputs</span> <span class="o">=</span> <span class="n">SlottedValueSet</span><span class="p">(</span>
+            <span class="n">items</span><span class="o">=</span><span class="n">pipeline_outputs</span><span class="p">,</span>
+            <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Outputs for pipeline &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
+            <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span>
+            <span class="n">registry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_step_inputs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">step_id</span><span class="p">,</span> <span class="n">inputs</span> <span class="ow">in</span> <span class="n">all_step_inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_step_inputs</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">SlottedValueSet</span><span class="p">(</span>
+                <span class="n">items</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span>
+                <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Inputs for step &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39; of pipeline &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span>
+                <span class="n">registry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_step_outputs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">step_id</span><span class="p">,</span> <span class="n">outputs</span> <span class="ow">in</span> <span class="n">all_step_outputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_step_outputs</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">SlottedValueSet</span><span class="p">(</span>
+                <span class="n">read_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">items</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span>
+                <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Outputs for step &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39; of pipeline &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
+                <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span>
+                <span class="n">registry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_refs</span> <span class="o">=</span> <span class="n">value_refs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_steps_by_stage</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_by_stage</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">values_updated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">items</span><span class="p">:</span> <span class="n">ValueSlot</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="n">updated_inputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">updated_outputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">updated_pipeline_inputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">updated_pipeline_outputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># print(&quot;===================================================&quot;)</span>
+        <span class="c1"># for item in items:</span>
+        <span class="c1">#     print(item)</span>
+        <span class="c1"># print(&quot;===================================================&quot;)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_status</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_refs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># means init is not finished yet</span>
+            <span class="k">return</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+
+            <span class="c1"># TODO: multiple value fields, also check pipeline id</span>
+            <span class="n">references</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_refs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">references</span>
+
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">references</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">StepInputRef</span><span class="p">):</span>
+                    <span class="n">updated_inputs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">value_name</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">StepOutputRef</span><span class="p">):</span>
+                    <span class="n">updated_outputs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">value_name</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">PipelineInputRef</span><span class="p">):</span>
+                    <span class="n">updated_pipeline_inputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">value_name</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">PipelineOutputRef</span><span class="p">):</span>
+                    <span class="n">updated_pipeline_outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">value_name</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t update, invalid type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># print(&#39;========================================&#39;)</span>
+        <span class="c1"># print(&#39;---&#39;)</span>
+        <span class="c1"># print(&quot;Upaded pipeline input&quot;)</span>
+        <span class="c1"># print(updated_pipeline_inputs)</span>
+        <span class="c1"># print(&#39;---&#39;)</span>
+        <span class="c1"># print(&quot;Upaded step inputs&quot;)</span>
+        <span class="c1"># print(updated_inputs)</span>
+        <span class="c1"># print(&#39;---&#39;)</span>
+        <span class="c1"># print(&quot;Upaded step outputs&quot;)</span>
+        <span class="c1"># print(updated_outputs)</span>
+        <span class="c1"># print(&#39;---&#39;)</span>
+        <span class="c1"># print(&quot;Upaded pipeline outputs&quot;)</span>
+        <span class="c1"># print(updated_pipeline_outputs)</span>
+
+        <span class="k">if</span> <span class="n">updated_pipeline_inputs</span><span class="p">:</span>
+            <span class="n">event_pi</span> <span class="o">=</span> <span class="n">PipelineInputEvent</span><span class="p">(</span>
+                <span class="n">pipeline_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="n">updated_pipeline_inputs</span><span class="o">=</span><span class="n">updated_pipeline_inputs</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_controller</span><span class="o">.</span><span class="n">pipeline_inputs_changed</span><span class="p">(</span><span class="n">event_pi</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_notify_pipeline_listeners</span><span class="p">(</span><span class="n">event_pi</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">updated_outputs</span><span class="p">:</span>
+            <span class="n">event_so</span> <span class="o">=</span> <span class="n">StepOutputEvent</span><span class="p">(</span>
+                <span class="n">pipeline_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="n">updated_step_outputs</span><span class="o">=</span><span class="n">updated_outputs</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_controller</span><span class="o">.</span><span class="n">step_outputs_changed</span><span class="p">(</span><span class="n">event_so</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_notify_pipeline_listeners</span><span class="p">(</span><span class="n">event_so</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">updated_inputs</span><span class="p">:</span>
+            <span class="n">event_si</span> <span class="o">=</span> <span class="n">StepInputEvent</span><span class="p">(</span>
+                <span class="n">pipeline_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="n">updated_step_inputs</span><span class="o">=</span><span class="n">updated_inputs</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_controller</span><span class="o">.</span><span class="n">step_inputs_changed</span><span class="p">(</span><span class="n">event_si</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_notify_pipeline_listeners</span><span class="p">(</span><span class="n">event_si</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">updated_pipeline_outputs</span><span class="p">:</span>
+            <span class="n">event_po</span> <span class="o">=</span> <span class="n">PipelineOutputEvent</span><span class="p">(</span>
+                <span class="n">pipeline_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="n">updated_pipeline_outputs</span><span class="o">=</span><span class="n">updated_pipeline_outputs</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_controller</span><span class="o">.</span><span class="n">pipeline_outputs_changed</span><span class="p">(</span><span class="n">event_po</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_notify_pipeline_listeners</span><span class="p">(</span><span class="n">event_po</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_notify_pipeline_listeners</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">StepEvent</span><span class="p">):</span>
+
+        <span class="k">for</span> <span class="n">listener</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;step_input&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+                <span class="n">listener</span><span class="o">.</span><span class="n">step_inputs_changed</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;step_output&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+                <span class="n">listener</span><span class="o">.</span><span class="n">step_outputs_changed</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;pipeline_input&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+                <span class="n">listener</span><span class="o">.</span><span class="n">pipeline_inputs_changed</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;pipeline_output&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+                <span class="n">listener</span><span class="o">.</span><span class="n">pipeline_outputs_changed</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported type: </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+    <span class="k">def</span> <span class="nf">get_current_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PipelineState&quot;</span><span class="p">:</span>
+
+        <span class="n">step_inputs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">step_states</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step_inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">step_inputs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">PipelineValuesInfo</span><span class="o">.</span><span class="n">from_value_set</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">items_are_valid</span><span class="p">():</span>
+                <span class="n">step_states</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">StepStatus</span><span class="o">.</span><span class="n">INPUTS_READY</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">step_states</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">StepStatus</span><span class="o">.</span><span class="n">STALE</span>
+
+        <span class="n">step_outputs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step_outputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">step_outputs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">PipelineValuesInfo</span><span class="o">.</span><span class="n">from_value_set</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">items_are_valid</span><span class="p">():</span>
+                <span class="n">step_states</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">StepStatus</span><span class="o">.</span><span class="n">RESULTS_READY</span>
+
+        <span class="kn">from</span> <span class="nn">kiara.info.pipelines</span> <span class="kn">import</span> <span class="n">PipelineState</span>
+
+        <span class="n">state</span> <span class="o">=</span> <span class="n">PipelineState</span><span class="p">(</span>
+            <span class="n">structure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">to_details</span><span class="p">(),</span>
+            <span class="n">pipeline_inputs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_inputs</span><span class="o">.</span><span class="n">to_details</span><span class="p">(),</span>
+            <span class="n">pipeline_outputs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_outputs</span><span class="o">.</span><span class="n">to_details</span><span class="p">(),</span>
+            <span class="n">step_states</span><span class="o">=</span><span class="n">step_states</span><span class="p">,</span>
+            <span class="n">step_inputs</span><span class="o">=</span><span class="n">step_inputs</span><span class="p">,</span>
+            <span class="n">step_outputs</span><span class="o">=</span><span class="n">step_outputs</span><span class="p">,</span>
+            <span class="n">status</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">state</span>
+
+    <span class="k">def</span> <span class="nf">__rich_console__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">console</span><span class="p">:</span> <span class="n">Console</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">ConsoleOptions</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderResult</span><span class="p">:</span>
+
+        <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current_state</span><span class="p">()</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2951,10 +3543,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

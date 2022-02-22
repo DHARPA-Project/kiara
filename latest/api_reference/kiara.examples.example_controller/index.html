@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.examples.example_controller/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -817,6 +817,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2193,6 +2195,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2295,7 +2299,9 @@
 
 
 <h2 id="kiara.examples.example_controller.ExampleController" class="doc doc-heading">
-        <code>ExampleController</code>
+        <code>
+ExampleController            (<span title="kiara.pipeline.controller.PipelineController">PipelineController</span>)
+        </code>
 
 
 
@@ -2304,6 +2310,42 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/examples/example_controller.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ExampleController</span><span class="p">(</span><span class="n">PipelineController</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">pipeline_inputs_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">PipelineInputEvent</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pipeline inputs changed: </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">updated_pipeline_inputs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  -&gt; pipeline status: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_status</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">pipeline_outputs_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">PipelineOutputEvent</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pipeline outputs changed: </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">updated_pipeline_outputs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  -&gt; pipeline status: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_status</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">step_inputs_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">StepInputEvent</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Step inputs changed, new values:&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">step_id</span><span class="p">,</span> <span class="n">input_names</span> <span class="ow">in</span> <span class="n">event</span><span class="o">.</span><span class="n">updated_step_inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - step &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39;:&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">input_names</span><span class="p">:</span>
+                <span class="n">new_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_step_inputs</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">()</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;      </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">new_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">step_outputs_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">StepOutputEvent</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Step outputs changed, new values:&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">step_id</span><span class="p">,</span> <span class="n">output_names</span> <span class="ow">in</span> <span class="n">event</span><span class="o">.</span><span class="n">updated_step_outputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - step &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39;:&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">output_names</span><span class="p">:</span>
+                <span class="n">new_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_step_outputs</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">()</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;      </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">new_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Executing steps: &#39;and&#39;, &#39;not&#39;...&quot;</span><span class="p">)</span>
+        <span class="n">and_job_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_step</span><span class="p">(</span><span class="s2">&quot;and&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait_for_jobs</span><span class="p">(</span><span class="n">and_job_id</span><span class="p">)</span>
+        <span class="n">not_job_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_step</span><span class="p">(</span><span class="s2">&quot;not&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait_for_jobs</span><span class="p">(</span><span class="n">not_job_id</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2613,10 +2655,10 @@ you can choose to only implement the <code>step_inputs_changed</code> method if 
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

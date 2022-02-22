@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.info.modules/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -887,6 +887,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2179,6 +2181,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2267,7 +2271,9 @@
 
 
 <h2 id="kiara.info.modules.ModuleTypesGroupInfo" class="doc doc-heading">
-        <code>ModuleTypesGroupInfo</code>
+        <code>
+ModuleTypesGroupInfo            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2279,6 +2285,128 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/info/modules.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ModuleTypesGroupInfo</span><span class="p">(</span><span class="n">KiaraInfoModel</span><span class="p">):</span>
+
+    <span class="n">__root__</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraModuleTypeMetadata</span><span class="p">]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_type_names</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
+        <span class="n">type_names</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ignore_pipeline_modules</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">ignore_non_pipeline_modules</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span>
+    <span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">ignore_pipeline_modules</span> <span class="ow">and</span> <span class="n">ignore_non_pipeline_modules</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Can&#39;t ignore both pipeline and non-pipeline modules.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">type_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">type_names</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">available_module_types</span>
+
+        <span class="n">classes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">tn</span> <span class="ow">in</span> <span class="n">type_names</span><span class="p">:</span>
+            <span class="n">_cls</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">get_module_class</span><span class="p">(</span><span class="n">tn</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ignore_pipeline_modules</span> <span class="ow">and</span> <span class="n">_cls</span><span class="o">.</span><span class="n">is_pipeline</span><span class="p">():</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">ignore_non_pipeline_modules</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_cls</span><span class="o">.</span><span class="n">is_pipeline</span><span class="p">():</span>
+                <span class="k">continue</span>
+            <span class="n">classes</span><span class="p">[</span><span class="n">tn</span><span class="p">]</span> <span class="o">=</span> <span class="n">KiaraModuleTypeMetadata</span><span class="o">.</span><span class="n">from_module_class</span><span class="p">(</span><span class="n">_cls</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ModuleTypesGroupInfo</span><span class="p">(</span><span class="n">__root__</span><span class="o">=</span><span class="n">classes</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_renderable_from_type_names</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
+        <span class="n">type_names</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">ignore_pipeline_modules</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">ignore_non_pipeline_modules</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span>
+    <span class="p">):</span>
+
+        <span class="n">classes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">tn</span> <span class="ow">in</span> <span class="n">type_names</span><span class="p">:</span>
+            <span class="n">_cls</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">get_module_class</span><span class="p">(</span><span class="n">tn</span><span class="p">)</span>
+            <span class="n">classes</span><span class="p">[</span><span class="n">tn</span><span class="p">]</span> <span class="o">=</span> <span class="n">_cls</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_renderable_from_module_type_map</span><span class="p">(</span>
+            <span class="n">module_types</span><span class="o">=</span><span class="n">classes</span><span class="p">,</span>
+            <span class="n">ignore_pipeline_modules</span><span class="o">=</span><span class="n">ignore_pipeline_modules</span><span class="p">,</span>
+            <span class="n">ignore_non_pipeline_modules</span><span class="o">=</span><span class="n">ignore_non_pipeline_modules</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">config</span>
+        <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_renderable_from_module_type_map</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">module_types</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraModule&quot;</span><span class="p">]],</span>
+        <span class="n">ignore_pipeline_modules</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">ignore_non_pipeline_modules</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a renderable from a map of module classes.</span>
+
+<span class="sd">        Render-configuration options:</span>
+<span class="sd">          - include_full_doc (default: False): include the full documentation, instead of just a one line description</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_renderable_from_module_info_map</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="n">k</span><span class="p">:</span> <span class="n">KiaraModuleTypeMetadata</span><span class="o">.</span><span class="n">from_module_class</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">module_types</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">},</span>
+            <span class="n">ignore_pipeline_modules</span><span class="o">=</span><span class="n">ignore_pipeline_modules</span><span class="p">,</span>
+            <span class="n">ignore_non_pipeline_modules</span><span class="o">=</span><span class="n">ignore_non_pipeline_modules</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">config</span>
+        <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_renderable_from_module_info_map</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">module_types</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraModuleTypeMetadata</span><span class="p">],</span>
+        <span class="n">ignore_pipeline_modules</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">ignore_non_pipeline_modules</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a renderable from a map of module info wrappers.</span>
+
+<span class="sd">        Render-configuration options:</span>
+<span class="sd">          - include_full_doc (default: False): include the full documentation, instead of just a one line description</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">ignore_pipeline_modules</span> <span class="ow">and</span> <span class="n">ignore_non_pipeline_modules</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Can&#39;t ignore both pipeline and non-pipeline modules.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ignore_pipeline_modules</span><span class="p">:</span>
+            <span class="n">module_types</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">module_types</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="o">.</span><span class="n">is_pipeline</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="n">ignore_non_pipeline_modules</span><span class="p">:</span>
+            <span class="n">module_types</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">module_types</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">is_pipeline</span><span class="p">}</span>
+
+        <span class="n">show_lines</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_lines</span><span class="o">=</span><span class="n">show_lines</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;desc&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">details</span> <span class="ow">in</span> <span class="n">module_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_full_doc&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">details</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">full_doc</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">details</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">table</span>
+
+    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="n">ModuleTypesGroupInfo</span><span class="o">.</span><span class="n">create_renderable_from_module_info_map</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span>
+        <span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2512,10 +2640,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

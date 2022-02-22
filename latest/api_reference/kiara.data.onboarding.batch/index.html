@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.data.onboarding.batch/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -565,6 +565,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2186,6 +2188,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2281,7 +2285,9 @@
 
 
 <h2 id="kiara.data.onboarding.batch.BatchOnboard" class="doc doc-heading">
-        <code>BatchOnboard</code>
+        <code>
+BatchOnboard            (<span title="pydantic.main.BaseModel">BaseModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2293,6 +2299,64 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/onboarding/batch.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">BatchOnboard</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">module_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">inputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">store_config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ValueStoreConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">module_config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Kiara</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">kiara</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
+
+        <span class="n">operation</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">create_operation</span><span class="p">(</span>
+            <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span>
+            <span class="n">operation_id</span><span class="o">=</span><span class="s2">&quot;_batch_onboarding_&quot;</span><span class="p">,</span>
+            <span class="n">config</span><span class="o">=</span><span class="n">module_type</span><span class="p">,</span>
+            <span class="n">module_config</span><span class="o">=</span><span class="n">module_config</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">store_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">store_config</span> <span class="o">=</span> <span class="n">ValueStoreConfig</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">store_config</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
+            <span class="n">store_config</span> <span class="o">=</span> <span class="n">ValueStoreConfig</span><span class="p">(</span><span class="o">**</span><span class="n">store_config</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">BatchOnboard</span><span class="p">(</span>
+            <span class="n">operation</span><span class="o">=</span><span class="n">operation</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span> <span class="n">store_config</span><span class="o">=</span><span class="n">store_config</span>
+        <span class="p">)</span>
+
+    <span class="n">inputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The inputs.&quot;</span><span class="p">)</span>
+    <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The operation to use with the inputs.&quot;</span><span class="p">)</span>
+    <span class="n">store_config</span><span class="p">:</span> <span class="n">ValueStoreConfig</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The configuration for storing operation/pipeline values.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="n">Value</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+
+        <span class="n">run_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
+
+        <span class="n">result</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="n">Value</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">store_config</span><span class="o">.</span><span class="n">inputs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Storing inputs not supported yet.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">store_config</span><span class="o">.</span><span class="n">steps</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Storing step inputs/outputs not supported yet.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">store_config</span><span class="o">.</span><span class="n">outputs</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">ValueStoreConfig</span><span class="o">.</span><span class="n">save_fields</span><span class="p">(</span>
+                <span class="n">base_id</span><span class="o">=</span><span class="n">base_id</span><span class="p">,</span>
+                <span class="n">value_set</span><span class="o">=</span><span class="n">run_result</span><span class="p">,</span>
+                <span class="n">matchers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">store_config</span><span class="o">.</span><span class="n">outputs</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">aliases</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">aliases</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2476,10 +2540,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

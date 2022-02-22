@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.config/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -523,6 +523,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2207,6 +2209,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2323,7 +2327,9 @@
 
 
 <h2 id="kiara.config.KiaraConfig" class="doc doc-heading">
-        <code>KiaraConfig</code>
+        <code>
+KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSettings</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2335,6 +2341,117 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/config.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraConfig</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
+        <span class="n">env_file_encoding</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span>
+        <span class="n">env_prefix</span> <span class="o">=</span> <span class="s2">&quot;kiara_&quot;</span>
+
+        <span class="nd">@classmethod</span>
+        <span class="k">def</span> <span class="nf">customise_sources</span><span class="p">(</span>
+            <span class="bp">cls</span><span class="p">,</span>
+            <span class="n">init_settings</span><span class="p">,</span>
+            <span class="n">env_settings</span><span class="p">,</span>
+            <span class="n">file_secret_settings</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">init_settings</span><span class="p">,</span>
+                <span class="n">env_settings</span><span class="p">,</span>
+                <span class="n">yaml_config_settings_source</span><span class="p">,</span>
+                <span class="n">file_secret_settings</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="n">module_managers</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span>
+        <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span>
+            <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">PythonModuleManagerConfig</span><span class="p">,</span> <span class="n">PipelineModuleManagerConfig</span><span class="p">]</span>
+        <span class="p">]</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The module managers to use in this kiara instance.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="n">default_processor</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span>
+        <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">SynchronousProcessorConfig</span><span class="p">,</span> <span class="n">ThreadPoolProcessorConfig</span><span class="p">]</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The configuration for the default processor to use.&quot;</span><span class="p">,</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="n">SynchronousProcessorConfig</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">data_store</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The path to the local kiara data store.&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">KIARA_DATA_STORE_DIR</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">extra_pipeline_folders</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Paths to local folders that contain kiara pipelines.&quot;</span><span class="p">,</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ignore_errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;If set, kiara will try to ignore most errors (that can be ignored).&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;module_managers&quot;</span><span class="p">,</span> <span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_validate_managers</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="p">]</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ModuleManager</span><span class="p">):</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">)</span>
+                <span class="n">mm_type</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;module_manager_type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">mm_type</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;No module manager type provided in config: </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">mm_type</span> <span class="o">==</span> <span class="s2">&quot;python&quot;</span><span class="p">:</span>
+                    <span class="n">item_config</span> <span class="o">=</span> <span class="n">PythonModuleManagerConfig</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">mm_type</span> <span class="o">==</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span>
+                    <span class="n">item_config</span> <span class="o">=</span> <span class="n">PipelineModuleManagerConfig</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid module manager type: </span><span class="si">{</span><span class="n">mm_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_config</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;default_processor&quot;</span><span class="p">,</span> <span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_validate_default_processor</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">SynchronousProcessorConfig</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="n">SynchronousProcessorConfig</span><span class="p">,</span> <span class="n">ThreadPoolProcessorConfig</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">v</span>
+
+        <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;synchronous&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">SynchronousProcessorConfig</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;multi-threaded&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ThreadPoolProcessorConfig</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; for default_processor config: </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="n">processor_type</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;module_processor_type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">processor_type</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No &#39;module_processor_type&#39; provided: </span><span class="si">{config}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">processor_type</span> <span class="o">==</span> <span class="s2">&quot;synchronous&quot;</span><span class="p">:</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">SynchronousProcessorConfig</span><span class="p">(</span><span class="o">**</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">processor_type</span> <span class="o">==</span> <span class="s2">&quot;multi-threaded&quot;</span><span class="p">:</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">ThreadPoolProcessorConfig</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">config</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2600,10 +2717,10 @@ when reading <code>config.json</code></p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

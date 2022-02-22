@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.data.types/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -607,6 +607,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2275,6 +2277,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2474,7 +2478,9 @@ be discouraged, since this might not be trivial and there are quite a few things
 
 
 <h2 id="kiara.data.types.__init__.ValueType" class="doc doc-heading">
-        <code>ValueType</code>
+        <code>
+ValueType            (<span title="abc.ABC">ABC</span>, <span title="typing.Generic">Generic</span>)
+        </code>
 
 
 
@@ -2497,6 +2503,155 @@ be discouraged, since this might not be trivial and there are quite a few things
  module needs the input data to do processing on it -- and even then it might be that it only requests a part of the
  data, say a single column of a table. Or when a frontend needs to display/visualize the data.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/types/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueType</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Generic</span><span class="p">[</span><span class="n">TYPE_PYTHON_CLS</span><span class="p">,</span> <span class="n">TYPE_CONFIG_CLS</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Base class that all *kiara* types must inherit from.</span>
+
+<span class="sd">    *kiara* types have 3 main responsibilities:</span>
+
+<span class="sd">     - serialize into / deserialize from persistent state</span>
+<span class="sd">     - data validation</span>
+<span class="sd">     -  metadata extraction</span>
+
+<span class="sd">     Serializing being the arguably most important of those, because without most of the data management features of</span>
+<span class="sd">     *kiara* would be impossible. Validation should not require any explanation. Metadata extraction is important, because</span>
+<span class="sd">     that metadata will be available to other components of *kiara* (or frontends for it), without them having to request</span>
+<span class="sd">     the actual data. That will hopefully make *kiara* very efficient in terms of memory management, as well as data</span>
+<span class="sd">     transfer and I/O. Ideally, the actual data (bytes) will only be requested at the last possible moment. For example when a</span>
+<span class="sd">     module needs the input data to do processing on it -- and even then it might be that it only requests a part of the</span>
+<span class="sd">     data, say a single column of a table. Or when a frontend needs to display/visualize the data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_type_metadata</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueTypeMetadata</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ValueTypeMetadata</span><span class="o">.</span><span class="n">from_value_type_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+
+    <span class="c1"># @classmethod</span>
+    <span class="c1"># def doc(cls) -&gt; str:</span>
+    <span class="c1">#</span>
+    <span class="c1">#     return extract_doc_from_cls(cls)</span>
+    <span class="c1">#</span>
+    <span class="c1"># @classmethod</span>
+    <span class="c1"># def desc(cls) -&gt; str:</span>
+    <span class="c1">#     return extract_doc_from_cls(cls, only_first_line=True)</span>
+
+    <span class="c1"># @classmethod</span>
+    <span class="c1"># def conversions(</span>
+    <span class="c1">#     self,</span>
+    <span class="c1"># ) -&gt; typing.Optional[typing.Mapping[str, typing.Mapping[str, typing.Any]]]:</span>
+    <span class="c1">#     &quot;&quot;&quot;Return a dictionary of configuration for modules that can transform this type.</span>
+    <span class="c1">#</span>
+    <span class="c1">#     The name of the transformation is the key of the result dictionary, the configuration is a module configuration</span>
+    <span class="c1">#     (dictionary wth &#39;module_type&#39; and optional &#39;module_config&#39;, &#39;input_name&#39; and &#39;output_name&#39; keys).</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#</span>
+    <span class="c1">#     return {&quot;string&quot;: {&quot;module_type&quot;: &quot;string.pretty_print&quot;, &quot;input_name&quot;: &quot;item&quot;}}</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">check_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;ValueType&quot;</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Check whether the provided input matches this value type.</span>
+
+<span class="sd">        If it does, return a ValueType object (with the appropriate type configuration).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">backing_python_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">TYPE_PYTHON_CLS</span><span class="p">]:</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">type_config_cls</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">TYPE_CONFIG_CLS</span><span class="p">]:</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">candidate_python_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_supported_hash_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">calculate_value_hash</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span> <span class="n">hash_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Calculate the hash of this value.</span>
+
+<span class="sd">        If a hash can&#39;t be calculated, or the calculation of a type is not implemented (yet), this will return None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Value type &#39;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_value_type_name</span><span class="si">}</span><span class="s2">&#39; does not support hash calculation.&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">type_config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">):</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_type_config</span><span class="p">:</span> <span class="n">TYPE_CONFIG_CLS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">type_config_cls</span><span class="p">(</span><span class="o">**</span><span class="n">type_config</span><span class="p">)</span>  <span class="c1"># type: ignore  # TODO: double-check this is only a mypy issue</span>
+        <span class="k">except</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">ve</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ValueTypeConfigException</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Error creating object for value_type: </span><span class="si">{</span><span class="n">ve</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span>
+                <span class="n">type_config</span><span class="p">,</span>
+                <span class="n">ve</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="c1"># self._type_config: typing.Mapping[str, typing.Any] = self</span>
+        <span class="c1"># self._transformations: typing.Optional[</span>
+        <span class="c1">#     typing.Mapping[str, typing.Mapping[str, typing.Any]]</span>
+        <span class="c1"># ] = None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">type_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TYPE_CONFIG_CLS</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type_config</span>
+
+    <span class="k">def</span> <span class="nf">import_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+
+        <span class="k">assert</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">parsed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">parsed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">parsed</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">parsed</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">KiaraValueException</span><span class="p">(</span>
+                <span class="n">value_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">value_data</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">exception</span><span class="o">=</span><span class="n">e</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">parsed</span>
+
+    <span class="k">def</span> <span class="nf">parse_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Parse a value into a supported python type.</span>
+
+<span class="sd">        This exists to make it easier to do trivial conversions (e.g. from a date string to a datetime object).</span>
+<span class="sd">        If you choose to overwrite this method, make 100% sure that you don&#39;t change the meaning of the value, and try to</span>
+<span class="sd">        avoid adding or removing information from the data (e.g. by changing the resolution of a date).</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            v: the value</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &#39;None&#39;, if no parsing was done and the original value should be used, otherwise return the parsed Python object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Validate the value. This expects an instance of the defined Python class (from &#39;backing_python_type).&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get_type_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;python&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return a type hint for this value type object.</span>
+
+<span class="sd">        This can be used by kiara interfaces to document/validate user input. For now, only &#39;python&#39; type hints are</span>
+<span class="sd">        expected to be implemented, but in theory this could also return type hints for other contexts.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__rich_console__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">console</span><span class="p">:</span> <span class="n">Console</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">ConsoleOptions</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderResult</span><span class="p">:</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2652,7 +2807,7 @@ avoid adding or removing information from the data (e.g. by changing the resolut
   <tbody>
       <tr>
         <td><code>v</code></td>
-        <td><code></code></td>
+        <td></td>
         <td><p>the value</p></td>
         <td><em>required</em></td>
       </tr>
@@ -2739,7 +2894,9 @@ avoid adding or removing information from the data (e.g. by changing the resolut
 
 
 <h2 id="kiara.data.types.__init__.ValueTypeConfigMetadata" class="doc doc-heading">
-        <code>ValueTypeConfigMetadata</code>
+        <code>
+ValueTypeConfigMetadata            (<span title="kiara.metadata.MetadataModel">MetadataModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2751,6 +2908,53 @@ avoid adding or removing information from the data (e.g. by changing the resolut
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/types/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueTypeConfigMetadata</span><span class="p">(</span><span class="n">MetadataModel</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_config_class</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">config_cls</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">ValueTypeConfigSchema</span><span class="p">],</span>
+    <span class="p">):</span>
+
+        <span class="n">flat_models</span> <span class="o">=</span> <span class="n">get_flat_models_from_model</span><span class="p">(</span><span class="n">config_cls</span><span class="p">)</span>
+        <span class="n">model_name_map</span> <span class="o">=</span> <span class="n">get_model_name_map</span><span class="p">(</span><span class="n">flat_models</span><span class="p">)</span>
+        <span class="n">m_schema</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">model_process_schema</span><span class="p">(</span><span class="n">config_cls</span><span class="p">,</span> <span class="n">model_name_map</span><span class="o">=</span><span class="n">model_name_map</span><span class="p">)</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="n">m_schema</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span>
+
+        <span class="n">config_values</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">details</span> <span class="ow">in</span> <span class="n">fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">type_str</span> <span class="o">=</span> <span class="s2">&quot;-- n/a --&quot;</span>
+            <span class="k">if</span> <span class="s2">&quot;type&quot;</span> <span class="ow">in</span> <span class="n">details</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">type_str</span> <span class="o">=</span> <span class="n">details</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
+
+            <span class="n">desc</span> <span class="o">=</span> <span class="n">details</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="n">DEFAULT_NO_DESC_VALUE</span><span class="p">)</span>
+
+            <span class="n">default</span> <span class="o">=</span> <span class="n">config_cls</span><span class="o">.</span><span class="n">__fields__</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">default</span>
+
+            <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">config_cls</span><span class="o">.</span><span class="n">__fields__</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">default_factory</span><span class="p">):</span>
+                    <span class="n">default</span> <span class="o">=</span> <span class="n">config_cls</span><span class="o">.</span><span class="n">__fields__</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">default_factory</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+
+            <span class="n">req</span> <span class="o">=</span> <span class="n">config_cls</span><span class="o">.</span><span class="n">__fields__</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">required</span>
+
+            <span class="n">config_values</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ValueTypeAndDescription</span><span class="p">(</span>
+                <span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">type_str</span><span class="p">,</span> <span class="n">value_default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="n">req</span>
+            <span class="p">)</span>
+
+        <span class="n">python_cls</span> <span class="o">=</span> <span class="n">PythonClassMetadata</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">config_cls</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ValueTypeConfigMetadata</span><span class="p">(</span>
+            <span class="n">python_class</span><span class="o">=</span><span class="n">python_cls</span><span class="p">,</span> <span class="n">config_values</span><span class="o">=</span><span class="n">config_values</span>
+        <span class="p">)</span>
+
+    <span class="n">python_class</span><span class="p">:</span> <span class="n">PythonClassMetadata</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The Python class for this configuration.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">config_values</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueTypeAndDescription</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The available configuration values.&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2829,7 +3033,9 @@ avoid adding or removing information from the data (e.g. by changing the resolut
 
 
 <h2 id="kiara.data.types.__init__.ValueTypeConfigSchema" class="doc doc-heading">
-        <code>ValueTypeConfigSchema</code>
+        <code>
+ValueTypeConfigSchema            (<span title="pydantic.main.BaseModel">BaseModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2844,6 +3050,73 @@ avoid adding or removing information from the data (e.g. by changing the resolut
 <p>This is stored in the <code>_config_cls</code> class attribute in each <code>ValueType</code> class. By default,
 a <code>ValueType</code> is not configurable, unless the <code>_config_cls</code> class attribute points to a sub-class of this class.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/types/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueTypeConfigSchema</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class that describes the configuration a [``ValueType``][kiara.data.types.ValueType] class accepts.</span>
+
+<span class="sd">    This is stored in the ``_config_cls`` class attribute in each ``ValueType`` class. By default,</span>
+<span class="sd">    a ``ValueType`` is not configurable, unless the ``_config_cls`` class attribute points to a sub-class of this class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">requires_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return whether this class can be used as-is, or requires configuration before an instance can be created.&quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__fields__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">required</span> <span class="ow">and</span> <span class="n">field</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">_config_hash</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
+        <span class="n">allow_mutation</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get the value for the specified configuation key.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields__</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No config value &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; in module config class &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">config_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config_hash</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+            <span class="n">hashes</span> <span class="o">=</span> <span class="n">deepdiff</span><span class="o">.</span><span class="n">DeepHash</span><span class="p">(</span><span class="n">_d</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_config_hash</span> <span class="o">=</span> <span class="n">hashes</span><span class="p">[</span><span class="n">_d</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config_hash</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="vm">__class__</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_hash</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__rich_console__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">console</span><span class="p">:</span> <span class="n">Console</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">ConsoleOptions</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderResult</span><span class="p">:</span>
+
+        <span class="n">my_table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">MINIMAL</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">my_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Field name&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="n">my_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields__</span><span class="p">:</span>
+            <span class="n">my_table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">))</span>
+
+        <span class="k">yield</span> <span class="n">my_table</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -3122,10 +3395,10 @@ a <code>ValueType</code> is not configurable, unless the <code>_config_cls</code
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

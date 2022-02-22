@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.data.types.type_mgmt/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -635,6 +635,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2172,6 +2174,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2254,7 +2258,8 @@
 
 
 <h2 id="kiara.data.types.type_mgmt.TypeMgmt" class="doc doc-heading">
-        <code>TypeMgmt</code>
+        <code>
+TypeMgmt        </code>
 
 
 
@@ -2263,6 +2268,319 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/types/type_mgmt.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">TypeMgmt</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">kiara</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_types</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">bidict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">ValueType</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_type_transformations</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span>
+            <span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_registered_python_classes</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_type_hierarchy</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">invalidate_types</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_types</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_type_transformations</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_registered_python_classes</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">value_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">bidict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">ValueType</span><span class="p">]]:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_types</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_types</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_types</span> <span class="o">=</span> <span class="n">bidict</span><span class="p">(</span><span class="n">find_all_value_types</span><span class="p">())</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_types</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">value_type_hierarchy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;nx.DiGraph&quot;</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type_hierarchy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type_hierarchy</span>
+
+        <span class="k">def</span> <span class="nf">recursive_base_find</span><span class="p">(</span>
+            <span class="bp">cls</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="p">):</span>
+
+            <span class="k">if</span> <span class="n">current</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">current</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__bases__</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">base</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_types</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                    <span class="n">current</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_types</span><span class="o">.</span><span class="n">inverse</span><span class="p">[</span><span class="n">base</span><span class="p">])</span>
+
+                <span class="n">recursive_base_find</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="n">current</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">current</span>
+
+        <span class="n">bases</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">bases</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">recursive_base_find</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+
+        <span class="n">hierarchy</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">_bases</span> <span class="ow">in</span> <span class="n">bases</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">hierarchy</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">value_types</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">_bases</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="c1"># we only need the first parent, all others will be taken care of by the parent of the parent</span>
+            <span class="n">hierarchy</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">_bases</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_type_hierarchy</span> <span class="o">=</span> <span class="n">hierarchy</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type_hierarchy</span>
+
+    <span class="k">def</span> <span class="nf">get_type_lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the shortest path between the specified type and the &#39;any&#39; type, in reverse direction starting from the specified type.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">value_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_types</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No value type &#39;</span><span class="si">{</span><span class="n">value_type</span><span class="si">}</span><span class="s2">&#39; registered.&quot;</span><span class="p">)</span>
+
+        <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">shortest_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_type_hierarchy</span><span class="p">,</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span> <span class="n">value_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_sub_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+
+        <span class="k">if</span> <span class="n">value_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_types</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No value type &#39;</span><span class="si">{</span><span class="n">value_type</span><span class="si">}</span><span class="s2">&#39; registered.&quot;</span><span class="p">)</span>
+
+        <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+
+        <span class="n">desc</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">descendants</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_type_hierarchy</span><span class="p">,</span> <span class="n">value_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">desc</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">value_type_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_types</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">registered_python_classes</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_registered_python_classes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_registered_python_classes</span>
+
+        <span class="n">registered_types</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">v_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">rel</span> <span class="o">=</span> <span class="n">v_type</span><span class="o">.</span><span class="n">candidate_python_types</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">rel</span><span class="p">:</span>
+                <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">rel</span><span class="p">:</span>
+                    <span class="n">registered_types</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_registered_python_classes</span> <span class="o">=</span> <span class="n">registered_types</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_registered_python_classes</span>
+
+    <span class="k">def</span> <span class="nf">get_type_config_for_data_profile</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">profile_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+
+        <span class="n">type_name</span> <span class="o">=</span> <span class="n">TYPE_PROFILE_MAP</span><span class="p">[</span><span class="n">profile_name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">type_name</span><span class="p">,</span> <span class="s2">&quot;type_config&quot;</span><span class="p">:</span> <span class="p">{}}</span>
+
+    <span class="k">def</span> <span class="nf">determine_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ValueType</span><span class="p">]:</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Value</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">()</span>
+
+        <span class="n">result</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ValueType</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">registered_types</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">registered_python_classes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="p">[]))</span>
+        <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__bases__</span><span class="p">:</span>
+            <span class="n">reg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_python_classes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">reg</span><span class="p">:</span>
+                <span class="n">registered_types</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">reg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">registered_types</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">rt</span> <span class="ow">in</span> <span class="n">registered_types</span><span class="p">:</span>
+                <span class="n">_cls</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">ValueType</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value_type_cls</span><span class="p">(</span><span class="n">rt</span><span class="p">)</span>
+                <span class="n">match</span> <span class="o">=</span> <span class="n">_cls</span><span class="o">.</span><span class="n">check_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match</span><span class="p">)</span>
+
+        <span class="c1"># TODO: re-run all checks on all modules, not just the ones that registered interest in the class</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">result_str</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">_value_type_name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Multiple value types found for value: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result_str</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get_value_type_cls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">ValueType</span><span class="p">]:</span>
+
+        <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_types</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">type_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No value type &#39;</span><span class="si">{</span><span class="n">type_name</span><span class="si">}</span><span class="s2">&#39;, available types: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_types</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">t</span>
+
+    <span class="c1"># def get_value_type_transformations(</span>
+    <span class="c1">#     self, value_type_name: str</span>
+    <span class="c1"># ) -&gt; typing.Mapping[str, typing.Mapping[str, typing.Any]]:</span>
+    <span class="c1">#     &quot;&quot;&quot;Return available transform pipelines for value types.&quot;&quot;&quot;</span>
+    <span class="c1">#</span>
+    <span class="c1">#     if value_type_name in self._value_type_transformations.keys():</span>
+    <span class="c1">#         return self._value_type_transformations[value_type_name]</span>
+    <span class="c1">#</span>
+    <span class="c1">#     type_cls = self.get_value_type_cls(type_name=value_type_name)</span>
+    <span class="c1">#     _configs = type_cls.conversions()</span>
+    <span class="c1">#     if _configs is None:</span>
+    <span class="c1">#         module_configs = {}</span>
+    <span class="c1">#     else:</span>
+    <span class="c1">#         module_configs = dict(_configs)</span>
+    <span class="c1">#     for base in type_cls.__bases__:</span>
+    <span class="c1">#         if hasattr(base, &quot;conversions&quot;):</span>
+    <span class="c1">#             _b_configs = base.conversions()  # type: ignore</span>
+    <span class="c1">#             if not _b_configs:</span>
+    <span class="c1">#                 continue</span>
+    <span class="c1">#             for k, v in _b_configs.items():</span>
+    <span class="c1">#                 if k not in module_configs.keys():</span>
+    <span class="c1">#                     module_configs[k] = v</span>
+    <span class="c1">#</span>
+    <span class="c1">#     # TODO: check input type compatibility?</span>
+    <span class="c1">#     result: typing.Dict[str, typing.Dict[str, typing.Any]] = {}</span>
+    <span class="c1">#     for name, config in module_configs.items():</span>
+    <span class="c1">#         config = dict(config)</span>
+    <span class="c1">#         module_type = config.pop(&quot;module_type&quot;, None)</span>
+    <span class="c1">#         if not module_type:</span>
+    <span class="c1">#             raise Exception(</span>
+    <span class="c1">#                 f&quot;Can&#39;t create transformation &#39;{name}&#39; for type &#39;{value_type_name}&#39;, no module type specified in config: {config}&quot;</span>
+    <span class="c1">#             )</span>
+    <span class="c1">#         module_config = config.pop(&quot;module_config&quot;, {})</span>
+    <span class="c1">#         module = self._kiara.create_module(</span>
+    <span class="c1">#             id=f&quot;_transform_{value_type_name}_{name}&quot;,</span>
+    <span class="c1">#             module_type=module_type,</span>
+    <span class="c1">#             module_config=module_config,</span>
+    <span class="c1">#         )</span>
+    <span class="c1">#</span>
+    <span class="c1">#         if &quot;input_name&quot; not in config.keys():</span>
+    <span class="c1">#</span>
+    <span class="c1">#             if len(module.input_schemas) == 1:</span>
+    <span class="c1">#                 config[&quot;input_name&quot;] = next(iter(module.input_schemas.keys()))</span>
+    <span class="c1">#             else:</span>
+    <span class="c1">#                 required_inputs = [</span>
+    <span class="c1">#                     inp</span>
+    <span class="c1">#                     for inp, schema in module.input_schemas.items()</span>
+    <span class="c1">#                     if schema.is_required()</span>
+    <span class="c1">#                 ]</span>
+    <span class="c1">#                 if len(required_inputs) == 1:</span>
+    <span class="c1">#                     config[&quot;input_name&quot;] = required_inputs[0]</span>
+    <span class="c1">#                 else:</span>
+    <span class="c1">#                     raise Exception(</span>
+    <span class="c1">#                         f&quot;Can&#39;t create transformation &#39;{name}&#39; for type &#39;{value_type_name}&#39;: can&#39;t determine input name between those options: &#39;{&#39;, &#39;.join(required_inputs)}&#39;&quot;</span>
+    <span class="c1">#                     )</span>
+    <span class="c1">#</span>
+    <span class="c1">#         if &quot;output_name&quot; not in config.keys():</span>
+    <span class="c1">#</span>
+    <span class="c1">#             if len(module.input_schemas) == 1:</span>
+    <span class="c1">#                 config[&quot;output_name&quot;] = next(iter(module.output_schemas.keys()))</span>
+    <span class="c1">#             else:</span>
+    <span class="c1">#                 required_outputs = [</span>
+    <span class="c1">#                     inp</span>
+    <span class="c1">#                     for inp, schema in module.output_schemas.items()</span>
+    <span class="c1">#                     if schema.is_required()</span>
+    <span class="c1">#                 ]</span>
+    <span class="c1">#                 if len(required_outputs) == 1:</span>
+    <span class="c1">#                     config[&quot;output_name&quot;] = required_outputs[0]</span>
+    <span class="c1">#                 else:</span>
+    <span class="c1">#                     raise Exception(</span>
+    <span class="c1">#                         f&quot;Can&#39;t create transformation &#39;{name}&#39; for type &#39;{value_type_name}&#39;: can&#39;t determine output name between those options: &#39;{&#39;, &#39;.join(required_outputs)}&#39;&quot;</span>
+    <span class="c1">#                     )</span>
+    <span class="c1">#</span>
+    <span class="c1">#         result[name] = {</span>
+    <span class="c1">#             &quot;module&quot;: module,</span>
+    <span class="c1">#             &quot;module_type&quot;: module_type,</span>
+    <span class="c1">#             &quot;module_config&quot;: module_config,</span>
+    <span class="c1">#             &quot;transformation_config&quot;: config,</span>
+    <span class="c1">#         }</span>
+    <span class="c1">#</span>
+    <span class="c1">#     self._value_type_transformations[value_type_name] = result</span>
+    <span class="c1">#     return self._value_type_transformations[value_type_name]</span>
+
+    <span class="k">def</span> <span class="nf">find_value_types_for_package</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">package_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">ValueType</span><span class="p">]]:</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">value_type_name</span><span class="p">,</span> <span class="n">value_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="n">value_md</span> <span class="o">=</span> <span class="n">value_type</span><span class="o">.</span><span class="n">get_type_metadata</span><span class="p">()</span>
+            <span class="n">package</span> <span class="o">=</span> <span class="n">value_md</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">labels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;package&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">package</span> <span class="o">==</span> <span class="n">package_name</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">value_type_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_type</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="c1"># def get_available_transformations_for_type(</span>
+    <span class="c1">#     self, value_type_name: str</span>
+    <span class="c1"># ) -&gt; typing.Iterable[str]:</span>
+    <span class="c1">#</span>
+    <span class="c1">#     return self.get_value_type_transformations(value_type_name=value_type_name)</span>
+
+    <span class="c1"># def transform_value(</span>
+    <span class="c1">#     self,</span>
+    <span class="c1">#     transformation_alias: str,</span>
+    <span class="c1">#     value: Value,</span>
+    <span class="c1">#     other_inputs: typing.Optional[typing.Mapping[str, typing.Any]] = None,</span>
+    <span class="c1"># ) -&gt; Value:</span>
+    <span class="c1">#</span>
+    <span class="c1">#     transformations = self.get_value_type_transformations(value.value_schema.type)</span>
+    <span class="c1">#</span>
+    <span class="c1">#     if transformation_alias not in transformations.keys():</span>
+    <span class="c1">#         raise Exception(</span>
+    <span class="c1">#             f&quot;Can&#39;t transform value of type &#39;{value.value_schema.type}&#39;, transformation &#39;{transformation_alias}&#39; not available for this type. Available: {&#39;, &#39;.join(transformations.keys())}&quot;</span>
+    <span class="c1">#         )</span>
+    <span class="c1">#</span>
+    <span class="c1">#     config = transformations[transformation_alias]</span>
+    <span class="c1">#</span>
+    <span class="c1">#     transformation_config = config[&quot;transformation_config&quot;]</span>
+    <span class="c1">#     input_name = transformation_config[&quot;input_name&quot;]</span>
+    <span class="c1">#</span>
+    <span class="c1">#     module: KiaraModule = config[&quot;module&quot;]</span>
+    <span class="c1">#</span>
+    <span class="c1">#     constants = module.get_config_value(&quot;constants&quot;)</span>
+    <span class="c1">#     inputs = dict(constants)</span>
+    <span class="c1">#</span>
+    <span class="c1">#     if other_inputs:</span>
+    <span class="c1">#</span>
+    <span class="c1">#         for k, v in other_inputs.items():</span>
+    <span class="c1">#             if k in constants.keys():</span>
+    <span class="c1">#                 raise Exception(f&quot;Invalid value &#39;{k}&#39; for &#39;other_inputs&#39;, this is a constant that can&#39;t be overwrittern.&quot;)</span>
+    <span class="c1">#             inputs[k] = v</span>
+    <span class="c1">#</span>
+    <span class="c1">#     defaults = transformation_config.get(&quot;defaults&quot;, None)</span>
+    <span class="c1">#     if defaults:</span>
+    <span class="c1">#         for k, v in defaults.items():</span>
+    <span class="c1">#             if k in constants.keys():</span>
+    <span class="c1">#                 raise Exception(f&quot;Invalid  default value &#39;{k}&#39;, this is a constant that can&#39;t be overwrittern.&quot;)</span>
+    <span class="c1">#             if k not in inputs.keys():</span>
+    <span class="c1">#                 inputs[k] = v</span>
+    <span class="c1">#</span>
+    <span class="c1">#     if input_name in inputs.keys():</span>
+    <span class="c1">#         raise Exception(</span>
+    <span class="c1">#             f&quot;Invalid value for inputs in transform arguments, can&#39;t contain the main input key &#39;{input_name}&#39;.&quot;</span>
+    <span class="c1">#         )</span>
+    <span class="c1">#</span>
+    <span class="c1">#     inputs[input_name] = value</span>
+    <span class="c1">#</span>
+    <span class="c1">#     result = module.run(**inputs)</span>
+    <span class="c1">#     output_name = transformation_config[&quot;output_name&quot;]</span>
+    <span class="c1">#</span>
+    <span class="c1">#     result_value = result.get_value_obj(output_name)</span>
+    <span class="c1">#     return result_value</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2418,10 +2736,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

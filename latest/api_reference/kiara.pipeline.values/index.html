@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.pipeline.values/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -1839,6 +1839,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2301,6 +2303,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2511,7 +2515,9 @@
 
 
 <h2 id="kiara.pipeline.values.PipelineInputRef" class="doc doc-heading">
-        <code>PipelineInputRef</code>
+        <code>
+PipelineInputRef            (<a title="kiara.pipeline.values.ValueRef" href="#kiara.pipeline.values.ValueRef">ValueRef</a>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2524,6 +2530,24 @@
 
       <p>An input to a pipeline.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/pipeline/values.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineInputRef</span><span class="p">(</span><span class="n">ValueRef</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An input to a pipeline.&quot;&quot;&quot;</span>
+
+    <span class="n">connected_inputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">StepValueAddress</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The step inputs that are connected to this pipeline input&quot;</span><span class="p">,</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">is_constant</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="s2">&quot;Whether this input is a constant and can&#39;t be changed by the user.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">generate_step_alias</span><span class="p">(</span><span class="n">PIPELINE_PARENT_MARKER</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_name</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2579,7 +2603,9 @@
 
 
 <h2 id="kiara.pipeline.values.PipelineOutputRef" class="doc doc-heading">
-        <code>PipelineOutputRef</code>
+        <code>
+PipelineOutputRef            (<a title="kiara.pipeline.values.ValueRef" href="#kiara.pipeline.values.ValueRef">ValueRef</a>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2592,6 +2618,18 @@
 
       <p>An output to a pipeline.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/pipeline/values.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineOutputRef</span><span class="p">(</span><span class="n">ValueRef</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An output to a pipeline.&quot;&quot;&quot;</span>
+
+    <span class="n">connected_output</span><span class="p">:</span> <span class="n">StepValueAddress</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Connected step outputs.&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">generate_step_alias</span><span class="p">(</span><span class="n">PIPELINE_PARENT_MARKER</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_name</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2647,7 +2685,9 @@
 
 
 <h2 id="kiara.pipeline.values.StepInputRef" class="doc doc-heading">
-        <code>StepInputRef</code>
+        <code>
+StepInputRef            (<a title="kiara.pipeline.values.ValueRef" href="#kiara.pipeline.values.ValueRef">ValueRef</a>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2661,6 +2701,49 @@
       <p>An input to a step.</p>
 <p>This object can either have a 'connected_outputs' set, or a 'connected_pipeline_input', not both.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/pipeline/values.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">StepInputRef</span><span class="p">(</span><span class="n">ValueRef</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An input to a step.</span>
+
+<span class="sd">    This object can either have a &#39;connected_outputs&#39; set, or a &#39;connected_pipeline_input&#39;, not both.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The step id.&quot;</span><span class="p">)</span>
+    <span class="n">connected_outputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">StepValueAddress</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A potential connected list of one or several module outputs.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">connected_pipeline_input</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A potential pipeline input.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">is_constant</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="s2">&quot;Whether this input is a constant and can&#39;t be changed by the user.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="nd">@root_validator</span><span class="p">(</span><span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">ensure_single_connected_item</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;connected_outputs&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;connected_pipeline_input&quot;</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Multiple connected items, only one allowed.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">values</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">generate_step_alias</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_name</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">address</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepValueAddress</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">StepValueAddress</span><span class="p">(</span><span class="n">step_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">value_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">camel_case_to_snake_case</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">],</span> <span class="n">repl</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">)&quot;</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2764,7 +2847,9 @@
 
 
 <h2 id="kiara.pipeline.values.StepOutputRef" class="doc doc-heading">
-        <code>StepOutputRef</code>
+        <code>
+StepOutputRef            (<a title="kiara.pipeline.values.ValueRef" href="#kiara.pipeline.values.ValueRef">ValueRef</a>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2777,6 +2862,36 @@
 
       <p>An output to a step.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/pipeline/values.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">StepOutputRef</span><span class="p">(</span><span class="n">ValueRef</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An output to a step.&quot;&quot;&quot;</span>
+
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">allow_mutation</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The step id.&quot;</span><span class="p">)</span>
+    <span class="n">pipeline_output</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The connected pipeline output.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">connected_inputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">StepValueAddress</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The step inputs that are connected to this step output&quot;</span><span class="p">,</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">generate_step_alias</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_name</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">address</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepValueAddress</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">StepValueAddress</span><span class="p">(</span><span class="n">step_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">value_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">camel_case_to_snake_case</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">],</span> <span class="n">repl</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">)&quot;</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2879,7 +2994,9 @@
 
 
 <h2 id="kiara.pipeline.values.ValueRef" class="doc doc-heading">
-        <code>ValueRef</code>
+        <code>
+ValueRef            (<span title="pydantic.main.BaseModel">BaseModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2903,6 +3020,55 @@ it can update dependent other values). A <code>ValueRef</code> object (obviously
 <p>Several <code>ValueRef</code> objects can target the same value, for example a step output and a connected step input would
 reference the same <code>Value</code> (in most cases)..</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/pipeline/values.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueRef</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An object that holds information about the location of a value within a pipeline (or other structure).</span>
+
+<span class="sd">    Basically, a `ValueRef` helps the containing object where in its structure the value belongs (for example so</span>
+<span class="sd">    it can update dependent other values). A `ValueRef` object (obviously) does not contain the value itself.</span>
+
+<span class="sd">    There are four different ValueRef type that are relevant for pipelines:</span>
+
+<span class="sd">    - [kiara.pipeline.values.StepInputRef][]: an input to a step</span>
+<span class="sd">    - [kiara.pipeline.values.StepOutputRef][]: an output of a step</span>
+<span class="sd">    - [kiara.pipeline.values.PipelineInputRef][]: an input to a pipeline</span>
+<span class="sd">    - [kiara.pipeline.values.PipelineOutputRef][]: an output for a pipeline</span>
+
+<span class="sd">    Several `ValueRef` objects can target the same value, for example a step output and a connected step input would</span>
+<span class="sd">    reference the same `Value` (in most cases)..</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">allow_mutation</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
+
+    <span class="n">_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">)</span>
+    <span class="n">value_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">value_schema</span><span class="p">:</span> <span class="n">ValueSchema</span>
+    <span class="c1"># pipeline_id: str</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_id</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">step_id</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;step_id&quot;</span><span class="p">):</span>
+            <span class="n">step_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; step_id=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(value_name=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_name</span><span class="si">}</span><span class="s2">&#39; </span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">camel_case_to_snake_case</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">],</span> <span class="n">repl</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">)&quot;</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -3142,10 +3308,10 @@ reference the same <code>Value</code> (in most cases)..</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

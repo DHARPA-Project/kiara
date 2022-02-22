@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.workflow.kiara_workflow/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -2091,6 +2091,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2159,6 +2161,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2227,7 +2231,8 @@
 
 
 <h2 id="kiara.workflow.kiara_workflow.KiaraWorkflow" class="doc doc-heading">
-        <code>KiaraWorkflow</code>
+        <code>
+KiaraWorkflow        </code>
 
 
 
@@ -2237,6 +2242,143 @@
 
       <p>A thin wrapper class around a [PipelineModule][kiara.pipeline.PipelineModule], mostly handling initialization from simplified configuration data.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/workflow/kiara_workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraWorkflow</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A thin wrapper class around a [PipelineModule][kiara.pipeline.PipelineModule], mostly handling initialization from simplified configuration data.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">workflow_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="n">ModuleConfig</span><span class="p">,</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
+        <span class="n">controller</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">PipelineController</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_controller</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">PipelineController</span><span class="p">]</span> <span class="o">=</span> <span class="n">controller</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">workflow_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_config</span><span class="p">:</span> <span class="n">ModuleConfig</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">kiara</span>
+
+        <span class="n">root_module_args</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_id</span><span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_config</span><span class="o">.</span><span class="n">module_type</span> <span class="o">==</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span>
+            <span class="n">root_module_args</span><span class="p">[</span><span class="s2">&quot;module_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pipeline&quot;</span>
+            <span class="n">root_module_args</span><span class="p">[</span><span class="s2">&quot;module_config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_config</span><span class="o">.</span><span class="n">module_config</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">is_pipeline_module</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_workflow_config</span><span class="o">.</span><span class="n">module_type</span><span class="p">):</span>
+            <span class="n">root_module_args</span><span class="p">[</span><span class="s2">&quot;module_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_config</span><span class="o">.</span><span class="n">module_type</span>
+            <span class="n">root_module_args</span><span class="p">[</span><span class="s2">&quot;module_config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_config</span><span class="o">.</span><span class="n">module_config</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># means it&#39;s a python module, and we wrap it into a single-module pipeline</span>
+            <span class="n">root_module_args</span><span class="p">[</span><span class="s2">&quot;module_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pipeline&quot;</span>
+            <span class="n">steps_conf</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;steps&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_config</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
+                        <span class="s2">&quot;step_id&quot;</span><span class="p">:</span> <span class="n">slugify</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_config</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">&quot;_&quot;</span>
+                        <span class="p">),</span>
+                        <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_config</span><span class="o">.</span><span class="n">module_config</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">],</span>
+                <span class="s2">&quot;input_aliases&quot;</span><span class="p">:</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;output_aliases&quot;</span><span class="p">:</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">root_module_args</span><span class="p">[</span><span class="s2">&quot;module_config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">steps_conf</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_root_module</span><span class="p">:</span> <span class="n">PipelineModule</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="o">**</span><span class="n">root_module_args</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root_module</span><span class="p">,</span> <span class="n">PipelineModule</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Pipeline</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">structure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineStructure</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root_module</span><span class="o">.</span><span class="n">structure</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Pipeline</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span> <span class="n">controller</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_controller</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">controller</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineController</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">controller</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepStatus</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">status</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSet</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">inputs</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSet</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">outputs</span>
+
+    <span class="k">def</span> <span class="nf">get_current_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineState</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">get_current_state</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">current_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineState</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current_state</span><span class="p">()</span>
+
+    <span class="c1"># @inputs.setter</span>
+    <span class="c1"># def inputs(self, inputs: typing.Mapping[str, typing.Any]):</span>
+    <span class="c1">#     self.pipeline.set_pipeline_inputs(**inputs)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">input_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">get_all_field_names</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">output_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">get_all_field_names</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">workflow_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">steps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepsInfo</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">to_details</span><span class="p">()</span><span class="o">.</span><span class="n">steps_info</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(workflow_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">workflow_id</span><span class="si">}</span><span class="s2">, root_module=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_root_module</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__rich_console__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">console</span><span class="p">:</span> <span class="n">Console</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">ConsoleOptions</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderResult</span><span class="p">:</span>
+
+        <span class="k">yield</span> <span class="sa">f</span><span class="s2">&quot;[b]Workflow: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">workflow_id</span><span class="si">}</span><span class="s2">[/b]&quot;</span>
+
+        <span class="n">doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root_module</span><span class="o">.</span><span class="n">get_type_metadata</span><span class="p">()</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">description</span>
+        <span class="k">if</span> <span class="n">doc</span> <span class="ow">and</span> <span class="n">doc</span> <span class="o">!=</span> <span class="n">DEFAULT_NO_DESC_VALUE</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">doc</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;property&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+        <span class="n">doc_link</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root_module</span><span class="o">.</span><span class="n">get_type_metadata</span><span class="p">()</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">references</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;documentation&quot;</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">doc_link</span><span class="p">:</span>
+            <span class="c1"># TODO: use direct link</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">doc_link</span><span class="o">.</span><span class="n">url</span>
+            <span class="n">module_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[link=</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_root_module</span><span class="o">.</span><span class="n">_module_type_id</span><span class="si">}</span><span class="s2">[/link]&quot;</span>  <span class="c1"># type: ignore</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">module_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root_module</span><span class="o">.</span><span class="n">_module_type_id</span>  <span class="c1"># type: ignore</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;root module&quot;</span><span class="p">,</span> <span class="n">module_str</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;current status&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">inputs_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">_create_rich_table</span><span class="p">(</span><span class="n">show_headers</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="n">inputs_table</span><span class="p">)</span>
+        <span class="n">outputs_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">_create_rich_table</span><span class="p">(</span><span class="n">show_headers</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">,</span> <span class="n">outputs_table</span><span class="p">)</span>
+
+        <span class="k">yield</span> <span class="n">table</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2362,10 +2504,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

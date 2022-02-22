@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.data.registry.store/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -593,6 +593,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2186,6 +2188,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2281,7 +2285,9 @@
 
 
 <h2 id="kiara.data.registry.store.LocalDataStore" class="doc doc-heading">
-        <code>LocalDataStore</code>
+        <code>
+LocalDataStore            (<span title="kiara.data.registry.DataRegistry">DataRegistry</span>)
+        </code>
 
 
 
@@ -2293,6 +2299,355 @@
 <p>Data is stored under the value for the configured 'base_path' attribute, along with <a href="../kiara.metadata.data/#kiara.metadata.data.LoadConfig">LoadConfig</a> data
 that describes how the data can be re-loaded into memory.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/registry/store.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">LocalDataStore</span><span class="p">(</span><span class="n">DataRegistry</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An implementation of a *kiara* data registry that stores data locally, so it can be accessed across sessions.</span>
+
+<span class="sd">    Data is stored under the value for the configured &#39;base_path&#39; attribute, along with [LoadConfig][kiara.metadata.data.LoadConfig] data</span>
+<span class="sd">    that describes how the data can be re-loaded into memory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">base_path</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]):</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">base_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">base_path</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">base_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_obj_cache</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_info_cache</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SavedValueInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_cache</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata_cache</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_slots</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSlot</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">base_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span>
+
+    <span class="k">def</span> <span class="nf">_get_saved_value_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SavedValueInfo</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_info_cache</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_info_cache</span><span class="p">[</span><span class="n">value_id</span><span class="p">]</span>
+
+        <span class="n">metadata_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_metadata_path</span><span class="p">(</span><span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">metadata_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No value with id &#39;</span><span class="si">{</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&#39; registered.&quot;</span><span class="p">)</span>
+
+        <span class="n">info_content</span> <span class="o">=</span> <span class="n">metadata_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+        <span class="n">info_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">info_content</span><span class="p">)</span>
+
+        <span class="n">value_info</span> <span class="o">=</span> <span class="n">SavedValueInfo</span><span class="p">(</span><span class="o">**</span><span class="n">info_dict</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">value_info</span><span class="o">.</span><span class="n">value_id</span> <span class="o">==</span> <span class="n">value_id</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_info_cache</span><span class="p">[</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_info</span>
+        <span class="k">return</span> <span class="n">value_info</span>
+
+    <span class="k">def</span> <span class="nf">_get_value_obj_for_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Value</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_obj_cache</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_obj_cache</span><span class="p">[</span><span class="n">value_id</span><span class="p">]</span>
+
+        <span class="n">value_info</span><span class="p">:</span> <span class="n">SavedValueInfo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_saved_value_info</span><span class="p">(</span><span class="n">value_id</span><span class="p">)</span>
+        <span class="n">value_schema</span> <span class="o">=</span> <span class="n">value_info</span><span class="o">.</span><span class="n">value_schema</span>
+        <span class="c1"># value_schema = ValueSchema(</span>
+        <span class="c1">#     type=value_info.value_type, type_config=value_info.value_type_config</span>
+        <span class="c1"># )</span>
+
+        <span class="n">value_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_value_obj</span><span class="p">(</span>
+            <span class="n">value_schema</span><span class="o">=</span><span class="n">value_schema</span><span class="p">,</span>
+            <span class="n">is_set</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">is_none</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">value_hashes</span><span class="o">=</span><span class="n">value_info</span><span class="o">.</span><span class="n">hashes</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="n">value_info</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">value_obj</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">value_info</span><span class="o">.</span><span class="n">value_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_new_value_obj</span><span class="p">(</span>
+            <span class="n">value_obj</span><span class="o">=</span><span class="n">value_obj</span><span class="p">,</span>
+            <span class="n">value_data</span><span class="o">=</span><span class="n">SpecialValue</span><span class="o">.</span><span class="n">IGNORE</span><span class="p">,</span>
+            <span class="n">lineage</span><span class="o">=</span><span class="n">value_info</span><span class="o">.</span><span class="n">lineage</span><span class="p">,</span>
+            <span class="c1"># value_hashes=value_info.hashes,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_obj_cache</span><span class="p">[</span><span class="n">value_obj</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_obj</span>
+        <span class="k">return</span> <span class="n">value_obj</span>
+
+    <span class="k">def</span> <span class="nf">_get_value_data_for_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_cache</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_cache</span><span class="p">[</span><span class="n">value_id</span><span class="p">]</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">()</span>
+
+        <span class="c1"># # value_obj = self.get_value_obj(value_item=value_id)</span>
+        <span class="c1"># metadata_path = self.get_metadata_path(value_id=value_id)</span>
+        <span class="c1"># if not metadata_path.exists():</span>
+        <span class="c1">#     raise Exception(f&quot;No value with id &#39;{value_id}&#39; registered.&quot;)</span>
+        <span class="c1">#</span>
+        <span class="c1"># info_content = metadata_path.read_text()</span>
+        <span class="c1"># info_dict = json.loads(info_content)</span>
+        <span class="c1"># value_info = SavedValueInfo(**info_dict)</span>
+        <span class="n">value_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_saved_value_info</span><span class="p">(</span><span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">value_info</span><span class="o">.</span><span class="n">value_id</span> <span class="o">==</span> <span class="n">value_id</span>
+
+        <span class="n">load_config</span> <span class="o">=</span> <span class="n">value_info</span><span class="o">.</span><span class="n">load_config</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="o">**</span><span class="n">load_config</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;value_id&quot;</span><span class="p">,</span> <span class="s2">&quot;base_path_input_name&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">}))</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_cache</span><span class="p">[</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_get_value_lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ValueLineage</span><span class="p">]:</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_saved_value_info</span><span class="p">(</span><span class="n">value_id</span><span class="p">)</span><span class="o">.</span><span class="n">lineage</span>
+
+    <span class="k">def</span> <span class="nf">_register_value_and_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">data</span> <span class="o">==</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">IGNORE</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">id</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+        <span class="c1">#</span>
+        <span class="c1"># new_value_id = str(uuid.uuid4())</span>
+        <span class="c1">#</span>
+        <span class="c1"># value.id = new_value_id</span>
+        <span class="c1"># value_type = value.type_name</span>
+        <span class="c1">#</span>
+        <span class="c1"># # run the type and repo type specific save module, and retrieve the load_config that is needed to retrieve it again later</span>
+        <span class="c1"># save_config = self._prepare_save_config(</span>
+        <span class="c1">#     value_id=new_value_id, value_type=value_type, value=value</span>
+        <span class="c1"># )</span>
+        <span class="c1">#</span>
+        <span class="c1"># save_module = save_config.create_module(kiara=self._kiara)</span>
+        <span class="c1"># result = save_module.run(**save_config.inputs)</span>
+        <span class="c1"># load_config_value: Value = result.get_value_obj(&quot;load_config&quot;)</span>
+        <span class="c1">#</span>
+        <span class="c1"># # assemble the value metadata</span>
+        <span class="c1"># metadata: typing.Dict[str, typing.Mapping[str, typing.Any]] = dict(</span>
+        <span class="c1">#     value.get_metadata(also_return_schema=True)</span>
+        <span class="c1"># )</span>
+
+    <span class="k">def</span> <span class="nf">_register_remote_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Value</span><span class="p">:</span>
+
+        <span class="n">value_metadata_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_metadata_path</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value_metadata_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t register remote value with id &#39;</span><span class="si">{</span><span class="n">value</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&#39;. Load config for this id already exists: </span><span class="si">{</span><span class="n">value_metadata_path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">value_type</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">type_name</span>
+
+        <span class="c1"># run the type and repo type specific save module, and retrieve the load_config that is needed to retrieve it again later</span>
+        <span class="n">save_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_save_config</span><span class="p">(</span>
+            <span class="n">value_id</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">value_type</span><span class="o">=</span><span class="n">value_type</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span>
+        <span class="p">)</span>
+
+        <span class="n">save_module</span> <span class="o">=</span> <span class="n">save_config</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">save_module</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="o">**</span><span class="n">save_config</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
+
+        <span class="n">load_config_value</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="s2">&quot;load_config&quot;</span><span class="p">)</span>
+        <span class="n">field_name</span> <span class="o">=</span> <span class="n">value_type</span>
+        <span class="k">if</span> <span class="n">field_name</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
+            <span class="n">field_name</span> <span class="o">=</span> <span class="s2">&quot;value_item&quot;</span>
+        <span class="n">saved_value</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
+
+        <span class="n">load_config_data</span> <span class="o">=</span> <span class="n">load_config_value</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">()</span>
+
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">saved_value</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">(</span><span class="n">also_return_schema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">value_info</span> <span class="o">=</span> <span class="n">SavedValueInfo</span><span class="p">(</span>
+            <span class="n">value_id</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">value_schema</span><span class="o">=</span><span class="n">saved_value</span><span class="o">.</span><span class="n">value_schema</span><span class="p">,</span>
+            <span class="n">is_valid</span><span class="o">=</span><span class="n">saved_value</span><span class="o">.</span><span class="n">item_is_valid</span><span class="p">(),</span>
+            <span class="n">hashes</span><span class="o">=</span><span class="n">saved_value</span><span class="o">.</span><span class="n">get_hashes</span><span class="p">(),</span>
+            <span class="n">lineage</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">get_lineage</span><span class="p">(),</span>
+            <span class="n">save_lineage</span><span class="o">=</span><span class="n">saved_value</span><span class="o">.</span><span class="n">get_lineage</span><span class="p">(),</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span>
+            <span class="n">load_config</span><span class="o">=</span><span class="n">load_config_data</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">value_metadata_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">value_metadata_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">value_info</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+
+        <span class="n">copied_value</span> <span class="o">=</span> <span class="n">saved_value</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">copied_value</span><span class="o">.</span><span class="n">_registry</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="n">copied_value</span><span class="o">.</span><span class="n">_kiara</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span>
+
+        <span class="k">if</span> <span class="n">copied_value</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="n">value</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+            <span class="n">log_message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saved value id different to original id &#39;</span><span class="si">{</span><span class="n">value</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="n">copied_value</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">id</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_obj_cache</span><span class="p">[</span><span class="n">copied_value</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">copied_value</span>
+
+        <span class="k">return</span> <span class="n">copied_value</span>
+
+    <span class="k">def</span> <span class="nf">_prepare_save_config</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="s2">&quot;Value&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SaveConfig</span><span class="p">:</span>
+
+        <span class="n">store_operations</span><span class="p">:</span> <span class="n">StoreOperationType</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">operation_mgmt</span><span class="o">.</span><span class="n">get_operations</span><span class="p">(</span><span class="s2">&quot;store_value&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+        <span class="n">op_config</span> <span class="o">=</span> <span class="n">store_operations</span><span class="o">.</span><span class="n">get_store_operation_for_type</span><span class="p">(</span><span class="n">value_type</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">op_config</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t save value: no save operation found for value type &#39;</span><span class="si">{</span><span class="n">value_type</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">target_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data_path</span><span class="p">(</span><span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>
+        <span class="n">metadata_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_metadata_path</span><span class="p">(</span><span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">metadata_path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t save value, metadata file already exists: </span><span class="si">{</span><span class="n">metadata_path</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">input_name</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">type_name</span>
+        <span class="k">if</span> <span class="n">input_name</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
+            <span class="n">input_name</span> <span class="o">=</span> <span class="s2">&quot;value_item&quot;</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">input_name</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(),</span>
+            <span class="s2">&quot;base_path&quot;</span><span class="p">:</span> <span class="n">target_path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">(),</span>
+            <span class="s2">&quot;value_id&quot;</span><span class="p">:</span> <span class="n">value_id</span><span class="p">,</span>
+        <span class="p">}</span>  <span class="c1"># type: ignore</span>
+
+        <span class="n">save_config</span> <span class="o">=</span> <span class="n">SaveConfig</span><span class="p">(</span>
+            <span class="n">module_type</span><span class="o">=</span><span class="n">op_config</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
+            <span class="n">module_config</span><span class="o">=</span><span class="n">op_config</span><span class="o">.</span><span class="n">module_config</span><span class="p">,</span>
+            <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span>
+            <span class="n">load_config_output</span><span class="o">=</span><span class="s2">&quot;load_config&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">save_config</span>
+
+    <span class="k">def</span> <span class="nf">get_data_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;value_</span><span class="si">{</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get_metadata_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;value_</span><span class="si">{</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">/</span> <span class="s2">&quot;value_metadata.json&quot;</span>
+        <span class="k">return</span> <span class="n">path</span>
+
+    <span class="c1"># def get_load_config_path(self, value_id: str) -&gt; Path:</span>
+    <span class="c1">#     path = self._base_path / f&quot;value_{value_id}&quot; / &quot;load_config.json&quot;</span>
+    <span class="c1">#     return path</span>
+
+    <span class="k">def</span> <span class="nf">_get_value_slot_for_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSlot</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">alias_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_slots</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_slots</span><span class="p">[</span><span class="n">alias_name</span><span class="p">]</span>
+
+        <span class="n">alias_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span> <span class="o">/</span> <span class="s2">&quot;aliases&quot;</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;alias_</span><span class="si">{</span><span class="n">alias_name</span><span class="si">}</span><span class="s2">.json&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">alias_file</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No alias with name &#39;</span><span class="si">{</span><span class="n">alias_name</span><span class="si">}</span><span class="s2">&#39; registered.&quot;</span><span class="p">)</span>
+
+        <span class="n">file_content</span> <span class="o">=</span> <span class="n">alias_file</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+        <span class="n">alias_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">file_content</span><span class="p">)</span>
+        <span class="n">value_schema</span> <span class="o">=</span> <span class="n">ValueSchema</span><span class="p">(</span><span class="o">**</span><span class="n">alias_data</span><span class="p">[</span><span class="s2">&quot;value_schema&quot;</span><span class="p">])</span>
+
+        <span class="n">value_slot</span> <span class="o">=</span> <span class="n">ValueSlot</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="n">alias_name</span><span class="p">,</span> <span class="n">value_schema</span><span class="o">=</span><span class="n">value_schema</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span> <span class="n">registry</span><span class="o">=</span><span class="bp">self</span>
+        <span class="p">)</span>
+        <span class="n">value_slot</span><span class="o">.</span><span class="n">register_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">version</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">alias_data</span><span class="p">[</span><span class="s2">&quot;versions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
+            <span class="n">value_id</span> <span class="o">=</span> <span class="n">alias_data</span><span class="p">[</span><span class="s2">&quot;versions&quot;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">version</span><span class="p">)]</span>
+            <span class="n">value_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">value_item</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value_obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t find value with id: </span><span class="si">{</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">tags</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="n">alias_data</span><span class="p">[</span><span class="s2">&quot;tags&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">tags</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">tag</span>
+                    <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">version</span> <span class="ow">in</span> <span class="n">alias_data</span><span class="p">[</span><span class="s2">&quot;tags&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">version</span> <span class="o">==</span> <span class="n">version</span>
+                <span class="p">]</span>
+
+            <span class="n">new_version</span> <span class="o">=</span> <span class="n">value_slot</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span>
+                <span class="n">value_obj</span><span class="p">,</span> <span class="n">trigger_callbacks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="n">tags</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">new_version</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">(</span><span class="n">version</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;New version different to stored version (</span><span class="si">{</span><span class="n">new_version</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">). This is a bug.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_slots</span><span class="p">[</span><span class="n">alias_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_slot</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_slots</span><span class="p">[</span><span class="n">alias_name</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_get_available_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+
+        <span class="n">alias_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span> <span class="o">/</span> <span class="s2">&quot;aliases&quot;</span>
+        <span class="n">alias_file</span> <span class="o">=</span> <span class="n">alias_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;alias_*.json&quot;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">af</span> <span class="ow">in</span> <span class="n">alias_file</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">af</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                <span class="n">log_message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ignoring non-file: </span><span class="si">{</span><span class="n">af</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="n">alias_name</span> <span class="o">=</span> <span class="n">af</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alias_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">_get_available_value_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="n">value_ids</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">6</span><span class="p">:]</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;value_*/value_metadata.json&quot;</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">value_ids</span>
+
+    <span class="k">def</span> <span class="nf">_register_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_schema</span><span class="p">:</span> <span class="n">ValueSchema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSlot</span><span class="p">:</span>
+
+        <span class="n">alias_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span> <span class="o">/</span> <span class="s2">&quot;aliases&quot;</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;alias_</span><span class="si">{</span><span class="n">alias_name</span><span class="si">}</span><span class="s2">.json&quot;</span>
+        <span class="k">if</span> <span class="n">alias_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Alias &#39;</span><span class="si">{</span><span class="n">alias_name</span><span class="si">}</span><span class="s2">&#39; already registered.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">alias_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_slots</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Value slot for alias &#39;</span><span class="si">{</span><span class="n">alias_name</span><span class="si">}</span><span class="s2">&#39; already exists.&quot;</span><span class="p">)</span>
+
+        <span class="n">alias_file</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">vs</span> <span class="o">=</span> <span class="n">ValueSlot</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="n">alias_name</span><span class="p">,</span> <span class="n">value_schema</span><span class="o">=</span><span class="n">value_schema</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span> <span class="n">registry</span><span class="o">=</span><span class="bp">self</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_slots</span><span class="p">[</span><span class="n">alias_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">vs</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write_alias_file</span><span class="p">(</span><span class="n">alias_name</span><span class="p">)</span>
+        <span class="n">vs</span><span class="o">.</span><span class="n">register_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">vs</span>
+
+    <span class="k">def</span> <span class="nf">_write_alias_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias_name</span><span class="p">):</span>
+
+        <span class="n">alias_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span> <span class="o">/</span> <span class="s2">&quot;aliases&quot;</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;alias_</span><span class="si">{</span><span class="n">alias_name</span><span class="si">}</span><span class="s2">.json&quot;</span>
+
+        <span class="n">value_slot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_slots</span><span class="p">[</span><span class="n">alias_name</span><span class="p">]</span>
+
+        <span class="n">alias_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;value_schema&quot;</span><span class="p">:</span> <span class="n">value_slot</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
+            <span class="s2">&quot;versions&quot;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s2">&quot;tags&quot;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">version</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">value_slot</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">alias_dict</span><span class="p">[</span><span class="s2">&quot;versions&quot;</span><span class="p">][</span><span class="n">version</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">id</span>
+
+        <span class="k">for</span> <span class="n">tag_name</span><span class="p">,</span> <span class="n">version</span> <span class="ow">in</span> <span class="n">value_slot</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">alias_dict</span><span class="p">[</span><span class="s2">&quot;tags&quot;</span><span class="p">][</span><span class="n">tag_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">version</span>
+
+        <span class="n">alias_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">alias_dict</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">values_updated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">items</span><span class="p">:</span> <span class="s2">&quot;ValueSlot&quot;</span><span class="p">):</span>
+
+        <span class="n">invalid</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_slots</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">invalid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">invalid</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t update value(s), invalid aliases: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">invalid</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_write_alias_file</span><span class="p">(</span><span class="n">alias_name</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2326,7 +2681,9 @@ that describes how the data can be re-loaded into memory.</p>
 
 
 <h2 id="kiara.data.registry.store.SavedValueInfo" class="doc doc-heading">
-        <code>SavedValueInfo</code>
+        <code>
+SavedValueInfo            (<span title="kiara.data.values.ValueInfo">ValueInfo</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2338,6 +2695,18 @@ that describes how the data can be re-loaded into memory.</p>
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/data/registry/store.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SavedValueInfo</span><span class="p">(</span><span class="n">ValueInfo</span><span class="p">):</span>
+
+    <span class="n">load_config</span><span class="p">:</span> <span class="n">LoadConfig</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The configuration to load this value from disk (or however it is stored).&quot;</span>
+    <span class="p">)</span>
+    <span class="n">save_lineage</span><span class="p">:</span> <span class="n">ValueLineage</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Information about how the value was saved.&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2497,10 +2866,10 @@ that describes how the data can be re-loaded into memory.</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

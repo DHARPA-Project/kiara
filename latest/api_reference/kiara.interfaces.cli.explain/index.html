@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.interfaces.cli.explain/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -1055,6 +1055,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2193,6 +2195,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2296,7 +2300,9 @@
 
 
 <h2 id="kiara.interfaces.cli.explain.KiaraEntityMatches" class="doc doc-heading">
-        <code>KiaraEntityMatches</code>
+        <code>
+KiaraEntityMatches            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2308,6 +2314,224 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/cli/explain.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraEntityMatches</span><span class="p">(</span><span class="n">KiaraInfoModel</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">search_term</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">search_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">search_aliases</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">search_desc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">search_full_doc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Kiara</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">kiara</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
+
+        <span class="n">module_types</span> <span class="o">=</span> <span class="n">find_module_types</span><span class="p">(</span>
+            <span class="n">item</span><span class="o">=</span><span class="n">search_term</span><span class="p">,</span>
+            <span class="n">search_desc</span><span class="o">=</span><span class="n">search_desc</span><span class="p">,</span>
+            <span class="n">search_full_doc</span><span class="o">=</span><span class="n">search_full_doc</span><span class="p">,</span>
+            <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">operation_types</span> <span class="o">=</span> <span class="n">find_operation_types</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="n">search_term</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
+        <span class="n">operations</span> <span class="o">=</span> <span class="n">find_operations</span><span class="p">(</span>
+            <span class="n">item</span><span class="o">=</span><span class="n">search_term</span><span class="p">,</span>
+            <span class="n">search_desc</span><span class="o">=</span><span class="n">search_desc</span><span class="p">,</span>
+            <span class="n">search_full_doc</span><span class="o">=</span><span class="n">search_full_doc</span><span class="p">,</span>
+            <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">find_values</span><span class="p">(</span>
+            <span class="n">item</span><span class="o">=</span><span class="n">search_term</span><span class="p">,</span>
+            <span class="n">search_ids</span><span class="o">=</span><span class="n">search_ids</span><span class="p">,</span>
+            <span class="n">search_aliases</span><span class="o">=</span><span class="n">search_aliases</span><span class="p">,</span>
+            <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">KiaraEntityMatches</span><span class="p">(</span>
+            <span class="n">module_types</span><span class="o">=</span><span class="n">module_types</span><span class="p">,</span>
+            <span class="n">operation_types</span><span class="o">=</span><span class="n">operation_types</span><span class="p">,</span>
+            <span class="n">operations</span><span class="o">=</span><span class="n">operations</span><span class="p">,</span>
+            <span class="n">values</span><span class="o">=</span><span class="n">values</span><span class="p">,</span>
+            <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">module_types</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span>
+            <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">KiaraModule</span><span class="p">]]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">operation_types</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OperationsMetadata</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">operations</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">kiara</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
+
+        <span class="n">init_dict</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">module_types</span><span class="p">:</span>
+            <span class="n">init_dict</span><span class="p">[</span><span class="s2">&quot;module_types&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">module_types</span>
+        <span class="k">if</span> <span class="n">operation_types</span><span class="p">:</span>
+            <span class="n">init_dict</span><span class="p">[</span><span class="s2">&quot;operation_types&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">operation_types</span>
+        <span class="k">if</span> <span class="n">operations</span><span class="p">:</span>
+            <span class="n">init_dict</span><span class="p">[</span><span class="s2">&quot;operations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">operations</span>
+        <span class="k">if</span> <span class="n">values</span><span class="p">:</span>
+            <span class="n">init_dict</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">init_dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span> <span class="o">=</span> <span class="n">kiara</span>
+
+    <span class="n">_kiara</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">()</span>
+
+    <span class="n">module_types</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraModuleTypeMetadata</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Matching module types.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span>
+    <span class="p">)</span>
+    <span class="n">operation_types</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OperationsMetadata</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Matching operation types.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span>
+    <span class="p">)</span>
+    <span class="n">operations</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Matching operations.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span>
+    <span class="p">)</span>
+    <span class="n">values</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueInfo</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Matching values.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span>
+    <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">no_module_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">module_types</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">no_operation_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_types</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">no_operations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">no_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">no_results</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">no_module_types</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_operation_types</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_operations</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_values</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_single_result</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_results</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_types</span><span class="p">:</span>
+            <span class="n">match_key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">module_types</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+            <span class="n">match_value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_types</span><span class="p">[</span><span class="n">match_key</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">KiaraModuleTypeMetadata</span><span class="p">,</span> <span class="n">match_key</span><span class="p">,</span> <span class="n">match_value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_types</span><span class="p">:</span>
+            <span class="n">match_key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_types</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+            <span class="n">match_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_types</span><span class="p">[</span><span class="n">match_key</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">OperationsMetadata</span><span class="p">,</span> <span class="n">match_key</span><span class="p">,</span> <span class="n">match_value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="p">:</span>
+            <span class="n">match_key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+            <span class="n">match_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="p">[</span><span class="n">match_key</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">Operation</span><span class="p">,</span> <span class="n">match_key</span><span class="p">,</span> <span class="n">match_value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="n">match_key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+            <span class="n">match_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">match_key</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">ValueInfo</span><span class="p">,</span> <span class="n">match_key</span><span class="p">,</span> <span class="n">match_value</span><span class="p">)</span>
+
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No match found. This is a bug.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;KiaraEntityMatches&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraEntityMatches&quot;</span><span class="p">:</span>
+
+        <span class="n">module_types</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">module_types</span><span class="p">)</span>
+        <span class="n">module_types</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">module_types</span><span class="p">)</span>
+
+        <span class="n">operation_types</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_types</span><span class="p">)</span>
+        <span class="n">operation_types</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">operation_types</span><span class="p">)</span>
+
+        <span class="n">operations</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="p">)</span>
+        <span class="n">operations</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">operations</span><span class="p">)</span>
+
+        <span class="n">values</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">KiaraEntityMatches</span><span class="p">(</span>
+            <span class="n">module_types</span><span class="o">=</span><span class="n">module_types</span><span class="p">,</span>
+            <span class="n">operation_types</span><span class="o">=</span><span class="n">operation_types</span><span class="p">,</span>
+            <span class="n">operations</span><span class="o">=</span><span class="n">operations</span><span class="p">,</span>
+            <span class="n">values</span><span class="o">=</span><span class="n">values</span><span class="p">,</span>
+            <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Id&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Description&quot;</span><span class="p">)</span>
+
+        <span class="n">empty_line</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_types</span><span class="p">:</span>
+
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">()</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;[b]Module types[/b]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">module_type</span><span class="p">,</span> <span class="n">module_type_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;  [i]</span><span class="si">{</span><span class="n">module_type</span><span class="si">}</span><span class="s2">[/i]&quot;</span><span class="p">,</span>
+                    <span class="n">module_type_info</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="n">empty_line</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_types</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">empty_line</span><span class="p">:</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">()</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;[b]Operation types[/b]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">op_type</span><span class="p">,</span> <span class="n">op_type_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;  [i]</span><span class="si">{</span><span class="n">op_type</span><span class="si">}</span><span class="s2">[/i]&quot;</span><span class="p">,</span> <span class="n">op_type_info</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">description</span>
+                <span class="p">)</span>
+
+            <span class="n">empty_line</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">empty_line</span><span class="p">:</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">()</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;[b]Operations[/b]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">op_id</span><span class="p">,</span> <span class="n">op_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [i]</span><span class="si">{</span><span class="n">op_id</span><span class="si">}</span><span class="s2">[/i]&quot;</span><span class="p">,</span> <span class="n">op_info</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+
+            <span class="n">empty_line</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">empty_line</span><span class="p">:</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">()</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;[b]Values[/b]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">value_id</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [i]</span><span class="si">{</span><span class="n">value_id</span><span class="si">}</span><span class="s2">[/i]&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">table</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2523,10 +2747,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

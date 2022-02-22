@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.info.operations/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -901,6 +901,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2206,6 +2208,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2321,7 +2325,9 @@
 
 
 <h2 id="kiara.info.operations.OperationsGroupInfo" class="doc doc-heading">
-        <code>OperationsGroupInfo</code>
+        <code>
+OperationsGroupInfo            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2333,6 +2339,44 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/info/operations.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OperationsGroupInfo</span><span class="p">(</span><span class="n">KiaraInfoModel</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+
+        <span class="n">operation_types</span> <span class="o">=</span> <span class="n">OperationsInfo</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
+        <span class="n">operation_configs</span> <span class="o">=</span> <span class="n">operation_types</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">OperationsGroupInfo</span><span class="p">(</span>
+            <span class="n">operation_types</span><span class="o">=</span><span class="n">operation_types</span><span class="p">,</span>
+            <span class="n">operation_configs</span><span class="o">=</span><span class="n">operation_configs</span><span class="o">.</span><span class="n">operation_configs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">operation_types</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OperationsInfo</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The available operation types and their details.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">operation_configs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The available operation ids and module_configs.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Key&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span>
+
+        <span class="n">op_map_table</span> <span class="o">=</span> <span class="n">OperationsInfo</span><span class="o">.</span><span class="n">create_renderable_from_operations_map</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">operation_types</span>
+        <span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;operation types&quot;</span><span class="p">,</span> <span class="n">op_map_table</span><span class="p">)</span>
+        <span class="n">configs</span> <span class="o">=</span> <span class="n">ModuleConfig</span><span class="o">.</span><span class="n">create_renderable_from_module_instance_configs</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">operation_configs</span>
+        <span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;operations&quot;</span><span class="p">,</span> <span class="n">configs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">table</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2412,7 +2456,9 @@
 
 
 <h2 id="kiara.info.operations.OperationsInfo" class="doc doc-heading">
-        <code>OperationsInfo</code>
+        <code>
+OperationsInfo            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2424,6 +2470,51 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/info/operations.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OperationsInfo</span><span class="p">(</span><span class="n">KiaraInfoModel</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;OperationsInfo&quot;</span><span class="p">]:</span>
+
+        <span class="n">op_types</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_mgmt</span><span class="o">.</span><span class="n">operation_types</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">op_name</span><span class="p">:</span> <span class="n">OperationsInfo</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">operations</span><span class="o">=</span><span class="n">op_types</span><span class="p">[</span><span class="n">op_name</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">op_name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">op_types</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="p">}</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">operations</span><span class="p">:</span> <span class="n">OperationType</span><span class="p">):</span>
+
+        <span class="n">info</span> <span class="o">=</span> <span class="n">OperationsMetadata</span><span class="o">.</span><span class="n">from_operations_class</span><span class="p">(</span><span class="n">operations</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">OperationsInfo</span><span class="p">(</span><span class="n">info</span><span class="o">=</span><span class="n">info</span><span class="p">,</span> <span class="n">operation_configs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">operations</span><span class="o">.</span><span class="n">operations</span><span class="p">))</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_renderable_from_operations_map</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">op_map</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;OperationsInfo&quot;</span><span class="p">]</span>
+    <span class="p">):</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Key&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">op_name</span><span class="p">,</span> <span class="n">ops</span> <span class="ow">in</span> <span class="n">op_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">op_name</span><span class="p">,</span> <span class="n">ops</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">table</span>
+
+    <span class="n">info</span><span class="p">:</span> <span class="n">OperationsMetadata</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Details about the type of operations contained in this collection.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">operation_configs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;All available operation ids and their configurations.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span>
+            <span class="n">operations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_configs</span><span class="p">,</span> <span class="n">omit_type_name</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2587,10 +2678,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

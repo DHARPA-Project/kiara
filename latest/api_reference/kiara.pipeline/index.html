@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.pipeline/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -1713,6 +1713,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2303,6 +2305,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2515,7 +2519,9 @@
 
 
 <h2 id="kiara.pipeline.__init__.PipelineValueInfo" class="doc doc-heading">
-        <code>PipelineValueInfo</code>
+        <code>
+PipelineValueInfo            (<span title="pydantic.main.BaseModel">BaseModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2528,6 +2534,63 @@
 
       <p>Convenience wrapper to make the [PipelineState][kiara.pipeline.pipeline.PipelineState] json/dict export prettier.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/pipeline/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineValueInfo</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convenience wrapper to make the [PipelineState][kiara.pipeline.pipeline.PipelineState] json/dict export prettier.&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_value_obj</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">ensure_metadata</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">ensure_metadata</span><span class="p">:</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">PipelineValueInfo</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">value_schema</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="p">,</span>
+            <span class="n">is_valid</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">item_is_valid</span><span class="p">(),</span>
+            <span class="n">is_set</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">is_set</span><span class="p">,</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">item_status</span><span class="p">(),</span>
+            <span class="c1"># value_metadata=value.value_metadata,</span>
+            <span class="c1"># last_update=value.last_update,</span>
+            <span class="c1"># value_hash=value.value_hash,</span>
+            <span class="c1"># is_streaming=value.is_streaming,</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
+        <span class="n">allow_mutation</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;A unique id for this value.&quot;</span><span class="p">)</span>
+    <span class="n">is_valid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether the value is set and valid.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="n">status</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value status string&quot;</span><span class="p">)</span>
+    <span class="n">is_set</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether the value is set.&quot;</span><span class="p">)</span>
+    <span class="n">value_schema</span><span class="p">:</span> <span class="n">ValueSchema</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The schema of this value.&quot;</span><span class="p">)</span>
+    <span class="c1"># is_constant: bool = Field(</span>
+    <span class="c1">#     description=&quot;Whether this value is a constant.&quot;, default=False</span>
+    <span class="c1"># )</span>
+    <span class="c1"># value_metadata: ValueMetadata = Field(</span>
+    <span class="c1">#     description=&quot;The metadata of the value itself (not the actual data).&quot;</span>
+    <span class="c1"># )</span>
+    <span class="c1"># last_update: datetime = Field(</span>
+    <span class="c1">#     default=None, description=&quot;The time the last update to this value happened.&quot;</span>
+    <span class="c1"># )</span>
+    <span class="c1"># value_hash: typing.Union[ValueHashMarker, int] = Field(</span>
+    <span class="c1">#     description=&quot;The hash of the current value.&quot;</span>
+    <span class="c1"># )</span>
+    <span class="c1"># is_streaming: bool = Field(</span>
+    <span class="c1">#     default=False,</span>
+    <span class="c1">#     description=&quot;Whether the value is currently streamed into this object.&quot;,</span>
+    <span class="c1"># )</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Metadata relating to the actual data (size, no. of rows, etc. -- depending on data type).&quot;</span><span class="p">,</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2696,7 +2759,9 @@
 
 
 <h2 id="kiara.pipeline.__init__.PipelineValuesInfo" class="doc doc-heading">
-        <code>PipelineValuesInfo</code>
+        <code>
+PipelineValuesInfo            (<span title="pydantic.main.BaseModel">BaseModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2711,6 +2776,35 @@
 <p>This is basically just a simplified version of the [ValueSet][kiara.data.values.ValueSet] class that is using
 pydantic, in order to make it easy to export to json.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/pipeline/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineValuesInfo</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convenience wrapper to make the [PipelineState][kiara.pipeline.pipeline.PipelineState] json/dict export prettier.</span>
+
+<span class="sd">    This is basically just a simplified version of the [ValueSet][kiara.data.values.ValueSet] class that is using</span>
+<span class="sd">    pydantic, in order to make it easy to export to json.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_value_set</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value_set</span><span class="p">:</span> <span class="n">ValueSet</span><span class="p">,</span> <span class="n">ensure_metadata</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+
+        <span class="n">values</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PipelineValueInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">value_set</span><span class="o">.</span><span class="n">get_all_field_names</span><span class="p">():</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">value_set</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">ensure_metadata</span><span class="o">=</span><span class="n">ensure_metadata</span><span class="p">)</span>
+            <span class="n">values</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">PipelineValueInfo</span><span class="o">.</span><span class="n">from_value_obj</span><span class="p">(</span>
+                <span class="n">v</span><span class="p">,</span> <span class="n">ensure_metadata</span><span class="o">=</span><span class="n">ensure_metadata</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">PipelineValuesInfo</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">values</span><span class="p">)</span>
+
+    <span class="n">values</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PipelineValueInfo</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Field names are keys, and the data as values.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">use_enum_values</span> <span class="o">=</span> <span class="kc">True</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2766,7 +2860,9 @@ pydantic, in order to make it easy to export to json.</p>
 
 
 <h2 id="kiara.pipeline.__init__.StepStatus" class="doc doc-heading">
-        <code>StepStatus</code>
+        <code>
+StepStatus            (<span title="enum.Enum">Enum</span>)
+        </code>
 
 
 
@@ -2776,6 +2872,17 @@ pydantic, in order to make it easy to export to json.</p>
 
       <p>Enum to describe the state of a workflow.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/pipeline/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">StepStatus</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Enum to describe the state of a workflow.&quot;&quot;&quot;</span>
+
+    <span class="n">STALE</span> <span class="o">=</span> <span class="s2">&quot;stale&quot;</span>
+    <span class="n">INPUTS_READY</span> <span class="o">=</span> <span class="s2">&quot;inputs_ready&quot;</span>
+    <span class="n">RESULTS_INCOMING</span> <span class="o">=</span> <span class="s2">&quot;processing&quot;</span>
+    <span class="n">RESULTS_READY</span> <span class="o">=</span> <span class="s2">&quot;results_ready&quot;</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2808,7 +2915,9 @@ pydantic, in order to make it easy to export to json.</p>
 
 
 <h2 id="kiara.pipeline.__init__.StepValueAddress" class="doc doc-heading">
-        <code>StepValueAddress</code>
+        <code>
+StepValueAddress            (<span title="pydantic.main.BaseModel">BaseModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2821,6 +2930,55 @@ pydantic, in order to make it easy to export to json.</p>
 
       <p>Small model to describe the address of a value of a step, within a Pipeline/PipelineStructure.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/pipeline/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">StepValueAddress</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Small model to describe the address of a value of a step, within a Pipeline/PipelineStructure.&quot;&quot;&quot;</span>
+
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
+
+    <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of a step within a pipeline.&quot;</span><span class="p">)</span>
+    <span class="n">value_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The name of the value (output name or pipeline input name).&quot;</span>
+    <span class="p">)</span>
+    <span class="n">sub_value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A reference to a subitem of a value (e.g. column, list item)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">alias</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;An alias string for this address (in the form ``[step_id].[value_name]``).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">generate_step_alias</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">StepValueAddress</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_value</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span>
+            <span class="n">other</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span>
+            <span class="n">other</span><span class="o">.</span><span class="n">value_name</span><span class="p">,</span>
+            <span class="n">other</span><span class="o">.</span><span class="n">sub_value</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_value</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_value</span><span class="p">:</span>
+            <span class="n">sub_value</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; sub_value=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sub_value</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sub_value</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;StepValueAddres(step_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">, value_name=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_name</span><span class="si">}{</span><span class="n">sub_value</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -3155,10 +3313,10 @@ pydantic, in order to make it easy to export to json.</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

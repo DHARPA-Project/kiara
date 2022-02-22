@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.pipeline.controller.batch/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -1755,6 +1755,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2227,6 +2229,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2364,7 +2368,9 @@
 
 
 <h2 id="kiara.pipeline.controller.batch.BatchController" class="doc doc-heading">
-        <code>BatchController</code>
+        <code>
+BatchController            (<span title="kiara.pipeline.controller.PipelineController">PipelineController</span>)
+        </code>
 
 
 
@@ -2389,18 +2395,113 @@ It waits until all inputs are set, after which it executes all pipeline steps in
   <tbody>
       <tr>
         <td><code>pipeline</code></td>
-        <td><code></code></td>
+        <td><code>Optional[Pipeline]</code></td>
         <td><p>the pipeline to control</p></td>
-        <td><em>required</em></td>
+        <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>auto_process</code></td>
-        <td><code></code></td>
+        <td><code>bool</code></td>
         <td><p>whether to automatically start processing the pipeline as soon as the input set is valid</p></td>
-        <td><em>required</em></td>
+        <td><code>True</code></td>
       </tr>
   </tbody>
 </table>
+        <details class="quote">
+          <summary>Source code in <code>kiara/pipeline/controller/batch.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">BatchController</span><span class="p">(</span><span class="n">PipelineController</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A [PipelineController][kiara.pipeline.controller.PipelineController] that executes all pipeline steps non-interactively.</span>
+
+<span class="sd">    This is the default implementation of a ``PipelineController``, and probably the most simple implementation of one.</span>
+<span class="sd">    It waits until all inputs are set, after which it executes all pipeline steps in the required order.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        pipeline: the pipeline to control</span>
+<span class="sd">        auto_process: whether to automatically start processing the pipeline as soon as the input set is valid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">pipeline</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Pipeline&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">auto_process</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">processor</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;ModuleProcessor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_auto_process</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">auto_process</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">processor</span><span class="o">=</span><span class="n">processor</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">auto_process</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auto_process</span>
+
+    <span class="nd">@auto_process</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">auto_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auto_process</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_auto_process</span> <span class="o">=</span> <span class="n">auto_process</span>
+
+    <span class="k">def</span> <span class="nf">process_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Pipeline running, doing nothing.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Pipeline already running.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">:</span>
+                <span class="n">job_ids</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">stage</span><span class="p">:</span>
+
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_be_processed</span><span class="p">(</span><span class="n">step_id</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_be_skipped</span><span class="p">(</span><span class="n">step_id</span><span class="p">):</span>
+                            <span class="k">continue</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;Required pipeline step &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39; can&#39;t be processed, inputs not ready yet: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">invalid_inputs</span><span class="p">(</span><span class="n">step_id</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">job_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_step</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
+                        <span class="n">job_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="c1"># TODO: cancel running jobs?</span>
+                        <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
+                            <span class="kn">import</span> <span class="nn">traceback</span>
+
+                            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Processing of step &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39; from pipeline &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&#39; failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_processor</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="o">*</span><span class="n">job_ids</span><span class="p">)</span>
+                <span class="c1"># for j_id in job_ids:</span>
+                <span class="c1">#     job = self._processor.get_job_details(j_id)</span>
+                <span class="c1">#     assert job is not None</span>
+                <span class="c1">#     if job.error:</span>
+                <span class="c1">#         print(job.error)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">step_inputs_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="s2">&quot;StepInputEvent&quot;</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Pipeline running, doing nothing.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_is_ready</span><span class="p">():</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pipeline not ready after input event: </span><span class="si">{</span><span class="n">event</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auto_process</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process_pipeline</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">pipeline_outputs_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="s2">&quot;PipelineOutputEvent&quot;</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_is_finished</span><span class="p">():</span>
+            <span class="c1"># TODO: check if something is running</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span> <span class="o">=</span> <span class="kc">False</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2600,7 +2701,9 @@ It waits until all inputs are set, after which it executes all pipeline steps in
 
 
 <h2 id="kiara.pipeline.controller.batch.BatchControllerManual" class="doc doc-heading">
-        <code>BatchControllerManual</code>
+        <code>
+BatchControllerManual            (<span title="kiara.pipeline.controller.PipelineController">PipelineController</span>)
+        </code>
 
 
 
@@ -2625,18 +2728,186 @@ It waits until all inputs are set, after which it executes all pipeline steps in
   <tbody>
       <tr>
         <td><code>pipeline</code></td>
-        <td><code></code></td>
+        <td><code>Optional[Pipeline]</code></td>
         <td><p>the pipeline to control</p></td>
-        <td><em>required</em></td>
+        <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>auto_process</code></td>
-        <td><code></code></td>
+        <td></td>
         <td><p>whether to automatically start processing the pipeline as soon as the input set is valid</p></td>
         <td><em>required</em></td>
       </tr>
   </tbody>
 </table>
+        <details class="quote">
+          <summary>Source code in <code>kiara/pipeline/controller/batch.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">BatchControllerManual</span><span class="p">(</span><span class="n">PipelineController</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A [PipelineController][kiara.pipeline.controller.PipelineController] that executes all pipeline steps non-interactively.</span>
+
+<span class="sd">    This is the default implementation of a ``PipelineController``, and probably the most simple implementation of one.</span>
+<span class="sd">    It waits until all inputs are set, after which it executes all pipeline steps in the required order.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        pipeline: the pipeline to control</span>
+<span class="sd">        auto_process: whether to automatically start processing the pipeline as soon as the input set is valid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">pipeline</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Pipeline&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">processor</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;ModuleProcessor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_finished_until</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">processor</span><span class="o">=</span><span class="n">processor</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">last_finished_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finished_until</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finished_until</span>
+
+    <span class="k">def</span> <span class="nf">process_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Pipeline running, doing nothing.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Pipeline already running.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">:</span>
+                <span class="n">job_ids</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">stage</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_be_processed</span><span class="p">(</span><span class="n">step_id</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_be_skipped</span><span class="p">(</span><span class="n">step_id</span><span class="p">):</span>
+                            <span class="k">continue</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;Required pipeline step &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39; can&#39;t be processed, inputs not ready yet: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">invalid_inputs</span><span class="p">(</span><span class="n">step_id</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">job_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_step</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
+                        <span class="n">job_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="c1"># TODO: cancel running jobs?</span>
+                        <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
+                            <span class="kn">import</span> <span class="nn">traceback</span>
+
+                            <span class="n">traceback</span><span class="o">.</span><span class="n">print_stack</span><span class="p">()</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Processing of step &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39; from pipeline &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">&#39; failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_processor</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="o">*</span><span class="n">job_ids</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">step_inputs_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="s2">&quot;StepInputEvent&quot;</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Pipeline running, doing nothing.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_is_ready</span><span class="p">():</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pipeline not ready after input event: </span><span class="si">{</span><span class="n">event</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">pipeline_inputs_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="s2">&quot;PipelineInputEvent&quot;</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_finished_until</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># print(&quot;============================&quot;)</span>
+        <span class="c1"># min_stage_to_clear = sys.maxsize</span>
+        <span class="c1"># for inp in event.updated_pipeline_inputs:</span>
+        <span class="c1">#     stage = self.pipeline.get_stage_for_pipeline_input(inp)</span>
+        <span class="c1">#     if stage &lt; min_stage_to_clear:</span>
+        <span class="c1">#         min_stage_to_clear = stage</span>
+        <span class="c1">#</span>
+        <span class="c1"># for stage, steps in self.pipeline.get_steps_by_stage().items():</span>
+        <span class="c1">#     if stage &lt; min_stage_to_clear:</span>
+        <span class="c1">#         continue</span>
+        <span class="c1">#     for step_id, step in steps.items():</span>
+        <span class="c1">#         step_inputs = self.get_step_inputs(step_id)</span>
+        <span class="c1">#         empty = { k: None for k in step_inputs.keys() }</span>
+        <span class="c1">#         step_inputs.set_values(**empty)</span>
+        <span class="c1">#         step_outputs = self.get_step_outputs(step_id)</span>
+        <span class="c1">#         empty = { k: None for k in step_outputs.keys() }</span>
+        <span class="c1">#         step_outputs.set_values(**empty)</span>
+
+    <span class="k">def</span> <span class="nf">pipeline_outputs_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="s2">&quot;PipelineOutputEvent&quot;</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_is_finished</span><span class="p">():</span>
+            <span class="c1"># TODO: check if something is running</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">process_stage</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">stage_nr</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">]]]:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Pipeline running, doing nothing.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Pipeline already running.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">result</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span>
+            <span class="nb">int</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">]]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">stage</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">):</span>
+
+                <span class="n">current_stage</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span>
+
+                <span class="k">if</span> <span class="n">current_stage</span> <span class="o">&gt;</span> <span class="n">stage_nr</span><span class="p">:</span>
+                    <span class="k">break</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finished_until</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">idx</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finished_until</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">job_ids</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">stage</span><span class="p">:</span>
+
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_be_processed</span><span class="p">(</span><span class="n">step_id</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_be_skipped</span><span class="p">(</span><span class="n">step_id</span><span class="p">):</span>
+                            <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">current_stage</span><span class="p">,</span> <span class="p">{})[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                            <span class="k">continue</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">exc</span> <span class="o">=</span> <span class="ne">Exception</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;Required pipeline step &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39; can&#39;t be processed, inputs not ready yet: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">invalid_inputs</span><span class="p">(</span><span class="n">step_id</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
+                            <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">current_stage</span><span class="p">,</span> <span class="p">{})[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">exc</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">job_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_step</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
+                        <span class="n">job_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
+                        <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">current_stage</span><span class="p">,</span> <span class="p">{})[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_id</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="c1"># TODO: cancel running jobs?</span>
+                        <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
+                            <span class="kn">import</span> <span class="nn">traceback</span>
+
+                            <span class="n">traceback</span><span class="o">.</span><span class="n">print_stack</span><span class="p">()</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Processing of step &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39; from pipeline &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">&#39; failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                        <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">current_stage</span><span class="p">,</span> <span class="p">{})[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_processor</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="o">*</span><span class="n">job_ids</span><span class="p">)</span>
+                <span class="c1"># for job_id in job_ids:</span>
+                <span class="c1">#     job = self.get_job_details(job_id)</span>
+                <span class="c1">#     dbg(job.dict())</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_finished_until</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;BATCH FINISHED&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2977,10 +3248,10 @@ you can choose to only implement the <code>step_inputs_changed</code> method if 
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

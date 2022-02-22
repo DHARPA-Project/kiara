@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.pipeline.module/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -1783,6 +1783,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2193,6 +2195,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2296,7 +2300,9 @@
 
 
 <h2 id="kiara.pipeline.module.PipelineModule" class="doc doc-heading">
-        <code>PipelineModule</code>
+        <code>
+PipelineModule            (<a title="kiara.module.KiaraModule" href="../kiara.module/#kiara.module.KiaraModule">KiaraModule</a>)
+        </code>
 
 
 
@@ -2306,6 +2312,80 @@
 
       <p>A <a href="../kiara.module/#kiara.module.KiaraModule">KiaraModule</a> that contains a collection of interconnected other modules.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/pipeline/module.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">[</span><span class="n">PipelineConfig</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;A [KiaraModule][kiara.module.KiaraModule] that contains a collection of interconnected other modules.&quot;&quot;&quot;</span>
+
+    <span class="n">_config_cls</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">PipelineConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">PipelineConfig</span>  <span class="c1"># type: ignore</span>
+    <span class="n">_module_type_id</span> <span class="o">=</span> <span class="s2">&quot;pipeline&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">is_pipeline</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">parent_id</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">module_config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span>
+            <span class="kc">None</span><span class="p">,</span> <span class="n">PipelineConfig</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># controller: typing.Union[</span>
+        <span class="c1">#     None, PipelineController, str, typing.Type[PipelineController]</span>
+        <span class="c1"># ] = None,</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="c1"># if controller is not None and not isinstance(controller, PipelineController):</span>
+        <span class="c1">#     raise NotImplementedError()</span>
+        <span class="c1"># if controller is None:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
+            <span class="n">parent_id</span><span class="o">=</span><span class="n">parent_id</span><span class="p">,</span>
+            <span class="n">module_config</span><span class="o">=</span><span class="n">module_config</span><span class="p">,</span>
+            <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_structure</span><span class="p">:</span> <span class="n">PipelineStructure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_structure</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">constants</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">constants</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_structure</span><span class="o">.</span><span class="n">constants</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">structure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineStructure</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The ``PipelineStructure`` of this module.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_structure</span>
+
+    <span class="k">def</span> <span class="nf">_create_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineStructure</span><span class="p">:</span>
+
+        <span class="n">pipeline_structure</span> <span class="o">=</span> <span class="n">PipelineStructure</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pipeline_structure</span>
+
+    <span class="k">def</span> <span class="nf">create_input_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">pipeline_input_schema</span>
+
+    <span class="k">def</span> <span class="nf">create_output_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">pipeline_output_schema</span>
+
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueSet</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="kn">from</span> <span class="nn">kiara</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+
+        <span class="c1"># controller = BatchController(auto_process=False, kiara=self._kiara)</span>
+
+        <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">structure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="p">)</span>
+        <span class="n">pipeline</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">set_values</span><span class="p">(</span><span class="o">**</span><span class="n">inputs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items_are_valid</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">KiaraProcessingException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t start processing of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_module_type_id</span><span class="si">}</span><span class="s2"> pipeline: one or several inputs missing or invalid.&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">StepStatus</span><span class="o">.</span><span class="n">RESULTS_READY</span><span class="p">:</span>
+            <span class="c1"># TODO: error details</span>
+            <span class="k">raise</span> <span class="n">KiaraProcessingException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error when running pipeline of type &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_module_type_id</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+        <span class="n">outputs</span><span class="o">.</span><span class="n">set_values</span><span class="p">(</span><span class="o">**</span><span class="n">pipeline</span><span class="o">.</span><span class="n">outputs</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2542,10 +2622,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

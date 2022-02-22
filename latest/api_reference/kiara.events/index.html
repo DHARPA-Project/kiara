@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.events/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -789,6 +789,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2266,6 +2268,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2441,7 +2445,9 @@
 
 
 <h2 id="kiara.events.PipelineInputEvent" class="doc doc-heading">
-        <code>PipelineInputEvent</code>
+        <code>
+PipelineInputEvent            (<a title="kiara.events.StepEvent" href="#kiara.events.StepEvent">StepEvent</a>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2454,6 +2460,17 @@
 
       <p>Event that gets fired when one or several inputs for the pipeline itself have changed.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/events.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineInputEvent</span><span class="p">(</span><span class="n">StepEvent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Event that gets fired when one or several inputs for the pipeline itself have changed.&quot;&quot;&quot;</span>
+
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;pipeline_input&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pipeline_input&quot;</span>
+    <span class="n">updated_pipeline_inputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;list of pipeline input names that where changed&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2508,7 +2525,9 @@
 
 
 <h2 id="kiara.events.PipelineOutputEvent" class="doc doc-heading">
-        <code>PipelineOutputEvent</code>
+        <code>
+PipelineOutputEvent            (<a title="kiara.events.StepEvent" href="#kiara.events.StepEvent">StepEvent</a>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2521,6 +2540,17 @@
 
       <p>Event that gets fired when one or several outputs for the pipeline itself have changed.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/events.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineOutputEvent</span><span class="p">(</span><span class="n">StepEvent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Event that gets fired when one or several outputs for the pipeline itself have changed.&quot;&quot;&quot;</span>
+
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;pipeline_output&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pipeline_output&quot;</span>
+    <span class="n">updated_pipeline_outputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;list of pipeline output names that where changed&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2575,7 +2605,9 @@
 
 
 <h2 id="kiara.events.StepEvent" class="doc doc-heading">
-        <code>StepEvent</code>
+        <code>
+StepEvent            (<span title="pydantic.main.BaseModel">BaseModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2587,6 +2619,23 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/events.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">StepEvent</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">allow_mutation</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">pipeline_id</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(pipeline_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_id</span><span class="si">}</span><span class="s2"> data=</span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2679,7 +2728,9 @@
 
 
 <h2 id="kiara.events.StepInputEvent" class="doc doc-heading">
-        <code>StepInputEvent</code>
+        <code>
+StepInputEvent            (<a title="kiara.events.StepEvent" href="#kiara.events.StepEvent">StepEvent</a>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2692,6 +2743,22 @@
 
       <p>Event that gets fired when one or several inputs for steps within a pipeline have changed.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/events.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">StepInputEvent</span><span class="p">(</span><span class="n">StepEvent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Event that gets fired when one or several inputs for steps within a pipeline have changed.&quot;&quot;&quot;</span>
+
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;step_input&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;step_input&quot;</span>
+    <span class="n">updated_step_inputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;steps (keys) with updated inputs which need re-processing (value is list of updated input names)&quot;</span>
+    <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">newly_stale_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Convenience method to display the steps that have been rendered &#39;stale&#39; by this event.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updated_step_inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2769,7 +2836,9 @@
 
 
 <h2 id="kiara.events.StepOutputEvent" class="doc doc-heading">
-        <code>StepOutputEvent</code>
+        <code>
+StepOutputEvent            (<a title="kiara.events.StepEvent" href="#kiara.events.StepEvent">StepEvent</a>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2782,6 +2851,17 @@
 
       <p>Event that gets fired when one or several outputs for steps within a pipeline have changed.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/events.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">StepOutputEvent</span><span class="p">(</span><span class="n">StepEvent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Event that gets fired when one or several outputs for steps within a pipeline have changed.&quot;&quot;&quot;</span>
+
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;step_output&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;step_output&quot;</span>
+    <span class="n">updated_step_outputs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;steps (keys) that finished processing of one, several or all outputs (values are list of &#39;finished&#39; output fields)&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2918,10 +2998,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

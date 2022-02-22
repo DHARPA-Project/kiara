@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/api_reference/kiara.info.kiara/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -859,6 +859,8 @@
       </a>
       
         
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2206,6 +2208,8 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -2321,7 +2325,9 @@
 
 
 <h2 id="kiara.info.kiara.KiaraContext" class="doc doc-heading">
-        <code>KiaraContext</code>
+        <code>
+KiaraContext            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2333,6 +2339,41 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/info/kiara.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraContext</span><span class="p">(</span><span class="n">KiaraInfoModel</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+
+        <span class="n">modules</span> <span class="o">=</span> <span class="n">ModulesGroup</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">)</span>
+        <span class="n">op_group</span> <span class="o">=</span> <span class="n">OperationsGroupInfo</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">KiaraContext</span><span class="p">(</span>
+            <span class="n">modules</span><span class="o">=</span><span class="n">modules</span><span class="p">,</span>
+            <span class="n">operations</span><span class="o">=</span><span class="n">op_group</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">modules</span><span class="p">:</span> <span class="n">ModulesGroup</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Information about the available modules.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">operations</span><span class="p">:</span> <span class="n">OperationsGroupInfo</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Information about supported operations in this kiara context.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Key&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span>
+
+        <span class="n">module_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">()</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;module types&quot;</span><span class="p">,</span> <span class="n">module_table</span><span class="p">)</span>
+
+        <span class="n">operations_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">()</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;operations&quot;</span><span class="p">,</span> <span class="n">operations_table</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">table</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2412,7 +2453,9 @@
 
 
 <h2 id="kiara.info.kiara.ModulesGroup" class="doc doc-heading">
-        <code>ModulesGroup</code>
+        <code>
+ModulesGroup            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel</span>)
+        </code>
 
 
   <span class="doc doc-properties">
@@ -2424,6 +2467,40 @@
     <div class="doc doc-contents ">
 
 
+        <details class="quote">
+          <summary>Source code in <code>kiara/info/kiara.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ModulesGroup</span><span class="p">(</span><span class="n">KiaraInfoModel</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+
+        <span class="n">module_types</span> <span class="o">=</span> <span class="n">ModuleTypesGroupInfo</span><span class="o">.</span><span class="n">from_type_names</span><span class="p">(</span>
+            <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">ignore_pipeline_modules</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">pipeline_types</span> <span class="o">=</span> <span class="n">PipelineTypesGroupInfo</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ModulesGroup</span><span class="p">(</span><span class="n">module_types</span><span class="o">=</span><span class="n">module_types</span><span class="p">,</span> <span class="n">pipelines</span><span class="o">=</span><span class="n">pipeline_types</span><span class="p">)</span>
+
+    <span class="n">module_types</span><span class="p">:</span> <span class="n">ModuleTypesGroupInfo</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The available module types.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">pipelines</span><span class="p">:</span> <span class="n">PipelineTypesGroupInfo</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The available pipelines.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+        <span class="n">mod_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_types</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">()</span>
+        <span class="n">pipe_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipelines</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">()</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Type&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Modules&quot;</span><span class="p">)</span>
+
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module types&quot;</span><span class="p">,</span> <span class="n">mod_table</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Pipelines&quot;</span><span class="p">,</span> <span class="n">pipe_table</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">table</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2585,10 +2662,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
       
     
   </body>

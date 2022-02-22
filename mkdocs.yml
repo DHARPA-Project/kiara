@@ -51,8 +51,13 @@ plugins:
 - mknotebooks
 - mkdocstrings:
     default_handler: python
+    handlers:
+      python:
+        selection:
+          docstring_style: google
     watch:
       - "src"
+    enable_inventory: true
 - frkl-docgen:
     main_module: "kiara"
 - macros:

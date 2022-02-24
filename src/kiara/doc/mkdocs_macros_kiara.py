@@ -147,6 +147,7 @@ def define_env(env):
         result = []
         for name, info in modules.items():
             type_md = info.get_type_metadata()
+            result.append(f"- [``{name}``][kiara_info.modules.{name}]")
             result.append(
                 f"  - [``{name}``]({type_md.context.get_url_for_reference('module_doc')}): {type_md.documentation.description}"
             )

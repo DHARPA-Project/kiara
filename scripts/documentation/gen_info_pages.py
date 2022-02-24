@@ -8,7 +8,9 @@ kiara = Kiara.instance()
 
 types = ["value_type", "module", "operation_type"]
 
-type_details = generate_pages_and_summary_for_types(kiara=kiara, types=types)
+type_details = generate_pages_and_summary_for_types(
+    kiara=kiara, types=types, limit_to_package="kiara"
+)
 
 summary_content = []
 for name, details in type_details.items():

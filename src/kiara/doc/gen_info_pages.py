@@ -173,7 +173,6 @@ def render_item_listing(
         path = os.path.join(*summary_path)
 
         rendered = list_template.render(**{"path": path, plural: items})
-
         p_write = os.path.join(plural, path, "index.md")
         p_index = os.path.join(path, "index.md")
 

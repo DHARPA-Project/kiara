@@ -58,7 +58,6 @@ plugins:
       python:
         selection:
           docstring_style: google
-
     watch:
       - "src"
     enable_inventory: true

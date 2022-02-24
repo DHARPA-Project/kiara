@@ -54,22 +54,20 @@ class KiaraCollector(BaseCollector):
         """
 
         tokens = identifier.split(".")
+        kiara_id = ".".join(tokens[1:])
+        print(f"REQUESTED: {identifier}")
         if tokens[0] != "kiara_info":
             return None
-            raise Exception(
-                f"Handler 'kiara' can only be used with identifiers that start with 'kiara_info.', the provided id is invalid: {identifier}"
-            )
-        info = self._component_tree.nodes[f"__self__.{'.'.join(tokens[1:])}"]["obj"]
+            # raise Exception(
+            #     f"Handler 'kiara' can only be used with identifiers that start with 'kiara_info.', the provided id is invalid: {identifier}"
+            # )
+        try:
+            info = self._component_tree.nodes[f"__self__.{kiara_id}"]["obj"]
+        except Exception as e:
+            import traceback
 
-        # tokens = identifier.split(".")
-        # if tokens[0] == "module":
-        #     module_name = '.'.join(tokens[1:])
-        #     module_cls = self._kiara.get_module_class(module_name)
-        #     ci = {
-        #         "type": "module",
-        #         "data": KiaraModuleTypeMetadata.from_module_class(module_cls)
-        #     }
-        # else:
-        #     raise NotImplementedError(tokens[0])
+            traceback.print_exc()
+            raise e
+        print(f"DONE: {identifier}")
 
-        return info
+        return {"obj": info, "identifier": identifier, "kiara_id": kiara_id}

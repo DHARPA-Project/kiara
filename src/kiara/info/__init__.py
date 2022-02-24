@@ -114,7 +114,9 @@ class KiaraInfoModel(BaseModel, JupyterMixin):
             return self._dynamic_subcomponents[path]
 
         if "." in path:
-            raise NotImplementedError()
+            first_token, rest = path.split(".", maxsplit=1)
+            sc = self.get_subcomponent(first_token)
+            return sc.get_subcomponent(rest)
 
         if self.__custom_root_type__:
             if isinstance(self.__root__, typing.Mapping):  # type: ignore

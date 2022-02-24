@@ -23,3 +23,6 @@ In addition to the ``kiara`` package, you'll need a package containing modules, 
 ``` console
 > pip install git+https://github.com/DHARPA-Project/kiara_modules.default.git
 ```
+
+[kiara][kiara.kiara.Kiara]
+[test_custom][kiara_info.modules.value.hash]

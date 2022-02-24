@@ -15,15 +15,21 @@ from kiara.utils.output import rich_print
 @click.command()
 @click.argument("topic", nargs=1, required=False)
 @click.option("--ignore-errors", "-i", help="Ignore errors.", is_flag=True)
-@click.option("--json", "-j", help="Print the result in json format", is_flag=True)
+@click.option(
+    "--format",
+    "-f",
+    help="The format of the output.",
+    type=click.Choice(["terminal", "json", "html"]),
+    default="terminal",
+)
 @click.option(
     "--json-schema",
     "-s",
-    help="Print the (json) schema of the output of this command.",
+    help="Print the (json) schema of the output of this command. Don't print the actual info.",
     is_flag=True,
 )
 @click.pass_context
-def info(ctx, topic, ignore_errors, json, json_schema):
+def info(ctx, topic, ignore_errors, format, json_schema):
     """kiara context information"""
 
     kiara_obj = ctx.obj["kiara"]
@@ -34,20 +40,18 @@ def info(ctx, topic, ignore_errors, json, json_schema):
         print(schema)
         sys.exit(0)
 
-    if not topic:
-        info = KiaraContext.create(kiara=kiara_obj, ignore_errors=ignore_errors)
-    else:
+    info = KiaraContext.get_info(
+        kiara=kiara_obj, sub_type=topic, ignore_errors=ignore_errors
+    )
 
-        if topic not in KiaraContext.__fields__.keys():
-            print(
-                f"Info topic '{topic}' not available. Available topics: {', '.join(KiaraContext.__fields__.keys())}"
-            )
-            sys.exit(1)
-
-        _info = KiaraContext.create(kiara=kiara_obj, ignore_errors=ignore_errors)
-        info = getattr(_info, topic)
-
-    if json:
-        print(info.json(indent=2))
-    else:
+    if format == "terminal":
         rich_print(info)
+    elif format == "json":
+        print(info.json(indent=2))
+    elif format == "html":
+        print(info.create_html())
+    else:
+        print(f"[red]Invalid output format: '{format}'.")
+        sys.exit(1)
+
+    sys.exit(0)

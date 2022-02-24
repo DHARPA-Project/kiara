@@ -24,6 +24,9 @@ TYPE_PROFILE_MAP = {
     "csv_file_bundle": "file_bundle",
     "table": "table",
     "graphml_file": "file",
+    "gexf_file": "file",
+    "gml_file": "file",
+    "shp_file": "file",
 }
 
 

@@ -65,7 +65,7 @@ KIARA_MODEL_CLASSES: typing.Mapping[str, typing.List[typing.Type[BaseModel]]] = 
 
 yaml = StringYAML()
 kiara_obj = Kiara.instance()
-kiara_context = KiaraContext.create(kiara=kiara_obj)
+kiara_context = KiaraContext.get_info(kiara=kiara_obj)
 
 
 def define_env(env):

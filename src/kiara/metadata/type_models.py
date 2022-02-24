@@ -16,10 +16,20 @@ from kiara.metadata.core_models import (
 )
 
 if typing.TYPE_CHECKING:
+    from kiara import Kiara
     from kiara.data.types import ValueType
 
 
 class ValueTypeMetadata(MetadataModel):
+    @classmethod
+    def create_all(cls, kiara: "Kiara") -> typing.Dict[str, "ValueTypeMetadata"]:
+
+        result = {}
+        for vt in kiara.value_types:
+            t_cls = kiara.get_value_type_cls(vt)
+            result[vt] = cls.from_value_type_class(t_cls)
+        return result
+
     @classmethod
     def from_value_type_class(cls, value_type_cls: typing.Type["ValueType"]):
 

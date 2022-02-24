@@ -15,7 +15,7 @@ from types import ModuleType
 def gen_pages_for_module(
     module: typing.Union[str, ModuleType], prefix: str = "api_reference"
 ):
-    """Generate pages for a set of modules (using the [mkdocstring](https://github.com/mkdocstrings/mkdocstrings) package."""
+    """Generate modules for a set of modules (using the [mkdocstring](https://github.com/mkdocstrings/mkdocstrings) package."""
 
     result = {}
     modules_info = get_source_tree(module)

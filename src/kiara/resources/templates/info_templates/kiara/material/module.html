@@ -1,0 +1,9 @@
+<h3>Module: {{ module_info.type_id }}</h3>
+<div>
+    {{ module_info.documentation.description }}
+</div>
+{% if module_info.documentation.doc %}}
+<div>
+    {{ module_info.documentation.doc }}
+</div>
+{% endif %}

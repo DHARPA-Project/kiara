@@ -17,10 +17,22 @@ from kiara.metadata.core_models import (
 )
 
 if typing.TYPE_CHECKING:
+    from kiara import Kiara
     from kiara.operations import OperationType
 
 
 class OperationsMetadata(MetadataModel):
+    @classmethod
+    def create_all(cls, kiara: "Kiara") -> typing.Dict[str, "OperationsMetadata"]:
+
+        op_types = kiara.operation_mgmt.operation_types
+        result = {}
+        for op_type in op_types:
+            op_type_cls = kiara.operation_mgmt.get_operations(op_type)
+            result[op_type] = cls.from_operations_class(op_type_cls.__class__)
+
+        return result
+
     @classmethod
     def from_operations_class(
         cls, operation_type_cls: typing.Type["OperationType"]

@@ -52,6 +52,9 @@ class Operation(ModuleConfig):
     _module: typing.Optional["KiaraModule"]
 
     id: str = Field(description="The operation id.")
+    type_category: typing.Optional[str] = Field(
+        description="The operation category this belongs to.", default=None
+    )
 
     @property
     def kiara(self) -> "Kiara":

@@ -3910,13 +3910,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kiara.metadata.WrapperMetadataModel" class="md-nav__link">
-    WrapperMetadataModel
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#kiara.metadata.core_models" class="md-nav__link">
     core_models
   </a>
@@ -7809,7 +7802,7 @@ avoid adding or removing information from the data (e.g. by changing the resolut
 
 <h4 id="kiara.data.types.ValueTypeConfigMetadata" class="doc doc-heading">
         <code>
-ValueTypeConfigMetadata            (<a title="kiara.metadata.WrapperMetadataModel" href="../metadata/__init__/#kiara.metadata.WrapperMetadataModel">WrapperMetadataModel</a>)
+ValueTypeConfigMetadata            (<a title="kiara.metadata.core_models.WrapperMetadataModel" href="../metadata/core_models/#kiara.metadata.core_models.WrapperMetadataModel">WrapperMetadataModel</a>)
         </code>
 
 
@@ -22160,87 +22153,6 @@ ValueTypeAndDescription            (<span title="pydantic.main.BaseModel">BaseMo
 
 
 
-  <div class="doc doc-object doc-class">
-
-
-
-<h3 id="kiara.metadata.WrapperMetadataModel" class="doc doc-heading">
-        <code>
-WrapperMetadataModel            (<a title="kiara.metadata.MetadataModel" href="../metadata/__init__/#kiara.metadata.MetadataModel">MetadataModel</a>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.metadata.WrapperMetadataModel" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/metadata/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">WrapperMetadataModel</span><span class="p">(</span><span class="n">MetadataModel</span><span class="p">):</span>
-
-    <span class="n">python_class</span><span class="p">:</span> <span class="s2">&quot;PythonClassMetadata&quot;</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Information about the Python class for this module type.&quot;</span>
-    <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h4 id="kiara.metadata.WrapperMetadataModel.python_class" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">python_class</span><span class="p">:</span> <span class="n">PythonClassMetadata</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.metadata.WrapperMetadataModel.python_class" class="headerlink" title="Permanent link">&para;</a></h4>
-
-    <div class="doc doc-contents ">
-
-      <p>Information about the Python class for this module type.</p>
-    </div>
-
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
 
 
 
@@ -22844,7 +22756,7 @@ LinkModel            (<span title="pydantic.main.BaseModel">BaseModel</span>)
 
 <h4 id="kiara.metadata.core_models.MetadataModelMetadata" class="doc doc-heading">
         <code>
-MetadataModelMetadata            (<a title="kiara.metadata.WrapperMetadataModel" href="../metadata/__init__/#kiara.metadata.WrapperMetadataModel">WrapperMetadataModel</a>)
+MetadataModelMetadata            (<a title="kiara.metadata.core_models.WrapperMetadataModel" href="../metadata/core_models/#kiara.metadata.core_models.WrapperMetadataModel">WrapperMetadataModel</a>)
         </code>
 
 
@@ -23332,6 +23244,87 @@ PythonClassMetadata            (<a title="kiara.metadata.MetadataModel" href="..
 
 
 
+  <div class="doc doc-object doc-class">
+
+
+
+<h4 id="kiara.metadata.core_models.WrapperMetadataModel" class="doc doc-heading">
+        <code>
+WrapperMetadataModel            (<a title="kiara.metadata.MetadataModel" href="../metadata/__init__/#kiara.metadata.MetadataModel">MetadataModel</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.metadata.core_models.WrapperMetadataModel" class="headerlink" title="Permanent link">&para;</a></h4>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/metadata/core_models.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">WrapperMetadataModel</span><span class="p">(</span><span class="n">MetadataModel</span><span class="p">):</span>
+
+    <span class="n">python_class</span><span class="p">:</span> <span class="n">PythonClassMetadata</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Information about the Python class for this module type.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.metadata.core_models.WrapperMetadataModel.python_class" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">python_class</span><span class="p">:</span> <span class="n">PythonClassMetadata</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.metadata.core_models.WrapperMetadataModel.python_class" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Information about the Python class for this module type.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
 
 
 
@@ -23788,7 +23781,7 @@ SaveConfig            (<a title="kiara.module_config.ModuleConfig" href="../modu
 
 <h4 id="kiara.metadata.module_models.KiaraModuleConfigMetadata" class="doc doc-heading">
         <code>
-KiaraModuleConfigMetadata            (<a title="kiara.metadata.WrapperMetadataModel" href="../metadata/__init__/#kiara.metadata.WrapperMetadataModel">WrapperMetadataModel</a>)
+KiaraModuleConfigMetadata            (<a title="kiara.metadata.core_models.WrapperMetadataModel" href="../metadata/core_models/#kiara.metadata.core_models.WrapperMetadataModel">WrapperMetadataModel</a>)
         </code>
 
 
@@ -24144,7 +24137,7 @@ KiaraModuleInstanceMetadata            (<span title="kiara.metadata.core_models.
 
 <h4 id="kiara.metadata.module_models.KiaraModuleTypeMetadata" class="doc doc-heading">
         <code>
-KiaraModuleTypeMetadata            (<a title="kiara.metadata.WrapperMetadataModel" href="../metadata/__init__/#kiara.metadata.WrapperMetadataModel">WrapperMetadataModel</a>)
+KiaraModuleTypeMetadata            (<a title="kiara.metadata.core_models.WrapperMetadataModel" href="../metadata/core_models/#kiara.metadata.core_models.WrapperMetadataModel">WrapperMetadataModel</a>)
         </code>
 
 

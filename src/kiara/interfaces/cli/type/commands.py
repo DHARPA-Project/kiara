@@ -7,7 +7,7 @@
 
 """Type-related subcommands for the cli."""
 
-import click
+import rich_click as click
 
 from kiara import Kiara
 from kiara.data.types import ValueTypesInfo

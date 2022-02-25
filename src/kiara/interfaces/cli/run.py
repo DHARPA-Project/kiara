@@ -7,8 +7,8 @@
 
 """The 'run' subcommand for the cli."""
 
-import click
 import os.path
+import rich_click as click
 import sys
 import typing
 from pathlib import Path

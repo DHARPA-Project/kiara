@@ -8,7 +8,7 @@
 """A command-line interface for *Kiara*.
 """
 
-import click
+import rich_click as click
 import typing
 
 from kiara import Kiara

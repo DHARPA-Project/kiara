@@ -7,7 +7,7 @@
 
 """Data-related sub-commands for the cli."""
 
-import click
+import rich_click as click
 import shutil
 import sys
 from rich import box

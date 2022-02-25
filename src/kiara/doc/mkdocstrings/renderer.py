@@ -6,12 +6,30 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import typing
 from collections import ChainMap
-from mkdocstrings.handlers.base import BaseRenderer
+from mkdocstrings.handlers.base import BaseRenderer, CollectorItem
+
+
+class AliasResolutionError:
+    pass
 
 
 class KiaraInfoRenderer(BaseRenderer):
 
     default_config: dict = {}
+
+    def get_anchors(
+        self, data: CollectorItem
+    ) -> typing.List[str]:  # noqa: D102 (ignore missing docstring)
+
+        if data is None:
+            return list()
+
+        print(f"RETURN ID: {data['identifier']}")
+        return list(data["identifier"])
+        try:
+            return list({data.path, data.canonical_path, *data.aliases})
+        except AliasResolutionError:
+            return [data.path]
 
     def render(self, data: typing.Dict[str, typing.Any], config: dict) -> str:
 

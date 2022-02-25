@@ -40,8 +40,8 @@ from rich.table import Table
 
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.exceptions import KiaraValueException, ValueTypeConfigException
-from kiara.metadata import ValueTypeAndDescription, WrapperMetadataModel
-from kiara.metadata.core_models import PythonClassMetadata
+from kiara.metadata import ValueTypeAndDescription
+from kiara.metadata.core_models import PythonClassMetadata, WrapperMetadataModel
 from kiara.metadata.type_models import ValueTypeMetadata
 
 

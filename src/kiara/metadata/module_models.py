@@ -23,13 +23,14 @@ from rich.table import Table
 
 from kiara.data.values import ValueSchema
 from kiara.defaults import DEFAULT_NO_DESC_VALUE, MODULE_TYPE_CATEGORY_ALIAS
-from kiara.metadata import ValueTypeAndDescription, WrapperMetadataModel
+from kiara.metadata import ValueTypeAndDescription
 from kiara.metadata.core_models import (
     ContextMetadataModel,
     DocumentationMetadataModel,
     HashedMetadataModel,
     OriginMetadataModel,
     PythonClassMetadata,
+    WrapperMetadataModel,
 )
 from kiara.module_config import ModuleTypeConfigSchema
 from kiara.pipeline.config import PipelineConfig

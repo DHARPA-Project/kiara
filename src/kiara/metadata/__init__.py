@@ -14,7 +14,7 @@ from kiara.info import KiaraInfoModel, extract_renderable
 
 if typing.TYPE_CHECKING:
     from kiara import Kiara
-    from kiara.metadata.core_models import MetadataModelMetadata, PythonClassMetadata
+    from kiara.metadata.core_models import MetadataModelMetadata
 
 
 class MetadataModel(KiaraInfoModel):
@@ -48,16 +48,6 @@ class MetadataModel(KiaraInfoModel):
             table.add_row("operations", "\n".join(ids))
 
         return table
-
-
-class WrapperMetadataModel(MetadataModel):
-
-    python_class: "PythonClassMetadata" = Field(
-        description="Information about the Python class for this module type."
-    )
-
-    def get_id(self) -> str:
-        return self.python_class.get_id()
 
 
 class MetadataSet(object):

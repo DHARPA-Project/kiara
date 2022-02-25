@@ -19,17 +19,55 @@ from rich.table import Table
 from types import ModuleType
 
 from kiara.defaults import DEFAULT_NO_DESC_VALUE, KIARA_HASH_FUNCTION
-from kiara.metadata import MetadataModel, WrapperMetadataModel
+from kiara.metadata import MetadataModel
 from kiara.utils import merge_dicts
 from kiara.utils.global_metadata import get_metadata_for_python_module_or_class
 
-# class HashMetadata(MetadataModel):
-#
-#     hash: str = Field(description="The hash for the value.")
-#     hash_desc: typing.Optional[str] = Field(
-#         description="A description how the hash was calculated and other details.",
-#         default=None,
-#     )
+
+class PythonClassMetadata(MetadataModel):
+    """Python class and module information."""
+
+    _metadata_key: typing.ClassVar[str] = "python_class"
+
+    @classmethod
+    def from_class(cls, item_cls: typing.Type):
+
+        conf: typing.Dict[str, typing.Any] = {
+            "class_name": item_cls.__name__,
+            "module_name": item_cls.__module__,
+            "full_name": f"{item_cls.__module__}.{item_cls.__name__}",
+        }
+        return PythonClassMetadata(**conf)
+
+    class_name: str = Field(description="The name of the Python class.")
+    module_name: str = Field(
+        description="The name of the Python module this class lives in."
+    )
+    full_name: str = Field(description="The full class namespace.")
+
+    def get_id(self) -> str:
+        return self.full_name
+
+    def get_category_alias(self) -> str:
+        return "metadata.python_class"
+
+    def get_class(self) -> typing.Type:
+        m = self.get_module()
+        return getattr(m, self.class_name)
+
+    def get_module(self) -> ModuleType:
+        m = importlib.import_module(self.module_name)
+        return m
+
+
+class WrapperMetadataModel(MetadataModel):
+
+    python_class: PythonClassMetadata = Field(
+        description="Information about the Python class for this module type."
+    )
+
+    def get_id(self) -> str:
+        return self.python_class.get_id()
 
 
 class HashedMetadataModel(MetadataModel):
@@ -263,42 +301,6 @@ class OriginMetadataModel(HashedMetadataModel):
         table.add_row("Authors", "\n".join(authors))
 
         return table
-
-
-class PythonClassMetadata(MetadataModel):
-    """Python class and module information."""
-
-    _metadata_key: typing.ClassVar[str] = "python_class"
-
-    @classmethod
-    def from_class(cls, item_cls: typing.Type):
-
-        conf: typing.Dict[str, typing.Any] = {
-            "class_name": item_cls.__name__,
-            "module_name": item_cls.__module__,
-            "full_name": f"{item_cls.__module__}.{item_cls.__name__}",
-        }
-        return PythonClassMetadata(**conf)
-
-    class_name: str = Field(description="The name of the Python class.")
-    module_name: str = Field(
-        description="The name of the Python module this class lives in."
-    )
-    full_name: str = Field(description="The full class namespace.")
-
-    def get_id(self) -> str:
-        return self.full_name
-
-    def get_category_alias(self) -> str:
-        return "metadata.python_class"
-
-    def get_class(self) -> typing.Type:
-        m = self.get_module()
-        return getattr(m, self.class_name)
-
-    def get_module(self) -> ModuleType:
-        m = importlib.import_module(self.module_name)
-        return m
 
 
 class MetadataModelMetadata(WrapperMetadataModel):

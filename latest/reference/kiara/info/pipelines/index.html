@@ -3899,6 +3899,9 @@ PipelineModuleInfo            (<a title="kiara.metadata.module_models.KiaraModul
     <span class="n">_structure</span><span class="p">:</span> <span class="s2">&quot;PipelineStructure&quot;</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">()</span>
     <span class="n">structure</span><span class="p">:</span> <span class="n">PipelineStructureDesc</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The pipeline structure.&quot;</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">get_category_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">PIPELINE_TYPE_CATEGORY_ALIAS</span>
+
     <span class="k">def</span> <span class="nf">print_data_flow_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simplified</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
         <span class="n">structure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_structure</span>
@@ -4028,6 +4031,7 @@ PipelineModuleInfo            (<a title="kiara.metadata.module_models.KiaraModul
     </div>
 
   </div>
+
 
 
 

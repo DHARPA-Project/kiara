@@ -2493,13 +2493,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kiara.metadata.core_models.MetadataModelMetadata.python_class" class="md-nav__link">
-    python_class
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#kiara.metadata.core_models.MetadataModelMetadata.type_name" class="md-nav__link">
     type_name
   </a>
@@ -3822,13 +3815,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kiara.metadata.core_models.MetadataModelMetadata.python_class" class="md-nav__link">
-    python_class
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#kiara.metadata.core_models.MetadataModelMetadata.type_name" class="md-nav__link">
     type_name
   </a>
@@ -4035,7 +4021,7 @@ AuthorModel            (<span title="pydantic.main.BaseModel">BaseModel</span>)
 
 <h2 id="kiara.metadata.core_models.ContextMetadataModel" class="doc doc-heading">
         <code>
-ContextMetadataModel            (<a title="kiara.metadata.MetadataModel" href="../__init__/#kiara.metadata.MetadataModel">MetadataModel</a>)
+ContextMetadataModel            (<span title="kiara.metadata.core_models.HashedMetadataModel">HashedMetadataModel</span>)
         </code>
 
 
@@ -4050,7 +4036,7 @@ ContextMetadataModel            (<a title="kiara.metadata.MetadataModel" href=".
 
         <details class="quote">
           <summary>Source code in <code>kiara/metadata/core_models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ContextMetadataModel</span><span class="p">(</span><span class="n">MetadataModel</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ContextMetadataModel</span><span class="p">(</span><span class="n">HashedMetadataModel</span><span class="p">):</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item_cls</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">):</span>
 
@@ -4069,6 +4055,9 @@ ContextMetadataModel            (<a title="kiara.metadata.MetadataModel" href=".
     <span class="n">labels</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A list of labels for the item.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span>
     <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_obj_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
@@ -4217,7 +4206,7 @@ ContextMetadataModel            (<a title="kiara.metadata.MetadataModel" href=".
 
 <h2 id="kiara.metadata.core_models.DocumentationMetadataModel" class="doc doc-heading">
         <code>
-DocumentationMetadataModel            (<a title="kiara.metadata.MetadataModel" href="../__init__/#kiara.metadata.MetadataModel">MetadataModel</a>)
+DocumentationMetadataModel            (<span title="kiara.metadata.core_models.HashedMetadataModel">HashedMetadataModel</span>)
         </code>
 
 
@@ -4232,7 +4221,7 @@ DocumentationMetadataModel            (<a title="kiara.metadata.MetadataModel" h
 
         <details class="quote">
           <summary>Source code in <code>kiara/metadata/core_models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">DocumentationMetadataModel</span><span class="p">(</span><span class="n">MetadataModel</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">DocumentationMetadataModel</span><span class="p">(</span><span class="n">HashedMetadataModel</span><span class="p">):</span>
 
     <span class="n">_metadata_key</span> <span class="o">=</span> <span class="s2">&quot;documentation&quot;</span>
 
@@ -4303,6 +4292,9 @@ DocumentationMetadataModel            (<a title="kiara.metadata.MetadataModel" h
     <span class="n">doc</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Detailed documentation of the item (in markdown).&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_obj_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_doc</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">full_doc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -4390,6 +4382,7 @@ DocumentationMetadataModel            (<a title="kiara.metadata.MetadataModel" h
     </div>
 
   </div>
+
 
 
 
@@ -4499,7 +4492,7 @@ LinkModel            (<span title="pydantic.main.BaseModel">BaseModel</span>)
 
 <h2 id="kiara.metadata.core_models.MetadataModelMetadata" class="doc doc-heading">
         <code>
-MetadataModelMetadata            (<a title="kiara.metadata.MetadataModel" href="../__init__/#kiara.metadata.MetadataModel">MetadataModel</a>)
+MetadataModelMetadata            (<a title="kiara.metadata.WrapperMetadataModel" href="../__init__/#kiara.metadata.WrapperMetadataModel">WrapperMetadataModel</a>)
         </code>
 
 
@@ -4514,7 +4507,7 @@ MetadataModelMetadata            (<a title="kiara.metadata.MetadataModel" href="
 
         <details class="quote">
           <summary>Source code in <code>kiara/metadata/core_models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MetadataModelMetadata</span><span class="p">(</span><span class="n">MetadataModel</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MetadataModelMetadata</span><span class="p">(</span><span class="n">WrapperMetadataModel</span><span class="p">):</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_model_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_cls</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">MetadataModel</span><span class="p">]):</span>
 
@@ -4541,9 +4534,9 @@ MetadataModelMetadata            (<a title="kiara.metadata.MetadataModel" href="
     <span class="n">context</span><span class="p">:</span> <span class="n">ContextMetadataModel</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Generic properties of this value type.&quot;</span>
     <span class="p">)</span>
-    <span class="n">python_class</span><span class="p">:</span> <span class="n">PythonClassMetadata</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The Python class for this value type.&quot;</span>
-    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_category_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;metadata.model&quot;</span>
 
     <span class="k">def</span> <span class="nf">create_fields_table</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">show_header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">show_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
@@ -4685,29 +4678,6 @@ MetadataModelMetadata            (<a title="kiara.metadata.MetadataModel" href="
 
 
 
-<h3 id="kiara.metadata.core_models.MetadataModelMetadata.python_class" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">python_class</span><span class="p">:</span> <span class="n">PythonClassMetadata</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.metadata.core_models.MetadataModelMetadata.python_class" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-      <p>The Python class for this value type.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
 <h3 id="kiara.metadata.core_models.MetadataModelMetadata.type_name" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span></code>
 
@@ -4737,6 +4707,7 @@ MetadataModelMetadata            (<a title="kiara.metadata.MetadataModel" href="
 
 
 
+
   </div>
 
     </div>
@@ -4751,7 +4722,7 @@ MetadataModelMetadata            (<a title="kiara.metadata.MetadataModel" href="
 
 <h2 id="kiara.metadata.core_models.OriginMetadataModel" class="doc doc-heading">
         <code>
-OriginMetadataModel            (<a title="kiara.metadata.MetadataModel" href="../__init__/#kiara.metadata.MetadataModel">MetadataModel</a>)
+OriginMetadataModel            (<span title="kiara.metadata.core_models.HashedMetadataModel">HashedMetadataModel</span>)
         </code>
 
 
@@ -4766,7 +4737,7 @@ OriginMetadataModel            (<a title="kiara.metadata.MetadataModel" href="..
 
         <details class="quote">
           <summary>Source code in <code>kiara/metadata/core_models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OriginMetadataModel</span><span class="p">(</span><span class="n">MetadataModel</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OriginMetadataModel</span><span class="p">(</span><span class="n">HashedMetadataModel</span><span class="p">):</span>
 
     <span class="n">_metadata_key</span> <span class="o">=</span> <span class="s2">&quot;origin&quot;</span>
 
@@ -4780,6 +4751,9 @@ OriginMetadataModel            (<a title="kiara.metadata.MetadataModel" href="..
     <span class="n">authors</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">AuthorModel</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The authors/creators of this item.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span>
     <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_obj_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">authors</span>
 
     <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
@@ -4891,6 +4865,12 @@ PythonClassMetadata            (<a title="kiara.metadata.MetadataModel" href="..
     <span class="p">)</span>
     <span class="n">full_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The full class namespace.&quot;</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_name</span>
+
+    <span class="k">def</span> <span class="nf">get_category_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;metadata.python_class&quot;</span>
+
     <span class="k">def</span> <span class="nf">get_class</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">:</span>
         <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_module</span><span class="p">()</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_name</span><span class="p">)</span>
@@ -4977,6 +4957,8 @@ PythonClassMetadata            (<a title="kiara.metadata.MetadataModel" href="..
     </div>
 
   </div>
+
+
 
 
 

@@ -3853,6 +3853,9 @@ KiaraEntityMatches            (<span title="kiara.info.KiaraInfoModel">KiaraInfo
 
     <span class="n">_kiara</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">()</span>
 
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The entity instance id.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="n">create_uuid4_string</span>
+    <span class="p">)</span>
     <span class="n">module_types</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraModuleTypeMetadata</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Matching module types.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span>
     <span class="p">)</span>
@@ -3865,6 +3868,12 @@ KiaraEntityMatches            (<span title="kiara.info.KiaraInfoModel">KiaraInfo
     <span class="n">values</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueInfo</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Matching values.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span>
     <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+
+    <span class="k">def</span> <span class="nf">get_category_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;instance.entity&quot;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">no_module_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -4012,6 +4021,28 @@ KiaraEntityMatches            (<span title="kiara.info.KiaraInfoModel">KiaraInfo
 
 
 
+<h5 id="kiara.interfaces.cli.explain.KiaraEntityMatches.id" class="doc doc-heading">
+<code class="highlight language-python"><span class="nb">id</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.interfaces.cli.explain.KiaraEntityMatches.id" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The entity instance id.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
 <h5 id="kiara.interfaces.cli.explain.KiaraEntityMatches.module_types" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">module_types</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">module_models</span><span class="o">.</span><span class="n">KiaraModuleTypeMetadata</span><span class="p">]</span></code>
 
@@ -4098,6 +4129,8 @@ KiaraEntityMatches            (<span title="kiara.info.KiaraInfoModel">KiaraInfo
     </div>
 
   </div>
+
+
 
 
 

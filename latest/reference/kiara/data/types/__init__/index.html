@@ -3488,13 +3488,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#kiara.data.types.ValueTypeConfigMetadata.python_class" class="md-nav__link">
-    python_class
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -4089,7 +4082,7 @@ avoid adding or removing information from the data (e.g. by changing the resolut
 
 <h2 id="kiara.data.types.ValueTypeConfigMetadata" class="doc doc-heading">
         <code>
-ValueTypeConfigMetadata            (<a title="kiara.metadata.MetadataModel" href="../../../metadata/__init__/#kiara.metadata.MetadataModel">MetadataModel</a>)
+ValueTypeConfigMetadata            (<a title="kiara.metadata.WrapperMetadataModel" href="../../../metadata/__init__/#kiara.metadata.WrapperMetadataModel">WrapperMetadataModel</a>)
         </code>
 
 
@@ -4104,7 +4097,7 @@ ValueTypeConfigMetadata            (<a title="kiara.metadata.MetadataModel" href
 
         <details class="quote">
           <summary>Source code in <code>kiara/data/types/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueTypeConfigMetadata</span><span class="p">(</span><span class="n">MetadataModel</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueTypeConfigMetadata</span><span class="p">(</span><span class="n">WrapperMetadataModel</span><span class="p">):</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_config_class</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -4141,9 +4134,6 @@ ValueTypeConfigMetadata            (<a title="kiara.metadata.MetadataModel" href
             <span class="n">python_class</span><span class="o">=</span><span class="n">python_cls</span><span class="p">,</span> <span class="n">config_values</span><span class="o">=</span><span class="n">config_values</span>
         <span class="p">)</span>
 
-    <span class="n">python_class</span><span class="p">:</span> <span class="n">PythonClassMetadata</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The Python class for this configuration.&quot;</span>
-    <span class="p">)</span>
     <span class="n">config_values</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueTypeAndDescription</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The available configuration values.&quot;</span>
     <span class="p">)</span>
@@ -4177,29 +4167,6 @@ ValueTypeConfigMetadata            (<a title="kiara.metadata.MetadataModel" href
     <div class="doc doc-contents ">
 
       <p>The available configuration values.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="kiara.data.types.ValueTypeConfigMetadata.python_class" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">python_class</span><span class="p">:</span> <span class="n">PythonClassMetadata</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.data.types.ValueTypeConfigMetadata.python_class" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-      <p>The Python class for this configuration.</p>
     </div>
 
   </div>

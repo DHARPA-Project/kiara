@@ -1644,33 +1644,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.info.operations.OperationsGroupInfo" class="md-nav__link">
-    OperationsGroupInfo
-  </a>
-  
-    <nav class="md-nav" aria-label="OperationsGroupInfo">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kiara.info.operations.OperationsGroupInfo.operation_configs" class="md-nav__link">
-    operation_configs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.info.operations.OperationsGroupInfo.operation_types" class="md-nav__link">
-    operation_types
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#kiara.info.operations.OperationsInfo" class="md-nav__link">
     OperationsInfo
   </a>
@@ -3515,33 +3488,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.info.operations.OperationsGroupInfo" class="md-nav__link">
-    OperationsGroupInfo
-  </a>
-  
-    <nav class="md-nav" aria-label="OperationsGroupInfo">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kiara.info.operations.OperationsGroupInfo.operation_configs" class="md-nav__link">
-    operation_configs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.info.operations.OperationsGroupInfo.operation_types" class="md-nav__link">
-    operation_types
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#kiara.info.operations.OperationsInfo" class="md-nav__link">
     OperationsInfo
   </a>
@@ -3608,137 +3554,6 @@
 
 
 
-<h2 id="kiara.info.operations.OperationsGroupInfo" class="doc doc-heading">
-        <code>
-OperationsGroupInfo            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel</span>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.info.operations.OperationsGroupInfo" class="headerlink" title="Permanent link">&para;</a></h2>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/info/operations.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OperationsGroupInfo</span><span class="p">(</span><span class="n">KiaraInfoModel</span><span class="p">):</span>
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-
-        <span class="n">operation_types</span> <span class="o">=</span> <span class="n">OperationsInfo</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
-        <span class="n">operation_configs</span> <span class="o">=</span> <span class="n">operation_types</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">OperationsGroupInfo</span><span class="p">(</span>
-            <span class="n">operation_types</span><span class="o">=</span><span class="n">operation_types</span><span class="p">,</span>
-            <span class="n">operation_configs</span><span class="o">=</span><span class="n">operation_configs</span><span class="o">.</span><span class="n">operation_configs</span><span class="p">,</span>
-        <span class="p">)</span>
-
-    <span class="n">operation_types</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OperationsInfo</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The available operation types and their details.&quot;</span>
-    <span class="p">)</span>
-    <span class="n">operation_configs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The available operation ids and module_configs.&quot;</span>
-    <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
-
-        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Key&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span>
-
-        <span class="n">op_map_table</span> <span class="o">=</span> <span class="n">OperationsInfo</span><span class="o">.</span><span class="n">create_renderable_from_operations_map</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">operation_types</span>
-        <span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;operation types&quot;</span><span class="p">,</span> <span class="n">op_map_table</span><span class="p">)</span>
-        <span class="n">configs</span> <span class="o">=</span> <span class="n">ModuleConfig</span><span class="o">.</span><span class="n">create_renderable_from_module_instance_configs</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">operation_configs</span>
-        <span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;operations&quot;</span><span class="p">,</span> <span class="n">configs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">table</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="kiara.info.operations.OperationsGroupInfo.operation_configs" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">operation_configs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">Operation</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.info.operations.OperationsGroupInfo.operation_configs" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-      <p>The available operation ids and module_configs.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="kiara.info.operations.OperationsGroupInfo.operation_types" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">operation_types</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">OperationsInfo</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.info.operations.OperationsGroupInfo.operation_types" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-      <p>The available operation types and their details.</p>
-    </div>
-
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
 <h2 id="kiara.info.operations.OperationsInfo" class="doc doc-heading">
         <code>
 OperationsInfo            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel</span>)
@@ -3791,6 +3606,28 @@ OperationsInfo            (<span title="kiara.info.KiaraInfoModel">KiaraInfoMode
     <span class="n">operation_configs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;All available operation ids and their configurations.&quot;</span>
     <span class="p">)</span>
+    <span class="n">_hash_cache</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">module_config_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_cache</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_cache</span>
+
+        <span class="n">obj</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">get_id</span><span class="p">(),</span>
+            <span class="s2">&quot;operation_configs&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_configs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">DeepHash</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">hasher</span><span class="o">=</span><span class="n">KIARA_HASH_FUNCTION</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hash_cache</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_cache</span>
+
+    <span class="k">def</span> <span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_config_hash</span>
+
+    <span class="k">def</span> <span class="nf">get_category_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;all_operations_info&quot;</span>
 
     <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
@@ -3833,6 +3670,7 @@ OperationsInfo            (<span title="kiara.info.KiaraInfoModel">KiaraInfoMode
 
 
 
+
   <div class="doc doc-object doc-attribute">
 
 
@@ -3853,6 +3691,8 @@ OperationsInfo            (<span title="kiara.info.KiaraInfoModel">KiaraInfoMode
     </div>
 
   </div>
+
+
 
 
 

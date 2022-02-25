@@ -3613,6 +3613,53 @@
             <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Can&#39;t render module info: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="nd">@env</span><span class="o">.</span><span class="n">macro</span>
+    <span class="k">def</span> <span class="nf">get_info_item_list_for_category</span><span class="p">(</span>
+        <span class="n">category</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">limit_to_package</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraInfoModel</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">_get_info_item_list_for_category</span><span class="p">(</span>
+            <span class="n">category</span><span class="o">=</span><span class="n">category</span><span class="p">,</span> <span class="n">limit_to_package</span><span class="o">=</span><span class="n">limit_to_package</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_info_item_list_for_category</span><span class="p">(</span>
+        <span class="n">category</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">limit_to_package</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraInfoModel</span><span class="p">]:</span>
+
+        <span class="n">infos</span> <span class="o">=</span> <span class="n">kiara_context</span><span class="o">.</span><span class="n">find_subcomponents</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="n">category</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">limit_to_package</span><span class="p">:</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">n_id</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">infos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">labels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;package&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="n">limit_to_package</span><span class="p">:</span>
+                    <span class="n">temp</span><span class="p">[</span><span class="n">n_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span>
+            <span class="n">infos</span> <span class="o">=</span> <span class="n">temp</span>
+
+        <span class="n">docs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">n_id</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">infos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">docs</span><span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">get_id</span><span class="p">()]</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">description</span>
+
+        <span class="k">return</span> <span class="n">docs</span>
+
+    <span class="nd">@env</span><span class="o">.</span><span class="n">macro</span>
+    <span class="k">def</span> <span class="nf">get_info_for_categories</span><span class="p">(</span>
+        <span class="o">*</span><span class="n">categories</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">limit_to_package</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+
+        <span class="n">TITLE_MAP</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;metadata.module&quot;</span><span class="p">:</span> <span class="s2">&quot;Modules&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;metadata.value_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Value types&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;metadata.operation_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Operation types&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">categories</span><span class="p">:</span>
+            <span class="n">infos</span> <span class="o">=</span> <span class="n">_get_info_item_list_for_category</span><span class="p">(</span>
+                <span class="n">cat</span><span class="p">,</span> <span class="n">limit_to_package</span><span class="o">=</span><span class="n">limit_to_package</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">infos</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">cat</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="n">infos</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">TITLE_MAP</span><span class="p">[</span><span class="n">cat</span><span class="p">]}</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="nd">@env</span><span class="o">.</span><span class="n">macro</span>
     <span class="k">def</span> <span class="nf">get_module_list_for_package</span><span class="p">(</span>
         <span class="n">package_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">include_core_modules</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -3628,13 +3675,11 @@
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">modules</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">type_md</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">get_type_metadata</span><span class="p">()</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- [``</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">``][kiara_info.modules.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
             <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;  - [``</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">``](</span><span class="si">{</span><span class="n">type_md</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get_url_for_reference</span><span class="p">(</span><span class="s1">&#39;module_doc&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">type_md</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;[``</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">``][kiara_info.modules.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">]: </span><span class="si">{</span><span class="n">type_md</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
 
     <span class="nd">@env</span><span class="o">.</span><span class="n">macro</span>
     <span class="k">def</span> <span class="nf">get_value_types_for_package</span><span class="p">(</span><span class="n">package_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>

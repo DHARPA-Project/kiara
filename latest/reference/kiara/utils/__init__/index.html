@@ -3646,6 +3646,7 @@
 
 
 
+
   <div class="doc doc-object doc-function">
 
 
@@ -3965,7 +3966,7 @@
 
     <span class="k">return</span> <span class="n">load_all_subclasses_for_entry_point</span><span class="p">(</span>
         <span class="n">entry_point_name</span><span class="o">=</span><span class="s2">&quot;kiara.metadata_models&quot;</span><span class="p">,</span>
-        <span class="n">base_class</span><span class="o">=</span><span class="n">MetadataModel</span><span class="p">,</span>
+        <span class="n">base_class</span><span class="o">=</span><span class="n">MetadataModel</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
         <span class="n">set_id_attribute</span><span class="o">=</span><span class="s2">&quot;_metadata_key&quot;</span><span class="p">,</span>
         <span class="n">remove_namespace_tokens</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;core.&quot;</span><span class="p">],</span>
     <span class="p">)</span>

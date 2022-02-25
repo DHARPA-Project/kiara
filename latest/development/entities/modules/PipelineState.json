@@ -3,6 +3,11 @@
   "description": "Describes the current state of a pipeline.\n\nThis includes the structure of the pipeline (how the internal modules/steps are connected to each other), as well\nas all current input/output values for the pipeline itself, as well as for all internal steps.\n\nUse the ``dict`` or ``json`` methods to convert this object into a generic data structure.",
   "type": "object",
   "properties": {
+    "pipeline_state_id": {
+      "title": "Pipeline State Id",
+      "description": "Id of this state instance.",
+      "type": "string"
+    },
     "structure": {
       "title": "Structure",
       "description": "The structure (interconnections of modules/steps) of the pipeline.",

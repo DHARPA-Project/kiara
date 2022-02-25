@@ -3582,7 +3582,7 @@ KiaraInfoRenderer            (<span title="mkdocstrings.handlers.base.BaseRender
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">list</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="nb">list</span><span class="p">([</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;identifier&quot;</span><span class="p">]])</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">([</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;identifier&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;kiara_id&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;obj&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get_id</span><span class="p">()])</span>
 
     <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 
@@ -3673,7 +3673,7 @@ KiaraInfoRenderer            (<span title="mkdocstrings.handlers.base.BaseRender
     <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">()</span>
 
-    <span class="k">return</span> <span class="nb">list</span><span class="p">([</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;identifier&quot;</span><span class="p">]])</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">([</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;identifier&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;kiara_id&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;obj&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get_id</span><span class="p">()])</span>
 </code></pre></div>
         </details>
     </div>

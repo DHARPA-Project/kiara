@@ -1610,6 +1610,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#kiara.info.kiara.KiaraContext.id" class="md-nav__link">
+    id
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.info.kiara.KiaraContext.modules" class="md-nav__link">
     modules
   </a>
@@ -3517,6 +3524,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#kiara.info.kiara.KiaraContext.id" class="md-nav__link">
+    id
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.info.kiara.KiaraContext.modules" class="md-nav__link">
     modules
   </a>
@@ -3616,11 +3630,11 @@ KiaraContext            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel<
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraContext</span><span class="p">(</span><span class="n">KiaraInfoModel</span><span class="p">):</span>
 
     <span class="n">available_categories</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">ClassVar</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">&quot;value_types&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;modules&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;pipelines&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;operations&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;operation_types&quot;</span><span class="p">,</span>
+        <span class="n">VALUE_TYPES_CATEGORY_ALIAS</span><span class="p">,</span>
+        <span class="n">MODULE_TYPES_CATEGORY_ALIAS</span><span class="p">,</span>
+        <span class="n">PIPELINE_TYPES_CATEGORY_ALIAS</span><span class="p">,</span>
+        <span class="n">OPERATIONS_CATEGORY_ALIAS</span><span class="p">,</span>
+        <span class="n">OPERATION_TYPES_CATEGORY_ALIAS</span><span class="p">,</span>
     <span class="p">]</span>
     <span class="n">_info_cache</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">ClassVar</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -3642,30 +3656,34 @@ KiaraContext            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel<
         <span class="k">if</span> <span class="n">cache</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cache</span>
 
-        <span class="k">if</span> <span class="n">category_name</span> <span class="o">==</span> <span class="s2">&quot;value_types&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">category_name</span> <span class="o">==</span> <span class="n">VALUE_TYPES_CATEGORY_ALIAS</span><span class="p">:</span>
             <span class="n">all_types</span> <span class="o">=</span> <span class="n">ValueTypeMetadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
-            <span class="n">info</span> <span class="o">=</span> <span class="n">KiaraDynamicInfoModel</span><span class="o">.</span><span class="n">create_from_child_models</span><span class="p">(</span><span class="o">**</span><span class="n">all_types</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">category_name</span> <span class="o">==</span> <span class="s2">&quot;modules&quot;</span><span class="p">:</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="n">KiaraDynamicInfoModel</span><span class="o">.</span><span class="n">create_from_child_models</span><span class="p">(</span><span class="o">**</span><span class="n">all_types</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="k">elif</span> <span class="n">category_name</span> <span class="o">==</span> <span class="n">MODULE_TYPES_CATEGORY_ALIAS</span><span class="p">:</span>
             <span class="n">info</span> <span class="o">=</span> <span class="n">ModuleTypesGroupInfo</span><span class="o">.</span><span class="n">from_type_names</span><span class="p">(</span>
                 <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">ignore_pipeline_modules</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">)</span>
-        <span class="k">elif</span> <span class="n">category_name</span> <span class="o">==</span> <span class="s2">&quot;pipelines&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">category_name</span> <span class="o">==</span> <span class="n">PIPELINE_TYPES_CATEGORY_ALIAS</span><span class="p">:</span>
             <span class="n">info</span> <span class="o">=</span> <span class="n">PipelineTypesGroupInfo</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
                 <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span>
             <span class="p">)</span>
-        <span class="k">elif</span> <span class="n">category_name</span> <span class="o">==</span> <span class="s2">&quot;operation_types&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">category_name</span> <span class="o">==</span> <span class="n">OPERATION_TYPES_CATEGORY_ALIAS</span><span class="p">:</span>
             <span class="n">all_op_types</span> <span class="o">=</span> <span class="n">OperationsMetadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
-            <span class="n">info</span> <span class="o">=</span> <span class="n">KiaraDynamicInfoModel</span><span class="o">.</span><span class="n">create_from_child_models</span><span class="p">(</span><span class="o">**</span><span class="n">all_op_types</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">category_name</span> <span class="o">==</span> <span class="s2">&quot;operations&quot;</span><span class="p">:</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="n">KiaraDynamicInfoModel</span><span class="o">.</span><span class="n">create_from_child_models</span><span class="p">(</span>
+                <span class="n">_category_alias</span><span class="o">=</span><span class="n">OPERATION_TYPES_CATEGORY_ALIAS</span><span class="p">,</span> <span class="o">**</span><span class="n">all_op_types</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">category_name</span> <span class="o">==</span> <span class="n">OPERATIONS_CATEGORY_ALIAS</span><span class="p">:</span>
             <span class="n">ops_infos</span> <span class="o">=</span> <span class="n">KiaraDynamicInfoModel</span><span class="o">.</span><span class="n">create_from_child_models</span><span class="p">(</span>
-                <span class="o">**</span><span class="n">OperationsInfo</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
+                <span class="o">**</span><span class="n">OperationsInfo</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
             <span class="p">)</span>
             <span class="n">operation_configs</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">ops_infos</span><span class="o">.</span><span class="n">__root__</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
                 <span class="n">configs</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">operation_configs</span>
                 <span class="n">operation_configs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">configs</span><span class="p">)</span>
 
-            <span class="n">info</span> <span class="o">=</span> <span class="n">KiaraDynamicInfoModel</span><span class="o">.</span><span class="n">create_from_child_models</span><span class="p">(</span><span class="o">**</span><span class="n">operation_configs</span><span class="p">)</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="n">KiaraDynamicInfoModel</span><span class="o">.</span><span class="n">create_from_child_models</span><span class="p">(</span>
+                <span class="n">_category_alias</span><span class="o">=</span><span class="n">OPERATIONS_CATEGORY_ALIAS</span><span class="p">,</span> <span class="o">**</span><span class="n">operation_configs</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Category not available: </span><span class="si">{</span><span class="n">category_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -3703,6 +3721,7 @@ KiaraContext            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel<
             <span class="p">)</span>
 
             <span class="k">return</span> <span class="n">KiaraContext</span><span class="p">(</span>
+                <span class="nb">id</span><span class="o">=</span><span class="n">kiara</span><span class="o">.</span><span class="n">_id</span><span class="p">,</span>
                 <span class="n">value_types</span><span class="o">=</span><span class="n">value_types</span><span class="p">,</span>
                 <span class="n">modules</span><span class="o">=</span><span class="n">module_types</span><span class="p">,</span>
                 <span class="n">pipelines</span><span class="o">=</span><span class="n">pipeline_types</span><span class="p">,</span>
@@ -3727,6 +3746,7 @@ KiaraContext            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel<
                 <span class="p">)</span>
             <span class="k">return</span> <span class="n">current</span>
 
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of the kiara context.&quot;</span><span class="p">)</span>
     <span class="n">value_types</span><span class="p">:</span> <span class="n">KiaraDynamicInfoModel</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Information about available value types.&quot;</span>
     <span class="p">)</span>
@@ -3740,6 +3760,12 @@ KiaraContext            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel<
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Information about operation types contained in the current kiara context.&quot;</span>
     <span class="p">)</span>
     <span class="n">operations</span><span class="p">:</span> <span class="n">KiaraDynamicInfoModel</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Available operations.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_category_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;root_context&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
 
     <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
@@ -3774,6 +3800,29 @@ KiaraContext            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel<
 
 
 
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.info.kiara.KiaraContext.id" class="doc doc-heading">
+<code class="highlight language-python"><span class="nb">id</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.info.kiara.KiaraContext.id" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>The id of the kiara context.</p>
+    </div>
+
+  </div>
 
 
 
@@ -3889,6 +3938,8 @@ KiaraContext            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel<
     </div>
 
   </div>
+
+
 
 
 

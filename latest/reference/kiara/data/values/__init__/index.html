@@ -5202,6 +5202,12 @@ ValueInfo            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel</sp
             <span class="n">is_valid</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">item_is_valid</span><span class="p">(),</span>
         <span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_id</span>
+
+    <span class="k">def</span> <span class="nf">get_category_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;value&quot;</span>
+
     <span class="n">value_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value id.&quot;</span><span class="p">)</span>
     <span class="n">value_schema</span><span class="p">:</span> <span class="n">ValueSchema</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value schema.&quot;</span><span class="p">)</span>
     <span class="c1"># aliases: typing.List[ValueAlias] = Field(</span>
@@ -5483,6 +5489,8 @@ ValueInfo            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel</sp
     </div>
 
   </div>
+
+
 
 
 

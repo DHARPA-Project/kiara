@@ -3574,6 +3574,7 @@ ModuleTypesGroupInfo            (<span title="kiara.info.KiaraInfoModel">KiaraIn
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ModuleTypesGroupInfo</span><span class="p">(</span><span class="n">KiaraInfoModel</span><span class="p">):</span>
 
     <span class="n">__root__</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraModuleTypeMetadata</span><span class="p">]</span>
+    <span class="n">_hash_cache</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_type_names</span><span class="p">(</span>
@@ -3684,6 +3685,22 @@ ModuleTypesGroupInfo            (<span title="kiara.info.KiaraInfoModel">KiaraIn
 
         <span class="k">return</span> <span class="n">table</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">module_config_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_cache</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_cache</span>
+
+        <span class="n">obj</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">DeepHash</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">hasher</span><span class="o">=</span><span class="n">KIARA_HASH_FUNCTION</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hash_cache</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_cache</span>
+
+    <span class="k">def</span> <span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_config_hash</span>
+
+    <span class="k">def</span> <span class="nf">get_category_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">MODULE_TYPES_CATEGORY_ALIAS</span>
+
     <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="n">ModuleTypesGroupInfo</span><span class="o">.</span><span class="n">create_renderable_from_module_info_map</span><span class="p">(</span>
@@ -3695,6 +3712,7 @@ ModuleTypesGroupInfo            (<span title="kiara.info.KiaraInfoModel">KiaraIn
 
 
   <div class="doc doc-children">
+
 
 
 
@@ -3822,6 +3840,8 @@ ModuleTypesGroupInfo            (<span title="kiara.info.KiaraInfoModel">KiaraIn
     </div>
 
   </div>
+
+
 
 
 

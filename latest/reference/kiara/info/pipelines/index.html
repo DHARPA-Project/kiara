@@ -1700,6 +1700,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.info.pipelines.PipelineState.pipeline_state_id" class="md-nav__link">
+    pipeline_state_id
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.info.pipelines.PipelineState.status" class="md-nav__link">
     status
   </a>
@@ -1812,6 +1819,13 @@
           <li class="md-nav__item">
   <a href="#kiara.info.pipelines.StepsInfo.steps" class="md-nav__link">
     steps
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.info.pipelines.StepsInfo.steps_info_id" class="md-nav__link">
+    steps_info_id
   </a>
   
 </li>
@@ -3667,6 +3681,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.info.pipelines.PipelineState.pipeline_state_id" class="md-nav__link">
+    pipeline_state_id
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.info.pipelines.PipelineState.status" class="md-nav__link">
     status
   </a>
@@ -3779,6 +3800,13 @@
           <li class="md-nav__item">
   <a href="#kiara.info.pipelines.StepsInfo.steps" class="md-nav__link">
     steps
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.info.pipelines.StepsInfo.steps_info_id" class="md-nav__link">
+    steps_info_id
   </a>
   
 </li>
@@ -4057,6 +4085,9 @@ as all current input/output values for the pipeline itself, as well as for all i
 <span class="sd">    Use the ``dict`` or ``json`` methods to convert this object into a generic data structure.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">pipeline_state_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Id of this state instance.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="n">create_uuid4_string</span>
+    <span class="p">)</span>
     <span class="n">structure</span><span class="p">:</span> <span class="n">PipelineStructureDesc</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The structure (interconnections of modules/steps) of the pipeline.&quot;</span>
     <span class="p">)</span>
@@ -4076,6 +4107,12 @@ as all current input/output values for the pipeline itself, as well as for all i
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The current (internal) output values of each step of this pipeline.&quot;</span>
     <span class="p">)</span>
     <span class="n">status</span><span class="p">:</span> <span class="n">StepStatus</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The current overal status of the pipeline.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_state_id</span>
+
+    <span class="k">def</span> <span class="nf">get_category_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;instance.pipeline.state&quot;</span>
 
     <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
@@ -4256,6 +4293,28 @@ as all current input/output values for the pipeline itself, as well as for all i
 
 
 
+<h3 id="kiara.info.pipelines.PipelineState.pipeline_state_id" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pipeline_state_id</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.info.pipelines.PipelineState.pipeline_state_id" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Id of this state instance.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="kiara.info.pipelines.PipelineState.status" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">status</span><span class="p">:</span> <span class="n">StepStatus</span></code>
 
@@ -4364,6 +4423,8 @@ as all current input/output values for the pipeline itself, as well as for all i
     </div>
 
   </div>
+
+
 
 
 
@@ -4796,6 +4857,10 @@ StepsInfo            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel</sp
           <summary>Source code in <code>kiara/info/pipelines.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">StepsInfo</span><span class="p">(</span><span class="n">KiaraInfoModel</span><span class="p">):</span>
 
+    <span class="n">steps_info_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Id for this steps information instance.&quot;</span><span class="p">,</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="n">create_uuid4_string</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">steps</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StepDesc</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;A list of step details.&quot;</span><span class="p">)</span>
     <span class="n">processing_stages</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The stages in which the steps are processed.&quot;</span>
@@ -4849,6 +4914,12 @@ StepsInfo            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel</sp
 
         <span class="k">return</span> <span class="n">table</span>
         <span class="c1"># yield Panel(table, title_align=&quot;left&quot;, title=&quot;Processing stages&quot;)</span>
+
+    <span class="k">def</span> <span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps_info_id</span>
+
+    <span class="k">def</span> <span class="nf">get_category_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;instance.steps_info&quot;</span>
 
     <span class="c1"># def __rich_console_old__(</span>
     <span class="c1">#     self, console: Console, options: ConsoleOptions</span>
@@ -4944,6 +5015,30 @@ StepsInfo            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel</sp
     </div>
 
   </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.info.pipelines.StepsInfo.steps_info_id" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">steps_info_id</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.info.pipelines.StepsInfo.steps_info_id" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Id for this steps information instance.</p>
+    </div>
+
+  </div>
+
+
 
 
 

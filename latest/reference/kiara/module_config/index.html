@@ -3807,6 +3807,8 @@ ModuleConfig            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel<
         <span class="n">validate_all</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="n">_module</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;KiaraModule&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_hash_cache</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
     <span class="n">module_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The module type.&quot;</span><span class="p">)</span>
     <span class="n">module_config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The configuration for the module.&quot;</span>
@@ -3814,6 +3816,25 @@ ModuleConfig            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel<
     <span class="n">doc</span><span class="p">:</span> <span class="n">DocumentationMetadataModel</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Documentation for this operation.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">module_config_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_cache</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_cache</span>
+
+        <span class="n">hash_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
+            <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_config</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">DeepHash</span><span class="p">(</span><span class="n">hash_dict</span><span class="p">,</span> <span class="n">hasher</span><span class="o">=</span><span class="n">KIARA_HASH_FUNCTION</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hash_cache</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="n">hash_dict</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_cache</span>
+
+    <span class="k">def</span> <span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_config_hash</span>
+
+    <span class="k">def</span> <span class="nf">get_category_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;module_config.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">module_type</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">create_doc</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -3907,6 +3928,7 @@ ModuleConfig            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel<
     </div>
 
   </div>
+
 
 
 
@@ -4073,6 +4095,8 @@ ModuleConfig            (<span title="kiara.info.KiaraInfoModel">KiaraInfoModel<
     </div>
 
   </div>
+
+
 
 
 

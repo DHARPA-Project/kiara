@@ -2405,13 +2405,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#kiara.metadata.module_models.KiaraModuleConfigMetadata.python_class" class="md-nav__link">
-    python_class
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2511,13 +2504,6 @@
           <li class="md-nav__item">
   <a href="#kiara.metadata.module_models.KiaraModuleTypeMetadata.process_src" class="md-nav__link">
     process_src
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.metadata.module_models.KiaraModuleTypeMetadata.python_class" class="md-nav__link">
-    python_class
   </a>
   
 </li>
@@ -3626,13 +3612,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#kiara.metadata.module_models.KiaraModuleConfigMetadata.python_class" class="md-nav__link">
-    python_class
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -3737,13 +3716,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kiara.metadata.module_models.KiaraModuleTypeMetadata.python_class" class="md-nav__link">
-    python_class
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#kiara.metadata.module_models.KiaraModuleTypeMetadata.type_id" class="md-nav__link">
     type_id
   </a>
@@ -3804,7 +3776,7 @@
 
 <h2 id="kiara.metadata.module_models.KiaraModuleConfigMetadata" class="doc doc-heading">
         <code>
-KiaraModuleConfigMetadata            (<a title="kiara.metadata.MetadataModel" href="../__init__/#kiara.metadata.MetadataModel">MetadataModel</a>)
+KiaraModuleConfigMetadata            (<a title="kiara.metadata.WrapperMetadataModel" href="../__init__/#kiara.metadata.WrapperMetadataModel">WrapperMetadataModel</a>)
         </code>
 
 
@@ -3819,7 +3791,7 @@ KiaraModuleConfigMetadata            (<a title="kiara.metadata.MetadataModel" hr
 
         <details class="quote">
           <summary>Source code in <code>kiara/metadata/module_models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraModuleConfigMetadata</span><span class="p">(</span><span class="n">MetadataModel</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraModuleConfigMetadata</span><span class="p">(</span><span class="n">WrapperMetadataModel</span><span class="p">):</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_config_class</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -3864,12 +3836,12 @@ KiaraModuleConfigMetadata            (<a title="kiara.metadata.MetadataModel" hr
             <span class="n">python_class</span><span class="o">=</span><span class="n">python_cls</span><span class="p">,</span> <span class="n">config_values</span><span class="o">=</span><span class="n">config_values</span>
         <span class="p">)</span>
 
-    <span class="n">python_class</span><span class="p">:</span> <span class="n">PythonClassMetadata</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The Python class for this configuration.&quot;</span>
-    <span class="p">)</span>
     <span class="n">config_values</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueTypeAndDescription</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The available configuration values.&quot;</span>
     <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_category_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;metadata.module_config&quot;</span>
 </code></pre></div>
         </details>
 
@@ -3906,28 +3878,6 @@ KiaraModuleConfigMetadata            (<a title="kiara.metadata.MetadataModel" hr
 
 
 
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="kiara.metadata.module_models.KiaraModuleConfigMetadata.python_class" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">python_class</span><span class="p">:</span> <span class="n">PythonClassMetadata</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.metadata.module_models.KiaraModuleConfigMetadata.python_class" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-      <p>The Python class for this configuration.</p>
-    </div>
-
-  </div>
-
-
 
 
 
@@ -3951,7 +3901,7 @@ KiaraModuleConfigMetadata            (<a title="kiara.metadata.MetadataModel" hr
 
 <h2 id="kiara.metadata.module_models.KiaraModuleInstanceMetadata" class="doc doc-heading">
         <code>
-KiaraModuleInstanceMetadata            (<a title="kiara.metadata.MetadataModel" href="../__init__/#kiara.metadata.MetadataModel">MetadataModel</a>)
+KiaraModuleInstanceMetadata            (<span title="kiara.metadata.core_models.HashedMetadataModel">HashedMetadataModel</span>)
         </code>
 
 
@@ -3966,7 +3916,7 @@ KiaraModuleInstanceMetadata            (<a title="kiara.metadata.MetadataModel" 
 
         <details class="quote">
           <summary>Source code in <code>kiara/metadata/module_models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraModuleInstanceMetadata</span><span class="p">(</span><span class="n">MetadataModel</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraModuleInstanceMetadata</span><span class="p">(</span><span class="n">HashedMetadataModel</span><span class="p">):</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_module_obj</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">):</span>
 
@@ -4002,6 +3952,15 @@ KiaraModuleInstanceMetadata            (<a title="kiara.metadata.MetadataModel" 
     <span class="n">outputs_schema</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The schema for the module outputs.&quot;</span>
     <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_obj_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+
+        <span class="c1"># TODO: include environment hash and/or version?</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_metadata</span><span class="o">.</span><span class="n">get_id</span><span class="p">(),</span> <span class="s2">&quot;config&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+    <span class="k">def</span> <span class="nf">get_category_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;instance.module&quot;</span>
 
     <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
@@ -4158,6 +4117,7 @@ KiaraModuleInstanceMetadata            (<a title="kiara.metadata.MetadataModel" 
 
 
 
+
   </div>
 
     </div>
@@ -4172,7 +4132,7 @@ KiaraModuleInstanceMetadata            (<a title="kiara.metadata.MetadataModel" 
 
 <h2 id="kiara.metadata.module_models.KiaraModuleTypeMetadata" class="doc doc-heading">
         <code>
-KiaraModuleTypeMetadata            (<a title="kiara.metadata.MetadataModel" href="../__init__/#kiara.metadata.MetadataModel">MetadataModel</a>)
+KiaraModuleTypeMetadata            (<a title="kiara.metadata.WrapperMetadataModel" href="../__init__/#kiara.metadata.WrapperMetadataModel">WrapperMetadataModel</a>)
         </code>
 
 
@@ -4187,7 +4147,7 @@ KiaraModuleTypeMetadata            (<a title="kiara.metadata.MetadataModel" href
 
         <details class="quote">
           <summary>Source code in <code>kiara/metadata/module_models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraModuleTypeMetadata</span><span class="p">(</span><span class="n">MetadataModel</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraModuleTypeMetadata</span><span class="p">(</span><span class="n">WrapperMetadataModel</span><span class="p">):</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_module_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">module_cls</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraModule&quot;</span><span class="p">]):</span>
 
@@ -4257,9 +4217,6 @@ KiaraModuleTypeMetadata            (<a title="kiara.metadata.MetadataModel" href
     <span class="n">context</span><span class="p">:</span> <span class="n">ContextMetadataModel</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Generic properties of this module (description, tags, labels, references, ...).&quot;</span>
     <span class="p">)</span>
-    <span class="n">python_class</span><span class="p">:</span> <span class="n">PythonClassMetadata</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Information about the Python class for this module type.&quot;</span>
-    <span class="p">)</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">KiaraModuleConfigMetadata</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Details on how this module type can be configured.&quot;</span>
     <span class="p">)</span>
@@ -4273,6 +4230,12 @@ KiaraModuleTypeMetadata            (<a title="kiara.metadata.MetadataModel" href
     <span class="n">process_src</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The source code of the process method of the module.&quot;</span>
     <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_id</span>
+
+    <span class="k">def</span> <span class="nf">get_category_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">MODULE_TYPE_CATEGORY_ALIAS</span>
 
     <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;documentation&quot;</span><span class="p">,</span> <span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">validate_doc</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -4494,29 +4457,6 @@ KiaraModuleTypeMetadata            (<a title="kiara.metadata.MetadataModel" href
 
 
 
-<h3 id="kiara.metadata.module_models.KiaraModuleTypeMetadata.python_class" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">python_class</span><span class="p">:</span> <span class="n">PythonClassMetadata</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.metadata.module_models.KiaraModuleTypeMetadata.python_class" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-      <p>Information about the Python class for this module type.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
 <h3 id="kiara.metadata.module_models.KiaraModuleTypeMetadata.type_id" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">type_id</span><span class="p">:</span> <span class="nb">str</span></code>
 
@@ -4556,6 +4496,8 @@ KiaraModuleTypeMetadata            (<a title="kiara.metadata.MetadataModel" href
     </div>
 
   </div>
+
+
 
 
 

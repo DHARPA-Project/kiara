@@ -24,7 +24,7 @@ class KiaraInfoRenderer(BaseRenderer):
         if data is None:
             return list()
 
-        return list([data["identifier"]])
+        return list([data["identifier"], data["kiara_id"], data["obj"].get_id()])
 
     def render(self, data: typing.Dict[str, typing.Any], config: dict) -> str:
 

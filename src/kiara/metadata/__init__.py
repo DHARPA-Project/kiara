@@ -14,19 +14,22 @@ from kiara.info import KiaraInfoModel, extract_renderable
 
 if typing.TYPE_CHECKING:
     from kiara import Kiara
-    from kiara.metadata.core_models import MetadataModelMetadata
+    from kiara.metadata.core_models import MetadataModelMetadata, PythonClassMetadata
 
 
 class MetadataModel(KiaraInfoModel):
     """Base class for classes that represent value metadata in kiara."""
 
-    @classmethod
-    def get_type_metadata(cls) -> "MetadataModelMetadata":
-        """Return all metadata associated with this module type."""
+    # @classmethod
+    # def get_type_metadata(cls) -> "MetadataModelMetadata":
+    #     """Return all metadata associated with this module type."""
+    #
+    #     from kiara.metadata.core_models import MetadataModelMetadata
+    #
+    #     return MetadataModelMetadata.from_model_class(model_cls=cls)
 
-        from kiara.metadata.core_models import MetadataModelMetadata
-
-        return MetadataModelMetadata.from_model_class(model_cls=cls)
+    def get_category_alias(self) -> str:
+        return "metadata"
 
     def create_renderable(self, **config: typing.Any) -> RenderableType:
 
@@ -45,6 +48,16 @@ class MetadataModel(KiaraInfoModel):
             table.add_row("operations", "\n".join(ids))
 
         return table
+
+
+class WrapperMetadataModel(MetadataModel):
+
+    python_class: "PythonClassMetadata" = Field(
+        description="Information about the Python class for this module type."
+    )
+
+    def get_id(self) -> str:
+        return self.python_class.get_id()
 
 
 class MetadataSet(object):

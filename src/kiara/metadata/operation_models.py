@@ -8,6 +8,7 @@
 import typing
 from pydantic import Field
 
+from kiara.defaults import OPERATION_TYPE_CATEGORY_ALIAS
 from kiara.metadata import MetadataModel
 from kiara.metadata.core_models import (
     ContextMetadataModel,
@@ -64,3 +65,9 @@ class OperationsMetadata(MetadataModel):
     python_class: PythonClassMetadata = Field(
         description="The Python class for this value type."
     )
+
+    def get_id(self) -> str:
+        return self.python_class.get_id()
+
+    def get_category_alias(self) -> str:
+        return OPERATION_TYPE_CATEGORY_ALIAS

@@ -42,7 +42,10 @@ class MetadataMgmt(object):
 
         result = {}
         for name, schema in self.all_schemas.items():
-            schema_md = schema.get_type_metadata()
+            if not hasattr(schema, "get_type_metadata"):
+                # TODO: maybe create an abstract class for this?
+                raise Exception(f"Can't get type information for: {type(schema)}")
+            schema_md = schema.get_type_metadata()  # type: ignore
             package = schema_md.context.labels.get("package")
             if package == package_name:
                 result[name] = schema

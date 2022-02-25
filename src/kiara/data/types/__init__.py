@@ -40,7 +40,7 @@ from rich.table import Table
 
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.exceptions import KiaraValueException, ValueTypeConfigException
-from kiara.metadata import MetadataModel, ValueTypeAndDescription
+from kiara.metadata import ValueTypeAndDescription, WrapperMetadataModel
 from kiara.metadata.core_models import PythonClassMetadata
 from kiara.metadata.type_models import ValueTypeMetadata
 
@@ -123,7 +123,7 @@ TYPE_CONFIG_CLS = typing.TypeVar("TYPE_CONFIG_CLS", bound=ValueTypeConfigSchema)
 TYPE_PYTHON_CLS = typing.TypeVar("TYPE_PYTHON_CLS")
 
 
-class ValueTypeConfigMetadata(MetadataModel):
+class ValueTypeConfigMetadata(WrapperMetadataModel):
     @classmethod
     def from_config_class(
         cls,
@@ -160,9 +160,6 @@ class ValueTypeConfigMetadata(MetadataModel):
             python_class=python_cls, config_values=config_values
         )
 
-    python_class: PythonClassMetadata = Field(
-        description="The Python class for this configuration."
-    )
     config_values: typing.Dict[str, ValueTypeAndDescription] = Field(
         description="The available configuration values."
     )

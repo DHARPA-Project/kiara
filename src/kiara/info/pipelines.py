@@ -6,6 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import typing
+from deepdiff import DeepHash
 from pydantic import BaseModel, Extra, Field, PrivateAttr
 from rich import box
 from rich.console import (
@@ -20,7 +21,13 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
 
-from kiara.defaults import COLOR_LIST, PIPELINE_PARENT_MARKER, SpecialValue
+from kiara.defaults import (
+    COLOR_LIST,
+    KIARA_HASH_FUNCTION,
+    PIPELINE_PARENT_MARKER,
+    PIPELINE_TYPES_CATEGORY_ALIAS,
+    SpecialValue,
+)
 from kiara.info import KiaraInfoModel
 from kiara.metadata.module_models import KiaraModuleTypeMetadata
 from kiara.pipeline import PipelineValuesInfo, StepStatus
@@ -30,6 +37,7 @@ from kiara.pipeline.values import PipelineInputRef, PipelineOutputRef, ValueRef
 from kiara.utils import (
     StringYAML,
     create_table_from_config_class,
+    create_uuid4_string,
     log_message,
     print_ascii_graph,
 )
@@ -45,6 +53,10 @@ yaml = StringYAML()
 
 class StepsInfo(KiaraInfoModel):
 
+    steps_info_id: str = Field(
+        description="Id for this steps information instance.",
+        default_factory=create_uuid4_string,
+    )
     steps: typing.Dict[str, StepDesc] = Field(description="A list of step details.")
     processing_stages: typing.List[typing.List[str]] = Field(
         description="The stages in which the steps are processed."
@@ -98,6 +110,12 @@ class StepsInfo(KiaraInfoModel):
 
         return table
         # yield Panel(table, title_align="left", title="Processing stages")
+
+    def get_id(self) -> str:
+        return self.steps_info_id
+
+    def get_category_alias(self) -> str:
+        return "instance.steps_info"
 
     # def __rich_console_old__(
     #     self, console: Console, options: ConsoleOptions
@@ -464,6 +482,7 @@ class PipelineModuleInfo(KiaraModuleTypeMetadata):
 
 class PipelineTypesGroupInfo(KiaraInfoModel):
     __root__: typing.Dict[str, PipelineModuleInfo]
+    _hash_cache: typing.Optional[str] = PrivateAttr(default=None)
 
     @classmethod
     def create(cls, kiara: "Kiara", ignore_errors: bool = False):
@@ -506,6 +525,22 @@ class PipelineTypesGroupInfo(KiaraInfoModel):
             table.add_row(*row)
 
         return table
+
+    @property
+    def module_config_hash(self):
+        if self._hash_cache is not None:
+            return self._hash_cache
+
+        obj = {k: v.get_id() for k, v in self.__root__.items()}
+        h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
+        self._hash_cache = h[obj]
+        return self._hash_cache
+
+    def get_id(self) -> str:
+        return self.module_config_hash
+
+    def get_category_alias(self) -> str:
+        return PIPELINE_TYPES_CATEGORY_ALIAS
 
     def create_renderable(self, **config: typing.Any) -> RenderableType:
 
@@ -641,6 +676,9 @@ class PipelineState(KiaraInfoModel):
     Use the ``dict`` or ``json`` methods to convert this object into a generic data structure.
     """
 
+    pipeline_state_id: str = Field(
+        description="Id of this state instance.", default_factory=create_uuid4_string
+    )
     structure: PipelineStructureDesc = Field(
         description="The structure (interconnections of modules/steps) of the pipeline."
     )
@@ -660,6 +698,12 @@ class PipelineState(KiaraInfoModel):
         description="The current (internal) output values of each step of this pipeline."
     )
     status: StepStatus = Field(description="The current overal status of the pipeline.")
+
+    def get_id(self) -> str:
+        return self.pipeline_state_id
+
+    def get_category_alias(self) -> str:
+        return "instance.pipeline.state"
 
     def create_renderable(self, **config: typing.Any) -> RenderableType:
 

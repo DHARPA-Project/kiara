@@ -4,11 +4,12 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
+import abc
 import importlib
 import inspect
 import typing
-from pydantic import AnyUrl, BaseModel, EmailStr, Field
+from deepdiff import DeepHash
+from pydantic import AnyUrl, BaseModel, EmailStr, Field, PrivateAttr
 from rich import box
 from rich.console import RenderableType
 from rich.markdown import Markdown
@@ -17,8 +18,8 @@ from rich.syntax import Syntax
 from rich.table import Table
 from types import ModuleType
 
-from kiara.defaults import DEFAULT_NO_DESC_VALUE
-from kiara.metadata import MetadataModel
+from kiara.defaults import DEFAULT_NO_DESC_VALUE, KIARA_HASH_FUNCTION
+from kiara.metadata import MetadataModel, WrapperMetadataModel
 from kiara.utils import merge_dicts
 from kiara.utils.global_metadata import get_metadata_for_python_module_or_class
 
@@ -29,6 +30,31 @@ from kiara.utils.global_metadata import get_metadata_for_python_module_or_class
 #         description="A description how the hash was calculated and other details.",
 #         default=None,
 #     )
+
+
+class HashedMetadataModel(MetadataModel):
+
+    _hash_cache: typing.Optional[str] = PrivateAttr(default=None)
+
+    @abc.abstractmethod
+    def _obj_to_hash(self) -> typing.Any:
+        pass
+
+    def get_id(self) -> str:
+        return self.module_config_hash
+
+    def get_category_alias(self) -> str:
+        return "metadata"
+
+    @property
+    def module_config_hash(self):
+        if self._hash_cache is not None:
+            return self._hash_cache
+
+        obj = self._obj_to_hash()
+        h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
+        self._hash_cache = h[obj]
+        return self._hash_cache
 
 
 class LinkModel(BaseModel):
@@ -48,7 +74,7 @@ class AuthorModel(BaseModel):
     )
 
 
-class ContextMetadataModel(MetadataModel):
+class ContextMetadataModel(HashedMetadataModel):
     @classmethod
     def from_class(cls, item_cls: typing.Type):
 
@@ -67,6 +93,9 @@ class ContextMetadataModel(MetadataModel):
     labels: typing.Dict[str, str] = Field(
         description="A list of labels for the item.", default_factory=list
     )
+
+    def _obj_to_hash(self) -> typing.Any:
+        return self.dict()
 
     def create_renderable(self, **config: typing.Any) -> RenderableType:
 
@@ -113,7 +142,7 @@ class ContextMetadataModel(MetadataModel):
         return link.url
 
 
-class DocumentationMetadataModel(MetadataModel):
+class DocumentationMetadataModel(HashedMetadataModel):
 
     _metadata_key = "documentation"
 
@@ -185,6 +214,9 @@ class DocumentationMetadataModel(MetadataModel):
         description="Detailed documentation of the item (in markdown).", default=None
     )
 
+    def _obj_to_hash(self) -> typing.Any:
+        return self.full_doc
+
     @property
     def full_doc(self):
 
@@ -198,7 +230,7 @@ class DocumentationMetadataModel(MetadataModel):
         return Markdown(self.full_doc)
 
 
-class OriginMetadataModel(MetadataModel):
+class OriginMetadataModel(HashedMetadataModel):
 
     _metadata_key = "origin"
 
@@ -212,6 +244,9 @@ class OriginMetadataModel(MetadataModel):
     authors: typing.List[AuthorModel] = Field(
         description="The authors/creators of this item.", default_factory=list
     )
+
+    def _obj_to_hash(self) -> typing.Any:
+        return self.authors
 
     def create_renderable(self, **config: typing.Any) -> RenderableType:
 
@@ -251,6 +286,12 @@ class PythonClassMetadata(MetadataModel):
     )
     full_name: str = Field(description="The full class namespace.")
 
+    def get_id(self) -> str:
+        return self.full_name
+
+    def get_category_alias(self) -> str:
+        return "metadata.python_class"
+
     def get_class(self) -> typing.Type:
         m = self.get_module()
         return getattr(m, self.class_name)
@@ -260,7 +301,7 @@ class PythonClassMetadata(MetadataModel):
         return m
 
 
-class MetadataModelMetadata(MetadataModel):
+class MetadataModelMetadata(WrapperMetadataModel):
     @classmethod
     def from_model_class(cls, model_cls: typing.Type[MetadataModel]):
 
@@ -287,9 +328,9 @@ class MetadataModelMetadata(MetadataModel):
     context: ContextMetadataModel = Field(
         description="Generic properties of this value type."
     )
-    python_class: PythonClassMetadata = Field(
-        description="The Python class for this value type."
-    )
+
+    def get_category_alias(self) -> str:
+        return "metadata.model"
 
     def create_fields_table(
         self, show_header: bool = True, show_required: bool = True

@@ -11,11 +11,10 @@ from rich.console import RenderableType
 from rich.table import Table
 
 from kiara import Kiara
-from kiara.info import KiaraInfoModel
-from kiara.metadata.core_models import MetadataModelMetadata
+from kiara.metadata.core_models import HashedMetadataModel, MetadataModelMetadata
 
 
-class MetadataModelsInfo(KiaraInfoModel):
+class MetadataModelsInfo(HashedMetadataModel):
 
     __root__: typing.Dict[str, MetadataModelMetadata]
 
@@ -42,6 +41,12 @@ class MetadataModelsInfo(KiaraInfoModel):
             )
 
         return MetadataModelsInfo(__root__=models)
+
+    def _obj_to_hash(self) -> typing.Any:
+        return {k: v.get_id() for k, v in self.__root__.items()}
+
+    def get_category_alias(self) -> str:
+        return "metadata.models_group"
 
     def create_renderable(self, **config: typing.Any) -> RenderableType:
 

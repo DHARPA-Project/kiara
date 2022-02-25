@@ -11,6 +11,13 @@ from rich import box
 from rich.console import RenderableType
 from rich.table import Table
 
+from kiara.defaults import (
+    MODULE_TYPES_CATEGORY_ALIAS,
+    OPERATION_TYPES_CATEGORY_ALIAS,
+    OPERATIONS_CATEGORY_ALIAS,
+    PIPELINE_TYPES_CATEGORY_ALIAS,
+    VALUE_TYPES_CATEGORY_ALIAS,
+)
 from kiara.info import KiaraDynamicInfoModel, KiaraInfoModel
 from kiara.info.modules import ModuleTypesGroupInfo
 from kiara.info.operations import OperationsInfo
@@ -57,11 +64,11 @@ if typing.TYPE_CHECKING:
 class KiaraContext(KiaraInfoModel):
 
     available_categories: typing.ClassVar = [
-        "value_types",
-        "modules",
-        "pipelines",
-        "operations",
-        "operation_types",
+        VALUE_TYPES_CATEGORY_ALIAS,
+        MODULE_TYPES_CATEGORY_ALIAS,
+        PIPELINE_TYPES_CATEGORY_ALIAS,
+        OPERATIONS_CATEGORY_ALIAS,
+        OPERATION_TYPES_CATEGORY_ALIAS,
     ]
     _info_cache: typing.ClassVar = {}
 
@@ -83,30 +90,34 @@ class KiaraContext(KiaraInfoModel):
         if cache is not None:
             return cache
 
-        if category_name == "value_types":
+        if category_name == VALUE_TYPES_CATEGORY_ALIAS:
             all_types = ValueTypeMetadata.create_all(kiara=kiara)
-            info = KiaraDynamicInfoModel.create_from_child_models(**all_types)
-        elif category_name == "modules":
+            info = KiaraDynamicInfoModel.create_from_child_models(**all_types)  # type: ignore
+        elif category_name == MODULE_TYPES_CATEGORY_ALIAS:
             info = ModuleTypesGroupInfo.from_type_names(
                 kiara=kiara, ignore_pipeline_modules=True
             )
-        elif category_name == "pipelines":
+        elif category_name == PIPELINE_TYPES_CATEGORY_ALIAS:
             info = PipelineTypesGroupInfo.create(
                 kiara=kiara, ignore_errors=ignore_errors
             )
-        elif category_name == "operation_types":
+        elif category_name == OPERATION_TYPES_CATEGORY_ALIAS:
             all_op_types = OperationsMetadata.create_all(kiara=kiara)
-            info = KiaraDynamicInfoModel.create_from_child_models(**all_op_types)
-        elif category_name == "operations":
+            info = KiaraDynamicInfoModel.create_from_child_models(
+                _category_alias=OPERATION_TYPES_CATEGORY_ALIAS, **all_op_types
+            )
+        elif category_name == OPERATIONS_CATEGORY_ALIAS:
             ops_infos = KiaraDynamicInfoModel.create_from_child_models(
-                **OperationsInfo.create_all(kiara=kiara)
+                **OperationsInfo.create_all(kiara=kiara)  # type: ignore
             )
             operation_configs = {}
             for v in ops_infos.__root__.values():
                 configs = v.operation_configs
                 operation_configs.update(configs)
 
-            info = KiaraDynamicInfoModel.create_from_child_models(**operation_configs)
+            info = KiaraDynamicInfoModel.create_from_child_models(
+                _category_alias=OPERATIONS_CATEGORY_ALIAS, **operation_configs
+            )
         else:
             raise NotImplementedError(f"Category not available: {category_name}")
 
@@ -144,6 +155,7 @@ class KiaraContext(KiaraInfoModel):
             )
 
             return KiaraContext(
+                id=kiara._id,
                 value_types=value_types,
                 modules=module_types,
                 pipelines=pipeline_types,
@@ -168,6 +180,7 @@ class KiaraContext(KiaraInfoModel):
                 )
             return current
 
+    id: str = Field(description="The id of the kiara context.")
     value_types: KiaraDynamicInfoModel = Field(
         description="Information about available value types."
     )
@@ -181,6 +194,12 @@ class KiaraContext(KiaraInfoModel):
         description="Information about operation types contained in the current kiara context."
     )
     operations: KiaraDynamicInfoModel = Field(description="Available operations.")
+
+    def get_category_alias(self) -> str:
+        return "root_context"
+
+    def get_id(self) -> str:
+        return self.id
 
     def create_renderable(self, **config: typing.Any) -> RenderableType:
 

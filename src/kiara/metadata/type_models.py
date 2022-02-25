@@ -7,6 +7,7 @@
 import typing
 from pydantic import Field
 
+from kiara.defaults import VALUE_TYPE_CATEGORY_ALIAS
 from kiara.metadata import MetadataModel
 from kiara.metadata.core_models import (
     ContextMetadataModel,
@@ -59,3 +60,9 @@ class ValueTypeMetadata(MetadataModel):
     python_class: PythonClassMetadata = Field(
         description="The Python class for this value type."
     )
+
+    def get_id(self) -> str:
+        return self.type_name
+
+    def get_category_alias(self) -> str:
+        return VALUE_TYPE_CATEGORY_ALIAS

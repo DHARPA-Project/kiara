@@ -895,6 +895,12 @@ class ValueInfo(KiaraInfoModel):
             is_valid=value.item_is_valid(),
         )
 
+    def get_id(self):
+        return self.value_id
+
+    def get_category_alias(self) -> str:
+        return "value"
+
     value_id: str = Field(description="The value id.")
     value_schema: ValueSchema = Field(description="The value schema.")
     # aliases: typing.List[ValueAlias] = Field(

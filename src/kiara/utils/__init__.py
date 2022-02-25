@@ -14,6 +14,7 @@ import logging
 import os
 import re
 import typing
+import uuid
 import yaml
 from io import StringIO
 from networkx import Graph
@@ -342,6 +343,10 @@ def check_valid_field_names(*field_names) -> typing.List[str]:
 def create_valid_identifier(text: str):
 
     return slugify(text, separator="_")
+
+
+def create_uuid4_string():
+    return str(uuid.uuid4())
 
 
 def merge_dicts(

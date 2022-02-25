@@ -201,6 +201,19 @@ class OperationMgmt(object):
         self._profiles: typing.Optional[typing.Dict[str, Operation]] = None
         self._operations: typing.Optional[typing.Dict[str, typing.List[str]]] = None
 
+    def find_operation_types_for_package(
+        self, package_name: str
+    ) -> typing.Dict[str, typing.Type[OperationType]]:
+
+        result = {}
+        for value_type_name, value_type in self.operation_type_classes.items():
+            value_md = value_type.get_type_metadata()
+            package = value_md.context.labels.get("package")
+            if package == package_name:
+                result[value_type_name] = value_type
+
+        return result
+
     @property
     def operation_type_classes(
         self,

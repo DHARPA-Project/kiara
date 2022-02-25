@@ -4,9 +4,10 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
+import abc
 import networkx as nx
 import typing
+from deepdiff import DeepHash
 from pydantic import BaseModel, PrivateAttr
 from rich import box
 from rich.console import (
@@ -21,6 +22,8 @@ from rich.console import (
 from rich.jupyter import JupyterMixin
 from rich.panel import Panel
 from rich.table import Table
+
+from kiara.defaults import KIARA_HASH_FUNCTION
 
 
 def extract_renderable(item: typing.Any):
@@ -44,7 +47,7 @@ def extract_renderable(item: typing.Any):
         return str(item)
 
 
-class KiaraInfoModel(BaseModel, JupyterMixin):
+class KiaraInfoModel(abc.ABC, BaseModel, JupyterMixin):
 
     _graph_cache: typing.Optional[nx.DiGraph] = PrivateAttr(default=None)
     _subcomponent_names_cache: typing.Union[None, bool, typing.List[str]] = PrivateAttr(
@@ -53,6 +56,32 @@ class KiaraInfoModel(BaseModel, JupyterMixin):
     _dynamic_subcomponents: typing.Dict[str, "KiaraInfoModel"] = PrivateAttr(
         default_factory=dict
     )
+
+    @abc.abstractmethod
+    def get_id(self) -> str:
+        pass
+
+    @abc.abstractmethod
+    def get_category_alias(self) -> str:
+        pass
+
+    def find_subcomponents(self, category: str) -> typing.Dict[str, "KiaraInfoModel"]:
+
+        tree = self.get_subcomponent_tree()
+        if tree is None:
+            raise Exception(f"No subcomponents found for category: {category}")
+
+        result = {}
+        for node_id, node in tree.nodes.items():
+            if not hasattr(node["obj"], "get_category_alias"):
+                raise NotImplementedError()
+
+            if category != node["obj"].get_category_alias():
+                continue
+
+            n_id = node_id[9:]  # remove the __self__. token
+            result[n_id] = node["obj"]
+        return result
 
     def get_subcomponent_tree(self) -> typing.Optional[nx.DiGraph]:
 
@@ -183,11 +212,16 @@ class KiaraInfoModel(BaseModel, JupyterMixin):
 class KiaraDynamicInfoModel(KiaraInfoModel):
 
     __root__: typing.Dict[str, KiaraInfoModel]
+    _hash_cache: typing.Optional[str] = PrivateAttr(default=None)
+    _category_alias: str = PrivateAttr(default="generic_list")
 
     @classmethod
-    def create_from_child_models(cls, **childs):
+    def create_from_child_models(cls, _category_alias: str = "generic_list", **childs):
 
-        return KiaraDynamicInfoModel(__root__=childs)
+        model = KiaraDynamicInfoModel(__root__=childs)
+        model._category_alias = _category_alias
+
+        return model
 
     def create_renderable(self, **config: typing.Any) -> RenderableType:
 
@@ -201,3 +235,19 @@ class KiaraDynamicInfoModel(KiaraInfoModel):
                 v = extract_renderable(attr)
             table.add_row(k, v)
         return table
+
+    @property
+    def module_config_hash(self):
+        if self._hash_cache is not None:
+            return self._hash_cache
+
+        obj = {k: v.get_id() for k, v in self.__root__.items()}
+        h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
+        self._hash_cache = h[obj]
+        return self._hash_cache
+
+    def get_id(self) -> str:
+        return self.module_config_hash
+
+    def get_category_alias(self) -> str:
+        return self._category_alias

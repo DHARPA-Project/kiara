@@ -263,7 +263,7 @@ def find_all_metadata_models() -> typing.Dict[str, typing.Type["MetadataModel"]]
 
     return load_all_subclasses_for_entry_point(
         entry_point_name="kiara.metadata_models",
-        base_class=MetadataModel,
+        base_class=MetadataModel,  # type: ignore
         set_id_attribute="_metadata_key",
         remove_namespace_tokens=["core."],
     )
@@ -380,7 +380,7 @@ def find_metadata_models_under(
 ) -> typing.Mapping[str, typing.Type[MetadataModel]]:
 
     return find_subclasses_under(
-        base_class=MetadataModel,
+        base_class=MetadataModel,  # type: ignore
         module=module,
         prefix=prefix,
         remove_namespace_tokens=[],

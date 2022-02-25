@@ -27,6 +27,9 @@ from .pipeline.commands import pipeline
 from .run import run
 from .type.commands import type_group
 
+click.rich_click.USE_MARKDOWN = True
+click.rich_click.USE_RICH_MARKUP = True
+
 # try:
 #     import uvloop
 #

@@ -30,6 +30,7 @@ requirements:
     - filetype>=1.0.0,<2.0.0
     - importlib_metadata>=3.0
     - mkdocstrings>=0.17.0
+    - mmh3>=3.0.0
     - networkx>=2.5,<3.0
     - pp-ez>=0.2.0
     - py-multibase>=1.0.0,<2.0.0

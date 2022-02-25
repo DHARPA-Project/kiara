@@ -5,6 +5,7 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
+import mmh3
 import os
 import sys
 import typing
@@ -116,3 +117,14 @@ COLOR_LIST = [
     "light_slate_grey",
     "deep_pink4",
 ]
+KIARA_HASH_FUNCTION = mmh3.hash
+
+VALUE_TYPES_CATEGORY_ALIAS = "value_types"
+MODULE_TYPES_CATEGORY_ALIAS = "modules"
+PIPELINE_TYPES_CATEGORY_ALIAS = "pipelines"
+OPERATION_TYPES_CATEGORY_ALIAS = "operation_types"
+OPERATIONS_CATEGORY_ALIAS = "operations"
+
+MODULE_TYPE_CATEGORY_ALIAS = "metadata.module"
+VALUE_TYPE_CATEGORY_ALIAS = "metadata.value_type"
+OPERATION_TYPE_CATEGORY_ALIAS = "metadata.operation_type"

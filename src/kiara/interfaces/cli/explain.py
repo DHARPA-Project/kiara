@@ -22,7 +22,7 @@ from kiara.metadata.module_models import KiaraModuleTypeMetadata
 from kiara.metadata.operation_models import OperationsMetadata
 from kiara.module import KiaraModule
 from kiara.operations import Operation, OperationType
-from kiara.utils import log_message
+from kiara.utils import create_uuid4_string, log_message
 from kiara.utils.output import rich_print
 
 
@@ -234,6 +234,9 @@ class KiaraEntityMatches(KiaraInfoModel):
 
     _kiara: Kiara = PrivateAttr()
 
+    id: str = Field(
+        description="The entity instance id.", default_factory=create_uuid4_string
+    )
     module_types: typing.Dict[str, KiaraModuleTypeMetadata] = Field(
         description="Matching module types.", default_factory=dict
     )
@@ -246,6 +249,12 @@ class KiaraEntityMatches(KiaraInfoModel):
     values: typing.Dict[str, ValueInfo] = Field(
         description="Matching values.", default_factory=dict
     )
+
+    def get_id(self) -> str:
+        return self.id
+
+    def get_category_alias(self) -> str:
+        return "instance.entity"
 
     @property
     def no_module_types(self) -> int:

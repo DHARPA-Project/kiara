@@ -22,11 +22,12 @@ from rich.syntax import Syntax
 from rich.table import Table
 
 from kiara.data.values import ValueSchema
-from kiara.defaults import DEFAULT_NO_DESC_VALUE
-from kiara.metadata import MetadataModel, ValueTypeAndDescription
+from kiara.defaults import DEFAULT_NO_DESC_VALUE, MODULE_TYPE_CATEGORY_ALIAS
+from kiara.metadata import ValueTypeAndDescription, WrapperMetadataModel
 from kiara.metadata.core_models import (
     ContextMetadataModel,
     DocumentationMetadataModel,
+    HashedMetadataModel,
     OriginMetadataModel,
     PythonClassMetadata,
 )
@@ -39,7 +40,7 @@ if typing.TYPE_CHECKING:
     from kiara import KiaraModule
 
 
-class KiaraModuleConfigMetadata(MetadataModel):
+class KiaraModuleConfigMetadata(WrapperMetadataModel):
     @classmethod
     def from_config_class(
         cls,
@@ -84,12 +85,12 @@ class KiaraModuleConfigMetadata(MetadataModel):
             python_class=python_cls, config_values=config_values
         )
 
-    python_class: PythonClassMetadata = Field(
-        description="The Python class for this configuration."
-    )
     config_values: typing.Dict[str, ValueTypeAndDescription] = Field(
         description="The available configuration values."
     )
+
+    def get_category_alias(self) -> str:
+        return "metadata.module_config"
 
 
 def calculate_class_doc_url(base_url: str, module_type_name: str, pipeline: bool):
@@ -127,7 +128,7 @@ def calculate_class_source_url(
     return url
 
 
-class KiaraModuleTypeMetadata(MetadataModel):
+class KiaraModuleTypeMetadata(WrapperMetadataModel):
     @classmethod
     def from_module_class(cls, module_cls: typing.Type["KiaraModule"]):
 
@@ -197,9 +198,6 @@ class KiaraModuleTypeMetadata(MetadataModel):
     context: ContextMetadataModel = Field(
         description="Generic properties of this module (description, tags, labels, references, ...)."
     )
-    python_class: PythonClassMetadata = Field(
-        description="Information about the Python class for this module type."
-    )
     config: KiaraModuleConfigMetadata = Field(
         description="Details on how this module type can be configured."
     )
@@ -213,6 +211,12 @@ class KiaraModuleTypeMetadata(MetadataModel):
     process_src: str = Field(
         description="The source code of the process method of the module."
     )
+
+    def get_id(self) -> str:
+        return self.type_id
+
+    def get_category_alias(self) -> str:
+        return MODULE_TYPE_CATEGORY_ALIAS
 
     @validator("documentation", pre=True)
     def validate_doc(cls, value):
@@ -259,7 +263,7 @@ class KiaraModuleTypeMetadata(MetadataModel):
         return table
 
 
-class KiaraModuleInstanceMetadata(MetadataModel):
+class KiaraModuleInstanceMetadata(HashedMetadataModel):
     @classmethod
     def from_module_obj(cls, obj: "KiaraModule"):
 
@@ -295,6 +299,15 @@ class KiaraModuleInstanceMetadata(MetadataModel):
     outputs_schema: typing.Dict[str, ValueSchema] = Field(
         description="The schema for the module outputs."
     )
+
+    def _obj_to_hash(self) -> typing.Any:
+
+        # TODO: include environment hash and/or version?
+        obj = {"module_type": self.type_metadata.get_id(), "config": self.config}
+        return obj
+
+    def get_category_alias(self) -> str:
+        return "instance.module"
 
     def create_renderable(self, **config: typing.Any) -> RenderableType:
 

@@ -77,6 +77,12 @@ class ProcessingInfo(MetadataModel):
         description="When the job was finished.", default=None
     )
 
+    def get_id(self) -> str:
+        return self.id
+
+    def get_category_alias(self) -> str:
+        return "instance.job_info"
+
 
 class Job(ProcessingInfo):
     @classmethod

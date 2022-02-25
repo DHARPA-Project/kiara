@@ -10,13 +10,14 @@
 import deepdiff
 import os
 import typing
+from deepdiff import DeepHash
 from pydantic import BaseModel, Extra, Field, PrivateAttr, validator
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.syntax import Syntax
 from rich.table import Table
 
-from kiara.defaults import DEFAULT_NO_DESC_VALUE
+from kiara.defaults import DEFAULT_NO_DESC_VALUE, KIARA_HASH_FUNCTION
 from kiara.info import KiaraInfoModel
 from kiara.metadata.core_models import DocumentationMetadataModel
 from kiara.utils import get_data_from_file
@@ -289,6 +290,8 @@ class ModuleConfig(KiaraInfoModel):
         validate_all = True
 
     _module: typing.Optional["KiaraModule"] = PrivateAttr(default=None)
+    _hash_cache: typing.Optional[str] = PrivateAttr(default=None)
+
     module_type: str = Field(description="The module type.")
     module_config: typing.Dict[str, typing.Any] = Field(
         default_factory=dict, description="The configuration for the module."
@@ -296,6 +299,25 @@ class ModuleConfig(KiaraInfoModel):
     doc: DocumentationMetadataModel = Field(
         description="Documentation for this operation.", default=None
     )
+
+    @property
+    def module_config_hash(self):
+        if self._hash_cache is not None:
+            return self._hash_cache
+
+        hash_dict = {
+            "module_type": self.module_type,
+            "module_config": self.module_config,
+        }
+        h = DeepHash(hash_dict, hasher=KIARA_HASH_FUNCTION)
+        self._hash_cache = h[hash_dict]
+        return self._hash_cache
+
+    def get_id(self) -> str:
+        return self.module_config_hash
+
+    def get_category_alias(self) -> str:
+        return f"module_config.{self.module_type}"
 
     @validator("doc", pre=True)
     def create_doc(cls, value):

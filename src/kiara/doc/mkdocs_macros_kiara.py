@@ -12,6 +12,7 @@ from pydoc import locate
 
 from kiara import Kiara
 from kiara.data.values import Value, ValueSchema
+from kiara.info import KiaraInfoModel
 from kiara.info.kiara import KiaraContext
 from kiara.info.pipelines import PipelineState, PipelineStructureDesc
 from kiara.metadata.module_models import KiaraModuleTypeMetadata
@@ -132,6 +133,53 @@ def define_env(env):
             return f"Can't render module info: {str(e)}"
 
     @env.macro
+    def get_info_item_list_for_category(
+        category: str, limit_to_package: typing.Optional[str] = None
+    ) -> typing.Dict[str, KiaraInfoModel]:
+        return _get_info_item_list_for_category(
+            category=category, limit_to_package=limit_to_package
+        )
+
+    def _get_info_item_list_for_category(
+        category: str, limit_to_package: typing.Optional[str] = None
+    ) -> typing.Dict[str, KiaraInfoModel]:
+
+        infos = kiara_context.find_subcomponents(category=category)
+
+        if limit_to_package:
+            temp = {}
+            for n_id, obj in infos.items():
+                if obj.context.labels.get("package", None) == limit_to_package:
+                    temp[n_id] = obj
+            infos = temp
+
+        docs = {}
+        for n_id, obj in infos.items():
+            docs[obj.get_id()] = obj.documentation.description
+
+        return docs
+
+    @env.macro
+    def get_info_for_categories(
+        *categories: str, limit_to_package: typing.Optional[str] = None
+    ):
+
+        TITLE_MAP = {
+            "metadata.module": "Modules",
+            "metadata.value_type": "Value types",
+            "metadata.operation_type": "Operation types",
+        }
+        result = {}
+        for cat in categories:
+            infos = _get_info_item_list_for_category(
+                cat, limit_to_package=limit_to_package
+            )
+            if infos:
+                result[cat] = {"items": infos, "title": TITLE_MAP[cat]}
+
+        return result
+
+    @env.macro
     def get_module_list_for_package(
         package_name: str,
         include_core_modules: bool = True,
@@ -147,13 +195,11 @@ def define_env(env):
         result = []
         for name, info in modules.items():
             type_md = info.get_type_metadata()
-            result.append(f"- [``{name}``][kiara_info.modules.{name}]")
             result.append(
-                f"  - [``{name}``]({type_md.context.get_url_for_reference('module_doc')}): {type_md.documentation.description}"
+                f"[``{name}``][kiara_info.modules.{name}]: {type_md.documentation.description}"
             )
 
-        print(result)
-        return "\n".join(result)
+        return result
 
     @env.macro
     def get_value_types_for_package(package_name: str):

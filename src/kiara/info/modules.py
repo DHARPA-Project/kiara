@@ -6,10 +6,13 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import typing
+from deepdiff import DeepHash
+from pydantic import PrivateAttr
 from rich import box
 from rich.console import RenderableType
 from rich.table import Table
 
+from kiara.defaults import KIARA_HASH_FUNCTION, MODULE_TYPES_CATEGORY_ALIAS
 from kiara.info import KiaraInfoModel
 from kiara.metadata.module_models import KiaraModuleTypeMetadata
 
@@ -46,6 +49,7 @@ if typing.TYPE_CHECKING:
 class ModuleTypesGroupInfo(KiaraInfoModel):
 
     __root__: typing.Dict[str, KiaraModuleTypeMetadata]
+    _hash_cache: typing.Optional[str] = PrivateAttr(default=None)
 
     @classmethod
     def from_type_names(
@@ -155,6 +159,22 @@ class ModuleTypesGroupInfo(KiaraInfoModel):
                 table.add_row(name, details.documentation.description)
 
         return table
+
+    @property
+    def module_config_hash(self):
+        if self._hash_cache is not None:
+            return self._hash_cache
+
+        obj = {k: v.get_id() for k, v in self.__root__.items()}
+        h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
+        self._hash_cache = h[obj]
+        return self._hash_cache
+
+    def get_id(self) -> str:
+        return self.module_config_hash
+
+    def get_category_alias(self) -> str:
+        return MODULE_TYPES_CATEGORY_ALIAS
 
     def create_renderable(self, **config: typing.Any) -> RenderableType:
 

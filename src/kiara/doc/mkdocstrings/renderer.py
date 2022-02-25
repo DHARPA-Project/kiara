@@ -24,12 +24,7 @@ class KiaraInfoRenderer(BaseRenderer):
         if data is None:
             return list()
 
-        print(f"RETURN ID: {data['identifier']}")
-        return list(data["identifier"])
-        try:
-            return list({data.path, data.canonical_path, *data.aliases})
-        except AliasResolutionError:
-            return [data.path]
+        return list([data["identifier"]])
 
     def render(self, data: typing.Dict[str, typing.Any], config: dict) -> str:
 

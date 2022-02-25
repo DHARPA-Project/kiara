@@ -55,7 +55,6 @@ class KiaraCollector(BaseCollector):
 
         tokens = identifier.split(".")
         kiara_id = ".".join(tokens[1:])
-        print(f"REQUESTED: {identifier}")
         if tokens[0] != "kiara_info":
             return None
             # raise Exception(
@@ -68,6 +67,5 @@ class KiaraCollector(BaseCollector):
 
             traceback.print_exc()
             raise e
-        print(f"DONE: {identifier}")
 
         return {"obj": info, "identifier": identifier, "kiara_id": kiara_id}

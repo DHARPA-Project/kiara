@@ -67,6 +67,10 @@ def render_item_listing(
             "cls": KiaraModuleTypeMetadata,
             "extract": extract_cls_from_kiara_module_type_metadata,
         },
+        "pipeline": {
+            "cls": KiaraModuleTypeMetadata,
+            "extract": extract_cls_from_kiara_module_type_metadata,
+        },
         "value_type": {
             "cls": ValueTypeMetadata,
             "extract": extract_cls_from_value_type,
@@ -197,6 +201,7 @@ def render_item_listing(
 TYPE_ALIAS_MAP = {
     "value_type": {"name": "Value types"},
     "module": {"name": "Modules"},
+    "pipeline": {"name": "Pipelines"},
     "operation_type": {"name": "Operation types"},
 }
 

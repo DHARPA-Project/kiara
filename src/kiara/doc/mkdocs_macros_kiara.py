@@ -166,6 +166,7 @@ def define_env(env):
 
         TITLE_MAP = {
             "metadata.module": "Modules",
+            "metadata.pipeline": "Pipelines",
             "metadata.value_type": "Value types",
             "metadata.operation_type": "Operation types",
         }

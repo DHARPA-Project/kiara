@@ -25,6 +25,7 @@ from kiara.defaults import (
     COLOR_LIST,
     KIARA_HASH_FUNCTION,
     PIPELINE_PARENT_MARKER,
+    PIPELINE_TYPE_CATEGORY_ALIAS,
     PIPELINE_TYPES_CATEGORY_ALIAS,
     SpecialValue,
 )
@@ -381,6 +382,9 @@ class PipelineModuleInfo(KiaraModuleTypeMetadata):
     _kiara: "Kiara" = PrivateAttr()
     _structure: "PipelineStructure" = PrivateAttr()
     structure: PipelineStructureDesc = Field(description="The pipeline structure.")
+
+    def get_category_alias(self) -> str:
+        return PIPELINE_TYPE_CATEGORY_ALIAS
 
     def print_data_flow_graph(self, simplified: bool = True) -> None:
 

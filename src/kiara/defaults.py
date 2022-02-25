@@ -126,5 +126,6 @@ OPERATION_TYPES_CATEGORY_ALIAS = "operation_types"
 OPERATIONS_CATEGORY_ALIAS = "operations"
 
 MODULE_TYPE_CATEGORY_ALIAS = "metadata.module"
+PIPELINE_TYPE_CATEGORY_ALIAS = "metadata.pipeline"
 VALUE_TYPE_CATEGORY_ALIAS = "metadata.value_type"
 OPERATION_TYPE_CATEGORY_ALIAS = "metadata.operation_type"

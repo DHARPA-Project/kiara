@@ -24,15 +24,14 @@ def test_metadata_list_subcommand():
     result = runner.invoke(cli, "metadata list")
 
     assert result.exit_code == 0
-    assert "table" in result.stdout
-    assert "file_bundle" in result.stdout
+    assert "python_class" in result.stdout
 
 
 def test_metadata_explain_subcommand():
 
     runner = CliRunner()
-    result = runner.invoke(cli, "metadata explain table")
+    result = runner.invoke(cli, "metadata explain python_class")
 
     assert result.exit_code == 0
-    assert "'table'" in result.stdout
-    assert "column_names" in result.stdout
+    assert "Python class" in result.stdout
+    assert "Markus Binsteiner" in result.stdout

@@ -28,6 +28,7 @@ TYPE_PROFILE_MAP = {
     "gml_file": "file",
     "shp_file": "file",
     "pajek_file": "file",
+    "jit_json_file": "file",
 }
 
 
@@ -142,7 +143,14 @@ class TypeMgmt(object):
         self, profile_name: str
     ) -> typing.Mapping[str, typing.Any]:
 
-        type_name = TYPE_PROFILE_MAP[profile_name]
+        type_name = TYPE_PROFILE_MAP.get(profile_name, None)
+        if type_name is None:
+            if "file" in profile_name:
+                type_name = "file"
+            else:
+                raise Exception(
+                    f"Can't find value type name for profile: {profile_name}"
+                )
         return {"type": type_name, "type_config": {}}
 
     def determine_type(self, data: typing.Any) -> typing.Optional[ValueType]:

@@ -23,6 +23,7 @@ from kiara.data.registry.store import LocalDataStore
 from kiara.data.types import ValueType
 from kiara.data.types.type_mgmt import TypeMgmt
 from kiara.data.values.value_set import ValueSet
+from kiara.environment import RuntimeEnvironmentMgmt
 from kiara.interfaces import get_console
 from kiara.metadata.mgmt import MetadataMgmt
 from kiara.metadata.module_models import KiaraModuleTypeMetadata
@@ -134,6 +135,8 @@ class Kiara(object):
             kiara=self
         )
 
+        self._env_mgmt: RuntimeEnvironmentMgmt = RuntimeEnvironmentMgmt(kiara=self)
+
     @property
     def config(self) -> KiaraConfig:
         """The configuration of this *kiara* environment."""
@@ -203,6 +206,10 @@ class Kiara(object):
     @property
     def metadata_mgmt(self) -> MetadataMgmt:
         return self._metadata_mgmt
+
+    @property
+    def env_mgmt(self) -> RuntimeEnvironmentMgmt:
+        return self._env_mgmt
 
     @property
     def value_types(self) -> typing.Mapping[str, typing.Type[ValueType]]:

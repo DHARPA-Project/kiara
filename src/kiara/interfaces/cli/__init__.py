@@ -25,6 +25,7 @@ from .module.commands import module
 from .operation.commands import operation
 from .pipeline.commands import pipeline
 from .run import run
+from .server.commands import client, server
 from .type.commands import type_group
 
 click.rich_click.USE_MARKDOWN = True
@@ -70,6 +71,8 @@ cli.add_command(info)
 cli.add_command(metadata)
 cli.add_command(type_group)
 cli.add_command(env_group)
+cli.add_command(server)
+cli.add_command(client)
 if is_develop():
     cli.add_command(dev_group)
 

@@ -246,7 +246,8 @@ class KiaraModuleTypeMetadata(WrapperMetadataModel):
             if self.config:
                 config_cls = self.config.python_class.get_class()
                 table.add_row("Module config", create_table_from_base_model(config_cls))
-            table.add_row("Module config", "-- no config --")
+            else:
+                table.add_row("Module config", "-- no config --")
 
         table.add_row("Python class", self.python_class.create_renderable())
 

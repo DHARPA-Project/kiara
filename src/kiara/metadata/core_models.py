@@ -72,20 +72,31 @@ class WrapperMetadataModel(MetadataModel):
 
 class HashedMetadataModel(MetadataModel):
 
-    _hash_cache: typing.Optional[str] = PrivateAttr(default=None)
+    _hash_cache: typing.Optional[int] = PrivateAttr(default=None)
+    _schema_hash_cache: typing.ClassVar = None
+
+    @classmethod
+    def get_schema_hash(cls) -> int:
+        if cls._schema_hash_cache is not None:
+            return cls._schema_hash_cache
+
+        obj = cls.schema_json()
+        h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
+        cls._schema_hash_cache = h[obj]
+        return cls._schema_hash_cache
 
     @abc.abstractmethod
     def _obj_to_hash(self) -> typing.Any:
         pass
 
     def get_id(self) -> str:
-        return self.module_config_hash
+        return str(self.model_data_hash)
 
     def get_category_alias(self) -> str:
         return "metadata"
 
     @property
-    def module_config_hash(self):
+    def model_data_hash(self) -> int:
         if self._hash_cache is not None:
             return self._hash_cache
 

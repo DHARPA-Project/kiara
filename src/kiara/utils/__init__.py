@@ -11,6 +11,7 @@ import importlib
 import inspect
 import json
 import logging
+import orjson
 import os
 import re
 import typing
@@ -20,6 +21,7 @@ from io import StringIO
 from networkx import Graph
 from pathlib import Path
 from pkgutil import iter_modules
+from pydantic import BaseModel
 from pydantic.schema import (
     get_flat_models_from_model,
     get_model_name_map,
@@ -33,7 +35,7 @@ from slugify import slugify
 from types import ModuleType
 from typing import Union
 
-from kiara.defaults import INVALID_VALUE_NAMES, SpecialValue
+from kiara.defaults import INVALID_VALUE_NAMES, PYDANTIC_USE_CONSTRUCT, SpecialValue
 
 if typing.TYPE_CHECKING:
     from kiara.data.values import ValueSchema
@@ -397,3 +399,21 @@ def find_free_id(
 
 
 string_types = (type(b""), type(""))
+
+
+def create_model(
+    model_cls: typing.Type[BaseModel],
+    _use_pydantic_construct: bool = PYDANTIC_USE_CONSTRUCT,
+    **field_values: typing.Any,
+):
+
+    if _use_pydantic_construct:
+        raise NotImplementedError()
+        return model_cls.construct(**field_values)
+    else:
+        return model_cls(**field_values)
+
+
+def orjson_dumps(v, *, default):
+    # orjson.dumps returns bytes, to match standard json.dumps we need to decode
+    return orjson.dumps(v, default=default).decode()

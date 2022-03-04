@@ -24,6 +24,12 @@ else:
 KIARA_RESOURCES_FOLDER = os.path.join(KIARA_MODULE_BASE_FOLDER, "resources")
 """Default resources folder for this package."""
 
+KIARA_DB_FILE = os.path.join(kiara_app_dirs.user_data_dir, "kiara.db")
+KIARA_DB_MIGRATIONS_CONFIG = os.path.join(
+    KIARA_RESOURCES_FOLDER, "database", "alembic.ini"
+)
+KIARA_DB_MIGRATIONS_FOLDER = os.path.join(KIARA_RESOURCES_FOLDER, "database", "kiara")
+KIARA_DB_URL = f"sqlite+pysqlite:///{os.path.abspath(KIARA_DB_FILE)}"
 USER_PIPELINES_FOLDER = os.path.join(kiara_app_dirs.user_config_dir, "pipelines")
 
 KIARA_DATA_STORE_DIR = os.path.join(
@@ -117,6 +123,7 @@ COLOR_LIST = [
     "light_slate_grey",
     "deep_pink4",
 ]
+
 KIARA_HASH_FUNCTION = mmh3.hash
 
 VALUE_TYPES_CATEGORY_ALIAS = "value_types"
@@ -129,3 +136,5 @@ MODULE_TYPE_CATEGORY_ALIAS = "metadata.module"
 PIPELINE_TYPE_CATEGORY_ALIAS = "metadata.pipeline"
 VALUE_TYPE_CATEGORY_ALIAS = "metadata.value_type"
 OPERATION_TYPE_CATEGORY_ALIAS = "metadata.operation_type"
+ENVIRONMENT_TYPE_CATEGORY_ALIAS = "metadata.environment"
+PYDANTIC_USE_CONSTRUCT: bool = False

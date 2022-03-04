@@ -27,6 +27,7 @@ TYPE_PROFILE_MAP = {
     "gexf_file": "file",
     "gml_file": "file",
     "shp_file": "file",
+    "pajek_file": "file",
 }
 
 

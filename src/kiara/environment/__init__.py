@@ -9,6 +9,8 @@ import typing
 from deepdiff import DeepHash
 from pydantic import BaseModel, Field, create_model
 
+from kiara.defaults import ENVIRONMENT_TYPE_CATEGORY_ALIAS
+from kiara.metadata.core_models import HashedMetadataModel
 from kiara.utils import _get_all_subclasses, is_debug, to_camel_case
 
 if typing.TYPE_CHECKING:
@@ -27,7 +29,7 @@ class RuntimeEnvironmentConfig(BaseModel):
     )
 
 
-class BaseRuntimeEnvironment(BaseModel, abc.ABC):
+class BaseRuntimeEnvironment(HashedMetadataModel):
     class Config:
         underscore_attrs_are_private = False
         allow_mutation = False
@@ -57,6 +59,12 @@ class BaseRuntimeEnvironment(BaseModel, abc.ABC):
             raise Exception(f"Can't create environment model for '{cls.__name__}': {e}")
 
         return cls(**data)
+
+    def get_category_alias(self) -> str:
+        return f"{ENVIRONMENT_TYPE_CATEGORY_ALIAS}.{self.environment_type}"  # type: ignore
+
+    def _obj_to_hash(self) -> typing.Any:
+        return self.dict()
 
     @classmethod
     @abc.abstractmethod

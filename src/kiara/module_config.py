@@ -291,6 +291,7 @@ class ModuleConfig(KiaraInfoModel):
 
     _module: typing.Optional["KiaraModule"] = PrivateAttr(default=None)
     _hash_cache: typing.Optional[str] = PrivateAttr(default=None)
+    _data_cache: typing.Optional[str] = PrivateAttr(default=None)
 
     module_type: str = Field(description="The module type.")
     module_config: typing.Dict[str, typing.Any] = Field(
@@ -305,13 +306,23 @@ class ModuleConfig(KiaraInfoModel):
         if self._hash_cache is not None:
             return self._hash_cache
 
-        hash_dict = {
-            "module_type": self.module_type,
-            "module_config": self.module_config,
-        }
+        hash_dict = self.module_config_data
         h = DeepHash(hash_dict, hasher=KIARA_HASH_FUNCTION)
         self._hash_cache = h[hash_dict]
         return self._hash_cache
+
+    @property
+    def module_config_data(
+        self,
+    ) -> typing.Mapping[str, typing.Mapping[str, typing.Any]]:
+        if self._data_cache is not None:
+            return self._data_cache
+
+        self._data_cache = {
+            "module_type": self.module_type,
+            "module_config": self.module_config,
+        }
+        return self._data_cache
 
     def get_id(self) -> str:
         return self.module_config_hash

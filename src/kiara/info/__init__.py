@@ -6,6 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import abc
 import networkx as nx
+import orjson
 import typing
 from deepdiff import DeepHash
 from pydantic import BaseModel, PrivateAttr
@@ -24,6 +25,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from kiara.defaults import KIARA_HASH_FUNCTION
+from kiara.utils import orjson_dumps
 
 
 def extract_renderable(item: typing.Any):
@@ -48,6 +50,10 @@ def extract_renderable(item: typing.Any):
 
 
 class KiaraInfoModel(abc.ABC, BaseModel, JupyterMixin):
+    class Config:
+        json_loads = orjson.loads
+        json_dumps = orjson_dumps
+        allow_mutation = False
 
     _graph_cache: typing.Optional[nx.DiGraph] = PrivateAttr(default=None)
     _subcomponent_names_cache: typing.Union[None, bool, typing.List[str]] = PrivateAttr(

@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/architecture/decisions/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.4">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.5">
     
     
       
@@ -3539,16 +3539,16 @@ module that has those same characteristics/interface.</p>
 <p>Disadvantages:
 - the lower-level backend code needs to implement two different ways to assemble/create modules, depending on whether it's a core-module, or a pipeline</p>
 <h2 id="use-of-subclassing-in-general">Use of subclassing in general<a class="headerlink" href="#use-of-subclassing-in-general" title="Permanent link">&para;</a></h2>
-<p>Across <em>kiara</em>, I'm using subclassing and inheritance in some instances, esp. important base classes are <a href="../../reference/kiara/module/#kiara.module.KiaraModule">KiaraModule</a> and <a href="../../reference/kiara/pipeline/controller/__init__/#kiara.pipeline.controller.PipelineController">PipelineController</a>. I'm aware that this is considered bad practice in a lot of cases, and I have <a href="https://www.sicpers.info/2018/03/why-inheritance-never-made-any-sense/">read</a> <a href="https://python-patterns.guide/gang-of-four/composition-over-inheritance/">my</a> <a href="https://python-patterns.guide/gang-of-four/composition-over-inheritance/#problem-the-subclass-explosion">share</a> of opinions and thoughts about the matter. In principle I agree, and I'm not 100% happy with every decision I made (or thought I had to made) in this area for <em>kiara</em>, but overall I decided to allow for some inheritance and class-based code sharing in the code, partly to speed up my implementation work, partly because I thought some of the disadvantages (like having to search base classes for some function definitions) are not as bad in a certain context than in others. I can totally see how others would disagree here, though, and there are a few things I would like to change/improve later on, if I find the time.</p>
+<p>Across <em>kiara</em>, I'm using subclassing and inheritance in some instances, esp. important base classes are <a class="autorefs autorefs-internal" href="../../reference/kiara/module/#kiara.module.KiaraModule">KiaraModule</a> and <a class="autorefs autorefs-internal" href="../../reference/kiara/pipeline/controller/__init__/#kiara.pipeline.controller.PipelineController">PipelineController</a>. I'm aware that this is considered bad practice in a lot of cases, and I have <a href="https://www.sicpers.info/2018/03/why-inheritance-never-made-any-sense/">read</a> <a href="https://python-patterns.guide/gang-of-four/composition-over-inheritance/">my</a> <a href="https://python-patterns.guide/gang-of-four/composition-over-inheritance/#problem-the-subclass-explosion">share</a> of opinions and thoughts about the matter. In principle I agree, and I'm not 100% happy with every decision I made (or thought I had to made) in this area for <em>kiara</em>, but overall I decided to allow for some inheritance and class-based code sharing in the code, partly to speed up my implementation work, partly because I thought some of the disadvantages (like having to search base classes for some function definitions) are not as bad in a certain context than in others. I can totally see how others would disagree here, though, and there are a few things I would like to change/improve later on, if I find the time.</p>
 <p>One of the main advantages I get out of using inheritance is being able to automatically discover subclasses of a base class. This is done for multiple of those, like:</p>
 <ul>
-<li><a href="../../reference/kiara/module/#kiara.module.KiaraModule">KiaraModule</a></li>
+<li><a class="autorefs autorefs-internal" href="../../reference/kiara/module/#kiara.module.KiaraModule">KiaraModule</a></li>
 <li>[ValueType][kiara.data.type.ValueType]</li>
-<li><a href="../../reference/kiara/metadata/__init__/#kiara.metadata.MetadataModel">MetadataModel</a></li>
+<li><a class="autorefs autorefs-internal" href="../../reference/kiara/metadata/__init__/#kiara.metadata.MetadataModel">MetadataModel</a></li>
 </ul>
 <p>Using auto-discovery in a Python virtualenv removes the need for workflow/module developers to understand Python packaging and entry_points. I've written a <a href="https://github.com/DHARPA-Project/kiara_modules.project_template">project template</a> that sets up all the basics, and developers focus on creating new classes (basically plugins), with no extra registration work to be done. I hope this will aid adoption. And that I've managed to design those base classes well enough so that they are easy to use and understand, so that some of the main drawbacks of subclassing won't matter all that much.</p>
 <h2 id="requiring-to-subclass-an-abstract-base-class-when-creating-a-module">Requiring to subclass an abstract base class when creating a module<a class="headerlink" href="#requiring-to-subclass-an-abstract-base-class-when-creating-a-module" title="Permanent link">&para;</a></h2>
-<p>The main class that uses a subclassing-strategy is <a href="../../reference/kiara/module/#kiara.module.KiaraModule">KiaraModule</a>. At it's heart, it's
+<p>The main class that uses a subclassing-strategy is <a class="autorefs autorefs-internal" href="../../reference/kiara/module/#kiara.module.KiaraModule">KiaraModule</a>. At it's heart, it's
 basically just a wrapper around a pure function, with some utility methods describing it's input and output. One reason
 I decided to not just create a decorator that wraps any function was the need to be able to describe the input the
 function takes, and the output it produces in a stricter way than would have been possible with just type hints.
@@ -3646,7 +3646,7 @@ way of doing things will give us the best guarantees (and metadata).</p>
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.bd0b6b67.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.5413a266.min.js"></script>
+      <script src="../../assets/javascripts/bundle.467223ff.min.js"></script>
       
     
   </body>

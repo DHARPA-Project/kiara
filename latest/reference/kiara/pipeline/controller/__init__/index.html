@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/pipeline/controller/__init__/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.4">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.5">
     
     
       
@@ -3663,7 +3663,7 @@
 
 <h2 id="kiara.pipeline.controller.PipelineController" class="doc doc-heading">
         <code>
-PipelineController            (<a title="kiara.pipeline.listeners.PipelineListener" href="../../listeners/#kiara.pipeline.listeners.PipelineListener">PipelineListener</a>)
+PipelineController            (<a class="autorefs autorefs-internal" title="kiara.pipeline.listeners.PipelineListener" href="../../listeners/#kiara.pipeline.listeners.PipelineListener">PipelineListener</a>)
         </code>
 
 
@@ -3672,9 +3672,9 @@ PipelineController            (<a title="kiara.pipeline.listeners.PipelineListen
 
     <div class="doc doc-contents ">
 
-      <p>An object that controls how a <a href="../../pipeline/#kiara.pipeline.pipeline.Pipeline">Pipeline</a> should react to events related to it's inputs/outputs.</p>
+      <p>An object that controls how a <a class="autorefs autorefs-internal" href="../../pipeline/#kiara.pipeline.pipeline.Pipeline">Pipeline</a> should react to events related to it's inputs/outputs.</p>
 <p>This is the base for the central controller class that needs to be implemented by a <em>Kiara</em> frontend. The default implementation
-that is used if no <code>PipelineController</code> is provided in a <a href="../../pipeline/#kiara.pipeline.pipeline.Pipeline">Pipeline</a> constructor
+that is used if no <code>PipelineController</code> is provided in a <a class="autorefs autorefs-internal" href="../../pipeline/#kiara.pipeline.pipeline.Pipeline">Pipeline</a> constructor
 is the [BatchController][kiara.pipeline.controller.BatchController], which basically waits until all required inputs are
 set, and then processes all pipeline steps in one go (in the right order).</p>
 <p>The pipeline object to control can be set either in the constructor, or via the <code>set_pipeline</code> method. But only once,
@@ -5102,7 +5102,7 @@ since the last time processing was done.</p>
 
 <h3 id="kiara.pipeline.controller.batch.BatchController" class="doc doc-heading">
         <code>
-BatchController            (<a title="kiara.pipeline.controller.PipelineController" href="#kiara.pipeline.controller.PipelineController">PipelineController</a>)
+BatchController            (<a class="autorefs autorefs-internal" title="kiara.pipeline.controller.PipelineController" href="#kiara.pipeline.controller.PipelineController">PipelineController</a>)
         </code>
 
 
@@ -5111,7 +5111,7 @@ BatchController            (<a title="kiara.pipeline.controller.PipelineControll
 
     <div class="doc doc-contents ">
 
-      <p>A <a href="#kiara.pipeline.controller.PipelineController">PipelineController</a> that executes all pipeline steps non-interactively.</p>
+      <p>A <a class="autorefs autorefs-internal" href="#kiara.pipeline.controller.PipelineController">PipelineController</a> that executes all pipeline steps non-interactively.</p>
 <p>This is the default implementation of a <code>PipelineController</code>, and probably the most simple implementation of one.
 It waits until all inputs are set, after which it executes all pipeline steps in the required order.</p>
 
@@ -5435,7 +5435,7 @@ It waits until all inputs are set, after which it executes all pipeline steps in
 
 <h3 id="kiara.pipeline.controller.batch.BatchControllerManual" class="doc doc-heading">
         <code>
-BatchControllerManual            (<a title="kiara.pipeline.controller.PipelineController" href="#kiara.pipeline.controller.PipelineController">PipelineController</a>)
+BatchControllerManual            (<a class="autorefs autorefs-internal" title="kiara.pipeline.controller.PipelineController" href="#kiara.pipeline.controller.PipelineController">PipelineController</a>)
         </code>
 
 
@@ -5444,7 +5444,7 @@ BatchControllerManual            (<a title="kiara.pipeline.controller.PipelineCo
 
     <div class="doc doc-contents ">
 
-      <p>A <a href="#kiara.pipeline.controller.PipelineController">PipelineController</a> that executes all pipeline steps non-interactively.</p>
+      <p>A <a class="autorefs autorefs-internal" href="#kiara.pipeline.controller.PipelineController">PipelineController</a> that executes all pipeline steps non-interactively.</p>
 <p>This is the default implementation of a <code>PipelineController</code>, and probably the most simple implementation of one.
 It waits until all inputs are set, after which it executes all pipeline steps in the required order.</p>
 
@@ -5984,7 +5984,7 @@ you can choose to only implement the <code>step_inputs_changed</code> method if 
     <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../../assets/javascripts/workers/search.bd0b6b67.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.5413a266.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.467223ff.min.js"></script>
       
     
   </body>

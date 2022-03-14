@@ -90,8 +90,8 @@ def test_module_instance_from_config_file(
     for path in module_config_paths.values():
         mod = KiaraModule.create_instance(path, kiara=kiara)
         assert isinstance(mod, KiaraModule)
-        assert mod.input_schemas.keys()
-        assert mod.output_schemas.keys()
+        assert mod.inputs_schema.keys()
+        assert mod.outputs_schema.keys()
 
 
 def test_module_instance_from_pipeline_config_files(
@@ -101,5 +101,5 @@ def test_module_instance_from_pipeline_config_files(
     for path in pipeline_paths.values():
         mod = KiaraModule.create_instance(path, kiara=kiara)
         assert isinstance(mod, KiaraModule)
-        assert mod.input_schemas.keys()
-        assert mod.output_schemas.keys()
+        assert mod.inputs_schema.keys()
+        assert mod.outputs_schema.keys()

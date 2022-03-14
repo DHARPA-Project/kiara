@@ -11,13 +11,14 @@ from pydantic import BaseModel
 from pydoc import locate
 
 from kiara import Kiara
-from kiara.data.values import Value, ValueSchema
 from kiara.info import KiaraInfoModel
 from kiara.info.kiara import KiaraContext
 from kiara.info.pipelines import PipelineState, PipelineStructureDesc
 from kiara.metadata.module_models import KiaraModuleTypeMetadata
+from kiara.models.values.value import Value
+from kiara.models.values.value_schema import ValueSchema
 from kiara.module_config import ModuleConfig, ModuleTypeConfigSchema
-from kiara.module_mgmt.pipelines import PipelineModuleManager
+from kiara.modules.module_mgmt import PipelineModuleManager
 from kiara.pipeline import PipelineValueInfo, PipelineValuesInfo, StepValueAddress
 from kiara.pipeline.config import PipelineConfig
 from kiara.pipeline.pipeline import (
@@ -167,8 +168,8 @@ def define_env(env):
         TITLE_MAP = {
             "metadata.module": "Modules",
             "metadata.pipeline": "Pipelines",
-            "metadata.value_type": "Value types",
-            "metadata.operation_type": "Operation types",
+            "metadata.type": "ValueOrm value_types",
+            "metadata.operation_type": "Operation value_types",
         }
         result = {}
         for cat in categories:
@@ -205,7 +206,9 @@ def define_env(env):
     @env.macro
     def get_value_types_for_package(package_name: str):
 
-        value_types = kiara_obj.type_mgmt.find_value_types_for_package(package_name)
+        value_types = kiara_obj.type_mgmt.find_value_type_classes_for_package(
+            package_name
+        )
         result = []
         for name, info in value_types.items():
             type_md = info.get_type_metadata()

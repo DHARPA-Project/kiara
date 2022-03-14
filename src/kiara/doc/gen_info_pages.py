@@ -71,7 +71,7 @@ def render_item_listing(
             "cls": KiaraModuleTypeMetadata,
             "extract": extract_cls_from_kiara_module_type_metadata,
         },
-        "value_type": {
+        "type": {
             "cls": ValueTypeMetadata,
             "extract": extract_cls_from_value_type,
         },
@@ -199,10 +199,10 @@ def render_item_listing(
 
 
 TYPE_ALIAS_MAP = {
-    "value_type": {"name": "Value types"},
+    "type": {"name": "ValueOrm value_types"},
     "module": {"name": "Modules"},
     "pipeline": {"name": "Pipelines"},
-    "operation_type": {"name": "Operation types"},
+    "operation_type": {"name": "Operation value_types"},
 }
 
 
@@ -213,7 +213,7 @@ def generate_pages_and_summary_for_types(
 ) -> typing.Dict[str, typing.Dict[str, typing.Any]]:
 
     if types is None:
-        types = ["value_type", "module", "operation_type"]
+        types = ["type", "module", "operation_type"]
 
     type_details: typing.Dict[str, typing.Dict[str, typing.Any]] = {
         t: dict(TYPE_ALIAS_MAP[t]) for t in types

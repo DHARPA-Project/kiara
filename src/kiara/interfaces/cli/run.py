@@ -18,10 +18,11 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 
 from kiara import Kiara
-from kiara.data.values.value_set import ValueSet, ValuesInfo
 from kiara.defaults import DEFAULT_TO_JSON_CONFIG
 from kiara.interfaces.cli.utils import _create_module_instance
-from kiara.module import KiaraModule
+from kiara.models.values.value import ValueSet
+from kiara.models.values.value_set import ValuesInfo
+from kiara.modules import KiaraModule
 from kiara.pipeline import StepStatus
 from kiara.pipeline.controller.batch import BatchController
 from kiara.processing import JobStatus
@@ -119,7 +120,7 @@ def run(ctx, module, inputs, module_config, output, explain, save):
         if one_required:
 
             inputs_table = create_table_from_field_schemas(
-                _show_header=True, **module_obj.input_schemas
+                _show_header=True, **module_obj.inputs_schema
             )
             print()
             print(
@@ -283,7 +284,7 @@ def run(ctx, module, inputs, module_config, output, explain, save):
                         p = Panel(
                             RenderGroup(*renderables),
                             box=box.ROUNDED,
-                            title=f"Value: [b i]{field_name}[/b i]",
+                            title=f"ValueOrm: [b i]{field_name}[/b i]",
                             title_align="left",
                         )
                         all_renderables.append(p)

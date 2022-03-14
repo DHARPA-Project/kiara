@@ -27,7 +27,7 @@ Across *kiara*, I'm using subclassing and inheritance in some instances, esp. im
 One of the main advantages I get out of using inheritance is being able to automatically discover subclasses of a base class. This is done for multiple of those, like:
 
 - [KiaraModule][kiara.module.KiaraModule]
-- [ValueType][kiara.data.type.ValueType]
+- [ValueTypeOrm][kiara.data.type.ValueTypeOrm]
 - [MetadataModel][kiara.metadata.MetadataModel]
 
 Using auto-discovery in a Python virtualenv removes the need for workflow/module developers to understand Python packaging and entry_points. I've written a [project template](https://github.com/DHARPA-Project/kiara_modules.project_template) that sets up all the basics, and developers focus on creating new classes (basically plugins), with no extra registration work to be done. I hope this will aid adoption. And that I've managed to design those base classes well enough so that they are easy to use and understand, so that some of the main drawbacks of subclassing won't matter all that much.

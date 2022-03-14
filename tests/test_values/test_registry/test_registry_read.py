@@ -10,7 +10,8 @@ import typing
 
 from kiara import Kiara
 from kiara.data.registry import DataRegistry, InMemoryDataRegistry
-from kiara.data.values import NO_ID_YET_MARKER, Value, ValueSchema, ValueSlot
+from kiara.data.values import NO_ID_YET_MARKER, Value, ValueSlot
+from kiara.models.values.value_schema import ValueSchema
 
 
 class SimpleTestRegistry(DataRegistry):
@@ -150,7 +151,7 @@ def test_default_data_registry_aliases(kiara: Kiara):
     value_ret = reg.get_value_obj("xxx")
     assert value_ret is None
 
-    val_1 = reg.register_data(value_data="xxx", value_schema=string_schema)
+    val_1 = reg.register_data(data="xxx", value_schema=string_schema)
     value_slot_1.add_value(val_1)
 
     assert value_slot_1.get_latest_value().get_value_data() == "xxx"

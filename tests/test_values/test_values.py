@@ -7,9 +7,10 @@
 import pytest
 
 from kiara import Kiara
-from kiara.data.values import Value, ValueSchema
+from kiara.data.values import Value
 from kiara.data.values.value_set import SlottedValueSet
 from kiara.defaults import SpecialValue
+from kiara.models.values.value_schema import ValueSchema
 
 
 def test_values_create(kiara: Kiara):
@@ -29,19 +30,19 @@ def test_registry_values(kiara: Kiara):
     with pytest.raises(Exception):
         v.get_value_data()
 
-    v = reg.register_data(value_data=None, value_schema=value_schema_1)
+    v = reg.register_data(data=None, value_schema=value_schema_1)
     v.get_value_data()
 
-    v = reg.register_data(value_data=SpecialValue.NO_VALUE, value_schema=value_schema_1)
+    v = reg.register_data(data=SpecialValue.NO_VALUE, value_schema=value_schema_1)
     assert v.get_value_data() is None
 
-    v = reg.register_data(value_data=SpecialValue.NOT_SET, value_schema=value_schema_1)
+    v = reg.register_data(data=SpecialValue.NOT_SET, value_schema=value_schema_1)
     with pytest.raises(Exception) as e:
         v.get_value_data()
 
-    assert "Value not set" in str(e.value)
+    assert "ValueOrm not set" in str(e.value)
 
-    v = reg.register_data(value_data="xxx", value_schema=value_schema_1)
+    v = reg.register_data(data="xxx", value_schema=value_schema_1)
     assert v.get_value_data() == "xxx"
 
 

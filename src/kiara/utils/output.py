@@ -4,24 +4,35 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
-import typing
+import json
 from abc import ABC, abstractmethod
-from pydantic import BaseModel, Field, root_validator
+
+import orjson
+from pydantic import BaseModel, Field, root_validator, BaseSettings
 from rich import box
-from rich.console import RenderableType
-from rich.table import Table as RichTable
+from rich.console import ConsoleRenderable, RenderableType, RenderGroup, RichCast
+from rich.syntax import Syntax
+from rich.table import Table, Table as RichTable
+from typing import Any, Iterable, Mapping, Optional, TYPE_CHECKING, Dict, Type, Union
 
+from kiara.defaults import SpecialValue
 from kiara.interfaces import get_console
+from kiara.models.values.value_metadata import ValueMetadata
 from kiara.utils import dict_from_cli_args
+from kiara.models.values.value import ORPHAN, Value
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from pyarrow import Table
+
+
+class RenderConfig(BaseModel):
+
+    render_format: str = Field(description="The output format.", default="terminal")
 
 
 class OutputDetails(BaseModel):
     @classmethod
-    def from_data(cls, data: typing.Any):
+    def from_data(cls, data: Any):
 
         if isinstance(data, str):
             if "=" in data:
@@ -29,7 +40,7 @@ class OutputDetails(BaseModel):
             else:
                 data = [f"format={data}"]
 
-        if isinstance(data, typing.Iterable):
+        if isinstance(data, Iterable):
             data = list(data)
             if len(data) == 1 and isinstance(data[0], str) and "=" not in data[0]:
                 data = [f"format={data[0]}"]
@@ -44,7 +55,7 @@ class OutputDetails(BaseModel):
 
     format: str = Field(description="The output format.")
     target: str = Field(description="The output target.")
-    config: typing.Dict[str, typing.Any] = Field(
+    config: Dict[str, Any] = Field(
         description="Output configuration.", default_factory=dict
     )
 
@@ -191,8 +202,8 @@ class OutputDetails(BaseModel):
 
 class TabularWrap(ABC):
     def __init__(self):
-        self._num_rows: typing.Optional[int] = None
-        self._column_names: typing.Optional[typing.Iterable[str]] = None
+        self._num_rows: Optional[int] = None
+        self._column_names: Optional[Iterable[str]] = None
 
     @property
     def num_rows(self) -> int:
@@ -201,13 +212,13 @@ class TabularWrap(ABC):
         return self._num_rows
 
     @property
-    def column_names(self) -> typing.Iterable[str]:
+    def column_names(self) -> Iterable[str]:
         if self._column_names is None:
             self._column_names = self.retrieve_column_names()
         return self._column_names
 
     @abstractmethod
-    def retrieve_column_names(self) -> typing.Iterable[str]:
+    def retrieve_column_names(self) -> Iterable[str]:
         pass
 
     @abstractmethod
@@ -216,20 +227,20 @@ class TabularWrap(ABC):
 
     @abstractmethod
     def slice(
-        self, offset: int = 0, length: typing.Optional[int] = None
+        self, offset: int = 0, length: Optional[int] = None
     ) -> "TabularWrap":
         pass
 
     @abstractmethod
-    def to_pydict(self) -> typing.Mapping:
+    def to_pydict(self) -> Mapping:
         pass
 
     def pretty_print(
         self,
-        rows_head: typing.Optional[int] = None,
-        rows_tail: typing.Optional[int] = None,
-        max_row_height: typing.Optional[int] = None,
-        max_cell_length: typing.Optional[int] = None,
+        rows_head: Optional[int] = None,
+        rows_tail: Optional[int] = None,
+        max_row_height: Optional[int] = None,
+        max_cell_length: Optional[int] = None,
     ) -> RenderableType:
 
         rich_table = RichTable(box=box.SIMPLE)
@@ -348,35 +359,35 @@ class ArrowTabularWrap(TabularWrap):
         self._table: "Table" = table
         super().__init__()
 
-    def retrieve_column_names(self) -> typing.Iterable[str]:
+    def retrieve_column_names(self) -> Iterable[str]:
         return self._table.column_names
 
     def retrieve_number_of_rows(self) -> int:
         return self._table.num_rows
 
-    def slice(self, offset: int = 0, length: typing.Optional[int] = None):
+    def slice(self, offset: int = 0, length: Optional[int] = None):
         return self._table.slice(offset=offset, length=length)
 
-    def to_pydict(self) -> typing.Mapping:
+    def to_pydict(self) -> Mapping:
         return self._table.to_pydict()
 
 
 class DictTabularWrap(TabularWrap):
-    def __init__(self, data: typing.Mapping[str, typing.Any]):
+    def __init__(self, data: Mapping[str, Any]):
 
-        self._data: typing.Mapping[str, typing.Any] = data
+        self._data: Mapping[str, Any] = data
 
     def retrieve_number_of_rows(self) -> int:
         return len(self._data)
 
-    def retrieve_column_names(self) -> typing.Iterable[str]:
+    def retrieve_column_names(self) -> Iterable[str]:
         return self._data.keys()
 
-    def to_pydict(self) -> typing.Mapping:
+    def to_pydict(self) -> Mapping:
         return self._data
 
     def slice(
-        self, offset: int = 0, length: typing.Optional[int] = None
+        self, offset: int = 0, length: Optional[int] = None
     ) -> "TabularWrap":
 
         result = {}
@@ -397,10 +408,15 @@ class DictTabularWrap(TabularWrap):
         return DictTabularWrap(result)
 
 
-def rich_print(msg: typing.Any = None) -> None:
+def rich_print(msg: Any = None, **config: Any) -> None:
+
     if msg is None:
         msg = ""
     console = get_console()
+
+    if hasattr(msg, "create_renderable"):
+        msg = msg.create_renderable(**config)
+
     console.print(msg)
 
 
@@ -412,17 +428,18 @@ def first_line(text: str):
         return text
 
 
-def create_table_from_base_model(model_cls: typing.Type[BaseModel]):
+def create_table_from_base_model_cls(model_cls: Type[BaseModel]):
 
-    table = RichTable(box=box.SIMPLE)
+    table = RichTable(box=box.SIMPLE, show_lines=True)
     table.add_column("Field")
     table.add_column("Type")
     table.add_column("Description")
     table.add_column("Required")
+    table.add_column("Default")
 
     props = model_cls.schema().get("properties", {})
 
-    for field_name, field in model_cls.__fields__.items():
+    for field_name, field in sorted(model_cls.__fields__.items()):
         row = [field_name]
         p = props.get(field_name, None)
         p_type = None
@@ -436,6 +453,224 @@ def create_table_from_base_model(model_cls: typing.Type[BaseModel]):
         desc = p.get("description", "")
         row.append(desc)
         row.append("yes" if field.required else "no")
+        default = field.default
+        if callable(default):
+            default = default()
+
+        if default is None:
+            default = ""
+        else:
+            try:
+                default = json.dumps(default, indent=2)
+            except:
+                default = str(default)
+        row.append(default)
+        table.add_row(*row)
+
+    return table
+
+
+# def create_table_from_config_class(
+#     config_cls: typing.Type["ModuleTypeConfigSchema"],
+#     remove_pipeline_config: bool = False,
+# ) -> Table:
+#
+#     table = Table(box=box.HORIZONTALS, show_header=False)
+#     table.add_column("Field name", style="i")
+#     table.add_column("Type")
+#     table.add_column("Description")
+#     flat_models = get_flat_models_from_model(config_cls)
+#     model_name_map = get_model_name_map(flat_models)
+#     m_schema, _, _ = model_process_schema(config_cls, model_name_map=model_name_map)
+#     fields = m_schema["properties"]
+#
+#     for field_name, details in fields.items():
+#         if remove_pipeline_config and field_name in [
+#             "steps",
+#             "input_aliases",
+#             "output_aliases",
+#             "doc",
+#         ]:
+#             continue
+#
+#         type_str = "-- n/a --"
+#         if "type" in details.keys():
+#             type_str = details["type"]
+#         table.add_row(field_name, type_str, details.get("description", "-- n/a --"))
+#
+#     return table
+
+
+def create_table_from_field_schemas(
+    _add_default: bool = True,
+    _add_required: bool = True,
+    _show_header: bool = False,
+    _constants: Optional[Mapping[str, Any]] = None,
+    **fields: "ValueSchema",
+):
+
+    table = Table(box=box.SIMPLE, show_header=_show_header)
+    table.add_column("Field name", style="i")
+    table.add_column("Type")
+    table.add_column("Description")
+
+    if _add_required:
+        table.add_column("Required")
+    if _add_default:
+        if _constants:
+            table.add_column("Default / Constant")
+        else:
+            table.add_column("Default")
+
+    for field_name, schema in fields.items():
+
+        row = [field_name, schema.type, schema.doc]
+
+        if _add_required:
+            req = schema.is_required()
+            if not req:
+                req_str = "no"
+            else:
+                if schema.default in [
+                    None,
+                    SpecialValue.NO_VALUE,
+                    SpecialValue.NOT_SET,
+                ]:
+                    req_str = "[b]yes[b]"
+                else:
+                    req_str = "no"
+            row.append(req_str)
+
+        if _add_default:
+            if _constants and field_name in _constants.keys():
+                d = f"[b]{_constants[field_name]}[/b] (constant)"
+            else:
+                if schema.default in [
+                    None,
+                    SpecialValue.NO_VALUE,
+                    SpecialValue.NOT_SET,
+                ]:
+                    d = "-- no default --"
+                else:
+                    d = str(schema.default)
+            row.append(d)
+
+        table.add_row(*row)
+
+    return table
+
+def create_table_from_model_object(model: BaseModel, **config: Any):
+
+    model_cls = model.__class__
+
+    table = RichTable(box=box.SIMPLE, show_lines=True)
+    table.add_column("Field")
+    table.add_column("Type")
+    table.add_column("Value")
+    table.add_column("Description")
+
+    props = model_cls.schema().get("properties", {})
+
+    for field_name, field in sorted(model_cls.__fields__.items()):
+        row = [field_name]
+
+        p = props.get(field_name, None)
+        p_type = None
+        if p is not None:
+            p_type = p.get("type", None)
+            # TODO: check 'anyOf' keys
+
+        if p_type is None:
+            p_type = "-- check source --"
+        row.append(p_type)
+
+        data = getattr(model, field_name)
+        row.append(extract_renderable(data, config=config))
+
+        desc = p.get("description", "")
+        row.append(desc)
+        table.add_row(*row)
+
+    return table
+
+
+def extract_renderable(item: Any, **config: Any):
+    """Try to automatically find and extract or create an object that is renderable by the 'rich' library."""
+
+    inline_models_as_json = config.setdefault("inline_models_as_json", True)
+
+    if isinstance(item, (ConsoleRenderable, RichCast, str)):
+        return item
+    elif isinstance(item, BaseModel) and not inline_models_as_json:
+        return create_table_from_model_object(item)
+    elif isinstance(item, BaseModel):
+        return item.json(indent=2)
+    elif isinstance(item, Mapping) and not inline_models_as_json:
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("Key", style="i")
+        table.add_column("Value")
+        for k, v in item.items():
+            table.add_row(k, extract_renderable(v, config=config))
+        return table
+    elif isinstance(item, Mapping):
+        result = {}
+        for k, v in item.items():
+            if isinstance(v, BaseModel):
+                v = v.dict()
+            result[k] = v
+        return json.dumps(result, indent=2)
+    elif isinstance(item, Iterable):
+        _all = []
+        for i in item:
+            _all.append(extract_renderable(i))
+        rg = RenderGroup(*_all)
+        return rg
+    else:
+        return str(item)
+
+
+def create_renderable_from_values(values: Mapping[str, "Value"], config: Optional[Mapping[str, Any]]=None) -> RenderableType:
+    """Create a renderable for this module configuration."""
+
+    if config is None:
+        config = {}
+
+    render_format = config.get("render_format", "terminal")
+    if render_format not in ["terminal"]:
+        raise Exception(f"Invalid render format: {render_format}")
+
+    show_pedigree = config.get("show_pedigree", False)
+    show_data = config.get("show_data", False)
+    show_hash = config.get("show_hash", True)
+
+    table= Table(show_lines=True, box=box.MINIMAL_DOUBLE_HEAD)
+    table.add_column("value_id", 'i')
+    table.add_column("value_type")
+    table.add_column("size")
+    if show_hash:
+        table.add_column("hash")
+    if show_pedigree:
+        table.add_column("pedigree")
+    if show_data:
+        table.add_column("data")
+
+    for id, value in sorted(values.items(), key=lambda item: item[1].value_schema.type):
+        row = [id, value.value_schema.type, str(value.value_size)]
+        if show_hash:
+            row.append(str(value.value_hash))
+        if show_pedigree:
+            if value.pedigree == ORPHAN:
+                pedigree = "-- n/a --"
+            else:
+                pedigree = value.pedigree.json(option=orjson.OPT_INDENT_2)
+            row.append(pedigree)
+        if show_data:
+            data = value.data
+            if isinstance(data, ValueMetadata):
+                data = json.dumps({"metadata": data.dict(), "schema": data.schema()}, indent=2)
+            else:
+                data = str(data)
+            row.append(data)
         table.add_row(*row)
 
     return table

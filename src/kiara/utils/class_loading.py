@@ -7,15 +7,13 @@
 
 import importlib
 import inspect
-import logging
 import os
 import sys
 import typing
 from stevedore import ExtensionManager
 from types import ModuleType
 
-from kiara.data.types import ValueType
-from kiara.metadata import MetadataModel
+from kiara.models.values.value_metadata import ValueMetadata
 from kiara.utils import (
     _get_all_subclasses,
     _import_modules_recursively,
@@ -23,12 +21,16 @@ from kiara.utils import (
     is_debug,
     log_message,
 )
+from kiara.value_types import ValueType
 
 if typing.TYPE_CHECKING:
-    from kiara.module import KiaraModule
-    from kiara.operations import OperationType
+    from kiara.modules import KiaraModule
+    from kiara.modules.operations import OperationType
 
-log = logging.getLogger("kiara")
+import structlog
+import logging
+
+logger = structlog.getLogger()
 
 KiaraEntryPointItem = typing.Union[typing.Type, typing.Tuple, typing.Callable]
 KiaraEntryPointIterable = typing.Iterable[KiaraEntryPointItem]
@@ -81,12 +83,7 @@ def find_subclasses_under(
             continue
 
         if inspect.isabstract(sc):
-            if is_debug():
-                # import traceback
-                # traceback.print_stack()
-                log.warning(f"Ignoring abstract subclass: {sc}")
-            else:
-                log.debug(f"Ignoring abstract subclass: {sc}")
+            log_message("ignore.subclass", sub_class=sc, base_class=base_class, reason="subclass is abstract")
             continue
 
         if module_name_func is None:
@@ -119,6 +116,7 @@ def load_all_subclasses_for_entry_point(
     base_class: typing.Type[SUBCLASS_TYPE],
     set_id_attribute: typing.Union[None, str] = None,
     remove_namespace_tokens: typing.Union[typing.Iterable[str], bool, None] = None,
+    include_abstract_classes: bool = False,
 ) -> typing.Dict[str, typing.Type[SUBCLASS_TYPE]]:
     """Find all subclasses of a base class via package entry points.
 
@@ -127,6 +125,7 @@ def load_all_subclasses_for_entry_point(
         base_class: the base class to look for
         set_id_attribute: whether to set the entry point id as attribute to the class, if None, no id attribute will be set, if a string, the attribute with that name will be set
         remove_namespace_tokens: a list of strings to remove from module names when autogenerating subclass ids, and prefix is None, or a boolean in which case all or none namespaces will be removed
+        include_abstract_classes: whether to include abstract classes in the result, or ignore them
 
     TODO
     """
@@ -140,7 +139,7 @@ def load_all_subclasses_for_entry_point(
     log2.addHandler(out_hdlr)
     log2.setLevel(logging.INFO)
 
-    log.debug(f"Finding {entry_point_name} items from search paths...")
+    log_message("events.loading.entry_points", entry_point_name=entry_point_name)
 
     mgr = ExtensionManager(
         namespace=entry_point_name,
@@ -148,6 +147,7 @@ def load_all_subclasses_for_entry_point(
         propagate_map_exceptions=True,
     )
 
+    import kiara.value_types.included_core_types.filesystem
     result_entrypoints: typing.Dict[str, typing.Type] = {}
     result_dynamic: typing.Dict[str, typing.Type] = {}
     for plugin in mgr:
@@ -159,10 +159,13 @@ def load_all_subclasses_for_entry_point(
 
             if set_id_attribute:
                 if hasattr(module_cls, set_id_attribute):
-                    if not getattr(module_cls, set_id_attribute) == name:
-                        log.warning(
-                            f"Item id mismatch for type {entry_point_name}: {getattr(module_cls, set_id_attribute)} != {name}, entry point key takes precedence: {name})"
+                    a = getattr(module_cls, set_id_attribute)
+                    if a is None:
+                        raise Exception(
+                            f"Class attribute '{set_id_attribute}' is 'None' class '{module_cls.__name__}', this is not allowed."
                         )
+                    if not getattr(module_cls, set_id_attribute) == name:
+                        log_message("entity.id_mismatch", details=f"item id mismatch for entrypoint type {entry_point_name}", entity_id=getattr(module_cls, set_id_attribute), entry_point_id=name, solution=f"use entry point id: {name}")
                         setattr(module_cls, set_id_attribute, name)
 
                 else:
@@ -173,7 +176,13 @@ def load_all_subclasses_for_entry_point(
             and len(plugin.plugin) >= 1
             and callable(plugin.plugin[0])
         ) or callable(plugin.plugin):
-            modules = _callable_wrapper(plugin.plugin)
+            try:
+                modules = _callable_wrapper(plugin.plugin)
+            except Exception as e:
+                if is_debug():
+                    import traceback
+                    traceback.print_exc()
+                raise Exception(f"Error trying to load plugin '{plugin.plugin}': {e}")
 
             for k, v in modules.items():
                 _name = f"{name}.{k}"
@@ -213,6 +222,15 @@ def load_all_subclasses_for_entry_point(
             )
         result[k] = v
 
+    if not include_abstract_classes:
+        temp = {}
+        for k, v in result.items():
+            if not inspect.isabstract(v):
+                temp[k] = v
+            else:
+                log_message("ignore.subclass", sub_class=v, base_class=base_class, reason="subclass is abstract")
+        result = temp
+
     return result
 
 
@@ -222,7 +240,7 @@ def find_all_kiara_modules() -> typing.Dict[str, typing.Type["KiaraModule"]]:
     TODO
     """
 
-    from kiara.module import KiaraModule
+    from kiara.modules import KiaraModule
 
     modules = load_all_subclasses_for_entry_point(
         entry_point_name="kiara.modules",
@@ -235,11 +253,7 @@ def find_all_kiara_modules() -> typing.Dict[str, typing.Type["KiaraModule"]]:
     for k, cls in modules.items():
 
         if not hasattr(cls, "process"):
-            msg = f"Ignoring module class '{cls}': no 'process' method."
-            if is_debug():
-                log.warning(msg)
-            else:
-                log.debug(msg)
+            log_message("ignore.module.class", cls=cls, reason="no 'process' method")
             continue
 
         # TODO: check signature of process method
@@ -255,21 +269,21 @@ def find_all_kiara_modules() -> typing.Dict[str, typing.Type["KiaraModule"]]:
     return result
 
 
-def find_all_metadata_models() -> typing.Dict[str, typing.Type["MetadataModel"]]:
+def find_all_metadata_models() -> typing.Dict[str, typing.Type[ValueMetadata]]:
     """Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.
 
     TODO
     """
 
     return load_all_subclasses_for_entry_point(
-        entry_point_name="kiara.metadata_models",
-        base_class=MetadataModel,  # type: ignore
+        entry_point_name="kiara.value_metadata",
+        base_class=ValueMetadata,  # type: ignore
         set_id_attribute="_metadata_key",
         remove_namespace_tokens=["core."],
     )
 
 
-def find_all_value_types() -> typing.Dict[str, typing.Type["ValueType"]]:
+def find_all_value_types() -> typing.Dict[str, typing.Type["ValueTypeOrm"]]:
     """Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.
 
     TODO
@@ -293,7 +307,7 @@ def find_all_value_types() -> typing.Dict[str, typing.Type["ValueType"]]:
 
 def find_all_operation_types() -> typing.Dict[str, typing.Type["OperationType"]]:
 
-    from kiara.operations import OperationType
+    from kiara.modules.operations import OperationType
 
     return load_all_subclasses_for_entry_point(
         entry_point_name="kiara.operation_types",
@@ -361,7 +375,7 @@ def find_kiara_modules_under(
     remove_namespace_tokens: typing.Optional[typing.Iterable[str]] = None,
 ) -> typing.Mapping[str, typing.Type["KiaraModule"]]:
 
-    from kiara.module import KiaraModule
+    from kiara.modules import KiaraModule
 
     if remove_namespace_tokens is None:
         remove_namespace_tokens = ["kiara_modules."]
@@ -375,17 +389,17 @@ def find_kiara_modules_under(
     )
 
 
-def find_metadata_models_under(
-    module: typing.Union[str, ModuleType], prefix: typing.Optional[str] = ""
-) -> typing.Mapping[str, typing.Type[MetadataModel]]:
-
-    return find_subclasses_under(
-        base_class=MetadataModel,  # type: ignore
-        module=module,
-        prefix=prefix,
-        remove_namespace_tokens=[],
-        module_name_func=_get_and_set_metadata_model_name,
-    )
+# def find_metadata_models_under(
+#     module: typing.Union[str, ModuleType], prefix: typing.Optional[str] = ""
+# ) -> typing.Mapping[str, typing.Type[MetadataModel]]:
+#
+#     return find_subclasses_under(
+#         base_class=MetadataModel,  # type: ignore
+#         module=module,
+#         prefix=prefix,
+#         remove_namespace_tokens=[],
+#         module_name_func=_get_and_set_metadata_model_name,
+#     )
 
 
 def find_value_types_under(
@@ -431,7 +445,7 @@ def find_pipeline_base_path_for_module(
     path = os.path.dirname(module_file)
 
     if not os.path.exists:
-        log_message(f"Pipelines folder '{path}' does not exist, ignoring...")
+        log_message("ignore.pipeline_folder", path=path, reason=f"folder does not exist")
         return None
 
     return path
@@ -441,6 +455,7 @@ def find_all_kiara_pipeline_paths(
     skip_errors: bool = False,
 ) -> typing.Dict[str, typing.List[typing.Tuple[typing.Optional[str], str]]]:
 
+    import logging
     log2 = logging.getLogger("stevedore")
     out_hdlr = logging.StreamHandler(sys.stdout)
     out_hdlr.setFormatter(
@@ -450,7 +465,7 @@ def find_all_kiara_pipeline_paths(
     log2.addHandler(out_hdlr)
     log2.setLevel(logging.INFO)
 
-    log.debug("Loading kiara pipelines...")
+    log_message("events.loading.pipelines")
 
     mgr = ExtensionManager(
         namespace="kiara.pipelines", invoke_on_load=False, propagate_map_exceptions=True
@@ -511,10 +526,10 @@ def find_all_kiara_pipeline_paths(
         #     #     plugin.plugin
         #     # )
         else:
-            msg = f"Can't load pipelines for entrypoint '{name}': invalid plugin type '{type(plugin.plugin)}'"
             if skip_errors:
-                log_message(msg)
+                log_message("ignore.pipline_entrypoint", entrypoint_name=name, reason=f"invalid plugin type '{type(plugin.plugin)}'")
                 continue
+            msg = f"Can't load pipelines for entrypoint '{name}': invalid plugin type '{type(plugin.plugin)}'"
             raise Exception(msg)
 
     result: typing.Dict[str, typing.List[typing.Tuple[typing.Optional[str], str]]] = {}

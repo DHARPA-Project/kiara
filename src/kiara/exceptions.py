@@ -9,8 +9,7 @@ import typing
 
 if typing.TYPE_CHECKING:
     from kiara import KiaraModule
-    from kiara.data.types import ValueType
-    from kiara.data.values.value_set import ValueSet
+    from kiara.models.values.value import ValueSet
 
 
 class KiaraException(Exception):
@@ -43,7 +42,7 @@ class ValueTypeConfigException(Exception):
     def __init__(
         self,
         msg: str,
-        type_cls: typing.Type["ValueType"],
+        type_cls: typing.Type["ValueTypeOrm"],
         config: typing.Mapping[str, typing.Any],
         parent: typing.Optional[Exception] = None,
     ):
@@ -64,11 +63,11 @@ class ValueTypeConfigException(Exception):
 class KiaraValueException(Exception):
     def __init__(
         self,
-        value_type: typing.Type["ValueType"],
+        value_type: typing.Type["ValueTypeOrm"],
         value_data: typing.Any,
         exception: Exception,
     ):
-        self._value_type: typing.Type["ValueType"] = value_type
+        self._value_type: typing.Type["ValueTypeOrm"] = value_type
         self._value_data: typing.Any = value_data
         self._exception: Exception = exception
 

@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 0.3.0 (Upcoming)
+## Version 0.3.2 (Upcoming)
 
 ## Version 0.3.1
 

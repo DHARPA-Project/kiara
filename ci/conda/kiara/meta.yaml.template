@@ -24,7 +24,6 @@ requirements:
     - Deprecated>=1.2.0
     - appdirs>=1.4.4,<2.0.0
     - bidict>=0.21.0
-    - click-rich>=1.2.0
     - deepdiff>=5.2.0,<6.0.0
     - distro>=1.6.0
     - dpath>=2.0.0
@@ -42,6 +41,7 @@ requirements:
     - pyyaml>=6.0.0
     - pyzmq>=22.0.0,<23.0.0
     - rich>=9.0.0,<11.0.0
+    - rich-rich>=1.2.0
     - ruamel.yaml>=0.17.0,<0.18.0
     - sqlalchemy>=1.4.0
     - sqlite

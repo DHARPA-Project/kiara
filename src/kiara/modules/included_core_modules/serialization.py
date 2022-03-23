@@ -1,14 +1,17 @@
+# -*- coding: utf-8 -*-
 import abc
-from typing import Mapping, Union, Any, Iterable, Dict
-
 from pydantic import Field, validator
+from typing import Any, Dict, Iterable, Mapping, Union
 
 from kiara import KiaraModule
-from kiara.defaults import SERIALIZED_DATA_TYPE_NAME, ANY_TYPE_NAME
+from kiara.data_types.included_core_types.serialization import (
+    DeserializationConfig,
+    SerializedValueModel,
+)
+from kiara.defaults import ANY_TYPE_NAME, SERIALIZED_DATA_TYPE_NAME
 from kiara.models.module import KiaraModuleConfig
-from kiara.models.values.value import ValueSet, Value
+from kiara.models.values.value import Value, ValueSet
 from kiara.models.values.value_schema import ValueSchema
-from kiara.data_types.included_core_types.serialization import DeserializationConfig, SerializedValueModel
 
 
 class SerializeConfig(KiaraModuleConfig):
@@ -20,6 +23,7 @@ class SerializeConfig(KiaraModuleConfig):
         if value == "serialization_config":
             raise ValueError(f"Invalid source type: {value}.")
         return value
+
 
 class SerializeValueModule(KiaraModule):
 
@@ -41,15 +45,12 @@ class SerializeValueModule(KiaraModule):
         source_type = self.get_config_value("source_type")
 
         return {
-            source_type: {
-                "type": source_type,
-                "doc": "The value to serialize."
-            },
+            source_type: {"type": source_type, "doc": "The value to serialize."},
             "serialization_config": {
                 "type": "any",
                 "doc": "Serialization-format specific configuration.",
-                "optional": True
-            }
+                "optional": True,
+            },
         }
 
     def create_outputs_schema(
@@ -59,10 +60,8 @@ class SerializeValueModule(KiaraModule):
         return {
             "serialized_value": {
                 "type": SERIALIZED_DATA_TYPE_NAME,
-                "type_config": {
-                    "format_name": self.get_serialization_format_name()
-                },
-                "doc": "The value in serialized form."
+                "type_config": {"format_name": self.get_serialization_format_name()},
+                "doc": "The value in serialized form.",
             }
         }
 
@@ -70,9 +69,7 @@ class SerializeValueModule(KiaraModule):
     def get_serialization_format_name(self) -> str:
         pass
 
-    def process(
-        self, inputs: ValueSet, outputs: ValueSet
-    ) -> None:
+    def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
 
         value = inputs.get_value_obj(self.get_config_value("source_type"))
         config = inputs.get_value_obj("serialization_config")
@@ -102,25 +99,30 @@ class PickleModule(SerializeValueModule):
         import pickle5 as pickle
 
         pickled = pickle.dumps(value.value_data, protocol=5)
-        data = {
-            "value": pickled
-        }
+        data = {"value": pickled}
 
         data_type_name = value.data_type_name
 
         deserialization_config = {
             "module_type": "value.serialize.pickle",
-            "module_config": {
-                "target_type": data_type_name
-            },
-            "output_name": data_type_name
+            "module_config": {"target_type": data_type_name},
+            "output_name": data_type_name,
         }
-        ser_val = SerializedValueModel(data=data, deserialization_config=DeserializationConfig.construct(**deserialization_config))
+        ser_val = SerializedValueModel(
+            data=data,
+            deserialization_config=DeserializationConfig.construct(
+                **deserialization_config
+            ),
+        )
         return ser_val
+
 
 class UnpickleConfig(KiaraModuleConfig):
 
-    target_type: str = Field(description="The type of the value to unpickle.", default=ANY_TYPE_NAME)
+    target_type: str = Field(
+        description="The type of the value to unpickle.", default=ANY_TYPE_NAME
+    )
+
 
 class UnpickleModule(KiaraModule):
 
@@ -135,7 +137,7 @@ class UnpickleModule(KiaraModule):
         return {
             "bytes": {
                 "type": "bytes",
-                "doc": f"The serialized bytes of the '{target_type}' value."
+                "doc": f"The serialized bytes of the '{target_type}' value.",
             }
         }
 
@@ -147,13 +149,14 @@ class UnpickleModule(KiaraModule):
         return {
             target_type: {
                 "type": target_type,
-                "doc": "The type of the value to unpickle."
-                }
+                "doc": "The type of the value to unpickle.",
             }
+        }
 
     def process(self, inputs: ValueSet, outputs: ValueSet):
 
         import pickle5 as pickle
+
         target_type = self.get_config_value("target_type")
         _bytes = inputs.get_all_value_data("bytes")
 

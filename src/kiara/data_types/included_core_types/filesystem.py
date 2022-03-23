@@ -1,14 +1,13 @@
-from typing import Optional, Any, List, Mapping, Type
-
+# -*- coding: utf-8 -*-
 import orjson.orjson
-
-from kiara.models.filesystem import FileModel, FileBundle
-from kiara.models.values.value import Value
-from kiara.utils import orjson_dumps
 import structlog
+from typing import Any, Mapping, Type
 
 from kiara.data_types import DataTypeConfig
 from kiara.data_types.included_core_types import AnyType, KiaraModelValueType
+from kiara.models.filesystem import FileBundle, FileModel
+from kiara.models.values.value import Value
+from kiara.utils import orjson_dumps
 
 logger = structlog.getLogger()
 
@@ -74,8 +73,10 @@ class FileValueType(KiaraModelValueType[FileModel, DataTypeConfig]):
             ]
             return "\n".join("lines")
 
+
 class FileBundleValueType(AnyType[FileModel, DataTypeConfig]):
     """A bundle of files (like a folder, zip archive, etc.)."""
+
     _data_type_name = "file_bundle"
 
     @classmethod
@@ -97,7 +98,9 @@ class FileBundleValueType(AnyType[FileModel, DataTypeConfig]):
         if isinstance(data, str):
             return FileBundle.import_folder(source=data)
         else:
-            raise Exception(f"Can't create FileBundle from data of type '{type(data)}'.")
+            raise Exception(
+                f"Can't create FileBundle from data of type '{type(data)}'."
+            )
 
     def render_as__renderable(
         self, value: "Value", render_config: Mapping[str, Any]

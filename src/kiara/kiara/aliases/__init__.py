@@ -1,17 +1,17 @@
+# -*- coding: utf-8 -*-
 import datetime
-from typing import Optional, Mapping, Dict, List, Any, TYPE_CHECKING, Iterable
-
 import structlog
 from rich.tree import Tree
-from sqlalchemy import desc, and_, func
+from sqlalchemy import and_, func
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, aliased
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional
 
 from kiara.kiara.aliases.aliases_orm import AliasOrm
 from kiara.models.documentation import DocumentationMetadataModel
-from kiara.models.values.value import Value, ORPHAN
+from kiara.models.values.value import ORPHAN, Value
 from kiara.models.values.value_schema import ValueSchema
-from kiara.utils.output import rich_print
+from kiara.utils import rich_print
 
 if TYPE_CHECKING:
     from kiara.kiara import DataRegistry
@@ -21,14 +21,22 @@ logger = structlog.getLogger()
 
 
 class AliasMap(object):
-
-    def __init__(self, alias: str, version: int, value: Optional[Value], values_schema: Optional[Mapping[str, ValueSchema]]=None, is_stored: bool=False):
+    def __init__(
+        self,
+        alias: str,
+        version: int,
+        value: Optional[Value],
+        values_schema: Optional[Mapping[str, ValueSchema]] = None,
+        is_stored: bool = False,
+    ):
 
         self._alias: str = alias
         self._version: int = version
-        self._is_stored: Optional[bool] = is_stored
+        self._is_stored: bool = is_stored
         self._value: Optional[Value] = value
-        self._created: datetime.datetime = datetime.datetime.now(tz=datetime.timezone.utc)
+        self._created: datetime.datetime = datetime.datetime.now(
+            tz=datetime.timezone.utc
+        )
 
         self._schemas: Dict[str, Optional[ValueSchema]] = {}
 
@@ -68,7 +76,7 @@ class AliasMap(object):
         if self._value is None:
             return None
         else:
-            return self.value.data
+            return self._value.data
 
     def get_alias(self, alias: str) -> "AliasMap":
 
@@ -82,11 +90,11 @@ class AliasMap(object):
             raise NotImplementedError()
 
         child_map = self._aliases[child]
-        child = child_map[max(child_map.keys())]
+        child_version = child_map[max(child_map.keys())]
         if rest is None:
-            return child
+            return child_version
         else:
-            return child.get_alias(rest)
+            return child_version.get_alias(rest)
 
     def set_alias(self, alias: str, value: Value):
 
@@ -99,31 +107,38 @@ class AliasMap(object):
             field_name = None
 
         if child is None:
+            assert field_name is not None
             self.set_field_value(field_name=field_name, value=value)
         else:
+            assert rest is not None
             if child not in self._aliases.keys():
                 self.set_field_value(field_name=child, value=None)
             max_version = max(self._aliases[child].keys())
             self._aliases[child][max_version].set_alias(alias=rest, value=value)
 
-
-    def add_field(self, field_name: str, schema: Optional[ValueSchema]=None):
+    def add_field(self, field_name: str, schema: Optional[ValueSchema] = None):
 
         if self._schema_locked:
             raise Exception(f"Can't add field '{field_name}': schema locked.")
         if field_name in self._schemas.keys():
-            raise Exception(f"Can't add field '{field_name}' to map: field already exists.")
+            raise Exception(
+                f"Can't add field '{field_name}' to map: field already exists."
+            )
 
         if "." in field_name:
-            raise Exception(f"Can't add field '{field_name}': invalid field name, '.' characters not allowed in name.")
+            raise Exception(
+                f"Can't add field '{field_name}': invalid field name, '.' characters not allowed in name."
+            )
 
         self._schemas[field_name] = schema
 
-    def set_field_value(self, field_name: str, value: Optional[Value]=None):
+    def set_field_value(self, field_name: str, value: Optional[Value] = None):
 
         if not field_name in self._schemas.keys():
             if not self._schema_autoadd:
-                raise Exception(f"Invalid field name '{field_name}', allowed names: {', '.join(self._schemas.keys())}")
+                raise Exception(
+                    f"Invalid field name '{field_name}', allowed names: {', '.join(self._schemas.keys())}"
+                )
 
             self.add_field(field_name=field_name)
 
@@ -134,16 +149,30 @@ class AliasMap(object):
 
             if value is None:
                 if current is None:
-                    logger.debug("set_field.skip", value_id=None, reason="last value was also 'None'")
-                    return
-            if current.value is not None:
-                if current.value.value_id == value.value_id:
-                    logger.debug("set_field.skip", value_id=value.value_id, reason="identical to last value")
+                    logger.debug(
+                        "set_field.skip",
+                        value_id=None,
+                        reason="last value was also 'None'",
+                    )
                     return
 
-        if self._schemas[field_name] and value.value_schema.type != self._schemas[field_name].type:
+            if current.value is not None:
+                if value is not None and current.value.value_id == value.value_id:
+                    logger.debug(
+                        "set_field.skip",
+                        value_id=value.value_id,
+                        reason="identical to last value",
+                    )
+                    return
+        assert value is not None
+
+        if (
+            self._schemas[field_name]
+            and value.value_schema.type != self._schemas[field_name].type  # type: ignore
+        ):
             raise Exception(
-                f"Invalid value type '{value.value_schema.type}': must be '{self._schemas[field_name].type}'")
+                f"Invalid value type '{value.value_schema.type}': must be '{self._schemas[field_name].type}'"  # type: ignore
+            )
 
         if not field_items:
             version = 1
@@ -175,7 +204,6 @@ class AliasMap(object):
 
         return tree
 
-
     def __repr__(self):
 
         return f"AliasMap(value={self.value}, field_names={self._aliases.keys()})"
@@ -185,33 +213,37 @@ class AliasMap(object):
 
 
 class AliasRegistry(AliasMap):
-
-    def __init__(self, data_registry: "DataRegistry", engine: Engine, doc: Any=None):
+    def __init__(self, data_registry: "DataRegistry", engine: Engine, doc: Any = None):
 
         self._data_registry: DataRegistry = data_registry
         self._engine: Engine = engine
         doc = DocumentationMetadataModel.create(doc)
-        v_doc = self._data_registry.register_data(doc, schema=ValueSchema(type="doc"), pedigree=ORPHAN)
+        v_doc = self._data_registry.register_data(
+            doc, schema=ValueSchema(type="doc"), pedigree=ORPHAN
+        )
         super().__init__(alias="", version=0, value=v_doc)
 
         self._load_all_aliases()
 
     def _load_all_aliases(self):
 
-        with Session(bind=self._engine, future=True) as session:
+        with Session(bind=self._engine, future=True) as session:  # type: ignore
 
             alias_a = aliased(AliasOrm)
             alias_b = aliased(AliasOrm)
 
-
-            result = session.query(
-                alias_b
-            ).join(
-                alias_a, and_(
-                    alias_a.alias == alias_b.alias,
-                    alias_a.version < alias_b.version
+            result = (
+                session.query(alias_b)
+                .join(
+                    alias_a,
+                    and_(
+                        alias_a.alias == alias_b.alias,
+                        alias_a.version < alias_b.version,
+                    ),
                 )
-            ).where(alias_b.value_id != None).order_by(func.length(alias_b.alias), alias_b.alias)
+                .where(alias_b.value_id != None)
+                .order_by(func.length(alias_b.alias), alias_b.alias)
+            )
 
             for r in result:
                 value = self._data_registry.get_value(r.value_id)
@@ -225,7 +257,7 @@ class AliasRegistry(AliasMap):
 
     def _persist(self, alias: str):
 
-        with Session(bind=self._engine, future=True) as session:
+        with Session(bind=self._engine, future=True) as session:  # type: ignore
 
             current = []
             tokens = alias.split(".")
@@ -242,8 +274,12 @@ class AliasRegistry(AliasMap):
 
                 if value_id is None:
                     continue
-                alias_map_orm = AliasOrm(value_id=value_id, created=alias_map.created, version=alias_map._version, alias=current_path)
+                alias_map_orm = AliasOrm(
+                    value_id=value_id,
+                    created=alias_map.created,
+                    version=alias_map._version,
+                    alias=current_path,
+                )
                 session.add(alias_map_orm)
 
             session.commit()
-

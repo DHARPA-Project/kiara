@@ -8,7 +8,7 @@ from rich import box
 from rich.console import RenderableType
 from rich.markdown import Markdown
 from rich.table import Table
-from typing import Any, Dict, List, Mapping, Optional, Set, Type, Callable
+from typing import Any, Callable, Dict, List, Mapping, Optional, Set, Tuple, Type, Union
 
 from kiara.defaults import (
     AUTHORS_METADATA_CATEGORY_ID,
@@ -70,7 +70,7 @@ class AuthorsMetadataModel(KiaraModel):
 
         for author in reversed(self.authors):
             if author.email:
-                authors = (author.name, author.email)
+                authors: Tuple[str, Union[str, EmailStr]] = (author.name, author.email)
             else:
                 authors = (author.name, "")
             table.add_row(*authors)
@@ -236,7 +236,7 @@ class DocumentationMetadataModel(KiaraModel):
     )
 
     def _retrieve_id(self) -> str:
-        return self.model_data_hash
+        return str(self.model_data_hash)
 
     def _retrieve_category_id(self) -> str:
         return DOCUMENTATION_CATEGORY_ID

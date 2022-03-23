@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import copy
-from typing import Any, Mapping, Union, Optional, Dict
+from typing import Any, Dict, Mapping, Optional, Union
 
 from kiara.defaults import INVALID_VALUE_NAMES, SpecialValue
 from kiara.models.values.value_schema import ValueSchema
@@ -74,8 +74,11 @@ def overlay_constants_and_defaults(
     return input_schemas, constants
 
 
-
-def augment_values(values: Mapping[str, Any], schemas: Mapping[str, ValueSchema], constants: Optional[Mapping[str, Any]]=None) -> Dict[str, Any]:
+def augment_values(
+    values: Mapping[str, Any],
+    schemas: Mapping[str, ValueSchema],
+    constants: Optional[Mapping[str, Any]] = None,
+) -> Dict[str, Any]:
 
     # TODO: check if extra fields were provided
 

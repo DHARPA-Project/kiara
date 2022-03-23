@@ -10,23 +10,15 @@
 import os.path
 import rich_click as click
 import sys
-
-from typing import Iterable, Any, Optional, Dict, List
 from pathlib import Path
-from rich import box
-from rich.console import RenderGroup
-from rich.panel import Panel
-from rich.syntax import Syntax
+from typing import Dict, Iterable, List, Optional
 
 from kiara import Kiara
-from kiara.defaults import DEFAULT_TO_JSON_CONFIG
-from kiara.models.module.operation import Operation, BaseOperationDetails
-from kiara.modules.operations.included_core_operations import CustomModuleOperationDetails
-from kiara.models.values.value import ValueSet
-from kiara.modules import KiaraModule
-from kiara.utils import dict_from_cli_args, is_debug
-from kiara.utils.output import OutputDetails, rich_print
 from kiara.models.module.manifest import Manifest
+from kiara.models.module.operation import Operation
+from kiara.models.values.value import ValueSet
+from kiara.utils import dict_from_cli_args, is_debug, rich_print
+from kiara.utils.output import OutputDetails
 from kiara.utils.values import augment_values
 
 
@@ -57,7 +49,15 @@ from kiara.utils.values import augment_values
     multiple=True,
 )
 @click.pass_context
-def run(ctx, module_or_operation: str, module_config: Iterable[str], inputs: Iterable[str], output: Iterable[str], explain: bool, save: Iterable[str]):
+def run(
+    ctx,
+    module_or_operation: str,
+    module_config: Iterable[str],
+    inputs: Iterable[str],
+    output: Iterable[str],
+    explain: bool,
+    save: Iterable[str],
+):
 
     # =========================================================================
     # initialize a few variables
@@ -108,7 +108,6 @@ def run(ctx, module_or_operation: str, module_config: Iterable[str], inputs: Ite
             )
             sys.exit(1)
 
-
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     # =========================================================================
@@ -117,12 +116,15 @@ def run(ctx, module_or_operation: str, module_config: Iterable[str], inputs: Ite
 
         operation = kiara_obj.operations_mgmt.get_operation(module_or_operation)
         if module_config:
-            print(f"Specified run target '{module_or_operation}' is an operation, additional module configuration is not allowed.")
-
+            print(
+                f"Specified run target '{module_or_operation}' is an operation, additional module configuration is not allowed."
+            )
 
     elif module_or_operation in kiara_obj.module_type_names:
 
-        manifest = Manifest(module_type=module_or_operation, module_config=module_config)
+        manifest = Manifest(
+            module_type=module_or_operation, module_config=module_config
+        )
 
         module = kiara_obj.create_module(manifest=manifest)
 
@@ -176,11 +178,13 @@ def run(ctx, module_or_operation: str, module_config: Iterable[str], inputs: Ite
 
     inputs_dict = dict_from_cli_args(*inputs, list_keys=list_keys)
 
-    augmented_inputs = augment_values(values=inputs_dict, schemas=operation.inputs_schema)
+    augmented_inputs = augment_values(
+        values=inputs_dict, schemas=operation.inputs_schema
+    )
 
     job_inputs: ValueSet = kiara_obj.data_registry.create_valueset(
-                data=augmented_inputs, schema=operation.inputs_schema
-            )
+        data=augmented_inputs, schema=operation.inputs_schema
+    )
 
     if not job_inputs.all_items_valid:
         print()

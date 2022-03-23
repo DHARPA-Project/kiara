@@ -6,10 +6,13 @@ from rich import box
 from rich.console import RenderableType
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import Any, Dict, Mapping, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional
 
-from kiara.defaults import MODULE_CONFIG_CATEGORY_ID, MODULE_CONFIG_SCHEMA_CATEGORY_ID, KIARA_HASH_FUNCTION, \
-    NO_MODULE_TYPE
+from kiara.defaults import (
+    KIARA_HASH_FUNCTION,
+    MODULE_CONFIG_CATEGORY_ID,
+    MODULE_CONFIG_SCHEMA_CATEGORY_ID,
+)
 from kiara.models import KiaraModel
 from kiara.utils import orjson_dumps
 
@@ -67,8 +70,8 @@ class KiaraModuleConfig(KiaraModel):
 
         return getattr(self, key)
 
-    def _retrieve_id(self) -> int:
-        return self.model_data_hash
+    def _retrieve_id(self) -> str:
+        return str(self.model_data_hash)
 
     def _retrieve_category_id(self) -> str:
         return MODULE_CONFIG_SCHEMA_CATEGORY_ID
@@ -179,8 +182,12 @@ class Manifest(KiaraModel):
 
 class LoadConfig(Manifest):
 
-    inputs: Dict[str, Any] = Field(description="The inputs to use to re-load the previously persisted value.")
-    output_name: str = Field(description="The name of the field that contains the persisted value details.")
+    inputs: Dict[str, Any] = Field(
+        description="The inputs to use to re-load the previously persisted value."
+    )
+    output_name: str = Field(
+        description="The name of the field that contains the persisted value details."
+    )
 
     def _retrieve_data_to_hash(self) -> Any:
         return self.dict()

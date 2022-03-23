@@ -1,16 +1,19 @@
+# -*- coding: utf-8 -*-
+from pydantic import Field
 from typing import Type
 
-from pydantic import Field
-
+from kiara.data_types import DataType, DataTypeConfig
 from kiara.models.module.manifest import LoadConfig
-from kiara.data_types import DataTypeConfig, DataType
-
 
 
 class LoadConfigSchema(DataTypeConfig):
 
-    persistence_target: str = Field(description="A hint as to the persistence target (e.g. disk).")
-    persistence_format: str = Field(description="A hint as to the persistence format (e.g. pickle).")
+    persistence_target: str = Field(
+        description="A hint as to the persistence target (e.g. disk)."
+    )
+    persistence_format: str = Field(
+        description="A hint as to the persistence format (e.g. pickle)."
+    )
 
 
 class LoadConfigValueType(DataType[LoadConfig, LoadConfigSchema]):
@@ -27,7 +30,7 @@ class LoadConfigValueType(DataType[LoadConfig, LoadConfigSchema]):
         return LoadConfig
 
     @classmethod
-    def data_type_config_class(cls) -> Type[DataTypeConfig]:
+    def data_type_config_class(cls) -> Type[LoadConfigSchema]:
         return LoadConfigSchema
 
     def is_immutable(self) -> bool:

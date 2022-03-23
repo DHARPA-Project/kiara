@@ -1,48 +1,58 @@
 # -*- coding: utf-8 -*-
 import abc
-import copy
-import json
+import structlog
 import uuid
 from enum import Enum
-
-from orjson import orjson
-from rich import box
 from rich.console import RenderableType
-from rich.table import Table
 from sqlalchemy.engine import Engine
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Union, Set, List, Iterable
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Mapping,
+    Optional,
+    Set,
+    Union,
+)
 
+from kiara.defaults import (
+    INVALID_HASH_MARKER,
+    ORPHAN_PEDIGREE_OUTPUT_NAME,
+    STRICT_CHECKS,
+    SpecialValue,
+)
 from kiara.exceptions import JobConfigException
-import structlog
-from kiara.defaults import STRICT_CHECKS, SpecialValue, NOT_SET_VALUE_ID, NONE_VALUE_ID, INVALID_HASH_MARKER, \
-    ORPHAN_PEDIGREE_OUTPUT_NAME
-from kiara.kiara.aliases import AliasMap, AliasRegistry
+from kiara.kiara.aliases import AliasRegistry
+from kiara.kiara.data_store import DataStore
+from kiara.kiara.data_store.filesystem_store import FilesystemDataStore
 from kiara.models.module.destiniy import Destiny
 from kiara.models.module.jobs import JobConfig, JobRecord
-from kiara.models.module.manifest import Manifest, LoadConfig
-from kiara.models.python_class import PythonClass
+from kiara.models.module.manifest import LoadConfig, Manifest
 from kiara.models.values import ValueStatus
 from kiara.models.values.value import (
     ORPHAN,
+    UnloadableData,
     Value,
     ValuePedigree,
     ValueSet,
-    ValueSetReadOnly, UnloadableData)
-from kiara.models.values.value_metadata import ValueMetadata
+    ValueSetReadOnly,
+)
 from kiara.models.values.value_schema import ValueSchema
-from kiara.modules.operations.included_core_operations.metadata import ExtractMetadataOperationType, \
-    ExtractMetadataDetails
-from kiara.modules.operations.included_core_operations.render_value import RenderValueOperationType
-from kiara.utils import log_message, is_debug
-
-from kiara.kiara.data_store import DataStore, DataArchive
-from kiara.kiara.data_store.filesystem_store import FilesystemDataStore
+from kiara.modules.operations.included_core_operations.metadata import (
+    ExtractMetadataDetails,
+    ExtractMetadataOperationType,
+)
+from kiara.modules.operations.included_core_operations.render_value import (
+    RenderValueOperationType,
+)
+from kiara.utils import is_debug, log_message
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
 
 logger = structlog.getLogger()
-
 
 
 class RegistryEvent(Enum):
@@ -53,8 +63,8 @@ class RegistryEvent(Enum):
     ALIAS_PRE_STORE = "alias_pre_store"
     ALIAS_STORED = "alias_stored"
 
-class DataEventHook(abc.ABC):
 
+class DataEventHook(abc.ABC):
     @abc.abstractmethod
     def get_subscribed_event_types(self) -> Iterable[RegistryEvent]:
         pass
@@ -65,7 +75,6 @@ class DataEventHook(abc.ABC):
 
 
 class CreateMetadataDestinies(DataEventHook):
-
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
@@ -91,15 +100,22 @@ class CreateMetadataDestinies(DataEventHook):
             op_details: ExtractMetadataDetails = op.operation_details  # type: ignore
             input_field_name = op_details.input_field_name
             result_field_name = op_details.result_field_name
-            self._kiara.data_registry.add_destiny(category="metadata", key=metadata_key, values={input_field_name: value}, manifest=op, result_field_name=result_field_name)
+            self._kiara.data_registry.add_destiny(
+                category="metadata",
+                key=metadata_key,
+                values={input_field_name: value},
+                manifest=op,
+                result_field_name=result_field_name,
+            )
 
     def resolve_all_metadata(self, value: Value):
 
-        self._kiara.data_registry.resolve_destinies_for_value(value=value, category="metadata")
+        self._kiara.data_registry.resolve_destinies_for_value(
+            value=value, category="metadata"
+        )
 
 
 class DataRegistry(object):
-
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
@@ -116,14 +132,15 @@ class DataRegistry(object):
         self._job_store_map: Dict[int, uuid.UUID] = {}
 
         self._destinies: Dict[uuid.UUID, Destiny] = {}
-        self._destinies_by_value: Dict[uuid.UUID, Dict[str, Dict[str, Set[Destiny]]]] = {}
+        self._destinies_by_value: Dict[
+            uuid.UUID, Dict[str, Dict[str, Set[Destiny]]]
+        ] = {}
         self._values_by_hash: Dict[int, Set[uuid.UUID]] = {}
 
         self._cached_data: Dict[uuid.UUID, Any] = {}
         self._load_configs: Dict[uuid.UUID, Optional[LoadConfig]] = {}
 
         self._alias_registry: AliasRegistry = None
-
 
         # initialize special values
         # special_value_cls = PythonClass.from_class(SpecialValue)
@@ -143,7 +160,9 @@ class DataRegistry(object):
             return self._alias_registry
 
         root_doc = "The root for all value aliases."
-        self._alias_registry = AliasRegistry(data_registry=self, engine=self._kiara._engine, doc=root_doc)
+        self._alias_registry = AliasRegistry(
+            data_registry=self, engine=self._kiara._engine, doc=root_doc
+        )
         return self._alias_registry
 
     def register_alias(self, alias: str, value: Union[Value, uuid.UUID]):
@@ -154,7 +173,9 @@ class DataRegistry(object):
 
     def add_store(self, data_store: DataStore):
         if data_store.data_store_id in self._data_stores.keys():
-            raise Exception(f"Can't add store, store id '{data_store.data_store_id}' already registered.")
+            raise Exception(
+                f"Can't add store, store id '{data_store.data_store_id}' already registered."
+            )
         self._data_stores[data_store.data_store_id] = data_store
         if self._default_data_store is None:
             self._default_data_store = data_store.data_store_id
@@ -169,7 +190,7 @@ class DataRegistry(object):
     def data_stores(self) -> Mapping[uuid.UUID, DataStore]:
         return self._data_stores
 
-    def get_store(self, store_id: Optional[uuid.UUID]=None) -> DataStore:
+    def get_store(self, store_id: Optional[uuid.UUID] = None) -> DataStore:
         if store_id is None:
             return self.default_data_store
         else:
@@ -200,7 +221,9 @@ class DataRegistry(object):
         if len(matches) == 0:
             return None
         elif len(matches) > 1:
-            raise Exception(f"Found value with id '{value}' in multiple archives, this is not supported (yet): {matches}")
+            raise Exception(
+                f"Found value with id '{value}' in multiple archives, this is not supported (yet): {matches}"
+            )
 
         self._value_store_map[value] = matches[0]
         return matches[0]
@@ -215,7 +238,6 @@ class DataRegistry(object):
         else:
             value_id = value
 
-
         if value_id in self._registered_values.keys():
             return self._registered_values[value_id]
 
@@ -228,7 +250,9 @@ class DataRegistry(object):
         if len(matches) == 0:
             raise Exception(f"No value registered with id: {value_id}")
         elif len(matches) > 1:
-            raise Exception(f"Found value with id '{value_id}' in multiple archives, this is not supported (yet): {matches}")
+            raise Exception(
+                f"Found value with id '{value_id}' in multiple archives, this is not supported (yet): {matches}"
+            )
 
         self._value_store_map[value_id] = matches[0]
         stored_value = self.get_store(matches[0]).retrieve_value(value_id=value_id)
@@ -236,7 +260,13 @@ class DataRegistry(object):
         self._registered_values[value_id] = stored_value
         return self._registered_values[value_id]
 
-    def store_value(self, value: Value, aliases: Optional[Iterable[str]]=None, store_id: Optional[uuid.UUID]=None, skip_if_exists: bool=True):
+    def store_value(
+        self,
+        value: Value,
+        aliases: Optional[Iterable[str]] = None,
+        store_id: Optional[uuid.UUID] = None,
+        skip_if_exists: bool = True,
+    ):
 
         store = self.get_store(store_id=store_id)
 
@@ -244,7 +274,7 @@ class DataRegistry(object):
 
             self.send_event(RegistryEvent.VALUE_PRE_STORE, value=value)
             load_config = store.store_value(value)
-            self._value_store_map[value.value_id]= store.data_store_id
+            self._value_store_map[value.value_id] = store.data_store_id
             self._load_configs[value.value_id] = load_config
 
             for category, keys in self.get_destinies_for_value(value=value).items():
@@ -252,7 +282,9 @@ class DataRegistry(object):
                     for destiny in destinies:
                         if destiny.result_value_id is not None:
                             self.store_value(self.get_value(destiny.result_value_id))
-                    store.persist_destinies(value=value, category=category, key=key, destinies=destinies)
+                    store.persist_destinies(
+                        value=value, category=category, key=key, destinies=destinies
+                    )
 
         if aliases:
             self.send_event(RegistryEvent.ALIAS_PRE_STORE)
@@ -263,7 +295,9 @@ class DataRegistry(object):
                 self.register_alias(alias=alias, value=value)
             self.send_event(RegistryEvent.VALUE_STORED, value=value)
 
-    def find_values_for_hash(self, value_hash: int, data_type_name: Optional[str]=None) -> Set[Value]:
+    def find_values_for_hash(
+        self, value_hash: int, data_type_name: Optional[str] = None
+    ) -> Set[Value]:
 
         if data_type_name:
             raise NotImplementedError()
@@ -272,14 +306,18 @@ class DataRegistry(object):
         if stored is None:
             matches = {}
             for store_id, store in self.data_stores.items():
-                value_ids = store.find_values_with_hash(value_hash=value_hash, data_type_name=data_type_name)
+                value_ids = store.find_values_with_hash(
+                    value_hash=value_hash, data_type_name=data_type_name
+                )
                 for v_id in value_ids:
                     matches.setdefault(v_id, []).append(store_id)
 
             stored = set()
             for v_id, store_ids in matches.items():
                 if len(store_ids) > 1:
-                    raise Exception(f"Found multiple stores for value id '{v_id}', this is not supported (yet).")
+                    raise Exception(
+                        f"Found multiple stores for value id '{v_id}', this is not supported (yet)."
+                    )
                 self._value_store_map[v_id] = store_ids[0]
                 stored.add(v_id)
 
@@ -302,7 +340,9 @@ class DataRegistry(object):
         if len(matches) == 0:
             return None
         elif len(matches) > 1:
-            raise Exception(f"Multiple stores have a record for job '{job}', this is not supported (yet).")
+            raise Exception(
+                f"Multiple stores have a record for job '{job}', this is not supported (yet)."
+            )
 
         self._job_store_map[job.model_data_hash] = matches[0]
         self._registred_jobs[job.model_data_hash] = match
@@ -331,11 +371,15 @@ class DataRegistry(object):
                 raise NotImplementedError()
 
         if schema.type not in self._kiara.data_type_names:
-            raise Exception(f"Can't register data of type '{schema.type}': type not registered. Available types: {', '.join(self._kiara.data_type_names)}")
+            raise Exception(
+                f"Can't register data of type '{schema.type}': type not registered. Available types: {', '.join(self._kiara.data_type_names)}"
+            )
 
         if isinstance(data, Value):
             if data.value_id in self._registered_values.keys():
-                raise Exception(f"Can't register value '{data.value_id}: already registered")
+                raise Exception(
+                    f"Can't register value '{data.value_id}: already registered"
+                )
 
             raise NotImplementedError()
             self._registered_values[data.value_id] = data
@@ -343,8 +387,8 @@ class DataRegistry(object):
 
         valid_type = True
         data_type = self._kiara.get_data_type(
-                data_type_name=schema.type, data_type_config=schema.type_config
-            )
+            data_type_name=schema.type, data_type_config=schema.type_config
+        )
 
         if data == SpecialValue.NOT_SET:
             status = ValueStatus.NOT_SET
@@ -353,7 +397,9 @@ class DataRegistry(object):
             status = ValueStatus.NONE
             value_hash = INVALID_HASH_MARKER
         else:
-            data, status, value_hash = data_type._pre_examine_data(data=data, schema=schema)
+            data, status, value_hash = data_type._pre_examine_data(
+                data=data, schema=schema
+            )
 
         existing_value: Optional[Value] = None
         if reuse_existing and value_hash != INVALID_HASH_MARKER:
@@ -383,7 +429,16 @@ class DataRegistry(object):
             return existing_value
 
         v_id = uuid.uuid4()
-        value, data = data_type.assemble_value(value_id=v_id, data=data, schema=schema, status=status, value_hash=value_hash, pedigree=pedigree, kiara_id=self._kiara.id, pedigree_output_name=pedigree_output_name)
+        value, data = data_type.assemble_value(
+            value_id=v_id,
+            data=data,
+            schema=schema,
+            status=status,
+            value_hash=value_hash,
+            pedigree=pedigree,
+            kiara_id=self._kiara.id,
+            pedigree_output_name=pedigree_output_name,
+        )
 
         if not valid_type:
             value._data_type_known = False
@@ -403,7 +458,10 @@ class DataRegistry(object):
 
     def retrieve_load_config(self, value_id: uuid.UUID) -> Optional[LoadConfig]:
 
-        if value_id in self._load_configs.keys() and self._load_configs[value_id] is not None:
+        if (
+            value_id in self._load_configs.keys()
+            and self._load_configs[value_id] is not None
+        ):
             load_config = self._load_configs[value_id]
         else:
             # now, the value_store map should contain this value_id
@@ -438,10 +496,13 @@ class DataRegistry(object):
         # TODO: check whether modules and value types are available
 
         try:
-            job_config = self._kiara.jobs_mgmt.prepare_job_config(manifest=load_config, inputs=load_config.inputs)
+            job_config = self._kiara.jobs_mgmt.prepare_job_config(
+                manifest=load_config, inputs=load_config.inputs
+            )
         except JobConfigException as jce:
             if is_debug():
                 import traceback
+
                 traceback.print_exc()
             return UnloadableData(value=value, load_config=load_config)
 
@@ -500,7 +561,9 @@ class DataRegistry(object):
 
         return ValueSetReadOnly(value_items=values, values_schema=schema)  # type: ignore
 
-    def retrieve_or_create_value(self, value_or_data: Any, value_schema: ValueSchema) -> Value:
+    def retrieve_or_create_value(
+        self, value_or_data: Any, value_schema: ValueSchema
+    ) -> Value:
 
         if isinstance(value_or_data, Value):
             existing = self.get_value(value_or_data)
@@ -529,8 +592,11 @@ class DataRegistry(object):
                 raise NotImplementedError()
 
         value = self.register_data(
-                    data=value_or_data, schema=value_schema, pedigree=ORPHAN, pedigree_output_name="__void__"
-            )
+            data=value_or_data,
+            schema=value_schema,
+            pedigree=ORPHAN,
+            pedigree_output_name="__void__",
+        )
         return value
 
     def create_renderable(self, **config: Any) -> RenderableType:
@@ -543,32 +609,63 @@ class DataRegistry(object):
         table = create_renderable_from_values(values=all_values, config=config)
         return table
 
-    def add_destiny(self, category: str, key: str, values: Dict[str, Union[Value, uuid.UUID]], manifest: Manifest, result_field_name: Optional[str]=None, ) -> Destiny:
+    def add_destiny(
+        self,
+        category: str,
+        key: str,
+        values: Dict[str, Union[Value, uuid.UUID]],
+        manifest: Manifest,
+        result_field_name: Optional[str] = None,
+    ) -> Destiny:
 
         if not values:
             raise Exception("Can't add destiny, no values provided.")
 
-        value_ids: Dict[str, uuid.UUID] = {k: (value if isinstance(value, uuid.UUID) else value.value_id) for k, value in values.items()}
+        value_ids: Dict[str, uuid.UUID] = {
+            k: (value if isinstance(value, uuid.UUID) else value.value_id)
+            for k, value in values.items()
+        }
 
         duplicates = []
         for value_id in value_ids.values():
-            if self._destinies_by_value.get(value_id, {}).get(category, {}).get(key, None) is not None:
+            if (
+                self._destinies_by_value.get(value_id, {})
+                .get(category, {})
+                .get(key, None)
+                is not None
+            ):
                 duplicates.append(value_id)
 
         if duplicates:
             for value_id in duplicates:
-                log_message("duplicate.destiny", category=category, key=key, value_id=value_id)
+                log_message(
+                    "duplicate.destiny", category=category, key=key, value_id=value_id
+                )
             # raise Exception(f"Can't add destiny, already existing destiny for value(s): {', '.join(duplicates)}.")
 
-        destiny = Destiny.create_from_values(kiara=self._kiara, category=category, key=key, manifest=manifest, result_field_name=result_field_name, values=value_ids)
+        destiny = Destiny.create_from_values(
+            kiara=self._kiara,
+            category=category,
+            key=key,
+            manifest=manifest,
+            result_field_name=result_field_name,
+            values=value_ids,
+        )
 
         for value_id in value_ids.values():
             self._destinies[destiny.destiny_id] = destiny
-            self._destinies_by_value.setdefault(value_id, {}).setdefault(category, {}).setdefault(key, set()).add(destiny)
+            self._destinies_by_value.setdefault(value_id, {}).setdefault(
+                category, {}
+            ).setdefault(key, set()).add(destiny)
 
         return destiny
 
-    def get_destinies_for_value(self, value: Union[uuid.UUID, Value], category: Optional[str]=None, key: Optional[str]=None) -> Mapping[str, Mapping[str, Set[Destiny]]]:
+    def get_destinies_for_value(
+        self,
+        value: Union[uuid.UUID, Value],
+        category: Optional[str] = None,
+        key: Optional[str] = None,
+    ) -> Mapping[str, Mapping[str, Set[Destiny]]]:
 
         if isinstance(value, Value):
             value = value.value_id
@@ -589,15 +686,24 @@ class DataRegistry(object):
             destinies = temp
         return destinies
 
-    def resolve_destinies_for_value(self, value: Union[uuid.UUID, Value], category: Optional[str]=None, key: Optional[str]=None) -> Dict[str, Dict[str, Dict[uuid.UUID, Value]]]:
+    def resolve_destinies_for_value(
+        self,
+        value: Union[uuid.UUID, Value],
+        category: Optional[str] = None,
+        key: Optional[str] = None,
+    ) -> Dict[str, Dict[str, Dict[uuid.UUID, Value]]]:
 
         result = {}
-        destinies = self.get_destinies_for_value(value=value, category=category, key=key)
+        destinies = self.get_destinies_for_value(
+            value=value, category=category, key=key
+        )
         for category, keys in destinies.items():
             for key, destinies in keys.items():
                 for destiny in destinies:
                     value = self.resolve_destiny(destiny)
-                    result.setdefault(category, {}).setdefault(key, {})[destiny.destiny_id] = value
+                    result.setdefault(category, {}).setdefault(key, {})[
+                        destiny.destiny_id
+                    ] = value
 
         return result
 
@@ -608,24 +714,31 @@ class DataRegistry(object):
         destiny.result_value_id = value.value_id
         return value
 
-
-    def render_data(self, value: Value, target_type="terminal_renderable", **render_config: Any) -> Any:
+    def render_data(
+        self, value: Value, target_type="terminal_renderable", **render_config: Any
+    ) -> Any:
 
         if render_config:
             raise NotImplementedError()
 
         op_type: RenderValueOperationType = self._kiara.operations_mgmt.get_operation_type("render_value")  # type: ignore
         try:
-            op = op_type.get_operation_for_render_combination(source_type=value.value_schema.type, target_type=target_type)
+            op = op_type.get_operation_for_render_combination(
+                source_type=value.value_schema.type, target_type=target_type
+            )
         except Exception:
             op = None
             if target_type == "terminal_renderable":
                 try:
-                    op = op_type.get_operation_for_render_combination(source_type="any", target_type="string")
+                    op = op_type.get_operation_for_render_combination(
+                        source_type="any", target_type="string"
+                    )
                 except Exception:
                     pass
             if op is None:
-                raise Exception(f"Can't find operation to render '{value.value_schema.type}' as '{target_type}.")
+                raise Exception(
+                    f"Can't find operation to render '{value.value_schema.type}' as '{target_type}."
+                )
 
         result = op.run(kiara=self._kiara, inputs={"value": value})
         rendered = result.get_value_data("rendered_value")

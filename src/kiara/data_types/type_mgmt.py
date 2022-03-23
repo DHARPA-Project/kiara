@@ -17,10 +17,9 @@ from typing import (
     Type,
 )
 
+from kiara.data_types import DataType
 from kiara.defaults import KIARA_ROOT_TYPE_NAME
 from kiara.utils.class_loading import find_all_data_types
-from kiara.utils.graphs import print_ascii_graph
-from kiara.data_types import DataType
 
 if TYPE_CHECKING:
     import networkx as nx
@@ -121,7 +120,6 @@ class TypeMgmt(object):
                 # we only need the first parent, all others will be taken care of by the parent of the parent
                 hierarchy.add_edge(_bases[0], name)
 
-
         self._type_hierarchy = hierarchy
         return self._type_hierarchy
 
@@ -135,7 +133,10 @@ class TypeMgmt(object):
             return self._lineages_cache[data_type_name]
 
         import networkx as nx
-        path = nx.shortest_path(self.data_type_hierarchy, KIARA_ROOT_TYPE_NAME, data_type_name)
+
+        path = nx.shortest_path(
+            self.data_type_hierarchy, KIARA_ROOT_TYPE_NAME, data_type_name
+        )
         path.remove(KIARA_ROOT_TYPE_NAME)
         self._lineages_cache[data_type_name] = list(reversed(path))
         return self._lineages_cache[data_type_name]
@@ -154,7 +155,7 @@ class TypeMgmt(object):
     def data_type_names(self) -> List[str]:
         return list(self.data_type_classes.keys())
 
-    def render_value(self, value: "Value", render_target: str="terminal", **config):
+    def render_value(self, value: "Value", render_target: str = "terminal", **config):
 
         pass
 

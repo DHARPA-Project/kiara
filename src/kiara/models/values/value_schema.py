@@ -48,7 +48,7 @@ class ValueSchema(KiaraModel):
         return DocumentationMetadataModel.create(value)
 
     def _retrieve_id(self) -> str:
-        return self.model_data_hash
+        return str(self.model_data_hash)
 
     def _retrieve_category_id(self) -> str:
         return VALUE_SCHEMA_CATEGORY_ID

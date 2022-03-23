@@ -2,34 +2,36 @@
 import abc
 import logging
 import uuid
-
 from deepdiff import DeepHash
 from pydantic import Field, PrivateAttr
 from pydantic.fields import Field
 from rich import box
-from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
-from rich.panel import Panel
+from rich.console import RenderableType
+from rich.table import Table
 from typing import (
+    TYPE_CHECKING,
     Any,
     Dict,
-    ForwardRef,
     Iterable,
     List,
     Mapping,
-    Optional, MutableMapping, Iterator, TYPE_CHECKING,
+    MutableMapping,
+    Optional,
 )
 
-from rich.table import Table
-
 from kiara.defaults import (
+    KIARA_HASH_FUNCTION,
+    NO_MODULE_TYPE,
+    UNOLOADABLE_DATA_CATEGORY_ID,
     VALUE_CATEGORY_ID,
     VALUE_PEDIGREE_TYPE_CATEGORY_ID,
     VALUES_CATEGORY_ID,
-    SpecialValue, NO_MODULE_TYPE, VOID_KIARA_ID, KIARA_HASH_FUNCTION, UNOLOADABLE_DATA_CATEGORY_ID,
+    VOID_KIARA_ID,
+    SpecialValue,
 )
 from kiara.models import KiaraModel
-from kiara.models.module.manifest import Manifest, LoadConfig
-from kiara.models.python_class import ClassKiaraModel, PythonClass
+from kiara.models.module.manifest import LoadConfig, Manifest
+from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
 from kiara.models.values.value_schema import ValueSchema
 from kiara.utils import StringYAML
@@ -37,16 +39,20 @@ from kiara.utils import StringYAML
 log = logging.getLogger("kiara")
 yaml = StringYAML()
 
-ValueSet = ForwardRef("ValueSet")
-
 if TYPE_CHECKING:
-    from kiara.kiara.data_registry import DataRegistry
     from kiara.data_types import DataType
+    from kiara.kiara import Kiara
+    from kiara.kiara.data_registry import DataRegistry
+
 
 class ValuePedigree(Manifest):
 
-    kiara_id: uuid.UUID = Field(description="The id of the kiara context a value was created in.")
-    environments: Dict[str, int] = Field(description="References to the runtime environment details a value was created in.")
+    kiara_id: uuid.UUID = Field(
+        description="The id of the kiara context a value was created in."
+    )
+    environments: Dict[str, int] = Field(
+        description="References to the runtime environment details a value was created in."
+    )
     inputs: Dict[str, uuid.UUID] = Field(
         description="A map of all the input fields and value references."
     )
@@ -99,9 +105,7 @@ class ValuePedigree(Manifest):
 
 
 class ValueDetails(KiaraModel):
-    """A wrapper class that manages and retieves value data and its details.
-
-    """
+    """A wrapper class that manages and retieves value data and its details."""
 
     value_id: uuid.UUID = Field(description="The id of the value.")
 
@@ -119,8 +123,12 @@ class ValueDetails(KiaraModel):
     pedigree: ValuePedigree = Field(
         description="Information about the module and inputs that went into creating this value."
     )
-    pedigree_output_name: str = Field(description="The output name that produced this value (using the manifest inside the pedigree).")
-    data_type_class: PythonClass = Field(description="The python class that is associtated with this model.")
+    pedigree_output_name: str = Field(
+        description="The output name that produced this value (using the manifest inside the pedigree)."
+    )
+    data_type_class: PythonClass = Field(
+        description="The python class that is associtated with this model."
+    )
 
     def _retrieve_id(self) -> str:
         return str(self.value_id)
@@ -190,7 +198,6 @@ class ValueDetails(KiaraModel):
         return self.__repr__()
 
 
-
 class Value(ValueDetails):
 
     _value_data: Any = PrivateAttr(default=SpecialValue.NOT_SET)
@@ -201,7 +208,9 @@ class Value(ValueDetails):
     @property
     def data(self) -> Any:
         if not self.is_initialized:
-            raise Exception(f"Can't retrieve data for value '{self.value_id}': value not initialized yet. This is most likely a bug.")
+            raise Exception(
+                f"Can't retrieve data for value '{self.value_id}': value not initialized yet. This is most likely a bug."
+            )
         return self._retrieve_data()
 
     def _retrieve_data(self) -> Any:
@@ -218,13 +227,15 @@ class Value(ValueDetails):
         retrieved = self._data_registry.retrieve_value_data(value_id=self.value_id)
 
         if retrieved is None or isinstance(retrieved, SpecialValue):
-            raise Exception(f"Can't set value data, invalid data type: {type(retrieved)}")
+            raise Exception(
+                f"Can't set value data, invalid data type: {type(retrieved)}"
+            )
 
         self._value_data = retrieved
         self._data_retrieved = True
         return self._value_data
 
-    def save(self, aliases: Optional[Iterable[str]]=None):
+    def save(self, aliases: Optional[Iterable[str]] = None):
 
         self._data_registry.store_value(self, aliases=aliases)
 
@@ -250,7 +261,9 @@ class Value(ValueDetails):
         if self._data_type is not None:
             return self._data_type
 
-        self._data_type = self.data_type_class.get_class()(**self.value_schema.type_config)
+        self._data_type = self.data_type_class.get_class()(
+            **self.value_schema.type_config
+        )
         return self._data_type
 
     def render_data(self, **render_config: Any) -> Any:
@@ -295,9 +308,13 @@ class Value(ValueDetails):
 
         if show_load_config:
             load_config = self._data_registry.retrieve_load_config(self.value_id)
-            table.add_row("load_config", load_config.create_renderable())
+            if load_config is None:
+                table.add_row("load_config", "-- no load config (yet?) --")
+            else:
+                table.add_row("load_config", load_config.create_renderable())
 
         return table
+
 
 class UnloadableData(KiaraModel):
     """A special 'marker' model, indicating that the data of value can't be loaded.
@@ -317,7 +334,7 @@ class UnloadableData(KiaraModel):
         return self.value.model_data_hash
 
 
-class ValueSet(KiaraModel, MutableMapping[str, Value]):
+class ValueSet(KiaraModel, MutableMapping[str, Value]):  # type: ignore
 
     # values_id: uuid.UUID = Field(
     #     description="The id of this value set.", default_factory=uuid.uuid4
@@ -354,7 +371,7 @@ class ValueSet(KiaraModel, MutableMapping[str, Value]):
                 return False
         return True
 
-    def check_invalid(self) -> Optional[Dict[str, str]]:
+    def check_invalid(self) -> Dict[str, str]:
         """Check whether the value set is invalid, if it is, return a description of what's wrong."""
 
         invalid: Dict[str, str] = {}
@@ -430,13 +447,13 @@ class ValueSet(KiaraModel, MutableMapping[str, Value]):
     def __setitem__(self, key: str, value):
 
         raise NotImplementedError()
-        self.set_value(key, value)
+        # self.set_value(key, value)
 
     def __delitem__(self, key: str):
 
         raise Exception(f"Removing items not supported: {key}")
 
-    def __iter__(self) -> Iterator[str]:
+    def __iter__(self):
         return iter(self.field_names)
 
     def __len__(self):
@@ -449,9 +466,11 @@ class ValueSet(KiaraModel, MutableMapping[str, Value]):
         return self.__repr__()
 
 
-class ValueSetReadOnly(ValueSet):
+class ValueSetReadOnly(ValueSet):  # type: ignore
 
-    value_items: Dict[str, Value] = Field(description="The values contained in this set.")
+    value_items: Dict[str, Value] = Field(
+        description="The values contained in this set."
+    )
 
     def _retrieve_id(self) -> str:
         return str(uuid.uuid4())
@@ -461,8 +480,7 @@ class ValueSetReadOnly(ValueSet):
 
     def _retrieve_data_to_hash(self) -> Any:
         return {
-            k: self.get_value_obj(k).model_data_hash
-            for k in self.values_schema.keys()
+            k: self.get_value_obj(k).model_data_hash for k in self.values_schema.keys()
         }
 
     def get_value_obj(self, field_name: str) -> Value:
@@ -474,7 +492,7 @@ class ValueSetReadOnly(ValueSet):
         return self.value_items[field_name]
 
 
-class ValueSetWritable(ValueSet):
+class ValueSetWritable(ValueSet):  # type: ignore
     @classmethod
     def create_from_schema(
         cls, kiara: "Kiara", schema: Mapping[str, ValueSchema], pedigree: ValuePedigree
@@ -491,7 +509,6 @@ class ValueSetWritable(ValueSet):
         description="The pedigree to add to all of the result values."
     )
 
-
     _values_uncommitted: Dict[str, Any] = PrivateAttr(default_factory=dict)
     _data_registry: "DataRegistry" = PrivateAttr(default=None)
     _auto_commit: bool = PrivateAttr(default=True)
@@ -504,8 +521,7 @@ class ValueSetWritable(ValueSet):
 
     def _retrieve_data_to_hash(self) -> Any:
         return {
-            k: self.get_value_obj(k).model_data_hash
-            for k in self.values_schema.keys()
+            k: self.get_value_obj(k).model_data_hash for k in self.values_schema.keys()
         }
 
     def get_value_obj(self, field_name: str) -> Value:
@@ -531,7 +547,11 @@ class ValueSetWritable(ValueSet):
         value_data = self._values_uncommitted[field_name]
 
         value = self._data_registry.register_data(
-            data=value_data, schema=schema, pedigree=self.pedigree, pedigree_output_name=field_name, reuse_existing=False
+            data=value_data,
+            schema=schema,
+            pedigree=self.pedigree,
+            pedigree_output_name=field_name,
+            reuse_existing=False,
         )
 
         self._values_uncommitted.pop(field_name)
@@ -560,5 +580,7 @@ class ValueSetWritable(ValueSet):
 
 
 ValuePedigree.update_forward_refs()
-ORPHAN = ValuePedigree(kiara_id=VOID_KIARA_ID, environments={}, module_type=NO_MODULE_TYPE, inputs={})
+ORPHAN = ValuePedigree(
+    kiara_id=VOID_KIARA_ID, environments={}, module_type=NO_MODULE_TYPE, inputs={}
+)
 # GENESIS_PEDIGREE = None

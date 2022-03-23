@@ -14,8 +14,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from kiara import Kiara
-from kiara.utils import log_message
-from kiara.utils.output import rich_print
+from kiara.utils import log_message, rich_print
 
 
 @click.group()
@@ -52,10 +51,20 @@ def list_types(ctx):
     is_flag=True,
     help="Don't list operations that have no specific operation type associated with them.",
 )
-@click.option("--include-internal-operations", "-i", help="Whether to include operations that are mainly used internally.", is_flag=True)
+@click.option(
+    "--include-internal-operations",
+    "-i",
+    help="Whether to include operations that are mainly used internally.",
+    is_flag=True,
+)
 @click.pass_context
 def list_operations(
-    ctx, by_type: bool, filter: typing.Iterable[str], full_doc: bool, omit_default: bool, include_internal_operations: bool
+    ctx,
+    by_type: bool,
+    filter: typing.Iterable[str],
+    full_doc: bool,
+    omit_default: bool,
+    include_internal_operations: bool,
 ):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
@@ -80,7 +89,10 @@ def list_operations(
                 kiara_obj.operations_mgmt.operations_by_type[operation_name].items()
             ):
 
-                if not include_internal_operations and op_config.operation_details.is_internal_operation:
+                if (
+                    not include_internal_operations
+                    and op_config.operation_details.is_internal_operation
+                ):
                     continue
                 if full_doc:
                     desc = op_config.doc.full_doc
@@ -121,10 +133,15 @@ def list_operations(
 
         for op_id, operation in kiara_obj.operations_mgmt.operations.items():
 
-            if not include_internal_operations and operation.operation_details.is_internal_operation:
+            if (
+                not include_internal_operations
+                and operation.operation_details.is_internal_operation
+            ):
                 continue
 
-            types = kiara_obj.operations_mgmt.find_all_operation_types(operation.operation_id)
+            types = kiara_obj.operations_mgmt.find_all_operation_types(
+                operation.operation_id
+            )
             if omit_default and len(types) == 1 and "all" in types:
                 continue
 

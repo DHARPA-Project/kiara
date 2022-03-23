@@ -1,8 +1,8 @@
+# -*- coding: utf-8 -*-
 from enum import Enum
-from typing import Dict, List, Union, Any, Mapping, Optional
-
 from pydantic import Extra, Field, root_validator, validator
 from slugify import slugify
+from typing import Any, Dict, List, Mapping, Optional, Union
 
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.module.manifest import Manifest

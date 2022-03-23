@@ -1,15 +1,17 @@
-from typing import Iterable, Union, Mapping, Optional, Any, TYPE_CHECKING, Dict, Type, List, Set
-
+# -*- coding: utf-8 -*-
 from pydantic import Field
+from typing import Any, Iterable, Mapping, Optional, Set, Union
 
-from kiara.models.module.operation import BaseOperationDetails, OperationConfig, Operation
+from kiara.models.module.operation import (
+    BaseOperationDetails,
+    Operation,
+    OperationConfig,
+)
 from kiara.models.python_class import PythonClass
 from kiara.models.values.value import ValueSet
-
+from kiara.modules import KiaraModule, ValueSetSchema
 from kiara.modules.operations import OperationType
 from kiara.utils.class_loading import find_all_value_metadata_models
-
-from kiara.modules import KiaraModule, ValueSetSchema
 
 
 class ExtractMetadataDetails(BaseOperationDetails):
@@ -17,32 +19,22 @@ class ExtractMetadataDetails(BaseOperationDetails):
 
     @classmethod
     def retrieve_inputs_schema(cls) -> ValueSetSchema:
-        return {
-            "value": {
-                "type": "any",
-                "doc": "The value to extract metadata from."
-            }
-        }
+        return {"value": {"type": "any", "doc": "The value to extract metadata from."}}
 
     @classmethod
     def retrieve_outputs_schema(cls) -> ValueSetSchema:
 
-        return {
-            "value_metadata": {
-                "type": "value_metadata",
-                "doc": "The metadata."
-            }
-        }
+        return {"value_metadata": {"type": "value_metadata", "doc": "The metadata."}}
 
-    data_types: Set[str] = Field(description="A set of value types this metadata operation can be used with.")
+    data_types: Set[str] = Field(
+        description="A set of value types this metadata operation can be used with."
+    )
     metadata_key: str = Field(description="The metadata key.")
     input_field_name: str = Field(description="The input field name.")
     result_field_name: str = Field(description="The result field name.")
 
     def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
-        return {
-            self.input_field_name: inputs["value"]
-        }
+        return {self.input_field_name: inputs["value"]}
 
     def create_operation_outputs(self, outputs: ValueSet) -> ValueSet:
 
@@ -58,7 +50,9 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
     - exactly one output field, whose field name is called 'value_metadata', and where the value has the type 'internal_model'
     """
 
-    def retrieve_included_operation_configs(self) -> Iterable[Union[Mapping, OperationConfig]]:
+    def retrieve_included_operation_configs(
+        self,
+    ) -> Iterable[Union[Mapping, OperationConfig]]:
 
         all_models = find_all_value_metadata_models()
 
@@ -73,19 +67,24 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
                     "module_type": "value.extract_metadata",
                     "module_config": {
                         "data_type": data_type,
-                        "metadata_model": PythonClass.from_class(model_cls)
+                        "metadata_model": PythonClass.from_class(model_cls),
                     },
-                    "doc": f"Extract '{metadata_key}' for value type '{data_type}'."
+                    "doc": f"Extract '{metadata_key}' for value type '{data_type}'.",
                 }
                 result.append(config)
 
         return result
 
-    def check_matching_operation(self, module: "KiaraModule") -> Optional[ExtractMetadataDetails]:
+    def check_matching_operation(
+        self, module: "KiaraModule"
+    ) -> Optional[ExtractMetadataDetails]:
 
         if len(module.outputs_schema) != 1:
             return None
-        if "value_metadata" not in module.outputs_schema or module.outputs_schema["value_metadata"].type != "internal_model":
+        if (
+            "value_metadata" not in module.outputs_schema
+            or module.outputs_schema["value_metadata"].type != "internal_model"
+        ):
             return None
         if len(module.inputs_schema) != 1:
             return None
@@ -106,7 +105,14 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
         else:
             op_id = f"extract.{metadata_key}.metadata.from.{data_type_name}"
 
-        details = ExtractMetadataDetails.create_operation_details(operation_id=op_id, data_types=all_types, metadata_key=metadata_key, input_field_name=input_field_name, result_field_name="value_metadata", is_internal_operation=True)
+        details = ExtractMetadataDetails.create_operation_details(
+            operation_id=op_id,
+            data_types=all_types,
+            metadata_key=metadata_key,
+            input_field_name=input_field_name,
+            result_field_name="value_metadata",
+            is_internal_operation=True,
+        )
 
         return details
 
@@ -131,10 +137,10 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
                 continue
             metadata_key = op_details.metadata_key
             if metadata_key in result:
-                raise Exception(f"Duplicate metadata operations for type '{metadata_key}'.")
+                raise Exception(
+                    f"Duplicate metadata operations for type '{metadata_key}'."
+                )
 
             result[metadata_key] = op
 
         return result
-
-

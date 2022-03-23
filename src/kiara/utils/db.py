@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-import os
-
 import orjson
+import os
 from sqlalchemy.engine import Engine
 from typing import Any, Mapping
 
@@ -9,11 +8,13 @@ from kiara.kiara.orm import EnvironmentOrm, MetadataSchemaOrm
 from kiara.models.runtime_environment import RuntimeEnvironmentMgmt
 from kiara.utils import orjson_dumps
 
+
 def get_kiara_db_url(base_path: str):
 
     abs_path = os.path.abspath(os.path.expanduser(base_path))
     db_url = f"sqlite+pysqlite:///{abs_path}/kiara.db"
     return db_url
+
 
 def orm_json_serialize(obj: Any) -> str:
 

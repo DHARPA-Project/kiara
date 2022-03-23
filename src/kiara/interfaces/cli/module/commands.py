@@ -19,8 +19,7 @@ from kiara import Kiara
 from kiara.kiara import explain
 from kiara.models.module import KiaraModuleTypeMetadata, ModuleTypesGroupInfo
 from kiara.models.module.manifest import Manifest
-from kiara.utils import dict_from_cli_args, log_message
-from kiara.utils.output import rich_print
+from kiara.utils import dict_from_cli_args, log_message, rich_print
 
 
 @click.group()

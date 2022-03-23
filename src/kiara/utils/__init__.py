@@ -24,9 +24,10 @@ from rich.console import ConsoleRenderable, RichCast
 from ruamel.yaml import YAML
 from slugify import slugify
 from types import ModuleType
-from typing import Union
+from typing import Any, Union
 
 from kiara.defaults import INVALID_VALUE_NAMES
+from kiara.interfaces import get_console
 
 logger = structlog.get_logger()
 
@@ -281,3 +282,23 @@ string_types = (type(b""), type(""))
 def orjson_dumps(v, *, default=None, **args):
     # orjson.dumps returns bytes, to match standard json.dumps we need to decode
     return orjson.dumps(v, default=default, **args).decode()
+
+
+def rich_print(msg: Any = None, **config: Any) -> None:
+
+    if msg is None:
+        msg = ""
+    console = get_console()
+
+    if hasattr(msg, "create_renderable"):
+        msg = msg.create_renderable(**config)  # type: ignore
+
+    console.print(msg)
+
+
+def first_line(text: str):
+
+    if "\n" in text:
+        return text.split("\n")[0].strip()
+    else:
+        return text

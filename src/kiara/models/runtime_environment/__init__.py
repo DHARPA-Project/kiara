@@ -62,8 +62,6 @@ class RuntimeEnvironment(KiaraModel):
         return self.dict()
 
 
-
-
 class RuntimeEnvironmentMgmt(object):
 
     _instance = None
@@ -85,11 +83,15 @@ class RuntimeEnvironmentMgmt(object):
 
     def get_environment_for_hash(self, env_hash: int) -> RuntimeEnvironment:
 
-        envs = [env for env in self.environments.values() if env.model_data_hash == env_hash]
+        envs = [
+            env for env in self.environments.values() if env.model_data_hash == env_hash
+        ]
         if len(envs) == 0:
             raise Exception(f"No environment with hash '{env_hash}' available.")
         elif len(envs) > 1:
-            raise Exception(f"Multipe environments with hash '{env_hash}' available. This is most likely a bug.")
+            raise Exception(
+                f"Multipe environments with hash '{env_hash}' available. This is most likely a bug."
+            )
         return envs[0]
 
     @property
@@ -103,7 +105,7 @@ class RuntimeEnvironmentMgmt(object):
         import kiara.models.runtime_environment.python  # noqa
 
         subclasses: Iterable[Type[RuntimeEnvironment]] = _get_all_subclasses(
-            RuntimeEnvironment
+            RuntimeEnvironment  # type: ignore
         )
         envs = {}
         for sc in subclasses:

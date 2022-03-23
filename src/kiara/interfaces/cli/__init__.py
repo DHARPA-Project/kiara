@@ -8,14 +8,14 @@
 """A command-line interface for *Kiara*.
 """
 import logging
-
 import rich_click as click
 import typing
 
 from kiara.kiara import Kiara
 from kiara.kiara.config import KiaraGlobalConfig
-from kiara.utils import is_develop, is_debug
+from kiara.utils import is_debug, is_develop
 
+from .config.commands import config
 from .data.commands import data
 from .dev.commands import dev_group
 
@@ -25,8 +25,6 @@ from .dev.commands import dev_group
 # from .metadata.commands import metadata
 from .module.commands import module
 from .operation.commands import operation
-from .server.commands import client, server
-from .config.commands import config
 
 # from .pipeline.commands import pipeline
 from .run import run
@@ -53,10 +51,10 @@ else:
     structlog.configure(
         wrapper_class=structlog.make_filtering_bound_logger(logging.INFO),
     )
+
+
 @click.group()
-@click.option(
-    "--context", "-c", help="The kiara context to use.", required=False
-)
+@click.option("--context", "-c", help="The kiara context to use.", required=False)
 @click.option(
     "--pipeline-folder",
     "-p",

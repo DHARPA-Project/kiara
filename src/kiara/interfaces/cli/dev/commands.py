@@ -4,18 +4,14 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import os
-from typing import Optional, Any, Dict
-
 import rich_click as click
 from alembic import command
 from alembic.config import Config
+from typing import Optional
 
 from kiara import Kiara
-from kiara.defaults import KIARA_DB_MIGRATIONS_FOLDER, KIARA_DB_MIGRATIONS_CONFIG
-from kiara.models.module.jobs import JobConfig
+from kiara.defaults import KIARA_DB_MIGRATIONS_CONFIG, KIARA_DB_MIGRATIONS_FOLDER
 from kiara.models.module.manifest import Manifest
-from kiara.modules.operations.included_core_operations.render_value import RenderValueOperationType
-from kiara.utils.output import rich_print
 
 
 @click.group("dev")
@@ -58,7 +54,7 @@ def test(ctx):
 
 @dev_group.command("reinit-db")
 @click.pass_context
-def reinit_db(ctx, new_version: Optional[str]=None):
+def reinit_db(ctx, new_version: Optional[str] = None):
 
     # os.remove(KIARA_DB_FILE)
 

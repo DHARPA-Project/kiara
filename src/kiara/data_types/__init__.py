@@ -26,18 +26,16 @@ be discouraged, since this might not be trivial and there are quite a few things
 import abc
 import copy
 import uuid
-
 from deepdiff import DeepHash
-from pydantic import BaseModel, Extra, PrivateAttr, ValidationError, Field
+from pydantic import BaseModel, Extra, Field, PrivateAttr, ValidationError
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.table import Table
-from typing import Any, Generic, Mapping, Optional, Type, TypeVar, Union, Tuple, TYPE_CHECKING
+from typing import Any, Generic, Mapping, Optional, Tuple, Type, TypeVar, Union
 
 from kiara.defaults import KIARA_HASH_FUNCTION, SpecialValue
-from kiara.exceptions import ValueTypeConfigException, KiaraValueException
+from kiara.exceptions import KiaraValueException, ValueTypeConfigException
 from kiara.models.python_class import PythonClass
-
 from kiara.models.values import ValueStatus
 from kiara.models.values.value import Value, ValuePedigree
 from kiara.models.values.value_schema import ValueSchema
@@ -116,14 +114,22 @@ class DataTypeConfig(BaseModel):
 
         yield my_table
 
+
 TYPE_PYTHON_CLS = TypeVar("TYPE_PYTHON_CLS")
 TYPE_CONFIG_CLS = TypeVar("TYPE_CONFIG_CLS", bound=DataTypeConfig)
 
 
 class DataTypeCharacteristics(BaseModel):
 
-    is_skalar: bool = Field(description="Whether the data desribed by this data type behaves like a skalar.", default=False)
-    is_json_serializable: bool = Field(description="Whether the data can be serialized to json without information loss.", default=False)
+    is_skalar: bool = Field(
+        description="Whether the data desribed by this data type behaves like a skalar.",
+        default=False,
+    )
+    is_json_serializable: bool = Field(
+        description="Whether the data can be serialized to json without information loss.",
+        default=False,
+    )
+
 
 class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
     """Base class that all *kiara* data_types must inherit from.
@@ -150,7 +156,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
 
     @classmethod
     def data_type_config_class(cls) -> Type[TYPE_CONFIG_CLS]:
-        return DataTypeConfig
+        return DataTypeConfig  # type: ignore
 
     @classmethod
     def _calculate_data_type_hash(
@@ -221,7 +227,9 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
     def type_config(self) -> TYPE_CONFIG_CLS:
         return self._type_config
 
-    def _pre_examine_data(self, data: Any, schema: ValueSchema) -> Tuple[Any, ValueStatus, int]:
+    def _pre_examine_data(
+        self, data: Any, schema: ValueSchema
+    ) -> Tuple[Any, ValueStatus, int]:
 
         if data == SpecialValue.NOT_SET:
             status = ValueStatus.NOT_SET
@@ -244,7 +252,9 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
             else:
                 data = self.parse_python_obj(data)
                 if data is None:
-                    raise Exception(f"Invalid data, can't parse into a value of type '{schema.type}'.")
+                    raise Exception(
+                        f"Invalid data, can't parse into a value of type '{schema.type}'."
+                    )
 
         if status in [ValueStatus.SET, ValueStatus.DEFAULT]:
             value_hash = self.calculate_hash(data)
@@ -320,9 +330,17 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
     #
     #     return value
 
-    def assemble_value(self, value_id: uuid.UUID, data: Any, schema: ValueSchema, status: Union[ValueStatus, str],
-                       value_hash: int, pedigree: ValuePedigree, kiara_id: uuid.UUID,
-                       pedigree_output_name: str) -> Tuple[Value, Any]:
+    def assemble_value(
+        self,
+        value_id: uuid.UUID,
+        data: Any,
+        schema: ValueSchema,
+        status: Union[ValueStatus, str],
+        value_hash: int,
+        pedigree: ValuePedigree,
+        kiara_id: uuid.UUID,
+        pedigree_output_name: str,
+    ) -> Tuple[Value, Any]:
 
         if isinstance(status, str):
             status = ValueStatus(status).name
@@ -344,7 +362,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
                     value_schema=schema,
                     pedigree=pedigree,
                     pedigree_output_name=pedigree_output_name,
-                    data_type_class=this_cls
+                    data_type_class=this_cls,
                 )
 
             except Exception as e:
@@ -362,7 +380,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
                 value_schema=schema,
                 pedigree=pedigree,
                 pedigree_output_name=pedigree_output_name,
-                data_type_class=this_cls
+                data_type_class=this_cls,
             )
 
         value._data_type = self
@@ -391,8 +409,6 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
             raise ValueError(
                 f"Invalid python type '{type(value)}', must be: {self.__class__.python_class()}"
             )
-
-        return value
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions

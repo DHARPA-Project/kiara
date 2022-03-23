@@ -23,12 +23,11 @@ class PythonClass(KiaraModel):
         conf: Dict[str, Any] = {
             "class_name": cls_name,
             "module_name": module_name,
-            "full_name": full_name
+            "full_name": full_name,
         }
         result = PythonClass(**conf)
         result._cls_cache = item_cls
         return result
-
 
     class_name: str = Field(description="The name of the Python class.")
     module_name: str = Field(
@@ -62,4 +61,6 @@ class PythonClass(KiaraModel):
 
 
 class ClassKiaraModel(KiaraModel):
-    python_class: PythonClass = Field(description="The python class that is associtated with this model.")
+    python_class: PythonClass = Field(
+        description="The python class that is associtated with this model."
+    )

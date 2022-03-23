@@ -1,38 +1,25 @@
 # -*- coding: utf-8 -*-
 import abc
-import os
-import shutil
-import uuid
-from enum import Enum
-from pathlib import Path
-
-import orjson
-from rich.console import RenderableType
-from sqlalchemy.engine import Engine
-from sqlalchemy.orm import Session
-from typing import TYPE_CHECKING, Optional, Iterable, Dict, Mapping, Any, Union, Tuple, List, Set
 import structlog
-from kiara.kiara.orm import ValueOrm, ValueTypeOrm, ManifestOrm
+import uuid
+from rich.console import RenderableType
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Set, Union
+
 from kiara.models.module.destiniy import Destiny
 from kiara.models.module.jobs import JobConfig, JobRecord
-from kiara.models.module.manifest import Manifest, LoadConfig
+from kiara.models.module.manifest import LoadConfig, Manifest
 from kiara.models.runtime_environment import RuntimeEnvironment
-from kiara.models.values.value import Value, ORPHAN, ValuePedigree, ValueDetails
+from kiara.models.values.value import ORPHAN, Value, ValuePedigree
 from kiara.models.values.value_schema import ValueSchema
-from kiara.modules.operations.included_core_operations.persistence import PersistValueOperationType
-from kiara.utils import orjson_dumps, log_message, is_debug
-from kiara.data_types import DataType
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
-    from kiara.modules import KiaraModule
 
 
 logger = structlog.getLogger()
 
 
 class DataArchive(abc.ABC):
-
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
@@ -84,17 +71,16 @@ class DataArchive(abc.ABC):
         pedigree = ValuePedigree(**value_data["pedigree"])
 
         value = Value(
-            value_id = value_data["value_id"],
-            kiara_id = self._kiara.id,
-            value_schema = value_schema,
-            value_status = value_data["value_status"],
-            value_size = value_data["value_size"],
-            value_hash = value_data["value_hash"],
-            pedigree = pedigree,
+            value_id=value_data["value_id"],
+            kiara_id=self._kiara.id,
+            value_schema=value_schema,
+            value_status=value_data["value_status"],
+            value_size=value_data["value_size"],
+            value_hash=value_data["value_hash"],
+            pedigree=pedigree,
             pedigree_output_name=value_data["pedigree_output_name"],
-            data_type_class=value_data["data_type_class"]
+            data_type_class=value_data["data_type_class"],
         )
-
 
         # value = data_type.reassemble_value(value_id=value_data["value_id"], load_config=None, schema=value_schema, status=value_data["value_status"], value_hash=value_data["value_hash"], value_size=value_data["value_size"], pedigree=pedigree, kiara_id=self._kiara.id, pedigree_output_name=value_data["pedigree_output_name"])
 
@@ -112,7 +98,9 @@ class DataArchive(abc.ABC):
         return self._retrieve_all_value_ids()
 
     @abc.abstractmethod
-    def _retrieve_all_value_ids(self, data_type_name: Optional[str]=None) -> Iterable[uuid.UUID]:
+    def _retrieve_all_value_ids(
+        self, data_type_name: Optional[str] = None
+    ) -> Iterable[uuid.UUID]:
         pass
 
     def has_value(self, value_id: uuid.UUID) -> bool:
@@ -129,7 +117,9 @@ class DataArchive(abc.ABC):
 
         return value_id in self._retrieve_all_value_ids()
 
-    def retrieve_environment_details(self, env_type: str, env_hash: int) -> Mapping[str, Any]:
+    def retrieve_environment_details(
+        self, env_type: str, env_hash: int
+    ) -> Mapping[str, Any]:
         """Retrieve the environment details with the specified type and hash.
 
         The environment is stored by the data store as a dictionary, including it's schema, not as the actual Python model.
@@ -145,21 +135,30 @@ class DataArchive(abc.ABC):
         return env
 
     @abc.abstractmethod
-    def _retrieve_environment_details(self, env_type: str, env_hash: int) -> Mapping[str, Any]:
+    def _retrieve_environment_details(
+        self, env_type: str, env_hash: int
+    ) -> Mapping[str, Any]:
         pass
 
-    def find_values_with_hash(self, value_hash: int, value_size: Optional[int]=None, data_type_name: Optional[str]=None) -> Set[uuid.UUID]:
+    def find_values_with_hash(
+        self,
+        value_hash: int,
+        value_size: Optional[int] = None,
+        data_type_name: Optional[str] = None,
+    ) -> Set[uuid.UUID]:
 
         if data_type_name is not None:
             raise NotImplementedError()
 
-        if  value_size is not None:
+        if value_size is not None:
             raise NotImplementedError()
 
         if value_hash in self._value_hash_index.keys():
             value_ids = self._value_hash_index[value_hash]
         else:
-            value_ids = self._find_values_with_hash(value_hash=value_hash, data_type_name=data_type_name)
+            value_ids = self._find_values_with_hash(
+                value_hash=value_hash, data_type_name=data_type_name
+            )
             if value_ids is None:
                 value_ids = set()
             self._value_hash_index[value_hash] = value_ids
@@ -167,18 +166,27 @@ class DataArchive(abc.ABC):
         return value_ids
 
     @abc.abstractmethod
-    def _find_values_with_hash(self, value_hash: int, value_size: Optional[int]=None, data_type_name: Optional[str]=None) -> Optional[Set[Value]]:
+    def _find_values_with_hash(
+        self,
+        value_hash: int,
+        value_size: Optional[int] = None,
+        data_type_name: Optional[str] = None,
+    ) -> Optional[Set[Value]]:
         pass
 
     def retrieve_job_record(self, job: JobConfig) -> Optional[JobRecord]:
-        return self._retrieve_job_record(manifest_hash=job.manifest_hash, inputs_hash=job.inputs_hash)
+        return self._retrieve_job_record(
+            manifest_hash=job.manifest_hash, inputs_hash=job.inputs_hash
+        )
 
     @abc.abstractmethod
-    def _retrieve_job_record(self, manifest_hash: int, inputs_hash: int) -> Optional[JobRecord]:
+    def _retrieve_job_record(
+        self, manifest_hash: int, inputs_hash: int
+    ) -> Optional[JobRecord]:
         pass
 
-class DataStore(DataArchive):
 
+class DataStore(DataArchive):
     def store_value(self, value: Value) -> LoadConfig:
 
         if value.pedigree != ORPHAN:
@@ -188,7 +196,12 @@ class DataStore(DataArchive):
                     assert other and other.value_id == value_id
                     self.store_value(other)
 
-        logger.debug("store.value", data_type=value.value_schema.type, value_id=value.id, value_hash=value.value_hash)
+        logger.debug(
+            "store.value",
+            data_type=value.value_schema.type,
+            value_id=value.id,
+            value_hash=value.value_hash,
+        )
 
         # first, persist environment information
         for env_type, env_hash in value.pedigree.environments.items():
@@ -215,10 +228,9 @@ class DataStore(DataArchive):
     def _persist_value_pedigree(self, value: Value):
         """Create an internal link from a value to its pedigree (and pedigree details).
 
-         This is so that the 'retrieve_job_record' can be used to prevent running the same job again, and the link of value
-         to the job that produced it is preserved.
-         """
-        pass
+        This is so that the 'retrieve_job_record' can be used to prevent running the same job again, and the link of value
+        to the job that produced it is preserved.
+        """
 
     def persist_environment(self, environment: RuntimeEnvironment):
         """Persist the specified environment.
@@ -235,11 +247,15 @@ class DataStore(DataArchive):
             return
 
         env_data = environment.as_dict_with_schema()
-        self._persist_environment_details(env_type=env_type, env_hash=env_hash, env_data=env_data)
+        self._persist_environment_details(
+            env_type=env_type, env_hash=env_hash, env_data=env_data
+        )
         self._env_cache.setdefault(env_type, {})[env_hash] = env_data
 
     @abc.abstractmethod
-    def _persist_environment_details(self, env_type: str, env_hash: int, env_data: Mapping[str, Any]):
+    def _persist_environment_details(
+        self, env_type: str, env_hash: int, env_data: Mapping[str, Any]
+    ):
         pass
 
     @abc.abstractmethod
@@ -250,17 +266,24 @@ class DataStore(DataArchive):
     def _persist_value(self, value: Value) -> LoadConfig:
         pass
 
-    def persist_destinies(self, value: Value, category: str, key: str, destinies: Set[Destiny]):
-        self._persist_destinies(value=value, category=category, key=key, destinies=destinies)
+    def persist_destinies(
+        self, value: Value, category: str, key: str, destinies: Set[Destiny]
+    ):
+        self._persist_destinies(
+            value=value, category=category, key=key, destinies=destinies
+        )
 
     @abc.abstractmethod
-    def _persist_destinies(self, value: Value, category: str, key: str, destinies: Set[Destiny]):
+    def _persist_destinies(
+        self, value: Value, category: str, key: str, destinies: Set[Destiny]
+    ):
         pass
 
     def create_renderable(self, **config: Any) -> RenderableType:
         """Create a renderable for this module configuration."""
 
         from kiara.utils.output import create_renderable_from_values
+
         all_values = {}
         for value_id in self.value_ids:
 
@@ -268,6 +291,7 @@ class DataStore(DataArchive):
             all_values[str(value_id)] = value
         table = create_renderable_from_values(values=all_values, config=config)
         return table
+
 
 # class PersistenceMgmt(object):
 #     def __init__(self, kiara: "Kiara"):

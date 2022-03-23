@@ -1,33 +1,34 @@
+# -*- coding: utf-8 -*-
 import datetime
 import hashlib
 import os
 import shutil
-from typing import Optional, Any, Union, Mapping, Dict, List
-
+import structlog
 from deepdiff import DeepHash
-from pydantic import PrivateAttr, Field, validator, BaseModel
+from pydantic import BaseModel, Field, PrivateAttr, validator
+from typing import Any, Dict, List, Mapping, Optional, Union
 
-from kiara.defaults import FILE_MODEL_CATEOGORY_ID, FILE_BUNDLE_MODEL_CATEOGORY_ID, KIARA_HASH_FUNCTION, \
-    DEFAULT_EXCLUDE_FILES
+from kiara.defaults import (
+    DEFAULT_EXCLUDE_FILES,
+    FILE_BUNDLE_MODEL_CATEOGORY_ID,
+    FILE_MODEL_CATEOGORY_ID,
+    KIARA_HASH_FUNCTION,
+)
 from kiara.models import KiaraModel
 from kiara.utils import log_message
 
+logger = structlog.getLogger()
 
 
 class FileModel(KiaraModel):
     """Describes properties for the 'file' value type."""
 
     @classmethod
-    def load_file(
-        cls,
-        source: str,
-        import_time: Optional[datetime.datetime]=None
-    ):
+    def load_file(cls, source: str, import_time: Optional[datetime.datetime] = None):
         """Utility method to read metadata of a file from disk and optionally move it into a data archive location."""
 
-        import mimetypes
-
         import filetype
+        import mimetypes
 
         if not source:
             raise ValueError("No source path provided.")
@@ -69,7 +70,9 @@ class FileModel(KiaraModel):
 
     _file_hash: Optional[int] = PrivateAttr(default=None)
 
-    import_time: datetime.datetime = Field(description="The time when the file was imported.")
+    import_time: datetime.datetime = Field(
+        description="The time when the file was imported."
+    )
     mime_type: str = Field(description="The mime type of the file.")
     file_name: str = Field("The name of the file.")
     size: int = Field(description="The size of the file.")
@@ -85,11 +88,12 @@ class FileModel(KiaraModel):
     def _retrieve_category_id(self) -> str:
         return FILE_MODEL_CATEOGORY_ID
 
+    @property
+    def model_data_hash(self) -> int:
+        return self.file_hash
+
     def _retrieve_data_to_hash(self) -> Any:
-        return {
-            "path": self.path,
-            "hash": self.file_hash
-        }
+        raise NotImplementedError()
 
     def get_id(self) -> str:
         return self.path
@@ -97,9 +101,7 @@ class FileModel(KiaraModel):
     def get_category_alias(self) -> str:
         return "instance.metadata.file"
 
-    def copy_file(
-        self, target: str
-    ) -> "FileModel":
+    def copy_file(self, target: str) -> "FileModel":
 
         target_path: str = os.path.abspath(target)
         os.makedirs(os.path.dirname(target_path), exist_ok=True)
@@ -132,15 +134,7 @@ class FileModel(KiaraModel):
 
         return self.file_name.split(".")[0]
 
-    @property
-    def import_time_as_datetime(self) -> datetime.datetime:
-        from dateutil import parser
-
-        return parser.parse(self.import_time)
-
-    def read_text(
-        self, max_lines: int = -1
-    ) -> str:
+    def read_text(self, max_lines: int = -1) -> str:
         """Read the content of a file."""
 
         with open(self.path, "rt") as f:
@@ -150,11 +144,8 @@ class FileModel(KiaraModel):
                 content = "".join((next(f) for x in range(max_lines)))
         return content
 
-    def read_bytes(
-        self, length: int = -1
-    ) -> bytes:
+    def read_bytes(self, length: int = -1) -> bytes:
         """Read the content of a file."""
-
 
         with open(self.path, "rb") as f:
             if length <= 0:
@@ -168,6 +159,7 @@ class FileModel(KiaraModel):
 
     def __str__(self):
         return self.__repr__()
+
 
 class FolderImportConfig(BaseModel):
 
@@ -184,6 +176,7 @@ class FolderImportConfig(BaseModel):
         default=DEFAULT_EXCLUDE_FILES,
     )
 
+
 class FileBundle(KiaraModel):
     """Describes properties for the 'file_bundle' value type."""
 
@@ -191,10 +184,8 @@ class FileBundle(KiaraModel):
     def import_folder(
         cls,
         source: str,
-        import_config: Union[
-            None, Mapping[str, Any], FolderImportConfig
-        ] = None,
-        import_time: Optional[datetime.datetime] = None
+        import_config: Union[None, Mapping[str, Any], FolderImportConfig] = None,
+        import_time: Optional[datetime.datetime] = None,
     ):
 
         if not source:
@@ -273,7 +264,7 @@ class FileBundle(KiaraModel):
             path=path,
             bundle_name=bundle_name,
             sum_size=sum_size,
-            import_time=bundle_import_time
+            import_time=bundle_import_time,
         )
 
     @classmethod
@@ -283,7 +274,7 @@ class FileBundle(KiaraModel):
         bundle_name: str,
         path: str,
         sum_size: Optional[int] = None,
-        import_time: Optional[datetime.datetime] = None
+        import_time: Optional[datetime.datetime] = None,
     ):
 
         if import_time:
@@ -313,7 +304,9 @@ class FileBundle(KiaraModel):
 
     path: str = Field(description="The archive path of the folder.")
     bundle_name: str = Field(description="The name of this bundle.")
-    import_time: datetime.datetime = Field(description="The time when the file bundle was imported.")
+    import_time: datetime.datetime = Field(
+        description="The time when the file bundle was imported."
+    )
     number_of_files: int = Field(
         description="How many files are included in this bundle."
     )
@@ -328,12 +321,17 @@ class FileBundle(KiaraModel):
     def _retrieve_category_id(self) -> str:
         return FILE_BUNDLE_MODEL_CATEOGORY_ID
 
+    @property
+    def model_data_hash(self) -> int:
+        return self.file_bundle_hash
+
+    def _retrieve_data_to_hash(self) -> Any:
+        raise NotImplementedError()
+
     def get_relative_path(self, file: FileModel):
         return os.path.relpath(file.path, self.path)
 
-    def read_text_file_contents(
-        self, ignore_errors: bool = False
-    ) -> Mapping[str, str]:
+    def read_text_file_contents(self, ignore_errors: bool = False) -> Mapping[str, str]:
 
         content_dict: Dict[str, str] = {}
 
@@ -345,7 +343,7 @@ class FileBundle(KiaraModel):
                 except Exception as e:
                     if ignore_errors:
                         log_message(f"Can't read file: {e}")
-                        logger.warning(f"ignore.file", path=fm.path, reason=str(e))
+                        logger.warning("ignore.file", path=fm.path, reason=str(e))
                     else:
                         raise Exception(f"Can't read file (as text) '{fm.path}: {e}")
 
@@ -369,7 +367,7 @@ class FileBundle(KiaraModel):
         return self._file_bundle_hash
 
     def copy_bundle(
-        self, target_path: str, bundle_name: Optional[str]=None
+        self, target_path: str, bundle_name: Optional[str] = None
     ) -> "FileBundle":
 
         if target_path == self.path:
@@ -389,7 +387,7 @@ class FileBundle(KiaraModel):
             bundle_name=bundle_name,
             path=target_path,
             sum_size=self.size,
-            import_time=self.import_time
+            import_time=self.import_time,
         )
         if self._file_bundle_hash is not None:
             fb._file_bundle_hash = self._file_bundle_hash

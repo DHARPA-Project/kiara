@@ -6,19 +6,17 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
-import copy
 import inspect
-
 import uuid
 from abc import abstractmethod
 from deepdiff import DeepHash
-from pydantic import ValidationError, BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderGroup, RenderResult
 from rich.panel import Panel
 from typing import (
-    TYPE_CHECKING,
     Any,
+    Dict,
     Generic,
     Iterable,
     List,
@@ -29,7 +27,7 @@ from typing import (
     Union,
 )
 
-from kiara.defaults import KIARA_HASH_FUNCTION, SpecialValue
+from kiara.defaults import KIARA_HASH_FUNCTION
 from kiara.exceptions import KiaraModuleConfigException
 from kiara.models.module.jobs import JobLog
 from kiara.models.module.manifest import KiaraModuleConfig
@@ -46,14 +44,16 @@ from kiara.models.module.manifest import KiaraModuleConfig
 # from kiara.module_config import KIARA_CONFIG, ModuleConfig, KiaraModuleConfig
 # from kiara.operations import Operation
 # from kiara.processing import JobLog
-from kiara.models.values.value import ValueSet, Value
+from kiara.models.values.value import ValueSet
 from kiara.models.values.value_schema import ValueSchema
 from kiara.utils import StringYAML, is_debug
 
 # from kiara.utils.modules import create_schemas, overlay_constants_and_defaults
-from kiara.utils.values import create_schema_dict, overlay_constants_and_defaults, augment_values
-
-from typing import Dict
+from kiara.utils.values import (
+    augment_values,
+    create_schema_dict,
+    overlay_constants_and_defaults,
+)
 
 yaml = StringYAML()
 
@@ -63,8 +63,13 @@ ValueSetSchema = Mapping[str, Union[ValueSchema, Mapping[str, Any]]]
 
 
 class InputOutputObject(abc.ABC):
-
-    def __init__(self, alias: str, config: KiaraModuleConfig=None, allow_empty_inputs_schema: bool=False, allow_empty_outputs_schema: bool=False):
+    def __init__(
+        self,
+        alias: str,
+        config: KiaraModuleConfig = None,
+        allow_empty_inputs_schema: bool = False,
+        allow_empty_outputs_schema: bool = False,
+    ):
 
         self._alias: str = alias
         self._inputs_schema: typing.Mapping[str, ValueSchema] = None  # type: ignore
@@ -85,7 +90,9 @@ class InputOutputObject(abc.ABC):
     def input_required(self, input_name: str):
 
         if input_name not in self._inputs_schema.keys():
-            raise Exception(f"No input '{input_name}', available inputs: {', '.join(self._inputs_schema)}")
+            raise Exception(
+                f"No input '{input_name}', available inputs: {', '.join(self._inputs_schema)}"
+            )
 
         if not self._inputs_schema[input_name].is_required():
             return False
@@ -94,8 +101,6 @@ class InputOutputObject(abc.ABC):
             return False
         else:
             return True
-
-
 
     @abstractmethod
     def create_inputs_schema(
@@ -236,16 +241,25 @@ class InputOutputObject(abc.ABC):
         return self.outputs_schema.keys()
 
     def augment_inputs(self, inputs: Mapping[str, Any]) -> Dict[str, Any]:
-        return augment_values(values=inputs, schemas=self.inputs_schema, constants=self.constants)
+        return augment_values(
+            values=inputs, schemas=self.inputs_schema, constants=self.constants
+        )
 
     def augment_outputs(self, outputs: Mapping[str, Any]) -> Dict[str, Any]:
 
         return augment_values(values=outputs, schemas=self.outputs_schema)
 
+
 class ModuleCharacteristics(BaseModel):
 
-    is_idempotent: bool = Field(description="Whether this module is idempotent (aka always produces the same output with the same inputs.", default=False)
-    is_internal: bool = Field(description="Hint for frontends whether this module is used predominantly internally, and users won't need to know of its existence.", default=False)
+    is_idempotent: bool = Field(
+        description="Whether this module is idempotent (aka always produces the same output with the same inputs.",
+        default=False,
+    )
+    is_internal: bool = Field(
+        description="Hint for frontends whether this module is used predominantly internally, and users won't need to know of its existence.",
+        default=False,
+    )
 
 
 class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
@@ -290,11 +304,11 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
     ):
 
         if isinstance(module_type_config, Mapping):
-            module_type_config: KIARA_CONFIG = cls._config_cls(**module_type_config)
+            module_type_config = cls._config_cls(**module_type_config)
 
         obj = {
             "module_type": cls._module_type_name,  # type: ignore
-            "module_type_config": module_type_config.model_data_hash,
+            "module_type_config": module_type_config.model_data_hash,  # type: ignore
         }
         h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
         return h[obj]
@@ -326,7 +340,7 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
         self._module_hash: Optional[int] = None
         self._characteristics: Optional[ModuleCharacteristics] = None
 
-        super().__init__(alias=self.__class__._module_type_name, config=self._config)
+        super().__init__(alias=self.__class__._module_type_name, config=self._config)  # type: ignore
 
         # self._merged_input_schemas: typing.Mapping[str, ValueSchema] = None  # type: ignore
 
@@ -382,8 +396,6 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
             raise Exception(
                 f"Error accessing config value '{key}' in module {self.__class__._module_type_name}."  # type: ignore
             )
-
-
 
     def process_step(
         self, inputs: ValueSet, outputs: ValueSet, job_log: JobLog
@@ -460,4 +472,3 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
             title_align="left",
             title=f"Module: [b]{self.id}[/b]",
         )
-

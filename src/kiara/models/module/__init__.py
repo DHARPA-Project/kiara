@@ -14,7 +14,7 @@ from rich.console import RenderableType
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import Any, Dict, Iterable, Mapping, Optional, Type
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Type
 
 from kiara.defaults import (
     DEFAULT_NO_DESC_VALUE,
@@ -31,7 +31,10 @@ from kiara.models.documentation import (
 from kiara.models.module.manifest import KiaraModuleConfig
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.python_class import PythonClass
-from kiara.utils.output import create_table_from_base_model_cls
+
+if TYPE_CHECKING:
+    from kiara.kiara import Kiara
+    from kiara.modules import KiaraModule
 
 
 class ValueTypeAndDescription(BaseModel):
@@ -92,7 +95,7 @@ class KiaraModuleConfigMetadata(KiaraModel):
     )
 
     def _retrieve_id(self) -> str:
-        self.python_class.id
+        return self.python_class.id
 
     def _retrieve_category_id(self) -> str:
         return MODULE_CONFIG_METADATA_CATEGORY_ID
@@ -256,7 +259,11 @@ class KiaraModuleTypeMetadata(KiaraModel):
         if include_config_schema:
             if self.config:
                 config_cls = self.config.python_class.get_class()
-                table.add_row("Module config", create_table_from_base_model_cls(config_cls))
+                from kiara.utils.output import create_table_from_base_model_cls
+
+                table.add_row(
+                    "Module config", create_table_from_base_model_cls(config_cls)
+                )
             else:
                 table.add_row("Module config", "-- no config --")
 
@@ -390,7 +397,7 @@ class ModuleTypesGroupInfo(KiaraModel):
         return table
 
     def _retrieve_id(self) -> str:
-        return self.model_data_hash
+        return str(self.model_data_hash)
 
     def _retrieve_category_id(self) -> str:
         return MODULE_TYPES_CATEGORY_ID

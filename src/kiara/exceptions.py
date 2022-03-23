@@ -6,12 +6,14 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import typing
-from typing import Mapping, Any
+from typing import Any, Mapping
 
 if typing.TYPE_CHECKING:
     from kiara import KiaraModule
-    from kiara.models.values.value import ValueSet
+    from kiara.data_types import DataType
     from kiara.models.module.manifest import Manifest
+    from kiara.models.values.value import Value
+
 
 class KiaraException(Exception):
     pass
@@ -43,7 +45,7 @@ class ValueTypeConfigException(Exception):
     def __init__(
         self,
         msg: str,
-        type_cls: typing.Type["ValueTypeOrm"],
+        type_cls: typing.Type["DataType"],
         config: typing.Mapping[str, typing.Any],
         parent: typing.Optional[Exception] = None,
     ):
@@ -84,10 +86,10 @@ class KiaraProcessingException(Exception):
         self,
         msg: typing.Union[str, Exception],
         module: typing.Optional["KiaraModule"] = None,
-        inputs: typing.Optional["ValueSet"] = None,
+        inputs: typing.Optional[Mapping[str, Value]] = None,
     ):
         self._module: typing.Optional["KiaraModule"] = module
-        self._inputs: typing.Optional["ValueSet"] = inputs
+        self._inputs: typing.Optional[Mapping[str, Value]] = inputs
         if isinstance(msg, Exception):
             self._parent: typing.Optional[Exception] = msg
             _msg = str(msg)
@@ -101,22 +103,24 @@ class KiaraProcessingException(Exception):
         return self._module  # type: ignore
 
     @property
-    def inputs(self) -> "ValueSet":
+    def inputs(self) -> Mapping[str, Value]:
         return self._inputs  # type: ignore
 
     @property
     def parent_exception(self) -> typing.Optional[Exception]:
         return self._parent
 
+
 class JobConfigException(Exception):
-    def __init__(self,
-                 msg: typing.Union[str, Exception],
-                 manifest: "Manifest",
-                 inputs: Mapping[str, Any]
-                 ):
+    def __init__(
+        self,
+        msg: typing.Union[str, Exception],
+        manifest: "Manifest",
+        inputs: Mapping[str, Any],
+    ):
 
         self._manifest: Manifest = manifest
-        self._inputs: Mapping[str, ANy] = inputs
+        self._inputs: Mapping[str, Any] = inputs
 
         if isinstance(msg, Exception):
             self._parent: typing.Optional[Exception] = msg
@@ -134,4 +138,3 @@ class JobConfigException(Exception):
     @property
     def inputs(self) -> Mapping[str, Any]:
         return self._inputs
-

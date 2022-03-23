@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-
 from alembic import context
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
@@ -27,8 +26,8 @@ fileConfig(config.config_file_name)
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 
-from kiara.kiara.orm import Base
 import kiara.kiara.aliases.aliases_orm
+from kiara.kiara.orm import Base
 
 target_metadata = Base.metadata
 

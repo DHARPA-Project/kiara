@@ -5,7 +5,7 @@
 
 import rich_click as click
 
-from kiara.environment import RuntimeEnvironmentMgmt
+from kiara.models.runtime_environment import RuntimeEnvironmentMgmt
 
 
 @click.group(name="environment")

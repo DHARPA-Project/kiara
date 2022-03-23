@@ -11,14 +11,8 @@ from pathlib import Path
 from pydantic import BaseModel, Field, validator
 
 from kiara.modules.mgmt import ModuleManager
-from kiara.modules.mgmt.pipelines import (
-    PipelineModuleManager,
-    PipelineModuleManagerConfig,
-)
-from kiara.modules.mgmt.python_classes import (
-    PythonModuleManager,
-    PythonModuleManagerConfig,
-)
+from kiara.modules.mgmt.pipelines import PipelineModuleManager
+from kiara.modules.mgmt.python_classes import PythonModuleManager
 
 if typing.TYPE_CHECKING:
     from kiara import KiaraModule
@@ -60,13 +54,10 @@ class MergedModuleManagerConfig(BaseModel):
 class MergedModuleManager(ModuleManager):
     def __init__(
         self,
-        module_managers: typing.Optional[
-            typing.List[str]
-        ] = None,
+        module_managers: typing.Optional[typing.List[str]] = None,
         extra_pipeline_folders: typing.Iterable[str] = None,
         ignore_errors: bool = False,
     ):
-
 
         self._modules: typing.Optional[typing.Dict[str, ModuleManager]] = None
         self._module_cls_cache: typing.Dict[str, typing.Type[KiaraModule]] = {}

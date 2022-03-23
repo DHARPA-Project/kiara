@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from typing import Dict
 import uuid
 from datetime import datetime
 from sqlalchemy import (
@@ -12,21 +11,24 @@ from sqlalchemy import (
     Table,
     UniqueConstraint,
 )
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy_utc import UtcDateTime, utcnow
 from sqlalchemy_utils import UUIDType
+from typing import Any, Dict, List, Optional, Union
 
-Base = declarative_base()
+Base: DeclarativeMeta = declarative_base()
 
 
 class MetadataSchemaOrm(Base):
     __tablename__ = "metadata_schema_lookup"
 
-    id = Column(Integer, primary_key=True)
-    metadata_schema_hash: int = Column(Integer, index=True)
-    metadata_type: str = Column(String, nullable=False)
-    metadata_schema: Dict = Column(JSON, nullable=False)
+    id: Column[Optional[int]] = Column(Integer, primary_key=True)
+    metadata_schema_hash: Column[int] = Column(Integer, index=True, nullable=False)
+    metadata_type: Column[str] = Column(String, nullable=False)
+    metadata_schema: Column[Union[Dict[Any, Any], List[Any]]] = Column(
+        JSON, nullable=False
+    )
     metadata_payloads = relationship("EnvironmentOrm")
 
     UniqueConstraint(metadata_schema_hash)
@@ -35,12 +37,14 @@ class MetadataSchemaOrm(Base):
 class EnvironmentOrm(Base):
     __tablename__ = "environments"
 
-    id = Column(Integer, primary_key=True)
-    metadata_hash: int = Column(Integer, index=True, nullable=False)
-    metadata_schema_id: int = Column(
+    id: Column[Optional[int]] = Column(Integer, primary_key=True)
+    metadata_hash: Column[int] = Column(Integer, index=True, nullable=False)
+    metadata_schema_id = Column(
         Integer, ForeignKey("metadata_schema_lookup.id"), nullable=False
     )
-    metadata_payload: Dict = Column(JSON, nullable=False)
+    metadata_payload: Column[Union[Dict[Any, Any], List[Any]]] = Column(
+        JSON, nullable=False
+    )
 
     UniqueConstraint(metadata_hash)
 
@@ -48,13 +52,16 @@ class EnvironmentOrm(Base):
 class ManifestOrm(Base):
     __tablename__ = "manifests"
 
-    id = Column(Integer, primary_key=True)
-    module_type: str = Column(String, index=True, nullable=False)
-    module_config: Dict = Column(JSON, nullable=False)
-    manifest_hash: int = Column(Integer, index=True, nullable=False)
-    is_idempotent: bool = Column(Boolean, nullable=False)
+    id: Column[Optional[int]] = Column(Integer, primary_key=True)
+    module_type: Column[str] = Column(String, index=True, nullable=False)
+    module_config: Column[Union[Dict[Any, Any], List[Any]]] = Column(
+        JSON, nullable=False
+    )
+    manifest_hash: Column[int] = Column(Integer, index=True, nullable=False)
+    is_idempotent: Column[bool] = Column(Boolean, nullable=False)
 
     UniqueConstraint(module_type, manifest_hash)
+
 
 jobs_env_association_table = Table(
     "job_environments",
@@ -67,28 +74,29 @@ jobs_env_association_table = Table(
 class JobsOrm(Base):
 
     __tablename__ = "jobs"
-    id = Column(Integer, primary_key=True)
-    manifest_id: int = Column(
+    id: Column[Optional[int]] = Column(Integer, primary_key=True)
+    manifest_id: Column[int] = Column(
         Integer, ForeignKey("manifests.id"), nullable=False
     )
-    inputs: str = Column(JSON, nullable=False)
-    input_hash: str = Column(String, nullable=False)
-    is_idempotent: bool = Column(Boolean, nullable=False)
-    created: datetime = Column(UtcDateTime(), default=utcnow(), nullable=False)
-    started: datetime = Column(UtcDateTime(), nullable=True)
-    duration_ms: int = Column(Integer, nullable=True)
+    inputs: Column[Union[Dict[Any, Any], List[Any]]] = Column(JSON, nullable=False)
+    input_hash: Column[str] = Column(String, nullable=False)
+    is_idempotent: Column[bool] = Column(Boolean, nullable=False)
+    created: Column[datetime] = Column(UtcDateTime(), default=utcnow(), nullable=False)
+    started: Column[Optional[datetime]] = Column(UtcDateTime(), nullable=True)
+    duration_ms: Column[Optional[int]] = Column(Integer, nullable=True)
     environments = relationship("EnvironmentOrm", secondary=jobs_env_association_table)
 
 
 class ValueTypeOrm(Base):
     __tablename__ = "data_types"
 
-    id = Column(Integer, primary_key=True)
-    type_config_hash: int = Column(Integer, index=True, nullable=False)
-    type_name: str = Column(String, nullable=False, index=True)
-    type_config: Dict = Column(JSON, nullable=False)
+    id: Column[Optional[int]] = Column(Integer, primary_key=True)
+    type_config_hash: Column[int] = Column(Integer, index=True, nullable=False)
+    type_name: Column[str] = Column(String, nullable=False, index=True)
+    type_config: Column[Union[Dict[Any, Any], List[Any]]] = Column(JSON, nullable=False)
 
     UniqueConstraint(type_config_hash, type_name)
+
 
 value_env_association_table = Table(
     "value_environments",
@@ -97,15 +105,18 @@ value_env_association_table = Table(
     Column("environment_id", ForeignKey("environments.id"), primary_key=True),
 )
 
+
 class ValueOrm(Base):
     __tablename__ = "values"
 
-    id = Column(Integer, primary_key=True)
-    global_id: uuid.UUID = Column(UUIDType(binary=True))
-    data_type_id: int = Column(Integer, ForeignKey("data_types.id"))
-    data_type_name: str = Column(Integer, index=True, nullable=False)
-    value_size: int = Column(Integer, index=True, nullable=False)
-    value_hash: str = Column(String, index=True, nullable=False)
+    id: Column[Optional[int]] = Column(Integer, primary_key=True)
+    global_id: Column[uuid.UUID] = Column(UUIDType(binary=True), nullable=False)
+    data_type_id: Column[int] = Column(
+        Integer, ForeignKey("data_types.id"), nullable=False
+    )
+    data_type_name: Column[str] = Column(String, index=True, nullable=False)
+    value_size: Column[int] = Column(Integer, index=True, nullable=False)
+    value_hash: Column[str] = Column(String, index=True, nullable=False)
     environments = relationship("EnvironmentOrm", secondary=value_env_association_table)
 
     UniqueConstraint(value_hash, value_size, data_type_id)
@@ -114,24 +125,30 @@ class ValueOrm(Base):
 class Pedigree(Base):
     __tablename__ = "pedigrees"
 
-    id: int = Column(Integer, primary_key=True)
-    manifest_id: int = Column(Integer, ForeignKey("manifests.id"), nullable=False)
-    inputs: Dict = Column(JSON, nullable=False)
+    id: Column[Optional[int]] = Column(Integer, primary_key=True)
+    manifest_id: Column[int] = Column(
+        Integer, ForeignKey("manifests.id"), nullable=False
+    )
+    inputs: Column[Union[Dict[Any, Any], List[Any]]] = Column(JSON, nullable=False)
 
 
 class DestinyOrm(Base):
     __tablename__ = "destinies"
 
-    id = Column(Integer, primary_key=True)
-    value_id: int = Column(Integer, ForeignKey("values.id"))
-    category: str = Column(String, nullable=False, index=False)
-    key: str = Column(String, nullable=False, index=False)
-    manifest_id: int = Column(Integer, ForeignKey("manifests.id"))
-    inputs: Dict = Column(JSON, index=False, nullable=False)
-    output_name: str = Column(String, index=False, nullable=False)
-    destiny_value: int = Column(Integer, ForeignKey("values.id"), nullable=True)
-    description: str = Column(String, nullable=True)
+    id: Column[Optional[int]] = Column(Integer, primary_key=True)
+    value_id: Column[int] = Column(Integer, ForeignKey("values.id"), nullable=False)
+    category: Column[str] = Column(String, nullable=False, index=False)
+    key: Column[str] = Column(String, nullable=False, index=False)
+    manifest_id: Column[int] = Column(
+        Integer, ForeignKey("manifests.id"), nullable=False
+    )
+    inputs: Column[Union[Dict[Any, Any], List[Any]]] = Column(
+        JSON, index=False, nullable=False
+    )
+    output_name: Column[str] = Column(String, index=False, nullable=False)
+    destiny_value: Column[Optional[int]] = Column(
+        Integer, ForeignKey("values.id"), nullable=True
+    )
+    description: Column[Optional[str]] = Column(String, nullable=True)
 
     UniqueConstraint(value_id, category, key)
-
-

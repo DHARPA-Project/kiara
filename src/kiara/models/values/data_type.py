@@ -2,12 +2,13 @@
 import uuid
 from pydantic.fields import Field, PrivateAttr
 from rich import box
-from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
+from rich.console import RenderableType
 from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
 from typing import Any, Iterable, Mapping, Optional, Type
 
+from kiara.data_types import DataType
 from kiara.defaults import DATA_TYPE_CLASS_CATEGORY_ID
 from kiara.models import KiaraModel
 from kiara.models.documentation import (
@@ -16,14 +17,11 @@ from kiara.models.documentation import (
     DocumentationMetadataModel,
 )
 from kiara.models.python_class import PythonClass
-from kiara.data_types import DataType
 
 
 class ValueTypeClassInfo(KiaraModel):
     @classmethod
-    def create_from_data_type(
-        self, data_type_cls: Type[DataType]
-    ) -> "ValueTypeInfo":
+    def create_from_data_type(self, data_type_cls: Type[DataType]) -> "ValueTypeInfo":
 
         authors = AuthorsMetadataModel.from_class(data_type_cls)
         doc = DocumentationMetadataModel.from_class_doc(data_type_cls)
@@ -42,8 +40,12 @@ class ValueTypeClassInfo(KiaraModel):
                 context=properties_md,
             )
         except Exception as e:
-            if isinstance(e, TypeError) and "missing 1 required positional argument: 'cls'" in str(e):
-                raise Exception(f"Invalid implementation of TypeValue subclass '{data_type_cls.__name__}': 'python_class' method must be marked as a '@classmethod'. This is a bug.")
+            if isinstance(
+                e, TypeError
+            ) and "missing 1 required positional argument: 'cls'" in str(e):
+                raise Exception(
+                    f"Invalid implementation of TypeValue subclass '{data_type_cls.__name__}': 'python_class' method must be marked as a '@classmethod'. This is a bug."
+                )
             raise e
 
     type_name: str = Field(description="The registered name for this value type.")

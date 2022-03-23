@@ -1,74 +1,71 @@
-from typing import Iterable, Union, Mapping, Optional, Any, TYPE_CHECKING, Dict, Type
+# -*- coding: utf-8 -*-
+from pydantic import Field
+from typing import Any, Iterable, Mapping, Optional, Union
 
-from pydantic import Field, BaseModel
-
-from kiara.defaults import SERIALIZED_DATA_TYPE_NAME, LOAD_CONFIG_DATA_TYPE_NAME
+from kiara.data_types.included_core_types.persistence import LoadConfigValueType
+from kiara.defaults import LOAD_CONFIG_DATA_TYPE_NAME
 from kiara.models.documentation import DocumentationMetadataModel
-from kiara.models.module.operation import BaseOperationDetails, OperationConfig, Operation
-
+from kiara.models.module.operation import (
+    BaseOperationDetails,
+    Operation,
+    OperationConfig,
+)
 from kiara.models.values.value import Value, ValueSet
 from kiara.models.values.value_schema import ValueSchema
+from kiara.modules import KiaraModule, ValueSetSchema
 from kiara.modules.included_core_modules.persistence import PersistValueModule
 from kiara.modules.operations import OperationType
 from kiara.utils import log_message
-from kiara.data_types.included_core_types.persistence import LoadConfigValueType
-
-from kiara.modules import KiaraModule, ValueSetSchema
 
 
 class PersistValueDetails(BaseOperationDetails):
-
     @classmethod
     def retrieve_inputs_schema(cls) -> ValueSetSchema:
 
         return {
-            "value": {
-                "type": "any",
-                "doc": "The value to persist."
-            },
-            "target": {
-                "type": "string",
-                "doc": "The target path or url."
-            },
+            "value": {"type": "any", "doc": "The value to persist."},
+            "target": {"type": "string", "doc": "The target path or url."},
             "base_name": {
                 "type": "string",
-                "doc": "A string to use as base token when persisting (might or might not be used)."
-            }
+                "doc": "A string to use as base token when persisting (might or might not be used).",
+            },
         }
 
     @classmethod
     def retrieve_outputs_schema(cls) -> ValueSetSchema:
 
         return {
-            "load_config": {
-                "type": "load_config",
-                "doc": "The saved value details."
-            }
+            "load_config": {"type": "load_config", "doc": "The saved value details."}
         }
 
-
-    value_input_field: str = Field(description="The (input) field name containing the value to be persisted.")
+    value_input_field: str = Field(
+        description="The (input) field name containing the value to be persisted."
+    )
     value_input_type: str = Field(description="The type of the value to be persisted.")
-    load_config_output_field: str = Field(description="The (output) field name containing the details of the persisted value.")
-    target_input_field: str = Field(description="The (input) field name containing the target value.")
-    base_name_input_field: Optional[str] = Field(description="The (input) field name containing the base_name value.", default=None)
+    load_config_output_field: str = Field(
+        description="The (output) field name containing the details of the persisted value."
+    )
+    target_input_field: str = Field(
+        description="The (input) field name containing the target value."
+    )
+    base_name_input_field: Optional[str] = Field(
+        description="The (input) field name containing the base_name value.",
+        default=None,
+    )
     persistence_target: str = Field(description="The name of the persistence target.")
-    persistence_format: str = Field(description="The persistence format.")\
-
+    persistence_format: str = Field(description="The persistence format.")
 
     def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
 
         return {
             self.value_input_field: inputs["value"],
             self.target_input_field: inputs["target"],
-            self.base_name_input_field: inputs["base_name"]
+            self.base_name_input_field: inputs["base_name"],
         }
 
     def create_operation_outputs(self, outputs: ValueSet) -> Mapping[str, Value]:
 
-        return {
-            "load_config": outputs.get_value_obj(self.load_config_output_field)
-        }
+        return {"load_config": outputs.get_value_obj(self.load_config_output_field)}
 
 
 class PersistValueOperationType(OperationType[PersistValueDetails]):
@@ -82,7 +79,9 @@ class PersistValueOperationType(OperationType[PersistValueDetails]):
       - an input field called 'value'
     """
 
-    def retrieve_included_operation_configs(self) -> Iterable[Union[Mapping, OperationConfig]]:
+    def retrieve_included_operation_configs(
+        self,
+    ) -> Iterable[Union[Mapping, OperationConfig]]:
         result = []
         for name, module_cls in self._kiara.module_types.items():
 
@@ -93,15 +92,15 @@ class PersistValueOperationType(OperationType[PersistValueDetails]):
                 func_name = f"data_type__{st}"
                 attr = getattr(module_cls, func_name)
                 doc = DocumentationMetadataModel.from_function(attr)
-                mc = {
-                    "source_type": st
-                }
+                mc = {"source_type": st}
                 oc = OperationConfig(module_type=name, module_config=mc, doc=doc)
                 result.append(oc)
 
         return result
 
-    def check_matching_operation(self, module: "KiaraModule") -> Optional[PersistValueDetails]:
+    def check_matching_operation(
+        self, module: "KiaraModule"
+    ) -> Optional[PersistValueDetails]:
 
         details = self.extract_details(module)
 
@@ -121,7 +120,11 @@ class PersistValueOperationType(OperationType[PersistValueDetails]):
                 continue
             else:
                 if match != None:
-                    log_message("ignore.operation", reason=f"More than one field of type '{LOAD_CONFIG_DATA_TYPE_NAME}'", module_type=module.module_type_name)
+                    log_message(
+                        "ignore.operation",
+                        reason=f"More than one field of type '{LOAD_CONFIG_DATA_TYPE_NAME}'",
+                        module_type=module.module_type_name,
+                    )
                     continue
                 else:
                     match = field_name
@@ -137,7 +140,11 @@ class PersistValueOperationType(OperationType[PersistValueDetails]):
             if field_name == schema.type:
                 if input_field_match is not None:
                     # we can't deal (yet) with multiple fields
-                    log_message("operation.ignore", module=module.module_type_name, reason=f"more than one input fields of type '{schema.type}'")
+                    log_message(
+                        "operation.ignore",
+                        module=module.module_type_name,
+                        reason=f"more than one input fields of type '{schema.type}'",
+                    )
                     input_field_match = None
                     break
                 else:
@@ -157,8 +164,12 @@ class PersistValueOperationType(OperationType[PersistValueDetails]):
 
         input_field_type = module.inputs_schema[input_field].type
         value_schema: ValueSchema = module.outputs_schema[match]
-        load_config_type: LoadConfigValueType = self._kiara.type_mgmt.retrieve_data_type(
-            data_type_name=value_schema.type, data_type_config=value_schema.type_config)  # type: ignore
+        load_config_type: LoadConfigValueType = (
+            self._kiara.type_mgmt.retrieve_data_type(
+                data_type_name=value_schema.type,
+                data_type_config=value_schema.type_config,
+            )
+        )  # type: ignore
 
         persistence_target = load_config_type.type_config.persistence_target
         persistence_format = load_config_type.type_config.persistence_format
@@ -177,7 +188,7 @@ class PersistValueOperationType(OperationType[PersistValueDetails]):
             "load_config_output_field": match,
             "persistence_target": persistence_target,
             "persistence_format": persistence_format,
-            "is_internal_operation": True
+            "is_internal_operation": True,
         }
 
         result = PersistValueDetails.create_operation_details(**details)
@@ -197,12 +208,12 @@ class PersistValueOperationType(OperationType[PersistValueDetails]):
 
             if match:
                 if len(match) > 1:
-                    raise Exception(f"Multiple serialization operations found for value type '{type_name}'. This is not supported (yet).")
+                    raise Exception(
+                        f"Multiple serialization operations found for value type '{type_name}'. This is not supported (yet)."
+                    )
                 persist_op = match[0]
 
         if persist_op is None:
             raise Exception(f"Can't find persist operation for type '{type_name}'.")
 
         return persist_op
-
-

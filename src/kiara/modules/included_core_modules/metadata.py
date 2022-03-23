@@ -4,18 +4,16 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-import abc
-from typing import Iterable, Union, Mapping, Any, Dict, Set, Type
+from pydantic import Field
+from typing import Any, Mapping, Type, Union
 
-from pydantic import BaseModel, Field, PrivateAttr
-
-from kiara.models.python_class import PythonClass
-from kiara.models.values.value_metadata import ValueMetadata
-from kiara.modules import KiaraModule
 from kiara.exceptions import KiaraProcessingException
 from kiara.models.module import KiaraModuleConfig
+from kiara.models.python_class import PythonClass
 from kiara.models.values.value import ValueSet
+from kiara.models.values.value_metadata import ValueMetadata
 from kiara.models.values.value_schema import ValueSchema
+from kiara.modules import KiaraModule
 
 
 class MetadataModuleConfig(KiaraModuleConfig):
@@ -36,9 +34,7 @@ class ExtractMetadataModule(KiaraModule):
 
     def create_inputs_schema(
         self,
-    ) -> Mapping[
-        str, Union[ValueSchema, Mapping[str, Any]]
-    ]:
+    ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
 
         data_type_name = self.get_config_value("data_type")
         inputs = {
@@ -52,9 +48,7 @@ class ExtractMetadataModule(KiaraModule):
 
     def create_outputs_schema(
         self,
-    ) -> Mapping[
-        str, Union[ValueSchema, Mapping[str, Any]]
-    ]:
+    ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
         outputs = {
             "value_metadata": {
                 "type": "internal_model",
@@ -76,14 +70,17 @@ class ExtractMetadataModule(KiaraModule):
         metadata = metadata_model_cls.create_value_metadata(value=value)
 
         if not isinstance(metadata, metadata_model_cls):
-            raise KiaraProcessingException(f"Invalid metadata model result, should be class '{metadata_model_cls.__name__}', but is: {metadata.__class__.__name__}. This is most likely a bug.")
+            raise KiaraProcessingException(
+                f"Invalid metadata model result, should be class '{metadata_model_cls.__name__}', but is: {metadata.__class__.__name__}. This is most likely a bug."
+            )
 
         if isinstance(metadata, Mapping):
             md = metadata_model_cls(metadata)
         elif isinstance(metadata, metadata_model_cls):
             md = metadata
         else:
-            raise KiaraProcessingException(f"Invalid type '{type(metadata)}' for result metadata, must be a mapping or subclass of '{metadata_model_cls.__name__}'.")
+            raise KiaraProcessingException(
+                f"Invalid type '{type(metadata)}' for result metadata, must be a mapping or subclass of '{metadata_model_cls.__name__}'."
+            )
 
         outputs.set_value("value_metadata", md)
-

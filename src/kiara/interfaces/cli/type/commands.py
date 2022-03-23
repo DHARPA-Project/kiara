@@ -11,8 +11,8 @@ import rich_click as click
 
 from kiara import Kiara
 from kiara.models.values.data_type import DataTypeClassesInfo, ValueTypeClassInfo
+from kiara.utils import rich_print
 from kiara.utils.graphs import print_ascii_graph
-from kiara.utils.output import rich_print
 
 
 @click.group(name="data-type")
@@ -23,7 +23,12 @@ def type_group(ctx):
 
 @type_group.command(name="list")
 @click.option("--details", "-d", is_flag=True, help="Display full description.")
-@click.option("--include-internal-types", "-i", is_flag=True, help="Also list types that are only (or mostly) used internally.")
+@click.option(
+    "--include-internal-types",
+    "-i",
+    is_flag=True,
+    help="Also list types that are only (or mostly) used internally.",
+)
 @click.pass_context
 def list_types(ctx, details, include_internal_types: bool):
     """List available data_types (work in progress)."""
@@ -40,9 +45,7 @@ def list_types(ctx, details, include_internal_types: bool):
         type_classes = kiara_obj.data_type_classes
 
     print()
-    data_types_info = DataTypeClassesInfo(
-        type_classes, id="all_types", details=details
-    )
+    data_types_info = DataTypeClassesInfo(type_classes, id="all_types", details=details)
 
     rich_print(data_types_info)
 

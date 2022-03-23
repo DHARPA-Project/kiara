@@ -1,53 +1,41 @@
-from typing import Iterable, Union, Mapping, Optional, Any, TYPE_CHECKING, Dict, Type
+# -*- coding: utf-8 -*-
+from pydantic import Field
+from typing import Any, Iterable, Mapping, Optional, Union
 
-from pydantic import Field, BaseModel
-
-from kiara.defaults import SERIALIZED_DATA_TYPE_NAME, LOAD_CONFIG_DATA_TYPE_NAME
 from kiara.models.documentation import DocumentationMetadataModel
-from kiara.models.module.operation import BaseOperationDetails, OperationConfig, Operation
-
+from kiara.models.module.operation import (
+    BaseOperationDetails,
+    Operation,
+    OperationConfig,
+)
 from kiara.models.values.value import Value, ValueSet
-from kiara.models.values.value_schema import ValueSchema
-from kiara.modules.included_core_modules.persistence import PersistValueModule
+from kiara.modules import KiaraModule, ValueSetSchema
 from kiara.modules.included_core_modules.render_value import RenderValueModule
 from kiara.modules.operations import OperationType
 from kiara.utils import log_message
-from kiara.data_types.included_core_types.persistence import LoadConfigValueType
-
-from kiara.modules import KiaraModule, ValueSetSchema
 
 
 class RenderValueDetails(BaseOperationDetails):
-
     @classmethod
     def retrieve_inputs_schema(cls) -> ValueSetSchema:
 
         return {
-            "value": {
-                "type": "any",
-                "doc": "The value to persist."
-            },
+            "value": {"type": "any", "doc": "The value to persist."},
             "render_type": {
                 "type": "string",
-                "doc": "The render target/type of render output."
+                "doc": "The render target/type of render output.",
             },
             "render_config": {
                 "type": "dict",
                 "doc": "A value type specific configuration for how to render the data.",
-                "optional": True
-            }
+                "optional": True,
+            },
         }
 
     @classmethod
     def retrieve_outputs_schema(cls) -> ValueSetSchema:
 
-        return {
-            "rendered_value": {
-                "type": "any",
-                "doc": "The rendered value."
-            }
-        }
-
+        return {"rendered_value": {"type": "any", "doc": "The rendered value."}}
 
     source_type: str = Field(description="The type of the value to be rendered.")
     target_type: str = Field(description="The type of the render result.")
@@ -61,9 +49,7 @@ class RenderValueDetails(BaseOperationDetails):
 
     def create_operation_outputs(self, outputs: ValueSet) -> Mapping[str, Value]:
 
-        return {
-            "rendered_value": outputs.get_value_obj("rendered_value")
-        }
+        return {"rendered_value": outputs.get_value_obj("rendered_value")}
 
 
 class RenderValueOperationType(OperationType[RenderValueDetails]):
@@ -74,30 +60,36 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
     - exactly two input fields, one of them named after the type it supports, and the other called 'render_config', of type 'dict'
     """
 
-    def retrieve_included_operation_configs(self) -> Iterable[Union[Mapping, OperationConfig]]:
+    def retrieve_included_operation_configs(
+        self,
+    ) -> Iterable[Union[Mapping, OperationConfig]]:
         result = []
         for name, module_cls in self._kiara.module_types.items():
 
             if not issubclass(module_cls, RenderValueModule):
                 continue
 
-            for source_type, target_type in module_cls.retrieve_supported_render_combinations():
+            for (
+                source_type,
+                target_type,
+            ) in module_cls.retrieve_supported_render_combinations():
                 if source_type not in self._kiara.data_type_names:
                     log_message("operation_config.ignore", operation_type="render_value", module_type=module_cls._module_type_name, source_type=source_type, target_type=target_type, reason=f"Source type '{source_type}' not registered.")  # type: ignore
                     continue
                 if target_type not in self._kiara.data_type_names:
-                    log_message("operation_config.ignore", operation_type="render_value",
-                                module_type=module_cls._module_type_name, source_type=source_type,  # type: ignore
-                                target_type=target_type,
-                                reason=f"Target type '{target_type}' not registered.")
+                    log_message(
+                        "operation_config.ignore",
+                        operation_type="render_value",
+                        module_type=module_cls._module_type_name,
+                        source_type=source_type,  # type: ignore
+                        target_type=target_type,
+                        reason=f"Target type '{target_type}' not registered.",
+                    )
                     continue
                 func_name = f"render__{source_type}__as__{target_type}"
                 attr = getattr(module_cls, func_name)
                 doc = DocumentationMetadataModel.from_function(attr)
-                mc = {
-                    "source_type": source_type,
-                    "target_type": target_type
-                }
+                mc = {"source_type": source_type, "target_type": target_type}
                 oc = OperationConfig(module_type=name, module_config=mc, doc=doc)
                 result.append(oc)
 
@@ -108,24 +100,33 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
 
                 target_type = attr[11:]
                 if target_type not in self._kiara.data_type_names:
-                    log_message("operation_config.ignore", operation_type="render_value",
-                                module_type="value.extract_metadata",
-                                source_type=data_type_name,
-                                target_type=target_type,
-                                reason=f"Target type '{target_type}' not registered.")  # type: ignore
+                    log_message(
+                        "operation_config.ignore",
+                        operation_type="render_value",
+                        module_type="value.extract_metadata",
+                        source_type=data_type_name,
+                        target_type=target_type,
+                        reason=f"Target type '{target_type}' not registered.",
+                    )  # type: ignore
 
                 # TODO: inspect signature?
-                doc = DocumentationMetadataModel.from_string(f"Render a {data_type_name} value as {target_type}.")
+                doc = DocumentationMetadataModel.from_string(
+                    f"Render a {data_type_name} value as {target_type}."
+                )
                 mc = {
                     "source_type": data_type_name,
                     "target_type": target_type,
                 }
-                oc = OperationConfig(module_type="value.render", module_config=mc, doc=doc)
+                oc = OperationConfig(
+                    module_type="value.render", module_config=mc, doc=doc
+                )
                 result.append(oc)
 
         return result
 
-    def check_matching_operation(self, module: "KiaraModule") -> Optional[RenderValueDetails]:
+    def check_matching_operation(
+        self, module: "KiaraModule"
+    ) -> Optional[RenderValueDetails]:
 
         details = self.extract_details(module)
 
@@ -145,7 +146,6 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
                 return None
             target_type = schema.type
 
-
         input_field_match = None
         render_config_match = None
 
@@ -153,7 +153,11 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
             if field_name == schema.type:
                 if input_field_match is not None:
                     # we can't deal (yet) with multiple fields
-                    log_message("operation.ignore", module=module.module_type_name, reason=f"more than one input fields of type '{schema.type}'")
+                    log_message(
+                        "operation.ignore",
+                        module=module.module_type_name,
+                        reason=f"more than one input fields of type '{schema.type}'",
+                    )
                     input_field_match = None
                     break
                 else:
@@ -178,7 +182,7 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
             "operation_id": operation_id,
             "source_type": input_field_type,
             "target_type": target_type,
-            "is_internal_operation": True
+            "is_internal_operation": True,
         }
 
         result = RenderValueDetails.create_operation_details(**details)
@@ -194,22 +198,30 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
             if details.source_type == source_type:
                 target_type = details.target_type
                 if target_type in result.keys():
-                    raise Exception(f"More than one operation for render combination '{source_type}'/'{target_type}', this is not supported (for now)." )
+                    raise Exception(
+                        f"More than one operation for render combination '{source_type}'/'{target_type}', this is not supported (for now)."
+                    )
                 result[target_type] = operation
 
         return result
 
-    def get_operation_for_render_combination(self, source_type: str, target_type: str) -> Operation:
+    def get_operation_for_render_combination(
+        self, source_type: str, target_type: str
+    ) -> Operation:
 
-        type_lineage = self._kiara.type_mgmt.get_type_lineage(data_type_name=source_type)
+        type_lineage = self._kiara.type_mgmt.get_type_lineage(
+            data_type_name=source_type
+        )
 
         for st in type_lineage:
             target_types = self.get_target_types_for(source_type=st)
             if not target_types:
                 continue
-                
+
             if target_type not in target_types.keys():
-                raise Exception(f"No operation that produces '{target_type}' for source type: {st}.")
+                raise Exception(
+                    f"No operation that produces '{target_type}' for source type: {st}."
+                )
             return target_types[target_type]
 
         raise Exception(f"No render opration(s) for source type: {source_type}.")

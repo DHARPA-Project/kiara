@@ -1,12 +1,12 @@
-from typing import Dict, Optional, Type
-
+# -*- coding: utf-8 -*-
 from deepdiff import DeepHash
 from mmh3 import hash_from_buffer
-from pydantic import Field, BaseModel, PrivateAttr
+from pydantic import BaseModel, Field, PrivateAttr
+from typing import Dict, Optional, Type
 
+from kiara.data_types import DataType, DataTypeConfig
 from kiara.defaults import KIARA_HASH_FUNCTION
 from kiara.models.module.manifest import Manifest
-from kiara.data_types import DataTypeConfig, DataType
 
 
 class SerializedValueTypeConfigSchema(DataTypeConfig):
@@ -16,7 +16,9 @@ class SerializedValueTypeConfigSchema(DataTypeConfig):
 
 class DeserializationConfig(Manifest):
 
-    output_name: str = Field(description="The name of the field that contains the deserialized value.")
+    output_name: str = Field(
+        description="The name of the field that contains the deserialized value."
+    )
 
 
 class SerializedValueModel(BaseModel):
@@ -52,7 +54,7 @@ class SerializedValueModel(BaseModel):
 
         obj = {
             "deserialization_config": self.deserialization_config.dict(),
-            "data": {k: hash_from_buffer(v) for k, v in self.data.items()}
+            "data": {k: hash_from_buffer(v) for k, v in self.data.items()},
         }
         h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
 
@@ -67,7 +69,9 @@ class SerializedValueModel(BaseModel):
         return self.__repr__()
 
 
-class SerializedValueType(DataType[SerializedValueModel, SerializedValueTypeConfigSchema]):
+class SerializedValueType(
+    DataType[SerializedValueModel, SerializedValueTypeConfigSchema]
+):
     """An value type that contains a serialized representation of a value.
 
     This is used for transferring/streaming value over the wire, and works on a similar principle as the 'load_config'

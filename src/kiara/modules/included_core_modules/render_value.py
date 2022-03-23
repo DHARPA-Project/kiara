@@ -1,20 +1,14 @@
-import abc
-import os
-import pprint
-from typing import Iterable, Mapping, Union, Any, Dict, Optional, Tuple
-
-import mmh3
+# -*- coding: utf-8 -*-
 import orjson
-from pydantic import Field, validator, BaseModel
+import pprint
+from pydantic import BaseModel, Field, validator
+from typing import Any, Dict, Iterable, Mapping, Tuple, Union
 
-from kiara.models.python_class import PythonClass
-from kiara.modules import KiaraModule, ValueSetSchema
-from kiara.exceptions import KiaraProcessingException
 from kiara.models.module import KiaraModuleConfig
-from kiara.models.values.value import ValueSet, Value
+from kiara.models.values.value import Value, ValueSet
 from kiara.models.values.value_schema import ValueSchema
-from kiara.utils.output import create_table_from_model_object, rich_print
-from kiara.models.module.manifest import LoadConfig
+from kiara.modules import KiaraModule
+from kiara.utils.output import create_table_from_model_object
 
 
 class RenderValueConfig(KiaraModuleConfig):
@@ -39,13 +33,17 @@ class RenderValueModule(KiaraModule):
 
         result = []
         for attr in dir(cls):
-            if len(attr) <= 16 or not attr.startswith("render__") or not "__as__" in attr:
+            if (
+                len(attr) <= 16
+                or not attr.startswith("render__")
+                or not "__as__" in attr
+            ):
                 continue
 
             attr = attr[8:]
             end_start_type = attr.find("__as__")
             source_type = attr[0:end_start_type]
-            target_type = attr[end_start_type+6:]
+            target_type = attr[end_start_type + 6 :]
             result.append((source_type, target_type))
         return result
 
@@ -60,15 +58,12 @@ class RenderValueModule(KiaraModule):
         assert source_type not in ["target", "base_name"]
 
         schema = {
-            source_type: {
-                "type": source_type,
-                "doc": "The value to render."
-            },
+            source_type: {"type": source_type, "doc": "The value to render."},
             "render_config": {
                 "type": "any",
                 "doc": "Value type dependent render configuration.",
-                "optional": True
-            }
+                "optional": True,
+            },
         }
 
         return schema
@@ -80,7 +75,7 @@ class RenderValueModule(KiaraModule):
         return {
             "rendered_value": {
                 "type": self.get_config_value("target_type"),
-                "doc": "The rendered value."
+                "doc": "The rendered value.",
             }
         }
 
@@ -114,15 +109,12 @@ class ValueTypeRenderModule(KiaraModule):
         assert source_type not in ["target", "base_name"]
 
         schema = {
-            source_type: {
-                "type": source_type,
-                "doc": "The value to render."
-            },
+            source_type: {"type": source_type, "doc": "The value to render."},
             "render_config": {
                 "type": "any",
                 "doc": "Value type dependent render configuration.",
-                "optional": True
-            }
+                "optional": True,
+            },
         }
 
         return schema
@@ -134,7 +126,7 @@ class ValueTypeRenderModule(KiaraModule):
         return {
             "rendered_value": {
                 "type": self.get_config_value("target_type"),
-                "doc": "The rendered value."
+                "doc": "The rendered value.",
             }
         }
 
@@ -157,7 +149,6 @@ class ValueTypeRenderModule(KiaraModule):
         outputs.set_value("rendered_value", result)
 
 
-
 class RenderAnyValueModule(RenderValueModule):
 
     _module_type_name = "value.render.any"
@@ -170,18 +161,18 @@ class RenderAnyValueModule(RenderValueModule):
         else:
             return str(data)
 
-    def render__any__as__terminal_renderable(self, value: Value, render_config: Dict[str, Any]):
+    def render__any__as__terminal_renderable(
+        self, value: Value, render_config: Dict[str, Any]
+    ):
 
         data = value.data
 
         if isinstance(data, BaseModel):
-            rendered = create_table_from_model_object(model=data, render_config=render_config)
+            rendered = create_table_from_model_object(
+                model=data, render_config=render_config
+            )
         elif isinstance(data, Iterable):
             rendered = pprint.pformat(data)
         else:
             rendered = str(data)
         return rendered
-
-
-
-

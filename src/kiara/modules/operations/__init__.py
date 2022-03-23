@@ -2,15 +2,23 @@
 import abc
 from typing import (
     TYPE_CHECKING,
+    Any,
     Dict,
+    Generic,
     Iterable,
     Mapping,
     Optional,
+    Set,
     Type,
-    Union, Set, Any, TypeVar, Generic,
+    TypeVar,
+    Union,
 )
 
-from kiara.models.module.operation import Operation, OperationConfig, BaseOperationDetails
+from kiara.models.module.operation import (
+    BaseOperationDetails,
+    Operation,
+    OperationConfig,
+)
 from kiara.models.python_class import PythonClass
 
 if TYPE_CHECKING:
@@ -19,8 +27,8 @@ if TYPE_CHECKING:
 
 OPERATION_TYPE_DETAILS = TypeVar("OPERATION_TYPE_DETAILS", bound=BaseOperationDetails)
 
-class OperationType(abc.ABC, Generic[OPERATION_TYPE_DETAILS]):
 
+class OperationType(abc.ABC, Generic[OPERATION_TYPE_DETAILS]):
     def __init__(self, kiara: "Kiara", op_type_name: str):
         self._kiara: Kiara = kiara
         self._op_type_name: str = op_type_name
@@ -29,14 +37,20 @@ class OperationType(abc.ABC, Generic[OPERATION_TYPE_DETAILS]):
     def operations(self) -> Mapping[str, Operation]:
         return self._kiara.operations_mgmt.operations_by_type[self._op_type_name]
 
-    def retrieve_included_operation_configs(self) -> Iterable[Union[Mapping, OperationConfig]]:
+    def retrieve_included_operation_configs(
+        self,
+    ) -> Iterable[Union[Mapping, OperationConfig]]:
         return []
 
     @abc.abstractmethod
-    def check_matching_operation(self, module: "KiaraModule") -> Optional[OPERATION_TYPE_DETAILS]:
+    def check_matching_operation(
+        self, module: "KiaraModule"
+    ) -> Optional[OPERATION_TYPE_DETAILS]:
         """Check whether the provided module is a valid operation for this type."""
 
-    def retrieve_operation_details(self, operation: Operation) -> OPERATION_TYPE_DETAILS:
+    def retrieve_operation_details(
+        self, operation: Operation
+    ) -> OPERATION_TYPE_DETAILS:
         """Retrieve operation details for provided operation.
 
         This is really just a utility method, to make the type checker happy.
@@ -81,7 +95,9 @@ class OperationsMgmt(object):
     def get_operation_type(self, op_type: str) -> OperationType:
 
         if op_type not in self.operation_types.keys():
-            raise Exception(f"No operation type '{op_type}' registered. Available operation types: {', '.join(self.operation_types.keys())}.")
+            raise Exception(
+                f"No operation type '{op_type}' registered. Available operation types: {', '.join(self.operation_types.keys())}."
+            )
 
         return self.operation_types[op_type]
 
@@ -179,7 +195,9 @@ class OperationsMgmt(object):
         for op_type in sorted(operations_by_type.keys()):
             self._operations_by_type.setdefault(op_type, {})
             for op_id in sorted(operations_by_type[op_type].keys()):
-                self._operations_by_type.setdefault(op_type, {})[op_id] = operations_by_type[op_type][op_id]
+                self._operations_by_type.setdefault(op_type, {})[
+                    op_id
+                ] = operations_by_type[op_type][op_id]
 
         return self._operations
 
@@ -192,9 +210,17 @@ class OperationsMgmt(object):
 
     def find_all_operation_types(self, operation_id: str) -> Set[str]:
 
-        m_hash = self.get_operation(operation_id=operation_id).module.module_instance_hash
+        m_hash = self.get_operation(
+            operation_id=operation_id
+        ).module.module_instance_hash
 
-        return set([op.operation_type for op in self.operations.values() if op.module.module_instance_hash == m_hash])
+        return set(
+            [
+                op.operation_type
+                for op in self.operations.values()
+                if op.module.module_instance_hash == m_hash
+            ]
+        )
 
     @property
     def operations_by_type(self) -> Mapping[str, Mapping[str, Operation]]:
@@ -210,8 +236,9 @@ class OperationsMgmt(object):
 
         op_type = self.operation_types.get(operation_type, None)
         if op_type is None:
-            raise Exception(f"Can't apply operation, operation type '{operation_type}' not registered.")
+            raise Exception(
+                f"Can't apply operation, operation type '{operation_type}' not registered."
+            )
 
         result = op_type.apply(**op_args)
         return result
-

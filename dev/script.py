@@ -3,7 +3,7 @@
 
 
 from kiara.interfaces.python_api import Step
-from kiara.utils.output import rich_print
+from kiara.utils import rich_print
 
 step_read_files_in_folder = Step(
     "onboarding.folder.import", step_id="read_files_in_folder"

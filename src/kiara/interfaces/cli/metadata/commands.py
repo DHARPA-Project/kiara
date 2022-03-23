@@ -13,8 +13,8 @@ from rich.syntax import Syntax
 from kiara import Kiara
 from kiara.info.metadata import MetadataModelsInfo
 from kiara.metadata.core_models import MetadataModelMetadata
+from kiara.utils import rich_print
 from kiara.utils.class_loading import find_all_value_metadata_models
-from kiara.utils.output import rich_print
 
 
 @click.group()

@@ -5,24 +5,23 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import json
-from abc import ABC, abstractmethod
-
 import orjson
-from pydantic import BaseModel, Field, root_validator, BaseSettings
+from abc import ABC, abstractmethod
+from pydantic import BaseModel, Field, root_validator
 from rich import box
 from rich.console import ConsoleRenderable, RenderableType, RenderGroup, RichCast
-from rich.syntax import Syntax
-from rich.table import Table, Table as RichTable
-from typing import Any, Iterable, Mapping, Optional, TYPE_CHECKING, Dict, Type, Union
+from rich.table import Table as RichTable
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Optional, Type
 
 from kiara.defaults import SpecialValue
-from kiara.interfaces import get_console
+from kiara.models.values.value import ORPHAN, Value
 from kiara.models.values.value_metadata import ValueMetadata
 from kiara.utils import dict_from_cli_args
-from kiara.models.values.value import ORPHAN, Value
 
 if TYPE_CHECKING:
-    from pyarrow import Table
+    from pyarrow import Table as ArrowTable
+
+    from kiara.models.values.value_schema import ValueSchema
 
 
 class RenderConfig(BaseModel):
@@ -226,9 +225,7 @@ class TabularWrap(ABC):
         pass
 
     @abstractmethod
-    def slice(
-        self, offset: int = 0, length: Optional[int] = None
-    ) -> "TabularWrap":
+    def slice(self, offset: int = 0, length: Optional[int] = None) -> "TabularWrap":
         pass
 
     @abstractmethod
@@ -355,8 +352,8 @@ class TabularWrap(ABC):
 
 
 class ArrowTabularWrap(TabularWrap):
-    def __init__(self, table: "Table"):
-        self._table: "Table" = table
+    def __init__(self, table: "ArrowTable"):
+        self._table: "ArrowTable" = table
         super().__init__()
 
     def retrieve_column_names(self) -> Iterable[str]:
@@ -386,9 +383,7 @@ class DictTabularWrap(TabularWrap):
     def to_pydict(self) -> Mapping:
         return self._data
 
-    def slice(
-        self, offset: int = 0, length: Optional[int] = None
-    ) -> "TabularWrap":
+    def slice(self, offset: int = 0, length: Optional[int] = None) -> "TabularWrap":
 
         result = {}
         start = None
@@ -406,26 +401,6 @@ class DictTabularWrap(TabularWrap):
                         end = len(self._data)
             result[cn] = self._data[cn][start:end]
         return DictTabularWrap(result)
-
-
-def rich_print(msg: Any = None, **config: Any) -> None:
-
-    if msg is None:
-        msg = ""
-    console = get_console()
-
-    if hasattr(msg, "create_renderable"):
-        msg = msg.create_renderable(**config)
-
-    console.print(msg)
-
-
-def first_line(text: str):
-
-    if "\n" in text:
-        return text.split("\n")[0].strip()
-    else:
-        return text
 
 
 def create_table_from_base_model_cls(model_cls: Type[BaseModel]):
@@ -509,7 +484,7 @@ def create_table_from_field_schemas(
     **fields: "ValueSchema",
 ):
 
-    table = Table(box=box.SIMPLE, show_header=_show_header)
+    table = RichTable(box=box.SIMPLE, show_header=_show_header)
     table.add_column("Field name", style="i")
     table.add_column("Type")
     table.add_column("Description")
@@ -524,7 +499,7 @@ def create_table_from_field_schemas(
 
     for field_name, schema in fields.items():
 
-        row = [field_name, schema.type, schema.doc]
+        row: List[RenderableType] = [field_name, schema.type, schema.doc]
 
         if _add_required:
             req = schema.is_required()
@@ -559,7 +534,10 @@ def create_table_from_field_schemas(
 
     return table
 
-def create_table_from_model_object(model: BaseModel, render_config: Optional[Mapping[str, Any]]=None):
+
+def create_table_from_model_object(
+    model: BaseModel, render_config: Optional[Mapping[str, Any]] = None
+):
 
     model_cls = model.__class__
 
@@ -594,12 +572,13 @@ def create_table_from_model_object(model: BaseModel, render_config: Optional[Map
     return table
 
 
-def extract_renderable(item: Any, render_config: Optional[Mapping[str, Any]]=None):
+def extract_renderable(item: Any, render_config: Optional[Mapping[str, Any]] = None):
     """Try to automatically find and extract or create an object that is renderable by the 'rich' library."""
-
 
     if render_config is None:
         render_config = {}
+    else:
+        render_config = dict(render_config)
 
     inline_models_as_json = render_config.setdefault("inline_models_as_json", True)
 
@@ -610,7 +589,7 @@ def extract_renderable(item: Any, render_config: Optional[Mapping[str, Any]]=Non
     elif isinstance(item, BaseModel):
         return item.json(indent=2)
     elif isinstance(item, Mapping) and not inline_models_as_json:
-        table = Table(show_header=False, box=box.SIMPLE)
+        table = RichTable(show_header=False, box=box.SIMPLE)
         table.add_column("Key", style="i")
         table.add_column("Value")
         for k, v in item.items():
@@ -633,7 +612,9 @@ def extract_renderable(item: Any, render_config: Optional[Mapping[str, Any]]=Non
         return str(item)
 
 
-def create_renderable_from_values(values: Mapping[str, "Value"], config: Optional[Mapping[str, Any]]=None) -> RenderableType:
+def create_renderable_from_values(
+    values: Mapping[str, "Value"], config: Optional[Mapping[str, Any]] = None
+) -> RenderableType:
     """Create a renderable for this module configuration."""
 
     if config is None:
@@ -648,8 +629,8 @@ def create_renderable_from_values(values: Mapping[str, "Value"], config: Optiona
     show_hash = config.get("show_hash", True)
     show_load_config = config.get("show_load_config", False)
 
-    table= Table(show_lines=True, box=box.MINIMAL_DOUBLE_HEAD)
-    table.add_column("value_id", 'i')
+    table = RichTable(show_lines=True, box=box.MINIMAL_DOUBLE_HEAD)
+    table.add_column("value_id", "i")
     table.add_column("data_type")
     table.add_column("size")
     if show_hash:
@@ -662,7 +643,7 @@ def create_renderable_from_values(values: Mapping[str, "Value"], config: Optiona
         table.add_column("load_config")
 
     for id, value in sorted(values.items(), key=lambda item: item[1].value_schema.type):
-        row = [id, value.value_schema.type, str(value.value_size)]
+        row: List[RenderableType] = [id, value.value_schema.type, str(value.value_size)]
         if show_hash:
             row.append(str(value.value_hash))
         if show_pedigree:
@@ -674,15 +655,19 @@ def create_renderable_from_values(values: Mapping[str, "Value"], config: Optiona
         if show_data:
             data = value.data
             if isinstance(data, ValueMetadata):
-                data = json.dumps({"metadata": data.dict(), "schema": data.schema()}, indent=2)
+                data = json.dumps(
+                    {"metadata": data.dict(), "schema": data.schema()}, indent=2
+                )
             else:
                 data = str(data)
             row.append(data)
         if show_load_config:
             load_config = value.load_config
             if load_config is None:
-                load_config = "-- not stored (yet) --"
-            row.append(load_config.create_renderable())
+                load_config_str: RenderableType = "-- not stored (yet) --"
+            else:
+                load_config_str = load_config.create_renderable()
+            row.append(load_config_str)
         table.add_row(*row)
 
     return table

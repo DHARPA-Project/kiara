@@ -1,39 +1,27 @@
 # -*- coding: utf-8 -*-
 import os
-
 import structlog
 import uuid
-
 from alembic import command
 from sqlalchemy.engine import Engine, create_engine
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Type, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Type
 
-from kiara.defaults import KIARA_DB_MIGRATIONS_FOLDER, KIARA_DB_MIGRATIONS_CONFIG
-from kiara.kiara.config import KiaraContextConfig, KiaraGlobalConfig
-from kiara.interfaces import get_console
-from kiara.kiara.data_registry import DataRegistry
-from kiara.kiara.data_store.filesystem_store import FilesystemDataStore
-from kiara.kiara.jobs import JobsMgmt
-from kiara.kiara.orm import (
-    EnvironmentOrm,
-    ManifestOrm as ModuleConfigOrm,
-)
-from kiara.kiara.data_store import DataStore
-from kiara.models.module import KiaraModuleTypeMetadata
-from kiara.models.module.manifest import Manifest
-from kiara.models.runtime_environment import RuntimeEnvironmentMgmt, RuntimeEnvironment
-from kiara.models.values.value import Value, ValueSet
-from kiara.modules.mgmt.merged import MergedModuleManager
-from kiara.modules.operations import OperationsMgmt
-from kiara.modules.operations.included_core_operations.render_value import RenderValueOperationType
-from kiara.utils import is_debug, log_message
-from kiara.utils.db import (
-    ensure_current_environments_persisted,
-    orm_json_deserialize,
-    orm_json_serialize,
-)
 from kiara.data_types import DataType
 from kiara.data_types.type_mgmt import TypeMgmt
+from kiara.defaults import KIARA_DB_MIGRATIONS_CONFIG, KIARA_DB_MIGRATIONS_FOLDER
+from kiara.interfaces import get_console
+from kiara.kiara.config import KiaraContextConfig, KiaraGlobalConfig
+from kiara.kiara.data_registry import DataRegistry
+from kiara.kiara.jobs import JobsMgmt
+from kiara.kiara.orm import EnvironmentOrm
+from kiara.models.module import KiaraModuleTypeMetadata
+from kiara.models.module.manifest import Manifest
+from kiara.models.runtime_environment import RuntimeEnvironment, RuntimeEnvironmentMgmt
+from kiara.models.values.value import ValueSet
+from kiara.modules.mgmt.merged import MergedModuleManager
+from kiara.modules.operations import OperationsMgmt
+from kiara.utils import is_debug, log_message
+from kiara.utils.db import orm_json_deserialize, orm_json_serialize
 
 if TYPE_CHECKING:
     from kiara.modules import KiaraModule
@@ -87,9 +75,7 @@ class Kiara(object):
             cls._instance = Kiara()
         return cls._instance
 
-    def __init__(
-        self, config: Optional[KiaraContextConfig] = None
-    ):
+    def __init__(self, config: Optional[KiaraContextConfig] = None):
 
         if not config:
             kc = KiaraGlobalConfig()
@@ -134,6 +120,7 @@ class Kiara(object):
         dsn = self._config.db_url
         log_message("running migration script", script=script_location, db_url=dsn)
         from alembic.config import Config
+
         alembic_cfg = Config(KIARA_DB_MIGRATIONS_CONFIG)
         alembic_cfg.set_main_option("script_location", script_location)
         alembic_cfg.set_main_option("sqlalchemy.url", dsn)
@@ -154,6 +141,7 @@ class Kiara(object):
 
         self._env_mgmt = RuntimeEnvironmentMgmt.instance()
         return self._env_mgmt
+
     @property
     def type_mgmt(self) -> TypeMgmt:
         return self._type_mgmt_obj
@@ -216,9 +204,7 @@ class Kiara(object):
         if self._cached_modules.setdefault(manifest.module_type, {}).get(
             manifest.manifest_hash, None
         ):
-            return self._cached_modules[manifest.module_type][
-                manifest.manifest_hash
-            ]
+            return self._cached_modules[manifest.module_type][manifest.manifest_hash]
 
         m_cls: Type[KiaraModule] = self._module_mgr.get_module_class(
             manifest.module_type
@@ -240,5 +226,3 @@ class Kiara(object):
     #
     #     value = self.data_registry.get_value(value)
     #     self.persistence_mgmt.persist_value(value=value)
-
-

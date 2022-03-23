@@ -11,14 +11,10 @@ import rich_click as click
 import shutil
 import sys
 from rich import box
-from rich.console import RenderGroup
 from rich.panel import Panel
-from rich.syntax import Syntax
-from rich.table import Table
 
 from kiara import Kiara
-from kiara.utils import StringYAML, is_debug, is_develop, log_message
-from kiara.utils.output import rich_print
+from kiara.utils import StringYAML, is_debug, is_develop, log_message, rich_print
 
 yaml = StringYAML()
 
@@ -59,18 +55,22 @@ def data(ctx):
     "-p",
     help="Display pedigree information for each value.",
     default=False,
-    is_flag=True
+    is_flag=True,
 )
 @click.option(
     "--show-data",
     "-d",
     help="Show a preview of the data associated with this value.",
     default=False,
-    is_flag=True
+    is_flag=True,
 )
-@click.option("--show-load-config", "-l", help="Display this values' load config.", is_flag=True)
+@click.option(
+    "--show-load-config", "-l", help="Display this values' load config.", is_flag=True
+)
 @click.pass_context
-def list_values(ctx, with_alias, only_latest, tags, all, show_pedigree, show_data, show_load_config):
+def list_values(
+    ctx, with_alias, only_latest, tags, all, show_pedigree, show_data, show_load_config
+):
     """List all data items that are stored in kiara."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
@@ -85,12 +85,18 @@ def list_values(ctx, with_alias, only_latest, tags, all, show_pedigree, show_dat
 @data.command(name="explain")
 @click.argument("value_id", nargs=-1, required=True)
 @click.option(
-    "--metadata/--no-metadata", "-m", help="Display value metadata.", is_flag=True, default=True
+    "--metadata/--no-metadata",
+    "-m",
+    help="Display value metadata.",
+    is_flag=True,
+    default=True,
 )
 @click.option(
     "--pedigree", "-p", help="Display pedigree information for the value.", is_flag=True
 )
-@click.option("--load-config", "-l", help="Display this values' load config.", is_flag=True)
+@click.option(
+    "--load-config", "-l", help="Display this values' load config.", is_flag=True
+)
 @click.pass_context
 def explain_value(
     ctx, value_id: str, metadata: bool, pedigree: bool, load_config: bool
@@ -164,11 +170,14 @@ def load_value(ctx, value_id: str):
         sys.exit(1)
 
     try:
-        renderable = kiara_obj.data_registry.render_data(value, target_type="terminal_renderable")
+        renderable = kiara_obj.data_registry.render_data(
+            value, target_type="terminal_renderable"
+        )
     except Exception as e:
 
         if is_debug():
             import traceback
+
             traceback.print_exc()
         log_message("error.render_value", value=value.id, error=e)
 

@@ -1,27 +1,26 @@
 # -*- coding: utf-8 -*-
-import sys
-
 import networkx as nx
 import orjson
+import sys
 from abc import ABC, abstractmethod
 from deepdiff import DeepHash
-from pydantic.fields import PrivateAttr, Field
+from pydantic.fields import PrivateAttr
 from pydantic.main import BaseModel
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.jupyter import JupyterMixin
 from rich.panel import Panel
 from rich.table import Table
-from typing import Any, ClassVar, Dict, Iterable, List, Optional, Union
+from typing import Any, ClassVar, Dict, Iterable, List, Optional
 
 from kiara.defaults import KIARA_HASH_FUNCTION
-
 from kiara.utils import orjson_dumps
 from kiara.utils.models import (
     assemble_subcomponent_tree,
     get_subcomponent_from_model,
     retrieve_data_subcomponent_keys,
 )
+
 
 class KiaraModel(ABC, BaseModel, JupyterMixin):
     """Base class that all models in kiara inherit from.
@@ -46,7 +45,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         return cls._schema_hash_cache
 
     _graph_cache: Optional[nx.DiGraph] = PrivateAttr(default=None)
-    _subcomponent_names_cache: Union[None, bool, List[str]] = PrivateAttr(default=None)
+    _subcomponent_names_cache: Optional[List[str]] = PrivateAttr(default=None)
     _dynamic_subcomponents: Dict[str, "KiaraModel"] = PrivateAttr(default_factory=dict)
     _id_cache: Optional[str] = PrivateAttr(default=None)
     _category_id_cache: Optional[str] = PrivateAttr(default=None)
@@ -150,7 +149,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
             result[n_id] = node["obj"]
         return result
 
-    def _retrieve_subcomponent_keys(self) -> Optional[Iterable[str]]:
+    def _retrieve_subcomponent_keys(self) -> Iterable[str]:
         """Retrieve the keys of all subcomponents of this model.
 
         Can be overwritten in sub-classes, by default it tries to automatically determine the subcomponents.
@@ -198,18 +197,15 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
             )
 
         return mime_bundle["text/html"]
-    
+
     def as_dict_with_schema(self) -> Dict[str, Dict[str, Any]]:
-        return {
-            "data": self.dict(),
-            "schema": self.schema()
-        }
+        return {"data": self.dict(), "schema": self.schema()}
 
     def as_json_with_schema(self) -> str:
 
         data_json = self.json()
         schema_json = self.schema_json()
-        return '{"data": ' + data_json + ', "schema": ' + schema_json + '}'
+        return '{"data": ' + data_json + ', "schema": ' + schema_json + "}"
 
     def __hash__(self):
         return self.model_data_hash

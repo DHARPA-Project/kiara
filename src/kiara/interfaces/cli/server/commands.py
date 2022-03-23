@@ -2,17 +2,10 @@
 #  Copyright (c) 2022, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-import os
 import rich_click as click
 import zmq
-from alembic import command
-from alembic.config import Config
 
 from kiara import Kiara
-from kiara.defaults import (
-    KIARA_DB_MIGRATIONS_CONFIG,
-    KIARA_DB_MIGRATIONS_FOLDER,
-)
 from kiara.protocol import KiaraMsg, ProcessingRequestMsg
 
 
@@ -88,6 +81,3 @@ def send(ctx, msg: str):
 
     result = socket.recv()
     print(result)
-
-
-

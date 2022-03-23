@@ -1,42 +1,50 @@
 # -*- coding: utf-8 -*-
 import abc
-
 import orjson
 from pydantic import Field, PrivateAttr, validator
 from rich import box
 from rich.console import RenderableType, RenderGroup
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import Any, Mapping, Optional, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Any, Mapping, Optional, Union
 
-from kiara.defaults import OPERATION_CATEOGORY_ID, OPERATION_CONFIG_CATEOGORY_ID, OPERATION_DETAILS_CATEOGORY_ID, \
-    PYDANTIC_USE_CONSTRUCT
+from kiara.defaults import (
+    OPERATION_CATEOGORY_ID,
+    OPERATION_CONFIG_CATEOGORY_ID,
+    OPERATION_DETAILS_CATEOGORY_ID,
+    PYDANTIC_USE_CONSTRUCT,
+)
 from kiara.models import KiaraModel
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module import KiaraModuleTypeMetadata
 from kiara.models.module.jobs import JobConfig
 from kiara.models.module.manifest import Manifest
 from kiara.models.python_class import PythonClass
-from kiara.models.values.value import ValueSet, Value, ValueSetReadOnly
+from kiara.models.values.value import Value, ValueSet, ValueSetReadOnly
 from kiara.models.values.value_schema import ValueSchema
+from kiara.modules import InputOutputObject, KiaraModule, ValueSetSchema
 from kiara.utils import orjson_dumps
 from kiara.utils.output import create_table_from_field_schemas
-
-from kiara.modules import KiaraModule, InputOutputObject, ValueSetSchema
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
 
-class OperationSchema(InputOutputObject):
 
-    def __init__(self, alias: str, inputs_schema: ValueSetSchema, outputs_schema: ValueSetSchema):
+class OperationSchema(InputOutputObject):
+    def __init__(
+        self, alias: str, inputs_schema: ValueSetSchema, outputs_schema: ValueSetSchema
+    ):
 
         allow_empty_inputs = True
         allow_empty_outputs = True
 
         self._inputs_schema_static: ValueSetSchema = inputs_schema
         self._outputs_schema_static: ValueSetSchema = outputs_schema
-        super().__init__(alias=alias, allow_empty_inputs_schema=allow_empty_inputs, allow_empty_outputs_schema=allow_empty_outputs)
+        super().__init__(
+            alias=alias,
+            allow_empty_inputs_schema=allow_empty_inputs,
+            allow_empty_outputs_schema=allow_empty_outputs,
+        )
 
     def create_inputs_schema(
         self,
@@ -51,7 +59,6 @@ class OperationSchema(InputOutputObject):
 
 
 class OperationDetails(KiaraModel):
-
     @classmethod
     def create_operation_details(cls, **details: Any):
 
@@ -63,7 +70,10 @@ class OperationDetails(KiaraModel):
         return result
 
     operation_id: str = Field(description="The id of the operation.")
-    is_internal_operation: bool = Field(description="Whether this operation is mainly used kiara-internally. Helps to hide it in UIs (operation lists etc.).", default=False)
+    is_internal_operation: bool = Field(
+        description="Whether this operation is mainly used kiara-internally. Helps to hide it in UIs (operation lists etc.).",
+        default=False,
+    )
 
     def _retrieve_id(self) -> str:
         return self.operation_id
@@ -98,6 +108,7 @@ class OperationDetails(KiaraModel):
     def create_operation_outputs(self, outputs: ValueSet) -> Mapping[str, Value]:
         pass
 
+
 class BaseOperationDetails(OperationDetails):
 
     _op_schema: OperationSchema = PrivateAttr(default=None)
@@ -117,7 +128,11 @@ class BaseOperationDetails(OperationDetails):
         if self._op_schema is not None:
             return self._op_schema
 
-        self._op_schema = OperationSchema(alias=self.__class__.__name__, inputs_schema=self.__class__.retrieve_inputs_schema(), outputs_schema=self.__class__.retrieve_outputs_schema())
+        self._op_schema = OperationSchema(
+            alias=self.__class__.__name__,
+            inputs_schema=self.__class__.retrieve_inputs_schema(),
+            outputs_schema=self.__class__.retrieve_outputs_schema(),
+        )
         return self._op_schema
 
 
@@ -140,12 +155,14 @@ class OperationConfig(Manifest):
     def _retrieve_data_to_hash(self) -> Any:
         return {"doc": self.doc.model_data_hash, "module_config": self.manifest_data}
 
-class Operation(OperationConfig):
 
+class Operation(OperationConfig):
     @classmethod
     def create_from_module(cls, module: KiaraModule) -> "Operation":
 
-        from kiara.modules.operations.included_core_operations import CustomModuleOperationDetails
+        from kiara.modules.operations.included_core_operations import (
+            CustomModuleOperationDetails,
+        )
 
         op_id = f"{module.module_type_name}._{module.module_instance_hash}"
 
@@ -157,14 +174,16 @@ class Operation(OperationConfig):
             operation_type="plain_module",
             operation_details=details,
             module_class=PythonClass.from_class(module.__class__),
-            doc=DocumentationMetadataModel.from_class_doc(module.__class__)
+            doc=DocumentationMetadataModel.from_class_doc(module.__class__),
         )
         operation._module = module
         return operation
 
     operation_id: str = Field(description="The (unique) id of this operation.")
     operation_type: str = Field(description="The type of this operation.")
-    operation_details: OperationDetails = Field(description="The operation specific details of this operation.")
+    operation_details: OperationDetails = Field(
+        description="The operation specific details of this operation."
+    )
 
     module_class: PythonClass = Field(description="The class of the underlying module.")
 
@@ -196,10 +215,16 @@ class Operation(OperationConfig):
 
     def prepare_job_config(self, kiara: "Kiara", inputs: Any) -> JobConfig:
 
-        augmented_inputs = self.operation_details.get_operation_schema().augment_inputs(inputs=inputs)
-        module_inputs = self.operation_details.create_module_inputs(inputs=augmented_inputs)
+        augmented_inputs = self.operation_details.get_operation_schema().augment_inputs(
+            inputs=inputs
+        )
+        module_inputs = self.operation_details.create_module_inputs(
+            inputs=augmented_inputs
+        )
 
-        job_config = kiara.jobs_mgmt.prepare_job_config(manifest=self, inputs=module_inputs)
+        job_config = kiara.jobs_mgmt.prepare_job_config(
+            manifest=self, inputs=module_inputs
+        )
         return job_config
 
     def run(self, kiara: "Kiara", inputs: Any) -> ValueSet:
@@ -249,7 +274,7 @@ class Operation(OperationConfig):
             _add_required=True,
             _add_default=True,
             _show_header=True,
-            **self.operation_details.inputs_schema
+            **self.operation_details.inputs_schema,
         )
         # constants = self.module_config.get("constants")
         # inputs_table = create_table_from_field_schemas(
@@ -264,7 +289,7 @@ class Operation(OperationConfig):
             _add_required=False,
             _add_default=False,
             _show_header=True,
-            **self.operation_details.outputs_schema
+            **self.operation_details.outputs_schema,
         )
         # outputs_table = create_table_from_field_schemas(
         #     _add_required=False,
@@ -283,10 +308,14 @@ class Operation(OperationConfig):
         )
         table.add_row("Module config", conf)
 
-        module_type_md = KiaraModuleTypeMetadata.from_module_class(self.module_class.get_class())
+        module_type_md = KiaraModuleTypeMetadata.from_module_class(
+            self.module_class.get_class()
+        )
 
-        desc= module_type_md.documentation.description
-        module_md = module_type_md.create_renderable(include_doc=False, include_src=False, include_config_schema=False)
+        desc = module_type_md.documentation.description
+        module_md = module_type_md.create_renderable(
+            include_doc=False, include_src=False, include_config_schema=False
+        )
         m_md = RenderGroup(desc, module_md)
         table.add_row("Module metadata", m_md)
 
@@ -294,4 +323,3 @@ class Operation(OperationConfig):
             table.add_row("Source code", module_type_md.process_src)
 
         return table
-

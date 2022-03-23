@@ -16,8 +16,7 @@ from rich.panel import Panel
 from kiara import Kiara
 from kiara.info.modules import ModuleTypesGroupInfo
 from kiara.info.pipelines import PipelineModuleInfo
-from kiara.utils import log_message
-from kiara.utils.output import rich_print
+from kiara.utils import log_message, rich_print
 
 
 @click.group()

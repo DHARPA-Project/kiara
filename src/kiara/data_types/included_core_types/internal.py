@@ -1,16 +1,17 @@
-import sys
-from typing import Type, Mapping, Any, TYPE_CHECKING
-
+# -*- coding: utf-8 -*-
 import orjson
+import sys
 from rich.syntax import Syntax
+from typing import TYPE_CHECKING, Any, Mapping, Type
 
-from kiara.data_types import DataType, DataTypeConfig, TYPE_PYTHON_CLS, TYPE_CONFIG_CLS
+from kiara.data_types import TYPE_CONFIG_CLS, TYPE_PYTHON_CLS, DataType, DataTypeConfig
 from kiara.models import KiaraModel
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.utils.hashing import compute_hash
 
 if TYPE_CHECKING:
     from kiara.models.values.value import Value
+
 
 class TerminalRenderable(DataType[object, DataTypeConfig]):
     """A list of renderable objects, used in the 'rich' Python library, to print to the terminal or in Jupyter.
@@ -36,6 +37,7 @@ class InternalModelValueType(DataType[KiaraModel, DataTypeConfig]):
 
     This type should not be used by user-facing modules and/or operations.
     """
+
     _data_type_name = "internal_model"
 
     @classmethod
@@ -57,9 +59,12 @@ class InternalModelValueType(DataType[KiaraModel, DataTypeConfig]):
         if not isinstance(value, KiaraModel):
             raise Exception(f"Invalid type: {type(value)}.")
 
-    def render_as__terminal_renderable(self, value: "Value", render_config: Mapping[str, Any]):
+    def render_as__terminal_renderable(
+        self, value: "Value", render_config: Mapping[str, Any]
+    ):
         json_str = value.data.json(option=orjson.OPT_INDENT_2)
         return Syntax(json_str, "json", background_color="default")
+
 
 class DocumentationModelValueType(InternalModelValueType):
     """Documentation for an internal entity."""
@@ -74,6 +79,8 @@ class DocumentationModelValueType(InternalModelValueType):
     def python_class(cls) -> Type:
         return DocumentationMetadataModel
 
-    def render_as__terminal_renderable(self, value: "Value", render_config: Mapping[str, Any]):
+    def render_as__terminal_renderable(
+        self, value: "Value", render_config: Mapping[str, Any]
+    ):
         json_str = value.data.json(option=orjson.OPT_INDENT_2)
         return Syntax(json_str, "json", background_color="default")

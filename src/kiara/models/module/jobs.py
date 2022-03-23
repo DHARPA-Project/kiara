@@ -2,16 +2,19 @@
 import logging
 import uuid
 from datetime import datetime
-from enum import Enum
-
 from deepdiff import DeepHash
+from enum import Enum
 from pydantic.fields import Field, PrivateAttr
 from pydantic.main import BaseModel
-from typing import Any, Dict, MutableMapping, Mapping, Optional
+from typing import Any, Dict, Mapping, Optional
 
-from kiara.defaults import JOB_CONFIG_TYPE_CATEGORY_ID, JOB_RECORD_TYPE_CATEGORY_ID, KIARA_HASH_FUNCTION
+from kiara.defaults import (
+    JOB_CONFIG_TYPE_CATEGORY_ID,
+    JOB_RECORD_TYPE_CATEGORY_ID,
+    KIARA_HASH_FUNCTION,
+)
 from kiara.models.module.manifest import Manifest
-from kiara.models.values.value import Value, ValueSetReadOnly
+from kiara.models.values.value import Value, ValueSet
 
 
 class JobStatus(Enum):
@@ -49,7 +52,7 @@ class JobLog(BaseModel):
 
 class JobConfig(Manifest):
 
-    inputs: ValueSetReadOnly = Field(
+    inputs: ValueSet = Field(
         description="The inputs to use when running this module.", default_factory=dict
     )
     _inputs_hash: Optional[int] = PrivateAttr(default=None)
@@ -63,7 +66,7 @@ class JobConfig(Manifest):
     def _retrieve_data_to_hash(self) -> Any:
         return {
             "module_config": self.manifest_data,
-            "inputs": {k: v.value_id for k, v in self.inputs.items()}
+            "inputs": {k: v.value_id for k, v in self.inputs.items()},
         }
 
     @property
@@ -77,12 +80,22 @@ class JobConfig(Manifest):
         self._inputs_hash = h[obj]
         return self._inputs_hash
 
+
 class JobRecord(Manifest):
-
     @classmethod
-    def from_manifest(cls, manifest: Manifest, inputs: Mapping[str, Value], outputs: Mapping[str, Value]):
+    def from_manifest(
+        cls,
+        manifest: Manifest,
+        inputs: Mapping[str, Value],
+        outputs: Mapping[str, Value],
+    ):
 
-        return JobRecord(module_type=manifest.module_type, module_config=manifest.module_config, inputs={k: v for k, v.value_id in inputs.items()}, outputs={k: v.value_id for k, v in outputs.items()})
+        return JobRecord(
+            module_type=manifest.module_type,
+            module_config=manifest.module_config,
+            inputs={k: v.value_id for k, v in inputs.items()},
+            outputs={k: v.value_id for k, v in outputs.items()},
+        )
 
     inputs: Dict[str, uuid.UUID] = Field(
         description="The inputs to use when running this module.", default_factory=dict
@@ -98,8 +111,8 @@ class JobRecord(Manifest):
         return {
             "manifest_hash": self.manifest_hash,
             "inputs": self.inputs,
-            "outputs": self.outputs
-            }
+            "outputs": self.outputs,
+        }
 
     @property
     def inputs_hash(self) -> int:
@@ -122,6 +135,7 @@ class JobRecord(Manifest):
         h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
         self._outputs_hash = h[obj]
         return self._outputs_hash
+
 
 class DeserializeConfig(JobConfig):
 

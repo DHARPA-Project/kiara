@@ -40,7 +40,7 @@ def list_pipelines(
     full_doc: bool,
     filter: typing.Iterable[str],
 ):
-    """List available module types."""
+    """List available module data_types."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 

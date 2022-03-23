@@ -34,15 +34,16 @@ def info(ctx, topic, ignore_errors, format, json_schema):
 
     kiara_obj = ctx.obj["kiara"]
 
-    if json_schema:
-        schema = KiaraContext.schema_json(indent=2)
-        # s = Syntax(schema, "json", background_color="default")  # doesn't seem to work with pipes
-        print(schema)
-        sys.exit(0)
-
     info = KiaraContext.get_info(
         kiara=kiara_obj, sub_type=topic, ignore_errors=ignore_errors
     )
+
+    if json_schema:
+        # TODO: make the dynamic models smarter, so we get the actual json schema here
+        schema = info.schema_json(indent=2)
+        # s = Syntax(schema, "json", background_color="default")  # doesn't seem to work with pipes
+        print(schema)
+        sys.exit(0)
 
     if format == "terminal":
         rich_print(info)

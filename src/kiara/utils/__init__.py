@@ -10,36 +10,26 @@ import dpath.util
 import importlib
 import inspect
 import json
-import logging
+import orjson
 import os
 import re
+import structlog
 import typing
 import uuid
 import yaml
 from io import StringIO
-from networkx import Graph
 from pathlib import Path
 from pkgutil import iter_modules
-from pydantic.schema import (
-    get_flat_models_from_model,
-    get_model_name_map,
-    model_process_schema,
-)
-from rich import box
 from rich.console import ConsoleRenderable, RichCast
-from rich.table import Table
 from ruamel.yaml import YAML
 from slugify import slugify
 from types import ModuleType
 from typing import Union
 
-from kiara.defaults import INVALID_VALUE_NAMES, SpecialValue
+from kiara.defaults import INVALID_VALUE_NAMES
 
-if typing.TYPE_CHECKING:
-    from kiara.data.values import ValueSchema
-    from kiara.module_config import ModuleTypeConfigSchema
+logger = structlog.get_logger()
 
-log = logging.getLogger("kiara")
 CAMEL_TO_SNAKE_REGEX = re.compile(r"(?<!^)(?=[A-Z])")
 
 WORD_REGEX_PATTERN = re.compile("[^A-Za-z]+")
@@ -63,12 +53,12 @@ def is_develop() -> bool:
         return False
 
 
-def log_message(msg: str):
+def log_message(msg: str, **data):
 
     if is_debug():
-        log.warning(msg)
-    else:
-        log.debug(msg)
+        logger.debug(msg, **data)
+    # else:
+    #     logger.debug(msg, **data)
 
 
 def is_rich_renderable(item: typing.Any):
@@ -104,30 +94,6 @@ def get_data_from_file(
     return data
 
 
-def print_ascii_graph(graph: Graph):
-
-    try:
-        from asciinet import graph_to_ascii
-    except:  # noqa
-        print(
-            "\nCan't print graph on terminal, package 'asciinet' not available. Please install it into the current virtualenv using:\n\npip install 'git+https://github.com/cosminbasca/asciinet.git#egg=asciinet&subdirectory=pyasciinet'"
-        )
-        return
-
-    try:
-        from asciinet._libutil import check_java
-
-        check_java("Java ")
-    except Exception as e:
-        print(e)
-        print(
-            "\nJava is currently necessary to print ascii graph. This might change in the future, but to use this functionality please install a JRE."
-        )
-        return
-
-    print(graph_to_ascii(graph))
-
-
 _AUTO_MODULE_ID: typing.Dict[str, int] = {}
 
 
@@ -151,96 +117,6 @@ def get_auto_workflow_alias(module_type: str, use_incremental_ids: bool = False)
     _AUTO_MODULE_ID[module_type] = nr + 1
 
     return f"{module_type}_{nr}"
-
-
-def create_table_from_config_class(
-    config_cls: typing.Type["ModuleTypeConfigSchema"],
-    remove_pipeline_config: bool = False,
-) -> Table:
-
-    table = Table(box=box.HORIZONTALS, show_header=False)
-    table.add_column("Field name", style="i")
-    table.add_column("Type")
-    table.add_column("Description")
-    flat_models = get_flat_models_from_model(config_cls)
-    model_name_map = get_model_name_map(flat_models)
-    m_schema, _, _ = model_process_schema(config_cls, model_name_map=model_name_map)
-    fields = m_schema["properties"]
-
-    for field_name, details in fields.items():
-        if remove_pipeline_config and field_name in [
-            "steps",
-            "input_aliases",
-            "output_aliases",
-            "doc",
-        ]:
-            continue
-
-        type_str = "-- n/a --"
-        if "type" in details.keys():
-            type_str = details["type"]
-        table.add_row(field_name, type_str, details.get("description", "-- n/a --"))
-
-    return table
-
-
-def create_table_from_field_schemas(
-    _add_default: bool = True,
-    _add_required: bool = True,
-    _show_header: bool = False,
-    _constants: typing.Optional[typing.Mapping[str, typing.Any]] = None,
-    **fields: "ValueSchema",
-):
-
-    table = Table(box=box.SIMPLE, show_header=_show_header)
-    table.add_column("Field name", style="i")
-    table.add_column("Type")
-    table.add_column("Description")
-
-    if _add_required:
-        table.add_column("Required")
-    if _add_default:
-        if _constants:
-            table.add_column("Default / Constant")
-        else:
-            table.add_column("Default")
-
-    for field_name, schema in fields.items():
-
-        row = [field_name, schema.type, schema.doc]
-
-        if _add_required:
-            req = schema.is_required()
-            if not req:
-                req_str = "no"
-            else:
-                if schema.default in [
-                    None,
-                    SpecialValue.NO_VALUE,
-                    SpecialValue.NOT_SET,
-                ]:
-                    req_str = "[b]yes[b]"
-                else:
-                    req_str = "no"
-            row.append(req_str)
-
-        if _add_default:
-            if _constants and field_name in _constants.keys():
-                d = f"[b]{_constants[field_name]}[/b] (constant)"
-            else:
-                if schema.default in [
-                    None,
-                    SpecialValue.NO_VALUE,
-                    SpecialValue.NOT_SET,
-                ]:
-                    d = "-- no default --"
-                else:
-                    d = str(schema.default)
-            row.append(d)
-
-        table.add_row(*row)
-
-    return table
 
 
 def dict_from_cli_args(
@@ -278,7 +154,7 @@ def dict_from_cli_args(
                 config.setdefault(k, []).append(v)
             else:
                 if k in config.keys():
-                    log.warning(f"Duplicate key '{k}', overwriting old value with: {v}")
+                    logger.warning(f"duplicate.key", old_value=k, new_value=v)
                 config[k] = v
     return config
 
@@ -304,9 +180,12 @@ class StringYAML(YAML):
             return stream.getvalue()
 
 
+SUBCLASS_TYPE = typing.TypeVar("SUBCLASS_TYPE")
+
+
 def _get_all_subclasses(
-    cls: typing.Type, ignore_abstract: bool = False
-) -> typing.Iterable[typing.Type]:
+    cls: typing.Type[SUBCLASS_TYPE], ignore_abstract: bool = False
+) -> typing.Iterable[typing.Type[SUBCLASS_TYPE]]:
 
     result = []
     for subclass in cls.__subclasses__():
@@ -397,3 +276,8 @@ def find_free_id(
 
 
 string_types = (type(b""), type(""))
+
+
+def orjson_dumps(v, *, default=None, **args):
+    # orjson.dumps returns bytes, to match standard json.dumps we need to decode
+    return orjson.dumps(v, default=default, **args).decode()

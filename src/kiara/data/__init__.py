@@ -9,5 +9,5 @@
 
 """Data and value related classes for *Kiara*."""
 
-from .values import Value  # noqa
-from .values.value_set import ValueSet  # noqa
+# from .values import ValueOrm  # noqa
+# from .values.value_set import ValueSet  # noqa

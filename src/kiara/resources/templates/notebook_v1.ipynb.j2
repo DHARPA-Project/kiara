@@ -166,11 +166,11 @@ workflow
 step_{{ step_id }}.output_schemas["{{ output_name }}"].doc
 
 # %% [metadata]
-# #### Value metadata
+# #### ValueOrm metadata
 # %%
 step_{{ step_id }}.output.{{ output_name }}.value
 # %% [markdown]
-# #### Value data
+# #### ValueOrm data
 # %%
 kiara.pretty_print(step_{{ step_id }}.output.{{ output_name }}.data)
 {% endfor -%}

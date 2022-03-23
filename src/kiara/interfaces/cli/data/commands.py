@@ -17,7 +17,7 @@ from rich.syntax import Syntax
 from rich.table import Table
 
 from kiara import Kiara
-from kiara.utils import StringYAML, is_debug, is_develop
+from kiara.utils import StringYAML, is_debug, is_develop, log_message
 from kiara.utils.output import rich_print
 
 yaml = StringYAML()
@@ -54,88 +54,59 @@ def data(ctx):
     help="Display all information and values. Overrides the other options.",
     is_flag=True,
 )
+@click.option(
+    "--show-pedigree",
+    "-p",
+    help="Display pedigree information for each value.",
+    default=False,
+    is_flag=True
+)
+@click.option(
+    "--show-data",
+    "-d",
+    help="Show a preview of the data associated with this value.",
+    default=False,
+    is_flag=True
+)
+@click.option("--show-load-config", "-l", help="Display this values' load config.", is_flag=True)
 @click.pass_context
-def list_values(ctx, with_alias, only_latest, tags, all):
+def list_values(ctx, with_alias, only_latest, tags, all, show_pedigree, show_data, show_load_config):
     """List all data items that are stored in kiara."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    table = Table(box=box.SIMPLE)
+    data_registry = kiara_obj.data_registry
 
-    if all:
-        with_alias = False
-        only_latest = False
-        # tags = True
-
-    table.add_column("id", style="i")
-    table.add_column("aliases")
-    table.add_column("type")
-
-    for v_id in kiara_obj.data_store.value_ids:
-
-        value = kiara_obj.data_store.get_value_obj(v_id)
-        value_type = value.type_name
-        aliases = kiara_obj.data_store.find_aliases_for_value(
-            v_id, include_all_versions=not only_latest
-        )
-
-        if with_alias:
-            if not aliases:
-                continue
-
-        _aliases = []
-        if not aliases:
-            _aliases.append("")
-        else:
-            for a in aliases:
-                latest_alias = kiara_obj.data_store.get_latest_version_for_alias(
-                    a.alias
-                )
-                if not only_latest:
-                    if latest_alias == a.version:
-                        _aliases.append(
-                            f"[bold yellow2]{a.alias}[/bold yellow2]@{a.version}"
-                        )
-                    else:
-                        _aliases.append(a.full_alias)
-                else:
-                    _aliases.append(a.alias)
-
-        table.add_row(v_id, _aliases[0], value_type)
-
-        for a in _aliases[1:]:
-            table.add_row("", a, "")
-
-    rich_print(table)
+    rich_print(data_registry.aliases.print_tree())
+    # table = kiara_obj.data_registry.default_data_store.create_renderable(show_pedigree=show_pedigree, show_data=show_data, show_load_config=show_load_config)
+    # rich_print(table, show_pedigree=show_pedigree, show_data=show_data)
 
 
 @data.command(name="explain")
 @click.argument("value_id", nargs=-1, required=True)
 @click.option(
-    "--no-metadata", "-nm", help="Don't display value metadata.", is_flag=True
+    "--metadata/--no-metadata", "-m", help="Display value metadata.", is_flag=True, default=True
 )
 @click.option(
-    "--lineage", "-l", help="Display lineage information for the value.", is_flag=True
+    "--pedigree", "-p", help="Display pedigree information for the value.", is_flag=True
 )
-@click.option(
-    "--include-ids", "-i", help="Include ids in lineage display.", is_flag=True
-)
+@click.option("--load-config", "-l", help="Display this values' load config.", is_flag=True)
 @click.pass_context
 def explain_value(
-    ctx, value_id: str, no_metadata: bool, lineage: bool, include_ids: bool
+    ctx, value_id: str, metadata: bool, pedigree: bool, load_config: bool
 ):
     """Print the metadata of a stored value."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     for v_id in value_id:
+        value = kiara_obj.data_registry.get_value(v_id)
         print()
-        value = kiara_obj.data_store.get_value_obj(value_item=v_id)
         if not value:
             print(f"No saved value found for: {v_id}")
             continue
-        table = value.get_info().create_renderable(
-            skip_metadata=no_metadata, skip_lineage=not lineage, include_ids=include_ids
+        table = value.create_renderable(
+            show_metadata=metadata, show_pedigree=pedigree, show_load_config=load_config
         )
         rich_print(
             Panel(
@@ -147,36 +118,36 @@ def explain_value(
         )
 
 
-@data.command(name="explain-lineage")
-@click.argument("value_id", nargs=1, required=True)
-@click.pass_context
-def explain_lineage(ctx, value_id: str):
-
-    kiara_obj: Kiara = ctx.obj["kiara"]
-
-    value = kiara_obj.data_store.get_value_obj(value_item=value_id)
-    if value is None:
-        print(f"No value stored for: {value_id}")
-        sys.exit(1)
-
-    value_info = value.create_info()
-
-    lineage = value_info.lineage
-    if not lineage:
-        print(f"No lineage information associated to value '{value_id}'.")
-        sys.exit(0)
-
-    yaml_str = yaml.dump(lineage.to_minimal_dict())
-    syntax = Syntax(yaml_str, "yaml", background_color="default")
-    rich_print(
-        Panel(
-            syntax,
-            title=f"Lineage for: {value_id}",
-            title_align="left",
-            box=box.ROUNDED,
-            padding=(1, 0, 0, 2),
-        )
-    )
+# @data.command(name="explain-lineage")
+# @click.argument("value_id", nargs=1, required=True)
+# @click.pass_context
+# def explain_lineage(ctx, value_id: str):
+#
+#     kiara_obj: Kiara = ctx.obj["kiara"]
+#
+#     value = kiara_obj.data_store.get_value_obj(value_item=value_id)
+#     if value is None:
+#         print(f"No value stored for: {value_id}")
+#         sys.exit(1)
+#
+#     value_info = value.create_info()
+#
+#     lineage = value_info.lineage
+#     if not lineage:
+#         print(f"No lineage information associated to value '{value_id}'.")
+#         sys.exit(0)
+#
+#     yaml_str = yaml.dump(lineage.to_minimal_dict())
+#     syntax = Syntax(yaml_str, "yaml", background_color="default")
+#     rich_print(
+#         Panel(
+#             syntax,
+#             title=f"Lineage for: {value_id}",
+#             title_align="left",
+#             box=box.ROUNDED,
+#             padding=(1, 0, 0, 2),
+#         )
+#     )
 
 
 @data.command(name="load")
@@ -187,27 +158,23 @@ def load_value(ctx, value_id: str):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    print()
-    value = kiara_obj.data_store.get_value_obj(value_item=value_id)
+    value = kiara_obj.data_registry.get_value(value=value_id)
     if value is None:
         print(f"No value available for id: {value_id}")
         sys.exit(1)
 
     try:
-        renderables = kiara_obj.pretty_print(value, "renderables")
+        renderable = kiara_obj.data_registry.render_data(value, target_type="terminal_renderable")
     except Exception as e:
 
         if is_debug():
-            print(e)
-        renderables = [str(value.get_value_data())]
+            import traceback
+            traceback.print_exc()
+        log_message("error.render_value", value=value.id, error=e)
 
-    if len(renderables) == 0:
-        return
-    elif len(renderables) == 1:
-        rich_print(renderables[0])
-    else:
-        rg = RenderGroup(*renderables)
-        rich_print(rg)
+        renderable = [str(value.data)]
+
+    rich_print(renderable)
 
 
 if is_develop():
@@ -218,7 +185,7 @@ if is_develop():
 
         kiara_obj: Kiara = ctx.obj["kiara"]
 
-        path = kiara_obj.data_store._base_path
+        path = kiara_obj.data_registry.default_data_store.data_store_path
         print()
         print(f"Deleting folder: {path}...")
         shutil.rmtree(path=path, ignore_errors=True)

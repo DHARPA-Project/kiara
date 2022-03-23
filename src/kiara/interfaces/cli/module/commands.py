@@ -14,9 +14,11 @@ import typing
 from rich.panel import Panel
 
 from kiara import Kiara
-from kiara.info.modules import ModuleTypesGroupInfo
-from kiara.interfaces.cli.utils import _create_module_instance
-from kiara.metadata.module_models import KiaraModuleTypeMetadata
+
+# from kiara.interfaces.cli.utils import _create_module_instance
+from kiara.kiara import explain
+from kiara.models.module import KiaraModuleTypeMetadata, ModuleTypesGroupInfo
+from kiara.models.module.manifest import Manifest
 from kiara.utils import dict_from_cli_args, log_message
 from kiara.utils.output import rich_print
 
@@ -52,7 +54,7 @@ def list_modules(
     full_doc: bool,
     filter: typing.Iterable[str],
 ):
-    """List available module types."""
+    """List available module data_types."""
 
     if only_pipeline_modules and only_core_modules:
         rich_print()
@@ -66,7 +68,7 @@ def list_modules(
     if filter:
         module_types = []
 
-        for m in kiara_obj.available_module_types:
+        for m in kiara_obj.module_type_names:
             match = True
 
             for f in filter:
@@ -85,7 +87,7 @@ def list_modules(
             if match:
                 module_types.append(m)
     else:
-        module_types = kiara_obj.available_module_types
+        module_types = kiara_obj.module_type_names
 
     renderable = ModuleTypesGroupInfo.create_renderable_from_type_names(
         kiara=kiara_obj,
@@ -103,7 +105,7 @@ def list_modules(
 
     p = Panel(renderable, title_align="left", title=title)
     print()
-    kiara_obj.explain(p)
+    explain(p)
 
 
 @module.command(name="explain")
@@ -112,9 +114,9 @@ def list_modules(
 def explain_module_type(ctx, module_type: str):
     """Print details of a module type.
 
-    This is different to the 'explain-instance' command, because module types need to be
+    This is different to the 'explain-instance' command, because module data_types need to be
     instantiated with configuration, before we can query all their properties (like
-    input/output types).
+    input/output data_types).
     """
 
     kiara_obj: Kiara = ctx.obj["kiara"]
@@ -151,9 +153,11 @@ def explain_module(ctx, module_type: str, module_config: typing.Iterable[typing.
     else:
         module_config = {}
 
-    module_obj = _create_module_instance(
-        ctx, module_type=module_type, module_config=module_config
-    )
+    kiara_obj: Kiara = ctx.obj["kiara"]
+
+    mc = Manifest(module_type=module_type, module_config=module_config)
+    module_obj = kiara_obj.create_module(mc)
+
     rich_print()
     rich_print(module_obj)
 

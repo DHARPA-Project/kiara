@@ -10,62 +10,72 @@
 import rich_click as click
 
 from kiara import Kiara
-from kiara.data.types import ValueTypesInfo
-from kiara.info.types import ValueTypeInfo
-from kiara.utils import print_ascii_graph
+from kiara.models.values.data_type import DataTypeClassesInfo, ValueTypeClassInfo
+from kiara.utils.graphs import print_ascii_graph
 from kiara.utils.output import rich_print
 
 
-@click.group(name="type")
+@click.group(name="data-type")
 @click.pass_context
 def type_group(ctx):
-    """Information about available value types, and details about them."""
+    """Information about available value data_types, and details about them."""
 
 
 @type_group.command(name="list")
 @click.option("--details", "-d", is_flag=True, help="Display full description.")
+@click.option("--include-internal-types", "-i", is_flag=True, help="Also list types that are only (or mostly) used internally.")
 @click.pass_context
-def list_types(ctx, details):
-    """List available types (work in progress)."""
+def list_types(ctx, details, include_internal_types: bool):
+    """List available data_types (work in progress)."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    print()
-    value_types_info = ValueTypesInfo(kiara_obj.value_types, details=details)
+    if not include_internal_types:
+        type_classes = {}
+        for name, cls in kiara_obj.data_type_classes.items():
+            lineage = kiara_obj.type_mgmt.get_type_lineage(name)
+            if "any" in lineage:
+                type_classes[name] = cls
+    else:
+        type_classes = kiara_obj.data_type_classes
 
-    rich_print(value_types_info)
+    print()
+    data_types_info = DataTypeClassesInfo(
+        type_classes, id="all_types", details=details
+    )
+
+    rich_print(data_types_info)
 
 
 @type_group.command(name="hierarchy")
 @click.option("--details", "-d", is_flag=True, help="Display full description.")
 @click.pass_context
 def hierarchy(ctx, details):
-    """List available types (work in progress)."""
+    """List available data_types (work in progress)."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     type_mgmt = kiara_obj.type_mgmt
     print()
 
-    print(type_mgmt.value_type_hierarchy)
-    print_ascii_graph(type_mgmt.value_type_hierarchy)
+    print_ascii_graph(type_mgmt.data_type_hierarchy)
 
 
 @type_group.command(name="explain")
-@click.argument("value_type", nargs=1, required=True)
+@click.argument("data_type", nargs=1, required=True)
 @click.pass_context
-def explain_module_type(ctx, value_type: str):
+def explain_data_type(ctx, data_type: str):
     """Print details of a module type.
 
-    This is different to the 'explain-instance' command, because module types need to be
+    This is different to the 'explain-instance' command, because module data_types need to be
     instantiated with configuration, before we can query all their properties (like
-    input/output types).
+    input/output data_types).
     """
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    vt_cls = kiara_obj.type_mgmt.get_value_type_cls(value_type)
-    info = ValueTypeInfo.from_type_class(vt_cls, kiara=kiara_obj)
+    dt_cls = kiara_obj.type_mgmt.get_data_type_cls(data_type)
+    info = ValueTypeClassInfo.create_from_data_type(dt_cls)
 
     rich_print()
-    rich_print(info.create_panel(title=f"Value type: [b i]{value_type}[/b i]"))
+    rich_print(info.create_panel(title=f"ValueOrm type: [b i]{data_type}[/b i]"))

@@ -6,7 +6,7 @@ from kiara.doc.gen_info_pages import generate_pages_and_summary_for_types
 
 kiara = Kiara.instance()
 
-types = ["value_type", "module", "operation_type"]
+types = ["type", "module", "operation_type"]
 
 type_details = generate_pages_and_summary_for_types(
     kiara=kiara, types=types, limit_to_package="kiara"

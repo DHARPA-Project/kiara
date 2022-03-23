@@ -1,6 +1,6 @@
-{% for vt in value_types %}
-### `{{ vt.type_name }}` ### {: #kiara_info.value_types.{{ vt.type_name }} }
+{% for vt in data_types %}
+### `{{ vt.type_name }}` ### {: #kiara_info.data_types.{{ vt.type_name }} }
 
-::: kiara_info.value_types.{{ vt.type_name }}
+::: kiara_info.data_types.{{ vt.type_name }}
     handler: kiara
 {% endfor %}

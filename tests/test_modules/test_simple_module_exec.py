@@ -22,8 +22,8 @@ def test_simple_module_exec(kiara: Kiara):
 
     assert "input field(s) not valid" in str(e.value)
 
-    # inp_a = Value(value_data=True, value_schema=boolean_schema, kiara=kiara)
-    # inp_b = Value(value_data=True, value_schema=boolean_schema, kiara=kiara)
+    # inp_a = ValueOrm(value_data=True, value_schema=boolean_schema, kiara=kiara)
+    # inp_b = ValueOrm(value_data=True, value_schema=boolean_schema, kiara=kiara)
     inputs = {"a": True, "b": True}
     outputs = and_mod.run(**inputs)
     assert outputs.get_value_data("y") is True

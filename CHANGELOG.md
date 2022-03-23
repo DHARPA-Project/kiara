@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 0.3.2 (Upcoming)
+## Version 0.3.0 (Upcoming)
 
 ## Version 0.3.1
 
@@ -65,7 +65,7 @@
 - this version contains a rather large refactoring of the data registry and how values are handled, so expect some breakage. Please submit issues for anything that worked, but doesn't anymore. Also, you'll have to delete the kiara shared local data (`~/.local/share/kiara` on linux) when upgrading.
 - renamed:
   - kiara.pipeline.config.PipelineModuleConfig -> kiara.pipeline.config.PipelineConfig
-  - kiara.module_config.ModuleTypeConfig -> kiara.module_config.ModuleTypeConfigSchema
+  - kiara.module_config.ModuleTypeConfig -> kiara.module_config.KiaraModuleConfig
   - kiara.module_config.ModuleConfig -> kiara.module_config.ModuleConfig
   - in kiara.pipeline.values:
     - StepInputField -> StepInputRef
@@ -80,12 +80,12 @@
     - ValueUpdateHandler -> ValueUpdateHandler
   - kiara.data.values.ValueSet*-related -> kiara.data.values.value_set
 - removed 'pipeline_id' attribute from 'PipelineStructure' class, but 'Pipeline" has 'id' and 'title' fields now instead
-- refactored 'DataRegistry' and 'Value' object:
-  - 'Value' objects are now immutable, and can only be created via a registry
-  - all subclasses of 'Value' are removed, there is only one 'Value' type now, which is always connected to a data registry (which handles versioning and actual storage of the payload)
+- refactored 'DataRegistry' and 'ValueOrm' object:
+  - 'ValueOrm' objects are now immutable, and can only be created via a registry
+  - all subclasses of 'ValueOrm' are removed, there is only one 'ValueOrm' type now, which is always connected to a data registry (which handles versioning and actual storage of the payload)
   - removed linked values, replaced by 'ValueSlot' class
-  - 'ValueSlot' basically contains the history of all (immutable) Value objects on a specific spot (mostly within a pipeline, but can be used elsewhere)
-  - 'set_value_data' on 'Value' class is removed (since values are no immutable)
+  - 'ValueSlot' basically contains the history of all (immutable) ValueOrm objects on a specific spot (mostly within a pipeline, but can be used elsewhere)
+  - 'set_value_data' on 'ValueOrm' class is removed (since values are no immutable)
   - the interface of 'ValueSet' however is mostly unchanged, and all 'set/get value_obj/value_data' methods should still work as before
 - data store is now just a 'DataRegistry' subclass that persists to disk instead of memory, this means that getting data into the data store now uses the 'register_data' method, and getting it out uses 'get_value_obj'
 - aliases can now only contain alphanumeric characters, '_' and '-"
@@ -124,7 +124,7 @@
 - major refactoring:
   - renamed:
     - 'kiara.module_config.KiaraWorkflowConfig' -> 'kiara.module_config.ModuleConfig'
-    - 'kiara.module_config.KiaraModuleConfig' -> 'kiara.module_config.ModuleTypeConfigSchema'
+    - 'kiara.module_config.KiaraModuleConfig' -> 'kiara.module_config.KiaraModuleConfig'
   - moved classes/functions:
     - 'kiara.data.operations' -> 'kiara.operations.type_operations'
     - 'kiara.processing.ModuleProcessor' -> 'kiara.processing.processor.ModuleProcessor'
@@ -154,7 +154,7 @@
 
 ## Version 0.0.9
 
-- removed 'aliases' attribute from Value class, aliases are now specified when calling 'save' on the Value object
+- removed 'aliases' attribute from ValueOrm class, aliases are now specified when calling 'save' on the ValueOrm object
 - Job details (incl. error messages -- check the kiara.processing.Job class) for the most recent or current module executions can be retrieved: `[controller_obj].get_job_details(step_id)```
 - re-write of the DataStore class:
   - support for aliases, as well as alias versions & tags (still to be documented)

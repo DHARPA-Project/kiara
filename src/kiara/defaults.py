@@ -4,6 +4,7 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
+import uuid
 
 import mmh3
 import os
@@ -24,6 +25,14 @@ else:
 KIARA_RESOURCES_FOLDER = os.path.join(KIARA_MODULE_BASE_FOLDER, "resources")
 """Default resources folder for this package."""
 
+KIARA_MAIN_CONFIG_FILE = os.path.join(kiara_app_dirs.user_config_dir, "config.yaml")
+
+KIARA_DB_FILE = os.path.join(kiara_app_dirs.user_data_dir, "kiara.db")
+KIARA_DB_MIGRATIONS_CONFIG = os.path.join(
+    KIARA_RESOURCES_FOLDER, "database", "alembic.ini"
+)
+KIARA_DB_MIGRATIONS_FOLDER = os.path.join(KIARA_RESOURCES_FOLDER, "database", "kiara")
+
 USER_PIPELINES_FOLDER = os.path.join(kiara_app_dirs.user_config_dir, "pipelines")
 
 KIARA_DATA_STORE_DIR = os.path.join(
@@ -39,24 +48,28 @@ MODULE_TYPE_KEY = "module_type"
 STEP_ID_KEY = "step_id"
 """The key to specify the step id."""
 
+# INVALID_VALUE_NAMES = [
+#     "kiara",
+#     "registry",
+#     "items_are_valid",
+#     "set_values",
+#     "set_value",
+#     "ALL",
+#     "all",
+#     "metadata",
+#     "value",
+#     "value_obj",
+#     "items",
+#     "keys",
+#     "values",
+#     "data",
+#     "callbacks",
+#     "trigger_callbacks",
+#     "shared_metadata",
+# ]
 INVALID_VALUE_NAMES = [
     "kiara",
-    "registry",
-    "items_are_valid",
-    "set_values",
-    "set_value",
-    "ALL",
-    "all",
-    "metadata",
-    "value",
-    "value_obj",
-    "items",
-    "keys",
-    "values",
-    "data",
     "callbacks",
-    "trigger_callbacks",
-    "shared_metadata",
 ]
 """List of reserved names, inputs/outputs can't use those."""
 
@@ -82,12 +95,13 @@ DEFAULT_NO_DESC_VALUE = "-- n/a --"
 
 KIARA_MODULE_METADATA_ATTRIBUTE = "KIARA_METADATA"
 
+KIARA_DEFAULT_ROOT_NODE_ID = "__self__"
+
 
 class SpecialValue(Enum):
 
     NOT_SET = "__not_set__"
     NO_VALUE = "__no_value__"
-    IGNORE = "__ignore__"
 
 
 DEFAULT_PRETTY_PRINT_CONFIG = {
@@ -117,15 +131,75 @@ COLOR_LIST = [
     "light_slate_grey",
     "deep_pink4",
 ]
+
+VOID_KIARA_ID = uuid.UUID("00000000-0000-0000-0000-000000000000")
+NOT_SET_VALUE_ID = uuid.UUID("00000000-0000-0000-0000-000000000001")
+NONE_VALUE_ID = uuid.UUID("00000000-0000-0000-0000-000000000002")
+
+ORPHAN_PEDIGREE_OUTPUT_NAME = "__orphan__"
+
+NO_MODULE_TYPE = "EXTERNAL_DATA"
+
+INVALID_HASH_MARKER = -1
+INVALID_SIZE_MARKER = -1
+KIARA_ROOT_TYPE_NAME = "__kiara__"
+
+SERIALIZED_DATA_TYPE_NAME = "serialized_value"
+LOAD_CONFIG_DATA_TYPE_NAME = "load_config"
+
+PYDANTIC_USE_CONSTRUCT: bool = False
+STRICT_CHECKS: bool = False
+
 KIARA_HASH_FUNCTION = mmh3.hash
 
-VALUE_TYPES_CATEGORY_ALIAS = "value_types"
-MODULE_TYPES_CATEGORY_ALIAS = "modules"
-PIPELINE_TYPES_CATEGORY_ALIAS = "pipelines"
-OPERATION_TYPES_CATEGORY_ALIAS = "operation_types"
-OPERATIONS_CATEGORY_ALIAS = "operations"
+ANY_TYPE_NAME = "any"
 
-MODULE_TYPE_CATEGORY_ALIAS = "metadata.module"
-PIPELINE_TYPE_CATEGORY_ALIAS = "metadata.pipeline"
-VALUE_TYPE_CATEGORY_ALIAS = "metadata.value_type"
-OPERATION_TYPE_CATEGORY_ALIAS = "metadata.operation_type"
+
+DATA_TYPE_CATEGORY_ID = "metadata.type"
+DATA_TYPES_CATEGORY_ID = "data_types"
+DATA_TYPE_CLASS_CATEGORY_ID = "data_type_class"
+
+DATA_WRAP_CATEGORY_ID = "instance.datawrap"
+UNOLOADABLE_DATA_CATEGORY_ID = "instance.unloadable_data"
+VALUE_CATEGORY_ID = "instance.value"
+VALUES_CATEGORY_ID = "instance.values"
+VALUE_METADATA_CATEGORY_ID = "instance.value_metadata"
+
+MODULE_CONFIG_SCHEMA_CATEGORY_ID = "module_config_schema"
+MODULE_CONFIG_CATEGORY_ID = "module_config"
+MODULE_CONFIG_METADATA_CATEGORY_ID = "metadata.module_config"
+
+MODULE_TYPE_CATEGORY_ID = "metadata.module"
+MODULE_TYPES_CATEGORY_ID = "modules"
+
+PIPELINE_TYPE_CATEGORY_ID = "metadata.pipeline"
+PIPELINE_TYPES_CATEGORY_ID = "pipelines"
+
+OPERATION_TYPE_CATEGORY_ID = "metadata.operation_type"
+OPERATION_TYPES_CATEGORY_ID = "operation_types"
+OPERATIONS_CATEGORY_ID = "operations"
+OPERATION_CATEOGORY_ID = "instance.operation"
+OPERATION_CONFIG_CATEOGORY_ID = "instance.operation_config"
+OPERATION_DETAILS_CATEOGORY_ID = "instance.operation_details"
+OPERATION_INPUTS_SCHEMA_CATEOGORY_ID = "instance.operation_input_schema"
+OPERATION_OUTPUTS_SCHEMA_CATEOGORY_ID = "instance.operation_output_schema"
+
+ENVIRONMENT_TYPE_CATEGORY_ID = "instance.environment"
+DOCUMENTATION_CATEGORY_ID = "documentation"
+
+VALUE_SCHEMA_CATEGORY_ID = "value_schema"
+
+JOB_CATEGORY_ID = "instance.job"
+JOB_LOG_CATEGORY_ID = "job_log"
+
+DESTINY_CATEGORY_ID = "instance.destiny"
+
+CONTEXT_METADATA_CATEOGORY_ID = "metadata.context"
+AUTHORS_METADATA_CATEGORY_ID = "metadata.authors"
+
+JOB_CONFIG_TYPE_CATEGORY_ID = "instance.job"
+JOB_RECORD_TYPE_CATEGORY_ID = "instance.job_record"
+VALUE_PEDIGREE_TYPE_CATEGORY_ID = "instance.value_pedigree"
+
+FILE_MODEL_CATEOGORY_ID = "instance.model.file"
+FILE_BUNDLE_MODEL_CATEOGORY_ID = "instance.model.file_bundle"

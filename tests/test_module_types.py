@@ -10,8 +10,8 @@ from kiara import Kiara
 
 def test_module_types_exist(kiara: Kiara):
 
-    assert "logic.and" in kiara.module_mgmt.get_module_types()
-    assert "logic.xor" in kiara.module_mgmt.get_module_types()
+    assert "logic.and" in kiara.module_mgmt.module_type_names
+    assert "logic.xor" in kiara.module_mgmt.module_type_names
 
     assert "logic.and" not in kiara.module_mgmt.available_pipeline_module_types
     assert "logic.and" in kiara.module_mgmt.available_non_pipeline_module_types

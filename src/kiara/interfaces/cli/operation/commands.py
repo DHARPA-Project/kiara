@@ -14,7 +14,6 @@ from rich.panel import Panel
 from rich.table import Table
 
 from kiara import Kiara
-from kiara.operations import OperationType
 from kiara.utils import log_message
 from kiara.utils.output import rich_print
 
@@ -23,6 +22,20 @@ from kiara.utils.output import rich_print
 @click.pass_context
 def operation(ctx):
     """Metadata-related sub-commands."""
+
+
+@operation.command("list-types")
+@click.pass_context
+def list_types(ctx):
+
+    kiara_obj: Kiara = ctx.obj["kiara"]
+
+    op_mgmt = kiara_obj.operations_mgmt
+
+    for name, op_type in op_mgmt.operation_types.items():
+        print("----")
+        print(name)
+        print(op_type)
 
 
 @operation.command(name="list")
@@ -39,16 +52,17 @@ def operation(ctx):
     is_flag=True,
     help="Don't list operations that have no specific operation type associated with them.",
 )
+@click.option("--include-internal-operations", "-i", help="Whether to include operations that are mainly used internally.", is_flag=True)
 @click.pass_context
-def list(
-    ctx, by_type: bool, filter: typing.Iterable[str], full_doc: bool, omit_default: bool
+def list_operations(
+    ctx, by_type: bool, filter: typing.Iterable[str], full_doc: bool, omit_default: bool, include_internal_operations: bool
 ):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     if by_type:
         title = "Operations by type"
-        all_operations_types = kiara_obj.operation_mgmt.operation_types
+        all_operations_types = kiara_obj.operations_mgmt.operation_types
 
         table = Table(box=box.SIMPLE, show_header=True)
         table.add_column("Type", no_wrap=True, style="b green")
@@ -57,14 +71,17 @@ def list(
 
         for operation_name in sorted(all_operations_types.keys()):
 
-            if operation_name == "all":
+            if operation_name == "custom_module":
                 continue
 
-            operation_details: OperationType = all_operations_types[operation_name]
             first_line_value = True
 
-            for op_id, op_config in sorted(operation_details.operations.items()):
+            for op_id, op_config in sorted(
+                kiara_obj.operations_mgmt.operations_by_type[operation_name].items()
+            ):
 
+                if not include_internal_operations and op_config.operation_details.is_internal_operation:
+                    continue
                 if full_doc:
                     desc = op_config.doc.full_doc
                 else:
@@ -102,20 +119,25 @@ def list(
         table.add_column("Type(s)", style="green")
         table.add_column("Description", style="i")
 
-        for op_id, config in kiara_obj.operation_mgmt.profiles.items():
+        for op_id, operation in kiara_obj.operations_mgmt.operations.items():
 
-            types = kiara_obj.operation_mgmt.get_types_for_id(op_id)
-
-            if omit_default and len(types) == 1:
+            if not include_internal_operations and operation.operation_details.is_internal_operation:
                 continue
 
-            types.remove("all")
+            types = kiara_obj.operations_mgmt.find_all_operation_types(operation.operation_id)
+            if omit_default and len(types) == 1 and "all" in types:
+                continue
+
+            try:
+                types.remove("custom_module")
+            except KeyError:
+                pass
 
             if full_doc:
-                desc = config.doc.full_doc
+                desc = operation.doc.full_doc
             else:
-                desc = config.doc.description
-            # desc = config.module_cls.get_type_metadata().documentation.description
+                desc = operation.doc.description
+
             if filter:
                 match = True
                 for f in filter:
@@ -158,7 +180,7 @@ def explain(ctx, operation_id: str, source: bool):
         except Exception as e:
             log_message(f"Tried to import '{operation_id}' as pipeline, failed: {e}")
 
-    op_config = kiara_obj.operation_mgmt.profiles.get(operation_id)
+    op_config = kiara_obj.operations_mgmt.operations.get(operation_id)
     if not op_config:
         print()
         print(f"No operation with id '{operation_id}' registered.")

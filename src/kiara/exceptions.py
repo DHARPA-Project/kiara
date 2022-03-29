@@ -86,7 +86,7 @@ class KiaraProcessingException(Exception):
         self,
         msg: typing.Union[str, Exception],
         module: typing.Optional["KiaraModule"] = None,
-        inputs: typing.Optional[Mapping[str, Value]] = None,
+        inputs: typing.Optional[Mapping[str, "Value"]] = None,
     ):
         self._module: typing.Optional["KiaraModule"] = module
         self._inputs: typing.Optional[Mapping[str, Value]] = inputs
@@ -103,12 +103,39 @@ class KiaraProcessingException(Exception):
         return self._module  # type: ignore
 
     @property
-    def inputs(self) -> Mapping[str, Value]:
+    def inputs(self) -> Mapping[str, "Value"]:
         return self._inputs  # type: ignore
 
     @property
     def parent_exception(self) -> typing.Optional[Exception]:
         return self._parent
+
+
+class InputValuesException(Exception):
+    def __init__(
+        self,
+        msg: typing.Union[None, str, Exception] = None,
+        invalid_inputs: Mapping[str, str] = None,
+    ):
+
+        if invalid_inputs is None:
+            invalid_inputs = {}
+
+        self._invalid_inputs: Mapping[str, str] = invalid_inputs
+
+        if msg is None:
+            if not self._invalid_inputs:
+                _msg = "Invalid inputs."
+            else:
+                _msg = f"Invalid inputs: {', '.join(self._invalid_inputs.keys())}"
+        elif isinstance(msg, Exception):
+            self._parent: typing.Optional[Exception] = msg
+            _msg = str(msg)
+        else:
+            self._parent = None
+            _msg = msg
+
+        super().__init__(_msg)
 
 
 class JobConfigException(Exception):

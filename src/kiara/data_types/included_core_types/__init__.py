@@ -14,13 +14,60 @@ from kiara.data_types import (
     DataTypeCharacteristics,
     DataTypeConfig,
 )
-from kiara.defaults import INVALID_HASH_MARKER, INVALID_SIZE_MARKER, KIARA_HASH_FUNCTION
+from kiara.defaults import (
+    INVALID_HASH_MARKER,
+    INVALID_SIZE_MARKER,
+    KIARA_HASH_FUNCTION,
+    SpecialValue,
+)
 from kiara.models import KiaraModel
 from kiara.models.values.value import Value
 
 SKALAR_CHARACTERISTICS = DataTypeCharacteristics(
     is_skalar=True, is_json_serializable=True
 )
+
+
+class NoneType(DataType[SpecialValue, DataTypeConfig]):
+    """'Any' type, the parent type for most other types.
+
+    This type acts as the parents for all (or at least most) non-internal value types. There are some generic operations
+    (like 'persist_value', or 'render_value') which are implemented for this type, so it's descendents have a fallback
+    option in case no subtype-specific operations are implemented for it. In general, it is not recommended to use the 'any'
+    type as module input or output, but it is possible. Values of type 'any' are not allowed to be persisted (at the moment,
+    this might or might not change).
+    """
+
+    _data_type_name = "none"
+
+    @classmethod
+    def python_class(cls) -> Type:
+        return SpecialValue
+
+    # def is_immutable(self) -> bool:
+    #     return False
+
+    def calculate_hash(self, data: Any) -> int:
+        return INVALID_HASH_MARKER
+        # raise Exception(
+        #     f"Calculating the hash for type '{self.__class__._value_type_name}' is not supported. If your type inherits from 'any', make sure to implement the 'calculate_hash' method."
+        # )
+
+    def calculate_size(self, data: Any) -> int:
+        return INVALID_SIZE_MARKER
+        # raise Exception(
+        #     f"Calculating size for type '{self.__class__._value_type_name}' is not supported. If your type inherits from 'any', make sure to implement the 'calculate_hash' method."
+        # )
+
+    def parse_python_obj(self, data: Any) -> SpecialValue:
+        return SpecialValue.NO_VALUE
+
+    def reender_as__string(
+        self, value: "Value", render_config: Mapping[str, Any]
+    ) -> Any:
+
+        data = value.data
+        return str(data.value)
 
 
 class AnyType(

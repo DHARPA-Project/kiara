@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from pydantic import Field
-from typing import Any, Iterable, Mapping, Optional, Union
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Union
 
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.operation import (
     BaseOperationDetails,
+    ManifestOperationConfig,
     Operation,
     OperationConfig,
 )
@@ -13,6 +14,9 @@ from kiara.modules import KiaraModule, ValueSetSchema
 from kiara.modules.included_core_modules.render_value import RenderValueModule
 from kiara.modules.operations import OperationType
 from kiara.utils import log_message
+
+if TYPE_CHECKING:
+    pass
 
 
 class RenderValueDetails(BaseOperationDetails):
@@ -90,7 +94,9 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
                 attr = getattr(module_cls, func_name)
                 doc = DocumentationMetadataModel.from_function(attr)
                 mc = {"source_type": source_type, "target_type": target_type}
-                oc = OperationConfig(module_type=name, module_config=mc, doc=doc)
+                oc = ManifestOperationConfig(
+                    module_type=name, module_config=mc, doc=doc
+                )
                 result.append(oc)
 
         for data_type_name, data_type_class in self._kiara.data_type_classes.items():
@@ -117,7 +123,7 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
                     "source_type": data_type_name,
                     "target_type": target_type,
                 }
-                oc = OperationConfig(
+                oc = ManifestOperationConfig(
                     module_type="value.render", module_config=mc, doc=doc
                 )
                 result.append(oc)

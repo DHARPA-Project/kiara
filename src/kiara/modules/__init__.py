@@ -29,8 +29,8 @@ from typing import (
 
 from kiara.defaults import KIARA_HASH_FUNCTION
 from kiara.exceptions import KiaraModuleConfigException
+from kiara.models.module import KiaraModuleConfig
 from kiara.models.module.jobs import JobLog
-from kiara.models.module.manifest import KiaraModuleConfig
 
 # from kiara.data.values import ValueOrm, ValueLineage, ValueSchema
 # from kiara.data.values.value_set import SlottedValueSet, ValueSet
@@ -317,7 +317,6 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
         self,
         module_config: Union[None, KIARA_CONFIG, Mapping[str, Any]] = None,
     ):
-
         self._id: uuid.UUID = uuid.uuid4()
 
         if isinstance(module_config, KiaraModuleConfig):

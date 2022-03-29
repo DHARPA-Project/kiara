@@ -448,7 +448,7 @@ def find_pipeline_base_path_for_module(module: Union[str, ModuleType]) -> Option
 
 def find_all_kiara_pipeline_paths(
     skip_errors: bool = False,
-) -> Dict[str, List[Tuple[Optional[str], str]]]:
+) -> List[str]:
 
     import logging
 
@@ -467,60 +467,39 @@ def find_all_kiara_pipeline_paths(
         namespace="kiara.pipelines", invoke_on_load=False, propagate_map_exceptions=True
     )
 
-    result_entrypoints: Dict[str, Tuple[Optional[str], str]] = {}
-    result_dynamic: Dict[str, Tuple[Optional[str], str]] = {}
+    paths: List[str] = []
     # TODO: make sure we load 'core' first?
     for plugin in mgr:
 
         name = plugin.name
-
         if (
             isinstance(plugin.plugin, tuple)
             and len(plugin.plugin) >= 1
             and callable(plugin.plugin[0])
         ) or callable(plugin.plugin):
-            pipeline_path_tuple = _find_pipeline_folders_using_callable(plugin.plugin)
-            result_dynamic[name] = pipeline_path_tuple
+            try:
+                if callable(plugin.plugin):
+                    func = plugin.plugin
+                    args = []
+                else:
+                    func = plugin.plugin[0]
+                    args = plugin.plugin[1:]
+                result = func(*args)
+                if isinstance(result, str):
+                    paths.append(result)
+                else:
+                    paths.extend(result)
+            except Exception as e:
+                if is_debug():
+                    import traceback
 
-        # elif isinstance(plugin.plugin, str):
-        #     if skip_errors:
-        #         continue
-        #
-        #     raise NotImplementedError(
-        #         f"Finding pipeline paths using item '{plugin.plugin}' not supported."
-        #     )
-        #     # module_name = plugin.plugin
-        #     # try:
-        #     #     m = importlib.import_module(module_name)
-        #     #     pipeline_path_tuple = _find_pipeline_folders_using_callable(m)
-        #     # except Exception:
-        #     #     raise Exception(
-        #     #         f"Can't load pipelines for module '{module_name}': module does not exist"
-        #     #     )
-        #     # result_entrypoints[name] = pipeline_path_tuple
-        # elif isinstance(plugin.plugin, typing.Mapping):
-        #     if skip_errors:
-        #         continue
-        #     raise NotImplementedError(
-        #         f"Finding pipeline paths for mapping '{plugin.plugin}' not supported."
-        #     )
-        # elif isinstance(plugin.plugin, typing.Iterable):
-        #     if skip_errors:
-        #         continue
-        #     raise NotImplementedError(
-        #         f"Finding pipeline paths for iterable '{plugin.plugin}' not supported."
-        #     )
-        #     result_entrypoints[name] = plugin.plugin
-        # elif isinstance(plugin.plugin, ModuleType):
-        #     if skip_errors:
-        #         continue
-        #     # print(f"Entrypoint type not supported yet: {plugin.plugin}")
-        #     raise NotImplementedError(
-        #         f"Pipeline entrypoint lookup ModuleType not supported yet: {plugin.plugin}"
-        #     )
-        #     # result_entrypoints[name] = _find_pipeline_folders_using_callable(
-        #     #     plugin.plugin
-        #     # )
+                    traceback.print_exc()
+                if skip_errors:
+                    log_message(
+                        "ignore.pipline_entrypoint", entrypoint_name=name, reason=str(e)
+                    )
+                    continue
+                raise Exception(f"Error trying to load plugin '{plugin.plugin}': {e}")
         else:
             if skip_errors:
                 log_message(
@@ -532,31 +511,23 @@ def find_all_kiara_pipeline_paths(
             msg = f"Can't load pipelines for entrypoint '{name}': invalid plugin type '{type(plugin.plugin)}'"
             raise Exception(msg)
 
-    result: Dict[str, List[Tuple[Optional[str], str]]] = {}
-
-    for k, v in result_entrypoints.items():
-        result.setdefault(k, []).append(v)
-
-    for k, v in result_dynamic.items():
-        result.setdefault(k, []).append(v)
-
-    return result
+    return paths
 
 
-def _find_pipeline_folders_using_callable(
-    func: Union[Callable, Tuple]
-) -> Tuple[Optional[str], str]:
-
-    if not callable(func):
-        assert len(func) >= 2
-        args = func[1]
-        assert len(args) == 1
-        module_path: Optional[str] = args[0]
-    else:
-        module_path = None
-    path = _callable_wrapper(func=func)  # type: ignore
-    assert isinstance(path, str)
-    return (module_path, path)
+# def _find_pipeline_folders_using_callable(
+#     func: Union[Callable, Tuple]
+# ) -> Tuple[Optional[str], str]:
+#
+#     if not callable(func):
+#         assert len(func) >= 2
+#         args = func[1]
+#         assert len(args) == 1
+#         module_path: Optional[str] = args[0]
+#     else:
+#         module_path = None
+#     path = _callable_wrapper(func=func)  # type: ignore
+#     assert isinstance(path, str)
+#     return (module_path, path)
 
 
 # def _find_kiara_modules_using_callable(

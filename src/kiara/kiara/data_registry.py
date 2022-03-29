@@ -2,7 +2,6 @@
 import abc
 import structlog
 import uuid
-from enum import Enum
 from rich.console import RenderableType
 from sqlalchemy.engine import Engine
 from typing import (
@@ -27,6 +26,13 @@ from kiara.exceptions import JobConfigException
 from kiara.kiara.aliases import AliasRegistry
 from kiara.kiara.data_store import DataStore
 from kiara.kiara.data_store.filesystem_store import FilesystemDataStore
+from kiara.models.events.data_registry import (
+    AliasPreStoreEvent,
+    RegistryEvent,
+    ValueCreatedEvent,
+    ValuePreStoreEvent,
+    ValueStoredEvent,
+)
 from kiara.models.module.destiniy import Destiny
 from kiara.models.module.jobs import JobConfig, JobRecord
 from kiara.models.module.manifest import LoadConfig, Manifest
@@ -55,22 +61,13 @@ if TYPE_CHECKING:
 logger = structlog.getLogger()
 
 
-class RegistryEvent(Enum):
-
-    VALUE_CREATED = "value_created"
-    VALUE_PRE_STORE = "value_pre_store"
-    VALUE_STORED = "value_stored"
-    ALIAS_PRE_STORE = "alias_pre_store"
-    ALIAS_STORED = "alias_stored"
-
-
 class DataEventHook(abc.ABC):
     @abc.abstractmethod
-    def get_subscribed_event_types(self) -> Iterable[RegistryEvent]:
+    def get_subscribed_event_types(self) -> Iterable[str]:
         pass
 
     @abc.abstractmethod
-    def process_hook(self, event_type: RegistryEvent, value: Value):
+    def process_hook(self, event: RegistryEvent):
         pass
 
 
@@ -79,18 +76,18 @@ class CreateMetadataDestinies(DataEventHook):
 
         self._kiara: Kiara = kiara
 
-    def get_subscribed_event_types(self) -> Iterable[RegistryEvent]:
-        return [RegistryEvent.VALUE_CREATED, RegistryEvent.VALUE_PRE_STORE]
+    def get_subscribed_event_types(self) -> Iterable[str]:
+        return ["value_created", "value_pre_store"]
 
-    def process_hook(self, event_type: RegistryEvent, value: Value):
+    def process_hook(self, event: RegistryEvent):
 
         # if not value._data_type_known:
         #     return
 
-        if event_type == RegistryEvent.VALUE_CREATED:
-            self.attach_metadata(value)
-        elif event_type == RegistryEvent.VALUE_PRE_STORE:
-            self.resolve_all_metadata(value)
+        if event.event_type == "value_created":  # type: ignore
+            self.attach_metadata(event.value)
+        elif event.event_type == "value_pre_store":  # type: ignore
+            self.resolve_all_metadata(event.value)
 
     def attach_metadata(self, value: Value):
 
@@ -129,7 +126,7 @@ class DataRegistry(object):
         self._registred_jobs: Dict[int, JobRecord] = {}
 
         self._value_store_map: Dict[uuid.UUID, uuid.UUID] = {}
-        self._job_store_map: Dict[int, uuid.UUID] = {}
+        # self._job_store_map: Dict[int, uuid.UUID] = {}
 
         self._destinies: Dict[uuid.UUID, Destiny] = {}
         self._destinies_by_value: Dict[
@@ -149,7 +146,7 @@ class DataRegistry(object):
         # self._none_value: Value = Value(value_id=NONE_VALUE_ID, kiara_id=self._kiara.id, value_schema=ValueSchema(type="special_type", default=SpecialValue.NO_VALUE, is_constant=True, doc="Special value, indicating a field is set with a 'none' value."), value_status=ValueStatus.NONE, value_size=0, value_hash=-2, pedigree=ORPHAN, pedigree_output_name="__void__", python_class=special_value_cls)
         # self._cached_data[NONE_VALUE_ID] = SpecialValue.NO_VALUE
 
-        self._event_hooks: Dict[RegistryEvent, List[DataEventHook]] = {}
+        self._event_hooks: Dict[str, List[DataEventHook]] = {}
 
         self.add_hook(CreateMetadataDestinies(kiara=self._kiara))
 
@@ -160,15 +157,16 @@ class DataRegistry(object):
             return self._alias_registry
 
         root_doc = "The root for all value aliases."
-        self._alias_registry = AliasRegistry(
-            data_registry=self, engine=self._kiara._engine, doc=root_doc
-        )
+        self._alias_registry = AliasRegistry()
+        self._alias_registry._data_registry = self
+        self._alias_registry._engine = self._engine
+
         return self._alias_registry
 
     def register_alias(self, alias: str, value: Union[Value, uuid.UUID]):
 
         value = self.get_value(value=value)
-        self.aliases.set_alias(alias=alias, value=value)
+        self.aliases.set_alias(alias=alias, value_id=value.value_id)
         self.aliases.save(alias)
 
     def add_store(self, data_store: DataStore):
@@ -199,7 +197,7 @@ class DataRegistry(object):
     def add_hook(self, hook: DataEventHook):
 
         event_types = hook.get_subscribed_event_types()
-        if isinstance(event_types, RegistryEvent):
+        if isinstance(event_types, str):
             event_types = [event_types]
         for event_type in event_types:
             self._event_hooks.setdefault(event_type, []).append(hook)
@@ -271,8 +269,8 @@ class DataRegistry(object):
         store = self.get_store(store_id=store_id)
 
         if not store.has_value(value.value_id) or not skip_if_exists:
-
-            self.send_event(RegistryEvent.VALUE_PRE_STORE, value=value)
+            event = ValuePreStoreEvent.construct(kiara_id=self._kiara.id, value=value)
+            self.send_event(event)
             load_config = store.store_value(value)
             self._value_store_map[value.value_id] = store.data_store_id
             self._load_configs[value.value_id] = load_config
@@ -287,13 +285,17 @@ class DataRegistry(object):
                     )
 
         if aliases:
-            self.send_event(RegistryEvent.ALIAS_PRE_STORE)
+            aps_event = AliasPreStoreEvent.construct(
+                kiara_id=self._kiara.id, value=value, aliases=aliases
+            )
+            self.send_event(aps_event)
             for alias in aliases:
                 if not alias:
                     logger.debug("ignore.store.alias", reason="alias is empty")
                     continue
                 self.register_alias(alias=alias, value=value)
-            self.send_event(RegistryEvent.VALUE_STORED, value=value)
+            vs_event = ValueStoredEvent.construct(kiara_id=self._kiara.id, value=value)
+            self.send_event(vs_event)
 
     def find_values_for_hash(
         self, value_hash: int, data_type_name: Optional[str] = None
@@ -304,7 +306,7 @@ class DataRegistry(object):
 
         stored = self._values_by_hash.get(value_hash, None)
         if stored is None:
-            matches = {}
+            matches: Dict[uuid.UUID, List[uuid.UUID]] = {}
             for store_id, store in self.data_stores.items():
                 value_ids = store.find_values_with_hash(
                     value_hash=value_hash, data_type_name=data_type_name
@@ -335,7 +337,8 @@ class DataRegistry(object):
         match = None
         for store_id, store in self.data_stores.items():
             match = store.retrieve_job_record(job=job)
-            matches.append(store_id)
+            if match:
+                matches.append(match)
 
         if len(matches) == 0:
             return None
@@ -344,8 +347,8 @@ class DataRegistry(object):
                 f"Multiple stores have a record for job '{job}', this is not supported (yet)."
             )
 
-        self._job_store_map[job.model_data_hash] = matches[0]
-        self._registred_jobs[job.model_data_hash] = match
+        # self._job_store_map[job.model_data_hash] = matches[0]
+        self._registred_jobs[job.model_data_hash] = matches[0]
 
         return match
 
@@ -375,6 +378,12 @@ class DataRegistry(object):
                 f"Can't register data of type '{schema.type}': type not registered. Available types: {', '.join(self._kiara.data_type_names)}"
             )
 
+        if isinstance(data, str) and data.startswith("value:"):
+            data = uuid.UUID(data[6:])
+
+        if isinstance(data, uuid.UUID):
+            data = self.get_value(value=data)
+
         if isinstance(data, Value):
             if data.value_id in self._registered_values.keys():
                 raise Exception(
@@ -385,7 +394,6 @@ class DataRegistry(object):
             self._registered_values[data.value_id] = data
             return data
 
-        valid_type = True
         data_type = self._kiara.get_data_type(
             data_type_name=schema.type, data_type_config=schema.type_config
         )
@@ -440,21 +448,19 @@ class DataRegistry(object):
             pedigree_output_name=pedigree_output_name,
         )
 
-        if not valid_type:
-            value._data_type_known = False
-
         value._data_registry = self
         self._values_by_hash.setdefault(value.value_hash, set()).add(value.value_id)
         self._registered_values[value.value_id] = value
         self._cached_data[value.value_id] = data
 
-        self.send_event(RegistryEvent.VALUE_CREATED, value=value)
+        event = ValueCreatedEvent(kiara_id=self._kiara.id, value=value)
+        self.send_event(event)
         return value
 
-    def send_event(self, event_type: RegistryEvent, **payload):
+    def send_event(self, event: RegistryEvent, **payload):
 
-        for hook in self._event_hooks.get(event_type, []):
-            hook.process_hook(event_type=event_type, **payload)
+        for hook in self._event_hooks.get(event.event_type, []):  # type: ignore
+            hook.process_hook(event=event)
 
     def retrieve_load_config(self, value_id: uuid.UUID) -> Optional[LoadConfig]:
 
@@ -484,6 +490,11 @@ class DataRegistry(object):
         value = self.get_value(value=value_id)
 
         load_config = self.retrieve_load_config(value_id=value_id)
+
+        if load_config is None:
+            raise Exception(
+                f"Load config for value '{value_id}' is 'None', this is most likely a bug."
+            )
 
         data = self._load_data_from_load_config(load_config=load_config, value=value)
         self._cached_data[value_id] = data

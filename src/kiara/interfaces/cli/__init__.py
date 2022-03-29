@@ -25,8 +25,7 @@ from .dev.commands import dev_group
 # from .metadata.commands import metadata
 from .module.commands import module
 from .operation.commands import operation
-
-# from .pipeline.commands import pipeline
+from .pipeline.commands import pipeline
 from .run import run
 from .type.commands import type_group
 
@@ -84,7 +83,7 @@ cli.add_command(run)
 cli.add_command(data)
 cli.add_command(operation)
 cli.add_command(module)
-# cli.add_command(pipeline)
+cli.add_command(pipeline)
 # cli.add_command(info)
 # cli.add_command(metadata)
 cli.add_command(type_group)

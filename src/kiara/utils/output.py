@@ -459,8 +459,8 @@ def create_table_from_base_model_cls(model_cls: Type[BaseModel]):
 #     m_schema, _, _ = model_process_schema(config_cls, model_name_map=model_name_map)
 #     fields = m_schema["properties"]
 #
-#     for field_name, details in fields.items():
-#         if remove_pipeline_config and field_name in [
+#     for alias, details in fields.items():
+#         if remove_pipeline_config and alias in [
 #             "steps",
 #             "input_aliases",
 #             "output_aliases",
@@ -471,7 +471,7 @@ def create_table_from_base_model_cls(model_cls: Type[BaseModel]):
 #         type_str = "-- n/a --"
 #         if "type" in details.keys():
 #             type_str = details["type"]
-#         table.add_row(field_name, type_str, details.get("description", "-- n/a --"))
+#         table.add_row(alias, type_str, details.get("description", "-- n/a --"))
 #
 #     return table
 

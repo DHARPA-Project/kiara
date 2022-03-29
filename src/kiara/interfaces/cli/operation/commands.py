@@ -85,19 +85,20 @@ def list_operations(
 
             first_line_value = True
 
-            for op_id, op_config in sorted(
-                kiara_obj.operations_mgmt.operations_by_type[operation_name].items()
+            for op_id in sorted(
+                kiara_obj.operations_mgmt.operations_by_type[operation_name]
             ):
+                operation = kiara_obj.operations_mgmt.get_operation(op_id)
 
                 if (
                     not include_internal_operations
-                    and op_config.operation_details.is_internal_operation
+                    and operation.operation_details.is_internal_operation
                 ):
                     continue
                 if full_doc:
-                    desc = op_config.doc.full_doc
+                    desc = operation.doc.full_doc
                 else:
-                    desc = op_config.doc.description
+                    desc = operation.doc.description
 
                 if filter:
                     match = True
@@ -131,7 +132,8 @@ def list_operations(
         table.add_column("Type(s)", style="green")
         table.add_column("Description", style="i")
 
-        for op_id, operation in kiara_obj.operations_mgmt.operations.items():
+        for op_id in kiara_obj.operations_mgmt.operation_ids:
+            operation = kiara_obj.operations_mgmt.get_operation(op_id)
 
             if (
                 not include_internal_operations
@@ -168,6 +170,7 @@ def list_operations(
                 table.add_row(op_id, ", ".join(types), desc)
 
     panel = Panel(table, title=title, title_align="left", box=box.ROUNDED)
+    print()
     rich_print(panel)
 
 
@@ -197,7 +200,7 @@ def explain(ctx, operation_id: str, source: bool):
         except Exception as e:
             log_message(f"Tried to import '{operation_id}' as pipeline, failed: {e}")
 
-    op_config = kiara_obj.operations_mgmt.operations.get(operation_id)
+    op_config = kiara_obj.operations_mgmt.get_operation(operation_id)
     if not op_config:
         print()
         print(f"No operation with id '{operation_id}' registered.")

@@ -33,7 +33,7 @@ def test(ctx):
     results = kiara_obj.execute(manifest=op, inputs=inputs)
     text_value = results["text"]
 
-    kiara_obj.data_registry.register_alias("test.test.test3", text_value)
+    kiara_obj.data_registry.register_alias("test1.test2.test3", text_value)
 
     kiara_obj.data_registry._alias_registry.print_tree()
 

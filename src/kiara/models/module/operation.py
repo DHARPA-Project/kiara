@@ -6,7 +6,7 @@ from rich import box
 from rich.console import RenderableType, RenderGroup
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Mapping, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Union
 
 from kiara.defaults import (
     OPERATION_CATEOGORY_ID,
@@ -16,14 +16,13 @@ from kiara.defaults import (
 )
 from kiara.models import KiaraModel
 from kiara.models.documentation import DocumentationMetadataModel
-from kiara.models.module import KiaraModuleTypeMetadata
+from kiara.models.module import KiaraModuleClass, KiaraModuleTypeMetadata
 from kiara.models.module.jobs import JobConfig
 from kiara.models.module.manifest import Manifest
-from kiara.models.python_class import PythonClass
+from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.values.value import Value, ValueSet, ValueSetReadOnly
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import InputOutputObject, KiaraModule, ValueSetSchema
-from kiara.utils import orjson_dumps
 from kiara.utils.output import create_table_from_field_schemas
 
 if TYPE_CHECKING:
@@ -136,7 +135,7 @@ class BaseOperationDetails(OperationDetails):
         return self._op_schema
 
 
-class OperationConfig(Manifest):
+class OperationConfig(KiaraModel):
 
     doc: DocumentationMetadataModel = Field(
         description="Documentation for this operation."
@@ -153,10 +152,71 @@ class OperationConfig(Manifest):
         return OPERATION_CONFIG_CATEOGORY_ID
 
     def _retrieve_data_to_hash(self) -> Any:
-        return {"doc": self.doc.model_data_hash, "module_config": self.manifest_data}
+        return self.dict()
+
+    @abc.abstractmethod
+    def retrieve_module_type(self, kiara: "Kiara") -> str:
+        pass
+
+    @abc.abstractmethod
+    def retrieve_module_config(self, kiara: "Kiara") -> Mapping[str, Any]:
+        pass
 
 
-class Operation(OperationConfig):
+class ManifestOperationConfig(OperationConfig):
+
+    module_type: str = Field(description="The module type.")
+    module_config: Dict[str, Any] = Field(
+        default_factory=dict, description="The configuration for the module."
+    )
+
+    def retrieve_module_type(self, kiara: "Kiara") -> str:
+        return self.module_type
+
+    def retrieve_module_config(self, kiara: "Kiara") -> Mapping[str, Any]:
+        return self.module_config
+
+
+class PipelineOperationConfig(OperationConfig):
+
+    pipeline_id: str = Field(description="The pipeline id.")
+    pipeline_config: Mapping[str, Any] = Field(description="The pipeline config data.")
+    module_map: Dict[str, Any] = Field(
+        description="A lookup map to resolves module names to operations.",
+        default_factory=dict,
+    )
+
+    @validator("pipeline_config")
+    def validate_pipeline_config(cls, value):
+        # TODO
+        assert isinstance(value, Mapping)
+        assert "steps" in value.keys()
+
+        return value
+
+    def retrieve_module_type(self, kiara: "Kiara") -> str:
+        return "pipeline"
+
+    def retrieve_module_config(self, kiara: "Kiara") -> Mapping[str, Any]:
+        pipeline_config = PipelineConfig.from_config(
+            pipeline_id=self.pipeline_id,
+            data=self.pipeline_config,
+            kiara=kiara,
+            module_map=self.module_map,
+        )
+        return pipeline_config
+
+    @property
+    def required_module_types(self) -> Iterable[str]:
+
+        return [step["module_type"] for step in self.pipeline_config["steps"]]
+
+    def __repr__(self):
+
+        return f"{self.__class__.__name__}(pipeline_id={self.pipeline_id} required_modules={list(self.required_module_types)} id={self.id}, category={self.category_id}, fields=[{', '.join(self.__fields__.keys())}])"
+
+
+class Operation(Manifest):
     @classmethod
     def create_from_module(cls, module: KiaraModule) -> "Operation":
 
@@ -173,7 +233,7 @@ class Operation(OperationConfig):
             operation_id=op_id,
             operation_type="plain_module",
             operation_details=details,
-            module_class=PythonClass.from_class(module.__class__),
+            module_details=KiaraModuleClass.from_module(module),
             doc=DocumentationMetadataModel.from_class_doc(module.__class__),
         )
         operation._module = module
@@ -184,8 +244,13 @@ class Operation(OperationConfig):
     operation_details: OperationDetails = Field(
         description="The operation specific details of this operation."
     )
+    doc: DocumentationMetadataModel = Field(
+        description="Documentation for this operation."
+    )
 
-    module_class: PythonClass = Field(description="The class of the underlying module.")
+    module_details: KiaraModuleClass = Field(
+        description="The class of the underlying module."
+    )
 
     _module: Optional["KiaraModule"] = PrivateAttr(default=None)
 
@@ -201,7 +266,7 @@ class Operation(OperationConfig):
     @property
     def module(self) -> "KiaraModule":
         if self._module is None:
-            m_cls = self.module_class.get_class()
+            m_cls = self.module_details.get_class()
             self._module = m_cls(module_config=self.module_config)
         return self._module
 
@@ -269,7 +334,6 @@ class Operation(OperationConfig):
 
         # module_type_md = self.module.get_type_metadata()
 
-        self.operation_details.inputs_schema
         inputs_table = create_table_from_field_schemas(
             _add_required=True,
             _add_default=True,
@@ -301,15 +365,17 @@ class Operation(OperationConfig):
         table.add_row("Outputs", outputs_table)
 
         table.add_row("Module type", self.module_type)
+
+        module_config = self.module.config.json(option=orjson.OPT_INDENT_2)
         conf = Syntax(
-            orjson_dumps(self.module_config, option=orjson.OPT_INDENT_2),
+            module_config,
             "json",
             background_color="default",
         )
         table.add_row("Module config", conf)
 
         module_type_md = KiaraModuleTypeMetadata.from_module_class(
-            self.module_class.get_class()
+            self.module_details.get_class()
         )
 
         desc = module_type_md.documentation.description
@@ -319,7 +385,7 @@ class Operation(OperationConfig):
         m_md = RenderGroup(desc, module_md)
         table.add_row("Module metadata", m_md)
 
-        if config.get("include_src", False):
+        if config.get("include_src", True):
             table.add_row("Source code", module_type_md.process_src)
 
         return table

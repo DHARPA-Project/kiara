@@ -1,59 +1,10 @@
 # -*- coding: utf-8 -*-
-from pydantic.config import Extra
-from pydantic.fields import Field
-from pydantic.main import BaseModel
-from typing import Any, Dict, Iterable, List, Mapping, Optional, Union
+from typing import Any, Iterable, List, Mapping, Optional, Union
 
+from kiara.models.module.pipeline.value_refs import StepValueAddress
 
-class StepValueAddress(BaseModel):
-    """Small model to describe the address of a value of a step, within a Pipeline/PipelineStructure."""
-
-    class Config:
-        extra = Extra.forbid
-
-    step_id: str = Field(description="The id of a step within a pipeline.")
-    value_name: str = Field(
-        description="The name of the value (output name or pipeline input name)."
-    )
-    sub_value: Optional[Dict[str, Any]] = Field(
-        default=None,
-        description="A reference to a subitem of a value (e.g. column, list item)",
-    )
-
-    @property
-    def alias(self):
-        """An alias string for this address (in the form ``[step_id].[value_name]``)."""
-        return generate_step_alias(self.step_id, self.value_name)
-
-    def __eq__(self, other):
-
-        if not isinstance(other, StepValueAddress):
-            return False
-
-        return (self.step_id, self.value_name, self.sub_value) == (
-            other.step_id,
-            other.value_name,
-            other.sub_value,
-        )
-
-    def __hash__(self):
-
-        return hash((self.step_id, self.value_name, self.sub_value))
-
-    def __repr__(self):
-
-        if self.sub_value:
-            sub_value = f" sub_value={self.sub_value}"
-        else:
-            sub_value = ""
-        return f"StepValueAddres(step_id={self.step_id}, value_name={self.value_name}{sub_value})"
-
-    def __str__(self):
-        return self.__repr__()
-
-
-def generate_step_alias(step_id: str, value_name):
-    return f"{step_id}.{value_name}"
+# def generate_step_alias(step_id: str, value_name):
+#     return f"{step_id}.{value_name}"
 
 
 def create_step_value_address(

@@ -13,7 +13,8 @@ import typing
 
 if typing.TYPE_CHECKING:
     from kiara import KiaraModule
-    from kiara.modules.mgmt.pipelines import PipelineModuleManagerConfig
+
+    # from kiara.modules.mgmt.pipelines import PipelineModuleManagerConfig
     from kiara.modules.mgmt.python_classes import PythonModuleManagerConfig
 
 
@@ -33,8 +34,7 @@ class ModuleManager(abc.ABC):
 
         raise NotImplementedError()
 
-        from kiara.modules.mgmt.pipelines import (
-            PipelineModuleManager,
+        from kiara.modules.mgmt.pipelines import (  # PipelineModuleManager,
             PipelineModuleManagerConfig,
         )
         from kiara.modules.mgmt.python_classes import (
@@ -48,8 +48,8 @@ class ModuleManager(abc.ABC):
                 raise ValueError(f"No module manager type provided in config: {config}")
             if mm_type == "python":
                 config = PythonModuleManagerConfig(**config)
-            elif mm_type == "pipeline":
-                config = PipelineModuleManagerConfig(**config)
+            # elif mm_type == "pipeline":
+            #     config = PipelineModuleManagerConfig(**config)
             else:
                 raise ValueError(f"Invalid module manager type: {mm_type}")
 
@@ -57,8 +57,10 @@ class ModuleManager(abc.ABC):
             mm: ModuleManager = PythonModuleManager(
                 **config.dict(exclude={"module_manager_type"})
             )
-        elif config.module_manager_type == "pipeline":
-            mm = PipelineModuleManager(**config.dict(exclude={"module_manager_type"}))
+        else:
+            raise NotImplementedError()
+        # elif config.module_manager_type == "pipeline":
+        #     mm = PipelineModuleManager(**config.dict(exclude={"module_manager_type"}))
 
         return mm
 

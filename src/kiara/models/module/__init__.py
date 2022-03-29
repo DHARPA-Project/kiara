@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import inspect
 import textwrap
+from pydantic import Extra, Field, PrivateAttr
 from pydantic.class_validators import validator
 from pydantic.fields import Field
 from pydantic.main import BaseModel
@@ -19,6 +20,7 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Type
 from kiara.defaults import (
     DEFAULT_NO_DESC_VALUE,
     MODULE_CONFIG_METADATA_CATEGORY_ID,
+    MODULE_CONFIG_SCHEMA_CATEGORY_ID,
     MODULE_TYPE_CATEGORY_ID,
     MODULE_TYPES_CATEGORY_ID,
 )
@@ -28,13 +30,94 @@ from kiara.models.documentation import (
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
-from kiara.models.module.manifest import KiaraModuleConfig
-from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.python_class import PythonClass
+from kiara.models.values.value_schema import ValueSchema
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
     from kiara.modules import KiaraModule
+
+
+class KiaraModuleConfig(KiaraModel):
+    """Base class that describes the configuration a [``KiaraModule``][kiara.module.KiaraModule] class accepts.
+
+    This is stored in the ``_config_cls`` class attribute in each ``KiaraModule`` class.
+
+    There are two config options every ``KiaraModule`` supports:
+
+     - ``constants``, and
+     - ``defaults``
+
+     Constants are pre-set inputs, and users can't change them and an error is thrown if they try. Defaults are default
+     values that override the schema defaults, and those can be overwritten by users. If both a constant and a default
+     value is set for an input field, an error is thrown.
+    """
+
+    @classmethod
+    def requires_config(cls, config: Optional[Mapping[str, Any]] = None) -> bool:
+        """Return whether this class can be used as-is, or requires configuration before an instance can be created."""
+
+        for field_name, field in cls.__fields__.items():
+            if field.required and field.default is None:
+                if config:
+                    if config.get(field_name, None) is None:
+                        return True
+                else:
+                    return True
+        return False
+
+    _config_hash: str = PrivateAttr(default=None)
+    constants: Dict[str, Any] = Field(
+        default_factory=dict, description="ValueOrm constants for this module."
+    )
+    defaults: Dict[str, Any] = Field(
+        default_factory=dict, description="ValueOrm defaults for this module."
+    )
+
+    class Config:
+        extra = Extra.forbid
+        validate_assignment = True
+
+    def get(self, key: str) -> Any:
+        """Get the value for the specified configuation key."""
+
+        if key not in self.__fields__:
+            raise Exception(
+                f"No config value '{key}' in module config class '{self.__class__.__name__}'."
+            )
+
+        return getattr(self, key)
+
+    def _retrieve_id(self) -> str:
+        return str(self.model_data_hash)
+
+    def _retrieve_category_id(self) -> str:
+        return MODULE_CONFIG_SCHEMA_CATEGORY_ID
+
+    def _retrieve_data_to_hash(self) -> Any:
+
+        return self.dict()
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        my_table = Table(box=box.MINIMAL, show_header=False)
+        my_table.add_column("Field name", style="i")
+        my_table.add_column("ValueOrm")
+        for field in self.__fields__:
+            my_table.add_row(field, getattr(self, field))
+
+        return my_table
+
+    def __eq__(self, other):
+
+        if self.__class__ != other.__class__:
+            return False
+
+        return self.model_data_hash == other.model_data_hash
+
+    def __hash__(self):
+
+        return self.model_data_hash
 
 
 class ValueTypeAndDescription(BaseModel):
@@ -104,16 +187,13 @@ class KiaraModuleConfigMetadata(KiaraModel):
         return self.python_class.id
 
 
-def calculate_class_doc_url(base_url: str, module_type_name: str, pipeline: bool):
+def calculate_class_doc_url(base_url: str, module_type_name: str):
 
     if base_url.endswith("/"):
         base_url = base_url[0:-1]
 
     module_type_name = module_type_name.replace(".", "")
-    if not pipeline:
-        url = f"{base_url}/latest/modules_list/#{module_type_name}"
-    else:
-        url = f"{base_url}/latest/pipelines_list/#{module_type_name}"
+    url = f"{base_url}/latest/modules_list/#{module_type_name}"
 
     return url
 
@@ -125,7 +205,7 @@ def calculate_class_source_url(
     if base_url.endswith("/"):
         base_url = base_url[0:-1]
 
-    m = python_class_info.get_module()
+    m = python_class_info.get_python_module()
     m_file = m.__file__
     assert m_file is not None
 
@@ -160,30 +240,25 @@ class KiaraModuleTypeMetadata(KiaraModel):
         python_class = PythonClass.from_class(module_cls)
         properties_md = ContextMetadataModel.from_class(module_cls)
 
-        is_pipeline = module_cls.is_pipeline()
         doc_url = properties_md.get_url_for_reference("documentation")
         if doc_url:
-            class_doc = calculate_class_doc_url(doc_url, module_cls._module_type_name, pipeline=is_pipeline)  # type: ignore
+            class_doc = calculate_class_doc_url(doc_url, module_cls._module_type_name)  # type: ignore
             properties_md.add_reference(
                 "module_doc",
                 class_doc,
                 "A link to the published, auto-generated module documentation.",
             )
 
-        if not is_pipeline:
-            repo_url = properties_md.get_url_for_reference("source_repo")
-            if repo_url is not None:
-                src_url = calculate_class_source_url(repo_url, python_class)
-                properties_md.add_reference(
-                    "source_url",
-                    src_url,
-                    "A link to the published source file that contains this module.",
-                )
+        repo_url = properties_md.get_url_for_reference("source_repo")
+        if repo_url is not None:
+            src_url = calculate_class_source_url(repo_url, python_class)
+            properties_md.add_reference(
+                "source_url",
+                src_url,
+                "A link to the published source file that contains this module.",
+            )
 
         config = KiaraModuleConfigMetadata.from_config_class(module_cls._config_cls)
-        pipeline_config = None
-        if module_cls._module_type_name != "pipeline" and is_pipeline:  # type: ignore
-            pipeline_config = module_cls._base_pipeline_config  # type: ignore
 
         return {
             "type_name": module_cls._module_type_name,  # type: ignore
@@ -192,8 +267,6 @@ class KiaraModuleTypeMetadata(KiaraModel):
             "context": properties_md,
             "python_class": python_class,
             "config": config,
-            "is_pipeline": is_pipeline,
-            "pipeline_config": pipeline_config,
             "process_src": proc_src,
         }
 
@@ -212,13 +285,6 @@ class KiaraModuleTypeMetadata(KiaraModel):
     )
     python_class: PythonClass = Field(
         description="The python class that implements this module type."
-    )
-    is_pipeline: bool = Field(
-        description="Whether the module type is a pipeline, or a core module."
-    )
-    pipeline_config: Optional[PipelineConfig] = Field(
-        description="If this module is a pipeline, this field contains the pipeline configuration.",
-        default_factory=None,
     )
     process_src: str = Field(
         description="The source code of the process method of the module."
@@ -270,15 +336,8 @@ class KiaraModuleTypeMetadata(KiaraModel):
         table.add_row("Python class", self.python_class.create_renderable())
 
         if include_src:
-            if self.is_pipeline:
-                json_str = self.pipeline_config.json(indent=2)  # type: ignore
-                _config: Syntax = Syntax(json_str, "json", background_color="default")
-                table.add_row("Pipeline config", Panel(_config, box=box.HORIZONTALS))
-            else:
-                _config = Syntax(self.process_src, "python", background_color="default")
-                table.add_row(
-                    "Processing source code", Panel(_config, box=box.HORIZONTALS)
-                )
+            _config = Syntax(self.process_src, "python", background_color="default")
+            table.add_row("Processing source code", Panel(_config, box=box.HORIZONTALS))
 
         return table
 
@@ -411,3 +470,51 @@ class ModuleTypesGroupInfo(KiaraModel):
         return ModuleTypesGroupInfo.create_renderable_from_module_info_map(
             self.__root__
         )
+
+
+class KiaraModuleClass(PythonClass):
+    @classmethod
+    def from_module(cls, module: "KiaraModule"):
+
+        item_cls = module.__class__
+
+        cls_name = item_cls.__name__
+        module_name = item_cls.__module__
+        if module_name == "builtins":
+            full_name = cls_name
+        else:
+            full_name = f"{item_cls.__module__}.{item_cls.__name__}"
+
+        conf: Dict[str, Any] = {
+            "class_name": cls_name,
+            "module_name": module_name,
+            "full_name": full_name,
+        }
+
+        conf["module_config"] = module.config
+        conf["inputs_schema"] = module.inputs_schema
+        conf["outputs_schema"] = module.outputs_schema
+
+        result = KiaraModuleClass.construct(**conf)
+        result._cls_cache = item_cls
+        result._module_instance_cache = module
+        return result
+
+    module_config: KiaraModuleConfig = Field(description="The module config.")
+    inputs_schema: Dict[str, ValueSchema] = Field(
+        description="The schema for the module input(s)."
+    )
+    outputs_schema: Dict[str, ValueSchema] = Field(
+        description="The schema for the module output(s)."
+    )
+
+    _module_instance_cache: "KiaraModule" = PrivateAttr(default=None)
+
+    def get_kiara_module_instance(self) -> "KiaraModule":
+
+        if self._module_instance_cache is not None:
+            return self._module_instance_cache
+
+        m_cls = self.get_class()
+        self._module_instance_cache = m_cls(module_config=self.module_config)
+        return self._module_instance_cache

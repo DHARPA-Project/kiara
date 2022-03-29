@@ -206,15 +206,18 @@ class Kiara(object):
         ):
             return self._cached_modules[manifest.module_type][manifest.manifest_hash]
 
-        m_cls: Type[KiaraModule] = self._module_mgr.get_module_class(
-            manifest.module_type
-        )
-        m_hash = m_cls._calculate_module_hash(manifest.module_config)
+        if manifest.module_type in self.module_type_names:
 
-        kiara_module = m_cls(module_config=manifest.module_config)
-        assert (
-            kiara_module.module_instance_hash == m_hash
-        )  # TODO: might not be necessary? Leaving it in here for now, to see if it triggers at any stage.
+            m_cls: Type[KiaraModule] = self._module_mgr.get_module_class(
+                manifest.module_type
+            )
+            m_hash = m_cls._calculate_module_hash(manifest.module_config)
+
+            kiara_module = m_cls(module_config=manifest.module_config)
+            assert (
+                kiara_module.module_instance_hash == m_hash
+            )  # TODO: might not be necessary? Leaving it in here for now, to see if it triggers at any stage.
+
         return kiara_module
 
     def execute(self, manifest: Manifest, inputs: Mapping[str, Any]) -> ValueSet:

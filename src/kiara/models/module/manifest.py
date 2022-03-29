@@ -2,104 +2,13 @@
 import orjson
 from deepdiff import DeepHash
 from pydantic import Extra, Field, PrivateAttr
-from rich import box
 from rich.console import RenderableType
 from rich.syntax import Syntax
-from rich.table import Table
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional
+from typing import Any, Dict, Optional
 
-from kiara.defaults import (
-    KIARA_HASH_FUNCTION,
-    MODULE_CONFIG_CATEGORY_ID,
-    MODULE_CONFIG_SCHEMA_CATEGORY_ID,
-)
+from kiara.defaults import KIARA_HASH_FUNCTION, MODULE_CONFIG_CATEGORY_ID
 from kiara.models import KiaraModel
 from kiara.utils import orjson_dumps
-
-if TYPE_CHECKING:
-    pass
-
-
-class KiaraModuleConfig(KiaraModel):
-    """Base class that describes the configuration a [``KiaraModule``][kiara.module.KiaraModule] class accepts.
-
-    This is stored in the ``_config_cls`` class attribute in each ``KiaraModule`` class.
-
-    There are two config options every ``KiaraModule`` supports:
-
-     - ``constants``, and
-     - ``defaults``
-
-     Constants are pre-set inputs, and users can't change them and an error is thrown if they try. Defaults are default
-     values that override the schema defaults, and those can be overwritten by users. If both a constant and a default
-     value is set for an input field, an error is thrown.
-    """
-
-    @classmethod
-    def requires_config(cls, config: Optional[Mapping[str, Any]] = None) -> bool:
-        """Return whether this class can be used as-is, or requires configuration before an instance can be created."""
-
-        for field_name, field in cls.__fields__.items():
-            if field.required and field.default is None:
-                if config:
-                    if config.get(field_name, None) is None:
-                        return True
-                else:
-                    return True
-        return False
-
-    _config_hash: str = PrivateAttr(default=None)
-    constants: Dict[str, Any] = Field(
-        default_factory=dict, description="ValueOrm constants for this module."
-    )
-    defaults: Dict[str, Any] = Field(
-        default_factory=dict, description="ValueOrm defaults for this module."
-    )
-
-    class Config:
-        extra = Extra.forbid
-        validate_assignment = True
-
-    def get(self, key: str) -> Any:
-        """Get the value for the specified configuation key."""
-
-        if key not in self.__fields__:
-            raise Exception(
-                f"No config value '{key}' in module config class '{self.__class__.__name__}'."
-            )
-
-        return getattr(self, key)
-
-    def _retrieve_id(self) -> str:
-        return str(self.model_data_hash)
-
-    def _retrieve_category_id(self) -> str:
-        return MODULE_CONFIG_SCHEMA_CATEGORY_ID
-
-    def _retrieve_data_to_hash(self) -> Any:
-
-        return self.dict()
-
-    def create_renderable(self, **config: Any) -> RenderableType:
-
-        my_table = Table(box=box.MINIMAL, show_header=False)
-        my_table.add_column("Field name", style="i")
-        my_table.add_column("ValueOrm")
-        for field in self.__fields__:
-            my_table.add_row(field, getattr(self, field))
-
-        return my_table
-
-    def __eq__(self, other):
-
-        if self.__class__ != other.__class__:
-            return False
-
-        return self.model_data_hash == other.model_data_hash
-
-    def __hash__(self):
-
-        return self.model_data_hash
 
 
 class Manifest(KiaraModel):

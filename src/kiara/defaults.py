@@ -173,6 +173,9 @@ MODULE_TYPES_CATEGORY_ID = "modules"
 
 PIPELINE_TYPE_CATEGORY_ID = "metadata.pipeline"
 PIPELINE_TYPES_CATEGORY_ID = "pipelines"
+PIPELINE_STEP_TYPE_CATEGORY_ID = "instance.pipeline_step"
+PIPELINE_CONFIG_TYPE_CATEGORY_ID = "instance.pipeline_config"
+PIPELINE_STRUCTURE_TYPE_CATEGORY_ID = "instance.pipeline_structure"
 
 OPERATION_TYPE_CATEGORY_ID = "metadata.operation_type"
 OPERATION_TYPES_CATEGORY_ID = "operation_types"

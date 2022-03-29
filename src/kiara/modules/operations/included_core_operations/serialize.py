@@ -6,7 +6,11 @@ from kiara import KiaraModule
 from kiara.data_types.included_core_types.serialization import SerializedValueType
 from kiara.defaults import SERIALIZED_DATA_TYPE_NAME
 from kiara.models.documentation import DocumentationMetadataModel
-from kiara.models.module.operation import Operation, OperationConfig
+from kiara.models.module.operation import (
+    ManifestOperationConfig,
+    Operation,
+    OperationConfig,
+)
 from kiara.models.values.value import Value, ValueSet
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import ValueSetSchema
@@ -74,7 +78,9 @@ class SerializeOperationType(OperationType[SerializeDetails]):
                 attr = getattr(module_cls, func_name)
                 doc = DocumentationMetadataModel.from_function(attr)
                 mc = {"source_type": st}
-                oc = OperationConfig(module_type=name, module_config=mc, doc=doc)
+                oc = ManifestOperationConfig(
+                    module_type=name, module_config=mc, doc=doc
+                )
                 result.append(oc)
 
         return result

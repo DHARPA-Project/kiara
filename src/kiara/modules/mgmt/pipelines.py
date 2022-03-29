@@ -62,15 +62,12 @@ class PipelineModuleManagerConfig(BaseModel):
 def get_pipeline_details_from_path(
     path: typing.Union[str, Path],
     module_type_name: typing.Optional[str] = None,
-    base_module: typing.Optional[str] = None,
-) -> typing.Tuple[typing.Optional[str], typing.Mapping[str, typing.Any]]:
+) -> typing.Mapping[str, typing.Any]:
     """Load a pipeline description, save it's content, and determine it the pipeline base name.
 
     Arguments:
         path: the path to the pipeline file
         module_type_name: if specifies, overwrites any auto-detected or assigned pipeline name
-        base_module: overrides the base module the assembled pipeline module will be located in the python hierarchy
-
     """
 
     if isinstance(path, str):
@@ -91,18 +88,12 @@ def get_pipeline_details_from_path(
     if module_type_name:
         data[MODULE_TYPE_NAME_KEY] = module_type_name
 
-    filename = path.name
-
     if not isinstance(data, typing.Mapping):
         raise Exception("Not a dictionary type.")
-    name = data.get(MODULE_TYPE_NAME_KEY, None)
-    if name is None:
-        name = filename.split(".", maxsplit=1)[0]
 
     result = {"data": data, "source": path.as_posix(), "source_type": "file"}
-    if base_module:
-        result["base_module"] = base_module
-    return (name, result)
+
+    return result
 
 
 def check_doc_sidecar(

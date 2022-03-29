@@ -2,9 +2,12 @@
 import importlib
 from pydantic.fields import Field, PrivateAttr
 from types import ModuleType
-from typing import Any, Dict, Type
+from typing import TYPE_CHECKING, Any, Dict, Type
 
 from kiara.models import KiaraModel
+
+if TYPE_CHECKING:
+    pass
 
 
 class PythonClass(KiaraModel):
@@ -25,7 +28,7 @@ class PythonClass(KiaraModel):
             "module_name": module_name,
             "full_name": full_name,
         }
-        result = PythonClass(**conf)
+        result = PythonClass.construct(**conf)
         result._cls_cache = item_cls
         return result
 
@@ -50,17 +53,11 @@ class PythonClass(KiaraModel):
     def get_class(self) -> Type:
 
         if self._cls_cache is None:
-            m = self.get_module()
+            m = self.get_python_module()
             self._cls_cache = getattr(m, self.class_name)
         return self._cls_cache
 
-    def get_module(self) -> ModuleType:
+    def get_python_module(self) -> ModuleType:
         if self._module_cache is None:
             self._module_cache = importlib.import_module(self.module_name)
         return self._module_cache
-
-
-class ClassKiaraModel(KiaraModel):
-    python_class: PythonClass = Field(
-        description="The python class that is associtated with this model."
-    )

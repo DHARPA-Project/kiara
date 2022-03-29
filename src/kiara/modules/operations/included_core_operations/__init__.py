@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from pydantic import Field, PrivateAttr
-from typing import Any, Dict, Iterable, Mapping, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Union
 
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.operation import (
+    ManifestOperationConfig,
     OperationConfig,
     OperationDetails,
     OperationSchema,
@@ -12,6 +13,9 @@ from kiara.models.values.value import Value, ValueSet
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule
 from kiara.modules.operations import OperationType
+
+if TYPE_CHECKING:
+    pass
 
 
 class CustomModuleOperationDetails(OperationDetails):
@@ -62,7 +66,7 @@ class CustomModuleOperationType(OperationType[CustomModuleOperationDetails]):
             if mod_conf.requires_config():
                 continue
             doc = DocumentationMetadataModel.from_class_doc(module_cls)
-            oc = OperationConfig(module_type=name, doc=doc)
+            oc = ManifestOperationConfig(module_type=name, doc=doc)
             result.append(oc)
         return result
 

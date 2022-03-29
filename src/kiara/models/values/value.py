@@ -336,24 +336,9 @@ class UnloadableData(KiaraModel):
 
 class ValueSet(KiaraModel, MutableMapping[str, Value]):  # type: ignore
 
-    # values_id: uuid.UUID = Field(
-    #     description="The id of this value set.", default_factory=uuid.uuid4
-    # )
     values_schema: Dict[str, ValueSchema] = Field(
         description="The schemas for all the values in this set."
     )
-
-    # def _retrieve_id(self) -> str:
-    #     return str(self.values_id)
-    #
-    # def _retrieve_category_id(self) -> str:
-    #     return VALUES_CATEGORY_ID
-    #
-    # def _retrieve_data_to_hash(self) -> Any:
-    #     return {
-    #         k: self.get_value_obj(k).model_data_hash
-    #         for k in self.values_schema.keys()
-    #     }
 
     @property
     def field_names(self) -> Iterable[str]:

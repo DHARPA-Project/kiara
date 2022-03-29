@@ -209,9 +209,9 @@ def run(
 
     dbg(aliases)
     dbg(full_aliases)
-    dbg(final_aliases)
     if save:
 
+        dbg(final_aliases)
         for field_name, aliases in final_aliases.items():
             rich_print(f"Saving '[i]{field_name}[/i]'...")
             try:
@@ -380,15 +380,15 @@ def run(
 #     if save:
 #         final_aliases = {}
 #         invalid_fields = []
-#         for field_name, alias in aliases.items():
-#             if field_name not in workflow.outputs.get_all_field_names():
-#                 invalid_fields.append(field_name)
+#         for alias, alias in aliases.items():
+#             if alias not in workflow.outputs.get_all_field_names():
+#                 invalid_fields.append(alias)
 #             else:
-#                 final_aliases[field_name] = alias
+#                 final_aliases[alias] = alias
 #
 #         for alias in full_aliases:
-#             for field_name in workflow.outputs.get_all_field_names():
-#                 final_aliases.setdefault(field_name, []).append(f"{alias}-{field_name}")
+#             for alias in workflow.outputs.get_all_field_names():
+#                 final_aliases.setdefault(alias, []).append(f"{alias}-{alias}")
 #
 #         if invalid_fields:
 #             print()
@@ -468,7 +468,7 @@ def run(
 #                     print()
 #                     all_renderables = []
 #
-#                     for field_name, value in workflow.outputs.items():
+#                     for alias, value in workflow.outputs.items():
 #                         try:
 #                             renderables = kiara_obj.pretty_print(value, "renderables")
 #                         except Exception as e:
@@ -483,7 +483,7 @@ def run(
 #                         p = Panel(
 #                             RenderGroup(*renderables),
 #                             box=box.ROUNDED,
-#                             title=f"ValueOrm: [b i]{field_name}[/b i]",
+#                             title=f"ValueOrm: [b i]{alias}[/b i]",
 #                             title_align="left",
 #                         )
 #                         all_renderables.append(p)
@@ -572,10 +572,10 @@ def run(
 #
 #         if save:
 #
-#             for field_name, aliases in final_aliases.items():
-#                 rich_print(f"Saving '[i]{field_name}[/i]'...")
+#             for alias, aliases in final_aliases.items():
+#                 rich_print(f"Saving '[i]{alias}[/i]'...")
 #                 try:
-#                     value = workflow.outputs.get_value_obj(field_name)
+#                     value = workflow.outputs.get_value_obj(alias)
 #                     value_md = value.save(aliases=aliases)
 #                     msg = f"   -> done, id: [i]{value_md.id}[/i]"
 #                     if aliases:

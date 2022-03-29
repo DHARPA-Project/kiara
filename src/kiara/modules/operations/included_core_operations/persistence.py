@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from pydantic import Field
-from typing import Any, Iterable, Mapping, Optional, Union
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Union
 
 from kiara.data_types.included_core_types.persistence import LoadConfigValueType
 from kiara.defaults import LOAD_CONFIG_DATA_TYPE_NAME
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.operation import (
     BaseOperationDetails,
+    ManifestOperationConfig,
     Operation,
     OperationConfig,
 )
@@ -16,6 +17,9 @@ from kiara.modules import KiaraModule, ValueSetSchema
 from kiara.modules.included_core_modules.persistence import PersistValueModule
 from kiara.modules.operations import OperationType
 from kiara.utils import log_message
+
+if TYPE_CHECKING:
+    pass
 
 
 class PersistValueDetails(BaseOperationDetails):
@@ -93,7 +97,9 @@ class PersistValueOperationType(OperationType[PersistValueDetails]):
                 attr = getattr(module_cls, func_name)
                 doc = DocumentationMetadataModel.from_function(attr)
                 mc = {"source_type": st}
-                oc = OperationConfig(module_type=name, module_config=mc, doc=doc)
+                oc = ManifestOperationConfig(
+                    module_type=name, module_config=mc, doc=doc
+                )
                 result.append(oc)
 
         return result

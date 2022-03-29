@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from pydantic import Field
-from typing import Any, Iterable, Mapping, Optional, Set, Union
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Set, Union
 
 from kiara.models.module.operation import (
     BaseOperationDetails,
@@ -12,6 +12,9 @@ from kiara.models.values.value import ValueSet
 from kiara.modules import KiaraModule, ValueSetSchema
 from kiara.modules.operations import OperationType
 from kiara.utils.class_loading import find_all_value_metadata_models
+
+if TYPE_CHECKING:
+    pass
 
 
 class ExtractMetadataDetails(BaseOperationDetails):

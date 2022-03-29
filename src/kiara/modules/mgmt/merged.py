@@ -11,7 +11,6 @@ from pathlib import Path
 from pydantic import BaseModel, Field, validator
 
 from kiara.modules.mgmt import ModuleManager
-from kiara.modules.mgmt.pipelines import PipelineModuleManager
 from kiara.modules.mgmt.python_classes import PythonModuleManager
 
 if typing.TYPE_CHECKING:
@@ -63,12 +62,12 @@ class MergedModuleManager(ModuleManager):
         self._module_cls_cache: typing.Dict[str, typing.Type[KiaraModule]] = {}
 
         self._default_python_mgr: typing.Optional[PythonModuleManager] = None
-        self._default_pipeline_mgr: typing.Optional[PipelineModuleManager] = None
-        self._custom_pipelines_mgr: typing.Optional[PipelineModuleManager] = None
+        # self._default_pipeline_mgr: typing.Optional[PipelineModuleManager] = None
+        # self._custom_pipelines_mgr: typing.Optional[PipelineModuleManager] = None
 
-        if extra_pipeline_folders is None:
-            extra_pipeline_folders = []
-        self._extra_pipeline_folders: typing.Iterable[str] = extra_pipeline_folders
+        # if extra_pipeline_folders is None:
+        #     extra_pipeline_folders = []
+        # self._extra_pipeline_folders: typing.Iterable[str] = extra_pipeline_folders
         self._ignore_errors: bool = ignore_errors
 
         if module_managers:
@@ -88,8 +87,8 @@ class MergedModuleManager(ModuleManager):
 
         _mms = [
             self.default_python_module_manager,
-            self.default_pipeline_module_manager,
-            self.default_custom_pipelines_manager,
+            # self.default_pipeline_module_manager,
+            # self.default_custom_pipelines_manager,
         ]
         self._module_mgrs = []
         self._modules = {}
@@ -116,27 +115,27 @@ class MergedModuleManager(ModuleManager):
             self._default_python_mgr = PythonModuleManager()
         return self._default_python_mgr
 
-    @property
-    def default_pipeline_module_manager(self) -> PipelineModuleManager:
+    # @property
+    # def default_pipeline_module_manager(self) -> PipelineModuleManager:
+    #
+    #     if self._default_pipeline_mgr is None:
+    #         self._default_pipeline_mgr = PipelineModuleManager(
+    #             folders=None, ignore_errors=self._ignore_errors
+    #         )
+    #     return self._default_pipeline_mgr
 
-        if self._default_pipeline_mgr is None:
-            self._default_pipeline_mgr = PipelineModuleManager(
-                folders=None, ignore_errors=self._ignore_errors
-            )
-        return self._default_pipeline_mgr
-
-    @property
-    def default_custom_pipelines_manager(self) -> PipelineModuleManager:
-
-        if self._custom_pipelines_mgr is None:
-            if self._extra_pipeline_folders:
-                folders = {"extra": self._extra_pipeline_folders}
-            else:
-                folders = {}
-            self._custom_pipelines_mgr = PipelineModuleManager(
-                folders=folders, ignore_errors=self._ignore_errors
-            )
-        return self._custom_pipelines_mgr
+    # @property
+    # def default_custom_pipelines_manager(self) -> PipelineModuleManager:
+    #
+    #     if self._custom_pipelines_mgr is None:
+    #         if self._extra_pipeline_folders:
+    #             folders = {"extra": self._extra_pipeline_folders}
+    #         else:
+    #             folders = {}
+    #         self._custom_pipelines_mgr = PipelineModuleManager(
+    #             folders=folders, ignore_errors=self._ignore_errors
+    #         )
+    #     return self._custom_pipelines_mgr
 
     @property
     def module_type_names(self) -> typing.List[str]:
@@ -199,36 +198,31 @@ class MergedModuleManager(ModuleManager):
         self._module_mgrs.append(module_manager)  # type: ignore
         self.data_types = None
 
-    def register_pipeline_description(
-        self,
-        data: typing.Union[Path, str, typing.Mapping[str, typing.Any]],
-        module_type_name: typing.Optional[str] = None,
-        namespace: typing.Optional[str] = None,
-        raise_exception: bool = False,
-    ) -> typing.Optional[str]:
-
-        # making sure the module_map attribute is populated
-        self.module_map  # noqa
-        name = self.default_custom_pipelines_manager.register_pipeline(
-            data=data, module_type_name=module_type_name, namespace=namespace
-        )
-
-        if name in self.module_map.keys():
-            if raise_exception:
-                raise Exception(f"Duplicate module name: {name}")
-            log.warning(f"Duplicate module name '{name}'. Ignoring all but the first.")
-            return None
-        else:
-            self.module_map[name] = self.default_custom_pipelines_manager
-
-            return name
+    # def register_pipeline_description(
+    #     self,
+    #     data: typing.Union[Path, str, typing.Mapping[str, typing.Any]],
+    #     module_type_name: typing.Optional[str] = None,
+    #     namespace: typing.Optional[str] = None,
+    #     raise_exception: bool = False,
+    # ) -> typing.Optional[str]:
+    #
+    #     # making sure the module_map attribute is populated
+    #     self.module_map  # noqa
+    #     name = self.default_custom_pipelines_manager.register_pipeline(
+    #         data=data, module_type_name=module_type_name, namespace=namespace
+    #     )
+    #
+    #     if name in self.module_map.keys():
+    #         if raise_exception:
+    #             raise Exception(f"Duplicate module name: {name}")
+    #         log.warning(f"Duplicate module name '{name}'. Ignoring all but the first.")
+    #         return None
+    #     else:
+    #         self.module_map[name] = self.default_custom_pipelines_manager
+    #
+    #         return name
 
     def get_module_class(self, module_type: str) -> typing.Type["KiaraModule"]:
-
-        if module_type == "pipeline":
-            from kiara import PipelineModule
-
-            return PipelineModule
 
         mm = self.module_map.get(module_type, None)
         if mm is None:

@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 import orjson
+import uuid
 from deepdiff import DeepHash
 from pydantic import Extra, Field, PrivateAttr
 from rich.console import RenderableType
 from rich.syntax import Syntax
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Mapping, Optional
 
-from kiara.defaults import KIARA_HASH_FUNCTION, MODULE_CONFIG_CATEGORY_ID
+from kiara.defaults import (
+    KIARA_HASH_FUNCTION,
+    MODULE_CONFIG_CATEGORY_ID,
+    NO_MODULE_TYPE,
+)
 from kiara.models import KiaraModel
 from kiara.utils import orjson_dumps
 
@@ -87,6 +92,26 @@ class Manifest(KiaraModel):
     def __str__(self):
 
         return self.__repr__()
+
+
+class InputsManifest(Manifest):
+
+    inputs: Mapping[str, uuid.UUID] = Field(
+        description="A map of all the input fields and value references."
+    )
+    _inputs_hash: Optional[int] = PrivateAttr(default=None)
+
+    @property
+    def inputs_hash(self) -> int:
+        if self._inputs_hash is not None:
+            return self._inputs_hash
+
+        if self.module_type == NO_MODULE_TYPE and not self.inputs:
+            self._inputs_hash = 0
+        else:
+            h = DeepHash(self.inputs, hasher=KIARA_HASH_FUNCTION)
+            self._inputs_hash = h[self.inputs]
+        return self._inputs_hash
 
 
 class LoadConfig(Manifest):

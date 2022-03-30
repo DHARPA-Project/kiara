@@ -7,15 +7,14 @@
 
 """Pipeline-related subcommands for the cli."""
 
+import orjson
 import os.path
 import rich_click as click
 import typing
 
 from kiara import Kiara
 from kiara.models.module.pipeline import PipelineConfig
-from kiara.models.module.pipeline.controller import (
-    SinglePipelineController,
-)
+from kiara.models.module.pipeline.controller import SinglePipelineController
 from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.utils.graphs import print_ascii_graph
 
@@ -108,11 +107,14 @@ def explain(ctx, pipeline_type: str):
 
     changed = pipeline.set_pipeline_inputs(a=True, b=True, _sync_to_step_inputs=True)
     changed = pipeline.set_pipeline_inputs(a=True, b=False)
-    print(changed)
+    changed = pipeline.sync_pipeline_inputs()
+
+    print(pipeline.get_pipeline_details().json(option=orjson.OPT_INDENT_2))
+
     # pipeline.set_pipeline_inputs(a=False, b=False)
 
-    print(pipeline.get_current_pipeline_inputs())
-    print(pipeline.get_inputs_for_steps())
+    # print(pipeline.get_current_pipeline_inputs())
+    # print(pipeline.get_inputs_for_steps())
 
 
 # @pipeline.command()

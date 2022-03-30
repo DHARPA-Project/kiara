@@ -25,9 +25,8 @@ if TYPE_CHECKING:
 class StepStatus(Enum):
     """Enum to describe the state of a workflow."""
 
-    STALE = "stale"
+    INPUTS_INVALID = "inputs_invalid"
     INPUTS_READY = "inputs_ready"
-    RESULTS_INCOMING = "processing"
     RESULTS_READY = "results_ready"
 
 
@@ -385,13 +384,3 @@ class PipelineConfig(KiaraModuleConfig):
             kiara = Kiara.instance()
 
         raise NotImplementedError()
-
-        # from kiara.pipeline.module import PipelineModule
-        #
-        # module = PipelineModule(
-        #     id=module_id,
-        #     parent_id=parent_id,
-        #     module_config=self,
-        #     kiara=kiara,
-        # )
-        # return module

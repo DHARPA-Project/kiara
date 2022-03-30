@@ -111,7 +111,7 @@ class KiaraProcessingException(Exception):
         return self._parent
 
 
-class InputValuesException(Exception):
+class InvalidValuesException(Exception):
     def __init__(
         self,
         msg: typing.Union[None, str, Exception] = None,

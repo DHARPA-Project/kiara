@@ -2,7 +2,6 @@
 import abc
 import logging
 import uuid
-from deepdiff import DeepHash
 from pydantic import Field, PrivateAttr
 from pydantic.fields import Field
 from rich import box
@@ -20,7 +19,6 @@ from typing import (
 )
 
 from kiara.defaults import (
-    KIARA_HASH_FUNCTION,
     NO_MODULE_TYPE,
     UNOLOADABLE_DATA_CATEGORY_ID,
     VALUE_CATEGORY_ID,
@@ -29,8 +27,9 @@ from kiara.defaults import (
     VOID_KIARA_ID,
     SpecialValue,
 )
+from kiara.exceptions import InvalidValuesException
 from kiara.models import KiaraModel
-from kiara.models.module.manifest import LoadConfig, Manifest
+from kiara.models.module.manifest import InputsManifest, LoadConfig
 from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
 from kiara.models.values.value_schema import ValueSchema
@@ -45,7 +44,7 @@ if TYPE_CHECKING:
     from kiara.kiara.data_registry import DataRegistry
 
 
-class ValuePedigree(Manifest):
+class ValuePedigree(InputsManifest):
 
     kiara_id: uuid.UUID = Field(
         description="The id of the kiara context a value was created in."
@@ -53,11 +52,6 @@ class ValuePedigree(Manifest):
     environments: Dict[str, int] = Field(
         description="References to the runtime environment details a value was created in."
     )
-    inputs: Dict[str, uuid.UUID] = Field(
-        description="A map of all the input fields and value references."
-    )
-
-    _inputs_hash: Optional[int] = PrivateAttr(default=None)
 
     def _retrieve_id(self) -> str:
         return str(self.model_data_hash)
@@ -69,33 +63,8 @@ class ValuePedigree(Manifest):
         return {
             "module_config": self.manifest_hash,
             "inputs": self.inputs_hash,
+            # "environments": self.environments
         }
-
-    @property
-    def model_data_hash(self) -> int:
-        """A hash for this model."""
-        if self._hash_cache is not None:
-            return self._hash_cache
-
-        if self.module_type == NO_MODULE_TYPE:
-            self._hash_cache = 0
-        else:
-            obj = self._retrieve_data_to_hash()
-            h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
-            self._hash_cache = h[obj]
-        return self._hash_cache
-
-    @property
-    def inputs_hash(self) -> int:
-        if self._inputs_hash is not None:
-            return self._inputs_hash
-
-        if self.module_type == NO_MODULE_TYPE and not self.inputs:
-            self._inputs_hash = 0
-        else:
-            h = DeepHash(self.inputs, hasher=KIARA_HASH_FUNCTION)
-            self._inputs_hash = h[self.inputs]
-        return self._inputs_hash
 
     def __repr__(self):
         return f"ValuePedigree(module_type={self.module_type}, inputs=[{', '.join(self.inputs.keys())}], hash={self.model_data_hash})"
@@ -412,6 +381,9 @@ class ValueSet(KiaraModel, MutableMapping[str, Value]):  # type: ignore
             field_name, raise_exception_when_unset=raise_exception_when_unset
         )[field_name]
 
+    def get_all_value_ids(self) -> Dict[str, uuid.UUID]:
+        return {k: self.get_value_obj(k).value_id for k in self.field_names}
+
     def get_all_value_data(
         self, raise_exception_when_unset: bool = False
     ) -> Dict[str, Any]:
@@ -452,6 +424,11 @@ class ValueSet(KiaraModel, MutableMapping[str, Value]):  # type: ignore
 
 
 class ValueSetReadOnly(ValueSet):  # type: ignore
+    @classmethod
+    def create_from_ids(cls, data_registry: DataRegistry, **value_ids: uuid.UUID):
+
+        values = {k: data_registry.get_value(v) for k, v in value_ids.items()}
+        return ValueSetReadOnly.construct(value_items=values)
 
     value_items: Dict[str, Value] = Field(
         description="The values contained in this set."
@@ -481,7 +458,7 @@ class ValueSetWritable(ValueSet):  # type: ignore
     @classmethod
     def create_from_schema(
         cls, kiara: "Kiara", schema: Mapping[str, ValueSchema], pedigree: ValuePedigree
-    ):
+    ) -> "ValueSetWritable":
 
         v = ValueSetWritable(values_schema=schema, pedigree=pedigree)
         v._data_registry = kiara.data_registry
@@ -542,6 +519,15 @@ class ValueSetWritable(ValueSet):  # type: ignore
         self._values_uncommitted.pop(field_name)
         self.value_items[field_name] = value
         return self.value_items[field_name]
+
+    def sync_values(self):
+
+        for field_name in self.field_names:
+            self.get_value_obj(field_name)
+
+        invalid = self.check_invalid()
+        if invalid:
+            raise InvalidValuesException(invalid_inputs=invalid)
 
     def set_value(self, field_name: str, data: Any) -> None:
         """Set the value for the specified field."""

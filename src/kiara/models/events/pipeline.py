@@ -5,20 +5,118 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
+import orjson
 import uuid
-from typing import Mapping
+from sortedcontainers import SortedDict
+from typing import TYPE_CHECKING, Dict, List, Mapping, MutableMapping, Optional, Set
 
 from kiara.models.events import ChangedValue, KiaraEvent
+from kiara.models.module.pipeline import StepStatus
+from kiara.utils import orjson_dumps
 
 try:
     from typing import Literal
 except Exception:
     from typing_extensions import Literal  # type: ignore
 
-from pydantic import Field
+from pydantic import BaseModel, Field
+
+if TYPE_CHECKING:
+    from kiara.models.module.pipeline.pipeline import Pipeline
+
+
+class StepDetails(BaseModel):
+    class Config:
+        json_loads = orjson.loads
+        json_dumps = orjson_dumps
+
+    kiara_id: uuid.UUID = Field(description="The id of the kiara context.")
+    pipeline_id: uuid.UUID = Field(description="The id of the pipeline.")
+    step_id: str = Field(description="The id of the step.")
+    processing_stage: int = Field(
+        description="The execution stage where this step is executed."
+    )
+    status: StepStatus = Field(description="The current status of this step.")
+    invalid_details: Dict[str, str] = Field(
+        description="Details about fields that are invalid (if status < 'INPUTS_READY'.",
+        default_factory=dict,
+    )
+
+    inputs: Dict[str, Optional[uuid.UUID]] = Field(
+        description="The current inputs of this step."
+    )
+    outputs: Dict[str, Optional[uuid.UUID]] = Field(
+        description="The current outputs of this step."
+    )
+
+
+class PipelineDetails(BaseModel):
+    class Config:
+        json_loads = orjson.loads
+        json_dumps = orjson_dumps
+
+    kiara_id: uuid.UUID = Field(description="The id of the kiara context.")
+    pipeline_id: uuid.UUID = Field(description="The id of the pipeline.")
+
+    pipeline_status: StepStatus = Field(
+        description="The current status of this pipeline."
+    )
+    invalid_details: Dict[str, str] = Field(
+        description="Details about fields that are invalid (if status < 'INPUTS_READY'.",
+        default_factory=dict,
+    )
+
+    step_states: Dict[str, StepDetails] = Field(
+        description="The state of each step within this pipeline."
+    )
+
+    def get_steps_by_processing_stage(self) -> MutableMapping[int, List[StepDetails]]:
+
+        result: MutableMapping[int, List[StepDetails]] = SortedDict()
+        for step_details in self.step_states.values():
+            result.setdefault(step_details.processing_stage, []).append(step_details)
+        return result
 
 
 class PipelineEvent(KiaraEvent):
+    @classmethod
+    def create_event(
+        cls,
+        pipeline: "Pipeline",
+        changed: Mapping[str, Mapping[str, Mapping[str, ChangedValue]]],
+    ):
+
+        pipeline_inputs = changed.get("__pipeline__", {}).get("inputs", {})
+        pipeline_outputs = changed.get("__pipeline__", {}).get("outputs", {})
+
+        step_inputs = {}
+        step_outputs = {}
+
+        invalidated_steps: Set[str] = set()
+
+        for step_id, change_details in changed.items():
+            if step_id == "__pipeline__":
+                continue
+            inputs = change_details.get("inputs", None)
+            if inputs:
+                invalidated_steps.add(step_id)
+                step_inputs[step_id] = inputs
+            outputs = change_details.get("outputs", None)
+            if outputs:
+                invalidated_steps.add(step_id)
+                step_outputs[step_id] = outputs
+
+        event = PipelineEvent(
+            kiara_id=pipeline.kiara_id,
+            pipeline_id=pipeline.pipeline_id,
+            pipeline_inputs_changed=pipeline_inputs,
+            pipeline_outputs_changed=pipeline_outputs,
+            step_inputs_changed=step_inputs,
+            step_outputs_changed=step_outputs,
+            invalidated_steps=sorted(invalidated_steps),
+        )
+        return event
+
     class Config:
         allow_mutation = False
 
@@ -27,50 +125,68 @@ class PipelineEvent(KiaraEvent):
     )
     pipeline_id: uuid.UUID = Field(description="The pipeline id.")
 
+    pipeline_inputs_changed: Dict[str, ChangedValue] = Field(
+        description="Details about changed pipeline input values.", default_factory=dict
+    )
+    pipeline_outputs_changed: Dict[str, ChangedValue] = Field(
+        description="Details about changed pipeline output values.",
+        default_factory=dict,
+    )
+
+    step_inputs_changed: Dict[str, Mapping[str, ChangedValue]] = Field(
+        description="Details about changed step input values.", default_factory=dict
+    )
+    step_outputs_changed: Dict[str, Mapping[str, ChangedValue]] = Field(
+        description="Details about changed step output values.", default_factory=dict
+    )
+
+    invalidated_steps: List[str] = Field(
+        description="A list of all step ids that have newly invalidated outputs."
+    )
+
     def __repr__(self):
-        d = self.dict()
-        d.pop("pipeline_id")
-        return f"{self.__class__.__name__}(pipeline_id={self.pipeline_id} data={d}"
+        return f"{self.__class__.__name__}(pipeline_id={self.pipeline_id}, invalidated_steps={', '.join(self.invalidated_steps)})"
 
     def __str__(self):
         return self.__repr__()
 
 
-class StepInputEvent(PipelineEvent):
-    """Event that gets fired when one or several inputs for steps within a pipeline have changed."""
-
-    event_type: Literal["step_input"] = "step_input"
-    step_id: str = Field(description="The step id.")
-    changed_inputs: Mapping[str, ChangedValue] = Field(
-        description="steps (keys) with updated inputs which need re-processing (value is list of updated input names)"
-    )
-
-
-class StepOutputEvent(PipelineEvent):
-    """Event that gets fired when one or several outputs for steps within a pipeline have changed."""
-
-    event_type: Literal["step_output"] = "step_output"
-
-    step_id: str = Field(description="The step id.")
-    changed_outputs: Mapping[str, ChangedValue] = Field(
-        description="steps (keys) with updated inputs which need re-processing (value is list of updated input names)"
-    )
-
-
-class PipelineInputEvent(PipelineEvent):
-    """Event that gets fired when one or several inputs for the pipeline itself have changed."""
-
-    event_type: Literal["pipeline_input"] = "pipeline_input"
-
-    changed_inputs: Mapping[str, ChangedValue] = Field(
-        description="steps (keys) with updated inputs which need re-processing (value is list of updated input names)"
-    )
-
-
-class PipelineOutputEvent(PipelineEvent):
-    """Event that gets fired when one or several outputs for the pipeline itself have changed."""
-
-    event_type: Literal["pipeline_output"] = "pipeline_output"
-    changed_outputs: Mapping[str, ChangedValue] = Field(
-        description="steps (keys) with updated inputs which need re-processing (value is list of updated input names)"
-    )
+# class StepInputEvent(PipelineEvent):
+#     """Event that gets fired when one or several inputs for steps within a pipeline have changed."""
+#
+#     event_type: Literal["step_input"] = "step_input"
+#     step_id: str = Field(description="The step id.")
+#     changed_inputs: Mapping[str, ChangedValue] = Field(
+#         description="steps (keys) with updated inputs which need re-processing (value is list of updated input names)"
+#     )
+#
+#
+#
+# class StepOutputEvent(PipelineEvent):
+#     """Event that gets fired when one or several outputs for steps within a pipeline have changed."""
+#
+#     event_type: Literal["step_output"] = "step_output"
+#
+#     step_id: str = Field(description="The step id.")
+#     changed_outputs: Mapping[str, ChangedValue] = Field(
+#         description="steps (keys) with updated inputs which need re-processing (value is list of updated input names)"
+#     )
+#
+#
+# class PipelineInputEvent(PipelineEvent):
+#     """Event that gets fired when one or several inputs for the pipeline itself have changed."""
+#
+#     event_type: Literal["pipeline_input"] = "pipeline_input"
+#
+#     changed_inputs: Mapping[str, ChangedValue] = Field(
+#         description="steps (keys) with updated inputs which need re-processing (value is list of updated input names)"
+#     )
+#
+#
+# class PipelineOutputEvent(PipelineEvent):
+#     """Event that gets fired when one or several outputs for the pipeline itself have changed."""
+#
+#     event_type: Literal["pipeline_output"] = "pipeline_output"
+#     changed_outputs: Mapping[str, ChangedValue] = Field(
+#         description="steps (keys) with updated inputs which need re-processing (value is list of updated input names)"
+#     )

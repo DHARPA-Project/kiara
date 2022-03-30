@@ -18,6 +18,8 @@ from typing import (
 
 from kiara.defaults import (
     INVALID_HASH_MARKER,
+    NONE_VALUE_ID,
+    NOT_SET_VALUE_ID,
     ORPHAN_PEDIGREE_OUTPUT_NAME,
     STRICT_CHECKS,
     SpecialValue,
@@ -36,6 +38,7 @@ from kiara.models.events.data_registry import (
 from kiara.models.module.destiniy import Destiny
 from kiara.models.module.jobs import JobConfig, JobRecord
 from kiara.models.module.manifest import LoadConfig, Manifest
+from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
 from kiara.models.values.value import (
     ORPHAN,
@@ -140,15 +143,58 @@ class DataRegistry(object):
         self._alias_registry: AliasRegistry = None
 
         # initialize special values
-        # special_value_cls = PythonClass.from_class(SpecialValue)
-        # self._not_set_value: Value = Value(value_id=NOT_SET_VALUE_ID, kiara_id=self._kiara.id, value_schema=ValueSchema(type="special_type", default=SpecialValue.NOT_SET, is_constant=True, doc="Special value, indicating a field is not set."), value_status=ValueStatus.NOT_SET, value_size=0, value_hash=-1, pedigree=ORPHAN, pedigree_output_name="__void__", python_class=special_value_cls)
-        # self._cached_data[NOT_SET_VALUE_ID] = SpecialValue.NOT_SET
-        # self._none_value: Value = Value(value_id=NONE_VALUE_ID, kiara_id=self._kiara.id, value_schema=ValueSchema(type="special_type", default=SpecialValue.NO_VALUE, is_constant=True, doc="Special value, indicating a field is set with a 'none' value."), value_status=ValueStatus.NONE, value_size=0, value_hash=-2, pedigree=ORPHAN, pedigree_output_name="__void__", python_class=special_value_cls)
-        # self._cached_data[NONE_VALUE_ID] = SpecialValue.NO_VALUE
+        special_value_cls = PythonClass.from_class(SpecialValue)
+        self._not_set_value: Value = Value(
+            value_id=NOT_SET_VALUE_ID,
+            kiara_id=self._kiara.id,
+            value_schema=ValueSchema(
+                type="none",
+                default=SpecialValue.NOT_SET,
+                is_constant=True,
+                doc="Special value, indicating a field is not set.",
+            ),
+            value_status=ValueStatus.NOT_SET,
+            value_size=0,
+            value_hash=INVALID_HASH_MARKER,
+            pedigree=ORPHAN,
+            pedigree_output_name="__void__",
+            data_type_class=special_value_cls,
+        )
+        self._cached_data[NOT_SET_VALUE_ID] = SpecialValue.NOT_SET
+
+        self._none_value: Value = Value(
+            value_id=NONE_VALUE_ID,
+            kiara_id=self._kiara.id,
+            value_schema=ValueSchema(
+                type="special_type",
+                default=SpecialValue.NO_VALUE,
+                is_constant=True,
+                doc="Special value, indicating a field is set with a 'none' value.",
+            ),
+            value_status=ValueStatus.NONE,
+            value_size=0,
+            value_hash=-2,
+            pedigree=ORPHAN,
+            pedigree_output_name="__void__",
+            data_type_class=special_value_cls,
+        )
+        self._cached_data[NONE_VALUE_ID] = SpecialValue.NO_VALUE
 
         self._event_hooks: Dict[str, List[DataEventHook]] = {}
 
         self.add_hook(CreateMetadataDestinies(kiara=self._kiara))
+
+    @property
+    def kiara_id(self) -> uuid.UUID:
+        return self._kiara.id
+
+    @property
+    def NOT_SET_VALUE(self) -> Value:
+        return self._not_set_value
+
+    @property
+    def NONE_VALUE(self) -> Value:
+        return self._none_value
 
     @property
     def aliases(self) -> AliasRegistry:

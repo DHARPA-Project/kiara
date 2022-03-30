@@ -7,7 +7,7 @@ from rich.tree import Tree
 from sqlalchemy import and_, func
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, aliased
-from typing import Any, Dict, Mapping, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional
 
 from kiara.defaults import VALUES_CATEGORY_ID
 from kiara.kiara.aliases.aliases_orm import AliasOrm
@@ -100,6 +100,8 @@ class AliasValueMap(ValueSet):
     def get_value_obj(self, field_name: str) -> Value:
 
         item = self.get_child_map(field_name=field_name)
+        if item is None:
+            return self._data_registry.NONE_VALUE
         if item.assoc_value is None:
             raise Exception(f"No value associated for field '{field_name}'.")
 
@@ -342,7 +344,6 @@ class AliasValueMap(ValueSet):
 
     def get_tree(self, base_name: str) -> Tree:
 
-        dbg(self.__dict__)
         if self.assoc_schema:
             type_name = self.assoc_schema.type
         else:

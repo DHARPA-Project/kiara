@@ -59,7 +59,7 @@ class StepValueAddress(BaseModel):
             sub_value = f" sub_value={self.sub_value}"
         else:
             sub_value = ""
-        return f"StepValueAddres(step_id={self.step_id}, value_name={self.value_name}{sub_value})"
+        return f"{self.__class__.__name__}(step_id={self.step_id}, value_name={self.value_name}{sub_value})"
 
     def __str__(self):
         return self.__repr__()

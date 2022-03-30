@@ -3,20 +3,9 @@ import networkx as nx
 from functools import lru_cache
 from networkx import NetworkXNoPath, NodeNotFound
 from pydantic import Field, PrivateAttr, root_validator
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    Iterable,
-    List,
-    Mapping,
-    Optional,
-    Set,
-)
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Optional, Set
 
-from kiara.defaults import (
-    PIPELINE_STRUCTURE_TYPE_CATEGORY_ID,
-)
+from kiara.defaults import PIPELINE_STRUCTURE_TYPE_CATEGORY_ID
 from kiara.models import KiaraModel
 from kiara.models.module.pipeline import PipelineConfig, PipelineStep
 from kiara.models.module.pipeline.value_refs import (
@@ -376,7 +365,7 @@ class PipelineStructure(KiaraModel):
 
         return d["step"]
 
-    def get_step_inputs(self, step_id: str) -> Mapping[str, StepInputRef]:
+    def get_step_input_refs(self, step_id: str) -> Mapping[str, StepInputRef]:
 
         d = self.steps_details.get(step_id, None)
         if d is None:
@@ -384,7 +373,7 @@ class PipelineStructure(KiaraModel):
 
         return d["inputs"]
 
-    def get_step_outputs(self, step_id: str) -> Mapping[str, StepOutputRef]:
+    def get_step_output_refs(self, step_id: str) -> Mapping[str, StepOutputRef]:
 
         d = self.steps_details.get(step_id, None)
         if d is None:
@@ -489,6 +478,11 @@ class PipelineStructure(KiaraModel):
                 return index
 
         raise Exception(f"Invalid step id '{step_id}'.")
+
+    def step_is_required(self, step_id: str) -> bool:
+        """Check if the specified step is required, or can be omitted."""
+
+        return self.get_step_details(step_id=step_id)["required"]
 
     def _process_steps(self):
         """The core method of this class, it connects all the processing modules, their inputs and outputs."""
@@ -765,7 +759,7 @@ class PipelineStructure(KiaraModel):
             step = self.get_step(step_id)
             step_nodes.remove(step)
 
-            for k, s_inp in self.get_step_inputs(step_id).items():
+            for k, s_inp in self.get_step_input_refs(step_id).items():
                 if not s_inp.value_schema.is_required():
                     continue
                 all_required_inputs.append(s_inp)

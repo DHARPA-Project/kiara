@@ -5,22 +5,14 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
+import dpath
 import logging
-import networkx as nx
 import sys
 import uuid
-from typing import (
-    Any,
-    Dict,
-    Hashable,
-    Iterable,
-    List,
-    Mapping,
-    Optional,
-)
+from typing import Any, Dict, Iterable, List, Mapping, Optional
 
 from kiara.defaults import SpecialValue
-from kiara.exceptions import InputValuesException
+from kiara.exceptions import InvalidValuesException
 from kiara.kiara import DataRegistry
 from kiara.kiara.aliases import AliasValueMap
 from kiara.models.module.pipeline import StepStatus
@@ -39,81 +31,13 @@ log = logging.getLogger("kiara")
 import abc
 
 from kiara.models.events import ChangedValue
-from kiara.models.events.pipeline import (
-    PipelineEvent,
-    PipelineInputEvent,
-    PipelineOutputEvent,
-    StepInputEvent,
-    StepOutputEvent,
-)
+from kiara.models.events.pipeline import PipelineDetails, PipelineEvent, StepDetails
 
 
 class PipelineListener(abc.ABC):
     @abc.abstractmethod
-    def get_listener_id(self) -> Hashable:
+    def _pipeline_event_occurred(self, event: PipelineEvent):
         pass
-
-    @abc.abstractmethod
-    def get_subscribed_event_types(self) -> Iterable[str]:
-        pass
-
-    @abc.abstractmethod
-    def _pipeline_events_occurred(self, *events: PipelineEvent):
-        pass
-
-
-class BasePipelineListener(PipelineListener):
-    def _pipeline_events_occurred(self, *events: PipelineEvent):
-
-        for event in events:
-
-            event_type: str = event.event_type  # type: ignore
-
-            if event_type == "pipeline_input":
-                self.pipeline_inputs_changed(event=event)  # type: ignore
-            elif event_type == "pipeline_output":
-                self.pipeline_outputs_changed(event=event)  # type: ignore
-            elif event_type == "step_input":
-                self.step_inputs_changed(event=event)  # type: ignore
-            elif event_type == "step_output":
-                self.step_outputs_changed(event=event)  # type: ignore
-            else:
-                raise Exception(f"Invalid event type: {event_type}")
-
-    def get_subscribed_event_types(self) -> Iterable[str]:
-        return ["pipeline_input", "step_input", "step_output", "pipeline_output"]
-
-    def step_inputs_changed(self, event: StepInputEvent):
-        """Method to override if the implementing controller needs to react to events where one or several step inputs have changed.
-
-        Arguments:
-            event: the step input event
-        """
-
-    def step_outputs_changed(self, event: StepOutputEvent):
-        """Method to override if the implementing controller needs to react to events where one or several step outputs have changed.
-
-        Arguments:
-            event: the step output event
-        """
-
-    def pipeline_inputs_changed(self, event: PipelineInputEvent):
-        """Method to override if the implementing controller needs to react to events where one or several pipeline inputs have changed.
-
-        !!! note
-        Whenever pipeline inputs change, the connected step inputs also change and an (extra) event will be fired for those. Which means
-        you can choose to only implement the ``step_inputs_changed`` method if you want to. This behaviour might change in the future.
-
-        Arguments:
-            event: the pipeline input event
-        """
-
-    def pipeline_outputs_changed(self, event: PipelineOutputEvent):
-        """Method to override if the implementing controller needs to react to events where one or several pipeline outputs have changed.
-
-        Arguments:
-            event: the pipeline output event
-        """
 
 
 class Pipeline(object):
@@ -126,7 +50,7 @@ class Pipeline(object):
         self._structure: PipelineStructure = structure
 
         self._value_refs: Mapping[AliasMap, Iterable[ValueRef]] = None  # type: ignore
-        self._status: StepStatus = StepStatus.STALE
+        # self._status: StepStatus = StepStatus.STALE
 
         self._steps_by_stage: Dict[int, Dict[str, PipelineStep]] = None  # type: ignore
         self._inputs_by_stage: Dict[int, List[str]] = None  # type: ignore
@@ -138,9 +62,17 @@ class Pipeline(object):
 
         self._init_values()
 
-        self._listeners: Dict[str, List[PipelineListener]] = {}
+        self._listeners: List[PipelineListener] = []
 
         # self._update_status()
+
+    @property
+    def pipeline_id(self) -> uuid.UUID:
+        return self._id
+
+    @property
+    def kiara_id(self) -> uuid.UUID:
+        return self._data_registry.kiara_id
 
     def _init_values(self):
         """Initialize this object. This should only be called once.
@@ -186,11 +118,7 @@ class Pipeline(object):
 
     def add_listener(self, listener: PipelineListener):
 
-        event_types = listener.get_subscribed_event_types()
-        if isinstance(event_types, str):
-            event_types = [event_types]
-        for event_type in event_types:
-            self._listeners.setdefault(event_type, []).append(listener)
+        self._listeners.append(listener)
 
     @property
     def id(self) -> uuid.UUID:
@@ -248,27 +176,83 @@ class Pipeline(object):
             result[step_id] = ids
         return result
 
-    def _notify_pipeline_listeners(self, *events: PipelineEvent):
+    def _notify_pipeline_listeners(self, event: PipelineEvent):
 
-        listener_event_map: Dict[Hashable, List[PipelineEvent]] = {}
-        listener_id_map: Dict[Hashable, PipelineListener] = {}
-        for event in events:
-            for event_type, listeners in self._listeners.items():
-                for l in listeners:
-                    if event == event_type:
-                        listener_event_map.setdefault(l.get_listener_id(), []).append(
-                            event
-                        )
-                        if l.get_listener_id() not in listener_id_map.keys():
-                            listener_id_map[l.get_listener_id()] = l
+        for listener in self._listeners:
+            listener._pipeline_event_occurred(event=event)
 
-        for l_id, events in listener_event_map.items():
-            listener = listener_id_map[l_id]
-            listener._pipeline_events_occurred(*events)
+    def get_pipeline_details(self) -> PipelineDetails:
+
+        pipeline_inputs = self._all_values.get_alias("pipeline.inputs")
+        assert pipeline_inputs is not None
+
+        invalid = pipeline_inputs.check_invalid()
+        if not invalid:
+            status = StepStatus.INPUTS_READY
+            step_outputs = self._all_values.get_alias(f"pipeline.outputs")
+            assert step_outputs is not None
+            invalid_outputs = step_outputs.check_invalid()
+            # TODO: also check that all the pedigrees match up with current inputs
+            if not invalid_outputs:
+                status = StepStatus.RESULTS_READY
+        else:
+            status = StepStatus.INPUTS_INVALID
+
+        step_states = {}
+        for step_id in self._structure.step_ids:
+            d = self.get_step_details(step_id)
+            step_states[step_id] = d
+
+        details = PipelineDetails.construct(
+            kiara_id=self._data_registry.kiara_id,
+            pipeline_id=self.pipeline_id,
+            pipeline_status=status,
+            invalid_details=invalid,
+            step_states=step_states,
+        )
+
+        return details
+
+    def get_step_details(self, step_id: str) -> StepDetails:
+
+        step_input_ids = self.get_current_step_inputs(step_id=step_id)
+        step_output_ids = self.get_current_step_outputs(step_id=step_id)
+        step_inputs = self._all_values.get_alias(f"steps.{step_id}.inputs")
+
+        assert step_inputs is not None
+        invalid = step_inputs.check_invalid()
+
+        processing_stage = self._structure.get_processing_stage(step_id)
+
+        if not invalid:
+            status = StepStatus.INPUTS_READY
+            step_outputs = self._all_values.get_alias(f"steps.{step_id}.outputs")
+            assert step_outputs is not None
+            invalid_outputs = step_outputs.check_invalid()
+            # TODO: also check that all the pedigrees match up with current inputs
+            if not invalid_outputs:
+                status = StepStatus.RESULTS_READY
+        else:
+            status = StepStatus.INPUTS_INVALID
+
+        details = StepDetails.construct(
+            kiara_id=self._data_registry.kiara_id,
+            pipeline_id=self.pipeline_id,
+            step_id=step_id,
+            status=status,
+            inputs=step_input_ids,
+            outputs=step_output_ids,
+            invalid_details=invalid,
+            processing_stage=processing_stage,
+        )
+        return details
 
     def set_pipeline_inputs(
-        self, _sync_to_step_inputs: bool = False, **inputs: Any
-    ) -> Mapping[str, ChangedValue]:
+        self,
+        _sync_to_step_inputs: bool = True,
+        _notify_listeners: bool = True,
+        **inputs: Any,
+    ) -> Mapping[str, Mapping[str, Mapping[str, ChangedValue]]]:
 
         values_to_set: Dict[str, Optional[uuid.UUID]] = {}
 
@@ -286,31 +270,21 @@ class Pipeline(object):
 
         changed_pipeline_inputs = self._set_values("pipeline.inputs", **values_to_set)
 
-        events = []
-        event: PipelineEvent = PipelineInputEvent.construct(
-            kiara_id=self._data_registry._kiara.id,
-            pipeline_id=self.id,
-            changed_inputs=changed_pipeline_inputs,
-        )
-        events.append(event)
+        changed_results = {"__pipeline__": {"inputs": changed_pipeline_inputs}}
 
         if _sync_to_step_inputs:
             changed = self.sync_pipeline_inputs(_notify_listeners=False)
-            for step_id, details in changed.items():
-                event = StepInputEvent.construct(
-                    kiara_id=self._data_registry._kiara.id,
-                    pipeline_id=self.id,
-                    step_id=step_id,
-                    changed_inputs=details,
-                )
-                events.append(event)
+            dpath.util.merge(changed_results, changed)
 
-        self._notify_pipeline_listeners(event)
-        return changed_pipeline_inputs
+        if _notify_listeners:
+            event = PipelineEvent.create_event(pipeline=self, changed=changed_results)
+            self._notify_pipeline_listeners(event)
+
+        return changed_results
 
     def sync_pipeline_inputs(
         self, _notify_listeners: bool = True
-    ) -> Mapping[str, Mapping[str, ChangedValue]]:
+    ) -> Mapping[str, Mapping[str, Mapping[str, ChangedValue]]]:
 
         pipeline_inputs = self.get_current_pipeline_inputs()
 
@@ -325,55 +299,82 @@ class Pipeline(object):
                         step_input.value_name
                     ] = pipeline_inputs[field_name]
 
-        results: Dict[str, Mapping[str, ChangedValue]] = {}
+        results: Dict[str, Mapping[str, Mapping[str, ChangedValue]]] = {}
         for step_id in values_to_sync.keys():
             values = values_to_sync[step_id]
-            step_changed = self.set_step_inputs(
-                step_id=step_id, _send_event=False, **values
-            )
-            results[step_id] = step_changed
+            step_changed = self._set_step_inputs(step_id=step_id, **values)
+            dpath.util.merge(results, step_changed)
 
         if _notify_listeners:
-            events = []
-            for step_id, changed in results.items():
-                event = StepInputEvent.construct(
-                    kiara_id=self._data_registry._kiara.id,
-                    pipeline_id=self.id,
-                    step_id=step_id,
-                    changed_inputs=changed,
-                )
-                events.append(event)
-            self._notify_pipeline_listeners(*events)
+            event = PipelineEvent.create_event(pipeline=self, changed=results)
+            self._notify_pipeline_listeners(event)
 
         return results
 
-    def set_step_inputs(
-        self, step_id: str, _send_event: bool = True, **inputs: Optional[uuid.UUID]
-    ) -> Mapping[str, ChangedValue]:
+    def _set_step_inputs(
+        self, step_id: str, **inputs: Optional[uuid.UUID]
+    ) -> Mapping[str, Mapping[str, Mapping[str, ChangedValue]]]:
 
         changed_step_inputs = self._set_values(f"steps.{step_id}.inputs", **inputs)
         if not changed_step_inputs:
-            return
+            return {}
 
-        step = self._structure.get_step(step_id)
+        result: Dict[str, Dict[str, Dict[str, ChangedValue]]] = {
+            step_id: {"inputs": changed_step_inputs}
+        }
 
-        for node in list(nx.dfs_successors(self._structure.data_flow_graph, step)):
-            if isinstance(node, StepInputRef):
-                pass
-            elif isinstance(node, StepOutputRef):
-                pass
-            elif isinstance(node, PipelineOutputRef):
-                pass
+        step_outputs = self._structure.get_step_output_refs(step_id=step_id)
+        null_outputs = {k: None for k in step_outputs.keys()}
 
-        if _send_event:
-            event = StepInputEvent.construct(
-                kiara_id=self._data_registry._kiara.id,
-                pipeline_id=self.id,
-                step_id=step_id,
-                changed_inputs=changed_step_inputs,
-            )
-            self._notify_pipeline_listeners(event)
-        return changed_step_inputs
+        changed_outputs = self._set_step_outputs(step_id=step_id, **null_outputs)
+        assert step_id not in changed_outputs.keys()
+
+        result.update(changed_outputs)  # type: ignore
+
+        return result
+
+    def _set_step_outputs(
+        self, step_id: str, **outputs: Optional[uuid.UUID]
+    ) -> Mapping[str, Mapping[str, Mapping[str, ChangedValue]]]:
+
+        changed_step_outputs = self._set_values(f"steps.{step_id}.outputs", **outputs)
+        if not changed_step_outputs:
+            return {}
+
+        result: Dict[str, Dict[str, Dict[str, ChangedValue]]] = {
+            step_id: {"outputs": changed_step_outputs}
+        }
+
+        output_refs = self._structure.get_step_output_refs(step_id=step_id)
+
+        pipeline_outputs: Dict[str, ChangedValue] = {}
+
+        inputs_to_set: Dict[str, Dict[str, Optional[uuid.UUID]]] = {}
+
+        for field_name, ref in output_refs.items():
+            if ref.pipeline_output:
+                assert ref.pipeline_output not in pipeline_outputs.keys()
+                pipeline_outputs[ref.pipeline_output] = changed_step_outputs[field_name]
+            for input_ref in ref.connected_inputs:
+                inputs_to_set.setdefault(input_ref.step_id, {})[
+                    input_ref.value_name
+                ] = outputs[field_name]
+
+        for step_id, step_inputs in inputs_to_set.items():
+            changed_step_outputs = self._set_step_inputs(step_id=step_id, **step_inputs)
+            assert step_id not in changed_step_outputs.keys()
+            dpath.util.merge(result, changed_step_outputs)
+
+        dpath.util.merge(result, {"__pipeline__": {"outputs": pipeline_outputs}})
+
+        return result
+
+    def _set_pipeline_outputs(
+        self, **outputs: Optional[uuid.UUID]
+    ) -> Mapping[str, ChangedValue]:
+
+        changed_pipeline_outputs = self._set_values("pipeline.outputs", **outputs)
+        return changed_pipeline_outputs
 
     def _set_values(
         self, alias: str, **values: Optional[uuid.UUID]
@@ -385,10 +386,10 @@ class Pipeline(object):
             if k not in self._all_values.get_alias(alias).values_schema.keys():
                 invalid[
                     k
-                ] = f"Invalid field '{k}'. Available fields: {', '.join(self.current_pipeline_inputs.values_schema.keys())}"
+                ] = f"Invalid field '{k}'. Available fields: {', '.join(self.get_current_pipeline_inputs().keys())}"
 
         if invalid:
-            raise InputValuesException(invalid_inputs=invalid)
+            raise InvalidValuesException(invalid_inputs=invalid)
 
         alias_map: AliasValueMap = self._all_values.get_alias(alias)
         assert alias_map is not None
@@ -401,12 +402,14 @@ class Pipeline(object):
 
             current_value = self._all_values.get_alias(f"{alias}.{field_name}")
             if current_value is not None:
-                current_value = current_value.assoc_value
-            current[field_name] = current_value
+                current_value_id = current_value.assoc_value
+            else:
+                current_value_id = None
+            current[field_name] = current_value_id
 
-            if current_value != new_value:
+            if current_value_id != new_value:
                 values_to_set[field_name] = new_value
-                changed[field_name] = ChangedValue(old=current_value, new=new_value)
+                changed[field_name] = ChangedValue(old=current_value_id, new=new_value)
 
         self._all_values.get_alias(alias).set_aliases(**values_to_set)
 
@@ -868,7 +871,7 @@ class PipelineOld(object):
             else:
                 raise Exception(f"Unsupported type: {event.type}")  # type: ignore
 
-    def get_current_state(self) -> "PipelineState":
+    def get_current_state(self) -> "PipelineDetails":
 
         raise NotImplementedError()
         #
@@ -887,9 +890,9 @@ class PipelineOld(object):
         #     if v.items_are_valid():
         #         step_states[k] = StepStatus.RESULTS_READY
         #
-        # from kiara.info.pipelines import PipelineState
+        # from kiara.info.pipelines import PipelineDetails
         #
-        # state = PipelineState(
+        # state = PipelineDetails(
         #     structure=self.structure.to_details(),
         #     pipeline_inputs=self._pipeline_inputs.to_details(),
         #     pipeline_outputs=self._pipeline_outputs.to_details(),

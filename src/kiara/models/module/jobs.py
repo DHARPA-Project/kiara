@@ -9,12 +9,14 @@ from pydantic.main import BaseModel
 from typing import Any, Dict, Mapping, Optional
 
 from kiara.defaults import (
+    JOB_CATEGORY_ID,
     JOB_CONFIG_TYPE_CATEGORY_ID,
     JOB_RECORD_TYPE_CATEGORY_ID,
     KIARA_HASH_FUNCTION,
 )
-from kiara.models.module.manifest import Manifest
-from kiara.models.values.value import Value, ValueSet
+from kiara.models import KiaraModel
+from kiara.models.module.manifest import InputsManifest, Manifest
+from kiara.models.values.value import Value
 
 
 class JobStatus(Enum):
@@ -50,13 +52,7 @@ class JobLog(BaseModel):
         self.log[len(self.log)] = _msg
 
 
-class JobConfig(Manifest):
-
-    inputs: ValueSet = Field(
-        description="The inputs to use when running this module.", default_factory=dict
-    )
-    _inputs_hash: Optional[int] = PrivateAttr(default=None)
-
+class JobConfig(InputsManifest):
     def _retrieve_id(self) -> str:
         return str(self.model_data_hash)
 
@@ -64,24 +60,10 @@ class JobConfig(Manifest):
         return JOB_CONFIG_TYPE_CATEGORY_ID
 
     def _retrieve_data_to_hash(self) -> Any:
-        return {
-            "module_config": self.manifest_data,
-            "inputs": {k: v.value_id for k, v in self.inputs.items()},
-        }
-
-    @property
-    def inputs_hash(self) -> int:
-
-        if self._inputs_hash is not None:
-            return self._inputs_hash
-
-        obj = {k: v.value_id for k, v in self.inputs.items()}
-        h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
-        self._inputs_hash = h[obj]
-        return self._inputs_hash
+        return {"module_config": self.manifest_data, "inputs": self.inputs_hash}
 
 
-class JobRecord(Manifest):
+class JobRecord(InputsManifest):
     @classmethod
     def from_manifest(
         cls,
@@ -97,11 +79,7 @@ class JobRecord(Manifest):
             outputs={k: v.value_id for k, v in outputs.items()},
         )
 
-    inputs: Dict[str, uuid.UUID] = Field(
-        description="The inputs to use when running this module.", default_factory=dict
-    )
     outputs: Dict[str, uuid.UUID] = Field(description="References to the job outputs.")
-    _inputs_hash: Optional[int] = PrivateAttr(default=None)
     _outputs_hash: Optional[int] = PrivateAttr(default=None)
 
     def _retrieve_category_id(self) -> str:
@@ -115,17 +93,6 @@ class JobRecord(Manifest):
         }
 
     @property
-    def inputs_hash(self) -> int:
-
-        if self._inputs_hash is not None:
-            return self._inputs_hash
-
-        obj = self.inputs
-        h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
-        self._inputs_hash = h[obj]
-        return self._inputs_hash
-
-    @property
     def outputs_hash(self) -> int:
 
         if self._outputs_hash is not None:
@@ -135,6 +102,51 @@ class JobRecord(Manifest):
         h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
         self._outputs_hash = h[obj]
         return self._outputs_hash
+
+
+class Job(KiaraModel):
+
+    job_id: uuid.UUID = Field(description="The job id.", default_factory=uuid.uuid4)
+
+    job_config: JobConfig = Field(description="The job details.")
+    status: JobStatus = Field(
+        description="The current status of the job.", default=JobStatus.CREATED
+    )
+    job_log: JobLog = Field(description="The lob jog.")
+    submitted: datetime = Field(
+        description="When the job was submitted.", default_factory=datetime.now
+    )
+    started: Optional[datetime] = Field(
+        description="When the job was started.", default=None
+    )
+    finished: Optional[datetime] = Field(
+        description="When the job was finished.", default=None
+    )
+    results: Optional[Dict[str, uuid.UUID]] = Field(description="The result(s).")
+    error: Optional[str] = Field(description="Potential error message.")
+    _exception: Optional[Exception] = PrivateAttr(default=None)
+
+    def _retrieve_id(self) -> str:
+        return str(self.job_id)
+
+    def _retrieve_category_id(self) -> str:
+        return JOB_CATEGORY_ID
+
+    def _retrieve_data_to_hash(self) -> Any:
+        return self.job_id
+
+    @property
+    def exception(self) -> Optional[Exception]:
+        return self._exception
+
+    @property
+    def runtime(self) -> Optional[float]:
+
+        if self.started is None or self.finished is None:
+            return None
+
+        runtime = self.finished - self.started
+        return runtime.total_seconds()
 
 
 class DeserializeConfig(JobConfig):

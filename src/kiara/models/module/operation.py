@@ -278,9 +278,9 @@ class Operation(Manifest):
     def outputs_schema(self) -> Mapping[str, ValueSchema]:
         return self.operation_details.outputs_schema
 
-    def prepare_job_config(self, kiara: "Kiara", inputs: Any) -> JobConfig:
+    def prepare_job_config(self, kiara: "Kiara", inputs: Mapping[str, Any]) -> JobConfig:
 
-        augmented_inputs = self.operation_details.get_operation_schema().augment_inputs(
+        augmented_inputs = self.operation_details.get_operation_schema().augment_module_inputs(
             inputs=inputs
         )
         module_inputs = self.operation_details.create_module_inputs(
@@ -296,7 +296,8 @@ class Operation(Manifest):
 
         job_config = self.prepare_job_config(kiara=kiara, inputs=inputs)
 
-        outputs: ValueSet = kiara.jobs_mgmt.execute_job(job_config=job_config)
+        job_id = kiara.jobs_mgmt.execute_job(job_config=job_config)
+        outputs: ValueSet = kiara.jobs_mgmt.retrieve_result(job_id=job_id)
 
         result = self.process_job_outputs(outputs=outputs)
         return result

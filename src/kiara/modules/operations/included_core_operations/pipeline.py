@@ -16,12 +16,11 @@ from kiara.models.values.value import Value, ValueSet
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule
 from kiara.modules.included_core_modules.pipeline import PipelineModule
-from kiara.modules.mgmt.pipelines import (
-    check_doc_sidecar,
-    get_pipeline_details_from_path,
-)
+
 from kiara.modules.operations import OperationType
+from kiara.utils import is_debug
 from kiara.utils.class_loading import find_all_kiara_pipeline_paths
+from kiara.utils.pipelines import get_pipeline_details_from_path, check_doc_sidecar
 
 if TYPE_CHECKING:
     from kiara import Kiara
@@ -139,6 +138,9 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
                             all_pipelines.append(data)
 
                         except Exception as e:
+                            if is_debug():
+                                import traceback
+                                traceback.print_exc()
                             logger.warning(
                                 "ignore.pipeline_file", path=full_path, reason=str(e)
                             )

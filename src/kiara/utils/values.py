@@ -98,7 +98,12 @@ def augment_values(
                     values_new[field_name] = schema.default()
                 else:
                     values_new[field_name] = copy.deepcopy(schema.default)
+            else:
+                values_new[field_name] = SpecialValue.NOT_SET
         else:
-            values_new[field_name] = values[field_name]
+            value = values[field_name]
+            if value is None:
+                value = SpecialValue.NO_VALUE
+            values_new[field_name] = value
 
     return values_new

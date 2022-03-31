@@ -240,14 +240,13 @@ class InputOutputObject(abc.ABC):
         """A list of output field names for this module."""
         return self.outputs_schema.keys()
 
-    def augment_inputs(self, inputs: Mapping[str, Any]) -> Dict[str, Any]:
+    def augment_module_inputs(self, inputs: Mapping[str, Any]) -> Dict[str, Any]:
         return augment_values(
             values=inputs, schemas=self.inputs_schema, constants=self.constants
         )
 
-    def augment_outputs(self, outputs: Mapping[str, Any]) -> Dict[str, Any]:
-
-        return augment_values(values=outputs, schemas=self.outputs_schema)
+    # def augment_outputs(self, outputs: Mapping[str, Any]) -> Dict[str, Any]:
+    #     return augment_values(values=outputs, schemas=self.outputs_schema)
 
 
 class ModuleCharacteristics(BaseModel):

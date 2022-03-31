@@ -500,7 +500,7 @@ class KiaraModuleClass(PythonClass):
         result._module_instance_cache = module
         return result
 
-    module_config: KiaraModuleConfig = Field(description="The module config.")
+    module_config: Dict[str, Any] = Field(description="The module config.")
     inputs_schema: Dict[str, ValueSchema] = Field(
         description="The schema for the module input(s)."
     )

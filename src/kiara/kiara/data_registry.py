@@ -37,7 +37,7 @@ from kiara.models.events.data_registry import (
 )
 from kiara.models.module.destiniy import Destiny
 from kiara.models.module.jobs import JobConfig, JobRecord
-from kiara.models.module.manifest import LoadConfig, Manifest
+from kiara.models.module.manifest import LoadConfig, Manifest, InputsManifest
 from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
 from kiara.models.values.value import (
@@ -115,7 +115,59 @@ class CreateMetadataDestinies(DataEventHook):
         )
 
 
-class DataRegistry(object):
+class AbstractDataRegistry(abc.ABC):
+    """This is just for development, this abstract class might be removed later."""
+
+    @abc.abstractmethod
+    def get_value(self, value: Union[uuid.UUID, str, Value]) -> Value:
+        pass
+
+    @abc.abstractmethod
+    def register_data(
+        self,
+        data: Any,
+        schema: Optional[ValueSchema] = None,
+        pedigree: Optional[ValuePedigree] = None,
+        pedigree_output_name: str = None,
+        reuse_existing: bool = True,
+    ) -> Value:
+
+        pass
+
+    @abc.abstractmethod
+    def retrieve_value_data(self, value_id: uuid.UUID) -> Any:
+        pass
+
+    @abc.abstractmethod
+    def retrieve_load_config(self, value_id: uuid.UUID) -> Optional[LoadConfig]:
+        pass
+
+    @abc.abstractmethod
+    def store_value(
+        self,
+        value: Value,
+        aliases: Optional[Iterable[str]] = None,
+        store_id: Optional[uuid.UUID] = None,
+        skip_if_exists: bool = True,
+    ):
+        pass
+
+    @abc.abstractmethod
+    def create_valueset(
+        self, data: Mapping[str, Any], schema: Mapping[str, ValueSchema]
+    ) -> ValueSet:
+        """Create a ValueSet object from an atrbitrary dict (that can contain 'raw' Python data, or Value instances."""
+
+        pass
+
+    @abc.abstractmethod
+    def find_matching_record(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
+        pass
+
+
+
+class DataRegistry(AbstractDataRegistry):
+
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
@@ -374,15 +426,15 @@ class DataRegistry(object):
 
         return set((self.get_value(value=v_id) for v_id in stored))
 
-    def find_job_record(self, job: JobConfig) -> Optional[JobRecord]:
+    def find_matching_record(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
 
-        if job.model_data_hash in self._registred_jobs.keys():
-            return self._registred_jobs[job.model_data_hash]
+        if inputs_manifest.model_data_hash in self._registred_jobs.keys():
+            return self._registred_jobs[inputs_manifest.model_data_hash]
 
         matches = []
         match = None
         for store_id, store in self.data_stores.items():
-            match = store.retrieve_job_record(job=job)
+            match = store.retrieve_job_record(inputs_manifest=inputs_manifest)
             if match:
                 matches.append(match)
 
@@ -390,11 +442,11 @@ class DataRegistry(object):
             return None
         elif len(matches) > 1:
             raise Exception(
-                f"Multiple stores have a record for job '{job}', this is not supported (yet)."
+                f"Multiple stores have a record for inputs manifest '{inputs_manifest}', this is not supported (yet)."
             )
 
         # self._job_store_map[job.model_data_hash] = matches[0]
-        self._registred_jobs[job.model_data_hash] = matches[0]
+        self._registred_jobs[inputs_manifest.model_data_hash] = matches[0]
 
         return match
 
@@ -432,9 +484,12 @@ class DataRegistry(object):
 
         if isinstance(data, Value):
             if data.value_id in self._registered_values.keys():
-                raise Exception(
-                    f"Can't register value '{data.value_id}: already registered"
-                )
+                if reuse_existing:
+                    return data
+                else:
+                    raise Exception(
+                        f"Can't register value '{data.value_id}: already registered"
+                    )
 
             raise NotImplementedError()
             self._registered_values[data.value_id] = data
@@ -528,7 +583,7 @@ class DataRegistry(object):
 
         return load_config
 
-    def retrieve_value_data(self, value_id: uuid.UUID):
+    def retrieve_value_data(self, value_id: uuid.UUID) -> Any:
 
         if value_id in self._cached_data.keys():
             return self._cached_data[value_id]
@@ -563,17 +618,20 @@ class DataRegistry(object):
                 traceback.print_exc()
             return UnloadableData(value=value, load_config=load_config)
 
-        result = self._kiara.jobs_mgmt.execute_job(job_config=job_config)
+        job_id = self._kiara.jobs_mgmt.execute_job(job_config=job_config)
+        result = self._kiara.jobs_mgmt.retrieve_result(job_id=job_id)
 
         # data = result.get_value_data(load_config.output_name)
         result_value = result.get_value_obj(field_name=load_config.output_name)
         return result_value.data
 
-    def load_valueset(self, values: Mapping[str, uuid.UUID]):
+    def load_values(self, values: Mapping[str, Optional[uuid.UUID]]) -> ValueSet:
 
         value_items = {}
         schemas = {}
         for field_name, value_id in values.items():
+            if value_id is None:
+                value_id = NONE_VALUE_ID
             value = self.get_value(value=value_id)
             value_items[field_name] = value
             schemas[field_name] = value.value_schema
@@ -587,7 +645,6 @@ class DataRegistry(object):
 
         input_details = {}
         for input_name, value_schema in schema.items():
-
             input_details[input_name] = {"schema": value_schema}
 
         leftover = set(data.keys())
@@ -750,7 +807,7 @@ class DataRegistry(object):
         key: Optional[str] = None,
     ) -> Dict[str, Dict[str, Dict[uuid.UUID, Value]]]:
 
-        result = {}
+        result: Dict[str, Dict[str, Dict[uuid.UUID, Value]]] = {}
         destinies = self.get_destinies_for_value(
             value=value, category=category, key=key
         )
@@ -766,8 +823,8 @@ class DataRegistry(object):
 
     def resolve_destiny(self, destiny: Destiny) -> Value:
 
-        result = self._kiara.execute(manifest=destiny, inputs=destiny.merged_inputs)
-        value = result.get_value_obj(field_name=destiny.result_field_name)
+        results = self._kiara.jobs_mgmt.execute_and_retrieve(manifest=destiny, inputs=destiny.merged_inputs)
+        value = results.get_value_obj(field_name=destiny.result_field_name)
         destiny.result_value_id = value.value_id
         return value
 
@@ -797,6 +854,7 @@ class DataRegistry(object):
                     f"Can't find operation to render '{value.value_schema.type}' as '{target_type}."
                 )
 
+        assert op is not None
         result = op.run(kiara=self._kiara, inputs={"value": value})
         rendered = result.get_value_data("rendered_value")
         return rendered

@@ -6,7 +6,7 @@ from deepdiff import DeepHash
 from enum import Enum
 from pydantic.fields import Field, PrivateAttr
 from pydantic.main import BaseModel
-from typing import Any, Dict, Mapping, Optional
+from typing import Any, Dict, Mapping, Optional, TYPE_CHECKING
 
 from kiara.defaults import (
     JOB_CATEGORY_ID,
@@ -14,9 +14,14 @@ from kiara.defaults import (
     JOB_RECORD_TYPE_CATEGORY_ID,
     KIARA_HASH_FUNCTION,
 )
+from kiara.exceptions import InvalidValuesException
 from kiara.models import KiaraModel
 from kiara.models.module.manifest import InputsManifest, Manifest
 from kiara.models.values.value import Value
+
+if TYPE_CHECKING:
+    from kiara.kiara import DataRegistry
+    from kiara.modules import KiaraModule
 
 
 class JobStatus(Enum):
@@ -53,6 +58,20 @@ class JobLog(BaseModel):
 
 
 class JobConfig(InputsManifest):
+
+    @classmethod
+    def create_from_module(cls, data_registry: "DataRegistry", module: "KiaraModule", inputs: Mapping[str, Any]):
+
+        augmented = module.augment_module_inputs(inputs=inputs)
+        values = data_registry.create_valueset(data=augmented, schema=module.inputs_schema)
+
+        invalid = values.check_invalid()
+        if invalid:
+            raise InvalidValuesException(invalid_values=invalid)
+
+        value_ids = values.get_all_value_ids()
+        return JobConfig.construct(module_type=module.module_type_name, module_config=module.config.dict(), inputs=value_ids)
+
     def _retrieve_id(self) -> str:
         return str(self.model_data_hash)
 
@@ -60,51 +79,11 @@ class JobConfig(InputsManifest):
         return JOB_CONFIG_TYPE_CATEGORY_ID
 
     def _retrieve_data_to_hash(self) -> Any:
-        return {"module_config": self.manifest_data, "inputs": self.inputs_hash}
+        return {"manifest": self.manifest_data, "inputs": self.inputs_hash}
 
 
-class JobRecord(InputsManifest):
-    @classmethod
-    def from_manifest(
-        cls,
-        manifest: Manifest,
-        inputs: Mapping[str, Value],
-        outputs: Mapping[str, Value],
-    ):
 
-        return JobRecord(
-            module_type=manifest.module_type,
-            module_config=manifest.module_config,
-            inputs={k: v.value_id for k, v in inputs.items()},
-            outputs={k: v.value_id for k, v in outputs.items()},
-        )
-
-    outputs: Dict[str, uuid.UUID] = Field(description="References to the job outputs.")
-    _outputs_hash: Optional[int] = PrivateAttr(default=None)
-
-    def _retrieve_category_id(self) -> str:
-        return JOB_RECORD_TYPE_CATEGORY_ID
-
-    def _retrieve_data_to_hash(self) -> Any:
-        return {
-            "manifest_hash": self.manifest_hash,
-            "inputs": self.inputs,
-            "outputs": self.outputs,
-        }
-
-    @property
-    def outputs_hash(self) -> int:
-
-        if self._outputs_hash is not None:
-            return self._outputs_hash
-
-        obj = self.outputs
-        h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
-        self._outputs_hash = h[obj]
-        return self._outputs_hash
-
-
-class Job(KiaraModel):
+class ActiveJob(KiaraModel):
 
     job_id: uuid.UUID = Field(description="The job id.", default_factory=uuid.uuid4)
 
@@ -147,6 +126,80 @@ class Job(KiaraModel):
 
         runtime = self.finished - self.started
         return runtime.total_seconds()
+
+class JobRecord(JobConfig):
+
+    outputs: Dict[str, uuid.UUID] = Field(description="References to the job outputs.")
+    _outputs_hash: Optional[int] = PrivateAttr(default=None)
+
+    def _retrieve_category_id(self) -> str:
+        return JOB_RECORD_TYPE_CATEGORY_ID
+
+    def _retrieve_data_to_hash(self) -> Any:
+        return {
+            "manifest_hash": self.manifest_hash,
+            "inputs": self.inputs,
+            "outputs": self.outputs,
+        }
+
+    @property
+    def outputs_hash(self) -> int:
+
+        if self._outputs_hash is not None:
+            return self._outputs_hash
+
+        obj = self.outputs
+        h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
+        self._outputs_hash = h[obj]
+        return self._outputs_hash
+
+class JobRecordFull(JobRecord):
+
+    @classmethod
+    def from_active_job(self, active_job: ActiveJob):
+
+        assert active_job.status == JobStatus.SUCCESS
+        assert active_job.results is not None
+
+        job_record = JobRecord.construct(
+            module_type=active_job.job_config.module_type,
+            module_config=active_job.job_config.module_config,
+            inputs=active_job.job_config.inputs,
+            outputs=active_job.results,
+            job_log=active_job.job_log,
+            submitted=active_job.submitted,
+            started=active_job.started,  # type: ignore
+            finished=active_job.finished,  # type: ignore
+            runtime=active_job.runtime  # type: ignore
+        )
+        return job_record
+
+    # @classmethod
+    # def from_manifest(
+    #     cls,
+    #     manifest: Manifest,
+    #     inputs: Mapping[str, Value],
+    #     outputs: Mapping[str, Value],
+    # ):
+    #
+    #     return JobRecord(
+    #         module_type=manifest.module_type,
+    #         module_config=manifest.module_config,
+    #         inputs={k: v.value_id for k, v in inputs.items()},
+    #         outputs={k: v.value_id for k, v in outputs.items()},
+    #     )
+
+    job_log: JobLog = Field(description="The lob jog.")
+    submitted: datetime = Field(
+        description="When the job was submitted."
+    )
+    started: datetime = Field(
+        description="When the job was started."
+    )
+    finished: datetime = Field(
+        description="When the job was finished."
+    )
+    runtime: float = Field(description="The duration of the job.")
 
 
 class DeserializeConfig(JobConfig):

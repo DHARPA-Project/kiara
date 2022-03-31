@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
 from kiara import Kiara
+from kiara.models.module.jobs import JobStatus, JobRecord, JobConfig
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
 from kiara.models.values.value import ValueSet
@@ -178,27 +179,20 @@ def run(
 
     inputs_dict = dict_from_cli_args(*inputs, list_keys=list_keys)
 
-    augmented_inputs = augment_values(
-        values=inputs_dict, schemas=operation.inputs_schema
-    )
-
-    job_inputs: ValueSet = kiara_obj.data_registry.create_valueset(
-        data=augmented_inputs, schema=operation.inputs_schema
-    )
-
-    if not job_inputs.all_items_valid:
-        print()
-        rich_print(f"Can't run operation '{module_or_operation}', invalid inputs:")
-        for field_name, reason in job_inputs.check_invalid().items():
-            rich_print(f"  [i]{field_name}[/i]: {reason}")
-        sys.exit(1)
-
     job_config = operation.prepare_job_config(kiara=kiara_obj, inputs=inputs_dict)
 
     # =========================================================================
     # execute job
 
-    outputs = kiara_obj.jobs_mgmt.execute_job(job_config=job_config)
+    job_id = kiara_obj.jobs_mgmt.execute_job(job_config=job_config)
+    status = kiara_obj.jobs_mgmt.get_job_status(job_id=job_id)
+
+    if status == JobStatus.FAILED:
+        job = kiara_obj.jobs_mgmt.get_job_details(job_id=job_id)
+        print(f"Job failed: {job.error}")
+        sys.exit(1)
+
+    outputs = kiara_obj.jobs_mgmt.retrieve_result(job_id)
 
     outputs = operation.process_job_outputs(outputs=outputs)
 

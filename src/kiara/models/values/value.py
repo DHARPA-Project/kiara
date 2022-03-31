@@ -61,7 +61,7 @@ class ValuePedigree(InputsManifest):
 
     def _retrieve_data_to_hash(self) -> Any:
         return {
-            "module_config": self.manifest_hash,
+            "manifest": self.manifest_hash,
             "inputs": self.inputs_hash,
             # "environments": self.environments
         }
@@ -235,9 +235,9 @@ class Value(ValueDetails):
         )
         return self._data_type
 
-    def render_data(self, **render_config: Any) -> Any:
-        rendered = self._data_registry.render_data(value=self, **render_config)
-        return rendered
+    # def render_data(self, **render_config: Any) -> Any:
+    #     rendered = self._data_registry.render_data(value=self, **render_config)
+    #     return rendered
 
     def create_renderable(self, **render_config: Any) -> RenderableType:
 
@@ -392,6 +392,11 @@ class ValueSet(KiaraModel, MutableMapping[str, Value]):  # type: ignore
             raise_exception_when_unset=raise_exception_when_unset,
         )
 
+    def set_values(self, **values) -> None:
+
+        for k, v in values.items():
+            self.set_value(k, v)
+
     def set_value(self, field_name: str, data: Any) -> None:
         raise Exception(
             f"The value set implementation '{self.__class__.__name__}' is read-only, and does not support the setting or changing of values."
@@ -425,7 +430,7 @@ class ValueSet(KiaraModel, MutableMapping[str, Value]):  # type: ignore
 
 class ValueSetReadOnly(ValueSet):  # type: ignore
     @classmethod
-    def create_from_ids(cls, data_registry: DataRegistry, **value_ids: uuid.UUID):
+    def create_from_ids(cls, data_registry: "DataRegistry", **value_ids: uuid.UUID):
 
         values = {k: data_registry.get_value(v) for k, v in value_ids.items()}
         return ValueSetReadOnly.construct(value_items=values)
@@ -513,7 +518,7 @@ class ValueSetWritable(ValueSet):  # type: ignore
             schema=schema,
             pedigree=self.pedigree,
             pedigree_output_name=field_name,
-            reuse_existing=False,
+            reuse_existing=True,
         )
 
         self._values_uncommitted.pop(field_name)
@@ -527,7 +532,7 @@ class ValueSetWritable(ValueSet):  # type: ignore
 
         invalid = self.check_invalid()
         if invalid:
-            raise InvalidValuesException(invalid_inputs=invalid)
+            raise InvalidValuesException(invalid_values=invalid)
 
     def set_value(self, field_name: str, data: Any) -> None:
         """Set the value for the specified field."""

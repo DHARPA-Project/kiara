@@ -2,7 +2,7 @@
 import orjson
 import uuid
 from deepdiff import DeepHash
-from pydantic import Extra, Field, PrivateAttr
+from pydantic import Extra, Field, PrivateAttr, validator
 from rich.console import RenderableType
 from rich.syntax import Syntax
 from typing import Any, Dict, Mapping, Optional
@@ -10,7 +10,7 @@ from typing import Any, Dict, Mapping, Optional
 from kiara.defaults import (
     KIARA_HASH_FUNCTION,
     MODULE_CONFIG_CATEGORY_ID,
-    NO_MODULE_TYPE,
+    NO_MODULE_TYPE, NONE_VALUE_ID,
 )
 from kiara.models import KiaraModel
 from kiara.utils import orjson_dumps
@@ -100,6 +100,15 @@ class InputsManifest(Manifest):
         description="A map of all the input fields and value references."
     )
     _inputs_hash: Optional[int] = PrivateAttr(default=None)
+
+    @validator("inputs")
+    def replace_none_values(cls, value):
+        result = {}
+        for k, v in value.items():
+            if v is None:
+                v = NONE_VALUE_ID
+            result[k] = v
+        return result
 
     @property
     def inputs_hash(self) -> int:

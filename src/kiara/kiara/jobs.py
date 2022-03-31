@@ -4,10 +4,11 @@ import uuid
 from typing import TYPE_CHECKING, Any, Mapping
 
 from kiara.exceptions import JobConfigException
-from kiara.models.module.jobs import JobConfig
+from kiara.models.module.jobs import JobConfig, ActiveJob, JobStatus
 from kiara.models.module.manifest import Manifest
 from kiara.models.values.value import ValueSet
 from kiara.processing import ModuleProcessor
+from kiara.processing.synchronous import SynchronousProcessor
 
 if TYPE_CHECKING:
     from kiara import Kiara
@@ -19,45 +20,23 @@ class JobsMgmt(object):
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
-        self._processor: ModuleProcessor = None
+        self._processor: ModuleProcessor = SynchronousProcessor(kiara=self._kiara)
 
     def prepare_job_config(
         self, manifest: Manifest, inputs: Mapping[str, Any]
     ) -> JobConfig:
 
         module = self._kiara.create_module(manifest=manifest)
-        augmented_inputs = module.augment_inputs(inputs=inputs)
+        job_config = JobConfig.create_from_module(data_registry=self._kiara.data_registry, module=module, inputs=inputs)
 
-        try:
-            job_inputs: ValueSet = self._kiara.data_registry.create_valueset(
-                data=augmented_inputs, schema=module.inputs_schema
-            )
+        return job_config
 
-        except Exception as e:
-            raise JobConfigException(e, manifest=manifest, inputs=inputs)
+    def execute(self, manifest: Manifest, inputs: Mapping[str, Any], wait: bool=False) -> uuid.UUID:
 
-        if not job_inputs.all_items_valid:
-            invalid_details = job_inputs.check_invalid()
-            raise JobConfigException(
-                msg=f"Can't process module '{manifest.module_type}', input field(s) not valid: {', '.join(invalid_details.keys())}",
-                manifest=manifest,
-                inputs=inputs
-                # type: ignore
-            )
+        job_config = self.prepare_job_config(manifest=manifest, inputs=inputs)
+        return self.execute_job(job_config, wait=wait)
 
-        job = JobConfig(
-            module_type=manifest.module_type,
-            module_config=manifest.module_config,
-            inputs=job_inputs,
-        )  # type: ignore
-        return job
-
-    def execute(self, manifest: Manifest, inputs: Mapping[str, Any]):
-
-        job = self.prepare_job_config(manifest=manifest, inputs=inputs)
-        return self.execute_job(job)
-
-    def execute_job(self, job_config: JobConfig) -> uuid.UUID:
+    def execute_job(self, job_config: JobConfig, wait: bool=False) -> uuid.UUID:
 
         log = logger.bind(
             module_type=job_config.module_type,
@@ -65,12 +44,47 @@ class JobsMgmt(object):
             job_hash=job_config.model_data_hash,
         )
 
-        stored_job = self._kiara.data_registry.find_job_record(job_config)
+        stored_job = self._kiara.data_registry.find_matching_record(inputs_manifest=job_config)
         if stored_job is not None:
             log.debug("job.use.cached")
-            return self._kiara.data_registry.load_valueset(values=stored_job.outputs)
+            raise NotImplementedError()
+            return self._kiara.data_registry.load_values(values=stored_job.outputs)
 
         log.debug("job.execute", inputs=job_config.inputs)
 
         job_id = self._processor.process_job(job_config=job_config)
+
+        if wait:
+            self._processor.wait_for(job_id)
+
         return job_id
+
+    def get_job_details(self, job_id: uuid.UUID) -> ActiveJob:
+        return self._processor.get_job(job_id)
+
+    def get_job_status(self, job_id: uuid.UUID) -> JobStatus:
+
+        return self._processor.get_job_status(job_id=job_id)
+
+    def retrieve_job(self, job_id: uuid.UUID, wait_for_finish: bool=False) -> ActiveJob:
+
+        if wait_for_finish:
+            self._processor.wait_for(job_id)
+
+        job = self._processor.get_job(job_id=job_id)
+        return job
+
+    def retrieve_result(self, job_id: uuid.UUID) -> ValueSet:
+
+        self._processor.wait_for(job_id)
+        job = self._processor.get_job_record(job_id=job_id)
+
+        results = self._kiara.data_registry.load_values(job.outputs)
+        return results
+
+    def execute_and_retrieve(self, manifest: Manifest, inputs: Mapping[str, Any], wait: bool=False) -> ValueSet:
+
+        job_id = self.execute(manifest=manifest, inputs=inputs, wait=True)
+        results = self.retrieve_result(job_id=job_id)
+        return results
+

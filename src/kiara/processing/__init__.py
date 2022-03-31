@@ -6,11 +6,11 @@ from pydantic import BaseModel
 from typing import Dict, Mapping, Union
 
 from kiara.exceptions import KiaraProcessingException
-from kiara.models.module.jobs import Job, JobConfig, JobLog, JobStatus
+from kiara.models.module.jobs import ActiveJob, JobConfig, JobLog, JobStatus, JobRecord, JobRecordFull
 from kiara.models.values.value import (
     ValuePedigree,
     ValueSetReadOnly,
-    ValueSetWritable,
+    ValueSetWritable, ValueSet,
 )
 from kiara.utils import is_debug
 
@@ -38,21 +38,38 @@ class ProcessorConfig(BaseModel):
 
 
 class ModuleProcessor(abc.ABC):
+
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
-        self._active_jobs: Dict[uuid.UUID, Job] = {}
+        self._active_jobs: Dict[uuid.UUID, ActiveJob] = {}
+        self._failed_jobs: Dict[uuid.UUID, ActiveJob] = {}
+        self._finished_jobs: Dict[uuid.UUID, ActiveJob] = {}
         self._output_refs: Dict[uuid.UUID, ValueSetWritable] = {}
-        self._finished_jobs: Dict[uuid.UUID, Job] = {}
+        self._job_records: Dict[uuid.UUID, JobRecordFull] = {}
 
-    def get_job(self, job_id: uuid.UUID) -> Job:
+    def get_job(self, job_id: uuid.UUID) -> ActiveJob:
 
         if job_id in self._active_jobs.keys():
             return self._active_jobs[job_id]
         elif job_id in self._finished_jobs.keys():
             return self._finished_jobs[job_id]
+        elif job_id in self._failed_jobs.keys():
+            return self._failed_jobs[job_id]
         else:
             raise Exception(f"No job with id '{job_id}' registered.")
+
+    def get_job_status(self, job_id: uuid.UUID) -> JobStatus:
+
+        job = self.get_job(job_id=job_id)
+        return job.status
+
+    def get_job_record(self, job_id: uuid.UUID) -> JobRecordFull:
+
+        if job_id in self._job_records.keys():
+            return self._job_records[job_id]
+        else:
+            raise Exception(f"No job record for job with id '{job_id}' registered.")
 
     def process_job(self, job_config: JobConfig) -> uuid.UUID:
 
@@ -77,22 +94,27 @@ class ModuleProcessor(abc.ABC):
         job_id = uuid.uuid4()
         job_log = JobLog()
 
-        job = Job.construct(job_id=job_id, job_config=job_config, job_log=job_log)
+        job = ActiveJob.construct(job_id=job_id, job_config=job_config, job_log=job_log)
 
         job.job_log.add_log("job created")
         self._active_jobs[job_id] = job
         self._output_refs[job_id] = outputs
 
+        input_values = self._kiara.data_registry.load_values(job_config.inputs)
+
+        if module.is_pipeline():
+            module._set_module_processor(self)
+
         try:
             self.queue_job(
                 job_id=job_id,
                 module=module,
-                inputs=job_config.inputs,
+                inputs=input_values,
                 outputs=outputs,
                 job_log=job.job_log,
             )
-
             return job_id
+
         except Exception as e:
             job.error = str(e)
             if is_debug():
@@ -139,6 +161,9 @@ class ModuleProcessor(abc.ABC):
             values.sync_values()
             value_ids = values.get_all_value_ids()
             job.results = value_ids
+            job.job_log.percent_finished = 100
+            job_record = JobRecordFull.from_active_job(active_job=job)
+            self._job_records[job_id] = job_record
             self._finished_jobs[job_id] = job
         elif status == JobStatus.FAILED or isinstance(status, (str, Exception)):
             self._active_jobs.pop(job_id)
@@ -150,7 +175,7 @@ class ModuleProcessor(abc.ABC):
             elif isinstance(status, Exception):
                 job.error = str(status)
                 job._exception = status
-            self._finished_jobs[job_id] = job
+            self._failed_jobs[job_id] = job
         elif status == JobStatus.STARTED:
             job.job_log.add_log("job started")
             job.status = JobStatus.STARTED
@@ -164,11 +189,9 @@ class ModuleProcessor(abc.ABC):
         self._wait_for(*job_ids)
 
         for job_id in job_ids:
-            job = self._active_jobs[job_id]
+            job = self._job_records[job_id]
             if job is None:
                 raise Exception(f"Can't find job with id: {job_id}")
-            if job.status == JobStatus.SUCCESS:
-                job.job_log.percent_finished = 100
 
     @abc.abstractmethod
     def _wait_for(self, *job_ids: uuid.UUID):
@@ -179,7 +202,7 @@ class ModuleProcessor(abc.ABC):
         self,
         job_id: uuid.UUID,
         module: "KiaraModule",
-        inputs: Mapping[str, uuid.UUID],
+        inputs: ValueSet,
         outputs: ValueSetWritable,
         job_log: JobLog,
     ) -> str:

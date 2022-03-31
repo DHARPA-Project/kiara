@@ -18,7 +18,7 @@ from kiara.models.module import KiaraModuleTypeMetadata
 from kiara.models.module.manifest import Manifest
 from kiara.models.runtime_environment import RuntimeEnvironment, RuntimeEnvironmentMgmt
 from kiara.models.values.value import ValueSet
-from kiara.modules.mgmt.merged import MergedModuleManager
+from kiara.modules.mgmt import ModuleManager, DefaultModuleManager
 from kiara.modules.operations import OperationsMgmt
 from kiara.utils import is_debug, log_message
 from kiara.utils.db import orm_json_deserialize, orm_json_serialize
@@ -100,11 +100,12 @@ class Kiara(object):
 
         self._envs: Optional[Mapping[str, EnvironmentOrm]] = None
         self._type_mgmt_obj: TypeMgmt = TypeMgmt(self)
-        self._module_mgr: MergedModuleManager = MergedModuleManager(
-            config.module_managers,
-            extra_pipeline_folders=self._config.extra_pipeline_folders,
-            ignore_errors=self._config.ignore_errors,
-        )
+        # self._module_mgr: MergedModuleManager = MergedModuleManager(
+        #     config.module_managers,
+        #     extra_pipeline_folders=self._config.extra_pipeline_folders,
+        #     ignore_errors=self._config.ignore_errors,
+        # )
+        self._module_mgr: ModuleManager = DefaultModuleManager()
         self._operations_mgmt: OperationsMgmt = OperationsMgmt(kiara=self)
 
         self._data_registry: DataRegistry = DataRegistry(kiara=self)
@@ -147,7 +148,7 @@ class Kiara(object):
         return self._type_mgmt_obj
 
     @property
-    def module_mgmt(self) -> MergedModuleManager:
+    def module_mgmt(self) -> ModuleManager:
         return self._module_mgr
 
     @property
@@ -189,7 +190,7 @@ class Kiara(object):
 
     @property
     def module_type_names(self) -> List[str]:
-        return sorted(self.module_types.keys())
+        return self._module_mgr.module_type_names
 
     def get_module_class(self, module_type: str) -> Type["KiaraModule"]:
         return self._module_mgr.get_module_class(module_type=module_type)
@@ -217,13 +218,18 @@ class Kiara(object):
             assert (
                 kiara_module.module_instance_hash == m_hash
             )  # TODO: might not be necessary? Leaving it in here for now, to see if it triggers at any stage.
+        else:
+            raise Exception(f"Invalid module type '{manifest.module_type}'. Available type names: {', '.join(self.module_type_names)}")
 
         return kiara_module
 
-    def execute(self, manifest: Manifest, inputs: Mapping[str, Any]) -> ValueSet:
+    def execute(self, manifest: Manifest, inputs: Mapping[str, Any]) -> uuid.UUID:
 
-        result = self._jobs_mgmt.execute(manifest=manifest, inputs=inputs)
-        return result
+        job_id = self._jobs_mgmt.execute(manifest=manifest, inputs=inputs)
+        return job_id
+
+    def get_job(self, job_id: uuid.UUID):
+        return self._job
 
     # def persist_value(self, value: Union[str, uuid.UUID, Value]):
     #

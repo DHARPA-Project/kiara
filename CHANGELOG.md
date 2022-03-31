@@ -155,7 +155,7 @@
 ## Version 0.0.9
 
 - removed 'aliases' attribute from ValueOrm class, aliases are now specified when calling 'save' on the ValueOrm object
-- Job details (incl. error messages -- check the kiara.processing.Job class) for the most recent or current module executions can be retrieved: `[controller_obj].get_job_details(step_id)```
+- ActiveJob details (incl. error messages -- check the kiara.processing.ActiveJob class) for the most recent or current module executions can be retrieved: `[controller_obj].get_job_details(step_id)```
 - re-write of the DataStore class:
   - support for aliases, as well as alias versions & tags (still to be documented)
   - enables the option of having different data store types down the line

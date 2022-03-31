@@ -177,6 +177,8 @@ PIPELINE_STEP_TYPE_CATEGORY_ID = "instance.pipeline_step"
 PIPELINE_CONFIG_TYPE_CATEGORY_ID = "instance.pipeline_config"
 PIPELINE_STRUCTURE_TYPE_CATEGORY_ID = "instance.pipeline_structure"
 
+PIPELINE_STEP_DETAILS_CATEGORY_ID = "instance.pipeline_step_details"
+
 OPERATION_TYPE_CATEGORY_ID = "metadata.operation_type"
 OPERATION_TYPES_CATEGORY_ID = "operation_types"
 OPERATIONS_CATEGORY_ID = "operations"

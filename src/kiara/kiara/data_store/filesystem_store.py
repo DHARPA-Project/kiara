@@ -286,18 +286,18 @@ class FilesystemDataStore(FileSystemArchive, DataStore):
 
         return load_config
 
-    def _persist_manifest(self, manifest: Manifest):
-
-        base_path = self.get_path(entity_type=EntityType.MANIFEST)
-        manifest_folder = base_path / str(manifest.manifest_hash)
-
-        if manifest_folder.exists():
-            return
-        else:
-            manifest_folder.mkdir(parents=True, exist_ok=False)
-
-        manifest_info_file = manifest_folder / "manifest.json"
-        manifest_info_file.write_text(orjson_dumps(manifest.manifest_data))
+    # def _persist_manifest(self, manifest: Manifest):
+    #
+    #     base_path = self.get_path(entity_type=EntityType.MANIFEST)
+    #     manifest_folder = base_path / str(manifest.manifest_hash)
+    #
+    #     if manifest_folder.exists():
+    #         return
+    #     else:
+    #         manifest_folder.mkdir(parents=True, exist_ok=False)
+    #
+    #     manifest_info_file = manifest_folder / "manifest.json"
+    #     manifest_info_file.write_text(orjson_dumps(manifest.manifest_data))
 
     def _persist_value_pedigree(self, value: Value):
 

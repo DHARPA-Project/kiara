@@ -14,7 +14,7 @@ import typing
 
 from kiara import Kiara
 from kiara.models.module.pipeline import PipelineConfig
-from kiara.models.module.pipeline.controller import SinglePipelineController
+from kiara.models.module.pipeline.controller import SinglePipelineController, SinglePipelineBatchController
 from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.utils.graphs import print_ascii_graph
 
@@ -100,17 +100,15 @@ def explain(ctx, pipeline_type: str):
         print_ascii_graph(pc.structure.data_flow_graph)
 
     pipeline = Pipeline(structure=pc.structure, data_registry=kiara_obj.data_registry)
+    processor = kiara_obj.jobs_mgmt._processor
+    controller = SinglePipelineBatchController(pipeline=pipeline, processor=processor)
 
-    controller = SinglePipelineController(pipeline=pipeline)
-
-    pipeline.add_listener(listener=controller)
-
-    changed = pipeline.set_pipeline_inputs(a=True, b=True, _sync_to_step_inputs=True)
-    changed = pipeline.set_pipeline_inputs(a=True, b=False)
-    changed = pipeline.sync_pipeline_inputs()
+    changed = pipeline.set_pipeline_inputs(inputs={"a": True, "b": True})
 
     print(pipeline.get_pipeline_details().json(option=orjson.OPT_INDENT_2))
 
+    print("STARTING")
+    controller.process_pipeline()
     # pipeline.set_pipeline_inputs(a=False, b=False)
 
     # print(pipeline.get_current_pipeline_inputs())

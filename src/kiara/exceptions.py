@@ -115,13 +115,13 @@ class InvalidValuesException(Exception):
     def __init__(
         self,
         msg: typing.Union[None, str, Exception] = None,
-        invalid_inputs: Mapping[str, str] = None,
+        invalid_values: Mapping[str, str] = None,
     ):
 
-        if invalid_inputs is None:
-            invalid_inputs = {}
+        if invalid_values is None:
+            invalid_values = {}
 
-        self._invalid_inputs: Mapping[str, str] = invalid_inputs
+        self._invalid_inputs: Mapping[str, str] = invalid_values
 
         if msg is None:
             if not self._invalid_inputs:

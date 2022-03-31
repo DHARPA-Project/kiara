@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
-from typing import Any, Iterable, List, Mapping, Optional, Union
+import os
+from pathlib import Path
+from typing import Any, Iterable, List, Mapping, Optional, Union, Tuple
 
+from kiara.defaults import MODULE_TYPE_NAME_KEY
 from kiara.models.module.pipeline.value_refs import StepValueAddress
 
 # def generate_step_alias(step_id: str, value_name):
 #     return f"{step_id}.{value_name}"
+from kiara.utils import get_data_from_file
 
 
 def create_step_value_address(
@@ -36,7 +40,7 @@ def create_step_value_address(
     elif isinstance(value_address_config, Mapping):
 
         step_id = value_address_config["step_id"]
-        output_name = value_address_config["output_name"]
+        output_name = value_address_config["value_name"]
         sub_value = value_address_config.get("sub_value", None)
     else:
         raise TypeError(
@@ -76,3 +80,67 @@ def ensure_step_value_addresses(
         raise TypeError(f"Can't parse input map, invalid type for output: {link}")
 
     return input_links
+
+
+def get_pipeline_details_from_path(
+    path: Union[str, Path],
+    module_type_name: Optional[str] = None,
+    base_module: Optional[str] = None,
+) -> Mapping[str, Any]:
+    """Load a pipeline description, save it's content, and determine it the pipeline base name.
+
+    Arguments:
+        path: the path to the pipeline file
+        module_type_name: if specifies, overwrites any auto-detected or assigned pipeline name
+        base_module: overrides the base module the assembled pipeline module will be located in the python hierarchy
+
+    """
+
+    if isinstance(path, str):
+        path = Path(os.path.expanduser(path))
+
+    if not path.is_file():
+        raise Exception(
+            f"Can't add pipeline description '{path.as_posix()}': not a file"
+        )
+
+    data = get_data_from_file(path)
+
+    if not data:
+        raise Exception(
+            f"Can't register pipeline file '{path.as_posix()}': no content."
+        )
+
+    if module_type_name:
+        data[MODULE_TYPE_NAME_KEY] = module_type_name
+
+    if not isinstance(data, Mapping):
+        raise Exception("Not a dictionary type.")
+
+    # filename = path.name
+    # name = data.get(MODULE_TYPE_NAME_KEY, None)
+    # if name is None:
+    #     name = filename.split(".", maxsplit=1)[0]
+
+    result = {"data": data, "source": path.as_posix(), "source_type": "file"}
+    if base_module:
+        result["base_module"] = base_module
+    return result
+
+
+def check_doc_sidecar(
+    path: Union[Path, str], data: Mapping[str, Any]
+) -> Mapping[str, Any]:
+
+    if isinstance(path, str):
+        path = Path(os.path.expanduser(path))
+
+    _doc = data["data"].get("documentation", None)
+    if _doc is None:
+        _doc_path = Path(path.as_posix() + ".md")
+        if _doc_path.is_file():
+            doc = _doc_path.read_text()
+            if doc:
+                data["data"]["documentation"] = doc
+
+    return data

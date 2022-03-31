@@ -8,9 +8,13 @@
 import orjson
 import uuid
 from sortedcontainers import SortedDict
-from typing import TYPE_CHECKING, Dict, List, Mapping, MutableMapping, Optional, Set
+from typing import TYPE_CHECKING, Dict, List, Mapping, MutableMapping, Optional, Set, Any
 
+from kiara.defaults import PIPELINE_STEP_DETAILS_CATEGORY_ID, NOT_SET_VALUE_ID, NONE_VALUE_ID
 from kiara.models.events import ChangedValue, KiaraEvent
+from kiara.models.module import KiaraModuleConfig
+from kiara.models.module.jobs import JobConfig
+from kiara.models.module.manifest import InputsManifest
 from kiara.models.module.pipeline import StepStatus
 from kiara.utils import orjson_dumps
 
@@ -19,16 +23,13 @@ try:
 except Exception:
     from typing_extensions import Literal  # type: ignore
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 
 if TYPE_CHECKING:
     from kiara.models.module.pipeline.pipeline import Pipeline
-
+    from kiara.kiara.data_registry import DataRegistry
 
 class StepDetails(BaseModel):
-    class Config:
-        json_loads = orjson.loads
-        json_dumps = orjson_dumps
 
     kiara_id: uuid.UUID = Field(description="The id of the kiara context.")
     pipeline_id: uuid.UUID = Field(description="The id of the pipeline.")
@@ -41,13 +42,44 @@ class StepDetails(BaseModel):
         description="Details about fields that are invalid (if status < 'INPUTS_READY'.",
         default_factory=dict,
     )
-
-    inputs: Dict[str, Optional[uuid.UUID]] = Field(
-        description="The current inputs of this step."
-    )
-    outputs: Dict[str, Optional[uuid.UUID]] = Field(
+    inputs: Dict[str, uuid.UUID] = Field(description="The current inputs of this step.")
+    outputs: Dict[str, uuid.UUID] = Field(
         description="The current outputs of this step."
     )
+
+    @validator("inputs")
+    def replace_none_values_inputs(cls, value):
+
+        result = {}
+        for k, v in value.items():
+            if v is None:
+                v = NONE_VALUE_ID
+            result[k] = v
+        return result
+
+    @validator("outputs")
+    def replace_none_values_outputs(cls, value):
+
+        result = {}
+        for k, v in value.items():
+            if v is None:
+                v = NOT_SET_VALUE_ID
+            result[k] = v
+        return result
+
+    def _retrieve_data_to_hash(self) -> Any:
+        return {
+            "kiara_id": self.kiara_id,
+            "pipeline_id": self.pipeline_id,
+            "step_id": self.step_id,
+            "inputs": self.inputs
+        }
+
+    def _retrieve_id(self) -> str:
+        return f"{self.kiara_id}.{self.pipeline_id}.{self.step_id}"
+
+    def _retrieve_category_id(self) -> str:
+        return PIPELINE_STEP_DETAILS_CATEGORY_ID
 
 
 class PipelineDetails(BaseModel):
@@ -65,6 +97,9 @@ class PipelineDetails(BaseModel):
         description="Details about fields that are invalid (if status < 'INPUTS_READY'.",
         default_factory=dict,
     )
+
+    pipeline_inputs: Dict[str, Optional[uuid.UUID]] = Field(description="The current pipeline inputs.")
+    pipeline_outputs: Dict[str, Optional[uuid.UUID]] = Field(description="The current pipeline outputs.")
 
     step_states: Dict[str, StepDetails] = Field(
         description="The state of each step within this pipeline."
@@ -113,7 +148,7 @@ class PipelineEvent(KiaraEvent):
             pipeline_outputs_changed=pipeline_outputs,
             step_inputs_changed=step_inputs,
             step_outputs_changed=step_outputs,
-            invalidated_steps=sorted(invalidated_steps),
+            changed_steps=sorted(invalidated_steps),
         )
         return event
 
@@ -140,12 +175,12 @@ class PipelineEvent(KiaraEvent):
         description="Details about changed step output values.", default_factory=dict
     )
 
-    invalidated_steps: List[str] = Field(
+    changed_steps: List[str] = Field(
         description="A list of all step ids that have newly invalidated outputs."
     )
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(pipeline_id={self.pipeline_id}, invalidated_steps={', '.join(self.invalidated_steps)})"
+        return f"{self.__class__.__name__}(pipeline_id={self.pipeline_id}, invalidated_steps={', '.join(self.changed_steps)})"
 
     def __str__(self):
         return self.__repr__()

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Set, U
 
 from kiara.models.module.destiniy import Destiny
 from kiara.models.module.jobs import JobConfig, JobRecord
-from kiara.models.module.manifest import LoadConfig, Manifest
+from kiara.models.module.manifest import LoadConfig, Manifest, InputsManifest
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.value import ORPHAN, Value, ValuePedigree
 from kiara.models.values.value_schema import ValueSchema
@@ -174,9 +174,9 @@ class DataArchive(abc.ABC):
     ) -> Optional[Set[Value]]:
         pass
 
-    def retrieve_job_record(self, job: JobConfig) -> Optional[JobRecord]:
+    def retrieve_job_record(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
         return self._retrieve_job_record(
-            manifest_hash=job.manifest_hash, inputs_hash=job.inputs_hash
+            manifest_hash=inputs_manifest.manifest_hash, inputs_hash=inputs_manifest.inputs_hash
         )
 
     @abc.abstractmethod
@@ -258,9 +258,9 @@ class DataStore(DataArchive):
     ):
         pass
 
-    @abc.abstractmethod
-    def _persist_manifest(self, manifest: Manifest):
-        pass
+    # @abc.abstractmethod
+    # def _persist_manifest(self, manifest: Manifest):
+    #     pass
 
     @abc.abstractmethod
     def _persist_value(self, value: Value) -> LoadConfig:

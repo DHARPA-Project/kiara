@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-import orjson.orjson
+import uuid
+
 import structlog
-from typing import Optional
+from typing import Optional, Mapping
 
 from kiara.models.events.pipeline import PipelineDetails, PipelineEvent
 from kiara.models.module.pipeline.pipeline import Pipeline, PipelineListener
+from kiara.processing import ModuleProcessor
 from kiara.utils import is_debug
 
 logger = structlog.getLogger()
@@ -16,9 +18,12 @@ class PipelineController(PipelineListener):
 
 
 class SinglePipelineController(PipelineController):
-    def __init__(self, pipeline: Pipeline):
+
+    def __init__(self, pipeline: Pipeline, processor: ModuleProcessor):
 
         self._pipeline: Pipeline = pipeline
+        self._processor: ModuleProcessor = processor
+        self._pipeline.add_listener(self)
         self._pipeline_details: Optional[PipelineDetails] = None
 
     @property
@@ -51,46 +56,46 @@ class SinglePipelineController(PipelineController):
 
         self._pipeline_details = None
 
-        dbg("============")
-        dbg("EVENT")
-        print(event.json(option=orjson.OPT_INDENT_2))
+    def set_processing_results(self, job_ids: Mapping[str, uuid.UUID]):
+
+        self._processor.wait_for(*job_ids.values())
+
+        combined_outputs= {}
+        for step_id, job_id in job_ids.items():
+            record = self._processor.get_job_record(job_id=job_id)
+            combined_outputs[step_id] = record.outputs
+
+        self.pipeline.set_multiple_step_outputs(changed_outputs=combined_outputs, notify_listeners=True)
+
+    def pipeline_is_ready(self) -> bool:
+        """Return whether the pipeline is ready to be processed.
+
+        A ``True`` result means that all pipeline inputs are set with valid values, and therefore every step within the
+        pipeline can be processed.
+
+        Returns:
+            whether the pipeline can be processed as a whole (``True``) or not (``False``)
+        """
+
+        pipeline_inputs = self.pipeline._all_values.get_alias("pipeline.inputs")
+        assert pipeline_inputs is not None
+        return pipeline_inputs.all_items_valid
 
     def process_step(
-        self, step_id: str, raise_exception: bool = False, wait: bool = False
-    ) -> str:
+        self, step_id: str, wait: bool = False
+    ) -> uuid.UUID:
         """Kick off processing for the step with the provided id.
 
         Arguments:
             step_id: the id of the step that should be started
         """
 
-        step_inputs = self.get_step_inputs(step_id)
+        job_config = self.pipeline.create_job_config_for_step(step_id)
 
-        # if the inputs are not valid, ignore this step
-        if not step_inputs.items_are_valid():
-            status = step_inputs.check_invalid()
-            assert status is not None
-            raise Exception(
-                f"Can't execute step '{step_id}', invalid inputs: {', '.join(status.keys())}"
-            )
-
-        # get the output 'holder' objects, which we'll need to pass to the module
-        step_outputs = self.get_step_outputs(step_id)
-        # get the module object that holds the code that will do the processing
-        step = self.get_step(step_id)
-
-        job_id = self._processor.start(
-            pipeline_id=self.pipeline.id,
-            pipeline_name=self.pipeline.title,
-            step_id=step_id,
-            module=step.module,
-            inputs=step_inputs,
-            outputs=step_outputs,
-        )
-        self._job_ids[step_id] = job_id
+        job_id = self._processor.process_job(job_config=job_config)
 
         if wait:
-            self.wait_for_jobs(job_id, sync_outputs=True)
+            self._processor.wait_for(job_id)
 
         return job_id
 
@@ -109,12 +114,13 @@ class SinglePipelineBatchController(SinglePipelineController):
     def __init__(
         self,
         pipeline: Pipeline,
+        processor: ModuleProcessor,
         auto_process: bool = True,
     ):
 
         self._auto_process: bool = auto_process
         self._is_running: bool = False
-        super().__init__(pipeline=pipeline)
+        super().__init__(pipeline=pipeline, processor=processor)
 
     @property
     def auto_process(self) -> bool:
@@ -134,26 +140,21 @@ class SinglePipelineBatchController(SinglePipelineController):
             )
             raise Exception("Pipeline already running.")
 
+        logger.debug("execute.pipeline", pipeline_id=self.pipeline.pipeline_id)
         self._is_running = True
         try:
-            for stage in self.pipeline.structure.processing_stages:
-                job_ids = []
+            for idx, stage in enumerate(self.pipeline.structure.processing_stages, start=1):
+
+                logger.debug("execute.pipeline.stage", pipeline_id=self.pipeline.pipeline_id, stage=idx)
+
+                job_ids = {}
                 for step_id in stage:
 
-                    if not self.can_be_processed(step_id):
-                        if self.can_be_skipped(step_id):
-                            continue
-                        else:
-                            invalid_inputs = (
-                                self.pipeline.get_pipeline_details().invalid_details.keys()
-                            )
-                            assert invalid_inputs
-                            raise Exception(
-                                f"Required pipeline step '{step_id}' can't be processed, inputs not ready yet: {', '.join(invalid_inputs)}"
-                            )
+                    logger.debug("execute.pipeline.step", pipeline_id=self.pipeline.pipeline_id, step_id=step_id)
+
                     try:
                         job_id = self.process_step(step_id)
-                        job_ids.append(job_id)
+                        job_ids[step_id] = job_id
                     except Exception as e:
                         # TODO: cancel running jobs?
                         if is_debug():
@@ -168,30 +169,11 @@ class SinglePipelineBatchController(SinglePipelineController):
                         )
                         return False
 
-                self._processor.wait_for(*job_ids)
-                # for j_id in job_ids:
-                #     job = self._processor.get_job_details(j_id)
-                #     assert job is not None
-                #     if job.error:
-                #         print(job.error)
+                self.set_processing_results(job_ids=job_ids)
+                logger.debug("execute_finished.pipeline.stage", pipeline_id=self.pipeline.pipeline_id, stage=idx)
+
         finally:
             self._is_running = False
 
-    def step_inputs_changed(self, event: "StepInputEvent"):
+        logger.debug("execute_finished.pipeline", pipeline_id=self.pipeline.pipeline_id)
 
-        if self._is_running:
-            log.debug("Pipeline running, doing nothing.")
-            return
-
-        if not self.pipeline_is_ready():
-            log.debug(f"Pipeline not ready after input event: {event}")
-            return
-
-        if self._auto_process:
-            self.process_pipeline()
-
-    def pipeline_outputs_changed(self, event: "PipelineOutputEvent"):
-
-        if self.pipeline_is_finished():
-            # TODO: check if something is running
-            self._is_running = False

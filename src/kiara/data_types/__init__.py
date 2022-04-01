@@ -383,6 +383,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
                 data_type_class=this_cls,
             )
 
+        value._value_data = data
         value._data_type = self
         return value, data
 

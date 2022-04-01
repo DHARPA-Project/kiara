@@ -77,9 +77,9 @@ def list_values(
 
     data_registry = kiara_obj.data_registry
 
-    rich_print(data_registry.aliases.print_tree())
-    # table = kiara_obj.data_registry.default_data_store.create_renderable(show_pedigree=show_pedigree, show_data=show_data, show_load_config=show_load_config)
-    # rich_print(table, show_pedigree=show_pedigree, show_data=show_data)
+    # rich_print(data_registry.aliases.print_tree())
+    table = kiara_obj.data_registry.default_data_store.create_renderable(show_pedigree=show_pedigree, show_data=show_data, show_load_config=show_load_config)
+    rich_print(table, show_pedigree=show_pedigree, show_data=show_data)
 
 
 @data.command(name="explain")

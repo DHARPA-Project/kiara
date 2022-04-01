@@ -184,15 +184,15 @@ def run(
     # =========================================================================
     # execute job
 
-    job_id = kiara_obj.jobs_mgmt.execute_job(job_config=job_config)
-    status = kiara_obj.jobs_mgmt.get_job_status(job_id=job_id)
+    job_id = kiara_obj.job_registry.execute_job(job_config=job_config)
+    status = kiara_obj.job_registry.get_job_status(job_id=job_id)
 
     if status == JobStatus.FAILED:
-        job = kiara_obj.jobs_mgmt.get_job_details(job_id=job_id)
+        job = kiara_obj.job_registry.get_job_details(job_id=job_id)
         print(f"Job failed: {job.error}")
         sys.exit(1)
 
-    outputs = kiara_obj.jobs_mgmt.retrieve_result(job_id)
+    outputs = kiara_obj.job_registry.retrieve_result(job_id)
 
     outputs = operation.process_job_outputs(outputs=outputs)
 

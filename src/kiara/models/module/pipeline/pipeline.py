@@ -103,8 +103,6 @@ class Pipeline(object):
                 )
 
         self._all_values = values
-        self._all_values.print_tree()
-        return
 
     def __eq__(self, other):
 

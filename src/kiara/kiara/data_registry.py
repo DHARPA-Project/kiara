@@ -160,12 +160,6 @@ class AbstractDataRegistry(abc.ABC):
 
         pass
 
-    @abc.abstractmethod
-    def find_matching_record(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
-        pass
-
-
-
 class DataRegistry(AbstractDataRegistry):
 
     def __init__(self, kiara: "Kiara"):
@@ -426,27 +420,27 @@ class DataRegistry(AbstractDataRegistry):
 
         return set((self.get_value(value=v_id) for v_id in stored))
 
-    def find_matching_record(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
-
-        if inputs_manifest.model_data_hash in self._registred_jobs.keys():
-            return self._registred_jobs[inputs_manifest.model_data_hash]
-
-        matches = []
-        match = None
-        for store_id, store in self.data_stores.items():
-            match = store.retrieve_job_record(inputs_manifest=inputs_manifest)
-            if match:
-                matches.append(match)
-
-        if len(matches) == 0:
-            return None
-        elif len(matches) > 1:
-            raise Exception(
-                f"Multiple stores have a record for inputs manifest '{inputs_manifest}', this is not supported (yet)."
-            )
-
-        # self._job_store_map[job.model_data_hash] = matches[0]
-        self._registred_jobs[inputs_manifest.model_data_hash] = matches[0]
+    # def find_matching_job_record(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
+    #
+    #     if inputs_manifest.model_data_hash in self._registred_jobs.keys():
+    #         return self._registred_jobs[inputs_manifest.model_data_hash]
+    #
+    #     matches = []
+    #     match = None
+    #     for store_id, store in self.data_stores.items():
+    #         match = store.retrieve_job_record(inputs_manifest=inputs_manifest)
+    #         if match:
+    #             matches.append(match)
+    #
+    #     if len(matches) == 0:
+    #         return None
+    #     elif len(matches) > 1:
+    #         raise Exception(
+    #             f"Multiple stores have a record for inputs manifest '{inputs_manifest}', this is not supported (yet)."
+    #         )
+    #
+    #     # self._job_store_map[job.model_data_hash] = matches[0]
+    #     self._registred_jobs[inputs_manifest.model_data_hash] = matches[0]
 
         return match
 
@@ -483,6 +477,7 @@ class DataRegistry(AbstractDataRegistry):
             data = self.get_value(value=data)
 
         if isinstance(data, Value):
+
             if data.value_id in self._registered_values.keys():
                 if reuse_existing:
                     return data
@@ -588,8 +583,6 @@ class DataRegistry(AbstractDataRegistry):
         if value_id in self._cached_data.keys():
             return self._cached_data[value_id]
 
-        value = self.get_value(value=value_id)
-
         load_config = self.retrieve_load_config(value_id=value_id)
 
         if load_config is None:
@@ -597,32 +590,33 @@ class DataRegistry(AbstractDataRegistry):
                 f"Load config for value '{value_id}' is 'None', this is most likely a bug."
             )
 
-        data = self._load_data_from_load_config(load_config=load_config, value=value)
+        data = self._load_data_from_load_config(load_config=load_config, value_id=value_id)
         self._cached_data[value_id] = data
+
         return data
 
-    def _load_data_from_load_config(self, load_config: LoadConfig, value: Value) -> Any:
+    def _load_data_from_load_config(self, load_config: LoadConfig, value_id: uuid.UUID) -> Any:
 
         logger.debug("value.load", module=load_config.module_type)
 
         # TODO: check whether modules and value types are available
 
         try:
-            job_config = self._kiara.jobs_mgmt.prepare_job_config(
+            job_config = self._kiara.job_registry.prepare_job_config(
                 manifest=load_config, inputs=load_config.inputs
             )
-        except JobConfigException as jce:
+        except JobConfigException:
             if is_debug():
                 import traceback
-
                 traceback.print_exc()
+            value = self.get_value(value=value_id)
             return UnloadableData(value=value, load_config=load_config)
 
-        job_id = self._kiara.jobs_mgmt.execute_job(job_config=job_config)
-        result = self._kiara.jobs_mgmt.retrieve_result(job_id=job_id)
-
+        job_id = self._kiara.job_registry.execute_job(job_config=job_config)
+        result = self._kiara.job_registry.retrieve_result(job_id=job_id)
         # data = result.get_value_data(load_config.output_name)
         result_value = result.get_value_obj(field_name=load_config.output_name)
+
         return result_value.data
 
     def load_values(self, values: Mapping[str, Optional[uuid.UUID]]) -> ValueSet:
@@ -680,9 +674,10 @@ class DataRegistry(AbstractDataRegistry):
     ) -> Value:
 
         if isinstance(value_or_data, Value):
-            existing = self.get_value(value_or_data)
-            if existing == value_or_data:
-                return existing
+            if value_or_data.value_id in self._registered_values.keys():
+                existing = self._registered_values[value_or_data.value_id]
+                if existing == value_or_data:
+                    return existing
 
             raise NotImplementedError()
 
@@ -823,7 +818,7 @@ class DataRegistry(AbstractDataRegistry):
 
     def resolve_destiny(self, destiny: Destiny) -> Value:
 
-        results = self._kiara.jobs_mgmt.execute_and_retrieve(manifest=destiny, inputs=destiny.merged_inputs)
+        results = self._kiara.job_registry.execute_and_retrieve(manifest=destiny, inputs=destiny.merged_inputs)
         value = results.get_value_obj(field_name=destiny.result_field_name)
         destiny.result_value_id = value.value_id
         return value

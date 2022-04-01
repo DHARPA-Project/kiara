@@ -12,7 +12,7 @@ from kiara.defaults import KIARA_DB_MIGRATIONS_CONFIG, KIARA_DB_MIGRATIONS_FOLDE
 from kiara.interfaces import get_console
 from kiara.kiara.config import KiaraContextConfig, KiaraGlobalConfig
 from kiara.kiara.data_registry import DataRegistry
-from kiara.kiara.jobs import JobsMgmt
+from kiara.kiara.job_registry import JobRegistry
 from kiara.kiara.orm import EnvironmentOrm
 from kiara.models.module import KiaraModuleTypeMetadata
 from kiara.models.module.manifest import Manifest
@@ -111,7 +111,7 @@ class Kiara(object):
         self._data_registry: DataRegistry = DataRegistry(kiara=self)
         # self._persistence_mgmt: PersistenceMgmt = PersistenceMgmt(kiara=self)
 
-        self._jobs_mgmt: JobsMgmt = JobsMgmt(kiara=self)
+        self._job_registry: JobRegistry = JobRegistry(kiara=self)
         self._cached_modules: Dict[str, Dict[int, KiaraModule]] = {}
 
         self._env_mgmt: Optional[RuntimeEnvironmentMgmt] = None
@@ -152,8 +152,8 @@ class Kiara(object):
         return self._module_mgr
 
     @property
-    def jobs_mgmt(self) -> JobsMgmt:
-        return self._jobs_mgmt
+    def job_registry(self) -> JobRegistry:
+        return self._job_registry
 
     @property
     def operations_mgmt(self) -> OperationsMgmt:
@@ -225,7 +225,7 @@ class Kiara(object):
 
     def execute(self, manifest: Manifest, inputs: Mapping[str, Any]) -> uuid.UUID:
 
-        job_id = self._jobs_mgmt.execute(manifest=manifest, inputs=inputs)
+        job_id = self._job_registry.execute(manifest=manifest, inputs=inputs)
         return job_id
 
     def get_job(self, job_id: uuid.UUID):

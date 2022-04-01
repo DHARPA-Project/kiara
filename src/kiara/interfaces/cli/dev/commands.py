@@ -30,9 +30,9 @@ def test(ctx):
 
     inputs = {"text_1": "xxxx", "text_2": "yyyy", "aaaa": "bbb"}
     # job = JobConfig(inputs=inputs, **op.dict())
-    job_id = kiara_obj.jobs_mgmt.execute(manifest=op, inputs=inputs)
+    job_id = kiara_obj.job_registry.execute(manifest=op, inputs=inputs)
     print(job_id)
-    results = kiara_obj.jobs_mgmt.retrieve_result(job_id)
+    results = kiara_obj.job_registry.retrieve_result(job_id)
     print(results)
     text_value = results["text"]
 

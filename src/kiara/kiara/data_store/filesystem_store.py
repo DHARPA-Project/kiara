@@ -7,9 +7,10 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Set
 
 from kiara.kiara.data_store import DataArchive, DataStore
+from kiara.kiara.job_registry import JobArchive
 from kiara.models.module.destiniy import Destiny
 from kiara.models.module.jobs import JobRecord
-from kiara.models.module.manifest import LoadConfig, Manifest
+from kiara.models.module.manifest import LoadConfig, Manifest, InputsManifest
 from kiara.models.values.value import Value
 from kiara.modules.operations.included_core_operations.persistence import (
     PersistValueOperationType,
@@ -33,10 +34,11 @@ class EntityType(Enum):
     DESTINY = "destinies"
 
 
-class FileSystemArchive(DataArchive):
+class FileSystemArchive(DataArchive, JobArchive):
+
     def __init__(self, kiara: "Kiara"):
 
-        super().__init__(kiara=kiara)
+        DataArchive.__init__(self, kiara=kiara)
         self._base_path: Optional[Path] = None
 
     @property
@@ -45,7 +47,7 @@ class FileSystemArchive(DataArchive):
         if self._base_path is not None:
             return self._base_path
 
-        self._base_path = Path(self._kiara.context_config.data_directory) / "store"
+        self._base_path = Path(self._kiara.context_config.data_directory) / "data_store"
         self._base_path.mkdir(parents=True, exist_ok=True)
         return self._base_path
 
@@ -80,6 +82,11 @@ class FileSystemArchive(DataArchive):
 
         environment = orjson.loads(env_details_file.read_text())
         return environment
+
+    def find_matching_job_record(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
+        return self._retrieve_job_record(
+            manifest_hash=inputs_manifest.manifest_hash, inputs_hash=inputs_manifest.inputs_hash
+        )
 
     def _retrieve_job_record(
         self, manifest_hash: int, inputs_hash: int
@@ -117,7 +124,7 @@ class FileSystemArchive(DataArchive):
         }
 
         outputs = {}
-        for output_file in inputs_folder.glob("output_*.json"):
+        for output_file in inputs_folder.glob("output__*.json"):
             full_output_name = output_file.name[8:]
             start_value_id = full_output_name.find("__value_id__")
             output_name = full_output_name[0:start_value_id]

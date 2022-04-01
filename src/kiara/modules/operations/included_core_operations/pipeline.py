@@ -111,9 +111,8 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
                         )
                     ]:
 
+                        full_path = os.path.join(root, filename)
                         try:
-
-                            full_path = os.path.join(root, filename)
 
                             data = get_pipeline_details_from_path(path=full_path)
                             data = check_doc_sidecar(full_path, data)

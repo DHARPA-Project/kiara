@@ -6,7 +6,7 @@ from deepdiff import DeepHash
 from enum import Enum
 from pydantic.fields import Field, PrivateAttr
 from pydantic.main import BaseModel
-from typing import Any, Dict, Mapping, Optional, TYPE_CHECKING
+from typing import Any, Dict, Mapping, Optional, TYPE_CHECKING, List
 
 from kiara.defaults import (
     JOB_CATEGORY_ID,
@@ -43,8 +43,8 @@ class LogMessage(BaseModel):
 
 class JobLog(BaseModel):
 
-    log: Dict[int, LogMessage] = Field(
-        description="The logs for this job.", default_factory=dict
+    log: List[LogMessage] = Field(
+        description="The logs for this job.", default_factory=list
     )
     percent_finished: int = Field(
         description="Describes how much of the job is finished. A negative number means the module does not support progress tracking.",
@@ -54,7 +54,7 @@ class JobLog(BaseModel):
     def add_log(self, msg: str, log_level: int = logging.DEBUG):
 
         _msg = LogMessage(msg=msg, log_level=log_level)
-        self.log[len(self.log)] = _msg
+        self.log.append(_msg)
 
 
 class JobConfig(InputsManifest):
@@ -127,9 +127,65 @@ class ActiveJob(KiaraModel):
         runtime = self.finished - self.started
         return runtime.total_seconds()
 
+class JobRuntimeDetails(BaseModel):
+
+    # @classmethod
+    # def from_manifest(
+    #     cls,
+    #     manifest: Manifest,
+    #     inputs: Mapping[str, Value],
+    #     outputs: Mapping[str, Value],
+    # ):
+    #
+    #     return JobRecord(
+    #         module_type=manifest.module_type,
+    #         module_config=manifest.module_config,
+    #         inputs={k: v.value_id for k, v in inputs.items()},
+    #         outputs={k: v.value_id for k, v in outputs.items()},
+    #     )
+
+    job_log: JobLog = Field(description="The lob jog.")
+    submitted: datetime = Field(
+        description="When the job was submitted."
+    )
+    started: datetime = Field(
+        description="When the job was started."
+    )
+    finished: datetime = Field(
+        description="When the job was finished."
+    )
+    runtime: float = Field(description="The duration of the job.")
+
+
 class JobRecord(JobConfig):
 
+    @classmethod
+    def from_active_job(self, active_job: ActiveJob):
+
+        assert active_job.status == JobStatus.SUCCESS
+        assert active_job.results is not None
+
+        job_details = JobRuntimeDetails.construct(
+            job_log=active_job.job_log,
+            submitted=active_job.submitted,
+            started=active_job.started,  # type: ignore
+            finished=active_job.finished,  # type: ignore
+            runtime=active_job.runtime  # type: ignore
+        )
+
+        job_record = JobRecord.construct(
+            module_type=active_job.job_config.module_type,
+            module_config=active_job.job_config.module_config,
+            inputs=active_job.job_config.inputs,
+            outputs=active_job.results,
+            runtime_details=job_details
+        )
+        return job_record
+
+
     outputs: Dict[str, uuid.UUID] = Field(description="References to the job outputs.")
+    runtime_details: Optional[JobRuntimeDetails] = Field(description="Runtime details for the job.")
+
     _outputs_hash: Optional[int] = PrivateAttr(default=None)
 
     def _retrieve_category_id(self) -> str:
@@ -174,20 +230,6 @@ class JobRecordFull(JobRecord):
         )
         return job_record
 
-    # @classmethod
-    # def from_manifest(
-    #     cls,
-    #     manifest: Manifest,
-    #     inputs: Mapping[str, Value],
-    #     outputs: Mapping[str, Value],
-    # ):
-    #
-    #     return JobRecord(
-    #         module_type=manifest.module_type,
-    #         module_config=manifest.module_config,
-    #         inputs={k: v.value_id for k, v in inputs.items()},
-    #         outputs={k: v.value_id for k, v in outputs.items()},
-    #     )
 
     job_log: JobLog = Field(description="The lob jog.")
     submitted: datetime = Field(

@@ -287,7 +287,7 @@ class Operation(Manifest):
             inputs=augmented_inputs
         )
 
-        job_config = kiara.jobs_mgmt.prepare_job_config(
+        job_config = kiara.job_registry.prepare_job_config(
             manifest=self, inputs=module_inputs
         )
         return job_config
@@ -296,8 +296,8 @@ class Operation(Manifest):
 
         job_config = self.prepare_job_config(kiara=kiara, inputs=inputs)
 
-        job_id = kiara.jobs_mgmt.execute_job(job_config=job_config)
-        outputs: ValueSet = kiara.jobs_mgmt.retrieve_result(job_id=job_id)
+        job_id = kiara.job_registry.execute_job(job_config=job_config)
+        outputs: ValueSet = kiara.job_registry.retrieve_result(job_id=job_id)
 
         result = self.process_job_outputs(outputs=outputs)
         return result

@@ -23,7 +23,7 @@ class SynchronousProcessorConfig(ProcessorConfig):
 
 
 class SynchronousProcessor(ModuleProcessor):
-    def queue_job(
+    def _add_processing_task(
         self,
         job_id: uuid.UUID,
         module: "KiaraModule",

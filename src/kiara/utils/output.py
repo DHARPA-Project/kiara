@@ -11,16 +11,16 @@ from pydantic import BaseModel, Field, root_validator
 from rich import box
 from rich.console import ConsoleRenderable, RenderableType, RenderGroup, RichCast
 from rich.table import Table as RichTable
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Optional, Type
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Optional, Type, Set
 
 from kiara.defaults import SpecialValue
-from kiara.models.values.value import ORPHAN, Value
 from kiara.models.values.value_metadata import ValueMetadata
 from kiara.utils import dict_from_cli_args
 
+from kiara.models.values.value import ORPHAN, Value
+
 if TYPE_CHECKING:
     from pyarrow import Table as ArrowTable
-
     from kiara.models.values.value_schema import ValueSchema
 
 
@@ -536,7 +536,7 @@ def create_table_from_field_schemas(
 
 
 def create_table_from_model_object(
-    model: BaseModel, render_config: Optional[Mapping[str, Any]] = None
+    model: BaseModel, render_config: Optional[Mapping[str, Any]] = None, exclude_fields: Optional[Set[str]] = None
 ):
 
     model_cls = model.__class__
@@ -550,6 +550,8 @@ def create_table_from_model_object(
     props = model_cls.schema().get("properties", {})
 
     for field_name, field in sorted(model_cls.__fields__.items()):
+        if exclude_fields and field_name in exclude_fields:
+            continue
         row = [field_name]
 
         p = props.get(field_name, None)

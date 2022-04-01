@@ -92,7 +92,7 @@ class SinglePipelineController(PipelineController):
 
         job_config = self.pipeline.create_job_config_for_step(step_id)
 
-        job_id = self._processor.process_job(job_config=job_config)
+        job_id = self._processor.queue_job(job_config=job_config)
 
         if wait:
             self._processor.wait_for(job_id)

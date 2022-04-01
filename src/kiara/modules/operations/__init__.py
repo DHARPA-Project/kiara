@@ -58,12 +58,16 @@ class OperationType(abc.ABC, Generic[OPERATION_TYPE_DETAILS]):
         """Check whether the provided module is a valid operation for this type."""
 
     def retrieve_operation_details(
-        self, operation: Operation
+        self, operation: Union[Operation, str]
     ) -> OPERATION_TYPE_DETAILS:
         """Retrieve operation details for provided operation.
 
         This is really just a utility method, to make the type checker happy.
         """
+
+        if isinstance(operation, str):
+            operation = self.operations[operation]
+
         return operation.operation_details
 
 

@@ -3,6 +3,7 @@ import copy
 import os
 from enum import Enum
 from pydantic import Extra, Field, PrivateAttr, root_validator, validator
+from rich.console import RenderableType
 from slugify import slugify
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
 
@@ -14,6 +15,7 @@ from kiara.models.module import KiaraModuleClass, KiaraModuleConfig
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.pipeline.value_refs import StepValueAddress
 from kiara.utils import get_data_from_file
+from kiara.utils.output import create_table_from_model_object
 from kiara.utils.pipelines import ensure_step_value_addresses
 
 if TYPE_CHECKING:
@@ -193,7 +195,12 @@ class PipelineStep(Manifest):
             self._module = m_cls(module_config=self.module_config)
         return self._module
 
+    def __repr__(self):
 
+        return f"{self.__class__.__name__}(step_id={self.step_id} module_type={self.module_type})"
+
+    def __str__(self):
+        return f"step: {self.step_id} (module: {self.module_type})"
 class PipelineConfig(KiaraModuleConfig):
     """A class to hold the configuration for a [PipelineModule][kiara.pipeline.module.PipelineModule].
 
@@ -308,7 +315,6 @@ class PipelineConfig(KiaraModuleConfig):
     documentation: str = Field(
         default="-- n/a --", description="Documentation about what the pipeline does."
     )
-
     context: Dict[str, Any] = Field(
         default_factory=dict, description="Metadata for this workflow."
     )
@@ -352,35 +358,6 @@ class PipelineConfig(KiaraModuleConfig):
         structure = PipelineStructure(pipeline_config=self)
         return structure
 
-    def create_pipeline(
-        self,
-        controller: Optional["PipelineController"] = None,
-        kiara: Optional["Kiara"] = None,
-    ):
+    def create_renderable(self, **config: Any) -> RenderableType:
 
-        # if parent_id is None:
-        #     parent_id = DEFAULT_PIPELINE_PARENT_ID
-        structure = self.create_pipeline_structure(kiara=kiara)
-
-        raise NotImplementedError()
-        # from kiara import Pipeline
-        #
-        # pipeline = Pipeline(
-        #     structure=structure,
-        #     controller=controller,
-        # )
-        # return pipeline
-
-    def create_pipeline_module(
-        self,
-        module_id: Optional[str] = None,
-        parent_id: Optional[str] = None,
-        kiara: Optional["Kiara"] = None,
-    ) -> "PipelineModule":
-
-        if kiara is None:
-            from kiara.kiara import Kiara
-
-            kiara = Kiara.instance()
-
-        raise NotImplementedError()
+        return create_table_from_model_object(self, exclude_fields={"steps"})

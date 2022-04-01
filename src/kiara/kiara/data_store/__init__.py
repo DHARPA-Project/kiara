@@ -174,16 +174,16 @@ class DataArchive(abc.ABC):
     ) -> Optional[Set[Value]]:
         pass
 
-    def retrieve_job_record(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
-        return self._retrieve_job_record(
-            manifest_hash=inputs_manifest.manifest_hash, inputs_hash=inputs_manifest.inputs_hash
-        )
-
-    @abc.abstractmethod
-    def _retrieve_job_record(
-        self, manifest_hash: int, inputs_hash: int
-    ) -> Optional[JobRecord]:
-        pass
+    # def retrieve_job_record(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
+    #     return self._retrieve_job_record(
+    #         manifest_hash=inputs_manifest.manifest_hash, inputs_hash=inputs_manifest.inputs_hash
+    #     )
+    #
+    # @abc.abstractmethod
+    # def _retrieve_job_record(
+    #     self, manifest_hash: int, inputs_hash: int
+    # ) -> Optional[JobRecord]:
+    #     pass
 
 
 class DataStore(DataArchive):

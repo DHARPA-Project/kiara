@@ -512,14 +512,18 @@ class ValueSetWritable(ValueSet):  # type: ignore
 
         schema = self.values_schema[field_name]
         value_data = self._values_uncommitted[field_name]
-
-        value = self._data_registry.register_data(
-            data=value_data,
-            schema=schema,
-            pedigree=self.pedigree,
-            pedigree_output_name=field_name,
-            reuse_existing=True,
-        )
+        if isinstance(value_data, Value):
+            value = value_data
+        elif isinstance(value_data, uuid.UUID):
+            value = self._data_registry.get_value(value_data)
+        else:
+            value = self._data_registry.register_data(
+                data=value_data,
+                schema=schema,
+                pedigree=self.pedigree,
+                pedigree_output_name=field_name,
+                reuse_existing=False,
+            )
 
         self._values_uncommitted.pop(field_name)
         self.value_items[field_name] = value

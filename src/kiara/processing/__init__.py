@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from typing import Dict, Mapping, Union
 
 from kiara.exceptions import KiaraProcessingException
-from kiara.models.module.jobs import ActiveJob, JobConfig, JobLog, JobStatus, JobRecord, JobRecordFull
+from kiara.models.module.jobs import ActiveJob, JobConfig, JobLog, JobStatus, JobRecord
 from kiara.models.values.value import (
     ValuePedigree,
     ValueSetReadOnly,
@@ -46,7 +46,7 @@ class ModuleProcessor(abc.ABC):
         self._failed_jobs: Dict[uuid.UUID, ActiveJob] = {}
         self._finished_jobs: Dict[uuid.UUID, ActiveJob] = {}
         self._output_refs: Dict[uuid.UUID, ValueSetWritable] = {}
-        self._job_records: Dict[uuid.UUID, JobRecordFull] = {}
+        self._job_records: Dict[uuid.UUID, JobRecord] = {}
 
     def get_job(self, job_id: uuid.UUID) -> ActiveJob:
 
@@ -64,14 +64,14 @@ class ModuleProcessor(abc.ABC):
         job = self.get_job(job_id=job_id)
         return job.status
 
-    def get_job_record(self, job_id: uuid.UUID) -> JobRecordFull:
+    def get_job_record(self, job_id: uuid.UUID) -> JobRecord:
 
         if job_id in self._job_records.keys():
             return self._job_records[job_id]
         else:
             raise Exception(f"No job record for job with id '{job_id}' registered.")
 
-    def process_job(self, job_config: JobConfig) -> uuid.UUID:
+    def queue_job(self, job_config: JobConfig) -> uuid.UUID:
 
         environments = {
             env_name: env.model_data_hash
@@ -106,7 +106,7 @@ class ModuleProcessor(abc.ABC):
             module._set_module_processor(self)
 
         try:
-            self.queue_job(
+            self._add_processing_task(
                 job_id=job_id,
                 module=module,
                 inputs=input_values,
@@ -162,7 +162,7 @@ class ModuleProcessor(abc.ABC):
             value_ids = values.get_all_value_ids()
             job.results = value_ids
             job.job_log.percent_finished = 100
-            job_record = JobRecordFull.from_active_job(active_job=job)
+            job_record = JobRecord.from_active_job(active_job=job)
             self._job_records[job_id] = job_record
             self._finished_jobs[job_id] = job
         elif status == JobStatus.FAILED or isinstance(status, (str, Exception)):
@@ -198,7 +198,7 @@ class ModuleProcessor(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def queue_job(
+    def _add_processing_task(
         self,
         job_id: uuid.UUID,
         module: "KiaraModule",

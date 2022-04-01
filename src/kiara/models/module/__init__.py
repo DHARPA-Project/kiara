@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import inspect
 import textwrap
+
+import orjson.orjson
 from pydantic import Extra, Field, PrivateAttr
 from pydantic.class_validators import validator
 from pydantic.fields import Field
@@ -32,6 +34,7 @@ from kiara.models.documentation import (
 )
 from kiara.models.python_class import PythonClass
 from kiara.models.values.value_schema import ValueSchema
+from kiara.utils import orjson_dumps
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -102,9 +105,18 @@ class KiaraModuleConfig(KiaraModel):
 
         my_table = Table(box=box.MINIMAL, show_header=False)
         my_table.add_column("Field name", style="i")
-        my_table.add_column("ValueOrm")
+        my_table.add_column("Value")
         for field in self.__fields__:
-            my_table.add_row(field, getattr(self, field))
+            attr = getattr(self, field)
+            if isinstance(attr, str):
+                attr_str = attr
+            elif hasattr(attr, "create_renderable"):
+                attr_str = attr.create_renderable()
+            elif isinstance(attr, BaseModel):
+                attr_str = attr.json(option=orjson.orjson.OPT_INDENT_2)
+            else:
+                attr_str = str(attr)
+            my_table.add_row(field, attr_str)
 
         return my_table
 

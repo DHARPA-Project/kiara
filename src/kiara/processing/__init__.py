@@ -3,14 +3,15 @@ import abc
 import uuid
 from datetime import datetime
 from pydantic import BaseModel
-from typing import Dict, Mapping, Union
+from typing import Any, Dict, List, Optional, Protocol, Union
 
 from kiara.exceptions import KiaraProcessingException
-from kiara.models.module.jobs import ActiveJob, JobConfig, JobLog, JobStatus, JobRecord
+from kiara.models.module.jobs import ActiveJob, JobConfig, JobLog, JobRecord, JobStatus
 from kiara.models.values.value import (
     ValuePedigree,
+    ValueSet,
     ValueSetReadOnly,
-    ValueSetWritable, ValueSet,
+    ValueSetWritable,
 )
 from kiara.utils import is_debug
 
@@ -32,21 +33,43 @@ except Exception:
     from typing_extensions import Literal  # type: ignore
 
 
+class JobStatusListener(Protocol):
+    def job_status_changed(
+        self, job_id: uuid.UUID, old_status: Optional[JobStatus], new_status: JobStatus
+    ):
+        pass
+
+
 class ProcessorConfig(BaseModel):
 
     module_processor_type: Literal["synchronous", "multi-threaded"] = "synchronous"
 
 
 class ModuleProcessor(abc.ABC):
-
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
+        self._created_jobs: Dict[uuid.UUID, Dict[Any]] = {}
         self._active_jobs: Dict[uuid.UUID, ActiveJob] = {}
         self._failed_jobs: Dict[uuid.UUID, ActiveJob] = {}
         self._finished_jobs: Dict[uuid.UUID, ActiveJob] = {}
         self._output_refs: Dict[uuid.UUID, ValueSetWritable] = {}
         self._job_records: Dict[uuid.UUID, JobRecord] = {}
+
+        self._listeners: List[JobStatusListener] = []
+
+    def _send_job_event(
+        self, job_id: uuid.UUID, old_status: Optional[JobStatus], new_status: JobStatus
+    ):
+
+        for l in self._listeners:
+            l.job_status_changed(
+                job_id=job_id, old_status=old_status, new_status=new_status
+            )
+
+    def register_job_status_listener(self, listener: JobStatusListener):
+
+        self._listeners.append(listener)
 
     def get_job(self, job_id: uuid.UUID) -> ActiveJob:
 
@@ -71,11 +94,11 @@ class ModuleProcessor(abc.ABC):
         else:
             raise Exception(f"No job record for job with id '{job_id}' registered.")
 
-    def queue_job(self, job_config: JobConfig) -> uuid.UUID:
+    def create_job(self, job_config: JobConfig) -> uuid.UUID:
 
         environments = {
             env_name: env.model_data_hash
-            for env_name, env in self._kiara.environments.items()
+            for env_name, env in self._kiara.current_environments.items()
         }
 
         result_pedigree = ValuePedigree(
@@ -97,6 +120,30 @@ class ModuleProcessor(abc.ABC):
         job = ActiveJob.construct(job_id=job_id, job_config=job_config, job_log=job_log)
 
         job.job_log.add_log("job created")
+
+        job_details = {
+            "job_config": job_config,
+            "job": job,
+            "module": module,
+            "outputs": outputs,
+        }
+        self._created_jobs[job_id] = job_details
+
+        self._send_job_event(
+            job_id=job_id, old_status=None, new_status=JobStatus.CREATED
+        )
+
+        return job_id
+
+    def queue_job(self, job_id: uuid.UUID) -> ActiveJob:
+
+        job_details = self._created_jobs.pop(job_id)
+        job_config = job_details.pop("job_config")
+
+        job = job_details.pop("job")
+        module = job_details.pop("module")
+        outputs = job_details.pop("outputs")
+
         self._active_jobs[job_id] = job
         self._output_refs[job_id] = outputs
 
@@ -113,7 +160,7 @@ class ModuleProcessor(abc.ABC):
                 outputs=outputs,
                 job_log=job.job_log,
             )
-            return job_id
+            return job
 
         except Exception as e:
             job.error = str(e)
@@ -152,6 +199,8 @@ class ModuleProcessor(abc.ABC):
                 f"Can't retrieve active job with id '{job_id}', no such job registered."
             )
 
+        old_status = job.status
+
         if status == JobStatus.SUCCESS:
             self._active_jobs.pop(job_id)
             job.job_log.add_log("job finished successfully")
@@ -183,6 +232,10 @@ class ModuleProcessor(abc.ABC):
         else:
             raise ValueError(f"Invalid value for status: {status}")
 
+        self._send_job_event(
+            job_id=job_id, old_status=old_status, new_status=job.status
+        )
+
     def wait_for(self, *job_ids: uuid.UUID):
         """Wait for the jobs with the specified ids, also optionally sync their outputs with the pipeline value state."""
 
@@ -191,7 +244,9 @@ class ModuleProcessor(abc.ABC):
         for job_id in job_ids:
             job = self._job_records[job_id]
             if job is None:
-                raise Exception(f"Can't find job with id: {job_id}")
+                job = self._failed_jobs[job_id]
+                if job is None:
+                    raise Exception(f"Can't find job with id: {job_id}")
 
     @abc.abstractmethod
     def _wait_for(self, *job_ids: uuid.UUID):

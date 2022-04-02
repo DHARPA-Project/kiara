@@ -39,7 +39,7 @@ TYPE_PROFILE_MAP = {
 }
 
 
-class TypeMgmt(object):
+class TypeRegistry(object):
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara

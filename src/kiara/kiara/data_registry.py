@@ -25,19 +25,15 @@ from kiara.defaults import (
     SpecialValue,
 )
 from kiara.exceptions import JobConfigException
-from kiara.kiara.aliases import AliasRegistry
 from kiara.kiara.data_store import DataStore
 from kiara.kiara.data_store.filesystem_store import FilesystemDataStore
 from kiara.models.events.data_registry import (
-    AliasPreStoreEvent,
     RegistryEvent,
     ValueCreatedEvent,
     ValuePreStoreEvent,
-    ValueStoredEvent,
 )
 from kiara.models.module.destiniy import Destiny
-from kiara.models.module.jobs import JobConfig, JobRecord
-from kiara.models.module.manifest import LoadConfig, Manifest, InputsManifest
+from kiara.models.module.manifest import LoadConfig, Manifest
 from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
 from kiara.models.values.value import (
@@ -94,7 +90,7 @@ class CreateMetadataDestinies(DataEventHook):
 
     def attach_metadata(self, value: Value):
 
-        op_type: ExtractMetadataOperationType = self._kiara.operations_mgmt.get_operation_type("extract_metadata")  # type: ignore
+        op_type: ExtractMetadataOperationType = self._kiara.operation_registry.get_operation_type("extract_metadata")  # type: ignore
         operations = op_type.get_operations_for_data_type(value.value_schema.type)
         for metadata_key, op in operations.items():
             op_details: ExtractMetadataDetails = op.operation_details  # type: ignore
@@ -115,53 +111,7 @@ class CreateMetadataDestinies(DataEventHook):
         )
 
 
-class AbstractDataRegistry(abc.ABC):
-    """This is just for development, this abstract class might be removed later."""
-
-    @abc.abstractmethod
-    def get_value(self, value: Union[uuid.UUID, str, Value]) -> Value:
-        pass
-
-    @abc.abstractmethod
-    def register_data(
-        self,
-        data: Any,
-        schema: Optional[ValueSchema] = None,
-        pedigree: Optional[ValuePedigree] = None,
-        pedigree_output_name: str = None,
-        reuse_existing: bool = True,
-    ) -> Value:
-
-        pass
-
-    @abc.abstractmethod
-    def retrieve_value_data(self, value_id: uuid.UUID) -> Any:
-        pass
-
-    @abc.abstractmethod
-    def retrieve_load_config(self, value_id: uuid.UUID) -> Optional[LoadConfig]:
-        pass
-
-    @abc.abstractmethod
-    def store_value(
-        self,
-        value: Value,
-        aliases: Optional[Iterable[str]] = None,
-        store_id: Optional[uuid.UUID] = None,
-        skip_if_exists: bool = True,
-    ):
-        pass
-
-    @abc.abstractmethod
-    def create_valueset(
-        self, data: Mapping[str, Any], schema: Mapping[str, ValueSchema]
-    ) -> ValueSet:
-        """Create a ValueSet object from an atrbitrary dict (that can contain 'raw' Python data, or Value instances."""
-
-        pass
-
-class DataRegistry(AbstractDataRegistry):
-
+class DataRegistry(object):
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
@@ -172,7 +122,6 @@ class DataRegistry(AbstractDataRegistry):
         self.add_store(FilesystemDataStore(kiara=self._kiara))
 
         self._registered_values: Dict[uuid.UUID, Value] = {}
-        self._registred_jobs: Dict[int, JobRecord] = {}
 
         self._value_store_map: Dict[uuid.UUID, uuid.UUID] = {}
         # self._job_store_map: Dict[int, uuid.UUID] = {}
@@ -185,8 +134,6 @@ class DataRegistry(AbstractDataRegistry):
 
         self._cached_data: Dict[uuid.UUID, Any] = {}
         self._load_configs: Dict[uuid.UUID, Optional[LoadConfig]] = {}
-
-        self._alias_registry: AliasRegistry = None
 
         # initialize special values
         special_value_cls = PythonClass.from_class(SpecialValue)
@@ -242,24 +189,24 @@ class DataRegistry(AbstractDataRegistry):
     def NONE_VALUE(self) -> Value:
         return self._none_value
 
-    @property
-    def aliases(self) -> AliasRegistry:
-
-        if self._alias_registry is not None:
-            return self._alias_registry
-
-        root_doc = "The root for all value aliases."
-        self._alias_registry = AliasRegistry()
-        self._alias_registry._data_registry = self
-        self._alias_registry._engine = self._engine
-
-        return self._alias_registry
-
-    def register_alias(self, alias: str, value: Union[Value, uuid.UUID]):
-
-        value = self.get_value(value=value)
-        self.aliases.set_alias(alias=alias, value_id=value.value_id)
-        self.aliases.save(alias)
+    # @property
+    # def aliases(self) -> AliasRegistry:
+    #
+    #     if self._alias_registry is not None:
+    #         return self._alias_registry
+    #
+    #     root_doc = "The root for all value aliases."
+    #     self._alias_registry = AliasRegistry()
+    #     self._alias_registry._data_registry = self
+    #     self._alias_registry._engine = self._engine
+    #
+    #     return self._alias_registry
+    #
+    # def register_alias(self, alias: str, value: Union[Value, uuid.UUID]):
+    #
+    #     value = self.get_value(value=value)
+    #     self.aliases.set_alias(alias=alias, value_id=value.value_id)
+    #     self.aliases.save(alias)
 
     def add_store(self, data_store: DataStore):
         if data_store.data_store_id in self._data_stores.keys():
@@ -294,17 +241,14 @@ class DataRegistry(AbstractDataRegistry):
         for event_type in event_types:
             self._event_hooks.setdefault(event_type, []).append(hook)
 
-    def find_store_id_for_value(self, value: Union[uuid.UUID]) -> Optional[uuid.UUID]:
+    def find_store_id_for_value(self, value_id: uuid.UUID) -> Optional[uuid.UUID]:
 
-        if isinstance(value, Value):
-            value = value.value_id
-
-        if value in self._value_store_map.keys():
-            return self._value_store_map[value]
+        if value_id in self._value_store_map.keys():
+            return self._value_store_map[value_id]
 
         matches = []
         for store_id, store in self.data_stores.items():
-            match = store.has_value(value_id=value)
+            match = store.has_value(value_id=value_id)
             if match:
                 matches.append(store_id)
 
@@ -312,21 +256,13 @@ class DataRegistry(AbstractDataRegistry):
             return None
         elif len(matches) > 1:
             raise Exception(
-                f"Found value with id '{value}' in multiple archives, this is not supported (yet): {matches}"
+                f"Found value with id '{value_id}' in multiple archives, this is not supported (yet): {matches}"
             )
 
-        self._value_store_map[value] = matches[0]
+        self._value_store_map[value_id] = matches[0]
         return matches[0]
 
-    def get_value(self, value: Union[uuid.UUID, str, Value]) -> Value:
-
-        if isinstance(value, str):
-            value_id = uuid.UUID(value)
-        elif isinstance(value, Value):
-            value_id = value.value_id
-            # TODO: check hash is the same as registered one?
-        else:
-            value_id = value
+    def get_value(self, value_id: uuid.UUID) -> Value:
 
         if value_id in self._registered_values.keys():
             return self._registered_values[value_id]
@@ -353,7 +289,6 @@ class DataRegistry(AbstractDataRegistry):
     def store_value(
         self,
         value: Value,
-        aliases: Optional[Iterable[str]] = None,
         store_id: Optional[uuid.UUID] = None,
         skip_if_exists: bool = True,
     ):
@@ -376,18 +311,18 @@ class DataRegistry(AbstractDataRegistry):
                         value=value, category=category, key=key, destinies=destinies
                     )
 
-        if aliases:
-            aps_event = AliasPreStoreEvent.construct(
-                kiara_id=self._kiara.id, value=value, aliases=aliases
-            )
-            self.send_event(aps_event)
-            for alias in aliases:
-                if not alias:
-                    logger.debug("ignore.store.alias", reason="alias is empty")
-                    continue
-                self.register_alias(alias=alias, value=value)
-            vs_event = ValueStoredEvent.construct(kiara_id=self._kiara.id, value=value)
-            self.send_event(vs_event)
+        # if aliases:
+        #     aps_event = AliasPreStoreEvent.construct(
+        #         kiara_id=self._kiara.id, value=value, aliases=aliases
+        #     )
+        #     self.send_event(aps_event)
+        #     for alias in aliases:
+        #         if not alias:
+        #             logger.debug("ignore.store.alias", reason="alias is empty")
+        #             continue
+        #         self.register_alias(alias=alias, value=value)
+        #     vs_event = ValueStoredEvent.construct(kiara_id=self._kiara.id, value=value)
+        #     self.send_event(vs_event)
 
     def find_values_for_hash(
         self, value_hash: int, data_type_name: Optional[str] = None
@@ -418,29 +353,29 @@ class DataRegistry(AbstractDataRegistry):
             if stored:
                 self._values_by_hash[value_hash] = stored
 
-        return set((self.get_value(value=v_id) for v_id in stored))
+        return set((self.get_value(value_id=v_id) for v_id in stored))
 
-    # def find_matching_job_record(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
-    #
-    #     if inputs_manifest.model_data_hash in self._registred_jobs.keys():
-    #         return self._registred_jobs[inputs_manifest.model_data_hash]
-    #
-    #     matches = []
-    #     match = None
-    #     for store_id, store in self.data_stores.items():
-    #         match = store.retrieve_job_record(inputs_manifest=inputs_manifest)
-    #         if match:
-    #             matches.append(match)
-    #
-    #     if len(matches) == 0:
-    #         return None
-    #     elif len(matches) > 1:
-    #         raise Exception(
-    #             f"Multiple stores have a record for inputs manifest '{inputs_manifest}', this is not supported (yet)."
-    #         )
-    #
-    #     # self._job_store_map[job.model_data_hash] = matches[0]
-    #     self._registred_jobs[inputs_manifest.model_data_hash] = matches[0]
+        # def find_matching_job_record(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
+        #
+        #     if inputs_manifest.model_data_hash in self._archived_records.keys():
+        #         return self._archived_records[inputs_manifest.model_data_hash]
+        #
+        #     matches = []
+        #     match = None
+        #     for store_id, store in self.data_stores.items():
+        #         match = store.retrieve_job_record(inputs_manifest=inputs_manifest)
+        #         if match:
+        #             matches.append(match)
+        #
+        #     if len(matches) == 0:
+        #         return None
+        #     elif len(matches) > 1:
+        #         raise Exception(
+        #             f"Multiple stores have a record for inputs manifest '{inputs_manifest}', this is not supported (yet)."
+        #         )
+        #
+        #     # self._job_store_map[job.model_data_hash] = matches[0]
+        #     self._archived_records[inputs_manifest.model_data_hash] = matches[0]
 
         return match
 
@@ -474,7 +409,7 @@ class DataRegistry(AbstractDataRegistry):
             data = uuid.UUID(data[6:])
 
         if isinstance(data, uuid.UUID):
-            data = self.get_value(value=data)
+            data = self.get_value(value_id=data)
 
         if isinstance(data, Value):
 
@@ -490,7 +425,7 @@ class DataRegistry(AbstractDataRegistry):
             self._registered_values[data.value_id] = data
             return data
 
-        data_type = self._kiara.get_data_type(
+        data_type = self._kiara.type_registry.retrieve_data_type(
             data_type_name=schema.type, data_type_config=schema.type_config
         )
 
@@ -567,12 +502,12 @@ class DataRegistry(AbstractDataRegistry):
             load_config = self._load_configs[value_id]
         else:
             # now, the value_store map should contain this value_id
-            store_id = self.find_store_id_for_value(value=value_id)
+            store_id = self.find_store_id_for_value(value_id=value_id)
             if store_id is None:
                 return None
 
             store = self.get_store(store_id)
-            self.get_value(value=value_id)
+            self.get_value(value_id=value_id)
             load_config = store.retrieve_load_config(value=value_id)
             self._load_configs[value_id] = load_config
 
@@ -590,12 +525,16 @@ class DataRegistry(AbstractDataRegistry):
                 f"Load config for value '{value_id}' is 'None', this is most likely a bug."
             )
 
-        data = self._load_data_from_load_config(load_config=load_config, value_id=value_id)
+        data = self._load_data_from_load_config(
+            load_config=load_config, value_id=value_id
+        )
         self._cached_data[value_id] = data
 
         return data
 
-    def _load_data_from_load_config(self, load_config: LoadConfig, value_id: uuid.UUID) -> Any:
+    def _load_data_from_load_config(
+        self, load_config: LoadConfig, value_id: uuid.UUID
+    ) -> Any:
 
         logger.debug("value.load", module=load_config.module_type)
 
@@ -608,8 +547,9 @@ class DataRegistry(AbstractDataRegistry):
         except JobConfigException:
             if is_debug():
                 import traceback
+
                 traceback.print_exc()
-            value = self.get_value(value=value_id)
+            value = self.get_value(value_id=value_id)
             return UnloadableData(value=value, load_config=load_config)
 
         job_id = self._kiara.job_registry.execute_job(job_config=job_config)
@@ -626,7 +566,7 @@ class DataRegistry(AbstractDataRegistry):
         for field_name, value_id in values.items():
             if value_id is None:
                 value_id = NONE_VALUE_ID
-            value = self.get_value(value=value_id)
+            value = self.get_value(value_id=value_id)
             value_items[field_name] = value
             schemas[field_name] = value.value_schema
 
@@ -696,7 +636,6 @@ class DataRegistry(AbstractDataRegistry):
             except Exception as e:
                 pass
 
-            # TODO: check for aliases later
             if valid_uuid:
                 raise NotImplementedError()
 
@@ -818,7 +757,9 @@ class DataRegistry(AbstractDataRegistry):
 
     def resolve_destiny(self, destiny: Destiny) -> Value:
 
-        results = self._kiara.job_registry.execute_and_retrieve(manifest=destiny, inputs=destiny.merged_inputs)
+        results = self._kiara.job_registry.execute_and_retrieve(
+            manifest=destiny, inputs=destiny.merged_inputs
+        )
         value = results.get_value_obj(field_name=destiny.result_field_name)
         destiny.result_value_id = value.value_id
         return value
@@ -830,7 +771,7 @@ class DataRegistry(AbstractDataRegistry):
         if render_config:
             raise NotImplementedError()
 
-        op_type: RenderValueOperationType = self._kiara.operations_mgmt.get_operation_type("render_value")  # type: ignore
+        op_type: RenderValueOperationType = self._kiara.operation_registry.get_operation_type("render_value")  # type: ignore
         try:
             op = op_type.get_operation_for_render_combination(
                 source_type=value.value_schema.type, target_type=target_type

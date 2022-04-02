@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import inspect
-import textwrap
-
 import orjson.orjson
+import textwrap
 from pydantic import Extra, Field, PrivateAttr
 from pydantic.class_validators import validator
 from pydantic.fields import Field
@@ -34,7 +33,6 @@ from kiara.models.documentation import (
 )
 from kiara.models.python_class import PythonClass
 from kiara.models.values.value_schema import ValueSchema
-from kiara.utils import orjson_dumps
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -397,7 +395,7 @@ class ModuleTypesGroupInfo(KiaraModel):
 
         classes = {}
         for tn in type_names:
-            _cls = kiara.get_module_class(tn)
+            _cls = kiara.module_registry.get_module_class(tn)
             classes[tn] = _cls
 
         return cls.create_renderable_from_module_type_map(

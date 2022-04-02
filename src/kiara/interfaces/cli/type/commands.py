@@ -38,7 +38,7 @@ def list_types(ctx, details, include_internal_types: bool):
     if not include_internal_types:
         type_classes = {}
         for name, cls in kiara_obj.data_type_classes.items():
-            lineage = kiara_obj.type_mgmt.get_type_lineage(name)
+            lineage = kiara_obj.type_registry.get_type_lineage(name)
             if "any" in lineage:
                 type_classes[name] = cls
     else:
@@ -58,7 +58,7 @@ def hierarchy(ctx, details):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    type_mgmt = kiara_obj.type_mgmt
+    type_mgmt = kiara_obj.type_registry
     print()
 
     print_ascii_graph(type_mgmt.data_type_hierarchy)
@@ -77,7 +77,7 @@ def explain_data_type(ctx, data_type: str):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    dt_cls = kiara_obj.type_mgmt.get_data_type_cls(data_type)
+    dt_cls = kiara_obj.type_registry.get_data_type_cls(data_type)
     info = ValueTypeClassInfo.create_from_data_type(dt_cls)
 
     rich_print()

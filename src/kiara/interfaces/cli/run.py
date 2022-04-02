@@ -14,13 +14,11 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
 from kiara import Kiara
-from kiara.models.module.jobs import JobStatus, JobRecord, JobConfig
+from kiara.models.module.jobs import JobStatus
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
-from kiara.models.values.value import ValueSet
 from kiara.utils import dict_from_cli_args, is_debug, rich_print
 from kiara.utils.output import OutputDetails
-from kiara.utils.values import augment_values
 
 
 @click.command()
@@ -113,9 +111,9 @@ def run(
 
     # =========================================================================
     # prepare manifest
-    if module_or_operation in kiara_obj.operations_mgmt.operation_ids:
+    if module_or_operation in kiara_obj.operation_registry.operation_ids:
 
-        operation = kiara_obj.operations_mgmt.get_operation(module_or_operation)
+        operation = kiara_obj.operation_registry.get_operation(module_or_operation)
         if module_config:
             print(
                 f"Specified run target '{module_or_operation}' is an operation, additional module configuration is not allowed."
@@ -142,7 +140,7 @@ def run(
         )
 
         merged = list(kiara_obj.module_type_names)
-        merged.extend(kiara_obj.operations_mgmt.operation_ids)
+        merged.extend(kiara_obj.operation_registry.operation_ids)
         for n in sorted(merged):
             rich_print(f"  - [i]{n}[/i]")
         sys.exit(1)
@@ -184,11 +182,11 @@ def run(
     # =========================================================================
     # execute job
 
-    job_id = kiara_obj.job_registry.execute_job(job_config=job_config)
+    job_id = kiara_obj.job_registry.execute_job(job_config=job_config, save_job=True)
     status = kiara_obj.job_registry.get_job_status(job_id=job_id)
 
     if status == JobStatus.FAILED:
-        job = kiara_obj.job_registry.get_job_details(job_id=job_id)
+        job = kiara_obj.job_registry.get_active_job(job_id=job_id)
         print(f"Job failed: {job.error}")
         sys.exit(1)
 
@@ -210,6 +208,7 @@ def run(
             rich_print(f"Saving '[i]{field_name}[/i]'...")
             try:
                 value = outputs.get_value_obj(field_name)
+                raise NotImplementedError()
                 value.save(aliases=aliases)
                 msg = f"   -> done, id: [i]{value.value_id}[/i]"
                 if aliases:

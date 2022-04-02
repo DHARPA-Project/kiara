@@ -5,7 +5,7 @@
 
 import rich_click as click
 
-from kiara.models.runtime_environment import RuntimeEnvironmentMgmt
+from kiara.kiara import EnvironmentRegistry
 
 
 @click.group(name="environment")
@@ -21,7 +21,7 @@ def list(ctx):
 
     kiara_obj = ctx.obj["kiara"]
 
-    remgmt = RuntimeEnvironmentMgmt(kiara=kiara_obj)
+    remgmt = EnvironmentRegistry(kiara=kiara_obj)
 
     import pp
 

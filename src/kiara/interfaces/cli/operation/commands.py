@@ -29,7 +29,7 @@ def list_types(ctx):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    op_mgmt = kiara_obj.operations_mgmt
+    op_mgmt = kiara_obj.operation_registry
 
     for name, op_type in op_mgmt.operation_types.items():
         print("----")
@@ -71,7 +71,7 @@ def list_operations(
 
     if by_type:
         title = "Operations by type"
-        all_operations_types = kiara_obj.operations_mgmt.operation_types
+        all_operations_types = kiara_obj.operation_registry.operation_types
 
         table = Table(box=box.SIMPLE, show_header=True)
         table.add_column("Type", no_wrap=True, style="b green")
@@ -86,9 +86,9 @@ def list_operations(
             first_line_value = True
 
             for op_id in sorted(
-                kiara_obj.operations_mgmt.operations_by_type[operation_name]
+                kiara_obj.operation_registry.operations_by_type[operation_name]
             ):
-                operation = kiara_obj.operations_mgmt.get_operation(op_id)
+                operation = kiara_obj.operation_registry.get_operation(op_id)
 
                 if (
                     not include_internal_operations
@@ -132,8 +132,8 @@ def list_operations(
         table.add_column("Type(s)", style="green")
         table.add_column("Description", style="i")
 
-        for op_id in kiara_obj.operations_mgmt.operation_ids:
-            operation = kiara_obj.operations_mgmt.get_operation(op_id)
+        for op_id in kiara_obj.operation_registry.operation_ids:
+            operation = kiara_obj.operation_registry.get_operation(op_id)
 
             if (
                 not include_internal_operations
@@ -141,7 +141,7 @@ def list_operations(
             ):
                 continue
 
-            types = kiara_obj.operations_mgmt.find_all_operation_types(
+            types = kiara_obj.operation_registry.find_all_operation_types(
                 operation.operation_id
             )
             if omit_default and len(types) == 1 and "all" in types:
@@ -200,7 +200,7 @@ def explain(ctx, operation_id: str, source: bool):
         except Exception as e:
             log_message(f"Tried to import '{operation_id}' as pipeline, failed: {e}")
 
-    op_config = kiara_obj.operations_mgmt.get_operation(operation_id)
+    op_config = kiara_obj.operation_registry.get_operation(operation_id)
     if not op_config:
         print()
         print(f"No operation with id '{operation_id}' registered.")

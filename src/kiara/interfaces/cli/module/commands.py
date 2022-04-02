@@ -127,7 +127,7 @@ def explain_module_type(ctx, module_type: str):
     else:
         _module_type = module_type
 
-    m_cls = kiara_obj.get_module_class(_module_type)
+    m_cls = kiara_obj.module_registry.get_module_class(_module_type)
     info = KiaraModuleTypeMetadata.from_module_class(m_cls)
 
     rich_print()

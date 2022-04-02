@@ -101,7 +101,7 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
         # metadata_key=module.get_config_value("metadata_key")
         metadata_model: PythonClass = module.get_config_value("metadata_model")
         metadata_key = metadata_model.get_class()._metadata_key  # type: ignore
-        all_types = self._kiara.type_mgmt.get_sub_types(data_type_name)
+        all_types = self._kiara.type_registry.get_sub_types(data_type_name)
 
         if data_type_name == "any":
             op_id = f"extract.{metadata_key}.metadata"
@@ -129,7 +129,9 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
             a mapping with the metadata type as key, and the operation as value
         """
 
-        lineage = set(self._kiara.type_mgmt.get_type_lineage(data_type_name=data_type))
+        lineage = set(
+            self._kiara.type_registry.get_type_lineage(data_type_name=data_type)
+        )
 
         result = {}
 

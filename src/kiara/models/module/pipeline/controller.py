@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-import uuid
-
 import structlog
-from typing import Optional, Mapping
+import uuid
+from typing import Mapping, Optional
 
 from kiara.models.events.pipeline import PipelineDetails, PipelineEvent
 from kiara.models.module.pipeline.pipeline import Pipeline, PipelineListener
@@ -18,7 +17,6 @@ class PipelineController(PipelineListener):
 
 
 class SinglePipelineController(PipelineController):
-
     def __init__(self, pipeline: Pipeline, processor: ModuleProcessor):
 
         self._pipeline: Pipeline = pipeline
@@ -60,12 +58,14 @@ class SinglePipelineController(PipelineController):
 
         self._processor.wait_for(*job_ids.values())
 
-        combined_outputs= {}
+        combined_outputs = {}
         for step_id, job_id in job_ids.items():
             record = self._processor.get_job_record(job_id=job_id)
             combined_outputs[step_id] = record.outputs
 
-        self.pipeline.set_multiple_step_outputs(changed_outputs=combined_outputs, notify_listeners=True)
+        self.pipeline.set_multiple_step_outputs(
+            changed_outputs=combined_outputs, notify_listeners=True
+        )
 
     def pipeline_is_ready(self) -> bool:
         """Return whether the pipeline is ready to be processed.
@@ -81,9 +81,7 @@ class SinglePipelineController(PipelineController):
         assert pipeline_inputs is not None
         return pipeline_inputs.all_items_valid
 
-    def process_step(
-        self, step_id: str, wait: bool = False
-    ) -> uuid.UUID:
+    def process_step(self, step_id: str, wait: bool = False) -> uuid.UUID:
         """Kick off processing for the step with the provided id.
 
         Arguments:
@@ -92,7 +90,8 @@ class SinglePipelineController(PipelineController):
 
         job_config = self.pipeline.create_job_config_for_step(step_id)
 
-        job_id = self._processor.queue_job(job_config=job_config)
+        job_id = self._processor.create_job(job_config=job_config)
+        self._processor.queue_job(job_id=job_id)
 
         if wait:
             self._processor.wait_for(job_id)
@@ -143,14 +142,24 @@ class SinglePipelineBatchController(SinglePipelineController):
         logger.debug("execute.pipeline", pipeline_id=self.pipeline.pipeline_id)
         self._is_running = True
         try:
-            for idx, stage in enumerate(self.pipeline.structure.processing_stages, start=1):
+            for idx, stage in enumerate(
+                self.pipeline.structure.processing_stages, start=1
+            ):
 
-                logger.debug("execute.pipeline.stage", pipeline_id=self.pipeline.pipeline_id, stage=idx)
+                logger.debug(
+                    "execute.pipeline.stage",
+                    pipeline_id=self.pipeline.pipeline_id,
+                    stage=idx,
+                )
 
                 job_ids = {}
                 for step_id in stage:
 
-                    logger.debug("execute.pipeline.step", pipeline_id=self.pipeline.pipeline_id, step_id=step_id)
+                    logger.debug(
+                        "execute.pipeline.step",
+                        pipeline_id=self.pipeline.pipeline_id,
+                        step_id=step_id,
+                    )
 
                     try:
                         job_id = self.process_step(step_id)
@@ -170,10 +179,13 @@ class SinglePipelineBatchController(SinglePipelineController):
                         return False
 
                 self.set_processing_results(job_ids=job_ids)
-                logger.debug("execute_finished.pipeline.stage", pipeline_id=self.pipeline.pipeline_id, stage=idx)
+                logger.debug(
+                    "execute_finished.pipeline.stage",
+                    pipeline_id=self.pipeline.pipeline_id,
+                    stage=idx,
+                )
 
         finally:
             self._is_running = False
 
         logger.debug("execute_finished.pipeline", pipeline_id=self.pipeline.pipeline_id)
-

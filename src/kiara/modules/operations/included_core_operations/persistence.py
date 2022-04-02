@@ -87,7 +87,7 @@ class PersistValueOperationType(OperationType[PersistValueDetails]):
         self,
     ) -> Iterable[Union[Mapping, OperationConfig]]:
         result = []
-        for name, module_cls in self._kiara.module_types.items():
+        for name, module_cls in self._kiara.module_type_classes.items():
 
             if not issubclass(module_cls, PersistValueModule):
                 continue
@@ -171,7 +171,7 @@ class PersistValueOperationType(OperationType[PersistValueDetails]):
         input_field_type = module.inputs_schema[input_field].type
         value_schema: ValueSchema = module.outputs_schema[match]
         load_config_type: LoadConfigValueType = (
-            self._kiara.type_mgmt.retrieve_data_type(
+            self._kiara.type_registry.retrieve_data_type(
                 data_type_name=value_schema.type,
                 data_type_config=value_schema.type_config,
             )
@@ -202,7 +202,7 @@ class PersistValueOperationType(OperationType[PersistValueDetails]):
 
     def get_operation_for_data_type(self, type_name: str) -> Operation:
 
-        lineage = self._kiara.type_mgmt.get_type_lineage(type_name)
+        lineage = self._kiara.type_registry.get_type_lineage(type_name)
 
         persist_op: Optional[Operation] = None
         for data_type in lineage:

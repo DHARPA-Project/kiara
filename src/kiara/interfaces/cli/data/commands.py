@@ -78,7 +78,11 @@ def list_values(
     data_registry = kiara_obj.data_registry
 
     # rich_print(data_registry.aliases.print_tree())
-    table = kiara_obj.data_registry.default_data_store.create_renderable(show_pedigree=show_pedigree, show_data=show_data, show_load_config=show_load_config)
+    table = kiara_obj.data_registry.default_data_store.create_renderable(
+        show_pedigree=show_pedigree,
+        show_data=show_data,
+        show_load_config=show_load_config,
+    )
     rich_print(table, show_pedigree=show_pedigree, show_data=show_data)
 
 
@@ -164,7 +168,7 @@ def load_value(ctx, value_id: str):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    value = kiara_obj.data_registry.get_value(value=value_id)
+    value = kiara_obj.data_registry.get_value(value_id=value_id)
     if value is None:
         print(f"No value available for id: {value_id}")
         sys.exit(1)

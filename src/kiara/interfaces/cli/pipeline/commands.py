@@ -6,13 +6,10 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 """Pipeline-related subcommands for the cli."""
-import sys
-
-import orjson
 import os.path
 import rich_click as click
+import sys
 import typing
-
 from rich import box
 from rich.panel import Panel
 from rich.table import Table
@@ -20,10 +17,7 @@ from rich.table import Table
 from kiara import Kiara
 from kiara.models.module.operation import Operation
 from kiara.models.module.pipeline import PipelineConfig
-from kiara.models.module.pipeline.controller import SinglePipelineController, SinglePipelineBatchController
-from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.modules.included_core_modules.pipeline import PipelineModule
-from kiara.modules.operations.included_core_operations.pipeline import PipelineOperationType, PipelineOperationDetails
 from kiara.utils import rich_print
 from kiara.utils.graphs import print_ascii_graph
 
@@ -33,17 +27,22 @@ def get_pipeline_config(kiara_obj: Kiara, pipeline_id_or_path: str) -> PipelineC
     if os.path.isfile(pipeline_id_or_path):
         pc = PipelineConfig.from_file(pipeline_id_or_path, kiara=kiara_obj)
     else:
-        operation: Operation = kiara_obj.operations_mgmt.get_operation(pipeline_id_or_path)
+        operation: Operation = kiara_obj.operation_registry.get_operation(
+            pipeline_id_or_path
+        )
         pipeline_module: PipelineModule = operation.module  # type: ignore
 
         if not pipeline_module.is_pipeline():
             print()
-            print(f"Specified operation id exists, but is not a pipeline: {pipeline_id_or_path}.")
+            print(
+                f"Specified operation id exists, but is not a pipeline: {pipeline_id_or_path}."
+            )
             sys.exit(1)
 
         pc = pipeline_module.config
 
     return pc
+
 
 @click.group()
 @click.pass_context
@@ -69,16 +68,14 @@ def list_pipelines(
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    kiara_obj.operations_mgmt.get_operation_type("pipeline")
+    kiara_obj.operation_registry.get_operation_type("pipeline")
 
     table = Table(box=box.SIMPLE, show_header=True)
     table.add_column("Id", no_wrap=True)
     table.add_column("Description", no_wrap=False, style="i")
 
-    for op_id in sorted(
-        kiara_obj.operations_mgmt.operations_by_type["pipeline"]
-    ):
-        operation = kiara_obj.operations_mgmt.get_operation(op_id)
+    for op_id in sorted(kiara_obj.operation_registry.operations_by_type["pipeline"]):
+        operation = kiara_obj.operation_registry.get_operation(op_id)
 
         if full_doc:
             desc = operation.doc.full_doc
@@ -88,10 +85,7 @@ def list_pipelines(
         if filter:
             match = True
             for f in filter:
-                if (
-                    f.lower() not in op_id.lower()
-                    and f.lower() not in desc.lower()
-                ):
+                if f.lower() not in op_id.lower() and f.lower() not in desc.lower():
                     match = False
                     break
             if not match:
@@ -108,6 +102,7 @@ def list_pipelines(
     print()
     rich_print(panel)
 
+
 @pipeline.command()
 @click.argument("pipeline-id-or-path", nargs=1)
 @click.pass_context
@@ -116,9 +111,12 @@ def explain(ctx, pipeline_id_or_path: str):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    pc = get_pipeline_config(kiara_obj=kiara_obj, pipeline_id_or_path=pipeline_id_or_path)
+    pc = get_pipeline_config(
+        kiara_obj=kiara_obj, pipeline_id_or_path=pipeline_id_or_path
+    )
 
     rich_print(pc)
+
 
 @pipeline.command()
 @click.argument("pipeline-id-or-path", nargs=1)
@@ -128,7 +126,9 @@ def execution_graph(ctx, pipeline_id_or_path: str):
 
     kiara_obj = ctx.obj["kiara"]
 
-    pc = get_pipeline_config(kiara_obj=kiara_obj, pipeline_id_or_path=pipeline_id_or_path)
+    pc = get_pipeline_config(
+        kiara_obj=kiara_obj, pipeline_id_or_path=pipeline_id_or_path
+    )
 
     structure = pc.structure
     print_ascii_graph(structure.execution_graph)
@@ -148,7 +148,9 @@ def data_flow_graph(ctx, pipeline_id_or_path: str, full: bool):
 
     kiara_obj = ctx.obj["kiara"]
 
-    pc = get_pipeline_config(kiara_obj=kiara_obj, pipeline_id_or_path=pipeline_id_or_path)
+    pc = get_pipeline_config(
+        kiara_obj=kiara_obj, pipeline_id_or_path=pipeline_id_or_path
+    )
 
     structure = pc.structure
 
@@ -156,7 +158,6 @@ def data_flow_graph(ctx, pipeline_id_or_path: str, full: bool):
         print_ascii_graph(structure.data_flow_graph)
     else:
         print_ascii_graph(structure.data_flow_graph_simple)
-
 
 
 # @pipeline.command()

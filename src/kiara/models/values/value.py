@@ -204,10 +204,6 @@ class Value(ValueDetails):
         self._data_retrieved = True
         return self._value_data
 
-    def save(self, aliases: Optional[Iterable[str]] = None):
-
-        self._data_registry.store_value(self, aliases=aliases)
-
     @property
     def load_config(self) -> Optional[LoadConfig]:
         return self._data_registry.retrieve_load_config(value_id=self.value_id)

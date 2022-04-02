@@ -22,7 +22,7 @@ def find_file_for_module(
 
         kiara = Kiara.instance()
 
-    m_cls = kiara.get_module_class(module_type=module_name)
+    m_cls = kiara.module_registry.get_module_class(module_type=module_name)
     python_module = m_cls.get_type_metadata().python_class.get_python_module()
 
     # TODO: some sanity checks

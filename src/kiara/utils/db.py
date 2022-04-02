@@ -5,7 +5,6 @@ from sqlalchemy.engine import Engine
 from typing import Any, Mapping
 
 from kiara.kiara.orm import EnvironmentOrm, MetadataSchemaOrm
-from kiara.models.runtime_environment import RuntimeEnvironmentMgmt
 from kiara.utils import orjson_dumps
 
 
@@ -37,9 +36,14 @@ def ensure_current_environments_persisted(
     engine: Engine,
 ) -> Mapping[str, EnvironmentOrm]:
 
+    from kiara.kiara import EnvironmentRegistry
+
     envs = {}
     with engine.create_session() as session:
-        for env_name, env in RuntimeEnvironmentMgmt.instance().environments.items():
+        for (
+            env_name,
+            env,
+        ) in EnvironmentRegistry.instance().current_environments.items():
 
             md = (
                 session.query(EnvironmentOrm)

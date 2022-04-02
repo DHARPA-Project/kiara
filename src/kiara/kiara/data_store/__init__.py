@@ -6,8 +6,7 @@ from rich.console import RenderableType
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Set, Union
 
 from kiara.models.module.destiniy import Destiny
-from kiara.models.module.jobs import JobConfig, JobRecord
-from kiara.models.module.manifest import LoadConfig, Manifest, InputsManifest
+from kiara.models.module.manifest import LoadConfig
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.value import ORPHAN, Value, ValuePedigree
 from kiara.models.values.value_schema import ValueSchema
@@ -176,12 +175,12 @@ class DataArchive(abc.ABC):
 
     # def retrieve_job_record(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
     #     return self._retrieve_job_record(
-    #         manifest_hash=inputs_manifest.manifest_hash, inputs_hash=inputs_manifest.inputs_hash
+    #         manifest_hash=inputs_manifest.manifest_hash, jobs_hash=inputs_manifest.jobs_hash
     #     )
     #
     # @abc.abstractmethod
     # def _retrieve_job_record(
-    #     self, manifest_hash: int, inputs_hash: int
+    #     self, manifest_hash: int, jobs_hash: int
     # ) -> Optional[JobRecord]:
     #     pass
 
@@ -192,7 +191,7 @@ class DataStore(DataArchive):
         if value.pedigree != ORPHAN:
             for value_id in value.pedigree.inputs.values():
                 if not self.has_value(value_id=value_id):
-                    other = self._kiara.data_registry.get_value(value=value_id)
+                    other = self._kiara.data_registry.get_value(value_id=value_id)
                     assert other and other.value_id == value_id
                     self.store_value(other)
 
@@ -209,7 +208,7 @@ class DataStore(DataArchive):
             if cached is not None:
                 continue
 
-            env = self._kiara.runtime_env_mgmt.get_environment_for_hash(env_hash)
+            env = self._kiara.environment_registry.get_environment_for_hash(env_hash)
             self.persist_environment(env)
 
         # save the value data and metadata
@@ -287,7 +286,7 @@ class DataStore(DataArchive):
         all_values = {}
         for value_id in self.value_ids:
 
-            value = self._kiara.data_registry.get_value(value=value_id)
+            value = self._kiara.data_registry.get_value(value_id=value_id)
             all_values[str(value_id)] = value
         table = create_renderable_from_values(values=all_values, config=config)
         return table

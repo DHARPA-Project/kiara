@@ -7,25 +7,19 @@
 
 import dpath
 import logging
-import sys
 import uuid
 from typing import Any, Dict, Iterable, List, Mapping, Optional
 
-from kiara.defaults import SpecialValue
 from kiara.exceptions import InvalidValuesException
 from kiara.kiara import DataRegistry
-from kiara.kiara.aliases import AliasValueMap
+from kiara.kiara.alias_registry import AliasValueMap
 from kiara.models.module.jobs import JobConfig
 from kiara.models.module.pipeline import StepStatus
 from kiara.models.module.pipeline.structure import PipelineStep, PipelineStructure
 from kiara.models.module.pipeline.value_refs import (
-    PipelineInputRef,
-    PipelineOutputRef,
-    StepInputRef,
-    StepOutputRef,
     ValueRef,
 )
-from kiara.models.values.value import ORPHAN, Value
+from kiara.models.values.value import ORPHAN
 
 log = logging.getLogger("kiara")
 
@@ -329,18 +323,26 @@ class Pipeline(object):
         step_outputs = self._structure.get_step_output_refs(step_id=step_id)
         null_outputs = {k: None for k in step_outputs.keys()}
 
-        changed_outputs = self.set_step_outputs(step_id=step_id, outputs=null_outputs, notify_listeners=False)
+        changed_outputs = self.set_step_outputs(
+            step_id=step_id, outputs=null_outputs, notify_listeners=False
+        )
         assert step_id not in changed_outputs.keys()
 
         result.update(changed_outputs)  # type: ignore
 
         return result
 
-    def set_multiple_step_outputs(self, changed_outputs: Mapping[str, Mapping[str, Optional[uuid.UUID]]], notify_listeners: bool=True) -> Mapping[str, Mapping[str, Mapping[str, ChangedValue]]]:
+    def set_multiple_step_outputs(
+        self,
+        changed_outputs: Mapping[str, Mapping[str, Optional[uuid.UUID]]],
+        notify_listeners: bool = True,
+    ) -> Mapping[str, Mapping[str, Mapping[str, ChangedValue]]]:
 
         results = {}
         for step_id, outputs in changed_outputs.items():
-            step_results = self.set_step_outputs(step_id=step_id, outputs=outputs, notify_listeners=False)
+            step_results = self.set_step_outputs(
+                step_id=step_id, outputs=outputs, notify_listeners=False
+            )
             dpath.util.merge(results, step_results)
 
         if notify_listeners:
@@ -350,7 +352,10 @@ class Pipeline(object):
         return results
 
     def set_step_outputs(
-        self, step_id: str, outputs: Mapping[str, Optional[uuid.UUID]], notify_listeners: bool=True
+        self,
+        step_id: str,
+        outputs: Mapping[str, Optional[uuid.UUID]],
+        notify_listeners: bool = True,
     ) -> Mapping[str, Mapping[str, Mapping[str, ChangedValue]]]:
 
         # make sure pedigrees match with respective inputs?
@@ -379,12 +384,16 @@ class Pipeline(object):
                 ] = outputs[field_name]
 
         for step_id, step_inputs in inputs_to_set.items():
-            changed_step_fields = self._set_step_inputs(step_id=step_id, inputs=step_inputs)
+            changed_step_fields = self._set_step_inputs(
+                step_id=step_id, inputs=step_inputs
+            )
             dpath.util.merge(result, changed_step_fields)
 
         if pipeline_outputs:
             changed_pipeline_outputs = self._set_pipeline_outputs(**pipeline_outputs)
-            dpath.util.merge(result, {"__pipeline__": {"outputs": changed_pipeline_outputs}})
+            dpath.util.merge(
+                result, {"__pipeline__": {"outputs": changed_pipeline_outputs}}
+            )
 
         if notify_listeners:
             event = PipelineEvent.create_event(pipeline=self, changed=result)
@@ -467,7 +476,9 @@ class Pipeline(object):
 
     def create_job_config_for_step(self, step_id: str) -> JobConfig:
 
-        step_inputs: Mapping[str, Optional[uuid.UUID]] = self.get_current_step_inputs(step_id)
+        step_inputs: Mapping[str, Optional[uuid.UUID]] = self.get_current_step_inputs(
+            step_id
+        )
         step_details: StepDetails = self.get_step_details(step_id=step_id)
         step: PipelineStep = self.get_step(step_id=step_id)
 
@@ -478,7 +489,9 @@ class Pipeline(object):
             msg = f"Can't execute step '{step_id}', invalid inputs: {', '.join(invalid_details.keys())}"
             raise InvalidValuesException(msg=msg, invalid_values=invalid_details)
 
-        job_config = JobConfig.create_from_module(data_registry=self._data_registry, module=step.module, inputs=step_inputs)
+        job_config = JobConfig.create_from_module(
+            data_registry=self._data_registry, module=step.module, inputs=step_inputs
+        )
         return job_config
 
 

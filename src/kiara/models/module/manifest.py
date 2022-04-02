@@ -10,7 +10,8 @@ from typing import Any, Dict, Mapping, Optional
 from kiara.defaults import (
     KIARA_HASH_FUNCTION,
     MODULE_CONFIG_CATEGORY_ID,
-    NO_MODULE_TYPE, NONE_VALUE_ID,
+    NO_MODULE_TYPE,
+    NONE_VALUE_ID,
 )
 from kiara.models import KiaraModel
 from kiara.utils import orjson_dumps
@@ -100,6 +101,18 @@ class InputsManifest(Manifest):
         description="A map of all the input fields and value references."
     )
     _inputs_hash: Optional[int] = PrivateAttr(default=None)
+    _jobs_hash: Optional[int] = PrivateAttr(default=None)
+
+    @property
+    def jobs_hash(self) -> int:
+
+        if self._jobs_hash is not None:
+            return self._jobs_hash
+
+        obj = {"manifest": self.manifest_hash, "inputs": self.inputs_hash}
+        h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
+        self._jobs_hash = h[obj]
+        return self._jobs_hash
 
     @validator("inputs")
     def replace_none_values(cls, value):

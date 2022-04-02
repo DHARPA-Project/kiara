@@ -120,7 +120,7 @@ def define_env(env):
 
         try:
 
-            m_cls = Kiara.instance().get_module_class(module_type)
+            m_cls = Kiara.instance().module_registry.get_module_class(module_type)
             info = KiaraModuleTypeMetadata.from_module_class(m_cls)
 
             from rich.console import Console
@@ -188,7 +188,7 @@ def define_env(env):
         include_pipelines: bool = True,
     ):
 
-        modules = kiara_obj.module_mgmt.find_modules_for_package(
+        modules = kiara_obj.module_registry.find_modules_for_package(
             package_name,
             include_core_modules=include_core_modules,
             include_pipelines=include_pipelines,
@@ -206,7 +206,7 @@ def define_env(env):
     @env.macro
     def get_data_types_for_package(package_name: str):
 
-        data_types = kiara_obj.type_mgmt.find_data_type_classes_for_package(
+        data_types = kiara_obj.type_registry.find_data_type_classes_for_package(
             package_name
         )
         result = []

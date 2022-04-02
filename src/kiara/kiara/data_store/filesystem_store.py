@@ -10,7 +10,7 @@ from kiara.kiara.data_store import DataArchive, DataStore
 from kiara.kiara.job_registry import JobArchive
 from kiara.models.module.destiniy import Destiny
 from kiara.models.module.jobs import JobRecord
-from kiara.models.module.manifest import LoadConfig, Manifest, InputsManifest
+from kiara.models.module.manifest import InputsManifest, LoadConfig
 from kiara.models.values.value import Value
 from kiara.modules.operations.included_core_operations.persistence import (
     PersistValueOperationType,
@@ -35,11 +35,13 @@ class EntityType(Enum):
 
 
 class FileSystemArchive(DataArchive, JobArchive):
-
     def __init__(self, kiara: "Kiara"):
 
         DataArchive.__init__(self, kiara=kiara)
         self._base_path: Optional[Path] = None
+
+    def get_job_archive_id(self) -> uuid.UUID:
+        return self._kiara.id
 
     @property
     def data_store_path(self) -> Path:
@@ -83,13 +85,16 @@ class FileSystemArchive(DataArchive, JobArchive):
         environment = orjson.loads(env_details_file.read_text())
         return environment
 
-    def find_matching_job_record(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
+    def find_matching_job_record(
+        self, inputs_manifest: InputsManifest
+    ) -> Optional[JobRecord]:
         return self._retrieve_job_record(
-            manifest_hash=inputs_manifest.manifest_hash, inputs_hash=inputs_manifest.inputs_hash
+            manifest_hash=inputs_manifest.manifest_hash,
+            jobs_hash=inputs_manifest.jobs_hash,
         )
 
     def _retrieve_job_record(
-        self, manifest_hash: int, inputs_hash: int
+        self, manifest_hash: int, jobs_hash: int
     ) -> Optional[JobRecord]:
 
         base_path = self.get_path(entity_type=EntityType.MANIFEST)
@@ -107,15 +112,15 @@ class FileSystemArchive(DataArchive, JobArchive):
 
         manifest_data = orjson.loads(manifest_file.read_text())
 
-        inputs_folder = manifest_folder / str(inputs_hash)
+        job_folder = manifest_folder / str(jobs_hash)
 
-        if not inputs_folder.exists():
+        if not job_folder.exists():
             return None
 
-        inputs_file_name = inputs_folder / "inputs.json"
+        inputs_file_name = job_folder / "inputs.json"
         if not inputs_file_name.exists():
             raise Exception(
-                f"No 'inputs.json' file for manifest/inputs hash-combo: {manifest_hash} / {inputs_hash}"
+                f"No 'inputs.json' file for manifest/inputs hash-combo: {manifest_hash} / {jobs_hash}"
             )
 
         inputs_data = {
@@ -124,7 +129,7 @@ class FileSystemArchive(DataArchive, JobArchive):
         }
 
         outputs = {}
-        for output_file in inputs_folder.glob("output__*.json"):
+        for output_file in job_folder.glob("output__*.json"):
             full_output_name = output_file.name[8:]
             start_value_id = full_output_name.find("__value_id__")
             output_name = full_output_name[0:start_value_id]
@@ -253,7 +258,7 @@ class FilesystemDataStore(FileSystemArchive, DataStore):
 
     def _persist_value_data(self, value: Value) -> LoadConfig:
 
-        persist_op_type = self._kiara.operations_mgmt.operation_types.get(
+        persist_op_type = self._kiara.operation_registry.operation_types.get(
             "persist_value", None
         )
         if persist_op_type is None:
@@ -261,7 +266,7 @@ class FilesystemDataStore(FileSystemArchive, DataStore):
                 "Can't persist value, 'persist_value' operation type not available."
             )
 
-        op_type: PersistValueOperationType = self._kiara.operations_mgmt.get_operation_type("persist_value")  # type: ignore
+        op_type: PersistValueOperationType = self._kiara.operation_registry.get_operation_type("persist_value")  # type: ignore
         op = op_type.get_operation_for_data_type(value.value_schema.type)
 
         working_dir = self.get_path(entity_type=EntityType.VALUE_DATA)
@@ -309,7 +314,7 @@ class FilesystemDataStore(FileSystemArchive, DataStore):
     def _persist_value_pedigree(self, value: Value):
 
         manifest_hash = value.pedigree.manifest_hash
-        inputs_hash = value.pedigree.inputs_hash
+        jobs_hash = value.pedigree.jobs_hash
 
         base_path = self.get_path(entity_type=EntityType.MANIFEST)
         manifest_folder = base_path / str(manifest_hash)
@@ -319,16 +324,16 @@ class FilesystemDataStore(FileSystemArchive, DataStore):
         if not manifest_info_file.exists():
             manifest_info_file.write_text(value.pedigree.manifest_data_as_json())
 
-        inputs_folder = manifest_folder / str(inputs_hash)
+        job_folder = manifest_folder / str(jobs_hash)
 
-        inputs_folder.mkdir(parents=True, exist_ok=True)
+        job_folder.mkdir(parents=True, exist_ok=True)
 
-        inputs_details_file_name = inputs_folder / "inputs.json"
+        inputs_details_file_name = job_folder / "inputs.json"
         if not inputs_details_file_name.exists():
             inputs_details_file_name.write_text(orjson_dumps(value.pedigree.inputs))
 
         outputs_file_name = (
-            inputs_folder
+            job_folder
             / f"output__{value.pedigree_output_name}__value_id__{value.value_id}.json"
         )
 

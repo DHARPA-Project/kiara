@@ -68,7 +68,7 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
         self,
     ) -> Iterable[Union[Mapping, OperationConfig]]:
         result = []
-        for name, module_cls in self._kiara.module_types.items():
+        for name, module_cls in self._kiara.module_type_classes.items():
 
             if not issubclass(module_cls, RenderValueModule):
                 continue
@@ -215,7 +215,7 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
         self, source_type: str, target_type: str
     ) -> Operation:
 
-        type_lineage = self._kiara.type_mgmt.get_type_lineage(
+        type_lineage = self._kiara.type_registry.get_type_lineage(
             data_type_name=source_type
         )
 

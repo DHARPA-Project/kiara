@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
-from typing import Union, Mapping, Any, Optional
+from typing import Any, Mapping, Optional, Union
 
-import orjson
-
-from kiara.kiara import DataRegistry
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.module.pipeline.controller import SinglePipelineBatchController
 from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.models.module.pipeline.structure import PipelineStructure
 from kiara.models.values.value import ValueSet
-from kiara.modules import KiaraModule, ValueSetSchema, KIARA_CONFIG
+from kiara.modules import KIARA_CONFIG, KiaraModule, ValueSetSchema
 from kiara.processing import ModuleProcessor
 
 
@@ -48,10 +45,15 @@ class PipelineModule(KiaraModule):
 
         pipeline_structure: PipelineStructure = self.config.structure
 
-        pipeline = Pipeline(structure=pipeline_structure, data_registry=outputs._data_registry)
-        controller = SinglePipelineBatchController(pipeline=pipeline, processor=self._module_processor)
+        pipeline = Pipeline(
+            structure=pipeline_structure, data_registry=outputs._data_registry
+        )
+        controller = SinglePipelineBatchController(
+            pipeline=pipeline, processor=self._module_processor
+        )
 
         pipeline.set_pipeline_inputs(inputs=inputs)
         controller.process_pipeline()
 
+        # TODO: resolve values first?
         outputs.set_values(**pipeline.get_current_pipeline_outputs())

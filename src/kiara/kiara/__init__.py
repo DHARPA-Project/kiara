@@ -18,6 +18,7 @@ from typing import (
 
 from kiara.data_types import DataType
 from kiara.defaults import KIARA_DB_MIGRATIONS_CONFIG, KIARA_DB_MIGRATIONS_FOLDER
+from kiara.exceptions import NoSuchExecutionTargetException
 from kiara.interfaces import get_console
 from kiara.kiara.alias_registry import AliasRegistry
 from kiara.kiara.config import KiaraContextConfig, KiaraGlobalConfig
@@ -30,6 +31,7 @@ from kiara.kiara.orm import EnvironmentOrm
 from kiara.kiara.type_registry import TypeRegistry
 from kiara.models.module import KiaraModuleTypeMetadata
 from kiara.models.module.manifest import Manifest
+from kiara.models.module.operation import Operation
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.value import Value
 from kiara.utils import is_debug, is_develop, log_message
@@ -213,6 +215,41 @@ class Kiara(object):
 
     def get_value(self, value: Union[uuid.UUID, str, Value]):
         pass
+
+    def run(self, module_or_operation: str, module_config: Mapping[str, Any]=None):
+
+        if isinstance(module_or_operation, str):
+            if module_or_operation in self.operation_registry.operation_ids:
+
+                operation = self.operation_registry.get_operation(module_or_operation)
+                if module_config:
+                    print(
+                        f"Specified run target '{module_or_operation}' is an operation, additional module configuration is not allowed."
+                    )
+
+        elif module_or_operation in self.module_type_names:
+
+            if module_config is None:
+                module_config = {}
+            manifest = Manifest(
+                module_type=module_or_operation, module_config=module_config
+            )
+
+            module = self.create_module(manifest=manifest)
+            operation = Operation.create_from_module(module)
+
+        elif os.path.isfile(module_or_operation):
+            raise NotImplementedError()
+            # module_name = kiara_obj.register_pipeline_description(
+            #     module_or_operation, raise_exception=True
+            # )
+        else:
+            merged = list(self.module_type_names)
+            merged.extend(self.operation_registry.operation_ids)
+            raise NoSuchExecutionTargetException(
+                msg=f"Invalid run target name '[i]{module_or_operation}[/i]'. Must be a path to a pipeline file, or one of the available modules/operations.",
+                available_targets=sorted(merged)
+            )
 
 
 class UUIDGenerator(object):

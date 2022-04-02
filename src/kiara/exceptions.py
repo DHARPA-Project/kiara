@@ -5,10 +5,9 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-import typing
-from typing import Any, Mapping
+from typing import Any, Mapping, TYPE_CHECKING, Type, Optional, Union, Iterable
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from kiara import KiaraModule
     from kiara.data_types import DataType
     from kiara.models.module.manifest import Manifest
@@ -23,9 +22,9 @@ class KiaraModuleConfigException(Exception):
     def __init__(
         self,
         msg: str,
-        module_cls: typing.Type["KiaraModule"],
-        config: typing.Mapping[str, typing.Any],
-        parent: typing.Optional[Exception] = None,
+        module_cls: Type["KiaraModule"],
+        config: Mapping[str, Any],
+        parent: Optional[Exception] = None,
     ):
 
         self._module_cls = module_cls
@@ -45,15 +44,15 @@ class ValueTypeConfigException(Exception):
     def __init__(
         self,
         msg: str,
-        type_cls: typing.Type["DataType"],
-        config: typing.Mapping[str, typing.Any],
-        parent: typing.Optional[Exception] = None,
+        type_cls: Type["DataType"],
+        config: Mapping[str, Any],
+        parent: Optional[Exception] = None,
     ):
 
         self._type_cls = type_cls
         self._config = config
 
-        self._parent: typing.Optional[Exception] = parent
+        self._parent: Optional[Exception] = parent
 
         if not msg.endswith("."):
             _msg = msg + "."
@@ -66,12 +65,12 @@ class ValueTypeConfigException(Exception):
 class KiaraValueException(Exception):
     def __init__(
         self,
-        data_type: typing.Type["DataType"],
-        value_data: typing.Any,
+        data_type: Type["DataType"],
+        value_data: Any,
         exception: Exception,
     ):
-        self._data_type: typing.Type["DataType"] = data_type
-        self._value_data: typing.Any = value_data
+        self._data_type: Type["DataType"] = data_type
+        self._value_data: Any = value_data
         self._exception: Exception = exception
 
         exc_msg = str(self._exception)
@@ -80,18 +79,27 @@ class KiaraValueException(Exception):
 
         super().__init__(f"Invalid value of type '{data_type._data_type_name}': {exc_msg}")  # type: ignore
 
+class NoSuchExecutionTargetException(Exception):
+
+    def __init__(self, selected_target: str, available_targets: Iterable[str], msg: Optional[str]=None):
+
+        if msg is None:
+            msg = f"Specified run target '{selected_target}' is an operation, additional module configuration is not allowed."
+
+        self.avaliable_targets: Iterable[str] = available_targets
+        super().__init__(msg)
 
 class KiaraProcessingException(Exception):
     def __init__(
         self,
-        msg: typing.Union[str, Exception],
-        module: typing.Optional["KiaraModule"] = None,
-        inputs: typing.Optional[Mapping[str, "Value"]] = None,
+        msg: Union[str, Exception],
+        module: Optional["KiaraModule"] = None,
+        inputs: Optional[Mapping[str, "Value"]] = None,
     ):
-        self._module: typing.Optional["KiaraModule"] = module
-        self._inputs: typing.Optional[Mapping[str, Value]] = inputs
+        self._module: Optional["KiaraModule"] = module
+        self._inputs: Optional[Mapping[str, Value]] = inputs
         if isinstance(msg, Exception):
-            self._parent: typing.Optional[Exception] = msg
+            self._parent: Optional[Exception] = msg
             _msg = str(msg)
         else:
             self._parent = None
@@ -107,14 +115,14 @@ class KiaraProcessingException(Exception):
         return self._inputs  # type: ignore
 
     @property
-    def parent_exception(self) -> typing.Optional[Exception]:
+    def parent_exception(self) -> Optional[Exception]:
         return self._parent
 
 
 class InvalidValuesException(Exception):
     def __init__(
         self,
-        msg: typing.Union[None, str, Exception] = None,
+        msg: Union[None, str, Exception] = None,
         invalid_values: Mapping[str, str] = None,
     ):
 
@@ -129,7 +137,7 @@ class InvalidValuesException(Exception):
             else:
                 _msg = f"Invalid inputs: {', '.join(self._invalid_inputs.keys())}"
         elif isinstance(msg, Exception):
-            self._parent: typing.Optional[Exception] = msg
+            self._parent: Optional[Exception] = msg
             _msg = str(msg)
         else:
             self._parent = None
@@ -141,7 +149,7 @@ class InvalidValuesException(Exception):
 class JobConfigException(Exception):
     def __init__(
         self,
-        msg: typing.Union[str, Exception],
+        msg: Union[str, Exception],
         manifest: "Manifest",
         inputs: Mapping[str, Any],
     ):
@@ -150,7 +158,7 @@ class JobConfigException(Exception):
         self._inputs: Mapping[str, Any] = inputs
 
         if isinstance(msg, Exception):
-            self._parent: typing.Optional[Exception] = msg
+            self._parent: Optional[Exception] = msg
             _msg = str(msg)
         else:
             self._parent = None

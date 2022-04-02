@@ -110,7 +110,10 @@ class ValueDetails(KiaraModel):
         return self._retrieve_data_to_hash()
 
     def _retrieve_data_to_hash(self) -> Any:
-        return self.value_hash
+        return {
+            "value_type": self.value_schema.type,
+            "value_hash": self.value_hash
+        }
 
     @property
     def data_type_name(self) -> str:

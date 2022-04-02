@@ -24,7 +24,7 @@ class Manifest(KiaraModel):
         extra = Extra.forbid
         validate_all = True
 
-    _manifest_data: Optional[Dict[str, Any]] = PrivateAttr(default=None)
+    _manifest_data: Optional[Mapping[str, Any]] = PrivateAttr(default=None)
     _manifest_hash: Optional[int] = PrivateAttr(default=None)
 
     module_type: str = Field(description="The module type.")

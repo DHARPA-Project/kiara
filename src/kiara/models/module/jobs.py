@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+import os
 import uuid
 from datetime import datetime
 from deepdiff import DeepHash
@@ -14,13 +15,15 @@ from kiara.defaults import (
     JOB_RECORD_TYPE_CATEGORY_ID,
     KIARA_HASH_FUNCTION,
 )
-from kiara.exceptions import InvalidValuesException
+from kiara.exceptions import InvalidValuesException, NoSuchExecutionTargetException
 from kiara.models import KiaraModel
-from kiara.models.module.manifest import InputsManifest
+from kiara.models.module.manifest import InputsManifest, Manifest
+from kiara.models.values.value import ValueSet, Value
 
 if TYPE_CHECKING:
-    from kiara.kiara import DataRegistry
+    from kiara.kiara import DataRegistry, Kiara
     from kiara.modules import KiaraModule
+    from kiara.models.module.operation import Operation
 
 
 class JobStatus(Enum):
@@ -213,6 +216,146 @@ class JobRecord(JobConfig):
         return self._outputs_hash
 
 
-class DeserializeConfig(JobConfig):
+class KiaraOperation(BaseModel):
 
-    output_name: str = Field(description="The name of the output field for the value.")
+    def __init__(self, kiara: "Kiara", operation_name: str, operation_config: Optional[Mapping[str, Any]]=None):
+
+        self._kiara: Kiara = kiara
+        self._operation_name: str = operation_name
+        if operation_config is None:
+            operation_config = {}
+        else:
+            operation_config = dict(operation_config)
+        self._operation_config: Dict[str, Any] = operation_config
+
+        self._operation: Optional[Operation] = None
+        self._inputs: Dict[str, Value] = {}
+
+    def validate(self):
+
+        self.operation  # noqa
+        self.inputs  # noqa
+        # todo: check if inputs are missing for this operation
+
+    def _invalidate(self):
+        self._operation = None
+        self._inputs = None
+
+    def inputs(self) -> Mapping[str, Value]:
+
+        return self._inputs
+
+    def set_input(self, field: Optional[str], value: Any=None):
+
+        if field is None:
+            if value is None:
+                self._inputs.clear()
+                self._invalidate()
+                return
+            else:
+                if not isinstance(value, Mapping):
+                    raise Exception(f"Can't set inputs dictionary (if no key is provided, value must be 'None' or of type 'Mapping').")
+
+                self._inputs.clear()
+                self.set_inputs(**value)
+                self._invalidate()
+                return
+        else:
+            old = self._inputs.get(field, None)
+            self._inputs[field] = value
+            if old != value:
+                self._invalidate()
+            return
+
+    def set_inputs(self, **inputs: Any):
+
+        changed = False
+        for k, v in inputs.items():
+            old = self._inputs.get(k, None)
+            self._inputs[k] = v
+            if old != v:
+                changed = True
+
+        if changed:
+            self._invalidate()
+
+        return
+
+    @property
+    def operation_name(self) -> str:
+        return self._operation_name
+
+    @operation_name.setter
+    def operation_name(self, operation_name: str):
+        self._operation_name = operation_name
+        self._invalidate()
+
+    @property
+    def operation_config(self) -> Mapping[str, Any]:
+        return self._operation_config
+
+    def set_operation_config_value(self, key: Optional[str], value: Any=None) -> Mapping[str, Any]:
+
+        if key is None:
+            if value is None:
+                old = bool(self._operation_config)
+                self._operation_config.clear()
+                if old:
+                    self._invalidate()
+                return self._operation_config
+            else:
+                try:
+                    old = self._operation_config
+                    self._operation_config = dict(value)
+                    if old != self._operation_config:
+                        self._invalidate()
+                    return self._operation_config
+                except Exception as e:
+                    raise Exception(f"Can't set configuration value dictionary (if no key is provided, value must be 'None' or of type 'Mapping'): {e}")
+
+        self._operation_config[key] = value
+        self._invalidate()
+        return self._operation_config
+
+    @property
+    def operation(self) -> "Operation":
+
+        if self._operation is not None:
+            return self._operation
+
+        module_or_operation = self._operation_name
+        operation: Operation[Operation] = None
+        if isinstance(module_or_operation, str):
+            if module_or_operation in self._kiara.operation_registry.operation_ids:
+
+                operation = self._kiara.operation_registry.get_operation(module_or_operation)
+                if self._operation_config:
+                    print(
+                        f"Specified run target '{module_or_operation}' is an operation, additional module configuration is not allowed."
+                    )
+
+        elif module_or_operation in self._kiara.module_type_names:
+
+            manifest = Manifest(
+                module_type=module_or_operation, module_config=self._operation_config
+            )
+
+            module = self._kiara.create_module(manifest=manifest)
+            operation = Operation.create_from_module(module)
+
+        elif os.path.isfile(module_or_operation):
+            raise NotImplementedError()
+            # module_name = kiara_obj.register_pipeline_description(
+            #     module_or_operation, raise_exception=True
+            # )
+
+        if operation is None:
+            merged = list(self._kiara.module_type_names)
+            merged.extend(self._kiara.operation_registry.operation_ids)
+            raise NoSuchExecutionTargetException(
+                msg=f"Invalid run target name '[i]{module_or_operation}[/i]'. Must be a path to a pipeline file, or one of the available modules/operations.",
+                available_targets=sorted(merged)
+            )
+
+        self._operation = operation
+        return self._operation

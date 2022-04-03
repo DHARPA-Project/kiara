@@ -30,6 +30,8 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
     a tree hierarchy of the overall kiara context, hashing, etc.
     """
 
+    __slots__ = ['__weakref__']
+
     class Config:
         json_loads = orjson.loads
         json_dumps = orjson_dumps
@@ -232,45 +234,3 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         yield self.create_renderable()
 
 
-# class KiaraModelGroup(KiaraModel):
-#
-#     __root__: Dict[str, KiaraModel]
-#     _hash_cache: Optional[str] = PrivateAttr(default=None)
-#     _category_alias: str = PrivateAttr(default="generic_list")
-#
-#     @classmethod
-#     def create_from_child_models(cls, _category_alias: str = "generic_list", **childs):
-#
-#         model = KiaraModelGroup(__root__=childs)
-#         model._category_alias = _category_alias
-#
-#         return model
-#
-#     def create_renderable(self, **render_config: Any) -> RenderableType:
-#
-#         table = Table(show_header=False, box=box.SIMPLE, show_lines=True)
-#         table.add_column("Key", style="i b")
-#         table.add_column("ValueOrm")
-#         for k, attr in self.__root__.items():
-#             if "documentation" in attr.__fields__.keys():
-#                 v = attr.documentation  # type: ignore
-#             else:
-#                 v = extract_renderable(attr)
-#             table.add_row(k, v)
-#         return table
-#
-#     @property
-#     def module_config_hash(self):
-#         if self._hash_cache is not None:
-#             return self._hash_cache
-#
-#         obj = {k: v.get_id() for k, v in self.__root__.items()}
-#         h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
-#         self._hash_cache = h[obj]
-#         return self._hash_cache
-#
-#     def get_id(self) -> str:
-#         return self.module_config_hash
-#
-#     def get_category_alias(self) -> str:
-#         return self._category_alias

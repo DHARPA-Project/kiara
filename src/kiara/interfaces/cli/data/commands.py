@@ -12,6 +12,7 @@ import shutil
 import sys
 from rich import box
 from rich.panel import Panel
+from rich.table import Table
 
 from kiara import Kiara
 from kiara.utils import StringYAML, is_debug, is_develop, log_message, rich_print
@@ -45,8 +46,8 @@ def data(ctx):
     default=True,
 )
 @click.option(
-    "--all",
-    "-a",
+    "--all-info",
+    "-i",
     help="Display all information and values. Overrides the other options.",
     is_flag=True,
 )
@@ -69,21 +70,37 @@ def data(ctx):
 )
 @click.pass_context
 def list_values(
-    ctx, with_alias, only_latest, tags, all, show_pedigree, show_data, show_load_config
+    ctx, with_alias, only_latest, tags, all_info, show_pedigree, show_data, show_load_config
 ):
     """List all data items that are stored in kiara."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    data_registry = kiara_obj.data_registry
+    alias_registry = kiara_obj.alias_registry
 
-    # rich_print(data_registry.aliases.print_tree())
-    table = kiara_obj.data_registry.default_data_store.create_renderable(
-        show_pedigree=show_pedigree,
-        show_data=show_data,
-        show_load_config=show_load_config,
-    )
-    rich_print(table, show_pedigree=show_pedigree, show_data=show_data)
+    table = Table(show_lines=True, box=box.SIMPLE)
+    table.add_column("alias")
+    table.add_column("value")
+
+    for alias in alias_registry.all_aliases:
+
+        value_id = alias_registry.find_value_id_for_alias(alias)
+        rendered = kiara_obj.data_registry.render_data(value_id=value_id)
+        table.add_row(alias, rendered)
+
+    print()
+    rich_print(table)
+
+
+    # data_registry = kiara_obj.data_registry
+    #
+    # # rich_print(data_registry.aliases.print_tree())
+    # table = kiara_obj.data_registry.default_data_store.create_renderable(
+    #     show_pedigree=show_pedigree,
+    #     show_data=show_data,
+    #     show_load_config=show_load_config,
+    # )
+    # rich_print(table, show_pedigree=show_pedigree, show_data=show_data)
 
 
 @data.command(name="explain")

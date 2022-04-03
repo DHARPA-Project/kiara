@@ -176,6 +176,7 @@ class Value(ValueDetails):
     _data_retrieved: bool = PrivateAttr(default=False)
     _data_registry: "DataRegistry" = PrivateAttr(default=None)
     _data_type: "DataType" = PrivateAttr(default=None)
+    _is_stored: bool = PrivateAttr(default=False)
 
     @property
     def data(self) -> Any:
@@ -233,10 +234,6 @@ class Value(ValueDetails):
             **self.value_schema.type_config
         )
         return self._data_type
-
-    # def render_data(self, **render_config: Any) -> Any:
-    #     rendered = self._data_registry.render_data(value=self, **render_config)
-    #     return rendered
 
     def create_renderable(self, **render_config: Any) -> RenderableType:
 

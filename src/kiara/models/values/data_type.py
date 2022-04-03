@@ -9,7 +9,7 @@ from rich.table import Table
 from typing import Any, Iterable, Mapping, Optional, Type
 
 from kiara.data_types import DataType
-from kiara.defaults import DATA_TYPE_CLASS_CATEGORY_ID
+from kiara.defaults import DATA_TYPE_CLASS_CATEGORY_ID, DATA_TYPES_CATEGORY_ID
 from kiara.models import KiaraModel
 from kiara.models.documentation import (
     AuthorsMetadataModel,

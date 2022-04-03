@@ -279,10 +279,8 @@ class KiaraOperation(object):
             value = result.get_value_obj(field_name)
             try:
                 self._kiara.data_registry.store_value(value=value, skip_if_exists=True)
-
-                msg = f"   -> done, id: [i]{value.value_id}[/i]"
                 if field_aliases:
-                    msg = msg + f", aliases: [i]{', '.join(field_aliases)}[/i]"
+                    self._kiara.alias_registry.register_aliases(value.value_id, *field_aliases)
 
                 stored[field_name] = StoreValueResult.construct(value=value, aliases=field_aliases, error=None)
 

@@ -48,18 +48,18 @@ class FileSystemJobArchive(JobArchive):
 
         base_path = Path(kiara.context_config.data_directory) / "job_store"
         base_path.mkdir(parents=True, exist_ok=True)
-        return cls(base_path=base_path, store_id=kiara.id)
+        result = cls(base_path=base_path, store_id=kiara.id)
+        ID_REGISTRY.update_metadata(result.get_job_archive_id(), kiara_id=kiara.id, obj=result)
+        return result
 
-    def __init__(self, base_path: Path, store_id: Optional[uuid.UUID] = None):
+    def __init__(self, base_path: Path, store_id: uuid.UUID):
 
         if not base_path.is_dir():
             raise Exception(
                 f"Can't create file system archive instance, base path does not exist or is not a folder: {base_path.as_posix()}."
             )
 
-        self._store_id: uuid.UUID = ID_REGISTRY.generate(
-            id=store_id, obj=self, type="job archive", cls=self.__class__
-        )
+        self._store_id: uuid.UUID = store_id
         self._base_path: Path = base_path
 
     def get_job_archive_id(self) -> uuid.UUID:
@@ -164,8 +164,9 @@ class JobRegistry(object):
         self._job_archives: Dict[uuid.UUID, JobArchive] = {}
         self._default_job_store: Optional[JobStore] = None
 
+        default_archive = FileSystemJobStore.create_from_kiara_context(self._kiara)
         self.register_job_archive(
-            FileSystemJobStore.create_from_kiara_context(self._kiara)
+            default_archive
         )
 
     def job_status_changed(
@@ -205,7 +206,6 @@ class JobRegistry(object):
     def get_job_record_in_session(self, job_id: uuid.UUID) -> JobRecord:
 
         return self._processor.get_job_record(job_id)
-
 
     def register_job_archive(self, job_store: JobStore):
 

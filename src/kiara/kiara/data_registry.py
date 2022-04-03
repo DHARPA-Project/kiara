@@ -53,6 +53,7 @@ from kiara.modules.operations.included_core_operations.render_value import (
     RenderValueOperationType,
 )
 from kiara.utils import is_debug, log_message
+from kiara.kiara.id_registry import ID_REGISTRY
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -283,6 +284,7 @@ class DataRegistry(object):
         self._value_store_map[value_id] = matches[0]
         stored_value = self.get_store(matches[0]).retrieve_value(value_id=value_id)
         stored_value._set_registry(self)
+        stored_value._is_stored = True
         self._registered_values[value_id] = stored_value
         return self._registered_values[value_id]
 
@@ -299,6 +301,7 @@ class DataRegistry(object):
             event = ValuePreStoreEvent.construct(kiara_id=self._kiara.id, value=value)
             self.send_event(event)
             load_config = store.store_value(value)
+            value._is_stored = True
             self._value_store_map[value.value_id] = store.data_store_id
             self._load_configs[value.value_id] = load_config
 
@@ -355,31 +358,23 @@ class DataRegistry(object):
 
         return set((self.get_value(value_id=v_id) for v_id in stored))
 
-        # def find_matching_job_record(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
-        #
-        #     if inputs_manifest.model_data_hash in self._archived_records.keys():
-        #         return self._archived_records[inputs_manifest.model_data_hash]
-        #
-        #     matches = []
-        #     match = None
-        #     for store_id, store in self.data_stores.items():
-        #         match = store.retrieve_job_record(inputs_manifest=inputs_manifest)
-        #         if match:
-        #             matches.append(match)
-        #
-        #     if len(matches) == 0:
-        #         return None
-        #     elif len(matches) > 1:
-        #         raise Exception(
-        #             f"Multiple stores have a record for inputs manifest '{inputs_manifest}', this is not supported (yet)."
-        #         )
-        #
-        #     # self._job_store_map[job.model_data_hash] = matches[0]
-        #     self._archived_records[inputs_manifest.model_data_hash] = matches[0]
-
-        return match
-
     def register_data(
+        self,
+        data: Any,
+        schema: Optional[ValueSchema] = None,
+        pedigree: Optional[ValuePedigree] = None,
+        pedigree_output_name: str = None,
+        reuse_existing: bool = True,
+    ) -> Value:
+
+        value = self._create_value(data=data, schema=schema, pedigree=pedigree, pedigree_output_name=pedigree_output_name, reuse_existing=reuse_existing)
+        self._values_by_hash.setdefault(value.value_hash, set()).add(value.value_id)
+        self._registered_values[value.value_id] = value
+        self._cached_data[value.value_id] = data
+
+        return value
+
+    def _create_value(
         self,
         data: Any,
         schema: Optional[ValueSchema] = None,
@@ -467,7 +462,7 @@ class DataRegistry(object):
             self._load_configs[existing_value.value_id] = None
             return existing_value
 
-        v_id = uuid.uuid4()
+        v_id = ID_REGISTRY.generate(type="value", kiara_id=self._kiara.id)
         value, data = data_type.assemble_value(
             value_id=v_id,
             data=data,
@@ -478,14 +473,12 @@ class DataRegistry(object):
             kiara_id=self._kiara.id,
             pedigree_output_name=pedigree_output_name,
         )
-
+        ID_REGISTRY.update_metadata(v_id, obj=value)
         value._data_registry = self
-        self._values_by_hash.setdefault(value.value_hash, set()).add(value.value_id)
-        self._registered_values[value.value_id] = value
-        self._cached_data[value.value_id] = data
 
         event = ValueCreatedEvent(kiara_id=self._kiara.id, value=value)
         self.send_event(event)
+
         return value
 
     def send_event(self, event: RegistryEvent, **payload):

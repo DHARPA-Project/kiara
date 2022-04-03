@@ -115,11 +115,11 @@ class ModuleProcessor(abc.ABC):
         outputs = ValueSetWritable.create_from_schema(
             kiara=self._kiara, schema=module.outputs_schema, pedigree=result_pedigree
         )
-        job_id = ID_REGISTRY.generate(type="active_job")
+        job_id = ID_REGISTRY.generate(kiara_id=self._kiara.id)
         job_log = JobLog()
 
         job = ActiveJob.construct(job_id=job_id, job_config=job_config, job_log=job_log)
-
+        ID_REGISTRY.update_metadata(job_id, obj=job)
         job.job_log.add_log("job created")
 
         job_details = {

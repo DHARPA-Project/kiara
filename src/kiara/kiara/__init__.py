@@ -97,8 +97,9 @@ class Kiara(object):
             config = kc.get_context()
 
         self._id: uuid.UUID = ID_REGISTRY.generate(
-            id=config.context_id, type="kiara context"
+            id=config.context_id, obj=self
         )
+        ID_REGISTRY.update_metadata(self._id, kiara_id=self._id)
         self._config: KiaraContextConfig = config
 
         if is_debug():

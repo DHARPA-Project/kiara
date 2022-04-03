@@ -188,13 +188,13 @@ class KiaraModuleConfigMetadata(KiaraModel):
     )
 
     def _retrieve_id(self) -> str:
-        return self.python_class.id
+        return self.python_class.model_id
 
     def _retrieve_category_id(self) -> str:
         return MODULE_CONFIG_METADATA_CATEGORY_ID
 
     def _retrieve_data_to_hash(self) -> Any:
-        return self.python_class.id
+        return self.python_class.model_id
 
 
 def calculate_class_doc_url(base_url: str, module_type_name: str):

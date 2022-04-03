@@ -24,7 +24,7 @@ from kiara.defaults import (
     STRICT_CHECKS,
     SpecialValue,
 )
-from kiara.exceptions import JobConfigException
+from kiara.exceptions import JobConfigException, InvalidValuesException
 from kiara.kiara.data_store import DataStore
 from kiara.kiara.data_store.filesystem_store import FilesystemDataStore
 from kiara.models.events.data_registry import (
@@ -588,11 +588,12 @@ class DataRegistry(object):
                 log_message("unused.inputs", input_names=leftover)
             else:
                 raise Exception(
-                    f"Can't register job, inputs contain unused/invalid fields: {', '.join(leftover)}"
+                    f"Can't create values instance, inputs contain unused/invalid fields: {', '.join(leftover)}"
                 )
 
         values = {}
 
+        failed = {}
         for input_name, details in input_details.items():
 
             value_schema = details["schema"]
@@ -603,9 +604,14 @@ class DataRegistry(object):
                 value_data = SpecialValue.NO_VALUE
             else:
                 value_data = data[input_name]
+            try:
+                value = self.retrieve_or_create_value(value_data, value_schema=value_schema)
+                values[input_name] = value
+            except Exception as e:
+                failed[input_name] = e
 
-            value = self.retrieve_or_create_value(value_data, value_schema=value_schema)
-            values[input_name] = value
+        if failed:
+            raise InvalidValuesException(msg="Can't create values instance.", invalid_values={k: str(v) for k, v in failed.items()})
 
         return ValueSetReadOnly(value_items=values, values_schema=schema)  # type: ignore
 
@@ -765,11 +771,10 @@ class DataRegistry(object):
         return value
 
     def render_data(
-        self, value: Value, target_type="terminal_renderable", **render_config: Any
+        self, value_id: uuid.UUID, target_type="terminal_renderable", **render_config: Any
     ) -> Any:
 
-        if render_config:
-            raise NotImplementedError()
+        value = self.get_value(value_id=value_id)
 
         op_type: RenderValueOperationType = self._kiara.operation_registry.get_operation_type("render_value")  # type: ignore
         try:

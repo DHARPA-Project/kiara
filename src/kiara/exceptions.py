@@ -4,14 +4,16 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
+import uuid
 from typing import Any, Mapping, TYPE_CHECKING, Type, Optional, Union, Iterable
+
 
 if TYPE_CHECKING:
     from kiara import KiaraModule
     from kiara.data_types import DataType
     from kiara.models.module.manifest import Manifest
     from kiara.models.values.value import Value
+    from kiara.models.module.jobs import ActiveJob
 
 
 class KiaraException(Exception):
@@ -129,13 +131,13 @@ class InvalidValuesException(Exception):
         if invalid_values is None:
             invalid_values = {}
 
-        self._invalid_inputs: Mapping[str, str] = invalid_values
+        self.invalid_inputs: Mapping[str, str] = invalid_values
 
         if msg is None:
-            if not self._invalid_inputs:
+            if not self.invalid_inputs:
                 _msg = "Invalid inputs."
             else:
-                _msg = f"Invalid inputs: {', '.join(self._invalid_inputs.keys())}"
+                _msg = f"Invalid inputs: {', '.join(self.invalid_inputs.keys())}"
         elif isinstance(msg, Exception):
             self._parent: Optional[Exception] = msg
             _msg = str(msg)
@@ -173,3 +175,13 @@ class JobConfigException(Exception):
     @property
     def inputs(self) -> Mapping[str, Any]:
         return self._inputs
+
+
+class FailedJobException(Exception):
+
+    def __init__(self, job: "ActiveJob", msg: Optional[str]=None):
+
+        self.job: ActiveJob = job
+        if msg is None:
+            msg = "Job failed."
+        super().__init__(msg)

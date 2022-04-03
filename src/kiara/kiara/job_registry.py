@@ -7,6 +7,7 @@ from bidict import bidict
 from pathlib import Path
 from typing import Any, Dict, Mapping, Optional, TYPE_CHECKING
 
+from kiara.kiara.id_registry import ID_REGISTRY
 from kiara.models.module.jobs import ActiveJob, JobConfig, JobRecord, JobStatus
 from kiara.models.module.manifest import InputsManifest, Manifest
 from kiara.models.values.value import ValueSet
@@ -23,6 +24,7 @@ MANIFEST_SUB_PATH = "manifests"
 
 
 class JobArchive(abc.ABC):
+
     @abc.abstractmethod
     def get_job_archive_id(self) -> uuid.UUID:
         pass
@@ -55,9 +57,7 @@ class FileSystemJobArchive(JobArchive):
                 f"Can't create file system archive instance, base path does not exist or is not a folder: {base_path.as_posix()}."
             )
 
-        from kiara.kiara import KIARA_IDS
-
-        self._store_id: uuid.UUID = KIARA_IDS.generate(
+        self._store_id: uuid.UUID = ID_REGISTRY.generate(
             id=store_id, obj=self, type="job archive", cls=self.__class__
         )
         self._base_path: Path = base_path
@@ -71,7 +71,7 @@ class FileSystemJobArchive(JobArchive):
 
         return self._retrieve_job_record(
             manifest_hash=inputs_manifest.manifest_hash,
-            jobs_hash=inputs_manifest.jobs_hash,
+            jobs_hash=inputs_manifest.job_hash,
         )
 
     def _retrieve_job_record(
@@ -105,6 +105,7 @@ class FileSystemJobArchive(JobArchive):
         details: Dict[str, Any] = orjson.loads(details_content)
 
         job_record = JobRecord(**details)
+        job_record._is_stored = True
         return job_record
 
 
@@ -112,7 +113,7 @@ class FileSystemJobStore(FileSystemJobArchive, JobStore):
     def store_job_record(self, job_record: JobRecord):
 
         manifest_hash = job_record.manifest_hash
-        jobs_hash = job_record.jobs_hash
+        jobs_hash = job_record.job_hash
 
         base_path = self._base_path / MANIFEST_SUB_PATH
         manifest_folder = base_path / str(manifest_hash)
@@ -154,7 +155,6 @@ class JobRegistry(object):
 
         self._kiara: Kiara = kiara
         self._active_jobs: bidict[int, uuid.UUID] = bidict()
-        self._save_marks: Dict[uuid.UUID, bool] = {}
         self._failed_jobs: Dict[int, uuid.UUID] = {}
         self._finished_jobs: Dict[int, uuid.UUID] = {}
         self._archived_records: Dict[uuid.UUID, JobRecord] = {}
@@ -172,25 +172,40 @@ class JobRegistry(object):
         self, job_id: uuid.UUID, old_status: Optional[JobStatus], new_status: JobStatus
     ):
 
+        # print(f"JOB STATUS CHANGED: {job_id} - {old_status} - {new_status.value}")
         if job_id in self._active_jobs.values() and new_status is JobStatus.FAILED:
             job_hash = self._active_jobs.inverse.pop(job_id)
             self._failed_jobs[job_hash] = job_id
-            self._save_marks.pop(job_id)
         elif job_id in self._active_jobs.values() and new_status is JobStatus.SUCCESS:
             job_hash = self._active_jobs.inverse.pop(job_id)
 
             job_record = self._processor.get_job_record(job_id)
-            save = self._save_marks.pop(job_id)
-            if save:
-                logger.debug(
-                    "store.job_record",
-                    jobs_hash=job_hash,
-                    module_type=job_record.module_type,
-                )
-                self._default_job_store.store_job_record(job_record)
 
             self._finished_jobs[job_hash] = job_id
             self._archived_records[job_id] = job_record
+
+    def store_job_record(self, job_id: uuid.UUID):
+
+        if job_id not in self._archived_records.keys():
+            raise Exception(f"Can't store job with id '{job_id}': no job record with that id exists.")
+
+        job_record = self._archived_records[job_id]
+
+        if job_record._is_stored:
+            logger.debug("ignore.store.job_record", reason="already stored", job_id=str(job_id))
+            return
+
+        logger.debug(
+            "store.job_record",
+            job_hash=job_record.job_hash,
+            module_type=job_record.module_type,
+        )
+        self._default_job_store.store_job_record(job_record)
+
+    def get_job_record_in_session(self, job_id: uuid.UUID) -> JobRecord:
+
+        return self._processor.get_job_record(job_id)
+
 
     def register_job_archive(self, job_store: JobStore):
 
@@ -224,12 +239,12 @@ class JobRegistry(object):
             'None' if no such job exists, a (uuid) job-id if the job is currently running or has run in the past
         """
 
-        if inputs_manifest.jobs_hash in self._active_jobs.keys():
+        if inputs_manifest.job_hash in self._active_jobs.keys():
             logger.debug("job.use_running")
-            return self._active_jobs[inputs_manifest.jobs_hash]
+            return self._active_jobs[inputs_manifest.job_hash]
 
-        if inputs_manifest.jobs_hash in self._finished_jobs.keys():
-            job_id = self._finished_jobs[inputs_manifest.jobs_hash]
+        if inputs_manifest.job_hash in self._finished_jobs.keys():
+            job_id = self._finished_jobs[inputs_manifest.job_hash]
             return job_id
 
         matches = []
@@ -248,14 +263,10 @@ class JobRegistry(object):
 
         job_record = matches[0]
 
-        from kiara.kiara import KIARA_IDS
-
-        fake_job_id = KIARA_IDS.generate(type="archived_job_id", obj=job_record)
-
-        self._finished_jobs[inputs_manifest.jobs_hash] = fake_job_id
-        self._archived_records[fake_job_id] = job_record
+        self._finished_jobs[inputs_manifest.job_hash] = job_record.job_id
+        self._archived_records[job_record.job_id] = job_record
         logger.debug("job.use_cached")
-        return fake_job_id
+        return job_record.job_id
 
     def prepare_job_config(
         self, manifest: Manifest, inputs: Mapping[str, Any]
@@ -276,7 +287,7 @@ class JobRegistry(object):
         return self.execute_job(job_config, wait=wait)
 
     def execute_job(
-        self, job_config: JobConfig, wait: bool = False, save_job: bool = False
+        self, job_config: JobConfig, wait: bool = False
     ) -> uuid.UUID:
 
         log = logger.bind(
@@ -292,8 +303,7 @@ class JobRegistry(object):
         log.debug("job.execute", inputs=job_config.inputs)
 
         job_id = self._processor.create_job(job_config=job_config)
-        self._save_marks[job_id] = save_job
-        self._active_jobs[job_config.jobs_hash] = job_id
+        self._active_jobs[job_config.job_hash] = job_id
 
         self._processor.queue_job(job_id=job_id)
 
@@ -322,6 +332,11 @@ class JobRegistry(object):
             return JobStatus.FAILED
 
         return self._processor.get_job_status(job_id=job_id)
+
+    def wait_for(self, *job_id: uuid.UUID):
+        not_finished = (j for j in job_id if j not in self._archived_records.keys())
+        if not_finished:
+            self._processor.wait_for(*not_finished)
 
     def retrieve_result(self, job_id: uuid.UUID) -> ValueSet:
 

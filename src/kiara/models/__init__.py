@@ -71,7 +71,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         """
 
     @property
-    def id(self) -> str:
+    def model_id(self) -> str:
         """The unique id of this model, within its category."""
 
         if self._id_cache is None:
@@ -216,11 +216,11 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         if self.__class__ != other.__class__:
             return False
         else:
-            return (self.id, self.model_data_hash) == (other.id, other.model_data_hash)
+            return (self.model_id, self.model_data_hash) == (other.model_id, other.model_data_hash)
 
     def __repr__(self):
 
-        return f"{self.__class__.__name__}(id={self.id}, category={self.category_id}, fields=[{', '.join(self.__fields__.keys())}])"
+        return f"{self.__class__.__name__}(model_id={self.model_id}, category={self.category_id}, fields=[{', '.join(self.__fields__.keys())}])"
 
     def __str__(self):
         return self.__repr__()

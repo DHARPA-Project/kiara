@@ -104,7 +104,7 @@ class InputsManifest(Manifest):
     _jobs_hash: Optional[int] = PrivateAttr(default=None)
 
     @property
-    def jobs_hash(self) -> int:
+    def job_hash(self) -> int:
 
         if self._jobs_hash is not None:
             return self._jobs_hash

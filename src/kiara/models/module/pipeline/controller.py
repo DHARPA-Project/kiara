@@ -3,6 +3,7 @@ import structlog
 import uuid
 from typing import Mapping, Optional
 
+from kiara.kiara import JobRegistry
 from kiara.models.events.pipeline import PipelineDetails, PipelineEvent
 from kiara.models.module.pipeline.pipeline import Pipeline, PipelineListener
 from kiara.processing import ModuleProcessor
@@ -17,10 +18,10 @@ class PipelineController(PipelineListener):
 
 
 class SinglePipelineController(PipelineController):
-    def __init__(self, pipeline: Pipeline, processor: ModuleProcessor):
+    def __init__(self, pipeline: Pipeline, job_registry: JobRegistry):
 
         self._pipeline: Pipeline = pipeline
-        self._processor: ModuleProcessor = processor
+        self._job_registry: JobRegistry = job_registry
         self._pipeline.add_listener(self)
         self._pipeline_details: Optional[PipelineDetails] = None
 
@@ -56,11 +57,12 @@ class SinglePipelineController(PipelineController):
 
     def set_processing_results(self, job_ids: Mapping[str, uuid.UUID]):
 
-        self._processor.wait_for(*job_ids.values())
+
+        self._job_registry.wait_for(*job_ids.values())
 
         combined_outputs = {}
         for step_id, job_id in job_ids.items():
-            record = self._processor.get_job_record(job_id=job_id)
+            record = self._job_registry.get_job_record_in_session(job_id=job_id)
             combined_outputs[step_id] = record.outputs
 
         self.pipeline.set_multiple_step_outputs(
@@ -90,11 +92,12 @@ class SinglePipelineController(PipelineController):
 
         job_config = self.pipeline.create_job_config_for_step(step_id)
 
-        job_id = self._processor.create_job(job_config=job_config)
-        self._processor.queue_job(job_id=job_id)
+        job_id = self._job_registry.execute_job(job_config=job_config)
+        # job_id = self._processor.create_job(job_config=job_config)
+        # self._processor.queue_job(job_id=job_id)
 
         if wait:
-            self._processor.wait_for(job_id)
+            self._job_registry.wait_for(job_id)
 
         return job_id
 
@@ -113,13 +116,13 @@ class SinglePipelineBatchController(SinglePipelineController):
     def __init__(
         self,
         pipeline: Pipeline,
-        processor: ModuleProcessor,
+        job_registry: JobRegistry,
         auto_process: bool = True,
     ):
 
         self._auto_process: bool = auto_process
         self._is_running: bool = False
-        super().__init__(pipeline=pipeline, processor=processor)
+        super().__init__(pipeline=pipeline, job_registry=job_registry)
 
     @property
     def auto_process(self) -> bool:

@@ -80,7 +80,7 @@ def get_subcomponent_from_model(data: "KiaraModel", path: str) -> "KiaraModel":
         if path in data.__fields__.keys():
             return getattr(data, path)
         else:
-            raise KeyError(f"No subcomponent for key '{path}' in model: {data.id}.")
+            raise KeyError(f"No subcomponent for key '{path}' in model: {data.model_id}.")
 
 
 def assemble_subcomponent_tree(data: "KiaraModel") -> Optional[nx.DiGraph]:

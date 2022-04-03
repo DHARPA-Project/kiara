@@ -105,9 +105,9 @@ class ValueDetails(KiaraModel):
     def _retrieve_category_id(self) -> str:
         return VALUE_CATEGORY_ID
 
-    @property
-    def model_data_hash(self) -> int:
-        return self._retrieve_data_to_hash()
+    # @property
+    # def model_data_hash(self) -> int:
+    #     return self._retrieve_data_to_hash()
 
     def _retrieve_data_to_hash(self) -> Any:
         return {
@@ -293,7 +293,7 @@ class UnloadableData(KiaraModel):
     load_config: LoadConfig = Field(description="The load config")
 
     def _retrieve_id(self) -> str:
-        return self.value.id
+        return self.value.model_id
 
     def _retrieve_category_id(self) -> str:
         return UNOLOADABLE_DATA_CATEGORY_ID
@@ -425,6 +425,24 @@ class ValueSet(KiaraModel, MutableMapping[str, Value]):  # type: ignore
 
     def __str__(self):
         return self.__repr__()
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        render_value_data = config.get("render_value_data", True)
+
+        table = Table(show_lines=False, show_header=True, box=box.SIMPLE)
+        table.add_column("field", style="b")
+        table.add_column("value", style="i")
+
+        for field_name in self.field_names:
+            value = self.get_value_obj(field_name=field_name)
+            if render_value_data:
+                rendered = value._data_registry.render_data(value_id=value.value_id, target_type="terminal_renderable", **config)
+            else:
+                rendered = value.create_renderable(**config)
+            table.add_row(field_name, rendered)
+
+        return table
 
 
 class ValueSetReadOnly(ValueSet):  # type: ignore

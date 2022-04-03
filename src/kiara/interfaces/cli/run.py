@@ -14,6 +14,8 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
 from kiara import Kiara
+from kiara.exceptions import NoSuchExecutionTargetException, InvalidValuesException, FailedJobException
+from kiara.interfaces.python_api import KiaraOperation
 from kiara.models.module.jobs import JobStatus
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
@@ -109,47 +111,29 @@ def run(
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    # =========================================================================
-    # prepare manifest
-    if module_or_operation in kiara_obj.operation_registry.operation_ids:
-
-        operation = kiara_obj.operation_registry.get_operation(module_or_operation)
-        if module_config:
-            print(
-                f"Specified run target '{module_or_operation}' is an operation, additional module configuration is not allowed."
-            )
-
-    elif module_or_operation in kiara_obj.module_type_names:
-
-        manifest = Manifest(
-            module_type=module_or_operation, module_config=module_config
-        )
-
-        module = kiara_obj.create_module(manifest=manifest)
-
-        operation = Operation.create_from_module(module)
-
-    elif os.path.isfile(module_or_operation):
-        raise NotImplementedError()
-        # module_name = kiara_obj.register_pipeline_description(
-        #     module_or_operation, raise_exception=True
-        # )
-    else:
-        rich_print(
-            f"\nInvalid run target name '[i]{module_or_operation}[/i]'. Must be a path to a pipeline file, or one of the available modules/operations:\n"
-        )
-
-        merged = list(kiara_obj.module_type_names)
-        merged.extend(kiara_obj.operation_registry.operation_ids)
-        for n in sorted(merged):
+    kiara_op = KiaraOperation(kiara=kiara_obj, operation_name=module_or_operation, operation_config=module_config)
+    try:
+        # validate that operation config is valid, ignoring inputs for now
+        operation = kiara_op.operation
+    except NoSuchExecutionTargetException as nset:
+        print()
+        rich_print(nset)
+        print()
+        print("Existing operations:")
+        print()
+        for n in nset.avaliable_targets:
             rich_print(f"  - [i]{n}[/i]")
+        sys.exit(1)
+    except Exception as e:
+        print()
+        rich_print(str(e))
         sys.exit(1)
 
     # =========================================================================
     # check save user input
+    final_aliases = {}
     if save:
         op_output_names = operation.outputs_schema.keys()
-        final_aliases = {}
         invalid_fields = []
         for field_name, alias in aliases.items():
             if field_name not in op_output_names:
@@ -177,50 +161,71 @@ def run(
 
     inputs_dict = dict_from_cli_args(*inputs, list_keys=list_keys)
 
-    job_config = operation.prepare_job_config(kiara=kiara_obj, inputs=inputs_dict)
+    kiara_op.set_inputs(**inputs_dict)
+
+    try:
+        operation_inputs = kiara_op.operation_inputs
+    except InvalidValuesException as ive:
+        print()
+        rich_print(str(ive))
+        print()
+        print("Details:\n")
+        for k, v in ive.invalid_inputs.items():
+            rich_print(f"  - [b]{k}[/b]: [i]{v}[/i]")
+        sys.exit(1)
+
+    invalid = operation_inputs.check_invalid()
+    if invalid:
+        print()
+        print("Can't create operation inputs, invalid field(s):")
+        print()
+        for k, v in invalid.items():
+            rich_print(f"  - [b]{k}[/b]: [i]{v}[/i]")
+        sys.exit(1)
+
 
     # =========================================================================
     # execute job
+    job_id = kiara_op.queue_job()
 
-    job_id = kiara_obj.job_registry.execute_job(job_config=job_config, save_job=True)
-    status = kiara_obj.job_registry.get_job_status(job_id=job_id)
-
-    if status == JobStatus.FAILED:
-        job = kiara_obj.job_registry.get_active_job(job_id=job_id)
-        print(f"Job failed: {job.error}")
+    try:
+        outputs = kiara_op.retrieve_result(job_id=job_id)
+    except FailedJobException as fje:
+        print()
+        rich_print(f"[red b]Job failed[/red b]: {fje.job.error}")
         sys.exit(1)
 
-    outputs = kiara_obj.job_registry.retrieve_result(job_id)
-
-    outputs = operation.process_job_outputs(outputs=outputs)
 
     print()
-    for k, v in outputs.items():
-        rendered = kiara_obj.data_registry.render_data(v)
-        rich_print(rendered)
+    rich_print("[b]Result(s):[/b]")
+    rich_print(outputs)
+    # for k, v in outputs.items():
+    #     rendered = kiara_obj.data_registry.render_data(v)
+    #     rich_print(rendered)
 
-    dbg(aliases)
-    dbg(full_aliases)
     if save:
 
-        dbg(final_aliases)
-        for field_name, aliases in final_aliases.items():
-            rich_print(f"Saving '[i]{field_name}[/i]'...")
-            try:
-                value = outputs.get_value_obj(field_name)
-                raise NotImplementedError()
-                value.save(aliases=aliases)
-                msg = f"   -> done, id: [i]{value.value_id}[/i]"
-                if aliases:
-                    msg = msg + f", aliases: [i]{', '.join(aliases)}[/i]"
-                rich_print(msg)
-            except Exception as e:
-                if is_debug():
-                    import traceback
-
-                    traceback.print_exc()
-                rich_print(f"   -> failed: [red]{e}[/red]")
-            print()
+        save_results = kiara_op.save_result(job_id=job_id, aliases=final_aliases)
+        print()
+        rich_print("[b]Stored value(s):[/b]")
+        rich_print(save_results)
+        # for field_name, aliases in final_aliases.items():
+        #     rich_print(f"Saving '[i]{field_name}[/i]'...")
+        #     try:
+        #         value = outputs.get_value_obj(field_name)
+        #         raise NotImplementedError()
+        #         value.save(aliases=aliases)
+        #         msg = f"   -> done, id: [i]{value.value_id}[/i]"
+        #         if aliases:
+        #             msg = msg + f", aliases: [i]{', '.join(aliases)}[/i]"
+        #         rich_print(msg)
+        #     except Exception as e:
+        #         if is_debug():
+        #             import traceback
+        #
+        #             traceback.print_exc()
+        #         rich_print(f"   -> failed: [red]{e}[/red]")
+        #     print()
 
 
 # @click.argument("module", nargs=1, metavar="MODULE_OR_OPERATION")

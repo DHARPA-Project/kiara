@@ -90,7 +90,7 @@ class FileSystemArchive(DataArchive, JobArchive):
     ) -> Optional[JobRecord]:
         return self._retrieve_job_record(
             manifest_hash=inputs_manifest.manifest_hash,
-            jobs_hash=inputs_manifest.jobs_hash,
+            jobs_hash=inputs_manifest.job_hash,
         )
 
     def _retrieve_job_record(
@@ -314,7 +314,7 @@ class FilesystemDataStore(FileSystemArchive, DataStore):
     def _persist_value_pedigree(self, value: Value):
 
         manifest_hash = value.pedigree.manifest_hash
-        jobs_hash = value.pedigree.jobs_hash
+        jobs_hash = value.pedigree.job_hash
 
         base_path = self.get_path(entity_type=EntityType.MANIFEST)
         manifest_folder = base_path / str(manifest_hash)

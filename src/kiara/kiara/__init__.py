@@ -24,6 +24,7 @@ from kiara.kiara.alias_registry import AliasRegistry
 from kiara.kiara.config import KiaraContextConfig, KiaraGlobalConfig
 from kiara.kiara.data_registry import DataRegistry
 from kiara.kiara.environment_registry import EnvironmentRegistry
+from kiara.kiara.id_registry import ID_REGISTRY
 from kiara.kiara.job_registry import JobRegistry
 from kiara.kiara.module_registry import ModuleRegistry
 from kiara.kiara.operation_registry import OperationRegistry
@@ -95,7 +96,7 @@ class Kiara(object):
             kc = KiaraGlobalConfig()
             config = kc.get_context()
 
-        self._id: uuid.UUID = KIARA_IDS.generate(
+        self._id: uuid.UUID = ID_REGISTRY.generate(
             id=config.context_id, type="kiara context"
         )
         self._config: KiaraContextConfig = config
@@ -252,22 +253,4 @@ class Kiara(object):
             )
 
 
-class UUIDGenerator(object):
-    def __init__(self):
-        self._ids: Dict[uuid.UUID, Any] = {}
 
-    def generate(self, id: Optional[uuid.UUID] = None, **metadata: Any):
-
-        if id is None:
-            id = uuid.uuid4()
-        if is_debug() or is_develop():
-
-            obj = metadata.pop("obj", None)
-            # TODO: store this in a weakref dict
-            logger.debug("generate.id", id=id, metadata=metadata)
-            self._ids.setdefault(id, []).append(metadata)
-
-        return id
-
-
-KIARA_IDS = UUIDGenerator()

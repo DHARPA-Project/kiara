@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from typing import Any, Dict, List, Optional, Protocol, Union
 
 from kiara.exceptions import KiaraProcessingException
+from kiara.kiara.id_registry import ID_REGISTRY
 from kiara.models.module.jobs import ActiveJob, JobConfig, JobLog, JobRecord, JobStatus
 from kiara.models.values.value import (
     ValuePedigree,
@@ -114,7 +115,7 @@ class ModuleProcessor(abc.ABC):
         outputs = ValueSetWritable.create_from_schema(
             kiara=self._kiara, schema=module.outputs_schema, pedigree=result_pedigree
         )
-        job_id = uuid.uuid4()
+        job_id = ID_REGISTRY.generate(type="active_job")
         job_log = JobLog()
 
         job = ActiveJob.construct(job_id=job_id, job_config=job_config, job_log=job_log)
@@ -150,7 +151,7 @@ class ModuleProcessor(abc.ABC):
         input_values = self._kiara.data_registry.load_values(job_config.inputs)
 
         if module.is_pipeline():
-            module._set_module_processor(self)
+            module._set_job_registry(self._kiara.job_registry)
 
         try:
             self._add_processing_task(
@@ -242,9 +243,9 @@ class ModuleProcessor(abc.ABC):
         self._wait_for(*job_ids)
 
         for job_id in job_ids:
-            job = self._job_records[job_id]
+            job = self._job_records.get(job_id, None)
             if job is None:
-                job = self._failed_jobs[job_id]
+                job = self._failed_jobs.get(job_id, None)
                 if job is None:
                     raise Exception(f"Can't find job with id: {job_id}")
 

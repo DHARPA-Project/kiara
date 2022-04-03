@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
-from typing import Any, Mapping, Optional, Union
+from typing import Any, Mapping, Optional, Union, TYPE_CHECKING
 
+from kiara.models.module.jobs import JobLog
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.module.pipeline.controller import SinglePipelineBatchController
 from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.models.module.pipeline.structure import PipelineStructure
 from kiara.models.values.value import ValueSet
 from kiara.modules import KIARA_CONFIG, KiaraModule, ValueSetSchema
-from kiara.processing import ModuleProcessor
+
+if TYPE_CHECKING:
+    from kiara.kiara.job_registry import JobRegistry
 
 
 class PipelineModule(KiaraModule):
@@ -19,14 +22,14 @@ class PipelineModule(KiaraModule):
         self,
         module_config: Union[None, KIARA_CONFIG, Mapping[str, Any]] = None,
     ):
-        self._module_processor: Optional[ModuleProcessor] = None
+        self._job_registry: Optional[JobRegistry] = None
         super().__init__(module_config=module_config)
 
     def is_pipeline(cls) -> bool:
         return True
 
-    def _set_module_processor(self, processor: ModuleProcessor):
-        self._module_processor = processor
+    def _set_job_registry(self, job_registry: "JobRegistry"):
+        self._job_registry = job_registry
 
     def create_inputs_schema(
         self,
@@ -41,7 +44,7 @@ class PipelineModule(KiaraModule):
         pipeline_structure: PipelineStructure = self.config.structure
         return pipeline_structure.pipeline_outputs_schema
 
-    def process(self, inputs: ValueSet, outputs: ValueSet):
+    def process(self, inputs: ValueSet, outputs: ValueSet, job_log: JobLog):
 
         pipeline_structure: PipelineStructure = self.config.structure
 
@@ -49,7 +52,7 @@ class PipelineModule(KiaraModule):
             structure=pipeline_structure, data_registry=outputs._data_registry
         )
         controller = SinglePipelineBatchController(
-            pipeline=pipeline, processor=self._module_processor
+            pipeline=pipeline, job_registry=self._job_registry
         )
 
         pipeline.set_pipeline_inputs(inputs=inputs)

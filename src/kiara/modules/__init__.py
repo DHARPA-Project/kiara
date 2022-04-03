@@ -343,7 +343,7 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
         # self._merged_input_schemas: typing.Mapping[str, ValueSchema] = None  # type: ignore
 
     @property
-    def id(self) -> uuid.UUID:
+    def module_id(self) -> uuid.UUID:
         """The id of this module."""
         return self._id
 
@@ -447,7 +447,7 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
         return self.module_instance_hash
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(id={self.id} input_names={list(self.input_names)} output_names={list(self.output_names)})"
+        return f"{self.__class__.__name__}(id={self.module_id} module_type={self.module_type_name} input_names={list(self.input_names)} output_names={list(self.output_names)})"
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -468,5 +468,5 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
             RenderGroup(*r_gro),
             box=box.ROUNDED,
             title_align="left",
-            title=f"Module: [b]{self.id}[/b]",
+            title=f"Module: [b]{self.module_type_name}[/b]",
         )

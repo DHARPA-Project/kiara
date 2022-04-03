@@ -2,8 +2,12 @@
 import abc
 import structlog
 import uuid
+
+from rich import box
 from rich.console import RenderableType
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Set, Union
+
+from rich.table import Table
 
 from kiara.models.module.destiniy import Destiny
 from kiara.models.module.manifest import LoadConfig
@@ -198,7 +202,7 @@ class DataStore(DataArchive):
         logger.debug(
             "store.value",
             data_type=value.value_schema.type,
-            value_id=value.id,
+            value_id=value.value_id,
             value_hash=value.value_hash,
         )
 
@@ -286,9 +290,10 @@ class DataStore(DataArchive):
         all_values = {}
         for value_id in self.value_ids:
 
-            value = self._kiara.data_registry.get_value(value_id=value_id)
+            value = self._kiara.data_registry.get_value(value_id)
             all_values[str(value_id)] = value
         table = create_renderable_from_values(values=all_values, config=config)
+
         return table
 
 

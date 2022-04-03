@@ -325,7 +325,7 @@ class PipelineStructure(KiaraModel):
         }
 
     def _retrieve_id(self) -> str:
-        return self.pipeline_config.id
+        return self.pipeline_config.model_id
 
     def _retrieve_category_id(self) -> str:
         return PIPELINE_STRUCTURE_TYPE_CATEGORY_ID

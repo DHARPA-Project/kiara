@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Optional, 
 
 from kiara.defaults import SpecialValue
 from kiara.models.values.value_metadata import ValueMetadata
-from kiara.utils import dict_from_cli_args
+from kiara.utils import dict_from_cli_args, orjson_dumps
 
 from kiara.models.values.value import ORPHAN, Value
 
@@ -603,7 +603,7 @@ def extract_renderable(item: Any, render_config: Optional[Mapping[str, Any]] = N
             if isinstance(v, BaseModel):
                 v = v.dict()
             result[k] = v
-        return json.dumps(result, indent=2)
+        return orjson_dumps(result, option=orjson.OPT_INDENT_2)
     elif isinstance(item, Iterable):
         _all = []
         for i in item:
@@ -655,13 +655,7 @@ def create_renderable_from_values(
                 pedigree = value.pedigree.json(option=orjson.OPT_INDENT_2)
             row.append(pedigree)
         if show_data:
-            data = value.data
-            if isinstance(data, ValueMetadata):
-                data = json.dumps(
-                    {"metadata": data.dict(), "schema": data.schema()}, indent=2
-                )
-            else:
-                data = str(data)
+            data =  value._data_registry.render_data(value_id=value.value_id, target_type="terminal_renderable", **config)
             row.append(data)
         if show_load_config:
             load_config = value.load_config

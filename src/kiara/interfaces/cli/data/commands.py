@@ -88,7 +88,6 @@ def list_values(
         rendered = kiara_obj.data_registry.render_data(value_id=value_id)
         table.add_row(alias, rendered)
 
-    print()
     rich_print(table)
 
 

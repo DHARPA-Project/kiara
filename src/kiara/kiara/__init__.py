@@ -23,6 +23,7 @@ from kiara.interfaces import get_console
 from kiara.kiara.alias_registry import AliasRegistry
 from kiara.kiara.config import KiaraContextConfig, KiaraGlobalConfig
 from kiara.kiara.data_registry import DataRegistry
+from kiara.kiara.destiny_registry import DestinyRegistry
 from kiara.kiara.environment_registry import EnvironmentRegistry
 from kiara.kiara.id_registry import ID_REGISTRY
 from kiara.kiara.job_registry import JobRegistry
@@ -123,6 +124,7 @@ class Kiara(object):
         self._data_registry: DataRegistry = DataRegistry(kiara=self)
         self._job_registry: JobRegistry = JobRegistry(kiara=self)
         self._alias_registry: AliasRegistry = AliasRegistry(kiara=self)
+        self._destiny_registry: DestinyRegistry = DestinyRegistry(kiara=self)
 
         self._env_mgmt: Optional[EnvironmentRegistry] = None
 
@@ -167,6 +169,10 @@ class Kiara(object):
     @property
     def alias_registry(self) -> AliasRegistry:
         return self._alias_registry
+
+    @property
+    def destiny_registry(self) -> DestinyRegistry:
+        return self._destiny_registry
 
     @property
     def job_registry(self) -> JobRegistry:

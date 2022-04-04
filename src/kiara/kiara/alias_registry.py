@@ -28,7 +28,15 @@ class AliasArchive(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def retrieve_all_aliases(self) -> Iterable[str]:
+    def retrieve_all_aliases(self) -> Optional[Iterable[str]]:
+        """Retrieve a list of all aliases registered in this archive.
+
+        The result of this method can be 'None', for cases where the aliases are determined dynamically.
+        In kiara, the result of this method is mostly used to improve performance when looking up an alias.
+
+        Returns:
+            a list of strings (the aliases), or 'None' if this archive does not support alias indexes.
+        """
         pass
 
     @abc.abstractmethod
@@ -187,6 +195,8 @@ class AliasRegistry(object):
         all_aliases: Dict[str, uuid.UUID] = {}
         for store_id, store in self._alias_archives.items():
             a = store.retrieve_all_aliases()
+            if a is None:
+                continue
             for alias in a:
                 if alias in all_aliases.keys():
                     value_one = self._alias_archives[all_aliases[alias]].find_value_id_for_alias(alias)

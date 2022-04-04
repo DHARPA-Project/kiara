@@ -6,7 +6,6 @@ from pydantic import BaseModel
 from typing import Any, Dict, List, Optional, Protocol, Union
 
 from kiara.exceptions import KiaraProcessingException
-from kiara.kiara.id_registry import ID_REGISTRY
 from kiara.models.module.jobs import ActiveJob, JobConfig, JobLog, JobRecord, JobStatus
 from kiara.models.values.value import (
     ValuePedigree,
@@ -14,6 +13,7 @@ from kiara.models.values.value import (
     ValueSetReadOnly,
     ValueSetWritable,
 )
+from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import is_debug
 
 # -*- coding: utf-8 -*-

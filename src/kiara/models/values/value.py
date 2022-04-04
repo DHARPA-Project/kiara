@@ -2,7 +2,7 @@
 import abc
 import logging
 import uuid
-from pydantic import Field, PrivateAttr
+from pydantic import PrivateAttr
 from pydantic.fields import Field
 from rich import box
 from rich.console import RenderableType
@@ -41,7 +41,7 @@ yaml = StringYAML()
 if TYPE_CHECKING:
     from kiara.data_types import DataType
     from kiara.kiara import Kiara
-    from kiara.kiara.data_registry import DataRegistry
+    from kiara.registries.data import DataRegistry
 
 
 class ValuePedigree(InputsManifest):
@@ -110,10 +110,7 @@ class ValueDetails(KiaraModel):
     #     return self._retrieve_data_to_hash()
 
     def _retrieve_data_to_hash(self) -> Any:
-        return {
-            "value_type": self.value_schema.type,
-            "value_hash": self.value_hash
-        }
+        return {"value_type": self.value_schema.type, "value_hash": self.value_hash}
 
     @property
     def data_type_name(self) -> str:
@@ -177,6 +174,35 @@ class Value(ValueDetails):
     _data_registry: "DataRegistry" = PrivateAttr(default=None)
     _data_type: "DataType" = PrivateAttr(default=None)
     _is_stored: bool = PrivateAttr(default=False)
+
+    properties: Mapping[str, uuid.UUID] = Field(
+        description="Links to values that are properties of this value.",
+        default_factory=dict,
+    )
+    property_backlinks: Dict[uuid.UUID, List[str]] = Field(
+        description="References to values this value is a property of.",
+        default_factory=dict,
+    )
+
+    def add_property(self, property_path: str, value: "Value"):
+
+        if self._is_stored:
+            raise Exception(
+                f"Can't add property to value '{self.value_id}': value already locked."
+            )
+
+        if value._is_stored:
+            raise Exception(
+                f"Can't add property to value '{self.value_id}': referenced value '{value.value_id}' already locked."
+            )
+
+        if property_path in self.properties.keys():
+            raise Exception(
+                f"Can't add property to value '{self.value_id}': property '{property_path}' already set."
+            )
+
+        self.properties[property_path] = value.value_id  # type: ignore
+        value.property_backlinks.setdefault(self.value_id, set()).add(property_path)  # type: ignore
 
     @property
     def data(self) -> Any:
@@ -434,7 +460,9 @@ class ValueSet(KiaraModel, MutableMapping[str, Value]):  # type: ignore
         for field_name in self.field_names:
             value = self.get_value_obj(field_name=field_name)
             if render_value_data:
-                rendered = value._data_registry.render_data(value_id=value.value_id, target_type="terminal_renderable", **config)
+                rendered = value._data_registry.render_data(
+                    value_id=value.value_id, target_type="terminal_renderable", **config
+                )
             else:
                 rendered = value.create_renderable(**config)
             table.add_row(field_name, rendered)

@@ -70,36 +70,42 @@ def data(ctx):
 )
 @click.pass_context
 def list_values(
-    ctx, with_alias, only_latest, tags, all_info, show_pedigree, show_data, show_load_config
+    ctx,
+    with_alias,
+    only_latest,
+    tags,
+    all_info,
+    show_pedigree,
+    show_data,
+    show_load_config,
 ):
     """List all data items that are stored in kiara."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    alias_registry = kiara_obj.alias_registry
+    if with_alias:
 
-    table = Table(show_lines=True, box=box.SIMPLE)
-    table.add_column("alias")
-    table.add_column("value")
+        alias_registry = kiara_obj.alias_registry
 
-    for alias in alias_registry.all_aliases:
+        table = Table(show_lines=True, box=box.SIMPLE)
+        table.add_column("alias")
+        table.add_column("value")
 
-        value_id = alias_registry.find_value_id_for_alias(alias)
-        rendered = kiara_obj.data_registry.render_data(value_id=value_id)
-        table.add_row(alias, rendered)
+        for alias in alias_registry.all_aliases:
 
-    rich_print(table)
+            value_id = alias_registry.find_value_id_for_alias(alias)
+            rendered = kiara_obj.data_registry.render_data(value_id=value_id)
+            table.add_row(alias, rendered)
 
+        rich_print(table)
+    else:
 
-    # data_registry = kiara_obj.data_registry
-    #
-    # # rich_print(data_registry.aliases.print_tree())
-    # table = kiara_obj.data_registry.default_data_store.create_renderable(
-    #     show_pedigree=show_pedigree,
-    #     show_data=show_data,
-    #     show_load_config=show_load_config,
-    # )
-    # rich_print(table, show_pedigree=show_pedigree, show_data=show_data)
+        table = kiara_obj.data_registry.default_data_store.create_renderable(
+            show_pedigree=show_pedigree,
+            show_data=show_data,
+            show_load_config=show_load_config,
+        )
+        rich_print(table, show_pedigree=show_pedigree, show_data=show_data)
 
 
 @data.command(name="explain")

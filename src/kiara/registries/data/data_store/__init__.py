@@ -2,14 +2,9 @@
 import abc
 import structlog
 import uuid
-
-from rich import box
 from rich.console import RenderableType
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Set, Union
 
-from rich.table import Table
-
-from kiara.models.module.destiniy import Destiny
 from kiara.models.module.manifest import LoadConfig
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.value import ORPHAN, Value, ValuePedigree
@@ -267,19 +262,6 @@ class DataStore(DataArchive):
 
     @abc.abstractmethod
     def _persist_value(self, value: Value) -> LoadConfig:
-        pass
-
-    def persist_destinies(
-        self, value: Value, category: str, key: str, destinies: Set[Destiny]
-    ):
-        self._persist_destinies(
-            value=value, category=category, key=key, destinies=destinies
-        )
-
-    @abc.abstractmethod
-    def _persist_destinies(
-        self, value: Value, category: str, key: str, destinies: Set[Destiny]
-    ):
         pass
 
     def create_renderable(self, **config: Any) -> RenderableType:

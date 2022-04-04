@@ -4,39 +4,29 @@ import structlog
 import uuid
 from alembic import command
 from sqlalchemy.engine import Engine, create_engine
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    Iterable,
-    List,
-    Mapping,
-    Optional,
-    Type,
-    Union,
-)
+from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Optional, Type, Union
 
 from kiara.data_types import DataType
 from kiara.defaults import KIARA_DB_MIGRATIONS_CONFIG, KIARA_DB_MIGRATIONS_FOLDER
 from kiara.exceptions import NoSuchExecutionTargetException
 from kiara.interfaces import get_console
-from kiara.kiara.alias_registry import AliasRegistry
 from kiara.kiara.config import KiaraContextConfig, KiaraGlobalConfig
-from kiara.kiara.data_registry import DataRegistry
-from kiara.kiara.destiny_registry import DestinyRegistry
-from kiara.kiara.environment_registry import EnvironmentRegistry
-from kiara.kiara.id_registry import ID_REGISTRY
-from kiara.kiara.job_registry import JobRegistry
-from kiara.kiara.module_registry import ModuleRegistry
-from kiara.kiara.operation_registry import OperationRegistry
-from kiara.kiara.orm import EnvironmentOrm
-from kiara.kiara.type_registry import TypeRegistry
 from kiara.models.module import KiaraModuleTypeMetadata
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.value import Value
-from kiara.utils import is_debug, is_develop, log_message
+from kiara.registries.aliases import AliasRegistry
+from kiara.registries.data import DataRegistry
+from kiara.registries.destinies.registry import DestinyRegistry
+from kiara.registries.environment import EnvironmentRegistry
+from kiara.registries.hooks.registry import HookRegistry
+from kiara.registries.ids import ID_REGISTRY
+from kiara.registries.jobs import JobRegistry
+from kiara.registries.modules import ModuleRegistry
+from kiara.registries.operations import OperationRegistry
+from kiara.registries.types import TypeRegistry
+from kiara.utils import is_debug, log_message
 from kiara.utils.db import orm_json_deserialize, orm_json_serialize
 
 if TYPE_CHECKING:
@@ -97,9 +87,7 @@ class Kiara(object):
             kc = KiaraGlobalConfig()
             config = kc.get_context()
 
-        self._id: uuid.UUID = ID_REGISTRY.generate(
-            id=config.context_id, obj=self
-        )
+        self._id: uuid.UUID = ID_REGISTRY.generate(id=config.context_id, obj=self)
         ID_REGISTRY.update_metadata(self._id, kiara_id=self._id)
         self._config: KiaraContextConfig = config
 
@@ -116,15 +104,17 @@ class Kiara(object):
         )
 
         # self._run_alembic_migrations()
+        # self._envs: Optional[Mapping[str, EnvironmentOrm]] = None
 
-        self._envs: Optional[Mapping[str, EnvironmentOrm]] = None
         self._type_registry: TypeRegistry = TypeRegistry(self)
-        self._module_registry: ModuleRegistry = ModuleRegistry()
-        self._operation_registry: OperationRegistry = OperationRegistry(kiara=self)
         self._data_registry: DataRegistry = DataRegistry(kiara=self)
         self._job_registry: JobRegistry = JobRegistry(kiara=self)
+        self._module_registry: ModuleRegistry = ModuleRegistry()
+        self._operation_registry: OperationRegistry = OperationRegistry(kiara=self)
+
         self._alias_registry: AliasRegistry = AliasRegistry(kiara=self)
         self._destiny_registry: DestinyRegistry = DestinyRegistry(kiara=self)
+        self._hook_registry: HookRegistry = HookRegistry(kiara=self)
 
         self._env_mgmt: Optional[EnvironmentRegistry] = None
 
@@ -186,6 +176,10 @@ class Kiara(object):
     def data_registry(self) -> DataRegistry:
         return self._data_registry
 
+    @property
+    def hook_registry(self) -> HookRegistry:
+        return self._hook_registry
+
     # ===================================================================================================
     # context specific types & instances
 
@@ -224,7 +218,7 @@ class Kiara(object):
     def get_value(self, value: Union[uuid.UUID, str, Value]):
         pass
 
-    def run(self, module_or_operation: str, module_config: Mapping[str, Any]=None):
+    def run(self, module_or_operation: str, module_config: Mapping[str, Any] = None):
 
         if isinstance(module_or_operation, str):
             if module_or_operation in self.operation_registry.operation_ids:
@@ -256,8 +250,5 @@ class Kiara(object):
             merged.extend(self.operation_registry.operation_ids)
             raise NoSuchExecutionTargetException(
                 msg=f"Invalid run target name '[i]{module_or_operation}[/i]'. Must be a path to a pipeline file, or one of the available modules/operations.",
-                available_targets=sorted(merged)
+                available_targets=sorted(merged),
             )
-
-
-

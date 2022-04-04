@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 import abc
 import os
+import structlog
 import uuid
 from pathlib import Path
-
-import structlog
 from pydantic import Field, PrivateAttr, root_validator
 from sqlalchemy import and_, func
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, aliased
-from typing import Optional, TYPE_CHECKING, Dict, Iterable, List
+from typing import TYPE_CHECKING, Dict, Iterable, Optional
 
 from kiara.models.aliases import AliasValueMap
 from kiara.models.documentation import DocumentationMetadataModel
-from kiara.kiara.id_registry import ID_REGISTRY
+from kiara.registries.ids import ID_REGISTRY
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -22,7 +21,6 @@ logger = structlog.getLogger()
 
 
 class AliasArchive(abc.ABC):
-
     @abc.abstractmethod
     def get_alias_archive_id(self) -> uuid.UUID:
         pass
@@ -37,27 +35,28 @@ class AliasArchive(abc.ABC):
         Returns:
             a list of strings (the aliases), or 'None' if this archive does not support alias indexes.
         """
-        pass
 
     @abc.abstractmethod
     def find_value_id_for_alias(self, alias: str) -> Optional[uuid.UUID]:
         pass
 
-class AliasStore(AliasArchive):
 
+class AliasStore(AliasArchive):
     @abc.abstractmethod
     def register_aliases(self, value_id: uuid.UUID, *aliases: str):
         pass
 
-class FileSystemAliasArchive(AliasArchive):
 
+class FileSystemAliasArchive(AliasArchive):
     @classmethod
     def create_from_kiara_context(cls, kiara: "Kiara"):
 
         base_path = Path(kiara.context_config.data_directory) / "alias_store"
         base_path.mkdir(parents=True, exist_ok=True)
         result = cls(base_path=base_path, store_id=kiara.id)
-        ID_REGISTRY.update_metadata(result.get_alias_archive_id(), kiara_id=kiara.id, obj=result)
+        ID_REGISTRY.update_metadata(
+            result.get_alias_archive_id(), kiara_id=kiara.id, obj=result
+        )
         return result
 
     def __init__(self, base_path: Path, store_id: uuid.UUID):
@@ -76,7 +75,9 @@ class FileSystemAliasArchive(AliasArchive):
 
         if "." in alias:
             tokens = alias.split(".")
-            alias_path = self._aliases_path.joinpath(*tokens[0:-1]) / f"{tokens[-1]}.alias"
+            alias_path = (
+                self._aliases_path.joinpath(*tokens[0:-1]) / f"{tokens[-1]}.alias"
+            )
         else:
             alias_path = self._aliases_path / f"{alias}.alias"
         return alias_path
@@ -95,7 +96,9 @@ class FileSystemAliasArchive(AliasArchive):
     def _translate_value_id(self, value_id: uuid.UUID) -> Path:
 
         tokens = str(value_id).split("-")
-        value_id_path = self._value_id_path.joinpath(*tokens[0:-1]) / f"{tokens[-1]}.value"
+        value_id_path = (
+            self._value_id_path.joinpath(*tokens[0:-1]) / f"{tokens[-1]}.value"
+        )
         return value_id_path
 
     def _translate_value_path(self, value_path: Path) -> uuid.UUID:
@@ -130,8 +133,8 @@ class FileSystemAliasArchive(AliasArchive):
         value_id = self._translate_value_path(value_path=resolved)
         return value_id
 
-class FileSystemAliasStore(FileSystemAliasArchive, AliasStore):
 
+class FileSystemAliasStore(FileSystemAliasArchive, AliasStore):
     def register_aliases(self, value_id: uuid.UUID, *aliases: str):
 
         value_path = self._translate_value_id(value_id=value_id)
@@ -150,16 +153,13 @@ class FileSystemAliasStore(FileSystemAliasArchive, AliasStore):
 
 
 class AliasRegistry(object):
-
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
         self._alias_archives: Dict[uuid.UUID, AliasArchive] = {}
         self._default_alias_store: Optional[AliasStore] = None
         default_archive = FileSystemAliasStore.create_from_kiara_context(self._kiara)
-        self.register_alias_archive(
-            default_archive
-        )
+        self.register_alias_archive(default_archive)
 
         self._cached_aliases: Dict[str, uuid.UUID] = {}
         self._all_aliases: Optional[Dict[str, uuid.UUID]] = None
@@ -199,13 +199,17 @@ class AliasRegistry(object):
                 continue
             for alias in a:
                 if alias in all_aliases.keys():
-                    value_one = self._alias_archives[all_aliases[alias]].find_value_id_for_alias(alias)
+                    value_one = self._alias_archives[
+                        all_aliases[alias]
+                    ].find_value_id_for_alias(alias)
                     value_two = store.find_value_id_for_alias(alias)
                     if value_one == value_two:
                         self._cached_aliases[alias] = value_one
                         continue
                     else:
-                        raise Exception(f"Multiple stores contain alias '{alias}'. This is not supported (yet).")
+                        raise Exception(
+                            f"Multiple stores contain alias '{alias}'. This is not supported (yet)."
+                        )
                 all_aliases[alias] = store_id
 
         self._all_aliases = sorted(all_aliases)
@@ -234,7 +238,9 @@ class AliasRegistry(object):
         for alias in aliases:
             self._cached_aliases[alias] = value_id
             if alias not in self.all_aliases:
-                self.all_aliases[alias] = self.default_alias_store.get_alias_archive_id()
+                self.all_aliases[
+                    alias
+                ] = self.default_alias_store.get_alias_archive_id()
 
 
 class PersistentValueAliasMap(AliasValueMap):

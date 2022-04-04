@@ -1,21 +1,30 @@
-import uuid
-from typing import Dict, Any, Optional, Type
-from weakref import WeakKeyDictionary, WeakValueDictionary
-
+# -*- coding: utf-8 -*-
 import structlog
+import uuid
+from typing import Any, Dict, Optional, Type
+from weakref import WeakValueDictionary
+
 from kiara.utils import is_debug, is_develop
 
 logger = structlog.getLogger()
 
+
 class NO_TYPE_MARKER(object):
     pass
+
 
 class IdRegistry(object):
     def __init__(self):
         self._ids: Dict[uuid.UUID, Dict[Type, Dict[str, Any]]] = {}
         self._objs: Dict[uuid.UUID, WeakValueDictionary[Type, Any]] = {}
 
-    def generate(self, id: Optional[uuid.UUID] = None, obj_type: Optional[Type]=None, obj: Optional[Any]=None, **metadata: Any):
+    def generate(
+        self,
+        id: Optional[uuid.UUID] = None,
+        obj_type: Optional[Type] = None,
+        obj: Optional[Any] = None,
+        **metadata: Any
+    ):
 
         if id is None:
             id = uuid.uuid4()
@@ -34,7 +43,13 @@ class IdRegistry(object):
 
         return id
 
-    def update_metadata(self, id: uuid.UUID, obj_type: Optional[Type]=None, obj: Optional[Any]=None, **metadata):
+    def update_metadata(
+        self,
+        id: uuid.UUID,
+        obj_type: Optional[Type] = None,
+        obj: Optional[Any] = None,
+        **metadata
+    ):
 
         if not is_debug() and not is_develop():
             return
@@ -47,5 +62,6 @@ class IdRegistry(object):
         self._ids.setdefault(id, {}).setdefault(obj_type, {}).update(metadata)
         if obj:
             self._objs.setdefault(id, WeakValueDictionary())[obj_type] = obj
+
 
 ID_REGISTRY = IdRegistry()

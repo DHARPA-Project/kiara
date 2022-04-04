@@ -13,7 +13,6 @@ from typing import (
     Mapping,
     Optional,
     Set,
-    Union,
 )
 
 from kiara.defaults import (
@@ -24,16 +23,13 @@ from kiara.defaults import (
     STRICT_CHECKS,
     SpecialValue,
 )
-from kiara.exceptions import JobConfigException, InvalidValuesException
-from kiara.kiara.data_store import DataStore
-from kiara.kiara.data_store.filesystem_store import FilesystemDataStore
+from kiara.exceptions import InvalidValuesException, JobConfigException
 from kiara.models.events.data_registry import (
     RegistryEvent,
     ValueCreatedEvent,
     ValuePreStoreEvent,
 )
-from kiara.models.module.destiniy import Destiny
-from kiara.models.module.manifest import LoadConfig, Manifest
+from kiara.models.module.manifest import LoadConfig
 from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
 from kiara.models.values.value import (
@@ -45,15 +41,13 @@ from kiara.models.values.value import (
     ValueSetReadOnly,
 )
 from kiara.models.values.value_schema import ValueSchema
-from kiara.modules.operations.included_core_operations.metadata import (
-    ExtractMetadataDetails,
-    ExtractMetadataOperationType,
-)
 from kiara.modules.operations.included_core_operations.render_value import (
     RenderValueOperationType,
 )
+from kiara.registries.data.data_store import DataStore
+from kiara.registries.data.data_store.filesystem_store import FilesystemDataStore
+from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import is_debug, log_message
-from kiara.kiara.id_registry import ID_REGISTRY
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -71,47 +65,6 @@ class DataEventHook(abc.ABC):
         pass
 
 
-class CreateMetadataDestinies(DataEventHook):
-    def __init__(self, kiara: "Kiara"):
-
-        self._kiara: Kiara = kiara
-
-    def get_subscribed_event_types(self) -> Iterable[str]:
-        return ["value_created", "value_pre_store"]
-
-    def process_hook(self, event: RegistryEvent):
-
-        # if not value._data_type_known:
-        #     return
-
-        if event.event_type == "value_created":  # type: ignore
-            self.attach_metadata(event.value)
-        elif event.event_type == "value_pre_store":  # type: ignore
-            self.resolve_all_metadata(event.value)
-
-    def attach_metadata(self, value: Value):
-
-        op_type: ExtractMetadataOperationType = self._kiara.operation_registry.get_operation_type("extract_metadata")  # type: ignore
-        operations = op_type.get_operations_for_data_type(value.value_schema.type)
-        for metadata_key, op in operations.items():
-            op_details: ExtractMetadataDetails = op.operation_details  # type: ignore
-            input_field_name = op_details.input_field_name
-            result_field_name = op_details.result_field_name
-            self._kiara.data_registry.add_destiny(
-                category="metadata",
-                key=metadata_key,
-                values={input_field_name: value},
-                manifest=op,
-                result_field_name=result_field_name,
-            )
-
-    def resolve_all_metadata(self, value: Value):
-
-        self._kiara.data_registry.resolve_destinies_for_value(
-            value=value, category="metadata"
-        )
-
-
 class DataRegistry(object):
     def __init__(self, kiara: "Kiara"):
 
@@ -127,10 +80,10 @@ class DataRegistry(object):
         self._value_store_map: Dict[uuid.UUID, uuid.UUID] = {}
         # self._job_store_map: Dict[int, uuid.UUID] = {}
 
-        self._destinies: Dict[uuid.UUID, Destiny] = {}
-        self._destinies_by_value: Dict[
-            uuid.UUID, Dict[str, Dict[str, Set[Destiny]]]
-        ] = {}
+        # self._destinies: Dict[uuid.UUID, Destiny] = {}
+        # self._destinies_by_value: Dict[
+        #     uuid.UUID, Dict[str, Dict[str, Set[Destiny]]]
+        # ] = {}
         self._values_by_hash: Dict[int, Set[uuid.UUID]] = {}
 
         self._cached_data: Dict[uuid.UUID, Any] = {}
@@ -145,7 +98,7 @@ class DataRegistry(object):
                 type="none",
                 default=SpecialValue.NOT_SET,
                 is_constant=True,
-                doc="Special value, indicating a field is not set.",
+                doc="Special value, indicating a field is not set.",  # type: ignore
             ),
             value_status=ValueStatus.NOT_SET,
             value_size=0,
@@ -163,7 +116,7 @@ class DataRegistry(object):
                 type="special_type",
                 default=SpecialValue.NO_VALUE,
                 is_constant=True,
-                doc="Special value, indicating a field is set with a 'none' value.",
+                doc="Special value, indicating a field is set with a 'none' value.",  # type: ignore
             ),
             value_status=ValueStatus.NONE,
             value_size=0,
@@ -175,8 +128,6 @@ class DataRegistry(object):
         self._cached_data[NONE_VALUE_ID] = SpecialValue.NO_VALUE
 
         self._event_hooks: Dict[str, List[DataEventHook]] = {}
-
-        self.add_hook(CreateMetadataDestinies(kiara=self._kiara))
 
     @property
     def kiara_id(self) -> uuid.UUID:
@@ -305,14 +256,14 @@ class DataRegistry(object):
             self._value_store_map[value.value_id] = store.data_store_id
             self._load_configs[value.value_id] = load_config
 
-            for category, keys in self.get_destinies_for_value(value=value).items():
-                for key, destinies in keys.items():
-                    for destiny in destinies:
-                        if destiny.result_value_id is not None:
-                            self.store_value(self.get_value(destiny.result_value_id))
-                    store.persist_destinies(
-                        value=value, category=category, key=key, destinies=destinies
-                    )
+            # for category, keys in self.get_destinies_for_value(value=value).items():
+            #     for key, destinies in keys.items():
+            #         for destiny in destinies:
+            #             if destiny.result_value_id is not None:
+            #                 self.store_value(self.get_value(destiny.result_value_id))
+            #         store.persist_destinies(
+            #             value=value, category=category, key=key, destinies=destinies
+            #         )
 
         # if aliases:
         #     aps_event = AliasPreStoreEvent.construct(
@@ -367,7 +318,13 @@ class DataRegistry(object):
         reuse_existing: bool = True,
     ) -> Value:
 
-        value = self._create_value(data=data, schema=schema, pedigree=pedigree, pedigree_output_name=pedigree_output_name, reuse_existing=reuse_existing)
+        value = self._create_value(
+            data=data,
+            schema=schema,
+            pedigree=pedigree,
+            pedigree_output_name=pedigree_output_name,
+            reuse_existing=reuse_existing,
+        )
         self._values_by_hash.setdefault(value.value_hash, set()).add(value.value_id)
         self._registered_values[value.value_id] = value
         self._cached_data[value.value_id] = data
@@ -598,13 +555,18 @@ class DataRegistry(object):
             else:
                 value_data = data[input_name]
             try:
-                value = self.retrieve_or_create_value(value_data, value_schema=value_schema)
+                value = self.retrieve_or_create_value(
+                    value_data, value_schema=value_schema
+                )
                 values[input_name] = value
             except Exception as e:
                 failed[input_name] = e
 
         if failed:
-            raise InvalidValuesException(msg="Can't create values instance.", invalid_values={k: str(v) for k, v in failed.items()})
+            raise InvalidValuesException(
+                msg="Can't create values instance.",
+                invalid_values={k: str(v) for k, v in failed.items()},
+            )
 
         return ValueSetReadOnly(value_items=values, values_schema=schema)  # type: ignore
 
@@ -656,115 +618,11 @@ class DataRegistry(object):
         table = create_renderable_from_values(values=all_values, config=config)
         return table
 
-    def add_destiny(
-        self,
-        category: str,
-        key: str,
-        values: Dict[str, Union[Value, uuid.UUID]],
-        manifest: Manifest,
-        result_field_name: Optional[str] = None,
-    ) -> Destiny:
-
-        if not values:
-            raise Exception("Can't add destiny, no values provided.")
-
-        value_ids: Dict[str, uuid.UUID] = {
-            k: (value if isinstance(value, uuid.UUID) else value.value_id)
-            for k, value in values.items()
-        }
-
-        duplicates = []
-        for value_id in value_ids.values():
-            if (
-                self._destinies_by_value.get(value_id, {})
-                .get(category, {})
-                .get(key, None)
-                is not None
-            ):
-                duplicates.append(value_id)
-
-        if duplicates:
-            for value_id in duplicates:
-                log_message(
-                    "duplicate.destiny", category=category, key=key, value_id=value_id
-                )
-            # raise Exception(f"Can't add destiny, already existing destiny for value(s): {', '.join(duplicates)}.")
-
-        destiny = Destiny.create_from_values(
-            kiara=self._kiara,
-            category=category,
-            key=key,
-            manifest=manifest,
-            result_field_name=result_field_name,
-            values=value_ids,
-        )
-
-        for value_id in value_ids.values():
-            self._destinies[destiny.destiny_id] = destiny
-            self._destinies_by_value.setdefault(value_id, {}).setdefault(
-                category, {}
-            ).setdefault(key, set()).add(destiny)
-
-        return destiny
-
-    def get_destinies_for_value(
-        self,
-        value: Union[uuid.UUID, Value],
-        category: Optional[str] = None,
-        key: Optional[str] = None,
-    ) -> Mapping[str, Mapping[str, Set[Destiny]]]:
-
-        if isinstance(value, Value):
-            value = value.value_id
-
-        destinies = self._destinies_by_value.get(value, {})
-        if category is not None:
-            temp = {}
-            temp[category] = destinies.get(category, {})
-            destinies = temp
-
-        if key is not None:
-            temp = {}
-            for category, keys in destinies.items():
-                for _key, _destinies in keys.items():
-                    if key == _key:
-                        temp.setdefault(category, {})[key] = _destinies
-
-            destinies = temp
-        return destinies
-
-    def resolve_destinies_for_value(
-        self,
-        value: Union[uuid.UUID, Value],
-        category: Optional[str] = None,
-        key: Optional[str] = None,
-    ) -> Dict[str, Dict[str, Dict[uuid.UUID, Value]]]:
-
-        result: Dict[str, Dict[str, Dict[uuid.UUID, Value]]] = {}
-        destinies = self.get_destinies_for_value(
-            value=value, category=category, key=key
-        )
-        for category, keys in destinies.items():
-            for key, destinies in keys.items():
-                for destiny in destinies:
-                    value = self.resolve_destiny(destiny)
-                    result.setdefault(category, {}).setdefault(key, {})[
-                        destiny.destiny_id
-                    ] = value
-
-        return result
-
-    def resolve_destiny(self, destiny: Destiny) -> Value:
-
-        results = self._kiara.job_registry.execute_and_retrieve(
-            manifest=destiny, inputs=destiny.merged_inputs
-        )
-        value = results.get_value_obj(field_name=destiny.result_field_name)
-        destiny.result_value_id = value.value_id
-        return value
-
     def render_data(
-        self, value_id: uuid.UUID, target_type="terminal_renderable", **render_config: Any
+        self,
+        value_id: uuid.UUID,
+        target_type="terminal_renderable",
+        **render_config: Any,
     ) -> Any:
 
         value = self.get_value(value_id=value_id)

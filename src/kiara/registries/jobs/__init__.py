@@ -5,14 +5,14 @@ import structlog
 import uuid
 from bidict import bidict
 from pathlib import Path
-from typing import Any, Dict, Mapping, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional
 
-from kiara.kiara.id_registry import ID_REGISTRY
 from kiara.models.module.jobs import ActiveJob, JobConfig, JobRecord, JobStatus
 from kiara.models.module.manifest import InputsManifest, Manifest
 from kiara.models.values.value import ValueSet
 from kiara.processing import ModuleProcessor
 from kiara.processing.synchronous import SynchronousProcessor
+from kiara.registries.ids import ID_REGISTRY
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -24,7 +24,6 @@ MANIFEST_SUB_PATH = "manifests"
 
 
 class JobArchive(abc.ABC):
-
     @abc.abstractmethod
     def get_job_archive_id(self) -> uuid.UUID:
         pass
@@ -49,7 +48,9 @@ class FileSystemJobArchive(JobArchive):
         base_path = Path(kiara.context_config.data_directory) / "job_store"
         base_path.mkdir(parents=True, exist_ok=True)
         result = cls(base_path=base_path, store_id=kiara.id)
-        ID_REGISTRY.update_metadata(result.get_job_archive_id(), kiara_id=kiara.id, obj=result)
+        ID_REGISTRY.update_metadata(
+            result.get_job_archive_id(), kiara_id=kiara.id, obj=result
+        )
         return result
 
     def __init__(self, base_path: Path, store_id: uuid.UUID):
@@ -165,9 +166,7 @@ class JobRegistry(object):
         self._default_job_store: Optional[JobStore] = None
 
         default_archive = FileSystemJobStore.create_from_kiara_context(self._kiara)
-        self.register_job_archive(
-            default_archive
-        )
+        self.register_job_archive(default_archive)
 
     def job_status_changed(
         self, job_id: uuid.UUID, old_status: Optional[JobStatus], new_status: JobStatus
@@ -188,12 +187,16 @@ class JobRegistry(object):
     def store_job_record(self, job_id: uuid.UUID):
 
         if job_id not in self._archived_records.keys():
-            raise Exception(f"Can't store job with id '{job_id}': no job record with that id exists.")
+            raise Exception(
+                f"Can't store job with id '{job_id}': no job record with that id exists."
+            )
 
         job_record = self._archived_records[job_id]
 
         if job_record._is_stored:
-            logger.debug("ignore.store.job_record", reason="already stored", job_id=str(job_id))
+            logger.debug(
+                "ignore.store.job_record", reason="already stored", job_id=str(job_id)
+            )
             return
 
         logger.debug(
@@ -286,9 +289,7 @@ class JobRegistry(object):
         job_config = self.prepare_job_config(manifest=manifest, inputs=inputs)
         return self.execute_job(job_config, wait=wait)
 
-    def execute_job(
-        self, job_config: JobConfig, wait: bool = False
-    ) -> uuid.UUID:
+    def execute_job(self, job_config: JobConfig, wait: bool = False) -> uuid.UUID:
 
         log = logger.bind(
             module_type=job_config.module_type,

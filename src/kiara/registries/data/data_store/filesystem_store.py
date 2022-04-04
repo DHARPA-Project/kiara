@@ -6,15 +6,14 @@ from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Set
 
-from kiara.kiara.data_store import DataArchive, DataStore
-from kiara.kiara.job_registry import JobArchive
-from kiara.models.module.destiniy import Destiny
 from kiara.models.module.jobs import JobRecord
 from kiara.models.module.manifest import InputsManifest, LoadConfig
 from kiara.models.values.value import Value
 from kiara.modules.operations.included_core_operations.persistence import (
     PersistValueOperationType,
 )
+from kiara.registries.data.data_store import DataArchive, DataStore
+from kiara.registries.jobs import JobArchive
 from kiara.utils import log_message, orjson_dumps
 
 if TYPE_CHECKING:
@@ -31,7 +30,6 @@ class EntityType(Enum):
     VALUE_DATA = "value_data"
     ENVIRONMENT = "environments"
     MANIFEST = "manifests"
-    DESTINY = "destinies"
 
 
 class FileSystemArchive(DataArchive, JobArchive):
@@ -353,25 +351,3 @@ class FilesystemDataStore(FileSystemArchive, DataStore):
         target_file = value_data_dir / f"value_id__{value.value_id}.json"
 
         target_file.symlink_to(outputs_file_name)
-
-    def _persist_destinies(
-        self, value: Value, category: str, key: str, destinies: Set[Destiny]
-    ):
-
-        base_path = self.get_path(EntityType.DESTINY)
-
-        for destiny in destinies:
-            path = (
-                base_path
-                / str(value.value_id)
-                / category
-                / key
-                / f"destiny__{destiny.destiny_id}.json"
-            )
-            if path.exists():
-                raise Exception(
-                    f"Can't persist destiny '{destiny.destiny_id}': already persisted."
-                )
-
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(orjson_dumps(destiny.dict()))

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import Any, Mapping, Optional, Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Mapping, Optional, Union
 
 from kiara.models.module.jobs import JobLog
 from kiara.models.module.pipeline import PipelineConfig
@@ -10,7 +10,7 @@ from kiara.models.values.value import ValueSet
 from kiara.modules import KIARA_CONFIG, KiaraModule, ValueSetSchema
 
 if TYPE_CHECKING:
-    from kiara.kiara.job_registry import JobRegistry
+    from kiara.registries.jobs import JobRegistry
 
 
 class PipelineModule(KiaraModule):

@@ -12,14 +12,12 @@ from typing import Any, Dict, Iterable, List, Mapping, Optional
 
 from kiara.exceptions import InvalidValuesException
 from kiara.kiara import DataRegistry
-from kiara.kiara.alias_registry import AliasValueMap
 from kiara.models.module.jobs import JobConfig
 from kiara.models.module.pipeline import StepStatus
 from kiara.models.module.pipeline.structure import PipelineStep, PipelineStructure
-from kiara.models.module.pipeline.value_refs import (
-    ValueRef,
-)
+from kiara.models.module.pipeline.value_refs import ValueRef
 from kiara.models.values.value import ORPHAN
+from kiara.registries.aliases import AliasValueMap
 
 log = logging.getLogger("kiara")
 

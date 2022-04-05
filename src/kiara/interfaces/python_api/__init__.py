@@ -251,6 +251,12 @@ class KiaraOperation(object):
 
     def save_result(self, job_id: Optional[uuid.UUID]=None, aliases: Union[None, str, Mapping]=None) -> StoreValuesResult:
 
+        if job_id is None:
+            job_id = self._last_job
+
+        if job_id is None:
+            raise Exception("No job queued (yet).")
+
         result = self.retrieve_result(job_id=job_id)
 
         if aliases is None:
@@ -258,7 +264,7 @@ class KiaraOperation(object):
         elif isinstance(aliases, str):
             alias_map = {}
             for field_name in result.field_names:
-                alias_map[field_name] = [f"{aliases}-{field_name}"]
+                alias_map[field_name] = [f"{aliases}.{field_name}"]
         elif isinstance(aliases, Mapping):
             alias_map = {}
             for field_name in aliases.keys():
@@ -273,12 +279,17 @@ class KiaraOperation(object):
         else:
             raise Exception(f"Invalid type '{type(aliases)}' for aliases parameter, must be string or mapping.")
 
+        values = {}
+        for field_name in result.field_names:
+            value = result.get_value_obj(field_name)
+            values[field_name] = value
+            self._kiara.data_registry.store_value(value=value, skip_if_exists=True)
+
         stored = {}
         for field_name, field_aliases in alias_map.items():
 
-            value = result.get_value_obj(field_name)
+            value = values[field_name]
             try:
-                self._kiara.data_registry.store_value(value=value, skip_if_exists=True)
                 if field_aliases:
                     self._kiara.alias_registry.register_aliases(value.value_id, *field_aliases)
 

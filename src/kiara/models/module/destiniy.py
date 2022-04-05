@@ -5,13 +5,16 @@ from pydantic import Field, PrivateAttr
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Union
 
 from kiara.defaults import DESTINY_CATEGORY_ID, SpecialValue
+from kiara.models.module import KiaraModuleClass
 from kiara.models.module.manifest import Manifest
 from kiara.models.values.value import Value
 from kiara.models.values.value_schema import ValueSchema
+from kiara.registries.ids import ID_REGISTRY
 from kiara.utils.hashing import compute_hash
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
+    from kiara.modules import KiaraModule
 
 
 class Destiny(Manifest):
@@ -25,8 +28,7 @@ class Destiny(Manifest):
     def create_from_values(
         cls,
         kiara: "Kiara",
-        category: str,
-        key: str,
+        destiny_alias: str,
         values: Mapping[str, Union[Value, uuid.UUID]],
         manifest: Manifest,
         result_field_name: Optional[str] = None,
@@ -61,12 +63,14 @@ class Destiny(Manifest):
             else:
                 deferred_inputs[field] = None
 
+        module_details = KiaraModuleClass.from_module(module=module)
+
         # TODO: check whether it'd be better to 'resolve' the module config, as this might change the resulting hash
-        destiny_id: uuid.UUID = uuid.uuid4()
-        return Destiny(
+        destiny_id: uuid.UUID = ID_REGISTRY.generate(obj_type=Destiny)
+        destiny = Destiny(
             destiny_id=destiny_id,
-            category=category,
-            key=key,
+            destiny_alias=destiny_alias,
+            module_details=module_details,
             module_type=manifest.module_type,
             module_config=manifest.module_config,
             result_field_name=result_field_name,
@@ -74,29 +78,38 @@ class Destiny(Manifest):
             fixed_inputs=fixed_inputs,
             inputs_schema=dict(module.inputs_schema),
             deferred_inputs=deferred_inputs,
-            result_value_id=None,
         )
+        destiny._module = module
+        ID_REGISTRY.update_metadata(destiny_id, obj=destiny)
+        return destiny
 
     destiny_id: uuid.UUID = Field(description="The id of this destiny.")
-    category: str = Field(description="The category name of this destiny.")
-    key: str = Field(description="The key within the category.")
+
+    destiny_alias: str = Field(description="The path to (the) destiny.")
+    module_details: KiaraModuleClass = Field(
+        description="The class of the underlying module."
+    )
     fixed_inputs: Dict[str, uuid.UUID] = Field(
         description="Inputs that are known in advance."
     )
     inputs_schema: Dict[str, ValueSchema] = Field(
         description="The schemas of all deferred input fields."
     )
-    deferred_inputs: Dict[str, Union[None, SpecialValue, uuid.UUID]] = Field(
+    deferred_inputs: Dict[str, Optional[uuid.UUID]] = Field(
         description="Potentially required external inputs that are needed for this destiny to materialize."
     )
     result_field_name: str = Field(description="The name of the result field.")
     result_schema: ValueSchema = Field(description="The value schema of the result.")
-    result_value_id: Optional[uuid.UUID] = Field(
-        description="The value_id/result of the computed destiny. If not materialized yet, this is 'None'."
-    )
+
+    is_resolved: bool = Field(description="Whether the destiny was resolved.", default=False)
+
+
+    _is_stored: bool = PrivateAttr(default=False)
+    _job_id: Optional[uuid.UUID] = PrivateAttr(default=None)
 
     _merged_inputs: Optional[Dict[str, uuid.UUID]] = PrivateAttr(default=None)
     _job_config_hash: Optional[int] = PrivateAttr(default=None)
+    _module: Optional["KiaraModule"] = PrivateAttr(default=None)
 
     def _retrieve_id(self) -> str:
         return str(self.destiny_id)
@@ -142,6 +155,13 @@ class Destiny(Manifest):
 
         self._merged_inputs = result
         return self._merged_inputs
+
+    @property
+    def module(self) -> "KiaraModule":
+        if self._module is None:
+            m_cls = self.module_details.get_class()
+            self._module = m_cls(module_config=self.module_config)
+        return self._module
 
     def _retrieve_job_config_hash(self) -> int:
         obj = {"module_config": self.manifest_data, "inputs": self.merged_inputs}

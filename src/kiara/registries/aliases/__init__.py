@@ -71,6 +71,10 @@ class FileSystemAliasArchive(AliasArchive):
         self._aliases_path: Path = self._base_path / "aliases"
         self._value_id_path: Path = self._base_path / "value_ids"
 
+    @property
+    def alias_store_path(self) -> Path:
+        return self._base_path
+
     def _translate_alias(self, alias: str) -> Path:
 
         if "." in alias:

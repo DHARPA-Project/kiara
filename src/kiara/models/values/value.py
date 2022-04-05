@@ -2,7 +2,7 @@
 import abc
 import logging
 import uuid
-from pydantic import PrivateAttr
+from pydantic import PrivateAttr, BaseModel
 from pydantic.fields import Field
 from rich import box
 from rich.console import RenderableType
@@ -15,7 +15,7 @@ from typing import (
     List,
     Mapping,
     MutableMapping,
-    Optional,
+    Optional, Set,
 )
 
 from kiara.defaults import (
@@ -167,6 +167,7 @@ class ValueDetails(KiaraModel):
         return self.__repr__()
 
 
+
 class Value(ValueDetails):
 
     _value_data: Any = PrivateAttr(default=SpecialValue.NOT_SET)
@@ -179,8 +180,8 @@ class Value(ValueDetails):
         description="Links to values that are properties of this value.",
         default_factory=dict,
     )
-    property_backlinks: Dict[uuid.UUID, List[str]] = Field(
-        description="References to values this value is a property of.",
+    destiny_refs: Mapping[str, Set[uuid.UUID]] = Field(
+        description="References to values this is a destiny for.",
         default_factory=dict,
     )
 
@@ -203,6 +204,15 @@ class Value(ValueDetails):
 
         self.properties[property_path] = value.value_id  # type: ignore
         value.property_backlinks.setdefault(self.value_id, set()).add(property_path)  # type: ignore
+
+    def add_destiny_refs(self, destiny_alias: str, *value_ids):
+
+        if self._is_stored:
+            raise Exception(
+                f"Can't set destiny_refs to value '{self.value_id}': value already locked."
+            )
+
+        self.destiny_refs.setdefault(destiny_alias, set()).update(value_ids)  # type: ignore
 
     @property
     def data(self) -> Any:

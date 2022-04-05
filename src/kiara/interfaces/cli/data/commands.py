@@ -28,8 +28,9 @@ def data(ctx):
 
 @data.command(name="list")
 @click.option(
-    "--with-alias/--all-ids",
-    help="Also list values without aliases (default: '--with-alias').",
+    "--all-ids",
+    "-a",
+    help="Also list values without aliases.",
     is_flag=True,
     default=True,
 )
@@ -71,7 +72,7 @@ def data(ctx):
 @click.pass_context
 def list_values(
     ctx,
-    with_alias,
+    all_ids,
     only_latest,
     tags,
     all_info,
@@ -83,7 +84,7 @@ def list_values(
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    if with_alias:
+    if all_ids:
 
         alias_registry = kiara_obj.alias_registry
 
@@ -220,8 +221,22 @@ if is_develop():
 
         kiara_obj: Kiara = ctx.obj["kiara"]
 
-        path = kiara_obj.data_registry.default_data_store.data_store_path
+        paths = {}
+
+        data_store_path = kiara_obj.data_registry.default_data_store.data_store_path
+        paths["data_store"] = data_store_path
+
+        aliases_store_path = kiara_obj.alias_registry.default_alias_store.alias_store_path
+        paths["alias_store"] = aliases_store_path
+
+        job_record_store_path = kiara_obj.job_registry.default_job_store.job_store_path
+        paths["jobs_record_store"] = job_record_store_path
+
+        destiny_store_path = kiara_obj.destiny_registry.default_destiny_store.destiny_store_path
+        paths["destiny_store"] = destiny_store_path
+
         print()
-        print(f"Deleting folder: {path}...")
-        shutil.rmtree(path=path, ignore_errors=True)
-        print("Folder deleted.")
+        for k, v in paths.items():
+            print(f"Deleting {k}: {v}...")
+            shutil.rmtree(path=v, ignore_errors=True)
+            print("   -> done")

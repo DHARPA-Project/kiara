@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import uuid
 from typing import TYPE_CHECKING, Iterable
 
 from kiara.models.events.data_registry import RegistryEvent
@@ -35,16 +36,14 @@ class CreateMetadataDestinies(DataEventHook):
             op_details: ExtractMetadataDetails = op.operation_details  # type: ignore
             input_field_name = op_details.input_field_name
             result_field_name = op_details.result_field_name
-            self._kiara.data_registry.add_destiny(
-                category="metadata",
-                key=metadata_key,
-                values={input_field_name: value},
+            self._kiara.destiny_registry.add_destiny(
+                destiny_alias=f"metadata.{metadata_key}",
+                values={input_field_name: value.value_id},
                 manifest=op,
                 result_field_name=result_field_name,
             )
 
-    def resolve_all_metadata(self, value: Value):
+    def resolve_all_metadata(self, value: uuid.UUID):
 
-        self._kiara.data_registry.resolve_destinies_for_value(
-            value=value, category="metadata"
-        )
+        self._kiara.destiny_registry.get_destinies_for_value(value=value)
+

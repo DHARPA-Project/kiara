@@ -63,6 +63,10 @@ class FileSystemJobArchive(JobArchive):
         self._store_id: uuid.UUID = store_id
         self._base_path: Path = base_path
 
+    @property
+    def job_store_path(self) -> Path:
+        return self._base_path
+
     def get_job_archive_id(self) -> uuid.UUID:
         return self._store_id
 
@@ -283,13 +287,13 @@ class JobRegistry(object):
         return job_config
 
     def execute(
-        self, manifest: Manifest, inputs: Mapping[str, Any], wait: bool = False
+        self, manifest: Manifest, inputs: Mapping[str, Any], wait: bool = False, _result_ids: Optional[Mapping[str, uuid.UUID]] = None
     ) -> uuid.UUID:
 
         job_config = self.prepare_job_config(manifest=manifest, inputs=inputs)
-        return self.execute_job(job_config, wait=wait)
+        return self.execute_job(job_config, wait=wait, _result_ids=_result_ids)
 
-    def execute_job(self, job_config: JobConfig, wait: bool = False) -> uuid.UUID:
+    def execute_job(self, job_config: JobConfig, wait: bool = False, _result_ids: Optional[Mapping[str, uuid.UUID]] = None) -> uuid.UUID:
 
         log = logger.bind(
             module_type=job_config.module_type,
@@ -350,9 +354,9 @@ class JobRegistry(object):
         return results
 
     def execute_and_retrieve(
-        self, manifest: Manifest, inputs: Mapping[str, Any]
+        self, manifest: Manifest, inputs: Mapping[str, Any], _result_ids: Optional[Mapping[str, uuid.UUID]]=None
     ) -> ValueSet:
 
-        job_id = self.execute(manifest=manifest, inputs=inputs, wait=True)
+        job_id = self.execute(manifest=manifest, inputs=inputs, wait=True, _result_ids=_result_ids)
         results = self.retrieve_result(job_id=job_id)
         return results

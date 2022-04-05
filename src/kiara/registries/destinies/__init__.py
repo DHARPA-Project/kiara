@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import abc
 import uuid
-from typing import Mapping, Optional, Set
+from typing import Mapping, Optional, Set, Iterable
 
 from kiara.models.module.destiniy import Destiny
 from kiara.models.values.value import Value
@@ -28,15 +28,10 @@ class DestinyArchive(abc.ABC):
 
 
 class DestinyStore(DestinyArchive):
-    def persist_destinies(
-        self, value: Value, category: str, key: str, destinies: Set[Destiny]
-    ):
-        self._persist_destinies(
-            value=value, category=category, key=key, destinies=destinies
-        )
 
     @abc.abstractmethod
-    def _persist_destinies(
-        self, value: Value, category: str, key: str, destinies: Set[Destiny]
+    def persist_destiny(
+        self, value_ids: Iterable[Value], destiny_alias: str, destiny: Destiny
     ):
         pass
+

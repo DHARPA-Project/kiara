@@ -80,10 +80,7 @@ class DataRegistry(object):
         self._value_store_map: Dict[uuid.UUID, uuid.UUID] = {}
         # self._job_store_map: Dict[int, uuid.UUID] = {}
 
-        # self._destinies: Dict[uuid.UUID, Destiny] = {}
-        # self._destinies_by_value: Dict[
-        #     uuid.UUID, Dict[str, Dict[str, Set[Destiny]]]
-        # ] = {}
+
         self._values_by_hash: Dict[int, Set[uuid.UUID]] = {}
 
         self._cached_data: Dict[uuid.UUID, Any] = {}

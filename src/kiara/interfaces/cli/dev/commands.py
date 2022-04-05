@@ -4,6 +4,8 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import os
+import sys
+
 import rich_click as click
 from alembic import command
 from alembic.config import Config
@@ -11,7 +13,9 @@ from typing import Optional
 
 from kiara import Kiara
 from kiara.defaults import KIARA_DB_MIGRATIONS_CONFIG, KIARA_DB_MIGRATIONS_FOLDER
+from kiara.interfaces.python_api import KiaraOperation
 from kiara.models.module.manifest import Manifest
+from kiara.utils import rich_print
 
 
 @click.group("dev")
@@ -26,20 +30,59 @@ def test(ctx):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
+    for value_id in kiara_obj.data_registry.default_data_store.value_ids:
+
+        print("----")
+        print(f"Value id: {value_id}")
+
+        destinies = kiara_obj.destiny_registry.get_destinies_for_value(value_id=value_id)
+        for k, v in destinies.items():
+            print(f"{k} -> {v}")
+
+
+    sys.exit()
+
     op = Manifest(module_type="core.example")
 
     inputs = {"text_1": "xxxx", "text_2": "yyyy", "aaaa": "bbb"}
     # job = JobConfig(inputs=inputs, **op.dict())
-    job_id = kiara_obj.job_registry.execute(manifest=op, inputs=inputs)
-    print(job_id)
-    results = kiara_obj.job_registry.retrieve_result(job_id)
-    print(results)
-    text_value = results["text"]
 
-    kiara_obj.data_registry.register_alias("test1.test2.test3", text_value)
+    op = KiaraOperation(kiara=kiara_obj, operation_name="core.example")
+    op.set_inputs(**inputs)
 
-    kiara_obj.data_registry._alias_registry.print_tree()
+    op.queue_job()
 
+    result = op.retrieve_result()
+
+    rich_print(result)
+
+    op.save_result(aliases="test_result")
+
+    for field_name in result.field_names:
+        value = result.get_value_obj(field_name)
+
+        op_type: ExtractMetadataOperationType = kiara_obj.operation_registry.get_operation_type("extract_metadata")  # type: ignore
+        operations = op_type.get_operations_for_data_type(value.value_schema.type)
+        print("METADATA")
+        for metadata_key, op in operations.items():
+            print(metadata_key)
+            op_details: ExtractMetadataDetails = op.operation_details  # type: ignore
+            input_field_name = op_details.input_field_name
+            result_field_name = op_details.result_field_name
+            d = kiara_obj.destiny_registry.add_destiny(
+                destiny_alias=f"metadata.{metadata_key}",
+                values={input_field_name: value.value_id},
+                manifest=op,
+                result_field_name=result_field_name,
+            )
+            print(f"ADDED: {d}")
+
+
+
+    all_destinies = kiara_obj.destiny_registry.get_destinies_for_value(value_id=value.value_id)
+    for destiny in all_destinies.values():
+        dbg(destiny.__dict__)
+        kiara_obj.destiny_registry.store_destiny(destiny_id=destiny.destiny_id)
     # kiara_obj.data_registry.store_value(value=text_value)
 
     # import pp

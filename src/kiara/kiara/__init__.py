@@ -20,7 +20,7 @@ from kiara.registries.aliases import AliasRegistry
 from kiara.registries.data import DataRegistry
 from kiara.registries.destinies.registry import DestinyRegistry
 from kiara.registries.environment import EnvironmentRegistry
-from kiara.registries.hooks.registry import HookRegistry
+from kiara.registries.events.registry import EventRegistry
 from kiara.registries.ids import ID_REGISTRY
 from kiara.registries.jobs import JobRegistry
 from kiara.registries.modules import ModuleRegistry
@@ -106,6 +106,7 @@ class Kiara(object):
         # self._run_alembic_migrations()
         # self._envs: Optional[Mapping[str, EnvironmentOrm]] = None
 
+        self._event_registry: EventRegistry = EventRegistry(kiara=self)
         self._type_registry: TypeRegistry = TypeRegistry(self)
         self._data_registry: DataRegistry = DataRegistry(kiara=self)
         self._job_registry: JobRegistry = JobRegistry(kiara=self)
@@ -114,7 +115,6 @@ class Kiara(object):
 
         self._alias_registry: AliasRegistry = AliasRegistry(kiara=self)
         self._destiny_registry: DestinyRegistry = DestinyRegistry(kiara=self)
-        self._hook_registry: HookRegistry = HookRegistry(kiara=self)
 
         self._env_mgmt: Optional[EnvironmentRegistry] = None
 
@@ -177,8 +177,8 @@ class Kiara(object):
         return self._data_registry
 
     @property
-    def hook_registry(self) -> HookRegistry:
-        return self._hook_registry
+    def event_registry(self) -> EventRegistry:
+        return self._event_registry
 
     # ===================================================================================================
     # context specific types & instances

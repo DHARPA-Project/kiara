@@ -12,7 +12,7 @@ from typing import (
     List,
     Mapping,
     Optional,
-    Set,
+    Set, Type, Callable,
 )
 
 from kiara.defaults import (
@@ -24,10 +24,11 @@ from kiara.defaults import (
     SpecialValue,
 )
 from kiara.exceptions import InvalidValuesException, JobConfigException
+from kiara.models.events import KiaraEvent
 from kiara.models.events.data_registry import (
     RegistryEvent,
     ValueCreatedEvent,
-    ValuePreStoreEvent,
+    ValuePreStoreEvent, ValueStoredEvent, DataStoreAddedEvent,
 )
 from kiara.models.module.manifest import LoadConfig
 from kiara.models.python_class import PythonClass
@@ -44,8 +45,9 @@ from kiara.models.values.value_schema import ValueSchema
 from kiara.modules.operations.included_core_operations.render_value import (
     RenderValueOperationType,
 )
-from kiara.registries.data.data_store import DataStore
+from kiara.registries.data.data_store import DataStore, DataArchive
 from kiara.registries.data.data_store.filesystem_store import FilesystemDataStore
+from kiara.registries.events.registry import EventListener
 from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import is_debug, log_message
 
@@ -54,30 +56,27 @@ if TYPE_CHECKING:
 
 logger = structlog.getLogger()
 
-
-class DataEventHook(abc.ABC):
-    @abc.abstractmethod
-    def get_subscribed_event_types(self) -> Iterable[str]:
-        pass
-
-    @abc.abstractmethod
-    def process_hook(self, event: RegistryEvent):
-        pass
+DEFAULT_STORE_MARKER = "__default__"
 
 
 class DataRegistry(object):
+
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
         self._engine: Engine = self._kiara._engine
 
-        self._data_stores: Dict[uuid.UUID, DataStore] = {}
-        self._default_data_store: Optional[uuid.UUID] = None
-        self.add_store(FilesystemDataStore(kiara=self._kiara))
+        self._event_callback: Callable = self._kiara.event_registry.add_producer(self)
+
+        self._data_stores: Dict[str, DataStore] = {}
+
+        self._default_data_store: Optional[str] = None
+
+        self.add_data_archive(FilesystemDataStore(kiara=self._kiara), alias=DEFAULT_STORE_MARKER)
 
         self._registered_values: Dict[uuid.UUID, Value] = {}
 
-        self._value_store_map: Dict[uuid.UUID, uuid.UUID] = {}
+        self._value_store_map: Dict[uuid.UUID, str] = {}
         # self._job_store_map: Dict[int, uuid.UUID] = {}
 
 
@@ -124,7 +123,6 @@ class DataRegistry(object):
         )
         self._cached_data[NONE_VALUE_ID] = SpecialValue.NO_VALUE
 
-        self._event_hooks: Dict[str, List[DataEventHook]] = {}
 
     @property
     def kiara_id(self) -> uuid.UUID:
@@ -137,6 +135,10 @@ class DataRegistry(object):
     @property
     def NONE_VALUE(self) -> Value:
         return self._none_value
+
+    def suppoerted_event_types(self) -> Iterable[Type[KiaraEvent]]:
+
+        return [DataStoreAddedEvent, ValuePreStoreEvent, ValueStoredEvent, ValueCreatedEvent]
 
     # @property
     # def aliases(self) -> AliasRegistry:
@@ -157,40 +159,54 @@ class DataRegistry(object):
     #     self.aliases.set_alias(alias=alias, value_id=value.value_id)
     #     self.aliases.save(alias)
 
-    def add_store(self, data_store: DataStore):
-        if data_store.data_store_id in self._data_stores.keys():
+    def add_data_archive(self, data_store: DataStore, alias: str=None):
+
+        if alias is None:
+            alias = str(data_store.data_store_id)
+
+        if alias in self._data_stores.keys():
             raise Exception(
-                f"Can't add store, store id '{data_store.data_store_id}' already registered."
+                f"Can't add store, alias '{alias}' already registered."
             )
-        self._data_stores[data_store.data_store_id] = data_store
-        if self._default_data_store is None:
-            self._default_data_store = data_store.data_store_id
+        self._data_stores[alias] = data_store
+        is_store = False
+        is_default_store = False
+        if isinstance(data_store, DataStore):
+            is_store = True
+            if self._default_data_store is None:
+                is_default_store = True
+                self._default_data_store = alias
+
+        event = DataStoreAddedEvent.construct(kiara_id=self._kiara.id, data_store_id=data_store.data_store_id, data_store_alias=alias, is_store=is_store, is_default_store=is_default_store)
+        self._event_callback(event)
 
     @property
-    def default_data_store(self) -> DataStore:
+    def default_data_store(self) -> str:
         if self._default_data_store is None:
             raise Exception("No default data store set.")
-        return self._data_stores[self._default_data_store]
+        return self._default_data_store
 
     @property
-    def data_stores(self) -> Mapping[uuid.UUID, DataStore]:
+    def data_stores(self) -> Mapping[str, DataStore]:
         return self._data_stores
 
-    def get_store(self, store_id: Optional[uuid.UUID] = None) -> DataStore:
+    def get_archive(self, store_id: Optional[str] = None) -> DataArchive:
         if store_id is None:
-            return self.default_data_store
-        else:
-            return self._data_stores[store_id]
+            store_id = self.default_data_store
+            if store_id is None:
+                raise Exception("Can't retrieve deafult data archive, none set (yet).")
 
-    def add_hook(self, hook: DataEventHook):
+        return self._data_stores[store_id]
 
-        event_types = hook.get_subscribed_event_types()
-        if isinstance(event_types, str):
-            event_types = [event_types]
-        for event_type in event_types:
-            self._event_hooks.setdefault(event_type, []).append(hook)
+    # def add_hook(self, hook: DataEventHook):
+    #
+    #     event_types = hook.get_subscribed_event_types()
+    #     if isinstance(event_types, str):
+    #         event_types = [event_types]
+    #     for event_type in event_types:
+    #         self._event_hooks.setdefault(event_type, []).append(hook)
 
-    def find_store_id_for_value(self, value_id: uuid.UUID) -> Optional[uuid.UUID]:
+    def find_store_id_for_value(self, value_id: uuid.UUID) -> Optional[str]:
 
         if value_id in self._value_store_map.keys():
             return self._value_store_map[value_id]
@@ -230,7 +246,7 @@ class DataRegistry(object):
             )
 
         self._value_store_map[value_id] = matches[0]
-        stored_value = self.get_store(matches[0]).retrieve_value(value_id=value_id)
+        stored_value = self.get_archive(matches[0]).retrieve_value(value_id=value_id)
         stored_value._set_registry(self)
         stored_value._is_stored = True
         self._registered_values[value_id] = stored_value
@@ -239,27 +255,34 @@ class DataRegistry(object):
     def store_value(
         self,
         value: Value,
-        store_id: Optional[uuid.UUID] = None,
+        store_id: Optional[str] = None,
         skip_if_exists: bool = True,
     ):
 
-        store = self.get_store(store_id=store_id)
+        if store_id is None:
+            store_id = self.default_data_store
+
+        store: DataStore = self.get_archive(store_id=store_id)  # type: ignore
+        if not isinstance(store, DataStore):
+            raise Exception(f"Can't store value into store '{store_id}': not writable.")
 
         # make sure all property values are available
         property_values = value.property_values
 
         if not store.has_value(value.value_id) or not skip_if_exists:
             event = ValuePreStoreEvent.construct(kiara_id=self._kiara.id, value=value)
-            self.send_event(event)
+            self._event_callback(event)
             load_config = store.store_value(value)
             value._is_stored = True
-            self._value_store_map[value.value_id] = store.data_store_id
+            self._value_store_map[value.value_id] = store_id
             self._load_configs[value.value_id] = load_config
 
 
             for property, property_value in property_values.items():
-                self.store_value(value=property_value, store_id=store.data_store_id, skip_if_exists=True)
+                self.store_value(value=property_value, store_id=store_id, skip_if_exists=True)
 
+        store_event = ValueStoredEvent.construct(kiara_id=self._kiara.id, value=value)
+        self._event_callback(store_event)
 
     def find_values_for_hash(
         self, value_hash: int, data_type_name: Optional[str] = None
@@ -270,7 +293,7 @@ class DataRegistry(object):
 
         stored = self._values_by_hash.get(value_hash, None)
         if stored is None:
-            matches: Dict[uuid.UUID, List[uuid.UUID]] = {}
+            matches: Dict[uuid.UUID, List[str]] = {}
             for store_id, store in self.data_stores.items():
                 value_ids = store.find_values_with_hash(
                     value_hash=value_hash, data_type_name=data_type_name
@@ -424,14 +447,9 @@ class DataRegistry(object):
         value._data_registry = self
 
         event = ValueCreatedEvent(kiara_id=self._kiara.id, value=value)
-        self.send_event(event)
+        self._event_callback(event)
 
         return value
-
-    def send_event(self, event: RegistryEvent, **payload):
-
-        for hook in self._event_hooks.get(event.event_type, []):  # type: ignore
-            hook.process_hook(event=event)
 
     def retrieve_load_config(self, value_id: uuid.UUID) -> Optional[LoadConfig]:
 
@@ -446,7 +464,7 @@ class DataRegistry(object):
             if store_id is None:
                 return None
 
-            store = self.get_store(store_id)
+            store = self.get_archive(store_id)
             self.get_value(value_id=value_id)
             load_config = store.retrieve_load_config(value=value_id)
             self._load_configs[value_id] = load_config
@@ -514,8 +532,8 @@ class DataRegistry(object):
 
     def load_data(self, values: Mapping[str, Optional[uuid.UUID]]) -> Mapping[str, Any]:
 
-        values = self.load_values(values=values)
-        return {k: v.data for k, v in values.items()}
+        result_values = self.load_values(values=values)
+        return {k: v.data for k, v in result_values.items()}
 
     def create_valueset(
         self, data: Mapping[str, Any], schema: Mapping[str, ValueSchema]

@@ -13,6 +13,7 @@ from kiara.modules.operations.included_core_operations.persistence import (
     PersistValueOperationType,
 )
 from kiara.registries.data.data_store import DataArchive, DataStore
+from kiara.registries.ids import ID_REGISTRY
 from kiara.registries.jobs import JobArchive
 from kiara.utils import log_message, orjson_dumps
 
@@ -136,7 +137,9 @@ class FileSystemArchive(DataArchive, JobArchive):
             value_id = uuid.UUID(value_id_str)
             outputs[output_name] = value_id
 
+        job_id = ID_REGISTRY.generate(obj_type=JobRecord, desc="fake job id")
         job_record = JobRecord(
+            job_id=job_id,
             module_type=manifest_data["module_type"],
             module_config=manifest_data["module_config"],
             inputs=inputs_data,

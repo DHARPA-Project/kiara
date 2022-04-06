@@ -15,6 +15,13 @@ class RegistryEvent(KiaraEvent):
     value: Value = Field(description="The value metadata.")
 
 
+class DataStoreAddedEvent(RegistryEvent):
+
+    data_store_id: uuid.UUID = Field(description="The unique id of this data archive.")
+    data_store_alias: str = Field(description="The alias this data archive was added as.")
+    is_store: bool = Field(description="Whether this archive supports write operations (aka implements the 'DataStore' interface).")
+    is_default_store: bool = Field(description="Whether this store acts as default store.")
+
 class ValueCreatedEvent(RegistryEvent):
 
     event_type: Literal["value_created"] = "value_created"

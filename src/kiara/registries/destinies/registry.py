@@ -183,7 +183,8 @@ class DestinyRegistry(object):
                 already_stored.append(v.value_id)
 
         if already_stored:
-            raise Exception(f"Can't attach destiny as property, value(s) already stored: {', '.join(already_stored)}")
+            stored = (str(v) for v in already_stored)
+            raise Exception(f"Can't attach destiny as property, value(s) already stored: {', '.join(stored)}")
 
         store_id = self._destiny_store_map[destiny.destiny_id]
 

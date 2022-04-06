@@ -7,10 +7,6 @@ from typing import Optional
 from kiara.utils import orjson_dumps
 
 
-class ChangedValue(BaseModel):
-
-    old: Optional[uuid.UUID]
-    new: Optional[uuid.UUID]
 
 
 class KiaraEvent(BaseModel):

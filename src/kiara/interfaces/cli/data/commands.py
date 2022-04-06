@@ -101,7 +101,7 @@ def list_values(
         rich_print(table)
     else:
 
-        table = kiara_obj.data_registry.default_data_store.create_renderable(
+        table = kiara_obj.data_registry.get_archive().create_renderable(
             show_pedigree=show_pedigree,
             show_data=show_data,
             show_load_config=show_load_config,
@@ -223,7 +223,7 @@ if is_develop():
 
         paths = {}
 
-        data_store_path = kiara_obj.data_registry.default_data_store.data_store_path
+        data_store_path = kiara_obj.data_registry.get_archive().data_store_path
         paths["data_store"] = data_store_path
 
         aliases_store_path = kiara_obj.alias_registry.default_alias_store.alias_store_path

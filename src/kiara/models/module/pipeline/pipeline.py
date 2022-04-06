@@ -5,6 +5,7 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
+import abc
 import dpath
 import logging
 import uuid
@@ -21,10 +22,7 @@ from kiara.registries.aliases import AliasValueMap
 
 log = logging.getLogger("kiara")
 
-import abc
-
-from kiara.models.events import ChangedValue
-from kiara.models.events.pipeline import PipelineDetails, PipelineEvent, StepDetails
+from kiara.models.events.pipeline import PipelineDetails, PipelineEvent, StepDetails, ChangedValue
 
 
 class PipelineListener(abc.ABC):

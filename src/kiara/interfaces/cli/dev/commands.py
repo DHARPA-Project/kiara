@@ -55,6 +55,9 @@ def test(ctx):
     for field_name in result.field_names:
         value = result.get_value_obj(field_name)
 
+        if value.is_stored:
+            continue
+
         op_type: ExtractMetadataOperationType = kiara_obj.operation_registry.get_operation_type("extract_metadata")  # type: ignore
         operations = op_type.get_operations_for_data_type(value.value_schema.type)
         for metadata_key, op in operations.items():
@@ -75,13 +78,8 @@ def test(ctx):
 
 
     all_destinies = kiara_obj.destiny_registry.get_destiny_aliases_for_value(value_id=value.value_id)
-    for destiny_alias in all_destinies:
-        dbg(destiny_alias)
-
 
     for k, v in result.items():
-        print(v.property_data)
-
         kiara_obj.data_registry.store_value(v)
 
 

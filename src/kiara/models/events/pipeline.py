@@ -24,7 +24,7 @@ from kiara.defaults import (
     NOT_SET_VALUE_ID,
     PIPELINE_STEP_DETAILS_CATEGORY_ID,
 )
-from kiara.models.events import ChangedValue, KiaraEvent
+from kiara.models.events import KiaraEvent
 from kiara.models.module.pipeline import StepStatus
 from kiara.utils import orjson_dumps
 
@@ -37,6 +37,12 @@ from pydantic import BaseModel, Field, validator
 
 if TYPE_CHECKING:
     from kiara.models.module.pipeline.pipeline import Pipeline
+
+
+class ChangedValue(BaseModel):
+
+    old: Optional[uuid.UUID]
+    new: Optional[uuid.UUID]
 
 
 class StepDetails(BaseModel):

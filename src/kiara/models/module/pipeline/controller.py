@@ -18,6 +18,7 @@ class PipelineController(PipelineListener):
 
 
 class SinglePipelineController(PipelineController):
+
     def __init__(self, pipeline: Pipeline, job_registry: JobRegistry):
 
         self._pipeline: Pipeline = pipeline

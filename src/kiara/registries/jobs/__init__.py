@@ -74,14 +74,9 @@ class FileSystemJobArchive(JobArchive):
         self, inputs_manifest: InputsManifest
     ) -> Optional[JobRecord]:
 
-        return self._retrieve_job_record(
-            manifest_hash=inputs_manifest.manifest_hash,
-            jobs_hash=inputs_manifest.job_hash,
-        )
 
-    def _retrieve_job_record(
-        self, manifest_hash: int, jobs_hash: int
-    ) -> Optional[JobRecord]:
+        manifest_hash = inputs_manifest.manifest_hash
+        jobs_hash = inputs_manifest.job_hash
 
         base_path = self._base_path / MANIFEST_SUB_PATH
         manifest_folder = base_path / str(manifest_hash)
@@ -156,6 +151,7 @@ class FileSystemJobStore(FileSystemJobArchive, JobStore):
 
 
 class JobRegistry(object):
+
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
@@ -166,11 +162,37 @@ class JobRegistry(object):
 
         self._processor: ModuleProcessor = SynchronousProcessor(kiara=self._kiara)
         self._processor.register_job_status_listener(self)
-        self._job_archives: Dict[uuid.UUID, JobArchive] = {}
-        self._default_job_store: Optional[JobStore] = None
+        self._job_archives: Dict[str, JobArchive] = {}
+        self._default_job_store: Optional[str] = None
 
         default_archive = FileSystemJobStore.create_from_kiara_context(self._kiara)
-        self.register_job_archive(default_archive)
+        self.register_job_archive(default_archive, store_alias="default_job_store")
+
+        default_file_store = self._kiara.data_registry.get_archive()
+        self.register_job_archive(default_file_store, store_alias="default_data_store")  # type: ignore
+
+    def register_job_archive(self, job_store: JobStore, store_alias: Optional[str]=None):
+
+        if store_alias is None:
+            store_alias = str(job_store.get_job_archive_id())
+
+        if store_alias in self._job_archives.keys():
+            raise Exception(
+                f"Can't register job store, store id already registered: {store_alias}."
+            )
+
+        self._job_archives[store_alias] = job_store
+
+        if self._default_job_store is None and isinstance(job_store, JobStore):
+            self._default_job_store = store_alias
+
+    @property
+    def default_job_store(self) -> JobStore:
+
+        if self._default_job_store is None:
+            raise Exception("No default job store set (yet).")
+        return self._job_archives[self._default_job_store]  # type: ignore
+
 
     def job_status_changed(
         self, job_id: uuid.UUID, old_status: Optional[JobStatus], new_status: JobStatus
@@ -208,31 +230,11 @@ class JobRegistry(object):
             job_hash=job_record.job_hash,
             module_type=job_record.module_type,
         )
-        self._default_job_store.store_job_record(job_record)
+        self.default_job_store.store_job_record(job_record)
 
     def get_job_record_in_session(self, job_id: uuid.UUID) -> JobRecord:
 
         return self._processor.get_job_record(job_id)
-
-    def register_job_archive(self, job_store: JobStore):
-
-        js_id = job_store.get_job_archive_id()
-        if js_id in self._job_archives.keys():
-            raise Exception(
-                f"Can't register job store, store id already registered: {js_id}."
-            )
-
-        self._job_archives[js_id] = job_store
-
-        if self._default_job_store is None and isinstance(job_store, JobStore):
-            self._default_job_store = job_store
-
-    @property
-    def default_job_store(self) -> JobStore:
-
-        if self._default_job_store is None:
-            raise Exception("No default job store set (yet).")
-        return self._default_job_store
 
     def find_matching_job_record(
         self, inputs_manifest: InputsManifest

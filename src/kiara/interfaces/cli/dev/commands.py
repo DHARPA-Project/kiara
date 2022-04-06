@@ -30,17 +30,13 @@ def test(ctx):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    for value_id in kiara_obj.data_registry.default_data_store.value_ids:
+    for value_id in kiara_obj.destiny_registry.all_values:
+        print("-----")
+        print(str(value_id))
+        aliases = kiara_obj.destiny_registry.get_destiny_aliases_for_value(value_id)
+        for alias in aliases:
+            print(f"- alias: {alias}")
 
-        print("----")
-        print(f"Value id: {value_id}")
-
-        destinies = kiara_obj.destiny_registry.get_destinies_for_value(value_id=value_id)
-        for k, v in destinies.items():
-            print(f"{k} -> {v}")
-
-
-    sys.exit()
 
     op = Manifest(module_type="core.example")
 
@@ -56,16 +52,12 @@ def test(ctx):
 
     rich_print(result)
 
-    op.save_result(aliases="test_result")
-
     for field_name in result.field_names:
         value = result.get_value_obj(field_name)
 
         op_type: ExtractMetadataOperationType = kiara_obj.operation_registry.get_operation_type("extract_metadata")  # type: ignore
         operations = op_type.get_operations_for_data_type(value.value_schema.type)
-        print("METADATA")
         for metadata_key, op in operations.items():
-            print(metadata_key)
             op_details: ExtractMetadataDetails = op.operation_details  # type: ignore
             input_field_name = op_details.input_field_name
             result_field_name = op_details.result_field_name
@@ -75,14 +67,27 @@ def test(ctx):
                 manifest=op,
                 result_field_name=result_field_name,
             )
-            print(f"ADDED: {d}")
+
+            kiara_obj.destiny_registry.resolve_destiny(d)
+
+            kiara_obj.destiny_registry.attach_as_property(d)
+            # kiara_obj.destiny_registry.store_destiny(d)
 
 
+    all_destinies = kiara_obj.destiny_registry.get_destiny_aliases_for_value(value_id=value.value_id)
+    for destiny_alias in all_destinies:
+        dbg(destiny_alias)
 
-    all_destinies = kiara_obj.destiny_registry.get_destinies_for_value(value_id=value.value_id)
-    for destiny in all_destinies.values():
-        dbg(destiny.__dict__)
-        kiara_obj.destiny_registry.store_destiny(destiny_id=destiny.destiny_id)
+
+    for k, v in result.items():
+        print(v.property_data)
+
+        kiara_obj.data_registry.store_value(v)
+
+
+    # op.save_result(aliases="test_result")
+
+    # kiara_obj.destiny_registry.store_destiny(destiny_id=destiny.destiny_id)
     # kiara_obj.data_registry.store_value(value=text_value)
 
     # import pp

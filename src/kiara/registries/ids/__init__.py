@@ -31,7 +31,7 @@ class IdRegistry(object):
 
         if is_debug() or is_develop():
 
-            logger.debug("generate.id", id=id, metadata=metadata)
+            # logger.debug("generate.id", id=id, metadata=metadata)
             if obj_type is None:
                 if obj:
                     obj_type = obj.__class__

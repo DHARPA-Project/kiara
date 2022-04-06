@@ -245,6 +245,9 @@ class DataRegistry(object):
 
         store = self.get_store(store_id=store_id)
 
+        # make sure all property values are available
+        property_values = value.property_values
+
         if not store.has_value(value.value_id) or not skip_if_exists:
             event = ValuePreStoreEvent.construct(kiara_id=self._kiara.id, value=value)
             self.send_event(event)
@@ -253,27 +256,10 @@ class DataRegistry(object):
             self._value_store_map[value.value_id] = store.data_store_id
             self._load_configs[value.value_id] = load_config
 
-            # for category, keys in self.get_destinies_for_value(value=value).items():
-            #     for key, destinies in keys.items():
-            #         for destiny in destinies:
-            #             if destiny.result_value_id is not None:
-            #                 self.store_value(self.get_value(destiny.result_value_id))
-            #         store.persist_destinies(
-            #             value=value, category=category, key=key, destinies=destinies
-            #         )
 
-        # if aliases:
-        #     aps_event = AliasPreStoreEvent.construct(
-        #         kiara_id=self._kiara.id, value=value, aliases=aliases
-        #     )
-        #     self.send_event(aps_event)
-        #     for alias in aliases:
-        #         if not alias:
-        #             logger.debug("ignore.store.alias", reason="alias is empty")
-        #             continue
-        #         self.register_alias(alias=alias, value=value)
-        #     vs_event = ValueStoredEvent.construct(kiara_id=self._kiara.id, value=value)
-        #     self.send_event(vs_event)
+            for property, property_value in property_values.items():
+                self.store_value(value=property_value, store_id=store.data_store_id, skip_if_exists=True)
+
 
     def find_values_for_hash(
         self, value_hash: int, data_type_name: Optional[str] = None
@@ -335,6 +321,7 @@ class DataRegistry(object):
         pedigree: Optional[ValuePedigree] = None,
         pedigree_output_name: str = None,
         reuse_existing: bool = True,
+        value_id: Optional[uuid.UUID] = None
     ) -> Value:
 
         if schema is None:
@@ -342,6 +329,9 @@ class DataRegistry(object):
 
         if pedigree is None:
             raise NotImplementedError()
+
+        if reuse_existing and value_id:
+            raise Exception(f"Can't create value with pre-registered id '{value_id}': 'reuse_existing' set to True, which is not allowed if 'value_id' is set.")
 
         if pedigree_output_name is None:
             if pedigree == ORPHAN:
@@ -416,7 +406,10 @@ class DataRegistry(object):
             self._load_configs[existing_value.value_id] = None
             return existing_value
 
-        v_id = ID_REGISTRY.generate(type="value", kiara_id=self._kiara.id)
+        if value_id:
+            v_id = value_id
+        else:
+            v_id = ID_REGISTRY.generate(type="value", kiara_id=self._kiara.id, pre_registered=False)
         value, data = data_type.assemble_value(
             value_id=v_id,
             data=data,
@@ -518,6 +511,11 @@ class DataRegistry(object):
             schemas[field_name] = value.value_schema
 
         return ValueSetReadOnly(value_items=value_items, values_schema=schemas)
+
+    def load_data(self, values: Mapping[str, Optional[uuid.UUID]]) -> Mapping[str, Any]:
+
+        values = self.load_values(values=values)
+        return {k: v.data for k, v in values.items()}
 
     def create_valueset(
         self, data: Mapping[str, Any], schema: Mapping[str, ValueSchema]

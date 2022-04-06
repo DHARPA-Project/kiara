@@ -250,7 +250,7 @@ class FilesystemDataStore(FileSystemArchive, DataStore):
         load_config = self._persist_value_data(value=value)
         value_file = value_dir / VALUE_DETAILS_FILE_NAME
         value_data = value.dict()
-        value_file.write_text(orjson_dumps(value_data))
+        value_file.write_text(orjson_dumps(value_data, option=orjson.OPT_NON_STR_KEYS))
 
         return load_config
 

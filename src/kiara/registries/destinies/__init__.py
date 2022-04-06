@@ -9,12 +9,18 @@ from kiara.models.values.value_schema import ValueSchema
 
 
 class DestinyArchive(abc.ABC):
+
     @abc.abstractmethod
     def get_destiny_archive_id(self) -> uuid.UUID:
         pass
 
     @abc.abstractmethod
-    def get_destinies_for(
+    def get_all_value_ids(self) -> Set[uuid.UUID]:
+        """Retrun a list of all value ids that have destinies stored in this archive."""
+        pass
+
+    @abc.abstractmethod
+    def get_destiny_aliases_for_value(
         self, value_id: uuid.UUID
     ) -> Optional[Mapping[str, ValueSchema]]:
         """Retrieve all the destinies for the specified value within this archive.
@@ -31,7 +37,7 @@ class DestinyStore(DestinyArchive):
 
     @abc.abstractmethod
     def persist_destiny(
-        self, value_ids: Iterable[Value], destiny_alias: str, destiny: Destiny
+        self, destiny: Destiny
     ):
         pass
 

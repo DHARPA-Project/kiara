@@ -287,13 +287,13 @@ class JobRegistry(object):
         return job_config
 
     def execute(
-        self, manifest: Manifest, inputs: Mapping[str, Any], wait: bool = False, _result_ids: Optional[Mapping[str, uuid.UUID]] = None
+        self, manifest: Manifest, inputs: Mapping[str, Any], wait: bool = False
     ) -> uuid.UUID:
 
         job_config = self.prepare_job_config(manifest=manifest, inputs=inputs)
-        return self.execute_job(job_config, wait=wait, _result_ids=_result_ids)
+        return self.execute_job(job_config, wait=wait)
 
-    def execute_job(self, job_config: JobConfig, wait: bool = False, _result_ids: Optional[Mapping[str, uuid.UUID]] = None) -> uuid.UUID:
+    def execute_job(self, job_config: JobConfig, wait: bool = False) -> uuid.UUID:
 
         log = logger.bind(
             module_type=job_config.module_type,
@@ -354,9 +354,9 @@ class JobRegistry(object):
         return results
 
     def execute_and_retrieve(
-        self, manifest: Manifest, inputs: Mapping[str, Any], _result_ids: Optional[Mapping[str, uuid.UUID]]=None
+        self, manifest: Manifest, inputs: Mapping[str, Any]
     ) -> ValueSet:
 
-        job_id = self.execute(manifest=manifest, inputs=inputs, wait=True, _result_ids=_result_ids)
+        job_id = self.execute(manifest=manifest, inputs=inputs, wait=True)
         results = self.retrieve_result(job_id=job_id)
         return results

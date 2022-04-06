@@ -3,7 +3,7 @@ import abc
 import uuid
 from datetime import datetime
 from pydantic import BaseModel
-from typing import Any, Dict, List, Optional, Protocol, Union
+from typing import Any, Dict, List, Optional, Protocol, Union, Mapping
 
 from kiara.exceptions import KiaraProcessingException
 from kiara.models.module.jobs import ActiveJob, JobConfig, JobLog, JobRecord, JobStatus

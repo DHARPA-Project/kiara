@@ -78,6 +78,8 @@ class DataArchive(abc.ABC):
             pedigree=pedigree,
             pedigree_output_name=value_data["pedigree_output_name"],
             data_type_class=value_data["data_type_class"],
+            property_refs=value_data["property_refs"],
+            destiny_details=value_data["destiny_details"]
         )
 
         # value = data_type.reassemble_value(value_id=value_data["value_id"], load_config=None, schema=value_schema, status=value_data["value_status"], value_hash=value_data["value_hash"], value_size=value_data["value_size"], pedigree=pedigree, kiara_id=self._kiara.id, pedigree_output_name=value_data["pedigree_output_name"])

@@ -15,7 +15,7 @@ from typing import (
     List,
     Mapping,
     MutableMapping,
-    Optional, Set,
+    Optional, Set, Union,
 )
 
 from kiara.defaults import (
@@ -175,44 +175,62 @@ class Value(ValueDetails):
     _data_registry: "DataRegistry" = PrivateAttr(default=None)
     _data_type: "DataType" = PrivateAttr(default=None)
     _is_stored: bool = PrivateAttr(default=False)
+    _cached_properties: Optional["ValueSet"] = PrivateAttr(default=None)
 
-    properties: Mapping[str, uuid.UUID] = Field(
+    property_refs: Mapping[str, uuid.UUID] = Field(
         description="Links to values that are properties of this value.",
         default_factory=dict,
     )
-    destiny_refs: Mapping[str, Set[uuid.UUID]] = Field(
-        description="References to values this is a destiny for.",
-        default_factory=dict,
-    )
+    destiny_details: Mapping[uuid.UUID, str] = Field(description="Backlinks to values that this value acts as destiny/or property for.", default_factory=dict)
 
-    def add_property(self, property_path: str, value: "Value"):
+
+    def add_property(self, value_id: Union[uuid.UUID, "Value"], property_path: str, add_origin_to_property_value: bool=True):
+
+        value = None
+        try:
+            value_temp = value
+            value_id = value_id.value_id
+            value = value_temp
+        except Exception:
+            # in case a Value object was provided
+            pass
+        finally:
+            del value_temp
+
+        if add_origin_to_property_value:
+            if value is None:
+                value = self._data_registry.get_value(value_id=value_id)  # type: ignore
+
+            if value._is_stored:
+                raise Exception(
+                    f"Can't add property to value '{self.value_id}': referenced value '{value.value_id}' already locked, so it's not possible to add the property backlink (as requested)."
+                )
 
         if self._is_stored:
             raise Exception(
                 f"Can't add property to value '{self.value_id}': value already locked."
             )
 
-        if value._is_stored:
-            raise Exception(
-                f"Can't add property to value '{self.value_id}': referenced value '{value.value_id}' already locked."
-            )
-
-        if property_path in self.properties.keys():
+        if property_path in self.property_refs.keys():
             raise Exception(
                 f"Can't add property to value '{self.value_id}': property '{property_path}' already set."
             )
 
-        self.properties[property_path] = value.value_id  # type: ignore
-        value.property_backlinks.setdefault(self.value_id, set()).add(property_path)  # type: ignore
+        self.property_refs[property_path] = value_id  # type: ignore
 
-    def add_destiny_refs(self, destiny_alias: str, *value_ids):
+        if add_origin_to_property_value:
+            value.add_destiny_details(value_id=self.value_id, destiny_alias=property_path)
+
+        self._cached_properties = None
+
+    def add_destiny_details(self, value_id: uuid.UUID, destiny_alias: str):
 
         if self._is_stored:
             raise Exception(
                 f"Can't set destiny_refs to value '{self.value_id}': value already locked."
             )
 
-        self.destiny_refs.setdefault(destiny_alias, set()).update(value_ids)  # type: ignore
+        self.destiny_details[value_id] = destiny_alias  # type: ignore
 
     @property
     def data(self) -> Any:
@@ -261,6 +279,10 @@ class Value(ValueDetails):
         return result
 
     @property
+    def is_stored(self) -> bool:
+        return self._is_stored
+
+    @property
     def data_type(self) -> "DataType":
 
         if self._data_type is not None:
@@ -270,6 +292,21 @@ class Value(ValueDetails):
             **self.value_schema.type_config
         )
         return self._data_type
+
+    @property
+    def property_values(self) -> "ValueSet":
+
+        if self._cached_properties is not None:
+            return self._cached_properties
+
+        self._cached_properties = self._data_registry.load_values(self.property_refs)
+        return self._cached_properties
+
+    @property
+    def property_data(self) -> Mapping[str, Any]:
+
+        return self._data_registry.load_data(self.property_refs)
+
 
     def create_renderable(self, **render_config: Any) -> RenderableType:
 

@@ -29,7 +29,7 @@ class Destiny(Manifest):
         cls,
         kiara: "Kiara",
         destiny_alias: str,
-        values: Mapping[str, Union[Value, uuid.UUID]],
+        values: Mapping[str, uuid.UUID],
         manifest: Manifest,
         result_field_name: Optional[str] = None,
     ):
@@ -54,12 +54,7 @@ class Destiny(Manifest):
         deferred_inputs: Dict[str, None] = {}
         for field in module.inputs_schema.keys():
             if field in values.keys():
-                if isinstance(values[field], uuid.UUID):
-                    fixed_inputs[field] = values[field]
-                elif isinstance(values[field], Value):
-                    fixed_inputs[field] = values[field].value_id  # type: ignore
-                else:
-                    raise TypeError(f"Invalid type for value: {type(values[field])}")
+                fixed_inputs[field] = values[field]
             else:
                 deferred_inputs[field] = None
 
@@ -100,9 +95,7 @@ class Destiny(Manifest):
     )
     result_field_name: str = Field(description="The name of the result field.")
     result_schema: ValueSchema = Field(description="The value schema of the result.")
-
-    is_resolved: bool = Field(description="Whether the destiny was resolved.", default=False)
-
+    result_value_id: Optional[uuid.UUID] = Field(description="The value id of the result.")
 
     _is_stored: bool = PrivateAttr(default=False)
     _job_id: Optional[uuid.UUID] = PrivateAttr(default=None)

@@ -603,7 +603,7 @@ def extract_renderable(item: Any, render_config: Optional[Mapping[str, Any]] = N
             if isinstance(v, BaseModel):
                 v = v.dict()
             result[k] = v
-        return orjson_dumps(result, option=orjson.OPT_INDENT_2)
+        return orjson_dumps(result, option=orjson.OPT_INDENT_2|orjson.OPT_NON_STR_KEYS)
     elif isinstance(item, Iterable):
         _all = []
         for i in item:

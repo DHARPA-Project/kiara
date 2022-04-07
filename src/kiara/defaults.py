@@ -72,6 +72,9 @@ INVALID_VALUE_NAMES = [
 ]
 """List of reserved names, inputs/outputs can't use those."""
 
+DEFAULT_STORE_MARKER = "__default__"
+"""Marker alias to indicate an instance is a default store for a registry."""
+
 PIPELINE_PARENT_MARKER = "__pipeline__"
 """Marker string in the pipeline structure that indicates a parent pipeline element."""
 

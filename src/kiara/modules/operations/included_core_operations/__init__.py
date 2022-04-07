@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from pydantic import Field, PrivateAttr
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Union
+import structlog
 
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.operation import (
@@ -18,6 +19,8 @@ if TYPE_CHECKING:
     pass
 
 
+logger = structlog.getLogger()
+
 class CustomModuleOperationDetails(OperationDetails):
     @classmethod
     def create_from_module(cls, module: KiaraModule):
@@ -28,10 +31,10 @@ class CustomModuleOperationDetails(OperationDetails):
             module_outputs_schema=module.outputs_schema,
         )
 
-    module_inputs_schema: Dict[str, ValueSchema] = Field(
+    module_inputs_schema: Mapping[str, ValueSchema] = Field(
         description="The input schemas of the module."
     )
-    module_outputs_schema: Dict[str, ValueSchema] = Field(
+    module_outputs_schema: Mapping[str, ValueSchema] = Field(
         description="The output schemas of the module."
     )
     _op_schema: OperationSchema = PrivateAttr(default=None)
@@ -64,6 +67,7 @@ class CustomModuleOperationType(OperationType[CustomModuleOperationDetails]):
         for name, module_cls in self._kiara.module_type_classes.items():
             mod_conf = module_cls._config_cls
             if mod_conf.requires_config():
+                logger.debug("ignore.custom_operation", module_type=name, reason="config required")
                 continue
             doc = DocumentationMetadataModel.from_class_doc(module_cls)
             oc = ManifestOperationConfig(module_type=name, doc=doc)

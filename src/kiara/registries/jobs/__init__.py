@@ -5,8 +5,11 @@ import structlog
 import uuid
 from bidict import bidict
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Type, Iterable
 
+from kiara.defaults import DEFAULT_STORE_MARKER
+from kiara.models.events import KiaraEvent
+from kiara.models.events.data_registry import JobArchiveAddedEvent, JobRecordPreStoreEvent, JobRecordStoredEvent
 from kiara.models.module.jobs import ActiveJob, JobConfig, JobRecord, JobStatus
 from kiara.models.module.manifest import InputsManifest, Manifest
 from kiara.models.values.value import ValueSet
@@ -165,11 +168,17 @@ class JobRegistry(object):
         self._job_archives: Dict[str, JobArchive] = {}
         self._default_job_store: Optional[str] = None
 
-        default_archive = FileSystemJobStore.create_from_kiara_context(self._kiara)
-        self.register_job_archive(default_archive, store_alias="default_job_store")
+        self._event_callback = self._kiara.event_registry.add_producer(self)
 
-        default_file_store = self._kiara.data_registry.get_archive()
-        self.register_job_archive(default_file_store, store_alias="default_data_store")  # type: ignore
+        default_archive = FileSystemJobStore.create_from_kiara_context(self._kiara)
+        self.register_job_archive(default_archive, store_alias=DEFAULT_STORE_MARKER)
+
+        # default_file_store = self._kiara.data_registry.get_archive(DEFAULT_STORE_MARKER)
+        # self.register_job_archive(default_file_store, store_alias="default_data_store")  # type: ignore
+
+    def suppoerted_event_types(self) -> Iterable[Type[KiaraEvent]]:
+
+        return [JobArchiveAddedEvent, JobRecordPreStoreEvent, JobRecordStoredEvent]
 
     def register_job_archive(self, job_store: JobStore, store_alias: Optional[str]=None):
 
@@ -183,16 +192,31 @@ class JobRegistry(object):
 
         self._job_archives[store_alias] = job_store
 
-        if self._default_job_store is None and isinstance(job_store, JobStore):
-            self._default_job_store = store_alias
+        is_store = False
+        is_default_store = False
+        if isinstance(job_store, JobStore):
+            is_store = True
+            if self._default_job_store is None:
+                self._default_job_store = store_alias
+
+        event = JobArchiveAddedEvent.construct(kiara_id=self._kiara.id, job_archive_id=job_store.get_job_archive_id(), job_archive_alias=store_alias, is_store=is_store, is_default_store=is_default_store)
+        self._event_callback(event)
 
     @property
-    def default_job_store(self) -> JobStore:
+    def default_job_store(self) -> str:
 
         if self._default_job_store is None:
             raise Exception("No default job store set (yet).")
-        return self._job_archives[self._default_job_store]  # type: ignore
+        return self._default_job_store  # type: ignore
 
+    def get_archive(self, store_id: Optional[str]=None) -> JobArchive:
+
+        if store_id is None:
+            store_id = self.default_job_store
+            if store_id is None:
+                raise Exception("Can't retrieve deafult job archive, none set (yet).")
+
+        return self._job_archives[store_id]
 
     def job_status_changed(
         self, job_id: uuid.UUID, old_status: Optional[JobStatus], new_status: JobStatus
@@ -230,7 +254,17 @@ class JobRegistry(object):
             job_hash=job_record.job_hash,
             module_type=job_record.module_type,
         )
-        self.default_job_store.store_job_record(job_record)
+        store: JobStore = self.get_archive()  # type: ignore
+        if not isinstance(store, JobStore):
+            raise Exception("Can't store job record to archive: not writable.")
+
+        pre_store_event = JobRecordPreStoreEvent.construct(kiara_id=self._kiara.id, job_record=job_record)
+        self._event_callback(pre_store_event)
+
+        store.store_job_record(job_record)
+
+        stored_event = JobRecordStoredEvent.construct(kiara_id=self._kiara.id, job_record=job_record)
+        self._event_callback(stored_event)
 
     def get_job_record_in_session(self, job_id: uuid.UUID) -> JobRecord:
 

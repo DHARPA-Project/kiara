@@ -234,7 +234,6 @@ class AliasValueMap(ValueSet):
                         f"Can't set alias '{alias}', no schema set for field: '{child}'."
                     )
                 else:
-                    print(f"ADDING: {child}")
                     self.set_alias_schema(alias=child, schema=ValueSchema(type="any"))
 
             field_item = None

@@ -1,34 +1,42 @@
 # -*- coding: utf-8 -*-
 import uuid
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Iterable, Any
 
-from kiara.models.events.data_registry import RegistryEvent
+from kiara.models.events import KiaraEvent
 from kiara.models.values.value import Value
-from kiara.registries.data import DataEventHook
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
 
 
-class CreateMetadataDestinies(DataEventHook):
+class CreateMetadataDestinies(object):
+
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
+        self._skip_internal_types: bool = True
 
-    def get_subscribed_event_types(self) -> Iterable[str]:
+    def supported_event_types(self) -> Iterable[str]:
         return ["value_created", "value_pre_store"]
 
-    def process_hook(self, event: RegistryEvent):
+    def handle_events(self, *events: KiaraEvent) -> Any:
 
-        # if not value._data_type_known:
-        #     return
+        for event in events:
+            if event.get_event_type() == "value_created":  # type: ignore
+                self.attach_metadata(event.value)  # type: ignore
 
-        if event.event_type == "value_created":  # type: ignore
-            self.attach_metadata(event.value)
-        elif event.event_type == "value_pre_store":  # type: ignore
-            self.resolve_all_metadata(event.value)
+        for event in events:
+            if event.get_event_type() == "value_pre_store":  # type: ignore
+                self.resolve_all_metadata(event.value) # type: ignore
 
     def attach_metadata(self, value: Value):
+
+        assert not value.is_stored
+
+        if self._skip_internal_types:
+            lineage = self._kiara.type_registry.get_type_lineage(value.value_schema.type)
+            if "any" not in lineage:
+                return
 
         op_type: ExtractMetadataOperationType = self._kiara.operation_registry.get_operation_type("extract_metadata")  # type: ignore
         operations = op_type.get_operations_for_data_type(value.value_schema.type)
@@ -43,7 +51,14 @@ class CreateMetadataDestinies(DataEventHook):
                 result_field_name=result_field_name,
             )
 
-    def resolve_all_metadata(self, value: uuid.UUID):
+    def resolve_all_metadata(self, value: Value):
 
-        self._kiara.destiny_registry.get_destinies_for_value(value=value)
+        assert not value.is_stored
+
+        aliases = self._kiara.destiny_registry.get_destiny_aliases_for_value(value_id=value.value_id)
+
+        for alias in aliases:
+            destiny = self._kiara.destiny_registry.get_destiny(value_id=value.value_id, destiny_alias=alias)
+            v = self._kiara.destiny_registry.resolve_destiny(destiny)
+            self._kiara.destiny_registry.attach_as_property(destiny)
 

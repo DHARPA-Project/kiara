@@ -20,6 +20,7 @@ from kiara.registries.aliases import AliasRegistry
 from kiara.registries.data import DataRegistry
 from kiara.registries.destinies.registry import DestinyRegistry
 from kiara.registries.environment import EnvironmentRegistry
+from kiara.registries.events.metadata import CreateMetadataDestinies
 from kiara.registries.events.registry import EventRegistry
 from kiara.registries.ids import ID_REGISTRY
 from kiara.registries.jobs import JobRegistry
@@ -117,6 +118,9 @@ class Kiara(object):
         self._destiny_registry: DestinyRegistry = DestinyRegistry(kiara=self)
 
         self._env_mgmt: Optional[EnvironmentRegistry] = None
+
+        metadata_augmenter = CreateMetadataDestinies(kiara=self)
+        self._event_registry.add_listener(metadata_augmenter, *metadata_augmenter.supported_event_types())
 
     def _run_alembic_migrations(self):
         script_location = os.path.abspath(KIARA_DB_MIGRATIONS_FOLDER)

@@ -143,7 +143,7 @@ def run(
 
         for alias in full_aliases:
             for field_name in op_output_names:
-                final_aliases.setdefault(field_name, []).append(f"{alias}-{field_name}")
+                final_aliases.setdefault(field_name, []).append(f"{alias}.{field_name}")
 
         if invalid_fields:
             print()

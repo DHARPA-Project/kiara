@@ -97,6 +97,13 @@ class DestinyRegistry(object):
 
         self._destiny_store_map[destiny.destiny_id] = store_id
 
+        return destiny
+
+    def get_destiny(self, value_id: uuid.UUID, destiny_alias: str) -> Destiny:
+
+        destiny = self._destinies_by_value.get(value_id, {}).get(destiny_alias, None)
+        if destiny is None:
+            raise Exception(f"No destiny '{destiny_alias}' available for value '{value_id}'.")
 
         return destiny
 
@@ -192,7 +199,6 @@ class DestinyRegistry(object):
 
         for v in values.values():
             v.add_property(value_id=destiny.result_value_id, property_path=full_path, add_origin_to_property_value=True)
-
 
     def store_destiny(self, destiny_id: uuid.UUID):
 

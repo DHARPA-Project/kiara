@@ -14,6 +14,7 @@ from typing import Optional
 from kiara import Kiara
 from kiara.defaults import KIARA_DB_MIGRATIONS_CONFIG, KIARA_DB_MIGRATIONS_FOLDER
 from kiara.interfaces.python_api import KiaraOperation
+from kiara.models.events import KiaraEvent
 from kiara.models.module.manifest import Manifest
 from kiara.utils import rich_print
 

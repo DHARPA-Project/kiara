@@ -229,7 +229,7 @@ if is_develop():
         aliases_store_path = kiara_obj.alias_registry.default_alias_store.alias_store_path
         paths["alias_store"] = aliases_store_path
 
-        job_record_store_path = kiara_obj.job_registry.default_job_store.job_store_path
+        job_record_store_path = kiara_obj.job_registry.get_archive().job_store_path
         paths["jobs_record_store"] = job_record_store_path
 
         destiny_store_path = kiara_obj.destiny_registry.default_destiny_store.destiny_store_path

@@ -1,19 +1,22 @@
 import abc
-from typing import Iterable, Generic, TypeVar, Type
+from typing import Iterable, Type, Protocol, Any
 
 from kiara.models.events import KiaraEvent
-from kiara.models.events.data_registry import RegistryEvent
 
 
-class KiaraEventHook(abc.ABC):
+class EventListener(Protocol):
 
-    @abc.abstractmethod
-    def supported_event_types(self) -> Iterable[Type[KiaraEvent]]:
+    def handle_events(self, *events: KiaraEvent) -> Any:
         pass
 
 
-class DataEventHook(KiaraEventHook):
+class AsyncEventListener(Protocol):
 
-    @abc.abstractmethod
-    def process_hook(self, event: RegistryEvent):
+    def wait_for_processing(self, processing_id: Any):
+        pass
+
+
+class EventProducer(Protocol):
+
+    def suppoerted_event_types(self) -> Iterable[Type[KiaraEvent]]:
         pass

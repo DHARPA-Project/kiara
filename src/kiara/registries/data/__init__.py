@@ -21,7 +21,7 @@ from kiara.defaults import (
     NOT_SET_VALUE_ID,
     ORPHAN_PEDIGREE_OUTPUT_NAME,
     STRICT_CHECKS,
-    SpecialValue,
+    SpecialValue, DEFAULT_STORE_MARKER,
 )
 from kiara.exceptions import InvalidValuesException, JobConfigException
 from kiara.models.events import KiaraEvent
@@ -47,7 +47,7 @@ from kiara.modules.operations.included_core_operations.render_value import (
 )
 from kiara.registries.data.data_store import DataStore, DataArchive
 from kiara.registries.data.data_store.filesystem_store import FilesystemDataStore
-from kiara.registries.events.registry import EventListener
+from kiara.registries.events import EventListener
 from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import is_debug, log_message
 
@@ -56,7 +56,7 @@ if TYPE_CHECKING:
 
 logger = structlog.getLogger()
 
-DEFAULT_STORE_MARKER = "__default__"
+
 
 
 class DataRegistry(object):
@@ -72,7 +72,7 @@ class DataRegistry(object):
 
         self._default_data_store: Optional[str] = None
 
-        self.add_data_archive(FilesystemDataStore(kiara=self._kiara), alias=DEFAULT_STORE_MARKER)
+        self.register_data_archive(FilesystemDataStore(kiara=self._kiara), alias=DEFAULT_STORE_MARKER)
 
         self._registered_values: Dict[uuid.UUID, Value] = {}
 
@@ -159,7 +159,7 @@ class DataRegistry(object):
     #     self.aliases.set_alias(alias=alias, value_id=value.value_id)
     #     self.aliases.save(alias)
 
-    def add_data_archive(self, data_store: DataStore, alias: str=None):
+    def register_data_archive(self, data_store: DataStore, alias: str=None):
 
         if alias is None:
             alias = str(data_store.data_store_id)
@@ -177,7 +177,7 @@ class DataRegistry(object):
                 is_default_store = True
                 self._default_data_store = alias
 
-        event = DataStoreAddedEvent.construct(kiara_id=self._kiara.id, data_store_id=data_store.data_store_id, data_store_alias=alias, is_store=is_store, is_default_store=is_default_store)
+        event = DataStoreAddedEvent.construct(kiara_id=self._kiara.id, data_archive_id=data_store.data_store_id, data_archive_alias=alias, is_store=is_store, is_default_store=is_default_store)
         self._event_callback(event)
 
     @property
@@ -267,7 +267,6 @@ class DataRegistry(object):
             raise Exception(f"Can't store value into store '{store_id}': not writable.")
 
         # make sure all property values are available
-        property_values = value.property_values
 
         if not store.has_value(value.value_id) or not skip_if_exists:
             event = ValuePreStoreEvent.construct(kiara_id=self._kiara.id, value=value)
@@ -276,7 +275,7 @@ class DataRegistry(object):
             value._is_stored = True
             self._value_store_map[value.value_id] = store_id
             self._load_configs[value.value_id] = load_config
-
+            property_values = value.property_values
 
             for property, property_value in property_values.items():
                 self.store_value(value=property_value, store_id=store_id, skip_if_exists=True)

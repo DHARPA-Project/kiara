@@ -10,7 +10,7 @@
 import structlog
 from typing import TYPE_CHECKING, Dict, Iterable, Mapping, Optional, Type
 
-from kiara.models.module import KiaraModuleTypeInfo
+from kiara.models.module import KiaraModuleTypeInfo, ModuleTypeClassesInfo
 from kiara.models.module.manifest import Manifest
 
 if TYPE_CHECKING:
@@ -59,8 +59,8 @@ class ModuleRegistry(object):
         return self._module_class_metadata[type_name]
 
     def get_context_metadata(
-        self, only_for_package: Optional[str] = None
-    ) -> Dict[str, KiaraModuleTypeInfo]:
+        self, alias: Optional[str] = None, only_for_package: Optional[str] = None
+    ) -> ModuleTypeClassesInfo:
 
         result = {}
         for type_name in self.module_types.keys():
@@ -71,7 +71,7 @@ class ModuleRegistry(object):
             else:
                 result[type_name] = md
 
-        return result
+        return ModuleTypeClassesInfo.construct(group_alias=alias, type_infos=result)  # type: ignore
 
     def create_module(self, manifest: Manifest) -> "KiaraModule":
         """Create a [KiaraModule][kiara.module.KiaraModule] object from a module configuration.

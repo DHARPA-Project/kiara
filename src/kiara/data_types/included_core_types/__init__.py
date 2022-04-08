@@ -29,14 +29,7 @@ SKALAR_CHARACTERISTICS = DataTypeCharacteristics(
 
 
 class NoneType(DataType[SpecialValue, DataTypeConfig]):
-    """'Any' type, the parent type for most other types.
-
-    This type acts as the parents for all (or at least most) non-internal value types. There are some generic operations
-    (like 'persist_value', or 'render_value') which are implemented for this type, so it's descendents have a fallback
-    option in case no subtype-specific operations are implemented for it. In general, it is not recommended to use the 'any'
-    type as module input or output, but it is possible. Values of type 'any' are not allowed to be persisted (at the moment,
-    this might or might not change).
-    """
+    """Type indicating a 'None' value"""
 
     _data_type_name = "none"
 

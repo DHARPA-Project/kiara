@@ -19,7 +19,7 @@ from typing import (
 
 from kiara.data_types import DataType
 from kiara.defaults import KIARA_ROOT_TYPE_NAME
-from kiara.models.values.data_type import DataTypeClassInfo
+from kiara.models.values.data_type import DataTypeClassesInfo, DataTypeClassInfo
 from kiara.utils.class_loading import find_all_data_types
 
 if TYPE_CHECKING:
@@ -177,8 +177,8 @@ class TypeRegistry(object):
         return self._data_type_metadata[type_name]
 
     def get_context_metadata(
-        self, only_for_package: Optional[str] = None
-    ) -> Dict[str, DataTypeClassInfo]:
+        self, alias: Optional[str] = None, only_for_package: Optional[str] = None
+    ) -> DataTypeClassesInfo:
 
         result = {}
         for type_name in self.data_type_names:
@@ -189,4 +189,4 @@ class TypeRegistry(object):
             else:
                 result[type_name] = md
 
-        return result
+        return DataTypeClassesInfo.construct(group_alias=alias, type_infos=result)  # type: ignore

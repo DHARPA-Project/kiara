@@ -201,6 +201,8 @@ JOB_LOG_CATEGORY_ID = "job_log"
 
 DESTINY_CATEGORY_ID = "instance.destiny"
 
+CONTEXT_INFO_CATEGORY_ID = "info.context"
+
 CONTEXT_METADATA_CATEOGORY_ID = "metadata.context"
 AUTHORS_METADATA_CATEGORY_ID = "metadata.authors"
 

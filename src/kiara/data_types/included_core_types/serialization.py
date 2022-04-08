@@ -72,7 +72,7 @@ class SerializedValueModel(BaseModel):
 class SerializedValueType(
     DataType[SerializedValueModel, SerializedValueTypeConfigSchema]
 ):
-    """An value type that contains a serialized representation of a value.
+    """A data type that contains a serialized representation of a value.
 
     This is used for transferring/streaming value over the wire, and works on a similar principle as the 'load_config'
     value type.

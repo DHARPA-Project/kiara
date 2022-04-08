@@ -7,7 +7,16 @@ from rich.console import RenderableType
 from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
-from typing import Any, Generic, Iterable, Optional, Type, TypeVar
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Generic,
+    Iterable,
+    Mapping,
+    Optional,
+    Type,
+    TypeVar,
+)
 
 from kiara.models import KiaraModel
 from kiara.models.documentation import (
@@ -18,22 +27,13 @@ from kiara.models.documentation import (
 from kiara.models.python_class import PythonClass
 from kiara.registries.ids import ID_REGISTRY
 
+if TYPE_CHECKING:
+    pass
+
 INFO_BASE_CLASS = TypeVar("INFO_BASE_CLASS")
 
 
 class KiaraInfoModel(KiaraModel, Generic[INFO_BASE_CLASS]):
-    @classmethod
-    @abc.abstractmethod
-    def create_from_type_class(
-        self, type_cls: Type[INFO_BASE_CLASS]
-    ) -> "KiaraInfoModel":
-        pass
-
-    @classmethod
-    @abc.abstractmethod
-    def base_class(self) -> Type[INFO_BASE_CLASS]:
-        pass
-
     @classmethod
     @abc.abstractmethod
     def category_name(cls) -> str:
@@ -53,9 +53,6 @@ class KiaraInfoModel(KiaraModel, Generic[INFO_BASE_CLASS]):
     )
     context: ContextMetadataModel = Field(
         description="Generic properties of this module (description, tags, labels, references, ...)."
-    )
-    python_class: PythonClass = Field(
-        description="The python class that implements this module type."
     )
 
     def _retrieve_id(self) -> str:
@@ -83,17 +80,36 @@ class KiaraInfoModel(KiaraModel, Generic[INFO_BASE_CLASS]):
         table.add_row("Author(s)", self.authors.create_renderable())
         table.add_row("Context", self.context.create_renderable())
 
-        table.add_row("Python class", self.python_class.create_renderable())
+        if hasattr(self, "python_class"):
+            table.add_row("Python class", self.python_class.create_renderable())
 
         return table
+
+
+class KiaraTypeInfoModel(KiaraInfoModel, Generic[INFO_BASE_CLASS]):
+    @classmethod
+    @abc.abstractmethod
+    def create_from_type_class(
+        self, type_cls: Type[INFO_BASE_CLASS]
+    ) -> "KiaraInfoModel":
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    def base_class(self) -> Type[INFO_BASE_CLASS]:
+        pass
+
+    python_class: PythonClass = Field(
+        description="The python class that implements this module type."
+    )
 
 
 INFO_CLASS = TypeVar("INFO_CLASS", bound=KiaraInfoModel)
 
 
-class InfoModelGroupMixin(KiaraModel):
+class InfoModelGroup(KiaraModel, Mapping[str, KiaraInfoModel]):
     @classmethod
-    def create_from_items(cls, group_alias: Optional[str] = None, **items: Type):
+    def create_from_type_items(cls, group_alias: Optional[str] = None, **items: Type):
 
         type_infos = {
             k: cls.base_info_class().create_from_type_class(v) for k, v in items.items()
@@ -118,6 +134,9 @@ class InfoModelGroupMixin(KiaraModel):
     def _retrieve_data_to_hash(self) -> Any:
         return {"type_name": self.type_name, "included_types": self.type_infos.keys()}
 
+    def get_type_infos(self) -> Mapping[str, KiaraInfoModel]:
+        return self.type_infos  # type: ignore
+
     def create_renderable(self, **config: Any) -> RenderableType:
 
         full_doc = config.get("full_doc", False)
@@ -135,3 +154,26 @@ class InfoModelGroupMixin(KiaraModel):
             table.add_row(type_name, md)
 
         return table
+
+    def __getitem__(self, item: str) -> KiaraInfoModel:
+
+        return self.get_type_infos()[item]
+
+    def __iter__(self):
+        return iter(self.get_type_infos())
+
+    def __len__(self):
+        return len(self.get_type_infos())
+
+
+class TypeInfoModelGroupMixin(InfoModelGroup):
+    @classmethod
+    def create_from_type_items(
+        cls, group_alias: Optional[str] = None, **items: Type
+    ) -> InfoModelGroup:
+
+        type_infos = {
+            k: cls.base_info_class().create_from_type_class(v) for k, v in items.items()
+        }
+        data_types_info = cls.construct(group_alias=group_alias, type_infos=type_infos)
+        return data_types_info

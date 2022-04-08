@@ -5,11 +5,11 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import builtins
 import inspect
-import typing
 from pydantic import BaseModel
 from pydoc import locate
+from typing import Any, Type, Union
 
-from kiara import Kiara
+from kiara.kiara import Kiara, KiaraContextInfo
 from kiara.utils import StringYAML
 
 yaml = StringYAML()
@@ -27,7 +27,7 @@ def define_env(env):
     # env.variables["baz"] = "John Doe"
 
     @env.macro
-    def get_schema_for_model(model_class: typing.Union[str, typing.Type[BaseModel]]):
+    def get_schema_for_model(model_class: Union[str, Type[BaseModel]]):
 
         if isinstance(model_class, str):
             _class: typing.Type[BaseModel] = locate(model_class)  # type: ignore
@@ -39,7 +39,7 @@ def define_env(env):
         return schema_json
 
     @env.macro
-    def get_src_of_object(obj: typing.Union[str, typing.Any]):
+    def get_src_of_object(obj: Union[str, Any]):
 
         try:
             if isinstance(obj, str):
@@ -53,9 +53,9 @@ def define_env(env):
             return f"Can't render object source: {str(e)}"
 
     @env.macro
-    def get_package_index():
+    def get_context_info() -> KiaraContextInfo:
 
-        return builtins.plugin_package_context_info
+        return builtins.plugin_package_context_info  # type: ignore
 
     # @env.macro
     # def get_module_info(module_type: str):

@@ -2,17 +2,13 @@
 import abc
 from typing import TYPE_CHECKING, Generic, Iterable, Mapping, Optional, TypeVar, Union
 
-from kiara.models.module.operation import (
-    BaseOperationDetails,
-    Operation,
-    OperationConfig,
-)
+from kiara.models.module.operation import Operation, OperationConfig, OperationDetails
 
 if TYPE_CHECKING:
     from kiara import Kiara, KiaraModule
 
 
-OPERATION_TYPE_DETAILS = TypeVar("OPERATION_TYPE_DETAILS", bound=BaseOperationDetails)
+OPERATION_TYPE_DETAILS = TypeVar("OPERATION_TYPE_DETAILS", bound=OperationDetails)
 
 
 class OperationType(abc.ABC, Generic[OPERATION_TYPE_DETAILS]):

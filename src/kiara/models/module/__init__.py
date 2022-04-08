@@ -15,7 +15,7 @@ from rich.console import RenderableType
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import Any, Dict, Literal, Mapping, Optional, TYPE_CHECKING, Type
+from typing import TYPE_CHECKING, Any, Dict, Literal, Mapping, Optional, Type
 
 from kiara.defaults import (
     DEFAULT_NO_DESC_VALUE,
@@ -28,7 +28,11 @@ from kiara.models.documentation import (
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
-from kiara.models.info import InfoModelGroupMixin, KiaraInfoModel
+from kiara.models.info import (
+    KiaraInfoModel,
+    KiaraTypeInfoModel,
+    TypeInfoModelGroupMixin,
+)
 from kiara.models.python_class import PythonClass
 from kiara.models.values.value_schema import ValueSchema
 
@@ -218,7 +222,7 @@ def calculate_class_source_url(
     return url
 
 
-class KiaraModuleTypeInfo(KiaraInfoModel["KiaraModule"]):
+class KiaraModuleTypeInfo(KiaraTypeInfoModel["KiaraModule"]):
     @classmethod
     def create_from_type_class(
         cls, type_cls: Type["KiaraModule"]
@@ -305,7 +309,7 @@ class KiaraModuleTypeInfo(KiaraInfoModel["KiaraModule"]):
         return table
 
 
-class ModuleTypeClassesInfo(InfoModelGroupMixin):
+class ModuleTypeClassesInfo(TypeInfoModelGroupMixin):
     @classmethod
     def base_info_class(cls) -> Type[KiaraInfoModel]:
         return KiaraModuleTypeInfo

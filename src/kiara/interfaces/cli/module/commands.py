@@ -72,7 +72,7 @@ def list_modules(ctx, full_doc: bool, filter: typing.Iterable[str], format: str)
         n: kiara_obj.module_registry.get_module_class(n) for n in module_types_names
     }
 
-    module_types_info = ModuleTypeClassesInfo.create_from_items(
+    module_types_info = ModuleTypeClassesInfo.create_from_type_items(
         group_alias=title, **module_types
     )
 

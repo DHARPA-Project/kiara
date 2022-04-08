@@ -10,12 +10,10 @@ import os
 import rich_click as click
 import sys
 import typing
-from rich import box
 from rich.panel import Panel
-from rich.table import Table
 
 from kiara import Kiara
-from kiara.models.module.operation import OperationTypeClassesInfo
+from kiara.models.module.operation import OperationGroupInfo, OperationTypeClassesInfo
 from kiara.utils import log_message, rich_print
 
 
@@ -63,7 +61,7 @@ def list_types(ctx, full_doc, format: str, filter: typing.Iterable[str]):
                 temp[k] = v
         op_types = temp
 
-    operation_types_info = OperationTypeClassesInfo.create_from_items(
+    operation_types_info = OperationTypeClassesInfo.create_from_type_items(
         group_alias="all_items", **op_types
     )
 
@@ -83,17 +81,17 @@ def list_types(ctx, full_doc, format: str, filter: typing.Iterable[str]):
 
 @operation.command(name="list")
 @click.option(
-    "--by-type", "-t", is_flag=True, help="List the operations by operation type."
+    "--by-type",
+    "-t",
+    is_flag=True,
+    help="List the operations by operation type (when using 'terminal' as format).",
 )
 @click.argument("filter", nargs=-1, required=False)
 @click.option(
-    "--full-doc", "-d", is_flag=True, help="Display the full doc for all operations."
-)
-@click.option(
-    "--omit-default",
-    "-o",
+    "--full-doc",
+    "-d",
     is_flag=True,
-    help="Don't list operations that have no specific operation type associated with them.",
+    help="Display the full doc for all operations (when using 'terminal' as format).",
 )
 @click.option(
     "--include-internal-operations",
@@ -101,121 +99,65 @@ def list_types(ctx, full_doc, format: str, filter: typing.Iterable[str]):
     help="Whether to include operations that are mainly used internally.",
     is_flag=True,
 )
+@click.option(
+    "--format",
+    "-f",
+    help="The output format. Defaults to 'terminal'.",
+    type=click.Choice(["terminal", "json", "html"]),
+    default="terminal",
+)
 @click.pass_context
 def list_operations(
     ctx,
     by_type: bool,
     filter: typing.Iterable[str],
     full_doc: bool,
-    omit_default: bool,
     include_internal_operations: bool,
+    format: str,
 ):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    if by_type:
-        title = "Operations by type"
-        all_operations_types = kiara_obj.operation_registry.operation_types
+    operations = kiara_obj.operation_registry.operations
+    title = "Available operations"
+    if filter:
+        title = "Filtered operations"
+        temp = {}
+        for op_id, op in operations.items():
+            match = True
+            for f in filter:
+                if f.lower() not in op_id.lower():
+                    match = False
+                    break
+            if match:
+                temp[op_id] = op
+        operations = temp
 
-        table = Table(box=box.SIMPLE, show_header=True)
-        table.add_column("Type", no_wrap=True, style="b green")
-        table.add_column("Id", no_wrap=True)
-        table.add_column("Description", no_wrap=False, style="i")
+    if not include_internal_operations:
+        temp = {}
+        for op_id, op in operations.items():
+            if not op.operation_details.is_internal_operation:
+                temp[op_id] = op
 
-        for operation_name in sorted(all_operations_types.keys()):
+        operations = temp
 
-            if operation_name == "custom_module":
-                continue
+    ops_info = OperationGroupInfo.create_from_operations(
+        kiara=kiara_obj, group_alias=title, **operations
+    )
 
-            first_line_value = True
-
-            for op_id in sorted(
-                kiara_obj.operation_registry.operations_by_type[operation_name]
-            ):
-                operation = kiara_obj.operation_registry.get_operation(op_id)
-
-                if (
-                    not include_internal_operations
-                    and operation.operation_details.is_internal_operation
-                ):
-                    continue
-                if full_doc:
-                    desc = operation.doc.full_doc
-                else:
-                    desc = operation.doc.description
-
-                if filter:
-                    match = True
-                    for f in filter:
-                        if (
-                            f.lower() not in operation_name.lower()
-                            and f.lower() not in op_id.lower()
-                            and f.lower() not in desc.lower()
-                        ):
-                            match = False
-                            break
-                    if not match:
-                        continue
-
-                row = []
-                if first_line_value:
-                    row.append(operation_name)
-                else:
-                    row.append("")
-
-                row.append(op_id)
-                row.append(desc)
-
-                table.add_row(*row)
-                first_line_value = False
-
-    else:
-        title = "All operations"
-        table = Table(box=box.SIMPLE, show_header=True)
-        table.add_column("Id", no_wrap=True, style="b")
-        table.add_column("Type(s)", style="green")
-        table.add_column("Description", style="i")
-
-        for op_id in kiara_obj.operation_registry.operation_ids:
-            operation = kiara_obj.operation_registry.get_operation(op_id)
-
-            if (
-                not include_internal_operations
-                and operation.operation_details.is_internal_operation
-            ):
-                continue
-
-            types = kiara_obj.operation_registry.find_all_operation_types(
-                operation.operation_id
+    if format == "terminal":
+        print()
+        rich_print(
+            ops_info.create_renderable(
+                full_doc=full_doc,
+                by_type=by_type,
+                include_internal_operations=include_internal_operations,
             )
-            if omit_default and len(types) == 1 and "all" in types:
-                continue
-
-            try:
-                types.remove("custom_module")
-            except KeyError:
-                pass
-
-            if full_doc:
-                desc = operation.doc.full_doc
-            else:
-                desc = operation.doc.description
-
-            if filter:
-                match = True
-                for f in filter:
-                    if f.lower() not in op_id.lower() and f.lower() not in desc.lower():
-                        match = False
-                        break
-                if match:
-                    table.add_row(op_id, ", ".join(types), desc)
-
-            else:
-                table.add_row(op_id, ", ".join(types), desc)
-
-    panel = Panel(table, title=title, title_align="left", box=box.ROUNDED)
-    print()
-    rich_print(panel)
+        )
+    elif format == "json":
+        print(ops_info.json(option=orjson.OPT_INDENT_2))
+    elif format == "html":
+        print(ops_info.create_html())
 
 
 @operation.command()

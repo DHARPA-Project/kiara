@@ -1,15 +1,29 @@
 # -*- coding: utf-8 -*-
-from typing import Any, Dict, Iterable, List, Mapping, Optional, Set, Type
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Mapping,
+    Optional,
+    Set,
+    Type,
+)
 
 from kiara.models.module import KiaraModuleClass
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import (
     ManifestOperationConfig,
     Operation,
+    OperationTypeClassesInfo,
     OperationTypeInfo,
     PipelineOperationConfig,
 )
 from kiara.modules.operations import OperationType
+
+if TYPE_CHECKING:
+    from kiara.kiara import Kiara
 
 
 class OperationRegistry(object):
@@ -67,8 +81,8 @@ class OperationRegistry(object):
         return self._operation_type_metadata[type_name]
 
     def get_context_metadata(
-        self, only_for_package: Optional[str] = None
-    ) -> Dict[str, OperationTypeInfo]:
+        self, alias: Optional[str] = None, only_for_package: Optional[str] = None
+    ) -> OperationTypeClassesInfo:
 
         result = {}
         for type_name in self.operation_type_classes.keys():
@@ -79,7 +93,7 @@ class OperationRegistry(object):
             else:
                 result[type_name] = md
 
-        return result
+        return OperationTypeClassesInfo.construct(group_alias=alias, type_infos=result)  # type: ignore
 
     @property
     def operation_type_classes(
@@ -226,15 +240,6 @@ class OperationRegistry(object):
                         if op_config in deferred_module_names[_op_id]:
                             deferred_module_names[_op_id].remove(op_config)
 
-                        # ops = self._create_operations(manifest=manifest, doc=op_config.doc)
-                        # for op_type_name, op in ops.items():
-                        #     if op.operation_id in operations.keys():
-                        #         raise Exception(f"Duplicate operation id: {op.operation_id}")
-                        #     operations[op.operation_id] = op
-                        #     operations_by_type.setdefault(op_type_name, []).append(op.operation_id)
-                        #     remove_deferred_names.add(op.operation_id)
-                        #     deferred_module_names.pop(op.operation_id)
-
             for name, dependencies in deferred_module_names.items():
                 if not dependencies:
                     remove_deferred_names.add(name)
@@ -273,7 +278,6 @@ class OperationRegistry(object):
                 module_type=manifest.module_type,
                 module_config=manifest.module_config,
                 operation_id=op_details.operation_id,
-                operation_type=op_name,
                 operation_details=op_details,
                 module_details=KiaraModuleClass.from_module(module),
                 doc=doc,
@@ -307,17 +311,3 @@ class OperationRegistry(object):
         if self._operations_by_type is None:
             self.operations  # noqa
         return self._operations_by_type  # type: ignore
-
-    # def apply_operation(self, operation_type: str, **op_args: Any):
-    #
-    #     if self._operations is None:
-    #         self.operations # type: ignore
-    #
-    #     op_type = self.operation_types.get(operation_type, None)
-    #     if op_type is None:
-    #         raise Exception(
-    #             f"Can't apply operation, operation type '{operation_type}' not registered."
-    #         )
-    #
-    #     result = op_type.apply(**op_args)
-    #     return result

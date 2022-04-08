@@ -4,6 +4,7 @@ import orjson
 from pydantic import Field, PrivateAttr, validator
 from rich import box
 from rich.console import RenderableType, RenderGroup
+from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
 from typing import (
@@ -14,6 +15,7 @@ from typing import (
     Literal,
     Mapping,
     Optional,
+    Set,
     Type,
     Union,
 )
@@ -31,7 +33,12 @@ from kiara.models.documentation import (
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
-from kiara.models.info import InfoModelGroupMixin, KiaraInfoModel
+from kiara.models.info import (
+    InfoModelGroup,
+    KiaraInfoModel,
+    KiaraTypeInfoModel,
+    TypeInfoModelGroupMixin,
+)
 from kiara.models.module import KiaraModuleClass, KiaraModuleTypeInfo
 from kiara.models.module.jobs import JobConfig
 from kiara.models.module.manifest import Manifest
@@ -248,7 +255,6 @@ class Operation(Manifest):
             module_type=module.module_type_name,
             module_config=module.config,
             operation_id=op_id,
-            operation_type="plain_module",
             operation_details=details,
             module_details=KiaraModuleClass.from_module(module),
             doc=DocumentationMetadataModel.from_class_doc(module.__class__),
@@ -257,7 +263,6 @@ class Operation(Manifest):
         return operation
 
     operation_id: str = Field(description="The (unique) id of this operation.")
-    operation_type: str = Field(description="The type of this operation.")
     operation_details: OperationDetails = Field(
         description="The operation specific details of this operation."
     )
@@ -413,7 +418,7 @@ class Operation(Manifest):
         return table
 
 
-class OperationTypeInfo(KiaraInfoModel):
+class OperationTypeInfo(KiaraTypeInfoModel):
     @classmethod
     def create_from_type_class(cls, type_cls: Type["OperationType"]):
 
@@ -452,7 +457,7 @@ class OperationTypeInfo(KiaraInfoModel):
         return self.type_name
 
 
-class OperationTypeClassesInfo(InfoModelGroupMixin):
+class OperationTypeClassesInfo(TypeInfoModelGroupMixin):
     @classmethod
     def base_info_class(cls) -> Type[KiaraInfoModel]:
         return OperationTypeInfo
@@ -461,3 +466,196 @@ class OperationTypeClassesInfo(InfoModelGroupMixin):
     type_infos: Mapping[str, OperationTypeInfo] = Field(
         description="The operation info instances for each type."
     )
+
+
+class OperationInfo(KiaraInfoModel):
+    @classmethod
+    def create_from_operation(cls, kiara: "Kiara", operation: Operation):
+
+        module = operation.module
+        module_cls = module.__class__
+
+        authors_md = AuthorsMetadataModel.from_class(module_cls)
+        properties_md = ContextMetadataModel.from_class(module_cls)
+
+        op_types = kiara.operation_registry.find_all_operation_types(
+            operation_id=operation.operation_id
+        )
+
+        op_info = OperationInfo.construct(
+            type_name="operation",
+            operation_types=op_types,
+            operation=operation,
+            documentation=operation.doc,
+            authors=authors_md,
+            context=properties_md,
+        )
+
+        return op_info
+
+    @classmethod
+    def category_name(cls) -> str:
+        return "operation"
+
+    operation: Operation = Field(description="The operation instance.")
+    operation_types: Set[str] = Field(
+        description="The operation types this operation belongs to."
+    )
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        include_doc = config.get("include_doc", True)
+
+        table = Table(box=box.SIMPLE, show_header=False, padding=(0, 0, 0, 0))
+        table.add_column("property", style="i")
+        table.add_column("value")
+
+        if include_doc:
+            table.add_row(
+                "Documentation",
+                Panel(self.documentation.create_renderable(), box=box.SIMPLE),
+            )
+        table.add_row("Author(s)", self.authors.create_renderable(**config))
+        table.add_row("Context", self.context.create_renderable(**config))
+
+        table.add_row("Operation details", self.operation.create_renderable(**config))
+        return table
+
+
+class OperationGroupInfo(InfoModelGroup):
+    @classmethod
+    def create_from_operations(
+        cls, kiara: "Kiara", group_alias: Optional[str] = None, **items: Operation
+    ) -> "OperationGroupInfo":
+
+        type_infos = {
+            k: OperationInfo.create_from_operation(kiara=kiara, operation=v)
+            for k, v in items.items()
+        }
+        data_types_info = cls.construct(group_alias=group_alias, type_infos=type_infos)
+        return data_types_info
+
+    type_name: Literal["operation_type"] = "operation_type"
+    type_infos: Mapping[str, OperationInfo] = Field(
+        description="The operation info instances for each type."
+    )
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        by_type = config.get("by_type", False)
+
+        if by_type:
+            return self._create_renderable_by_type(**config)
+        else:
+            return self._create_renderable_list(**config)
+
+    def _create_renderable_list(self, **config):
+
+        include_internal_operations = config.get("include_internal_operations", True)
+        full_doc = config.get("full_doc", False)
+        filter = config.get("filter", [])
+
+        table = Table(box=box.SIMPLE, show_header=True)
+        table.add_column("Id", no_wrap=True, style="b")
+        table.add_column("Type(s)", style="green")
+        table.add_column("Description", style="i")
+
+        for op_id, op_info in self.type_infos.items():
+
+            if (
+                not include_internal_operations
+                and op_info.operation.operation_details.is_internal_operation
+            ):
+                continue
+
+            types = op_info.operation_types
+
+            try:
+                types.remove("custom_module")
+            except KeyError:
+                pass
+
+            if full_doc:
+                desc = op_info.documentation.full_doc
+            else:
+                desc = op_info.documentation.description
+
+            if filter:
+                match = True
+                for f in filter:
+                    if f.lower() not in op_id.lower() and f.lower() not in desc.lower():
+                        match = False
+                        break
+                if match:
+                    table.add_row(op_id, ", ".join(types), desc)
+
+            else:
+                table.add_row(op_id, ", ".join(types), desc)
+
+        return table
+
+    def _create_renderable_by_type(self, **config):
+
+        include_internal_operations = config.get("include_internal_operations", True)
+        full_doc = config.get("full_doc", False)
+        filter = config.get("filter", [])
+
+        by_type = {}
+        for op_id, op in self.type_infos.items():
+            if filter:
+                match = True
+                for f in filter:
+                    if (
+                        f.lower() not in op_id.lower()
+                        and f.lower() not in op.documentation.description.lower()
+                    ):
+                        match = False
+                        break
+                if not match:
+                    continue
+            for op_type in op.operation_types:
+                by_type.setdefault(op_type, {})[op_id] = op
+
+        table = Table(box=box.SIMPLE, show_header=True)
+        table.add_column("Type", no_wrap=True, style="b green")
+        table.add_column("Id", no_wrap=True)
+        if full_doc:
+            table.add_column("Documentation", no_wrap=False, style="i")
+        else:
+            table.add_column("Description", no_wrap=False, style="i")
+
+        for operation_name in sorted(by_type.keys()):
+
+            if operation_name == "custom_module":
+                continue
+
+            first_line_value = True
+            op_infos = by_type[operation_name]
+
+            for op_id in sorted(op_infos.keys()):
+                op_info: OperationInfo = op_infos[op_id]
+
+                if (
+                    not include_internal_operations
+                    and op_info.operation.operation_details.is_internal_operation
+                ):
+                    continue
+
+                if full_doc:
+                    desc = op_info.documentation.full_doc
+                else:
+                    desc = op_info.documentation.description
+
+                row = []
+                if first_line_value:
+                    row.append(operation_name)
+                else:
+                    row.append("")
+
+                row.append(op_id)
+                row.append(desc)
+
+                table.add_row(*row)
+                first_line_value = False
+
+        return table

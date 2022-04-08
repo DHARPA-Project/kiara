@@ -7,6 +7,7 @@ from kiara.data_types.included_core_types.serialization import SerializedValueTy
 from kiara.defaults import SERIALIZED_DATA_TYPE_NAME
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.operation import (
+    BaseOperationDetails,
     ManifestOperationConfig,
     Operation,
     OperationConfig,
@@ -15,7 +16,7 @@ from kiara.models.values.value import Value, ValueSet
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import ValueSetSchema
 from kiara.modules.included_core_modules.serialization import SerializeValueModule
-from kiara.modules.operations import BaseOperationDetails, OperationType
+from kiara.modules.operations import OperationType
 from kiara.utils import log_message
 
 
@@ -178,7 +179,7 @@ class SerializeOperationType(OperationType[SerializeDetails]):
             if match:
                 if len(match) > 1:
                     raise Exception(
-                        f"Multiple serialization operations found for type '{op.operation_type}'. This is not supported (yet)."
+                        f"Multiple serialization operations found for type of '{op.operation_id}'. This is not supported (yet)."
                     )
                 serialize_op = match[0]
 

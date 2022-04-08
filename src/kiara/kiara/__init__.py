@@ -3,18 +3,40 @@ import os
 import structlog
 import uuid
 from alembic import command
+from pydantic import Field
 from sqlalchemy.engine import Engine, create_engine
-from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Optional, Type, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Mapping,
+    Optional,
+    Type,
+    Union,
+)
 
 from kiara.data_types import DataType
-from kiara.defaults import KIARA_DB_MIGRATIONS_CONFIG, KIARA_DB_MIGRATIONS_FOLDER
+from kiara.defaults import (
+    CONTEXT_INFO_CATEGORY_ID,
+    KIARA_DB_MIGRATIONS_CONFIG,
+    KIARA_DB_MIGRATIONS_FOLDER,
+)
 from kiara.exceptions import NoSuchExecutionTargetException
 from kiara.interfaces import get_console
 from kiara.kiara.config import KiaraContextConfig, KiaraGlobalConfig
-from kiara.models.module import KiaraModuleTypeInfo
+from kiara.models import KiaraModel
+from kiara.models.info import InfoModelGroup, KiaraInfoModel
+from kiara.models.module import KiaraModuleTypeInfo, ModuleTypeClassesInfo
 from kiara.models.module.manifest import Manifest
-from kiara.models.module.operation import Operation
+from kiara.models.module.operation import (
+    Operation,
+    OperationGroupInfo,
+    OperationTypeClassesInfo,
+)
 from kiara.models.runtime_environment import RuntimeEnvironment
+from kiara.models.values.data_type import DataTypeClassesInfo
 from kiara.models.values.value import Value
 from kiara.registries.aliases import AliasRegistry
 from kiara.registries.data import DataRegistry
@@ -29,6 +51,7 @@ from kiara.registries.operations import OperationRegistry
 from kiara.registries.types import TypeRegistry
 from kiara.utils import is_debug, log_message
 from kiara.utils.db import orm_json_deserialize, orm_json_serialize
+from kiara.utils.operations import filter_operations_for_package
 
 if TYPE_CHECKING:
     from kiara.modules import KiaraModule
@@ -124,6 +147,8 @@ class Kiara(object):
             metadata_augmenter, *metadata_augmenter.supported_event_types()
         )
 
+        self._context_info: Optional[KiaraContextInfo] = None
+
     def _run_alembic_migrations(self):
         script_location = os.path.abspath(KIARA_DB_MIGRATIONS_FOLDER)
         dsn = self._config.db_url
@@ -142,6 +167,13 @@ class Kiara(object):
     @property
     def context_config(self) -> KiaraContextConfig:
         return self._config
+
+    @property
+    def context_info(self) -> "KiaraContextInfo":
+
+        if self._context_info is None:
+            self._context_info = KiaraContextInfo.create_from_kiara_instance(kiara=self)
+        return self._context_info
 
     # ===================================================================================================
     # registry accessors
@@ -258,3 +290,87 @@ class Kiara(object):
                 msg=f"Invalid run target name '[i]{module_or_operation}[/i]'. Must be a path to a pipeline file, or one of the available modules/operations.",
                 available_targets=sorted(merged),
             )
+
+
+class KiaraContextInfo(KiaraModel):
+    @classmethod
+    def create_from_kiara_instance(
+        cls, kiara: "Kiara", package_filter: Optional[str] = None
+    ):
+
+        data_types = kiara.type_registry.get_context_metadata(
+            only_for_package=package_filter
+        )
+        modules = kiara.module_registry.get_context_metadata(
+            only_for_package=package_filter
+        )
+        operation_types = kiara.operation_registry.get_context_metadata(
+            only_for_package=package_filter
+        )
+        operations = filter_operations_for_package(kiara=kiara, pkg_name=package_filter)
+
+        return KiaraContextInfo.construct(
+            kiara_id=kiara.id,
+            package_filter=package_filter,
+            data_types=data_types,
+            module_types=modules,
+            operation_types=operation_types,
+            operations=operations,
+        )
+
+    kiara_id: uuid.UUID = Field(description="The id of the kiara context.")
+    package_filter: Optional[str] = Field(
+        description="Whether this context is filtered to only include information included in a specific Python package."
+    )
+    data_types: DataTypeClassesInfo = Field(description="The included data types.")
+    module_types: ModuleTypeClassesInfo = Field(
+        description="The included kiara module types."
+    )
+    operation_types: OperationTypeClassesInfo = Field(
+        description="The included operation types."
+    )
+    operations: OperationGroupInfo = Field(description="The included operations.")
+
+    def _retrieve_id(self) -> str:
+        if not self.package_filter:
+            return str(self.kiara_id)
+        else:
+            return f"{self.kiara_id}.package_{self.package_filter}"
+
+    def _retrieve_category_id(self) -> str:
+        return CONTEXT_INFO_CATEGORY_ID
+
+    def _retrieve_data_to_hash(self) -> Any:
+        return {"kiara_id": self.kiara_id, "package": self.package_filter}
+
+    def get_info(self, item_type: str, item_id: str) -> KiaraInfoModel:
+
+        if "data_type" in item_type:
+            group_info = self.data_types
+        elif "module" in item_type:
+            group_info = self.module_types
+        elif "operation_type" in item_type or "operation_types" in item_type:
+            group_info = self.operation_types
+        elif "operation" in item_type:
+            group_info = self.operations
+        else:
+            item_types = ["data_type", "module_type", "operation_type", "operation"]
+            raise Exception(
+                f"Can't determine item type '{item_type}', use one of: {', '.join(item_types)}"
+            )
+
+        return group_info[item_id]
+
+    def get_all_info(self, skip_empty_types: bool = True) -> Dict[str, InfoModelGroup]:
+
+        result = {}
+        if self.data_types or not skip_empty_types:
+            result["data_types"] = self.data_types
+        if self.module_types or not skip_empty_types:
+            result["module_types"] = self.module_types
+        if self.operation_types or not skip_empty_types:
+            result["operation_types"] = self.operation_types
+        if self.operations or not skip_empty_types:
+            result["operations"] = self.operations
+
+        return result

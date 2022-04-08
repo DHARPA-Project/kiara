@@ -9,7 +9,8 @@ import builtins
 from mkdocstrings.handlers.base import BaseCollector, CollectorItem
 from mkdocstrings.loggers import get_logger
 
-from kiara import Kiara
+from kiara.kiara import Kiara, KiaraContextInfo
+from kiara.models.info import KiaraInfoModel
 
 logger = get_logger(__name__)
 
@@ -52,12 +53,9 @@ class KiaraCollector(BaseCollector):
             return None
 
         item_type = tokens[1]
-
-        type_item_details = builtins.plugin_package_context_info
-        items = type_item_details[item_type]
-
         item_id = ".".join(tokens[2:])
 
-        item = items[item_id]
+        ctx: KiaraContextInfo = builtins.plugin_package_context_info  # type: ignore
+        item: KiaraInfoModel = ctx.get_info(item_type=item_type, item_id=item_id)
 
         return {"obj": item, "identifier": identifier}

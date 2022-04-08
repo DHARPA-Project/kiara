@@ -75,7 +75,7 @@ def list_types(
                 temp[k] = v
         type_classes = temp
 
-    data_types_info = DataTypeClassesInfo.create_from_items(
+    data_types_info = DataTypeClassesInfo.create_from_type_items(
         group_alias=title, **type_classes
     )
 

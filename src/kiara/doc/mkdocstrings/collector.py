@@ -2,17 +2,14 @@
 #  Copyright (c) 2022-2022, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-#
-#  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 from __future__ import annotations
 
-import networkx as nx
+import builtins
 from mkdocstrings.handlers.base import BaseCollector, CollectorItem
 from mkdocstrings.loggers import get_logger
 
 from kiara import Kiara
-from kiara.info.kiara import KiaraContext
 
 logger = get_logger(__name__)
 
@@ -37,10 +34,6 @@ class KiaraCollector(BaseCollector):
         """Initialize the collector."""
 
         self._kiara: Kiara = Kiara.instance()
-        self._context: KiaraContext = KiaraContext.get_info(
-            kiara=self._kiara, ignore_errors=False
-        )
-        self._component_tree: nx.DiGraph = self._context.get_subcomponent_tree()  # type: ignore
 
     def collect(self, identifier: str, config: dict) -> CollectorItem:  # noqa: WPS231
         """Collect the documentation tree given an identifier and selection options.
@@ -54,18 +47,17 @@ class KiaraCollector(BaseCollector):
         """
 
         tokens = identifier.split(".")
-        kiara_id = ".".join(tokens[1:])
+
         if tokens[0] != "kiara_info":
             return None
-            # raise Exception(
-            #     f"Handler 'kiara' can only be used with identifiers that start with 'kiara_info.', the provided id is invalid: {identifier}"
-            # )
-        try:
-            info = self._component_tree.nodes[f"__self__.{kiara_id}"]["obj"]
-        except Exception as e:
-            import traceback
 
-            traceback.print_exc()
-            raise e
+        item_type = tokens[1]
 
-        return {"obj": info, "identifier": identifier, "kiara_id": kiara_id}
+        type_item_details = builtins.plugin_package_context_info
+        items = type_item_details[item_type]
+
+        item_id = ".".join(tokens[2:])
+
+        item = items[item_id]
+
+        return {"obj": item, "identifier": identifier}

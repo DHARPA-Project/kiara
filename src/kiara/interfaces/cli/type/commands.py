@@ -6,11 +6,13 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 """Type-related subcommands for the cli."""
-
+import orjson.orjson
 import rich_click as click
+from rich.panel import Panel
+from typing import Iterable
 
 from kiara import Kiara
-from kiara.models.values.data_type import DataTypeClassesInfo, ValueTypeClassInfo
+from kiara.models.values.data_type import DataTypeClassesInfo, DataTypeClassInfo
 from kiara.utils import rich_print
 from kiara.utils.graphs import print_ascii_graph
 
@@ -22,15 +24,30 @@ def type_group(ctx):
 
 
 @type_group.command(name="list")
-@click.option("--details", "-d", is_flag=True, help="Display full description.")
+@click.option(
+    "--full-doc",
+    "-d",
+    is_flag=True,
+    help="Display the full documentation for every data type (when using 'terminal' output format).",
+)
 @click.option(
     "--include-internal-types",
     "-i",
     is_flag=True,
     help="Also list types that are only (or mostly) used internally.",
 )
+@click.argument("filter", nargs=-1, required=False)
+@click.option(
+    "--format",
+    "-f",
+    help="The output format. Defaults to 'terminal'.",
+    type=click.Choice(["terminal", "json", "html"]),
+    default="terminal",
+)
 @click.pass_context
-def list_types(ctx, details, include_internal_types: bool):
+def list_types(
+    ctx, full_doc, include_internal_types: bool, filter: Iterable[str], format: str
+):
     """List available data_types (work in progress)."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
@@ -44,10 +61,36 @@ def list_types(ctx, details, include_internal_types: bool):
     else:
         type_classes = kiara_obj.data_type_classes
 
-    print()
-    data_types_info = DataTypeClassesInfo(type_classes, id="all_types", details=details)
+    title = "Available data types"
+    if filter:
+        title = "Filtered data types"
+        temp = {}
+        for k, v in type_classes.items():
+            match = True
+            for f in filter:
+                if f.lower() not in k.lower():
+                    match = False
+                    break
+            if match:
+                temp[k] = v
+        type_classes = temp
 
-    rich_print(data_types_info)
+    data_types_info = DataTypeClassesInfo.create_from_items(
+        group_alias=title, **type_classes
+    )
+
+    if format == "terminal":
+        print()
+        p = Panel(
+            data_types_info.create_renderable(full_doc=full_doc),
+            title_align="left",
+            title="Available data types",
+        )
+        rich_print(p)
+    elif format == "json":
+        print(data_types_info.json(option=orjson.orjson.OPT_INDENT_2))
+    elif format == "html":
+        print(data_types_info.create_html())
 
 
 @type_group.command(name="hierarchy")
@@ -78,7 +121,7 @@ def explain_data_type(ctx, data_type: str):
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     dt_cls = kiara_obj.type_registry.get_data_type_cls(data_type)
-    info = ValueTypeClassInfo.create_from_data_type(dt_cls)
+    info = DataTypeClassInfo.create_from_type_class(dt_cls)
 
     rich_print()
-    rich_print(info.create_panel(title=f"ValueOrm type: [b i]{data_type}[/b i]"))
+    rich_print(info.create_panel(title=f"Value type: [b i]{data_type}[/b i]"))

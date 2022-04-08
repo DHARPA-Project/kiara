@@ -2,9 +2,10 @@
 import importlib
 from pydantic.fields import Field, PrivateAttr
 from types import ModuleType
-from typing import TYPE_CHECKING, Any, Dict, Type
+from typing import TYPE_CHECKING, Any, Dict, Optional, Type
 
 from kiara.models import KiaraModel
+from kiara.models.documentation import ContextMetadataModel
 
 if TYPE_CHECKING:
     pass
@@ -14,7 +15,7 @@ class PythonClass(KiaraModel):
     """Python class and module information."""
 
     @classmethod
-    def from_class(cls, item_cls: Type):
+    def from_class(cls, item_cls: Type, attach_context_metadata: bool = False):
 
         cls_name = item_cls.__name__
         module_name = item_cls.__module__
@@ -28,6 +29,11 @@ class PythonClass(KiaraModel):
             "module_name": module_name,
             "full_name": full_name,
         }
+
+        if attach_context_metadata:
+            ctx_md = ContextMetadataModel.from_class(item_cls=item_cls)
+            conf["items"] = ctx_md
+
         result = PythonClass.construct(**conf)
         result._cls_cache = item_cls
         return result
@@ -37,6 +43,10 @@ class PythonClass(KiaraModel):
         description="The name of the Python module this class lives in."
     )
     full_name: str = Field(description="The full class namespace.")
+
+    context_metadata: Optional[ContextMetadataModel] = Field(
+        description="Context metadata for the class.", default=None
+    )
 
     _module_cache: ModuleType = PrivateAttr(default=None)
     _cls_cache: Type = PrivateAttr(default=None)

@@ -79,7 +79,7 @@ class DataArchive(abc.ABC):
             pedigree_output_name=value_data["pedigree_output_name"],
             data_type_class=value_data["data_type_class"],
             property_refs=value_data["property_refs"],
-            destiny_details=value_data["destiny_details"]
+            destiny_details=value_data["destiny_details"],
         )
 
         # value = data_type.reassemble_value(value_id=value_data["value_id"], load_config=None, schema=value_schema, status=value_data["value_status"], value_hash=value_data["value_hash"], value_size=value_data["value_size"], pedigree=pedigree, kiara_id=self._kiara.id, pedigree_output_name=value_data["pedigree_output_name"])
@@ -313,7 +313,7 @@ class DataStore(DataArchive):
 #
 #         return result.get_value_data("load_config")
 #
-#     def _persist_value_in_session(self, value: Value, session: Session) -> ValueOrm:
+#     def _persist_value_in_session(self, value: Value, session: Session) -> Value:
 #
 #         if value.data is None:
 #             raise NotImplementedError()
@@ -346,7 +346,7 @@ class DataStore(DataArchive):
 #             session.commit()
 #
 #         value_orm = (
-#             session.query(ValueOrm)
+#             session.query(Value)
 #             .filter_by(
 #                 value_hash=hash,
 #                 value_size=size,
@@ -356,7 +356,7 @@ class DataStore(DataArchive):
 #         )
 #         if value_orm is None:
 #             value_id = uuid.uuid4()
-#             value_orm = ValueOrm(
+#             value_orm = Value(
 #                 global_id=value_id,
 #                 data_type_name=data_type.data_type_name,
 #                 value_size=size,

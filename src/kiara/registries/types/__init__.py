@@ -19,6 +19,7 @@ from typing import (
 
 from kiara.data_types import DataType
 from kiara.defaults import KIARA_ROOT_TYPE_NAME
+from kiara.models.values.data_type import DataTypeClassInfo
 from kiara.utils.class_loading import find_all_data_types
 
 if TYPE_CHECKING:
@@ -44,6 +45,7 @@ class TypeRegistry(object):
 
         self._kiara: Kiara = kiara
         self._data_types: Optional[bidict[str, Type[DataType]]] = None
+        self._data_type_metadata: Dict[str, DataTypeClassInfo] = {}
         self._cached_data_type_objects: Dict[int, DataType] = {}
         # self._registered_python_classes: Dict[Type, typing.List[str]] = None  # type: ignore
         self._type_hierarchy: Optional[nx.DiGraph] = None
@@ -155,67 +157,6 @@ class TypeRegistry(object):
     def data_type_names(self) -> List[str]:
         return list(self.data_type_classes.keys())
 
-    def render_value(self, value: "Value", render_target: str = "terminal", **config):
-
-        pass
-
-    # @property
-    # def registered_python_classes(
-    #     self,
-    # ) -> Mapping[Type, Iterable[str]]:
-    #
-    #     if self._registered_python_classes is not None:
-    #         return self._registered_python_classes
-    #
-    #     registered_types = {}
-    #     for name, v_type in self.data_type_classes.items():
-    #         rel = v_type.candidate_python_types()
-    #         if rel:
-    #             for cls in rel:
-    #                 registered_types.setdefault(cls, []).append(name)
-    #
-    #     self._registered_python_classes = registered_types
-    #     return self._registered_python_classes
-
-    # def get_type_config_for_data_profile(
-    #     self, profile_name: str
-    # ) -> Mapping[str, Any]:
-    #
-    #     type_name = TYPE_PROFILE_MAP[profile_name]
-    #     return {"type": type_name, "type_config": {}}
-
-    # def determine_type(self, data: Any) -> Optional[ValueTypeOrm]:
-    #
-    #     if isinstance(data, ValueOrm):
-    #         data = data.get_value_data()
-    #
-    #     result: List[ValueTypeOrm] = []
-    #
-    #     registered_types = set(self.registered_python_classes.get(data.__class__, []))
-    #     for cls in data.__class__.__bases__:
-    #         reg = self.registered_python_classes.get(cls)
-    #         if reg:
-    #             registered_types.update(reg)
-    #
-    #     if registered_types:
-    #         for rt in registered_types:
-    #             _cls: Type[ValueTypeOrm] = self.get_value_type_cls(rt)
-    #             match = _cls.check_data(data)
-    #             if match:
-    #                 result.append(match)
-    #
-    #     # TODO: re-run all checks on all modules, not just the ones that registered interest in the class
-    #
-    #     if len(result) == 0:
-    #         return None
-    #     elif len(result) > 1:
-    #         result_str = [x._value_type_name for x in result]  # type: ignore
-    #         raise Exception(
-    #             f"Multiple value data_types found for value: {', '.join(result_str)}."
-    #         )
-    #     else:
-    #         return result[0]
-
     def get_data_type_cls(self, type_name: str) -> Type[DataType]:
 
         t = self.data_type_classes.get(type_name, None)
@@ -225,16 +166,27 @@ class TypeRegistry(object):
             )
         return t
 
-    def find_data_type_classes_for_package(
-        self, package_name: str
-    ) -> Dict[str, Type[DataType]]:
+    def get_type_metadata(self, type_name: str) -> DataTypeClassInfo:
+
+        md = self._data_type_metadata.get(type_name, None)
+        if md is None:
+            md = DataTypeClassInfo.create_from_type_class(
+                type_cls=self.get_data_type_cls(type_name=type_name)
+            )
+            self._data_type_metadata[type_name] = md
+        return self._data_type_metadata[type_name]
+
+    def get_context_metadata(
+        self, only_for_package: Optional[str] = None
+    ) -> Dict[str, DataTypeClassInfo]:
 
         result = {}
-        for data_type_name, data_type_cls in self.data_type_classes.items():
-
-            value_md = data_type_cls.get_type_metadata()
-            package = value_md.context.labels.get("package")
-            if package == package_name:
-                result[data_type_name] = data_type_cls
+        for type_name in self.data_type_names:
+            md = self.get_type_metadata(type_name=type_name)
+            if only_for_package:
+                if md.context.labels.get("package") == only_for_package:
+                    result[type_name] = md
+            else:
+                result[type_name] = md
 
         return result

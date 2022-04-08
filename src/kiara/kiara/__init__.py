@@ -11,7 +11,7 @@ from kiara.defaults import KIARA_DB_MIGRATIONS_CONFIG, KIARA_DB_MIGRATIONS_FOLDE
 from kiara.exceptions import NoSuchExecutionTargetException
 from kiara.interfaces import get_console
 from kiara.kiara.config import KiaraContextConfig, KiaraGlobalConfig
-from kiara.models.module import KiaraModuleTypeMetadata
+from kiara.models.module import KiaraModuleTypeInfo
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
 from kiara.models.runtime_environment import RuntimeEnvironment
@@ -44,7 +44,7 @@ def explain(item: Any):
         from kiara.modules import KiaraModule
 
         if issubclass(item, KiaraModule):
-            item = KiaraModuleTypeMetadata.from_module_class(module_cls=item)
+            item = KiaraModuleTypeInfo.create_from_type_class(type_cls=item)
 
     console = get_console()
     console.print(item)
@@ -120,7 +120,9 @@ class Kiara(object):
         self._env_mgmt: Optional[EnvironmentRegistry] = None
 
         metadata_augmenter = CreateMetadataDestinies(kiara=self)
-        self._event_registry.add_listener(metadata_augmenter, *metadata_augmenter.supported_event_types())
+        self._event_registry.add_listener(
+            metadata_augmenter, *metadata_augmenter.supported_event_types()
+        )
 
     def _run_alembic_migrations(self):
         script_location = os.path.abspath(KIARA_DB_MIGRATIONS_FOLDER)

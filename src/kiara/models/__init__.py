@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import networkx as nx
 import orjson
 import sys
@@ -30,7 +29,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
     a tree hierarchy of the overall kiara context, hashing, etc.
     """
 
-    __slots__ = ['__weakref__']
+    __slots__ = ["__weakref__"]
 
     class Config:
         json_loads = orjson.loads
@@ -218,7 +217,10 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         if self.__class__ != other.__class__:
             return False
         else:
-            return (self.model_id, self.model_data_hash) == (other.model_id, other.model_data_hash)
+            return (self.model_id, self.model_data_hash) == (
+                other.model_id,
+                other.model_data_hash,
+            )
 
     def __repr__(self):
 
@@ -232,5 +234,3 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
     ) -> RenderResult:
 
         yield self.create_renderable()
-
-

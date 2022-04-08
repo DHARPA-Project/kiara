@@ -14,12 +14,13 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
 from kiara import Kiara
-from kiara.exceptions import NoSuchExecutionTargetException, InvalidValuesException, FailedJobException
+from kiara.exceptions import (
+    FailedJobException,
+    InvalidValuesException,
+    NoSuchExecutionTargetException,
+)
 from kiara.interfaces.python_api import KiaraOperation
-from kiara.models.module.jobs import JobStatus
-from kiara.models.module.manifest import Manifest
-from kiara.models.module.operation import Operation
-from kiara.utils import dict_from_cli_args, is_debug, rich_print
+from kiara.utils import dict_from_cli_args, rich_print
 from kiara.utils.output import OutputDetails
 
 
@@ -111,7 +112,11 @@ def run(
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    kiara_op = KiaraOperation(kiara=kiara_obj, operation_name=module_or_operation, operation_config=module_config)
+    kiara_op = KiaraOperation(
+        kiara=kiara_obj,
+        operation_name=module_or_operation,
+        operation_config=module_config,
+    )
     try:
         # validate that operation config is valid, ignoring inputs for now
         operation = kiara_op.operation
@@ -183,7 +188,6 @@ def run(
             rich_print(f"  - [b]{k}[/b]: [i]{v}[/i]")
         sys.exit(1)
 
-
     # =========================================================================
     # execute job
     job_id = kiara_op.queue_job()
@@ -194,7 +198,6 @@ def run(
         print()
         rich_print(f"[red b]Job failed[/red b]: {fje.job.error}")
         sys.exit(1)
-
 
     print()
     rich_print("[b]Result(s):[/b]")
@@ -481,7 +484,7 @@ def run(
 #                         p = Panel(
 #                             RenderGroup(*renderables),
 #                             box=box.ROUNDED,
-#                             title=f"ValueOrm: [b i]{alias}[/b i]",
+#                             title=f"Value: [b i]{alias}[/b i]",
 #                             title_align="left",
 #                         )
 #                         all_renderables.append(p)

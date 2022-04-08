@@ -3,7 +3,6 @@ import inspect
 import orjson.orjson
 import textwrap
 from pydantic import Extra, Field, PrivateAttr
-from pydantic.class_validators import validator
 from pydantic.fields import Field
 from pydantic.main import BaseModel
 from pydantic.schema import (
@@ -16,14 +15,12 @@ from rich.console import RenderableType
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Type
+from typing import Any, Dict, Literal, Mapping, Optional, TYPE_CHECKING, Type
 
 from kiara.defaults import (
     DEFAULT_NO_DESC_VALUE,
     MODULE_CONFIG_METADATA_CATEGORY_ID,
     MODULE_CONFIG_SCHEMA_CATEGORY_ID,
-    MODULE_TYPE_CATEGORY_ID,
-    MODULE_TYPES_CATEGORY_ID,
 )
 from kiara.models import KiaraModel
 from kiara.models.documentation import (
@@ -31,11 +28,11 @@ from kiara.models.documentation import (
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
+from kiara.models.info import InfoModelGroupMixin, KiaraInfoModel
 from kiara.models.python_class import PythonClass
 from kiara.models.values.value_schema import ValueSchema
 
 if TYPE_CHECKING:
-    from kiara.kiara import Kiara
     from kiara.modules import KiaraModule
 
 
@@ -69,10 +66,10 @@ class KiaraModuleConfig(KiaraModel):
 
     _config_hash: str = PrivateAttr(default=None)
     constants: Dict[str, Any] = Field(
-        default_factory=dict, description="ValueOrm constants for this module."
+        default_factory=dict, description="Value constants for this module."
     )
     defaults: Dict[str, Any] = Field(
-        default_factory=dict, description="ValueOrm defaults for this module."
+        default_factory=dict, description="Value defaults for this module."
     )
 
     class Config:
@@ -143,7 +140,6 @@ class KiaraModuleConfigMetadata(KiaraModel):
     def from_config_class(
         cls,
         config_cls: Type[KiaraModuleConfig],
-        remove_pipeline_config: bool = False,
     ):
 
         flat_models = get_flat_models_from_model(config_cls)
@@ -153,13 +149,6 @@ class KiaraModuleConfigMetadata(KiaraModel):
 
         config_values = {}
         for field_name, details in fields.items():
-            if remove_pipeline_config and field_name in [
-                "steps",
-                "input_aliases",
-                "output_aliases",
-                "doc",
-            ]:
-                continue
 
             type_str = "-- n/a --"
             if "type" in details.keys():
@@ -229,12 +218,25 @@ def calculate_class_source_url(
     return url
 
 
-class KiaraModuleTypeMetadata(KiaraModel):
+class KiaraModuleTypeInfo(KiaraInfoModel["KiaraModule"]):
     @classmethod
-    def from_module_class(cls, module_cls: Type["KiaraModule"]):
+    def create_from_type_class(
+        cls, type_cls: Type["KiaraModule"]
+    ) -> "KiaraModuleTypeInfo":
 
-        module_attrs = cls.extract_module_attributes(module_cls=module_cls)
-        return cls(**module_attrs)
+        module_attrs = cls.extract_module_attributes(module_cls=type_cls)
+        return cls.construct(**module_attrs)
+
+    @classmethod
+    def base_class(self) -> Type["KiaraModule"]:
+
+        from kiara.modules import KiaraModule
+
+        return KiaraModule
+
+    @classmethod
+    def category_name(cls) -> str:
+        return "module"
 
     @classmethod
     def extract_module_attributes(
@@ -249,25 +251,6 @@ class KiaraModuleTypeMetadata(KiaraModel):
         doc = DocumentationMetadataModel.from_class_doc(module_cls)
         python_class = PythonClass.from_class(module_cls)
         properties_md = ContextMetadataModel.from_class(module_cls)
-
-        doc_url = properties_md.get_url_for_reference("documentation")
-        if doc_url:
-            class_doc = calculate_class_doc_url(doc_url, module_cls._module_type_name)  # type: ignore
-            properties_md.add_reference(
-                "module_doc",
-                class_doc,
-                "A link to the published, auto-generated module documentation.",
-            )
-
-        repo_url = properties_md.get_url_for_reference("source_repo")
-        if repo_url is not None:
-            src_url = calculate_class_source_url(repo_url, python_class)
-            properties_md.add_reference(
-                "source_url",
-                src_url,
-                "A link to the published source file that contains this module.",
-            )
-
         config = KiaraModuleConfigMetadata.from_config_class(module_cls._config_cls)
 
         return {
@@ -280,39 +263,9 @@ class KiaraModuleTypeMetadata(KiaraModel):
             "process_src": proc_src,
         }
 
-    type_name: str = Field(description="The registered name for this module type.")
-    documentation: DocumentationMetadataModel = Field(
-        description="Documentation for the module."
-    )
-    authors: AuthorsMetadataModel = Field(
-        description="Information about authorship for the module type."
-    )
-    context: ContextMetadataModel = Field(
-        description="Generic properties of this module (description, tags, labels, references, ...)."
-    )
-    config: KiaraModuleConfigMetadata = Field(
-        description="Details on how this module type can be configured."
-    )
-    python_class: PythonClass = Field(
-        description="The python class that implements this module type."
-    )
     process_src: str = Field(
         description="The source code of the process method of the module."
     )
-
-    def _retrieve_id(self) -> str:
-        return self.type_name
-
-    def _retrieve_category_id(self) -> str:
-        return MODULE_TYPE_CATEGORY_ID
-
-    def _retrieve_data_to_hash(self) -> Any:
-        return self.type_name
-
-    @validator("documentation", pre=True)
-    def validate_doc(cls, value):
-
-        return DocumentationMetadataModel.create(value)
 
     def create_renderable(self, **config: Any) -> RenderableType:
 
@@ -352,134 +305,15 @@ class KiaraModuleTypeMetadata(KiaraModel):
         return table
 
 
-class ModuleTypesGroupInfo(KiaraModel):
-
-    __root__: Dict[str, KiaraModuleTypeMetadata]
-
-    # @classmethod
-    # def from_type_names(
-    #     cls,
-    #     kiara: "Kiara",
-    #     type_names: Optional[Iterable[str]] = None,
-    #     ignore_pipeline_modules: bool = False,
-    #     ignore_non_pipeline_modules: bool = False,
-    #     **config: Any
-    # ):
-    #
-    #     if ignore_pipeline_modules and ignore_non_pipeline_modules:
-    #         raise Exception("Can't ignore both pipeline and non-pipeline modules.")
-    #
-    #     if type_names is None:
-    #         type_names = kiara.available_module_types
-    #
-    #     classes = {}
-    #     for tn in type_names:
-    #         _cls = kiara.get_module_class(tn)
-    #         if ignore_pipeline_modules and _cls.is_pipeline():
-    #             continue
-    #         if ignore_non_pipeline_modules and not _cls.is_pipeline():
-    #             continue
-    #         classes[tn] = KiaraModuleTypeMetadata.from_module_class(_cls)
-    #
-    #     return ModuleTypesGroupInfo(__root__=classes)
-
+class ModuleTypeClassesInfo(InfoModelGroupMixin):
     @classmethod
-    def create_renderable_from_type_names(
-        cls,
-        kiara: "Kiara",
-        type_names: Iterable[str],
-        ignore_pipeline_modules: bool = False,
-        ignore_non_pipeline_modules: bool = False,
-        **config: Any,
-    ):
+    def base_info_class(cls) -> Type[KiaraInfoModel]:
+        return KiaraModuleTypeInfo
 
-        classes = {}
-        for tn in type_names:
-            _cls = kiara.module_registry.get_module_class(tn)
-            classes[tn] = _cls
-
-        return cls.create_renderable_from_module_type_map(
-            module_types=classes,
-            ignore_pipeline_modules=ignore_pipeline_modules,
-            ignore_non_pipeline_modules=ignore_non_pipeline_modules,
-            **config,
-        )
-
-    @classmethod
-    def create_renderable_from_module_type_map(
-        cls,
-        module_types: Mapping[str, Type["KiaraModule"]],
-        ignore_pipeline_modules: bool = False,
-        ignore_non_pipeline_modules: bool = False,
-        **config: Any,
-    ):
-        """Create a renderable from a map of module classes.
-
-        Render-configuration options:
-          - include_full_doc (default: False): include the full documentation, instead of just a one line description
-        """
-
-        return cls.create_renderable_from_module_info_map(
-            {
-                k: KiaraModuleTypeMetadata.from_module_class(v)
-                for k, v in module_types.items()
-            },
-            ignore_pipeline_modules=ignore_pipeline_modules,
-            ignore_non_pipeline_modules=ignore_non_pipeline_modules,
-            **config,
-        )
-
-    @classmethod
-    def create_renderable_from_module_info_map(
-        cls,
-        module_types: Mapping[str, KiaraModuleTypeMetadata],
-        ignore_pipeline_modules: bool = False,
-        ignore_non_pipeline_modules: bool = False,
-        **config: Any,
-    ):
-        """Create a renderable from a map of module info wrappers.
-
-        Render-configuration options:
-          - include_full_doc (default: False): include the full documentation, instead of just a one line description
-        """
-
-        if ignore_pipeline_modules and ignore_non_pipeline_modules:
-            raise Exception("Can't ignore both pipeline and non-pipeline modules.")
-
-        if ignore_pipeline_modules:
-            module_types = {k: v for k, v in module_types.items() if not v.is_pipeline}
-        elif ignore_non_pipeline_modules:
-            module_types = {k: v for k, v in module_types.items() if v.is_pipeline}
-
-        show_lines = False
-        table = Table(show_header=False, box=box.SIMPLE, show_lines=show_lines)
-        table.add_column("name", style="b")
-        table.add_column("desc", style="i")
-
-        for name, details in module_types.items():
-
-            if config.get("include_full_doc", False):
-                table.add_row(name, details.documentation.full_doc)
-            else:
-                table.add_row(name, details.documentation.description)
-
-        return table
-
-    def _retrieve_id(self) -> str:
-        return str(self.model_data_hash)
-
-    def _retrieve_category_id(self) -> str:
-        return MODULE_TYPES_CATEGORY_ID
-
-    def _retrieve_data_to_hash(self) -> Any:
-        obj = {k: v.model_data_hash for k, v in self.__root__.items()}
-        return obj
-
-    def create_renderable(self, **config: Any) -> RenderableType:
-
-        return ModuleTypesGroupInfo.create_renderable_from_module_info_map(
-            self.__root__
-        )
+    type_name: Literal["module_type"] = "module_type"
+    type_infos: Mapping[str, KiaraModuleTypeInfo] = Field(
+        description="The module type info instances for each type."
+    )
 
 
 class KiaraModuleClass(PythonClass):

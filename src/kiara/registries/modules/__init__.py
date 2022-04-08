@@ -8,8 +8,9 @@
 """Base module for code that handles the import and management of [KiaraModule][kiara.module.KiaraModule] sub-classes."""
 
 import structlog
-from typing import TYPE_CHECKING, Dict, Iterable, Mapping, Type
+from typing import TYPE_CHECKING, Dict, Iterable, Mapping, Optional, Type
 
+from kiara.models.module import KiaraModuleTypeInfo
 from kiara.models.module.manifest import Manifest
 
 if TYPE_CHECKING:
@@ -28,6 +29,7 @@ class ModuleRegistry(object):
         module_classes = find_all_kiara_modules()
 
         self._module_classes: Mapping[str, Type[KiaraModule]] = {}
+        self._module_class_metadata: Dict[str, KiaraModuleTypeInfo] = {}
 
         for k, v in module_classes.items():
             self._module_classes[k] = v
@@ -46,31 +48,28 @@ class ModuleRegistry(object):
     def get_module_type_names(self) -> Iterable[str]:
         return self._module_classes.keys()
 
-    def find_modules_for_package(
-        self,
-        package_name: str,
-        include_core_modules: bool = True,
-        include_pipelines: bool = True,
-    ) -> Dict[str, Type["KiaraModule"]]:
+    def get_module_type_metadata(self, type_name: str) -> KiaraModuleTypeInfo:
+
+        md = self._module_class_metadata.get(type_name, None)
+        if md is None:
+            md = KiaraModuleTypeInfo.create_from_type_class(
+                self.get_module_class(module_type=type_name)
+            )
+            self._module_class_metadata[type_name] = md
+        return self._module_class_metadata[type_name]
+
+    def get_context_metadata(
+        self, only_for_package: Optional[str] = None
+    ) -> Dict[str, KiaraModuleTypeInfo]:
 
         result = {}
-        for module_type in self.get_module_type_names():
-
-            if module_type == "pipeline":
-                continue
-            module_cls = self.get_module_class(module_type)
-
-            module_package = module_cls.get_type_metadata().context.labels.get(
-                "package", None
-            )
-            if module_package != package_name:
-                continue
-            if module_cls.is_pipeline():
-                if include_pipelines:
-                    result[module_type] = module_cls
+        for type_name in self.module_types.keys():
+            md = self.get_module_type_metadata(type_name=type_name)
+            if only_for_package:
+                if md.context.labels.get("package") == only_for_package:
+                    result[type_name] = md
             else:
-                if include_core_modules:
-                    result[module_type] = module_cls
+                result[type_name] = md
 
         return result
 

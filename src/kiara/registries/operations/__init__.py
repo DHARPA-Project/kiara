@@ -6,6 +6,7 @@ from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import (
     ManifestOperationConfig,
     Operation,
+    OperationTypeInfo,
     PipelineOperationConfig,
 )
 from kiara.modules.operations import OperationType
@@ -24,6 +25,8 @@ class OperationRegistry(object):
 
         if operation_type_classes is not None:
             self._operation_type_classes = dict(operation_type_classes)
+
+        self._operation_type_metadata: Dict[str, OperationTypeInfo] = {}
 
         self._operation_types: Optional[Dict[str, OperationType]] = None
 
@@ -53,16 +56,28 @@ class OperationRegistry(object):
 
         return self.operation_types[op_type]
 
-    def find_operation_types_for_package(
-        self, package_name: str
-    ) -> Dict[str, Type[OperationType]]:
+    def get_type_metadata(self, type_name: str) -> OperationTypeInfo:
+
+        md = self._operation_type_metadata.get(type_name, None)
+        if md is None:
+            md = OperationTypeInfo.create_from_type_class(
+                type_cls=self.operation_type_classes[type_name]
+            )
+            self._operation_type_metadata[type_name] = md
+        return self._operation_type_metadata[type_name]
+
+    def get_context_metadata(
+        self, only_for_package: Optional[str] = None
+    ) -> Dict[str, OperationTypeInfo]:
 
         result = {}
-        for data_type_name, data_type in self.operation_type_classes.items():
-            value_md = data_type.get_type_metadata()
-            package = value_md.context.labels.get("package")
-            if package == package_name:
-                result[data_type_name] = data_type
+        for type_name in self.operation_type_classes.keys():
+            md = self.get_type_metadata(type_name=type_name)
+            if only_for_package:
+                if md.context.labels.get("package") == only_for_package:
+                    result[type_name] = md
+            else:
+                result[type_name] = md
 
         return result
 

@@ -111,7 +111,7 @@ class ContextMetadataModel(KiaraModel):
 
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("Key", style="i")
-        table.add_column("ValueOrm")
+        table.add_column("Value")
 
         if self.tags:
             table.add_row("Tags", ", ".join(self.tags))

@@ -6,20 +6,37 @@ from rich import box
 from rich.console import RenderableType, RenderGroup
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    Literal,
+    Mapping,
+    Optional,
+    Type,
+    Union,
+)
 
 from kiara.defaults import (
     OPERATION_CATEOGORY_ID,
     OPERATION_CONFIG_CATEOGORY_ID,
     OPERATION_DETAILS_CATEOGORY_ID,
+    OPERATION_TYPE_CATEGORY_ID,
     PYDANTIC_USE_CONSTRUCT,
 )
 from kiara.models import KiaraModel
-from kiara.models.documentation import DocumentationMetadataModel
-from kiara.models.module import KiaraModuleClass, KiaraModuleTypeMetadata
+from kiara.models.documentation import (
+    AuthorsMetadataModel,
+    ContextMetadataModel,
+    DocumentationMetadataModel,
+)
+from kiara.models.info import InfoModelGroupMixin, KiaraInfoModel
+from kiara.models.module import KiaraModuleClass, KiaraModuleTypeInfo
 from kiara.models.module.jobs import JobConfig
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.pipeline import PipelineConfig
+from kiara.models.python_class import PythonClass
 from kiara.models.values.value import Value, ValueSet, ValueSetReadOnly
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import InputOutputObject, KiaraModule, ValueSetSchema
@@ -278,10 +295,14 @@ class Operation(Manifest):
     def outputs_schema(self) -> Mapping[str, ValueSchema]:
         return self.operation_details.outputs_schema
 
-    def prepare_job_config(self, kiara: "Kiara", inputs: Mapping[str, Any]) -> JobConfig:
+    def prepare_job_config(
+        self, kiara: "Kiara", inputs: Mapping[str, Any]
+    ) -> JobConfig:
 
-        augmented_inputs = self.operation_details.get_operation_schema().augment_module_inputs(
-            inputs=inputs
+        augmented_inputs = (
+            self.operation_details.get_operation_schema().augment_module_inputs(
+                inputs=inputs
+            )
         )
         module_inputs = self.operation_details.create_module_inputs(
             inputs=augmented_inputs
@@ -375,7 +396,7 @@ class Operation(Manifest):
         )
         table.add_row("Module config", conf)
 
-        module_type_md = KiaraModuleTypeMetadata.from_module_class(
+        module_type_md = KiaraModuleTypeInfo.create_from_type_class(
             self.module_details.get_class()
         )
 
@@ -390,3 +411,53 @@ class Operation(Manifest):
             table.add_row("Source code", module_type_md.process_src)
 
         return table
+
+
+class OperationTypeInfo(KiaraInfoModel):
+    @classmethod
+    def create_from_type_class(cls, type_cls: Type["OperationType"]):
+
+        authors_md = AuthorsMetadataModel.from_class(type_cls)
+        doc = DocumentationMetadataModel.from_class_doc(type_cls)
+        python_class = PythonClass.from_class(type_cls)
+        properties_md = ContextMetadataModel.from_class(type_cls)
+
+        return OperationTypeInfo.construct(
+            **{
+                "type_name": type_cls._operation_type_name,  # type: ignore
+                "documentation": doc,
+                "authors": authors_md,
+                "context": properties_md,
+                "python_class": python_class,
+            }
+        )
+
+    @classmethod
+    def base_class(self) -> Type["OperationType"]:
+        from kiara.modules.operations import OperationType
+
+        return OperationType
+
+    @classmethod
+    def category_name(cls) -> str:
+        return "operation_type"
+
+    def _retrieve_id(self) -> str:
+        return self.type_name
+
+    def _retrieve_category_id(self) -> str:
+        return OPERATION_TYPE_CATEGORY_ID
+
+    def _retrieve_data_to_hash(self) -> Any:
+        return self.type_name
+
+
+class OperationTypeClassesInfo(InfoModelGroupMixin):
+    @classmethod
+    def base_info_class(cls) -> Type[KiaraInfoModel]:
+        return OperationTypeInfo
+
+    type_name: Literal["operation_type"] = "operation_type"
+    type_infos: Mapping[str, OperationTypeInfo] = Field(
+        description="The operation info instances for each type."
+    )

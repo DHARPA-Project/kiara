@@ -87,7 +87,7 @@ if TYPE_CHECKING:
 #
 #         for step in steps:
 #
-#             module_cls = kiara.get_module_class(step.module_type)
+#             type_cls = kiara.get_module_class(step.module_type)
 #             input_links = {}
 #             for input_field, sources  in step.get("input_links", {}).items():
 #                 if isinstance(sources, str):
@@ -101,7 +101,7 @@ if TYPE_CHECKING:
 #                 module_type=step.module_type,
 #                 module_config=copy.deepcopy(step.module_config),
 #                 input_links=input_links,
-#                 module_class=PythonClass.from_class(module_cls)
+#                 module_class=PythonClass.from_class(type_cls)
 #             )
 #             result.append(_s)
 #

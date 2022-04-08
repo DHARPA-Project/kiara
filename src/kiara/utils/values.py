@@ -51,7 +51,7 @@ def overlay_constants_and_defaults(
         # value_to_test = None
         if default_value is not None and constant_value is not None:
             raise Exception(
-                f"Module configuration error. ValueOrm '{k}' set in both 'constants' and 'defaults', this is not allowed."
+                f"Module configuration error. Value '{k}' set in both 'constants' and 'defaults', this is not allowed."
             )
 
         # TODO: perform validation for constants/defaults

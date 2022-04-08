@@ -39,7 +39,7 @@ from kiara.models.module.jobs import JobLog
 # from kiara.metadata import MetadataModel
 # from kiara.metadata.module_models import (
 #     KiaraModuleInstanceMetadata,
-#     KiaraModuleTypeMetadata,
+#     KiaraModuleTypeInfo,
 # )
 # from kiara.module_config import KIARA_CONFIG, ModuleConfig, KiaraModuleConfig
 # from kiara.operations import Operation
@@ -63,6 +63,25 @@ ValueSetSchema = Mapping[str, Union[ValueSchema, Mapping[str, Any]]]
 
 
 class InputOutputObject(abc.ABC):
+    """Abstract base class for classes that define inputs and outputs schemas.
+
+    Both the 'create_inputs_schema` and `creawte_outputs_schema` methods implemented by child classes return a description of the input schema of this module.
+
+    If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):
+
+    ```
+        {
+          "[input_field_name]: {
+              "type": "[type]",
+              "doc*": "[a description of this input]",
+              "optional*': [boolean whether this input is optional or required (defaults to 'False')]
+          "[other_input_field_name]: {
+              "type: ...
+              ...
+          }
+              ```
+    """
+
     def __init__(
         self,
         alias: str,
@@ -106,42 +125,13 @@ class InputOutputObject(abc.ABC):
     def create_inputs_schema(
         self,
     ) -> ValueSetSchema:
-        """Abstract method to implement by child classes, returns a description of the input schema of this module.
-
-        If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):
-
-        ```
-            {
-              "[input_field_name]: {
-                  "type": "[type]",
-                  "doc*": "[a description of this input]",
-                  "optional*': [boolean whether this input is optional or required (defaults to 'False')]
-              "[other_input_field_name]: {
-                  "type: ...
-                  ...
-              }
-              ```
-        """
+        """Return the schema for this types' inputs."""
 
     @abstractmethod
     def create_outputs_schema(
         self,
     ) -> ValueSetSchema:
-        """Abstract method to implement by child classes, returns a description of the output schema of this module.
-
-        If returning a dictionary of dictionaries, the format of the return value is as follows (items with '*' are optional):
-
-        ```
-            {
-              "[output_field_name]: {
-                  "type": "[type]",
-                  "doc*": "[a description of this output]"
-              "[other_input_field_name]: {
-                  "type: ...
-                  ...
-              }
-            ```
-        """
+        """Return the schema for this types' outputs."""
 
     @property
     def inputs_schema(self) -> Mapping[str, ValueSchema]:

@@ -7,9 +7,9 @@
 
 """Module related subcommands for the cli."""
 
+import orjson
 import os.path
 import rich_click as click
-import sys
 import typing
 from rich.panel import Panel
 
@@ -17,7 +17,7 @@ from kiara import Kiara
 
 # from kiara.interfaces.cli.utils import _create_module_instance
 from kiara.kiara import explain
-from kiara.models.module import KiaraModuleTypeMetadata, ModuleTypesGroupInfo
+from kiara.models.module import KiaraModuleTypeInfo, ModuleTypeClassesInfo
 from kiara.models.module.manifest import Manifest
 from kiara.utils import dict_from_cli_args, log_message, rich_print
 
@@ -30,42 +30,28 @@ def module(ctx):
 
 @module.command(name="list")
 @click.option(
-    "--only-pipeline-modules", "-p", is_flag=True, help="Only list pipeline modules."
-)
-@click.option(
-    "--only-core-modules",
-    "-c",
-    is_flag=True,
-    help="Only list core (aka 'Python') modules.",
-)
-@click.option(
     "--full-doc",
     "-d",
     is_flag=True,
-    help="Display the full documentation for every module type.",
+    help="Display the full documentation for every module type (when using 'terminal' output format).",
+)
+@click.option(
+    "--format",
+    "-f",
+    help="The output format. Defaults to 'terminal'.",
+    type=click.Choice(["terminal", "json", "html"]),
+    default="terminal",
 )
 @click.argument("filter", nargs=-1, required=False)
 @click.pass_context
-def list_modules(
-    ctx,
-    only_pipeline_modules: bool,
-    only_core_modules: bool,
-    full_doc: bool,
-    filter: typing.Iterable[str],
-):
+def list_modules(ctx, full_doc: bool, filter: typing.Iterable[str], format: str):
     """List available module data_types."""
-
-    if only_pipeline_modules and only_core_modules:
-        rich_print()
-        rich_print(
-            "Please provide either '--only-core-modules' or '--only-pipeline-modules', not both."
-        )
-        sys.exit(1)
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     if filter:
-        module_types = []
+        title = f"Filtered modules: {filter}"
+        module_types_names = []
 
         for m in kiara_obj.module_type_names:
             match = True
@@ -75,42 +61,43 @@ def list_modules(
                 if f.lower() not in m.lower():
                     match = False
                     break
-                # else:
-                #     m_cls = kiara_obj.get_module_class(m)
-                #     doc = m_cls.get_type_metadata().documentation.full_doc
-                #
-                #     if f.lower() not in doc.lower():
-                #         match = False
-                #         break
 
             if match:
-                module_types.append(m)
+                module_types_names.append(m)
     else:
-        module_types = kiara_obj.module_type_names
+        title = "All modules"
+        module_types_names = kiara_obj.module_type_names
 
-    renderable = ModuleTypesGroupInfo.create_renderable_from_type_names(
-        kiara=kiara_obj,
-        type_names=module_types,
-        ignore_non_pipeline_modules=only_pipeline_modules,
-        ignore_pipeline_modules=only_core_modules,
-        include_full_doc=full_doc,
+    module_types = {
+        n: kiara_obj.module_registry.get_module_class(n) for n in module_types_names
+    }
+
+    module_types_info = ModuleTypeClassesInfo.create_from_items(
+        group_alias=title, **module_types
     )
-    if only_pipeline_modules:
-        title = "Available pipeline modules"
-    elif only_core_modules:
-        title = "Available core modules"
-    else:
-        title = "Available modules"
 
-    p = Panel(renderable, title_align="left", title=title)
-    print()
-    explain(p)
+    if format == "terminal":
+        renderable = module_types_info.create_renderable(full_doc=full_doc)
+        p = Panel(renderable, title_align="left", title=title)
+        print()
+        explain(p)
+    elif format == "json":
+        print(module_types_info.json(option=orjson.OPT_INDENT_2))
+    elif format == "html":
+        print(module_types_info.create_html())
 
 
 @module.command(name="explain")
+@click.option(
+    "--format",
+    "-f",
+    help="The output format. Defaults to 'terminal'.",
+    type=click.Choice(["terminal", "json", "html"]),
+    default="terminal",
+)
 @click.argument("module_type", nargs=1, required=True)
 @click.pass_context
-def explain_module_type(ctx, module_type: str):
+def explain_module_type(ctx, module_type: str, format: str):
     """Print details of a module type.
 
     This is different to the 'explain-instance' command, because module data_types need to be
@@ -128,10 +115,15 @@ def explain_module_type(ctx, module_type: str):
         _module_type = module_type
 
     m_cls = kiara_obj.module_registry.get_module_class(_module_type)
-    info = KiaraModuleTypeMetadata.from_module_class(m_cls)
+    info = KiaraModuleTypeInfo.create_from_type_class(m_cls)
 
-    rich_print()
-    rich_print(info.create_panel(title=f"Module type: [b i]{module_type}[/b i]"))
+    if format == "terminal":
+        rich_print()
+        rich_print(info.create_panel(title=f"Module type: [b i]{module_type}[/b i]"))
+    elif format == "json":
+        print(info.json(option=orjson.OPT_INDENT_2))
+    elif format == "html":
+        print(info.create_html())
 
 
 @module.command("explain-instance")

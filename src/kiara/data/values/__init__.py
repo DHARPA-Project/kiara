@@ -13,7 +13,7 @@ valid/set, what type/schema it has, when it was last modified, ...), but it does
 that is that such data can be fairly large, and in a lot of cases it is not necessary for the code involved to have
 access to it, access to the metadata is enough.
 
-Each ValueOrm has a unique id, which can be used to retrieve the data (whole, or parts of it) from a [DataRegistry][kiara.data.registry.DataRegistry].
+Each Value has a unique id, which can be used to retrieve the data (whole, or parts of it) from a [DataRegistry][kiara.data.registry.DataRegistry].
 In addition, that id can be used to subscribe to change events for a value (published whenever the data that is associated with a value was changed).
 """
 
@@ -37,7 +37,7 @@ In addition, that id can be used to subscribe to change events for a value (publ
 #     def from_value(cls, value: Value, include_deserialization_config: bool = False):
 #
 #         if value.id not in value._registry.value_ids:
-#             raise Exception("ValueOrm not registered (yet).")
+#             raise Exception("Value not registered (yet).")
 #
 #         # aliases = value._registry.find_aliases_for_value(value)
 #         # hashes = value.get_hashes()

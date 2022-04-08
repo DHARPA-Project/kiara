@@ -108,7 +108,7 @@ class DataTypeConfig(BaseModel):
 
         my_table = Table(box=box.MINIMAL, show_header=False)
         my_table.add_column("Field name", style="i")
-        my_table.add_column("ValueOrm")
+        my_table.add_column("Value")
         for field in self.__fields__:
             my_table.add_row(field, getattr(self, field))
 
@@ -419,9 +419,9 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
 
 
 # class ValueTypeInfo(object):
-#     def __init__(self, data_type_cls: typing.Type[ValueTypeOrm]):
+#     def __init__(self, type_cls: typing.Type[ValueTypeOrm]):
 #
-#         self._value_type_cls: typing.Type[ValueTypeOrm] = data_type_cls
+#         self._value_type_cls: typing.Type[ValueTypeOrm] = type_cls
 #
 #     @property
 #     def doc(self) -> str:

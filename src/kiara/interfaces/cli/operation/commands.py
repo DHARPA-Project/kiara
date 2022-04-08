@@ -5,6 +5,7 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
+import orjson
 import os
 import rich_click as click
 import sys
@@ -14,6 +15,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from kiara import Kiara
+from kiara.models.module.operation import OperationTypeClassesInfo
 from kiara.utils import log_message, rich_print
 
 
@@ -24,17 +26,59 @@ def operation(ctx):
 
 
 @operation.command("list-types")
+@click.option(
+    "--full-doc",
+    "-d",
+    is_flag=True,
+    help="Display the full documentation for every operation type (when using 'terminal' output format).",
+)
+@click.argument("filter", nargs=-1, required=False)
+@click.option(
+    "--format",
+    "-f",
+    help="The output format. Defaults to 'terminal'.",
+    type=click.Choice(["terminal", "json", "html"]),
+    default="terminal",
+)
 @click.pass_context
-def list_types(ctx):
+def list_types(ctx, full_doc, format: str, filter: typing.Iterable[str]):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     op_mgmt = kiara_obj.operation_registry
 
-    for name, op_type in op_mgmt.operation_types.items():
-        print("----")
-        print(name)
-        print(op_type)
+    op_types = op_mgmt.operation_type_classes
+
+    title = "Available operation types"
+    if filter:
+        title = "Filtered data types"
+        temp = {}
+        for k, v in op_types.items():
+            match = True
+            for f in filter:
+                if f.lower() not in k.lower():
+                    match = False
+                    break
+            if match:
+                temp[k] = v
+        op_types = temp
+
+    operation_types_info = OperationTypeClassesInfo.create_from_items(
+        group_alias="all_items", **op_types
+    )
+
+    if format == "terminal":
+        print()
+        p = Panel(
+            operation_types_info.create_renderable(full_doc=full_doc),
+            title_align="left",
+            title=title,
+        )
+        rich_print(p)
+    elif format == "json":
+        print(operation_types_info.json(option=orjson.OPT_INDENT_2))
+    elif format == "html":
+        print(operation_types_info.create_html())
 
 
 @operation.command(name="list")

@@ -23,24 +23,6 @@ if TYPE_CHECKING:
 
 
 class PersistValueDetails(BaseOperationDetails):
-    @classmethod
-    def retrieve_inputs_schema(cls) -> ValueSetSchema:
-
-        return {
-            "value": {"type": "any", "doc": "The value to persist."},
-            "target": {"type": "string", "doc": "The target path or url."},
-            "base_name": {
-                "type": "string",
-                "doc": "A string to use as base token when persisting (might or might not be used).",
-            },
-        }
-
-    @classmethod
-    def retrieve_outputs_schema(cls) -> ValueSetSchema:
-
-        return {
-            "load_config": {"type": "load_config", "doc": "The saved value details."}
-        }
 
     value_input_field: str = Field(
         description="The (input) field name containing the value to be persisted."
@@ -58,6 +40,23 @@ class PersistValueDetails(BaseOperationDetails):
     )
     persistence_target: str = Field(description="The name of the persistence target.")
     persistence_format: str = Field(description="The persistence format.")
+
+    def retrieve_inputs_schema(self) -> ValueSetSchema:
+
+        return {
+            "value": {"type": "any", "doc": "The value to persist."},
+            "target": {"type": "string", "doc": "The target path or url."},
+            "base_name": {
+                "type": "string",
+                "doc": "A string to use as base token when persisting (might or might not be used).",
+            },
+        }
+
+    def retrieve_outputs_schema(self) -> ValueSetSchema:
+
+        return {
+            "load_config": {"type": "load_config", "doc": "The saved value details."}
+        }
 
     def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import abc
 import orjson
+import structlog
 from pydantic import Field, PrivateAttr, validator
 from rich import box
 from rich.console import RenderableType, RenderGroup
@@ -51,6 +52,9 @@ from kiara.utils.output import create_table_from_field_schemas
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
+
+
+logger = structlog.getLogger()
 
 
 class OperationSchema(InputOutputObject):
@@ -136,12 +140,10 @@ class BaseOperationDetails(OperationDetails):
 
     _op_schema: OperationSchema = PrivateAttr(default=None)
 
-    @classmethod
     @abc.abstractmethod
     def retrieve_inputs_schema(cls) -> ValueSetSchema:
         pass
 
-    @classmethod
     @abc.abstractmethod
     def retrieve_outputs_schema(cls) -> ValueSetSchema:
         pass
@@ -153,8 +155,8 @@ class BaseOperationDetails(OperationDetails):
 
         self._op_schema = OperationSchema(
             alias=self.__class__.__name__,
-            inputs_schema=self.__class__.retrieve_inputs_schema(),
-            outputs_schema=self.__class__.retrieve_outputs_schema(),
+            inputs_schema=self.retrieve_inputs_schema(),
+            outputs_schema=self.retrieve_outputs_schema(),
         )
         return self._op_schema
 
@@ -309,6 +311,7 @@ class Operation(Manifest):
                 inputs=inputs
             )
         )
+
         module_inputs = self.operation_details.create_module_inputs(
             inputs=augmented_inputs
         )
@@ -320,12 +323,14 @@ class Operation(Manifest):
 
     def run(self, kiara: "Kiara", inputs: Any) -> ValueSet:
 
+        logger.debug("run.operation", operation_id=self.operation_id)
         job_config = self.prepare_job_config(kiara=kiara, inputs=inputs)
 
         job_id = kiara.job_registry.execute_job(job_config=job_config)
         outputs: ValueSet = kiara.job_registry.retrieve_result(job_id=job_id)
 
         result = self.process_job_outputs(outputs=outputs)
+
         return result
 
     def process_job_outputs(self, outputs: ValueSet) -> ValueSet:

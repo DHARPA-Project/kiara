@@ -20,8 +20,11 @@ if TYPE_CHECKING:
 
 
 class RenderValueDetails(BaseOperationDetails):
-    @classmethod
-    def retrieve_inputs_schema(cls) -> ValueSetSchema:
+
+    source_type: str = Field(description="The type of the value to be rendered.")
+    target_type: str = Field(description="The type of the render result.")
+
+    def retrieve_inputs_schema(self) -> ValueSetSchema:
 
         return {
             "value": {"type": "any", "doc": "The value to persist."},
@@ -36,13 +39,9 @@ class RenderValueDetails(BaseOperationDetails):
             },
         }
 
-    @classmethod
-    def retrieve_outputs_schema(cls) -> ValueSetSchema:
+    def retrieve_outputs_schema(self) -> ValueSetSchema:
 
         return {"rendered_value": {"type": "any", "doc": "The rendered value."}}
-
-    source_type: str = Field(description="The type of the value to be rendered.")
-    target_type: str = Field(description="The type of the render result.")
 
     def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
 

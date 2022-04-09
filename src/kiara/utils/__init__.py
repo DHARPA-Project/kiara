@@ -15,7 +15,6 @@ import os
 import re
 import structlog
 import typing
-import uuid
 import yaml
 from io import StringIO
 from pathlib import Path
@@ -225,10 +224,6 @@ def create_valid_identifier(text: str):
     return slugify(text, separator="_")
 
 
-def create_uuid4_string():
-    return str(uuid.uuid4())
-
-
 def merge_dicts(
     *dicts: typing.Mapping[str, typing.Any]
 ) -> typing.Dict[str, typing.Any]:
@@ -281,6 +276,7 @@ string_types = (type(b""), type(""))
 
 def orjson_dumps(v, *, default=None, **args):
     # orjson.dumps returns bytes, to match standard json.dumps we need to decode
+
     return orjson.dumps(v, default=default, **args).decode()
 
 

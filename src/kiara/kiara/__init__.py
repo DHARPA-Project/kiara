@@ -38,6 +38,8 @@ from kiara.models.module.operation import (
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.data_type import DataTypeClassesInfo
 from kiara.models.values.value import Value
+from kiara.models.values.value_metadata import MetadataTypeClassesInfo
+from kiara.registries import KiaraArchive
 from kiara.registries.aliases import AliasRegistry
 from kiara.registries.data import DataRegistry
 from kiara.registries.destinies.registry import DestinyRegistry
@@ -51,6 +53,7 @@ from kiara.registries.operations import OperationRegistry
 from kiara.registries.types import TypeRegistry
 from kiara.utils import is_debug, log_message
 from kiara.utils.db import orm_json_deserialize, orm_json_serialize
+from kiara.utils.metadata import find_metadata_models
 from kiara.utils.operations import filter_operations_for_package
 
 if TYPE_CHECKING:
@@ -148,6 +151,13 @@ class Kiara(object):
         )
 
         self._context_info: Optional[KiaraContextInfo] = None
+
+        # initialize stores
+        self._archives: Dict[str, KiaraArchive] = {}
+        # default_data_store = FilesystemDataStore()
+        for archive_alias, archive in self._config.archives.items():
+            dbg(archive_alias)
+            print(archive)
 
     def _run_alembic_migrations(self):
         script_location = os.path.abspath(KIARA_DB_MIGRATIONS_FOLDER)
@@ -309,11 +319,14 @@ class KiaraContextInfo(KiaraModel):
         )
         operations = filter_operations_for_package(kiara=kiara, pkg_name=package_filter)
 
+        metadata_types = find_metadata_models(only_for_package=package_filter)
+
         return KiaraContextInfo.construct(
             kiara_id=kiara.id,
             package_filter=package_filter,
             data_types=data_types,
             module_types=modules,
+            metadata_types=metadata_types,
             operation_types=operation_types,
             operations=operations,
         )
@@ -325,6 +338,9 @@ class KiaraContextInfo(KiaraModel):
     data_types: DataTypeClassesInfo = Field(description="The included data types.")
     module_types: ModuleTypeClassesInfo = Field(
         description="The included kiara module types."
+    )
+    metadata_types: MetadataTypeClassesInfo = Field(
+        description="The included value metadata types."
     )
     operation_types: OperationTypeClassesInfo = Field(
         description="The included operation types."
@@ -349,12 +365,20 @@ class KiaraContextInfo(KiaraModel):
             group_info = self.data_types
         elif "module" in item_type:
             group_info = self.module_types
+        elif "metadata" in item_type:
+            group_info = self.metadata_types
         elif "operation_type" in item_type or "operation_types" in item_type:
             group_info = self.operation_types
         elif "operation" in item_type:
             group_info = self.operations
         else:
-            item_types = ["data_type", "module_type", "operation_type", "operation"]
+            item_types = [
+                "data_type",
+                "module_type",
+                "metadata_type",
+                "operation_type",
+                "operation",
+            ]
             raise Exception(
                 f"Can't determine item type '{item_type}', use one of: {', '.join(item_types)}"
             )
@@ -368,6 +392,8 @@ class KiaraContextInfo(KiaraModel):
             result["data_types"] = self.data_types
         if self.module_types or not skip_empty_types:
             result["module_types"] = self.module_types
+        if self.metadata_types or not skip_empty_types:
+            result["metadata_types"] = self.metadata_types
         if self.operation_types or not skip_empty_types:
             result["operation_types"] = self.operation_types
         if self.operations or not skip_empty_types:

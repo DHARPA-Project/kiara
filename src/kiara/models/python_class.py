@@ -2,7 +2,7 @@
 import importlib
 from pydantic.fields import Field, PrivateAttr
 from types import ModuleType
-from typing import TYPE_CHECKING, Any, Dict, Optional, Type
+from typing import Any, Dict, TYPE_CHECKING, Type
 
 from kiara.models import KiaraModel
 from kiara.models.documentation import ContextMetadataModel
@@ -44,9 +44,9 @@ class PythonClass(KiaraModel):
     )
     full_name: str = Field(description="The full class namespace.")
 
-    context_metadata: Optional[ContextMetadataModel] = Field(
-        description="Context metadata for the class.", default=None
-    )
+    # context_metadata: Optional[ContextMetadataModel] = Field(
+    #     description="Context metadata for the class.", default=None
+    # )
 
     _module_cache: ModuleType = PrivateAttr(default=None)
     _cls_cache: Type = PrivateAttr(default=None)

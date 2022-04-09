@@ -37,6 +37,7 @@ if TYPE_CHECKING:
     from kiara.modules.operations import OperationType
     from kiara.models.values.value_metadata import ValueMetadata
     from kiara.data_types import DataType
+    from kiara.registries import KiaraArchive
 
 import logging
 import structlog
@@ -339,6 +340,20 @@ def find_all_value_metadata_models() -> Dict[str, Type["ValueMetadata"]]:
         entry_point_name="kiara.value_metadata",
         base_class=ValueMetadata,  # type: ignore
         type_id_key="_metadata_key",
+        type_id_func=_cls_name_id_func,
+        attach_python_metadata=False,
+    )
+
+
+def find_all_archive_types() -> Dict[str, Type["KiaraArchive"]]:
+    """Find all [KiaraArchive][kiara.registries.KiaraArchive] subclasses via package entry points."""
+
+    from kiara.registries import KiaraArchive
+
+    return load_all_subclasses_for_entry_point(
+        entry_point_name="kiara.archive_type",
+        base_class=KiaraArchive,  # type: ignore
+        type_id_key="_archive_type_name",
         type_id_func=_cls_name_id_func,
         attach_python_metadata=False,
     )

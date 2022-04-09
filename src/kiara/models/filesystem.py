@@ -68,7 +68,7 @@ class FileModel(KiaraModel):
         )
         return m
 
-    _file_hash: Optional[int] = PrivateAttr(default=None)
+    _file_hash: Optional[str] = PrivateAttr(default=None)
 
     import_time: datetime.datetime = Field(
         description="The time when the file was imported."
@@ -115,7 +115,7 @@ class FileModel(KiaraModel):
         return fm
 
     @property
-    def file_hash(self) -> int:
+    def file_hash(self) -> str:
 
         if self._file_hash is not None:
             return self._file_hash
@@ -126,7 +126,7 @@ class FileModel(KiaraModel):
             for byte_block in iter(lambda: f.read(4096), b""):
                 sha256_hash.update(byte_block)
 
-        self._file_hash = int.from_bytes(sha256_hash.digest(), "big")
+        self._file_hash = sha256_hash.hexdigest()
         return self._file_hash
 
     @property
@@ -357,6 +357,7 @@ class FileBundle(KiaraModel):
     @property
     def file_bundle_hash(self) -> int:
 
+        # TODO: use sha256?
         if self._file_bundle_hash is not None:
             return self._file_bundle_hash
 

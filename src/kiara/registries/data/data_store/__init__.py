@@ -9,19 +9,24 @@ from kiara.models.module.manifest import LoadConfig
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.value import ORPHAN, Value, ValuePedigree
 from kiara.models.values.value_schema import ValueSchema
+from kiara.registries import BaseArchive
 
 if TYPE_CHECKING:
-    from kiara.kiara import Kiara
-
+    pass
 
 logger = structlog.getLogger()
 
 
-class DataArchive(abc.ABC):
-    def __init__(self, kiara: "Kiara"):
+class DataArchive(BaseArchive):
+    @classmethod
+    def supported_item_types(cls) -> Iterable[str]:
 
-        self._kiara: Kiara = kiara
-        self._archive_id: uuid.UUID = uuid.uuid4()
+        return ["data", "job_record"]
+
+    def __init__(self, archive_id: uuid.UUID):
+
+        super().__init__(archive_id=archive_id)
+
         self._env_cache: Dict[str, Dict[int, Mapping[str, Any]]] = {}
         self._value_cache: Dict[uuid.UUID, Value] = {}
         self._load_config_cache: Dict[uuid.UUID, LoadConfig] = {}
@@ -70,7 +75,7 @@ class DataArchive(abc.ABC):
 
         value = Value(
             value_id=value_data["value_id"],
-            kiara_id=self._kiara.id,
+            kiara_id=self.kiara_context.id,
             value_schema=value_schema,
             value_status=value_data["value_status"],
             value_size=value_data["value_size"],
@@ -81,10 +86,6 @@ class DataArchive(abc.ABC):
             property_refs=value_data["property_refs"],
             destiny_details=value_data["destiny_details"],
         )
-
-        # value = data_type.reassemble_value(value_id=value_data["value_id"], load_config=None, schema=value_schema, status=value_data["value_status"], value_hash=value_data["value_hash"], value_size=value_data["value_size"], pedigree=pedigree, kiara_id=self._kiara.id, pedigree_output_name=value_data["pedigree_output_name"])
-
-        # value._set_registry(load_config=load_config, jobs_mgmt=self._kiara.jobs_mgmt)
 
         self._value_cache[value_id] = value
         return self._value_cache[value_id]
@@ -192,7 +193,9 @@ class DataStore(DataArchive):
         if value.pedigree != ORPHAN:
             for value_id in value.pedigree.inputs.values():
                 if not self.has_value(value_id=value_id):
-                    other = self._kiara.data_registry.get_value(value_id=value_id)
+                    other = self.kiara_context.data_registry.get_value(
+                        value_id=value_id
+                    )
                     assert other and other.value_id == value_id
                     self.store_value(other)
 
@@ -209,7 +212,9 @@ class DataStore(DataArchive):
             if cached is not None:
                 continue
 
-            env = self._kiara.environment_registry.get_environment_for_hash(env_hash)
+            env = self.kiara_context.environment_registry.get_environment_for_hash(
+                env_hash
+            )
             self.persist_environment(env)
 
         # save the value data and metadata
@@ -274,7 +279,7 @@ class DataStore(DataArchive):
         all_values = {}
         for value_id in self.value_ids:
 
-            value = self._kiara.data_registry.get_value(value_id)
+            value = self.kiara_context.data_registry.get_value(value_id)
             all_values[str(value_id)] = value
         table = create_renderable_from_values(values=all_values, config=config)
 

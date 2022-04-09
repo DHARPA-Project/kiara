@@ -26,6 +26,9 @@ KIARA_RESOURCES_FOLDER = os.path.join(KIARA_MODULE_BASE_FOLDER, "resources")
 
 KIARA_MAIN_CONFIG_FILE = os.path.join(kiara_app_dirs.user_config_dir, "config.yaml")
 
+KIARA_CONTEXTS_FOLDER = os.path.join(kiara_app_dirs.user_data_dir, "contexts")
+KIARA_STORES_FOLDER = os.path.join(kiara_app_dirs.user_data_dir, "stores")
+
 KIARA_DB_FILE = os.path.join(kiara_app_dirs.user_data_dir, "kiara.db")
 KIARA_DB_MIGRATIONS_CONFIG = os.path.join(
     KIARA_RESOURCES_FOLDER, "database", "alembic.ini"

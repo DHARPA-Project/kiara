@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from pydantic import Field
-from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Set, Union
+from typing import Any, Iterable, Mapping, Optional, Union
 
 from kiara.models.module.operation import (
     BaseOperationDetails,
@@ -13,28 +13,28 @@ from kiara.modules import KiaraModule, ValueSetSchema
 from kiara.modules.operations import OperationType
 from kiara.utils.class_loading import find_all_value_metadata_models
 
-if TYPE_CHECKING:
-    pass
-
 
 class ExtractMetadataDetails(BaseOperationDetails):
     """A model that contains information needed to describe an 'extract_metadata' operation."""
 
-    @classmethod
-    def retrieve_inputs_schema(cls) -> ValueSetSchema:
-        return {"value": {"type": "any", "doc": "The value to extract metadata from."}}
-
-    @classmethod
-    def retrieve_outputs_schema(cls) -> ValueSetSchema:
-
-        return {"value_metadata": {"type": "value_metadata", "doc": "The metadata."}}
-
-    data_types: Set[str] = Field(
-        description="A set of value types this metadata operation can be used with."
+    data_type: str = Field(
+        description="The data type this metadata operation can be used with."
     )
     metadata_key: str = Field(description="The metadata key.")
     input_field_name: str = Field(description="The input field name.")
     result_field_name: str = Field(description="The result field name.")
+
+    def retrieve_inputs_schema(self) -> ValueSetSchema:
+        return {
+            "value": {
+                "type": self.data_type,
+                "doc": f"The {self.data_type} value to extract metadata from.",
+            }
+        }
+
+    def retrieve_outputs_schema(self) -> ValueSetSchema:
+
+        return {"value_metadata": {"type": "value_metadata", "doc": "The metadata."}}
 
     def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
         return {self.input_field_name: inputs["value"]}
@@ -72,7 +72,7 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
                         "data_type": data_type,
                         "metadata_model": PythonClass.from_class(model_cls),
                     },
-                    "doc": f"Extract '{metadata_key}' for value type '{data_type}'.",
+                    "doc": f"Extract '{metadata_key}' metadata for value type '{data_type}'.",
                 }
                 result.append(config)
 
@@ -101,7 +101,6 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
         # metadata_key=module.get_config_value("metadata_key")
         metadata_model: PythonClass = module.get_config_value("metadata_model")
         metadata_key = metadata_model.get_class()._metadata_key  # type: ignore
-        all_types = self._kiara.type_registry.get_sub_types(data_type_name)
 
         if data_type_name == "any":
             op_id = f"extract.{metadata_key}.metadata"
@@ -110,7 +109,7 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
 
         details = ExtractMetadataDetails.create_operation_details(
             operation_id=op_id,
-            data_types=all_types,
+            data_type=data_type_name,
             metadata_key=metadata_key,
             input_field_name=input_field_name,
             result_field_name="value_metadata",
@@ -137,8 +136,8 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
 
         for op_id, op in self.operations.items():
             op_details = self.retrieve_operation_details(op)
-            common_types = op_details.data_types.intersection(lineage)
-            if not common_types:
+            included = op_details.data_type in lineage
+            if not included:
                 continue
             metadata_key = op_details.metadata_key
             if metadata_key in result:

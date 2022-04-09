@@ -5,6 +5,7 @@ from typing import Any, Mapping, Type
 
 from kiara.data_types import DataTypeConfig
 from kiara.data_types.included_core_types import AnyType, KiaraModelValueType
+from kiara.defaults import KIARA_HASH_FUNCTION
 from kiara.models.filesystem import FileBundle, FileModel
 from kiara.models.values.value import Value
 from kiara.utils import orjson_dumps
@@ -33,7 +34,7 @@ class FileValueType(KiaraModelValueType[FileModel, DataTypeConfig]):
         return data.size
 
     def calculate_hash(self, data: FileModel) -> int:
-        return data.file_hash
+        return KIARA_HASH_FUNCTION(data.file_hash)
 
     def create_model_from_python_obj(self, data: Any) -> FileModel:
 

@@ -46,6 +46,7 @@ class EnvironmentRegistry(object):
         if self._environments is not None:
             return self._environments
 
+        import kiara.models.runtime_environment.kiara  # noqa
         import kiara.models.runtime_environment.operating_system  # noqa
         import kiara.models.runtime_environment.python  # noqa
 

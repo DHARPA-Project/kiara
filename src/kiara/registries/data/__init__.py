@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import abc
 import structlog
 import uuid
 from rich.console import RenderableType
@@ -7,12 +6,14 @@ from sqlalchemy.engine import Engine
 from typing import (
     TYPE_CHECKING,
     Any,
+    Callable,
     Dict,
     Iterable,
     List,
     Mapping,
     Optional,
-    Set, Type, Callable,
+    Set,
+    Type,
 )
 
 from kiara.defaults import (
@@ -21,14 +22,15 @@ from kiara.defaults import (
     NOT_SET_VALUE_ID,
     ORPHAN_PEDIGREE_OUTPUT_NAME,
     STRICT_CHECKS,
-    SpecialValue, DEFAULT_STORE_MARKER,
+    SpecialValue,
 )
 from kiara.exceptions import InvalidValuesException, JobConfigException
 from kiara.models.events import KiaraEvent
 from kiara.models.events.data_registry import (
-    RegistryEvent,
+    DataStoreAddedEvent,
     ValueCreatedEvent,
-    ValuePreStoreEvent, ValueStoredEvent, DataStoreAddedEvent,
+    ValuePreStoreEvent,
+    ValueStoredEvent,
 )
 from kiara.models.module.manifest import LoadConfig
 from kiara.models.python_class import PythonClass
@@ -45,9 +47,7 @@ from kiara.models.values.value_schema import ValueSchema
 from kiara.modules.operations.included_core_operations.render_value import (
     RenderValueOperationType,
 )
-from kiara.registries.data.data_store import DataStore, DataArchive
-from kiara.registries.data.data_store.filesystem_store import FilesystemDataStore
-from kiara.registries.events import EventListener
+from kiara.registries.data.data_store import DataArchive, DataStore
 from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import is_debug, log_message
 
@@ -57,10 +57,7 @@ if TYPE_CHECKING:
 logger = structlog.getLogger()
 
 
-
-
 class DataRegistry(object):
-
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
@@ -72,13 +69,12 @@ class DataRegistry(object):
 
         self._default_data_store: Optional[str] = None
 
-        self.register_data_archive(FilesystemDataStore(kiara=self._kiara), alias=DEFAULT_STORE_MARKER)
+        # self.register_data_archive(FilesystemDataStore(kiara=self._kiara), alias=DEFAULT_STORE_MARKER)
 
         self._registered_values: Dict[uuid.UUID, Value] = {}
 
         self._value_store_map: Dict[uuid.UUID, str] = {}
         # self._job_store_map: Dict[int, uuid.UUID] = {}
-
 
         self._values_by_hash: Dict[int, Set[uuid.UUID]] = {}
 
@@ -123,7 +119,6 @@ class DataRegistry(object):
         )
         self._cached_data[NONE_VALUE_ID] = SpecialValue.NO_VALUE
 
-
     @property
     def kiara_id(self) -> uuid.UUID:
         return self._kiara.id
@@ -138,7 +133,12 @@ class DataRegistry(object):
 
     def suppoerted_event_types(self) -> Iterable[Type[KiaraEvent]]:
 
-        return [DataStoreAddedEvent, ValuePreStoreEvent, ValueStoredEvent, ValueCreatedEvent]
+        return [
+            DataStoreAddedEvent,
+            ValuePreStoreEvent,
+            ValueStoredEvent,
+            ValueCreatedEvent,
+        ]
 
     # @property
     # def aliases(self) -> AliasRegistry:
@@ -159,15 +159,14 @@ class DataRegistry(object):
     #     self.aliases.set_alias(alias=alias, value_id=value.value_id)
     #     self.aliases.save(alias)
 
-    def register_data_archive(self, data_store: DataStore, alias: str=None):
+    def register_data_archive(self, data_store: DataStore, alias: str = None):
 
+        data_store_id = data_store.register_archive(kiara=self._kiara)
         if alias is None:
-            alias = str(data_store.data_store_id)
+            alias = str(data_store_id)
 
         if alias in self._data_stores.keys():
-            raise Exception(
-                f"Can't add store, alias '{alias}' already registered."
-            )
+            raise Exception(f"Can't add store, alias '{alias}' already registered.")
         self._data_stores[alias] = data_store
         is_store = False
         is_default_store = False
@@ -177,7 +176,13 @@ class DataRegistry(object):
                 is_default_store = True
                 self._default_data_store = alias
 
-        event = DataStoreAddedEvent.construct(kiara_id=self._kiara.id, data_archive_id=data_store.data_store_id, data_archive_alias=alias, is_store=is_store, is_default_store=is_default_store)
+        event = DataStoreAddedEvent.construct(
+            kiara_id=self._kiara.id,
+            data_archive_id=data_store.data_store_id,
+            data_archive_alias=alias,
+            is_store=is_store,
+            is_default_store=is_default_store,
+        )
         self._event_callback(event)
 
     @property
@@ -229,6 +234,13 @@ class DataRegistry(object):
 
     def get_value(self, value_id: uuid.UUID) -> Value:
 
+        if not isinstance(value_id, uuid.UUID):
+            # fallbacks for common mistakes, this should error out if not a Value or string.
+            if hasattr(value_id, "value_id"):
+                value_id = value_id.value_id
+            else:
+                value_id = uuid.UUID(value_id)
+
         if value_id in self._registered_values.keys():
             return self._registered_values[value_id]
 
@@ -249,6 +261,7 @@ class DataRegistry(object):
         stored_value = self.get_archive(matches[0]).retrieve_value(value_id=value_id)
         stored_value._set_registry(self)
         stored_value._is_stored = True
+
         self._registered_values[value_id] = stored_value
         return self._registered_values[value_id]
 
@@ -278,7 +291,9 @@ class DataRegistry(object):
             property_values = value.property_values
 
             for property, property_value in property_values.items():
-                self.store_value(value=property_value, store_id=store_id, skip_if_exists=True)
+                self.store_value(
+                    value=property_value, store_id=store_id, skip_if_exists=True
+                )
 
         store_event = ValueStoredEvent.construct(kiara_id=self._kiara.id, value=value)
         self._event_callback(store_event)
@@ -343,7 +358,7 @@ class DataRegistry(object):
         pedigree: Optional[ValuePedigree] = None,
         pedigree_output_name: str = None,
         reuse_existing: bool = True,
-        value_id: Optional[uuid.UUID] = None
+        value_id: Optional[uuid.UUID] = None,
     ) -> Value:
 
         if schema is None:
@@ -353,7 +368,9 @@ class DataRegistry(object):
             raise NotImplementedError()
 
         if reuse_existing and value_id:
-            raise Exception(f"Can't create value with pre-registered id '{value_id}': 'reuse_existing' set to True, which is not allowed if 'value_id' is set.")
+            raise Exception(
+                f"Can't create value with pre-registered id '{value_id}': 'reuse_existing' set to True, which is not allowed if 'value_id' is set."
+            )
 
         if pedigree_output_name is None:
             if pedigree == ORPHAN:
@@ -431,7 +448,9 @@ class DataRegistry(object):
         if value_id:
             v_id = value_id
         else:
-            v_id = ID_REGISTRY.generate(type="value", kiara_id=self._kiara.id, pre_registered=False)
+            v_id = ID_REGISTRY.generate(
+                type="value", kiara_id=self._kiara.id, pre_registered=False
+            )
         value, data = data_type.assemble_value(
             value_id=v_id,
             data=data,
@@ -572,11 +591,20 @@ class DataRegistry(object):
                 )
                 values[input_name] = value
             except Exception as e:
+                if is_debug():
+                    import traceback
+
+                    traceback.print_exc()
                 failed[input_name] = e
 
         if failed:
+            msg = []
+            for k, v in failed.items():
+                if not str(v):
+                    v = str(type(v).__name__)
+                msg.append(f"{k}: {v}")
             raise InvalidValuesException(
-                msg="Can't create values instance.",
+                msg=f"Can't create values instance: {', '.join(msg)}",
                 invalid_values={k: str(v) for k, v in failed.items()},
             )
 

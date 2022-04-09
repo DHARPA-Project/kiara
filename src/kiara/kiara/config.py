@@ -1,14 +1,21 @@
 # -*- coding: utf-8 -*-
 import os
 import uuid
-from pydantic import root_validator
+from pydantic import BaseModel, root_validator
 from pydantic.config import Extra
 from pydantic.env_settings import BaseSettings
 from pydantic.fields import Field
 from ruamel import yaml
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Mapping, Optional
 
-from kiara.defaults import KIARA_MAIN_CONFIG_FILE, kiara_app_dirs
+from kiara.defaults import (
+    DEFAULT_STORE_MARKER,
+    KIARA_CONTEXTS_FOLDER,
+    KIARA_MAIN_CONFIG_FILE,
+    kiara_app_dirs,
+)
+from kiara.registries.environment import EnvironmentRegistry
+from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import get_data_from_file, log_message
 from kiara.utils.db import get_kiara_db_url
 
@@ -23,13 +30,42 @@ def config_file_settings_source(settings: BaseSettings) -> Dict[str, Any]:
     return config
 
 
+class KiaraArchiveConfig(BaseModel):
+
+    archive_id: str = Field(description="The unique archive id.")
+    archive_type: str = Field(description="The archive type.")
+    config: Mapping[str, Any] = Field(
+        description="Archive type specific config.", default_factory=dict
+    )
+
+    @property
+    def archive_uuid(self) -> uuid.UUID:
+        return uuid.UUID(self.archive_id)
+
+
+def create_default_archives():
+
+    env_registry = EnvironmentRegistry.instance()
+
+    archives = env_registry.environments["kiara_types"].archive_types
+    store_type = "file_system_data_store"
+
+    assert store_type in archives.keys()
+
+    store_id = ID_REGISTRY.generate(comment="default store id")
+    data_store = KiaraArchiveConfig.construct(
+        archive_id=str(store_id), archive_type=store_type
+    )
+
+    return {DEFAULT_STORE_MARKER: data_store}
+
+
 class KiaraBaseConfig(BaseSettings):
     class Config:
         extra = Extra.forbid
 
-    module_managers: List[str] = Field(
-        description="The module managers to use in this kiara instance.",
-        default_factory=list,
+    archives: Dict[str, KiaraArchiveConfig] = Field(
+        description="All the archives this kiara context can use and the aliases they are registered with."
     )
     extra_pipeline_folders: List[str] = Field(
         description="Paths to local folders that contain kiara pipelines.",
@@ -94,12 +130,12 @@ class KiaraGlobalConfig(KiaraBaseConfig):
 
         contexts = {}
 
-        if not os.path.exists(kiara_app_dirs.user_data_dir):
+        if not os.path.exists(KIARA_CONTEXTS_FOLDER):
             return contexts
 
-        for f in os.listdir(kiara_app_dirs.user_data_dir):
+        for f in os.listdir(KIARA_CONTEXTS_FOLDER):
 
-            config_dir = os.path.join(kiara_app_dirs.user_data_dir, f)
+            config_dir = os.path.join(KIARA_CONTEXTS_FOLDER, f)
             k_config = cls.load_context(config_dir)
             if k_config:
                 contexts[k_config.context_alias] = k_config
@@ -122,6 +158,8 @@ class KiaraGlobalConfig(KiaraBaseConfig):
             context_alias = config["context_id"]
         config["context_alias"] = context_alias
         config["context_folder"] = path
+
+        config["archives"] = create_default_archives()
 
         kiara_config = KiaraContextConfig(**config)
         config_file = os.path.join(path, "kiara_context.yaml")
@@ -194,6 +232,7 @@ class KiaraGlobalConfig(KiaraBaseConfig):
             context_name = loaded_context.context_alias
         else:
             match = None
+
             for context_alias, context in contexts.items():
 
                 if context.context_id == context_name:
@@ -214,7 +253,7 @@ class KiaraGlobalConfig(KiaraBaseConfig):
                     raise Exception(f"Can't find context with name: {context_name}")
 
                 context_id = str(uuid.uuid4())
-                context_dir = os.path.join(kiara_app_dirs.user_data_dir, context_id)
+                context_dir = os.path.join(KIARA_CONTEXTS_FOLDER, context_id)
 
                 kiara_config = cls.create_context(
                     path=context_dir, context_id=context_id, context_alias=context_name
@@ -225,6 +264,7 @@ class KiaraGlobalConfig(KiaraBaseConfig):
 
         values["context"] = context_name
         values["context_configs"] = contexts
+        values["archives"] = contexts[context_name].archives
 
         return values
 

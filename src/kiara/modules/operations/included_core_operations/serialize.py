@@ -21,20 +21,6 @@ from kiara.utils import log_message
 
 
 class SerializeDetails(BaseOperationDetails):
-    @classmethod
-    def retrieve_inputs_schema(cls) -> ValueSetSchema:
-
-        return {"value": {"type": "any", "doc": "The value to serialzie."}}
-
-    @classmethod
-    def retrieve_outputs_schema(cls) -> ValueSetSchema:
-
-        return {
-            "serialized_value": {
-                "type": "serialized_value",
-                "doc": "The serialized value details (and data).",
-            }
-        }
 
     value_input_field: str = Field(
         description="The (input) field name containing the value to be serialized."
@@ -46,6 +32,19 @@ class SerializeDetails(BaseOperationDetails):
     serialization_format: str = Field(
         description="The name of the serialization format."
     )
+
+    def retrieve_inputs_schema(self) -> ValueSetSchema:
+
+        return {"value": {"type": "any", "doc": "The value to serialzie."}}
+
+    def retrieve_outputs_schema(self) -> ValueSetSchema:
+
+        return {
+            "serialized_value": {
+                "type": "serialized_value",
+                "doc": "The serialized value details (and data).",
+            }
+        }
 
     def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
         raise NotImplementedError()

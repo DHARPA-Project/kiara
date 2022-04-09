@@ -18,7 +18,7 @@ from kiara.registries.jobs import JobArchive
 from kiara.utils import log_message, orjson_dumps
 
 if TYPE_CHECKING:
-    from kiara.kiara import Kiara
+    pass
 
 logger = structlog.getLogger()
 
@@ -33,10 +33,18 @@ class EntityType(Enum):
     MANIFEST = "manifests"
 
 
-class FileSystemArchive(DataArchive, JobArchive):
-    def __init__(self, kiara: "Kiara"):
+class FileSystemDataArchive(DataArchive, JobArchive):
+    """Data store that loads data from the local filesystem."""
 
-        DataArchive.__init__(self, kiara=kiara)
+    _archive_type_name = "filesystem_data_archive"
+
+    @classmethod
+    def is_writeable(cls) -> bool:
+        return False
+
+    def __init__(self, archive_id: uuid.UUID):
+
+        DataArchive.__init__(self, archive_id=archive_id)
         self._base_path: Optional[Path] = None
 
     def get_job_archive_id(self) -> uuid.UUID:
@@ -228,7 +236,15 @@ class FileSystemArchive(DataArchive, JobArchive):
         return LoadConfig(**data)
 
 
-class FilesystemDataStore(FileSystemArchive, DataStore):
+class FilesystemDataStore(FileSystemDataArchive, DataStore):
+    """Data store that stores data as files on the local filesystem."""
+
+    _archive_type_name = "filesystem_data_store"
+
+    @classmethod
+    def is_writeable(cls) -> bool:
+        return False
+
     def _persist_environment_details(
         self, env_type: str, env_hash: int, env_data: Mapping[str, Any]
     ):

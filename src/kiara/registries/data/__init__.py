@@ -178,7 +178,7 @@ class DataRegistry(object):
 
         event = DataStoreAddedEvent.construct(
             kiara_id=self._kiara.id,
-            data_archive_id=data_store.data_store_id,
+            data_archive_id=data_store.archive_id,
             data_archive_alias=alias,
             is_store=is_store,
             is_default_store=is_default_store,

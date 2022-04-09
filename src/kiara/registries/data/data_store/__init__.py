@@ -9,7 +9,7 @@ from kiara.models.module.manifest import LoadConfig
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.value import ORPHAN, Value, ValuePedigree
 from kiara.models.values.value_schema import ValueSchema
-from kiara.registries import BaseArchive
+from kiara.registries import ARCHIVE_CONFIG_CLS, BaseArchive
 
 if TYPE_CHECKING:
     pass
@@ -23,18 +23,14 @@ class DataArchive(BaseArchive):
 
         return ["data", "job_record"]
 
-    def __init__(self, archive_id: uuid.UUID):
+    def __init__(self, archive_id: uuid.UUID, config: ARCHIVE_CONFIG_CLS):
 
-        super().__init__(archive_id=archive_id)
+        super().__init__(archive_id=archive_id, config=config)
 
         self._env_cache: Dict[str, Dict[int, Mapping[str, Any]]] = {}
         self._value_cache: Dict[uuid.UUID, Value] = {}
         self._load_config_cache: Dict[uuid.UUID, LoadConfig] = {}
         self._value_hash_index: Dict[int, Set[uuid.UUID]] = {}
-
-    @property
-    def data_store_id(self) -> uuid.UUID:
-        return self._archive_id
 
     def retrieve_load_config(self, value: Union[uuid.UUID, Value]) -> LoadConfig:
 

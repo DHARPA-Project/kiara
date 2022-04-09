@@ -277,7 +277,14 @@ string_types = (type(b""), type(""))
 def orjson_dumps(v, *, default=None, **args):
     # orjson.dumps returns bytes, to match standard json.dumps we need to decode
 
-    return orjson.dumps(v, default=default, **args).decode()
+    try:
+        return orjson.dumps(v, default=default, **args).decode()
+    except Exception as e:
+        if is_debug():
+            print(f"Error dumping json data: {e}")
+            dbg(v)
+
+        raise e
 
 
 def rich_print(msg: Any = None, **config: Any) -> None:

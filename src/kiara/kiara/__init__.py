@@ -52,6 +52,7 @@ from kiara.registries.modules import ModuleRegistry
 from kiara.registries.operations import OperationRegistry
 from kiara.registries.types import TypeRegistry
 from kiara.utils import is_debug, log_message
+from kiara.utils.class_loading import find_all_archive_types
 from kiara.utils.db import orm_json_deserialize, orm_json_serialize
 from kiara.utils.metadata import find_metadata_models
 from kiara.utils.operations import filter_operations_for_package
@@ -153,11 +154,26 @@ class Kiara(object):
         self._context_info: Optional[KiaraContextInfo] = None
 
         # initialize stores
+        self._archive_types = find_all_archive_types()
         self._archives: Dict[str, KiaraArchive] = {}
-        # default_data_store = FilesystemDataStore()
+
         for archive_alias, archive in self._config.archives.items():
-            dbg(archive_alias)
-            print(archive)
+            archive_cls = self._archive_types.get(archive.archive_type, None)
+            if archive_cls is None:
+                raise Exception(
+                    f"Can't create context: no archive type '{archive.archive_type}' available. Available types: {', '.join(self._archive_types.keys())}"
+                )
+
+            config_cls = archive_cls._config_cls
+            config = config_cls(**archive.config)
+            archive = archive_cls(archive_id=archive.archive_uuid, config=config)
+            for supported_type in archive.supported_item_types():
+                if supported_type == "data":
+                    self.data_registry.register_data_archive(
+                        archive, alias=archive_alias
+                    )
+                if supported_type == "job_record":
+                    self.job_registry.register_job_archive(archive, alias=archive_alias)
 
     def _run_alembic_migrations(self):
         script_location = os.path.abspath(KIARA_DB_MIGRATIONS_FOLDER)

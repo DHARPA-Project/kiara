@@ -8,7 +8,7 @@ from rich import box
 from rich.console import RenderableType
 from rich.markdown import Markdown
 from rich.table import Table
-from typing import Any, Callable, Dict, List, Mapping, Optional, Set, Tuple, Type, Union
+from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Type, Union
 
 from kiara.defaults import (
     AUTHORS_METADATA_CATEGORY_ID,
@@ -91,8 +91,8 @@ class ContextMetadataModel(KiaraModel):
     references: Dict[str, LinkModel] = Field(
         description="References for the item.", default_factory=dict
     )
-    tags: Set[str] = Field(
-        description="A list of tags for the item.", default_factory=set
+    tags: List[str] = Field(
+        description="A list of tags for the item.", default_factory=list
     )
     labels: Dict[str, str] = Field(
         description="A list of labels for the item.", default_factory=list

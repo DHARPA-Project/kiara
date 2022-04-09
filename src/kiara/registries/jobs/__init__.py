@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
 import abc
-import orjson
 import structlog
 import uuid
 from bidict import bidict
-from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Type, Iterable
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Type
 
-from kiara.defaults import DEFAULT_STORE_MARKER
 from kiara.models.events import KiaraEvent
-from kiara.models.events.data_registry import JobArchiveAddedEvent, JobRecordPreStoreEvent, JobRecordStoredEvent
+from kiara.models.events.data_registry import (
+    JobArchiveAddedEvent,
+    JobRecordPreStoreEvent,
+    JobRecordStoredEvent,
+)
 from kiara.models.module.jobs import ActiveJob, JobConfig, JobRecord, JobStatus
 from kiara.models.module.manifest import InputsManifest, Manifest
 from kiara.models.values.value import ValueSet
 from kiara.processing import ModuleProcessor
 from kiara.processing.synchronous import SynchronousProcessor
-from kiara.registries.ids import ID_REGISTRY
+from kiara.registries import BaseArchive
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -26,11 +27,7 @@ logger = structlog.getLogger()
 MANIFEST_SUB_PATH = "manifests"
 
 
-class JobArchive(abc.ABC):
-    @abc.abstractmethod
-    def get_job_archive_id(self) -> uuid.UUID:
-        pass
-
+class JobArchive(BaseArchive):
     @abc.abstractmethod
     def find_matching_job_record(
         self, inputs_manifest: InputsManifest
@@ -44,117 +41,7 @@ class JobStore(JobArchive):
         pass
 
 
-class FileSystemJobArchive(JobArchive):
-    @classmethod
-    def create_from_kiara_context(cls, kiara: "Kiara"):
-
-        base_path = Path(kiara.context_config.data_directory) / "job_store"
-        base_path.mkdir(parents=True, exist_ok=True)
-        result = cls(base_path=base_path, store_id=kiara.id)
-        ID_REGISTRY.update_metadata(
-            result.get_job_archive_id(), kiara_id=kiara.id, obj=result
-        )
-        return result
-
-    def __init__(self, base_path: Path, store_id: uuid.UUID):
-
-        if not base_path.is_dir():
-            raise Exception(
-                f"Can't create file system archive instance, base path does not exist or is not a folder: {base_path.as_posix()}."
-            )
-
-        self._store_id: uuid.UUID = store_id
-        self._base_path: Path = base_path
-
-    @property
-    def job_store_path(self) -> Path:
-        return self._base_path
-
-    def get_job_archive_id(self) -> uuid.UUID:
-        return self._store_id
-
-    def find_matching_job_record(
-        self, inputs_manifest: InputsManifest
-    ) -> Optional[JobRecord]:
-
-
-        manifest_hash = inputs_manifest.manifest_hash
-        jobs_hash = inputs_manifest.job_hash
-
-        base_path = self._base_path / MANIFEST_SUB_PATH
-        manifest_folder = base_path / str(manifest_hash)
-
-        if not manifest_folder.exists():
-            return None
-
-        manifest_file = manifest_folder / "manifest.json"
-
-        if not manifest_file.exists():
-            raise Exception(
-                f"No 'manifests.json' file for manifest with hash: {manifest_hash}"
-            )
-
-        details_folder = manifest_folder / str(jobs_hash)
-        if not details_folder.exists():
-            return None
-
-        details_file_name = details_folder / "details.json"
-        if not details_file_name.exists():
-            raise Exception(
-                f"No 'inputs.json' file for manifest/inputs hash-combo: {manifest_hash} / {jobs_hash}"
-            )
-
-        details_content = details_file_name.read_text()
-        details: Dict[str, Any] = orjson.loads(details_content)
-
-        job_record = JobRecord(**details)
-        job_record._is_stored = True
-        return job_record
-
-
-class FileSystemJobStore(FileSystemJobArchive, JobStore):
-    def store_job_record(self, job_record: JobRecord):
-
-        manifest_hash = job_record.manifest_hash
-        jobs_hash = job_record.job_hash
-
-        base_path = self._base_path / MANIFEST_SUB_PATH
-        manifest_folder = base_path / str(manifest_hash)
-
-        manifest_folder.mkdir(parents=True, exist_ok=True)
-
-        manifest_info_file = manifest_folder / "manifest.json"
-        if not manifest_info_file.exists():
-            manifest_info_file.write_text(job_record.manifest_data_as_json())
-
-        job_folder = manifest_folder / str(jobs_hash)
-        job_folder.mkdir(parents=True, exist_ok=True)
-
-        job_details_file_name = job_folder / "details.json"
-        if job_details_file_name.exists():
-            raise Exception(
-                f"Job record already exists: {job_details_file_name.as_posix()}"
-            )
-
-        job_details_file_name.write_text(job_record.json())
-
-        for output_name, output_v_id in job_record.outputs.items():
-
-            outputs_file_name = (
-                job_folder / f"output__{output_name}__value_id__{output_v_id}.json"
-            )
-
-            if outputs_file_name.exists():
-                # if value.pedigree_output_name == "__void__":
-                #     return
-                # else:
-                raise Exception(f"Can't write value '{output_v_id}': already exists.")
-            else:
-                outputs_file_name.touch()
-
-
 class JobRegistry(object):
-
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
@@ -170,8 +57,8 @@ class JobRegistry(object):
 
         self._event_callback = self._kiara.event_registry.add_producer(self)
 
-        default_archive = FileSystemJobStore.create_from_kiara_context(self._kiara)
-        self.register_job_archive(default_archive, store_alias=DEFAULT_STORE_MARKER)
+        # default_archive = FileSystemJobStore.create_from_kiara_context(self._kiara)
+        # self.register_job_archive(default_archive, store_alias=DEFAULT_STORE_MARKER)
 
         # default_file_store = self._kiara.data_registry.get_archive(DEFAULT_STORE_MARKER)
         # self.register_job_archive(default_file_store, store_alias="default_data_store")  # type: ignore
@@ -180,26 +67,32 @@ class JobRegistry(object):
 
         return [JobArchiveAddedEvent, JobRecordPreStoreEvent, JobRecordStoredEvent]
 
-    def register_job_archive(self, job_store: JobStore, store_alias: Optional[str]=None):
+    def register_job_archive(self, job_store: JobStore, alias: Optional[str] = None):
 
-        if store_alias is None:
-            store_alias = str(job_store.get_job_archive_id())
+        if alias is None:
+            alias = str(job_store.archive_id)
 
-        if store_alias in self._job_archives.keys():
+        if alias in self._job_archives.keys():
             raise Exception(
-                f"Can't register job store, store id already registered: {store_alias}."
+                f"Can't register job store, store id already registered: {alias}."
             )
 
-        self._job_archives[store_alias] = job_store
+        self._job_archives[alias] = job_store
 
         is_store = False
         is_default_store = False
         if isinstance(job_store, JobStore):
             is_store = True
             if self._default_job_store is None:
-                self._default_job_store = store_alias
+                self._default_job_store = alias
 
-        event = JobArchiveAddedEvent.construct(kiara_id=self._kiara.id, job_archive_id=job_store.get_job_archive_id(), job_archive_alias=store_alias, is_store=is_store, is_default_store=is_default_store)
+        event = JobArchiveAddedEvent.construct(
+            kiara_id=self._kiara.id,
+            job_archive_id=job_store.archive_id,
+            job_archive_alias=alias,
+            is_store=is_store,
+            is_default_store=is_default_store,
+        )
         self._event_callback(event)
 
     @property
@@ -209,7 +102,7 @@ class JobRegistry(object):
             raise Exception("No default job store set (yet).")
         return self._default_job_store  # type: ignore
 
-    def get_archive(self, store_id: Optional[str]=None) -> JobArchive:
+    def get_archive(self, store_id: Optional[str] = None) -> JobArchive:
 
         if store_id is None:
             store_id = self.default_job_store
@@ -258,12 +151,16 @@ class JobRegistry(object):
         if not isinstance(store, JobStore):
             raise Exception("Can't store job record to archive: not writable.")
 
-        pre_store_event = JobRecordPreStoreEvent.construct(kiara_id=self._kiara.id, job_record=job_record)
+        pre_store_event = JobRecordPreStoreEvent.construct(
+            kiara_id=self._kiara.id, job_record=job_record
+        )
         self._event_callback(pre_store_event)
 
         store.store_job_record(job_record)
 
-        stored_event = JobRecordStoredEvent.construct(kiara_id=self._kiara.id, job_record=job_record)
+        stored_event = JobRecordStoredEvent.construct(
+            kiara_id=self._kiara.id, job_record=job_record
+        )
         self._event_callback(stored_event)
 
     def get_job_record_in_session(self, job_id: uuid.UUID) -> JobRecord:

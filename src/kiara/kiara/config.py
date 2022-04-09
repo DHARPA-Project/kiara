@@ -9,9 +9,11 @@ from ruamel import yaml
 from typing import Any, Dict, List, Mapping, Optional
 
 from kiara.defaults import (
-    DEFAULT_STORE_MARKER,
+    DEFAULT_DATA_STORE_MARKER,
+    DEFAULT_JOB_STORE_MARKER,
     KIARA_CONTEXTS_FOLDER,
     KIARA_MAIN_CONFIG_FILE,
+    KIARA_STORES_FOLDER,
     kiara_app_dirs,
 )
 from kiara.registries.environment import EnvironmentRegistry
@@ -48,16 +50,27 @@ def create_default_archives():
     env_registry = EnvironmentRegistry.instance()
 
     archives = env_registry.environments["kiara_types"].archive_types
-    store_type = "file_system_data_store"
+    data_store_type = "filesystem_data_store"
 
-    assert store_type in archives.keys()
+    assert data_store_type in archives.keys()
 
-    store_id = ID_REGISTRY.generate(comment="default store id")
+    data_store_id = ID_REGISTRY.generate(comment="default data store id")
+    archive_config = {"base_path": KIARA_STORES_FOLDER}
     data_store = KiaraArchiveConfig.construct(
-        archive_id=str(store_id), archive_type=store_type
+        archive_id=str(data_store_id),
+        archive_type=data_store_type,
+        config=dict(archive_config),
     )
 
-    return {DEFAULT_STORE_MARKER: data_store}
+    job_store_type = "filesystem_job_store"
+    job_store_id = ID_REGISTRY.generate(comment="default job store id")
+    job_store = KiaraArchiveConfig.construct(
+        archive_id=str(job_store_id),
+        archive_type=job_store_type,
+        config=dict(archive_config),
+    )
+
+    return {DEFAULT_DATA_STORE_MARKER: data_store, DEFAULT_JOB_STORE_MARKER: job_store}
 
 
 class KiaraBaseConfig(BaseSettings):

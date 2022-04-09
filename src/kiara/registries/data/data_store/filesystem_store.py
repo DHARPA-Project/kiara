@@ -12,6 +12,7 @@ from kiara.models.values.value import Value
 from kiara.modules.operations.included_core_operations.persistence import (
     PersistValueOperationType,
 )
+from kiara.registries import FileSystemArchiveConfig
 from kiara.registries.data.data_store import DataArchive, DataStore
 from kiara.registries.ids import ID_REGISTRY
 from kiara.registries.jobs import JobArchive
@@ -37,18 +38,19 @@ class FileSystemDataArchive(DataArchive, JobArchive):
     """Data store that loads data from the local filesystem."""
 
     _archive_type_name = "filesystem_data_archive"
+    _config_cls = FileSystemArchiveConfig
 
     @classmethod
     def is_writeable(cls) -> bool:
         return False
 
-    def __init__(self, archive_id: uuid.UUID):
+    def __init__(self, archive_id: uuid.UUID, config: FileSystemArchiveConfig):
 
-        DataArchive.__init__(self, archive_id=archive_id)
+        DataArchive.__init__(self, archive_id=archive_id, config=config)
         self._base_path: Optional[Path] = None
 
-    def get_job_archive_id(self) -> uuid.UUID:
-        return self._kiara.id
+    # def get_job_archive_id(self) -> uuid.UUID:
+    #     return self._kiara.id
 
     @property
     def data_store_path(self) -> Path:
@@ -56,7 +58,9 @@ class FileSystemDataArchive(DataArchive, JobArchive):
         if self._base_path is not None:
             return self._base_path
 
-        self._base_path = Path(self._kiara.context_config.data_directory) / "data_store"
+        self._base_path = (
+            Path(self.config.base_path) / "data_store" / str(self.archive_id)
+        )
         self._base_path.mkdir(parents=True, exist_ok=True)
         return self._base_path
 

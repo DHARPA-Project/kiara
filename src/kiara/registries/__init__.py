@@ -1,13 +1,29 @@
 # -*- coding: utf-8 -*-
 import abc
+import orjson
 import uuid
-from typing import TYPE_CHECKING, Iterable, Optional
+from pydantic import BaseModel, Field
+from typing import TYPE_CHECKING, ClassVar, Generic, Iterable, Optional, Type, TypeVar
+
+from kiara.utils import orjson_dumps
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
 
 
+class ArchiveConfig(BaseModel):
+    class Config:
+        json_loads = orjson.loads
+        json_dumps = orjson_dumps
+
+
+ARCHIVE_CONFIG_CLS = TypeVar("ARCHIVE_CONFIG_CLS", bound=ArchiveConfig)
+
+
 class KiaraArchive(abc.ABC):
+
+    _config_cls: ClassVar[Type[ArchiveConfig]] = ArchiveConfig
+
     @classmethod
     @abc.abstractmethod
     def supported_item_types(cls) -> Iterable[str]:
@@ -23,11 +39,24 @@ class KiaraArchive(abc.ABC):
         pass
 
 
-class BaseArchive(KiaraArchive):
-    def __init__(self, archive_id: uuid.UUID):
+class BaseArchive(KiaraArchive, Generic[ARCHIVE_CONFIG_CLS]):
+
+    _config_cls: ClassVar[Type[ARCHIVE_CONFIG_CLS]] = ArchiveConfig
+
+    def __init__(self, archive_id: uuid.UUID, config: ARCHIVE_CONFIG_CLS):
 
         self._archive_id: uuid.UUID = archive_id
+        self._config: ARCHIVE_CONFIG_CLS = config
         self._kiara: Optional["Kiara"] = None
+
+    @property
+    def config(self) -> ARCHIVE_CONFIG_CLS:
+
+        return self._config
+
+    @property
+    def archive_id(self) -> uuid.UUID:
+        return self._archive_id
 
     @property
     def kiara_context(self) -> "Kiara":
@@ -37,4 +66,9 @@ class BaseArchive(KiaraArchive):
 
     def register_archive(self, kiara: "Kiara") -> uuid.UUID:
         self._kiara = kiara
-        return self._archive_id
+        return self.archive_id
+
+
+class FileSystemArchiveConfig(ArchiveConfig):
+
+    base_path: str = Field(description="The base path for this archive.")

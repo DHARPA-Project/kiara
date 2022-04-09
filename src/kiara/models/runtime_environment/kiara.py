@@ -19,9 +19,7 @@ from kiara.models.python_class import PythonClass
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.value_metadata import MetadataTypeClassesInfo
 from kiara.registries import KiaraArchive
-from kiara.utils.class_loading import (
-    find_all_archive_types,
-)
+from kiara.utils.class_loading import find_all_archive_types
 from kiara.utils.metadata import find_metadata_models
 
 
@@ -90,7 +88,7 @@ class ArchiveTypeClassesInfo(TypeInfoModelGroupMixin):
     def base_info_class(cls) -> Type[ArchiveTypeInfoModel]:
         return ArchiveTypeInfoModel
 
-    type_name: Literal["value_metadata"] = "value_metadata"
+    type_name: Literal["archive_type"] = "archive_type"
     type_infos: Mapping[str, ArchiveTypeInfoModel] = Field(
         description="The archive info instances for each type."
     )

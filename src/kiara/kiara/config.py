@@ -55,19 +55,24 @@ def create_default_archives():
     assert data_store_type in archives.keys()
 
     data_store_id = ID_REGISTRY.generate(comment="default data store id")
-    archive_config = {"base_path": KIARA_STORES_FOLDER}
+    data_archive_config = {
+        "base_path": os.path.join(KIARA_STORES_FOLDER, data_store_type)
+    }
     data_store = KiaraArchiveConfig.construct(
         archive_id=str(data_store_id),
         archive_type=data_store_type,
-        config=dict(archive_config),
+        config=data_archive_config,
     )
 
     job_store_type = "filesystem_job_store"
+    job_archive_config = {
+        "base_path": os.path.join(KIARA_STORES_FOLDER, job_store_type)
+    }
     job_store_id = ID_REGISTRY.generate(comment="default job store id")
     job_store = KiaraArchiveConfig.construct(
         archive_id=str(job_store_id),
         archive_type=job_store_type,
-        config=dict(archive_config),
+        config=job_archive_config,
     )
 
     return {DEFAULT_DATA_STORE_MARKER: data_store, DEFAULT_JOB_STORE_MARKER: job_store}

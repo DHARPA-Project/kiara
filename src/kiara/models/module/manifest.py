@@ -134,23 +134,3 @@ class InputsManifest(Manifest):
             h = DeepHash(self.inputs, hasher=KIARA_HASH_FUNCTION)
             self._inputs_hash = h[self.inputs]
         return self._inputs_hash
-
-
-class LoadConfig(Manifest):
-
-    inputs: Dict[str, Any] = Field(
-        description="The inputs to use to re-load the previously persisted value."
-    )
-    output_name: str = Field(
-        description="The name of the field that contains the persisted value details."
-    )
-
-    def _retrieve_data_to_hash(self) -> Any:
-        return self.dict()
-
-    def __repr__(self):
-
-        return f"{self.__class__.__name__}(module_type={self.module_type}, output_name={self.output_name})"
-
-    def __str__(self):
-        return self.__repr__()

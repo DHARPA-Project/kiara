@@ -3,7 +3,7 @@ from pydantic import Field
 from typing import Type
 
 from kiara.data_types import DataType, DataTypeConfig
-from kiara.models.module.manifest import LoadConfig
+from kiara.models.module.persistence import LoadConfig
 
 
 class LoadConfigSchema(DataTypeConfig):

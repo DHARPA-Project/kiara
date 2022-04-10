@@ -15,6 +15,7 @@ from rich import box
 from rich.console import Console, ConsoleOptions, RenderGroup, RenderResult
 from rich.panel import Panel
 from typing import (
+    TYPE_CHECKING,
     Any,
     Dict,
     Generic,
@@ -44,7 +45,6 @@ from kiara.models.module.jobs import JobLog
 # from kiara.module_config import KIARA_CONFIG, ModuleConfig, KiaraModuleConfig
 # from kiara.operations import Operation
 # from kiara.processing import JobLog
-from kiara.models.values.value import ValueSet
 from kiara.models.values.value_schema import ValueSchema
 from kiara.utils import StringYAML, is_debug
 
@@ -54,6 +54,10 @@ from kiara.utils.values import (
     create_schema_dict,
     overlay_constants_and_defaults,
 )
+
+if TYPE_CHECKING:
+    from kiara.models.values.value import ValueSet
+
 
 yaml = StringYAML()
 
@@ -386,7 +390,7 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
             )
 
     def process_step(
-        self, inputs: ValueSet, outputs: ValueSet, job_log: JobLog
+        self, inputs: "ValueSet", outputs: "ValueSet", job_log: JobLog
     ) -> None:
         """Kick off processing for a specific set of input/outputs.
 

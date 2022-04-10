@@ -4,16 +4,14 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-import uuid
-from typing import Any, Mapping, TYPE_CHECKING, Type, Optional, Union, Iterable
-
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Type, Union
 
 if TYPE_CHECKING:
     from kiara import KiaraModule
     from kiara.data_types import DataType
+    from kiara.models.module.jobs import ActiveJob
     from kiara.models.module.manifest import Manifest
     from kiara.models.values.value import Value
-    from kiara.models.module.jobs import ActiveJob
 
 
 class KiaraException(Exception):
@@ -81,15 +79,21 @@ class KiaraValueException(Exception):
 
         super().__init__(f"Invalid value of type '{data_type._data_type_name}': {exc_msg}")  # type: ignore
 
-class NoSuchExecutionTargetException(Exception):
 
-    def __init__(self, selected_target: str, available_targets: Iterable[str], msg: Optional[str]=None):
+class NoSuchExecutionTargetException(Exception):
+    def __init__(
+        self,
+        selected_target: str,
+        available_targets: Iterable[str],
+        msg: Optional[str] = None,
+    ):
 
         if msg is None:
             msg = f"Specified run target '{selected_target}' is an operation, additional module configuration is not allowed."
 
         self.avaliable_targets: Iterable[str] = available_targets
         super().__init__(msg)
+
 
 class KiaraProcessingException(Exception):
     def __init__(
@@ -135,9 +139,12 @@ class InvalidValuesException(Exception):
 
         if msg is None:
             if not self.invalid_inputs:
-                _msg = "Invalid inputs."
+                _msg = "Invalid values. No details available."
             else:
-                _msg = f"Invalid inputs: {', '.join(self.invalid_inputs.keys())}"
+                msg_parts = []
+                for k, v in invalid_values.items():
+                    msg_parts.append(f"{k}: {v}")
+                _msg = f"Invalid values: {', '.join(msg_parts)}"
         elif isinstance(msg, Exception):
             self._parent: Optional[Exception] = msg
             _msg = str(msg)
@@ -178,8 +185,7 @@ class JobConfigException(Exception):
 
 
 class FailedJobException(Exception):
-
-    def __init__(self, job: "ActiveJob", msg: Optional[str]=None):
+    def __init__(self, job: "ActiveJob", msg: Optional[str] = None):
 
         self.job: ActiveJob = job
         if msg is None:

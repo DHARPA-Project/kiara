@@ -5,7 +5,7 @@ import uuid
 from rich.console import RenderableType
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Set, Union
 
-from kiara.models.module.manifest import LoadConfig
+from kiara.models.module.persistence import LoadConfig
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.value import ORPHAN, Value, ValuePedigree
 from kiara.models.values.value_schema import ValueSchema

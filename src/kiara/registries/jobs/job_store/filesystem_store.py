@@ -34,9 +34,7 @@ class FileSystemJobArchive(JobArchive):
         if self._base_path is not None:
             return self._base_path
 
-        self._base_path = (
-            Path(self.config.base_path) / "job_record_store" / str(self.archive_id)
-        )
+        self._base_path = Path(self.config.base_path) / str(self.archive_id)
         self._base_path.mkdir(parents=True, exist_ok=True)
         return self._base_path
 

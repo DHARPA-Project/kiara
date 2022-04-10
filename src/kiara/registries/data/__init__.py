@@ -32,7 +32,7 @@ from kiara.models.events.data_registry import (
     ValuePreStoreEvent,
     ValueStoredEvent,
 )
-from kiara.models.module.manifest import LoadConfig
+from kiara.models.module.persistence import LoadConfig
 from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
 from kiara.models.values.value import (

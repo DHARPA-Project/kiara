@@ -3,11 +3,17 @@ import orjson
 import structlog
 import uuid
 from enum import Enum
+from hashfs import HashFS
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Set
 
 from kiara.models.module.jobs import JobRecord
-from kiara.models.module.manifest import InputsManifest, LoadConfig
+from kiara.models.module.manifest import InputsManifest
+from kiara.models.module.persistence import (
+    ByteProvisioningStrategy,
+    BytesStructure,
+    LoadConfig,
+)
 from kiara.models.values.value import Value
 from kiara.modules.operations.included_core_operations.persistence import (
     PersistValueOperationType,
@@ -34,6 +40,11 @@ class EntityType(Enum):
     MANIFEST = "manifests"
 
 
+DEFAULT_HASHFS_DEPTH = 4
+DEFAULT_HASHFS_WIDTH = 1
+DEFAULT_HASH_FS_ALGORITHM = "sha256"
+
+
 class FileSystemDataArchive(DataArchive, JobArchive):
     """Data store that loads data from the local filesystem."""
 
@@ -48,6 +59,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
 
         DataArchive.__init__(self, archive_id=archive_id, config=config)
         self._base_path: Optional[Path] = None
+        self._hashfs: Optional[HashFS] = None
 
     # def get_job_archive_id(self) -> uuid.UUID:
     #     return self._kiara.id
@@ -58,11 +70,21 @@ class FileSystemDataArchive(DataArchive, JobArchive):
         if self._base_path is not None:
             return self._base_path
 
-        self._base_path = (
-            Path(self.config.base_path) / "data_store" / str(self.archive_id)
-        )
+        self._base_path = Path(self.config.base_path) / str(self.archive_id)
         self._base_path.mkdir(parents=True, exist_ok=True)
         return self._base_path
+
+    @property
+    def hashfs(self) -> HashFS:
+
+        if self._hashfs is None:
+            self._hashfs = HashFS(
+                self.data_store_path,
+                depth=DEFAULT_HASHFS_DEPTH,
+                width=DEFAULT_HASHFS_WIDTH,
+                algorithm=DEFAULT_HASH_FS_ALGORITHM,
+            )
+        return self._hashfs
 
     def get_path(
         self, entity_type: Optional[EntityType] = None, base_path: Optional[Path] = None
@@ -293,13 +315,11 @@ class FilesystemDataStore(FileSystemDataArchive, DataStore):
         working_dir = self.get_path(entity_type=EntityType.VALUE_DATA)
         data_dir = working_dir / value.data_type_name / str(value.value_hash)
 
-        base_name = "value"
         result = op.run(
             kiara=self._kiara,
             inputs={
                 "value": value,
-                "target": data_dir.as_posix(),
-                "base_name": base_name,
+                "persistence_config": {"temp_dir": data_dir.as_posix()},
             },
         )
 
@@ -308,13 +328,32 @@ class FilesystemDataStore(FileSystemDataArchive, DataStore):
             raise Exception(
                 f"Can't write load config, no load config returned by module '{op.module_type}' when persisting value."
             )
-
         if not isinstance(load_config, LoadConfig):
             raise Exception(
                 f"Can't write load config, invalid result type '{type(load_config)}' from module '{op.module_type}' when persisting value."
             )
 
+        bytes_structure: BytesStructure = result.get_value_data("bytes_structure")
+        if (
+            load_config.provisioning_strategy != ByteProvisioningStrategy.INLINE
+            and not bytes_structure
+        ):
+            raise Exception(
+                f"Can't write load config, no bytes structure returned by module '{op.module_type}' when persisting value."
+            )
+
+        if bytes_structure and not isinstance(bytes_structure, BytesStructure):
+            raise Exception(
+                f"Can't write load config, invalid result bytes structure type '{type(bytes_structure)}' from module '{op.module_type}' when persisting value."
+            )
+
+        print("----")
+        dbg(load_config.dict())
+        dbg(bytes_structure)
+        print("----")
+
         load_config_file = data_dir / ".load_config.json"
+        data_dir.mkdir(exist_ok=True, parents=True)
         load_config_file.write_text(load_config.json())
 
         return load_config

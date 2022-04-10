@@ -2,7 +2,7 @@
 import abc
 import logging
 import uuid
-from pydantic import PrivateAttr, BaseModel
+from pydantic import PrivateAttr
 from pydantic.fields import Field
 from rich import box
 from rich.console import RenderableType
@@ -15,7 +15,8 @@ from typing import (
     List,
     Mapping,
     MutableMapping,
-    Optional, Set, Union,
+    Optional,
+    Union,
 )
 
 from kiara.defaults import (
@@ -29,11 +30,12 @@ from kiara.defaults import (
 )
 from kiara.exceptions import InvalidValuesException
 from kiara.models import KiaraModel
-from kiara.models.module.manifest import InputsManifest, LoadConfig
+from kiara.models.module.manifest import InputsManifest
+from kiara.models.module.persistence import LoadConfig
 from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
 from kiara.models.values.value_schema import ValueSchema
-from kiara.utils import StringYAML
+from kiara.utils import StringYAML, is_debug
 
 log = logging.getLogger("kiara")
 yaml = StringYAML()
@@ -167,7 +169,6 @@ class ValueDetails(KiaraModel):
         return self.__repr__()
 
 
-
 class Value(ValueDetails):
 
     _value_data: Any = PrivateAttr(default=SpecialValue.NOT_SET)
@@ -181,10 +182,17 @@ class Value(ValueDetails):
         description="Links to values that are properties of this value.",
         default_factory=dict,
     )
-    destiny_details: Mapping[uuid.UUID, str] = Field(description="Backlinks to values that this value acts as destiny/or property for.", default_factory=dict)
+    destiny_details: Mapping[uuid.UUID, str] = Field(
+        description="Backlinks to values that this value acts as destiny/or property for.",
+        default_factory=dict,
+    )
 
-
-    def add_property(self, value_id: Union[uuid.UUID, "Value"], property_path: str, add_origin_to_property_value: bool=True):
+    def add_property(
+        self,
+        value_id: Union[uuid.UUID, "Value"],
+        property_path: str,
+        add_origin_to_property_value: bool = True,
+    ):
 
         value = None
         try:
@@ -219,7 +227,9 @@ class Value(ValueDetails):
         self.property_refs[property_path] = value_id  # type: ignore
 
         if add_origin_to_property_value:
-            value.add_destiny_details(value_id=self.value_id, destiny_alias=property_path)
+            value.add_destiny_details(
+                value_id=self.value_id, destiny_alias=property_path
+            )
 
         self._cached_properties = None
 
@@ -306,7 +316,6 @@ class Value(ValueDetails):
     def property_data(self) -> Mapping[str, Any]:
 
         return self._data_registry.load_data(self.property_refs)
-
 
     def create_renderable(self, **render_config: Any) -> RenderableType:
 
@@ -625,6 +634,10 @@ class ValueSetWritable(ValueSet):  # type: ignore
 
         invalid = self.check_invalid()
         if invalid:
+            if is_debug():
+                import traceback
+
+                traceback.print_stack()
             raise InvalidValuesException(invalid_values=invalid)
 
     def set_value(self, field_name: str, data: Any) -> None:

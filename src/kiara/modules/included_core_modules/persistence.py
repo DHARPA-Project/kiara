@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
 import abc
-import orjson
 import os
 from pydantic import Field, validator
-from typing import Any, Dict, Iterable, Mapping, Union
+from typing import Any, Dict, Iterable, Mapping, Optional, Tuple, Union
 
 from kiara.defaults import LOAD_CONFIG_DATA_TYPE_NAME
 from kiara.exceptions import KiaraProcessingException
 from kiara.models import KiaraModel
-from kiara.models.filesystem import FileModel
 from kiara.models.module import KiaraModuleConfig
-from kiara.models.module.manifest import LoadConfig
+from kiara.models.module.persistence import (
+    ByteProvisioningStrategy,
+    BytesStructure,
+    LoadConfig,
+)
 from kiara.models.python_class import PythonClass
 from kiara.models.values.value import Value, ValueSet
 from kiara.models.values.value_schema import ValueSchema
@@ -53,12 +55,6 @@ class PersistValueModule(KiaraModule):
 
         schema = {
             source_type: {"type": source_type, "doc": "The value to serialize."},
-            "target": {"type": "string", "doc": "The folder to store the value in."},
-            "base_name": {
-                "type": "string",
-                "doc": "The base name for the saved file. Depending on the value type, the extension might be automatically determined.",
-                "optional": True,
-            },
         }
 
         return schema
@@ -75,7 +71,12 @@ class PersistValueModule(KiaraModule):
                     "persistence_format": self.get_persistence_format_name(),
                 },
                 "doc": "The value in serialized form.",
-            }
+            },
+            "bytes_structure": {
+                "type": "any",
+                "doc": "The actual serialized value bytes or path to saved files containing the value data.",
+                "optional": True,
+            },
         }
 
     @abc.abstractmethod
@@ -91,18 +92,14 @@ class PersistValueModule(KiaraModule):
         source_type = self.get_config_value("source_type")
         value = inputs.get_value_obj(source_type)
 
-        target = inputs.get_value_data("target")
-        base_name = inputs.get_value_data("base_name")
-        # input_fields = set(inputs.field_names)
-        # input_fields.remove(source_type)
-        #
-        # persistence_config = inputs.get_value_data_for_fields(*input_fields)
-
         func_name = f"data_type__{self.get_config_value('source_type')}"
         func = getattr(self, func_name)
 
-        result: LoadConfig = func(value=value, target=target, base_name=base_name)
-        outputs.set_value("load_config", result)
+        result: LoadConfig
+        bytes_structure: Optional[BytesStructure]
+        result, bytes_structure = func(value=value, persistence_config={"x": "y"})
+
+        outputs.set_values(load_config=result, bytes_structure=bytes_structure)
 
 
 class SavePickleToDiskModule(PersistValueModule):
@@ -115,31 +112,40 @@ class SavePickleToDiskModule(PersistValueModule):
     def get_persistence_format_name(self) -> str:
         return "pickle_file"
 
-    def data_type__any(self, value: Value, target: str, base_name: str) -> LoadConfig:
+    def data_type__any(
+        self, value: Value, persistence_config: Mapping[str, Any]
+    ) -> Tuple[LoadConfig, Optional[BytesStructure]]:
         """Persist any Python object using 'pickle'."""
 
         import pickle5 as pickle
 
-        os.makedirs(target, exist_ok=True)
+        # os.makedirs(target, exist_ok=True)
+        # target_file = os.path.join(target, f"{base_name}.pickle")
+        # with open(target_file, "wb") as f:
 
-        target_file = os.path.join(target, f"{base_name}.pickle")
+        pickled_bytes = pickle.dumps(value.data, protocol=5)
 
-        # value_hash = mmh3.hash_from_buffer(value.value_data)
-        # value_size = len(value.value_data)
+        bytes_structure_data = {
+            "data_type": value.value_schema.type,
+            "data_type_config": value.value_schema.type_config,
+            "bytes_map": {"serialized_value.pickle": pickled_bytes},
+        }
 
-        with open(target_file, "wb") as f:
-            pickle.dump(value.data, f, protocol=5)
+        bytes_structure = BytesStructure.construct(**bytes_structure_data)
 
-        file_model = FileModel.load_file(target_file)
         load_config_data = {
-            "inputs": {"pickle_file": file_model},
-            "module_type": "value.load.pickle_file.from.disk",
-            "module_config": {"data_type": value.value_schema.type},
+            "provisioning_strategy": ByteProvisioningStrategy.BYTES,
+            "module_type": "value.load.pickled_data",
+            "module_config": {
+                "data_type": value.value_schema.type,
+                "data_type_config": value.value_schema.type_config,
+            },
+            "inputs": {"serialized_value": "serialized_value.pickle"},
             "output_name": value.value_schema.type,
         }
 
         load_config = LoadConfig(**load_config_data)
-        return load_config
+        return load_config, bytes_structure
 
 
 class SaveInternalModelModule(PersistValueModule):
@@ -154,12 +160,9 @@ class SaveInternalModelModule(PersistValueModule):
         return "json_file"
 
     def data_type__internal_model(
-        self, value: Value, target: str, base_name: str
-    ) -> LoadConfig:
+        self, value: Value, persistence_config: Mapping[str, Any]
+    ) -> Tuple[LoadConfig, Optional[BytesStructure]]:
         """Persist internally used model data as a json file."""
-
-        os.makedirs(target, exist_ok=True)
-        target_file = os.path.join(target, f"{base_name}.json")
 
         try:
             value_metadata: KiaraModel = value.data
@@ -168,25 +171,21 @@ class SaveInternalModelModule(PersistValueModule):
             all_json = (
                 '{"data": ' + data_json + ', "python_class": ' + python_class_json + "}"
             )
+
+            load_config_data = {
+                "provisioning_strategy": ByteProvisioningStrategy.INLINE,
+                "module_type": "internal_model.load_from_store",
+                "inputs": {"model_data": all_json},
+                "output_name": "internal_model",
+            }
+
+            load_config = LoadConfig(**load_config_data)
         except Exception as e:
             raise KiaraProcessingException(
                 f"Can't serialize value of type '{value.value_schema.type}' to json: {e}."
             )
 
-        with open(target_file, "wt") as f:
-            f.write(all_json)
-
-        file_model = FileModel.load_file(source=target_file)
-        load_config_data = {
-            "inputs": {
-                "json_file": file_model,
-            },
-            "module_type": "internal_model.load_from.json_file",
-            "output_name": "internal_model",
-        }
-
-        load_config = LoadConfig(**load_config_data)
-        return load_config
+        return load_config, None
 
 
 class LoadInternalModelFromDiskModule(KiaraModule):
@@ -198,7 +197,12 @@ class LoadInternalModelFromDiskModule(KiaraModule):
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
 
-        return {"json_file": {"type": "file", "doc": "The json file."}}
+        return {
+            "model_data": {
+                "type": "dict",
+                "doc": "The serialized model data.",
+            }
+        }
 
     def create_outputs_schema(
         self,
@@ -207,7 +211,7 @@ class LoadInternalModelFromDiskModule(KiaraModule):
         return {
             "internal_model": {
                 "type": "internal_model",
-                "doc": f"The deserialized internal_model value, loaded from disk.",
+                "doc": f"The deserialized internal_model value, loaded from the data store.",
             }
         }
 
@@ -216,19 +220,12 @@ class LoadInternalModelFromDiskModule(KiaraModule):
 
     def process(self, inputs: ValueSet, outputs: ValueSet):
 
-        file_model: FileModel = inputs.get_value_data("json_file")
-        path = file_model.path
-        if not os.path.isfile(path):
-            raise KiaraProcessingException(f"No json file found on path: {path}")
+        model_data = inputs.get_value_data("data")
+        python_class_data = inputs.get_value_data("python_class")
 
-        with open(path, "rb") as f:
-            content = f.read()
-        data = orjson.loads(content)
-        python_class_data = data["python_class"]
         model_cls = PythonClass(**python_class_data).get_class()
 
-        model = model_cls(**data["data"])
-
+        model = model_cls(**model_data)
         outputs.set_value("internal_model", model)
 
 

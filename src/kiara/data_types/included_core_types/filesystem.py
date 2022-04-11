@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import orjson.orjson
 import structlog
+from rich.console import RenderGroup
 from typing import Any, Mapping, Type
 
 from kiara.data_types import DataTypeConfig
@@ -73,6 +74,34 @@ class FileValueType(KiaraModelValueType[FileModel, DataTypeConfig]):
                 data.json(option=orjson.OPT_INDENT_2),
             ]
             return "\n".join("lines")
+
+    def render_as__terminal_renderable(
+        self, value: "Value", render_config: Mapping[str, Any]
+    ) -> Any:
+
+        data: Any = value.data
+        max_lines = render_config.get("max_lines", 34)
+        try:
+            lines = []
+            with open(data.path, "r") as f:
+                for idx, l in enumerate(f):
+                    if idx > max_lines:
+                        lines.append("...\n")
+                        lines.append("...")
+                        break
+                    lines.append(l.rstrip())
+
+            return RenderGroup(*lines)
+        except UnicodeDecodeError:
+            # found non-text data
+            lines = [
+                "Binary file or non-utf8 enconding, not printing content...",
+                "",
+                "[b]File metadata:[/b]",
+                "",
+                data.json(option=orjson.OPT_INDENT_2),
+            ]
+            return RenderGroup(*lines)
 
 
 class FileBundleValueType(AnyType[FileModel, DataTypeConfig]):

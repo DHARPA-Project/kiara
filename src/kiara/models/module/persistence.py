@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from enum import Enum
+from pathlib import Path
 from pydantic import BaseModel, Field
-from typing import Any, Iterable, Mapping, Union
+from typing import Any, List, Mapping, Optional, Union
 
 from kiara.models.module.manifest import Manifest
 
@@ -10,7 +11,7 @@ class ByteProvisioningStrategy(Enum):
 
     INLINE = "INLINE"
     BYTES = "bytes"
-    LINK_MAP = "link_map"
+    FILE_PATH_MAP = "link_map"
     LINK_FOLDER = "folder"
     COPIED_FOLDER = "copied_folder"
 
@@ -20,8 +21,22 @@ class BytesStructure(BaseModel):
 
     data_type: str = Field(description="The data type.")
     data_type_config: Mapping[str, Any] = Field(description="The data type config.")
-    bytes_map: Mapping[str, Iterable[Union[str, bytes]]] = Field(
-        description="References to byte arrays, Keys are field names, values are a list of hash-ids that the data is composed of."
+    chunk_map: Mapping[str, List[Union[str, bytes]]] = Field(
+        description="References to byte arrays, Keys are field names, values are a list of hash-ids that the data is composed of.",
+        default_factory=dict,
+    )
+
+    def provision_as_folder(self, copy_files: bool = False) -> Path:
+        pass
+
+
+class BytesAliasStructure(BaseModel):
+
+    data_type: str = Field(description="The data type.")
+    data_type_config: Mapping[str, Any] = Field(description="The data type config.")
+    chunk_id_map: Mapping[str, List[str]] = Field(
+        description="References to byte arrays, Keys are field names, values are a list of hash-ids that the data is composed of.",
+        default_factory=dict,
     )
 
 
@@ -29,7 +44,7 @@ class LoadConfig(Manifest):
 
     provisioning_strategy: ByteProvisioningStrategy = Field(
         description="In what form the  serialized bytes are returned.",
-        default_factory=ByteProvisioningStrategy.INLINE,
+        default=ByteProvisioningStrategy.INLINE,
     )
     # bytes_structure: Optional[BytesStructure] = Field(
     #     description="A description of the bytes structure of the (serialized) data.",
@@ -40,6 +55,9 @@ class LoadConfig(Manifest):
     )
     output_name: str = Field(
         description="The name of the field that contains the persisted value details."
+    )
+    bytes_map: Optional[BytesAliasStructure] = Field(
+        description="References to the byte chunks for the inputs.", default=None
     )
 
     def _retrieve_data_to_hash(self) -> Any:

@@ -4,13 +4,25 @@ import structlog
 import uuid
 from enum import Enum
 from hashfs import HashFS
+from io import BytesIO
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Set
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Mapping,
+    Optional,
+    Set,
+    Tuple,
+    Union,
+)
 
 from kiara.models.module.jobs import JobRecord
 from kiara.models.module.manifest import InputsManifest
 from kiara.models.module.persistence import (
-    ByteProvisioningStrategy,
+    BytesAliasStructure,
     BytesStructure,
     LoadConfig,
 )
@@ -19,10 +31,10 @@ from kiara.modules.operations.included_core_operations.persistence import (
     PersistValueOperationType,
 )
 from kiara.registries import FileSystemArchiveConfig
-from kiara.registries.data.data_store import DataArchive, DataStore
+from kiara.registries.data.data_store import BaseDataStore, DataArchive
 from kiara.registries.ids import ID_REGISTRY
 from kiara.registries.jobs import JobArchive
-from kiara.utils import log_message, orjson_dumps
+from kiara.utils import is_debug, log_message, orjson_dumps
 
 if TYPE_CHECKING:
     pass
@@ -59,6 +71,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
 
         DataArchive.__init__(self, archive_id=archive_id, config=config)
         self._base_path: Optional[Path] = None
+        self._hashfs_path: Optional[Path] = None
         self._hashfs: Optional[HashFS] = None
 
     # def get_job_archive_id(self) -> uuid.UUID:
@@ -75,11 +88,18 @@ class FileSystemDataArchive(DataArchive, JobArchive):
         return self._base_path
 
     @property
+    def hash_fs_path(self) -> Path:
+
+        if self._hashfs_path is None:
+            self._hashfs_path = self.data_store_path / "hash_fs"
+        return self._hashfs_path
+
+    @property
     def hashfs(self) -> HashFS:
 
         if self._hashfs is None:
             self._hashfs = HashFS(
-                self.data_store_path,
+                self.hash_fs_path,
                 depth=DEFAULT_HASHFS_DEPTH,
                 width=DEFAULT_HASHFS_WIDTH,
                 algorithm=DEFAULT_HASH_FS_ALGORITHM,
@@ -121,6 +141,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
     def find_matching_job_record(
         self, inputs_manifest: InputsManifest
     ) -> Optional[JobRecord]:
+
         return self._retrieve_job_record(
             manifest_hash=inputs_manifest.manifest_hash,
             jobs_hash=inputs_manifest.job_hash,
@@ -261,15 +282,19 @@ class FileSystemDataArchive(DataArchive, JobArchive):
 
         return LoadConfig(**data)
 
+    def retrieve_bytes(self, chunk_id: str, as_bytes: bool = True) -> Union[bytes, str]:
 
-class FilesystemDataStore(FileSystemDataArchive, DataStore):
+        addr = self.hashfs.get(chunk_id)
+        if as_bytes:
+            return Path(addr.abspath).read_bytes()
+        else:
+            return addr.abspath
+
+
+class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
     """Data store that stores data as files on the local filesystem."""
 
     _archive_type_name = "filesystem_data_store"
-
-    @classmethod
-    def is_writeable(cls) -> bool:
-        return False
 
     def _persist_environment_details(
         self, env_type: str, env_hash: int, env_data: Mapping[str, Any]
@@ -281,7 +306,15 @@ class FilesystemDataStore(FileSystemDataArchive, DataStore):
         if not env_details_file.exists():
             env_details_file.write_text(orjson_dumps(env_data))
 
-    def _persist_value(self, value: Value) -> LoadConfig:
+    def _persist_load_config(self, value: Value, load_config: LoadConfig):
+
+        working_dir = self.get_path(entity_type=EntityType.VALUE_DATA)
+        data_dir = working_dir / value.data_type_name / str(value.value_hash)
+        load_config_file = data_dir / ".load_config.json"
+        data_dir.mkdir(exist_ok=True, parents=True)
+        load_config_file.write_text(load_config.json())
+
+    def _persist_value_details(self, value: Value):
 
         value_dir = self.get_path(entity_type=EntityType.VALUE) / str(value.value_id)
 
@@ -292,14 +325,41 @@ class FilesystemDataStore(FileSystemDataArchive, DataStore):
         else:
             value_dir.mkdir(parents=True, exist_ok=False)
 
-        load_config = self._persist_value_data(value=value)
         value_file = value_dir / VALUE_DETAILS_FILE_NAME
         value_data = value.dict()
         value_file.write_text(orjson_dumps(value_data, option=orjson.OPT_NON_STR_KEYS))
 
-        return load_config
+    def _persist_bytes(self, bytes_structure: BytesStructure) -> BytesAliasStructure:
 
-    def _persist_value_data(self, value: Value) -> LoadConfig:
+        bytes_alias_map: Dict[str, List[str]] = {}
+
+        for key, bytes_list in bytes_structure.chunk_map.items():
+
+            if is_debug():
+                assert not isinstance(bytes_list, (bytes, str))
+
+            for chunk in bytes_list:
+                if isinstance(chunk, str):
+                    addr = self.hashfs.put(chunk)
+                elif isinstance(chunk, bytes):
+                    chunk = BytesIO(chunk)
+                    addr = self.hashfs.put(chunk)
+                else:
+                    raise Exception(
+                        f"Can't persist chunk: invalid type '{type(chunk)}'"
+                    )
+                bytes_alias_map.setdefault(key, []).append(addr.id)
+
+        alias_structure = BytesAliasStructure.construct(
+            data_type=bytes_structure.data_type,
+            data_type_config=bytes_structure.data_type_config,
+            chunk_id_map=bytes_alias_map,
+        )
+        return alias_structure
+
+    def _persist_value_data(
+        self, value: Value
+    ) -> Tuple[LoadConfig, Optional[BytesStructure]]:
 
         persist_op_type = self._kiara.operation_registry.operation_types.get(
             "persist_value", None
@@ -324,39 +384,9 @@ class FilesystemDataStore(FileSystemDataArchive, DataStore):
         )
 
         load_config: LoadConfig = result.get_value_data("load_config")
-        if not load_config:
-            raise Exception(
-                f"Can't write load config, no load config returned by module '{op.module_type}' when persisting value."
-            )
-        if not isinstance(load_config, LoadConfig):
-            raise Exception(
-                f"Can't write load config, invalid result type '{type(load_config)}' from module '{op.module_type}' when persisting value."
-            )
-
         bytes_structure: BytesStructure = result.get_value_data("bytes_structure")
-        if (
-            load_config.provisioning_strategy != ByteProvisioningStrategy.INLINE
-            and not bytes_structure
-        ):
-            raise Exception(
-                f"Can't write load config, no bytes structure returned by module '{op.module_type}' when persisting value."
-            )
 
-        if bytes_structure and not isinstance(bytes_structure, BytesStructure):
-            raise Exception(
-                f"Can't write load config, invalid result bytes structure type '{type(bytes_structure)}' from module '{op.module_type}' when persisting value."
-            )
-
-        print("----")
-        dbg(load_config.dict())
-        dbg(bytes_structure)
-        print("----")
-
-        load_config_file = data_dir / ".load_config.json"
-        data_dir.mkdir(exist_ok=True, parents=True)
-        load_config_file.write_text(load_config.json())
-
-        return load_config
+        return load_config, bytes_structure
 
     # def _persist_manifest(self, manifest: Manifest):
     #

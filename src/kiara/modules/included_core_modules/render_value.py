@@ -144,7 +144,11 @@ class ValueTypeRenderModule(KiaraModule):
         func_name = f"render_as__{target_type}"
         func = getattr(data_type, func_name)
 
-        result = func(value=source_value, render_config=render_config)
+        render_config_dict = render_config.data
+        if render_config_dict is None:
+            render_config_dict = {}
+
+        result = func(value=source_value, render_config=render_config_dict)
         # TODO: check we have the correct type?
         outputs.set_value("rendered_value", result)
 

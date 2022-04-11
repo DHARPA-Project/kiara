@@ -3,9 +3,24 @@ import abc
 import structlog
 import uuid
 from rich.console import RenderableType
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Set, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    Mapping,
+    Optional,
+    Set,
+    Tuple,
+    Union,
+)
 
-from kiara.models.module.persistence import LoadConfig
+from kiara.models.module.persistence import (
+    ByteProvisioningStrategy,
+    BytesAliasStructure,
+    BytesStructure,
+    LoadConfig,
+)
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.value import ORPHAN, Value, ValuePedigree
 from kiara.models.values.value_schema import ValueSchema
@@ -171,6 +186,10 @@ class DataArchive(BaseArchive):
     ) -> Optional[Set[Value]]:
         pass
 
+    @abc.abstractmethod
+    def retrieve_bytes(self, chunk_id: str, as_bytes: bool = True) -> Union[bytes, str]:
+        pass
+
     # def retrieve_job_record(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
     #     return self._retrieve_job_record(
     #         manifest_hash=inputs_manifest.manifest_hash, jobs_hash=inputs_manifest.jobs_hash
@@ -184,6 +203,55 @@ class DataArchive(BaseArchive):
 
 
 class DataStore(DataArchive):
+    @classmethod
+    def is_writeable(cls) -> bool:
+        return True
+
+    @abc.abstractmethod
+    def store_value(self, value: Value) -> LoadConfig:
+        """ "Store the value, its data and metadata into the store.
+
+        Arguments:
+            value: the value to persist
+
+        Returns:
+            the load config that is needed to retrieve the value data later
+        """
+
+
+class BaseDataStore(DataStore):
+    @abc.abstractmethod
+    def _persist_bytes(self, bytes_structure: BytesStructure) -> BytesAliasStructure:
+        pass
+
+    @abc.abstractmethod
+    def _persist_load_config(self, value: Value, load_config: LoadConfig):
+        pass
+
+    @abc.abstractmethod
+    def _persist_value_details(self, value: Value):
+        pass
+
+    @abc.abstractmethod
+    def _persist_value_data(
+        self, value: Value
+    ) -> Tuple[LoadConfig, Optional[BytesStructure]]:
+        pass
+
+    @abc.abstractmethod
+    def _persist_value_pedigree(self, value: Value):
+        """Create an internal link from a value to its pedigree (and pedigree details).
+
+        This is so that the 'retrieve_job_record' can be used to prevent running the same job again, and the link of value
+        to the job that produced it is preserved.
+        """
+
+    @abc.abstractmethod
+    def _persist_environment_details(
+        self, env_type: str, env_hash: int, env_data: Mapping[str, Any]
+    ):
+        pass
+
     def store_value(self, value: Value) -> LoadConfig:
 
         if value.pedigree != ORPHAN:
@@ -225,13 +293,40 @@ class DataStore(DataArchive):
 
         return load_config
 
-    @abc.abstractmethod
-    def _persist_value_pedigree(self, value: Value):
-        """Create an internal link from a value to its pedigree (and pedigree details).
+    def _persist_value(self, value: Value) -> LoadConfig:
 
-        This is so that the 'retrieve_job_record' can be used to prevent running the same job again, and the link of value
-        to the job that produced it is preserved.
-        """
+        # TODO: check if value id is already persisted?
+        load_config, bytes_structure = self._persist_value_data(value=value)
+
+        if not load_config:
+            raise Exception(
+                f"Can't write load config, no load config returned when persisting value."
+            )
+        if not isinstance(load_config, LoadConfig):
+            raise Exception(
+                f"Can't write load config, invalid result type '{type(load_config)}' when persisting value."
+            )
+
+        if (
+            load_config.provisioning_strategy != ByteProvisioningStrategy.INLINE
+            and not bytes_structure
+        ):
+            raise Exception(
+                f"Can't write load config, no bytes structure returned when persisting value."
+            )
+
+        if bytes_structure and not isinstance(bytes_structure, BytesStructure):
+            raise Exception(
+                f"Can't write load config, invalid result bytes structure type '{type(bytes_structure)}' when persisting value."
+            )
+
+        if bytes_structure:
+            alias_structure = self._persist_bytes(bytes_structure=bytes_structure)
+            load_config.bytes_map = alias_structure
+        self._persist_load_config(value=value, load_config=load_config)
+        self._persist_value_details(value=value)
+
+        return load_config
 
     def persist_environment(self, environment: RuntimeEnvironment):
         """Persist the specified environment.
@@ -252,20 +347,6 @@ class DataStore(DataArchive):
             env_type=env_type, env_hash=env_hash, env_data=env_data
         )
         self._env_cache.setdefault(env_type, {})[env_hash] = env_data
-
-    @abc.abstractmethod
-    def _persist_environment_details(
-        self, env_type: str, env_hash: int, env_data: Mapping[str, Any]
-    ):
-        pass
-
-    # @abc.abstractmethod
-    # def _persist_manifest(self, manifest: Manifest):
-    #     pass
-
-    @abc.abstractmethod
-    def _persist_value(self, value: Value) -> LoadConfig:
-        pass
 
     def create_renderable(self, **config: Any) -> RenderableType:
         """Create a renderable for this module configuration."""

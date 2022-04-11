@@ -332,26 +332,30 @@ class Value(ValueDetails):
         for k in self.__fields__.keys():
 
             attr = getattr(self, k)
-            if k == "pedigree_output_name":
-                if not show_pedigree:
-                    continue
-                if attr == "__void__":
-                    continue
-
-            v = None
-            if k == "pedigree":
-                if not show_pedigree:
-                    continue
-                if attr == ORPHAN:
-                    v = "[i]-- external data --[/i]"
-                else:
-                    v = extract_renderable(attr)
+            if k in ["pedigree_output_name", "pedigree"]:
+                continue
 
             elif k == "value_status":
                 v = f"[i]-- {attr.value} --[/i]"
             else:
                 v = extract_renderable(attr)
             table.add_row(k, v)
+
+        if show_pedigree:
+            pedigree = getattr(self, "pedigree")
+
+            if pedigree == ORPHAN:
+                v = "[i]-- external data --[/i]"
+                pedigree_output_name: Optional[Any] = None
+            else:
+                v = extract_renderable(pedigree)
+                pedigree_output_name = getattr(self, "pedigree_output_name")
+
+            row = ["pedigree", v]
+            table.add_row(*row)
+            if pedigree_output_name:
+                row = ["pedigree_output_name", pedigree_output_name]
+                table.add_row(*row)
 
         if show_load_config:
             load_config = self._data_registry.retrieve_load_config(self.value_id)

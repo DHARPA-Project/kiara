@@ -63,10 +63,20 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
     - exactly two input fields, one of them named after the type it supports, and the other called 'render_config', of type 'dict'
     """
 
+    def _calculate_op_id(self, source_type: str, target_type: str):
+
+        if source_type == "any":
+            operation_id = f"render.as.{target_type}"
+        else:
+            operation_id = f"render.{source_type}.as.{target_type}"
+
+        return operation_id
+
     def retrieve_included_operation_configs(
         self,
     ) -> Iterable[Union[Mapping, OperationConfig]]:
-        result = []
+
+        result = {}
         for name, module_cls in self._kiara.module_type_classes.items():
 
             if not issubclass(module_cls, RenderValueModule):
@@ -96,7 +106,10 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
                 oc = ManifestOperationConfig(
                     module_type=name, module_config=mc, doc=doc
                 )
-                result.append(oc)
+                op_id = self._calculate_op_id(
+                    source_type=source_type, target_type=target_type
+                )
+                result[op_id] = oc
 
         for data_type_name, data_type_class in self._kiara.data_type_classes.items():
             for attr in dir(data_type_class):
@@ -125,9 +138,9 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
                 oc = ManifestOperationConfig(
                     module_type="value.render", module_config=mc, doc=doc
                 )
-                result.append(oc)
+                result[f"_type_{data_type_name}"] = oc
 
-        return result
+        return result.values()
 
     def check_matching_operation(
         self, module: "KiaraModule"
@@ -178,10 +191,9 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
 
         input_field_type = module.inputs_schema[input_field_match].type
 
-        if input_field_type == "any":
-            operation_id = f"render.as.{target_type}"
-        else:
-            operation_id = f"render.{input_field_type}.as.{target_type}"
+        operation_id = self._calculate_op_id(
+            source_type=input_field_type, target_type=target_type
+        )
 
         details = {
             "operation_id": operation_id,

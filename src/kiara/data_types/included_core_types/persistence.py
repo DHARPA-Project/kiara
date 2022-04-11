@@ -2,7 +2,8 @@
 from pydantic import Field
 from typing import Type
 
-from kiara.data_types import DataType, DataTypeConfig
+from kiara.data_types import DataTypeConfig
+from kiara.data_types.included_core_types.internal import InternalType
 from kiara.models.module.persistence import LoadConfig
 
 
@@ -16,7 +17,7 @@ class LoadConfigSchema(DataTypeConfig):
     )
 
 
-class LoadConfigValueType(DataType[LoadConfig, LoadConfigSchema]):
+class LoadConfigValueType(InternalType[LoadConfig, LoadConfigSchema]):
     """An value type that contains data that describes how to (re-)load a value from disk.
 
     This is mostly used internally in kiara, but might be exposed to users in certain cases (for example when exporting

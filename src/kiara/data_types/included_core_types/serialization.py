@@ -4,7 +4,8 @@ from mmh3 import hash_from_buffer
 from pydantic import BaseModel, Field, PrivateAttr
 from typing import Dict, Optional, Type
 
-from kiara.data_types import DataType, DataTypeConfig
+from kiara.data_types import DataTypeConfig
+from kiara.data_types.included_core_types.internal import InternalType
 from kiara.defaults import KIARA_HASH_FUNCTION
 from kiara.models.module.manifest import Manifest
 
@@ -70,7 +71,7 @@ class SerializedValueModel(BaseModel):
 
 
 class SerializedValueType(
-    DataType[SerializedValueModel, SerializedValueTypeConfigSchema]
+    InternalType[SerializedValueModel, SerializedValueTypeConfigSchema]
 ):
     """A data type that contains a serialized representation of a value.
 

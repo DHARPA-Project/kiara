@@ -8,12 +8,11 @@ from typing import (
     Any,
     Callable,
     Dict,
-    Iterable,
     List,
     Mapping,
     Optional,
     Set,
-    Type,
+    Union,
 )
 
 from kiara.defaults import (
@@ -25,14 +24,17 @@ from kiara.defaults import (
     SpecialValue,
 )
 from kiara.exceptions import InvalidValuesException, JobConfigException
-from kiara.models.events import KiaraEvent
 from kiara.models.events.data_registry import (
     DataStoreAddedEvent,
     ValueCreatedEvent,
     ValuePreStoreEvent,
     ValueStoredEvent,
 )
-from kiara.models.module.persistence import LoadConfig
+from kiara.models.module.persistence import (
+    ByteProvisioningStrategy,
+    BytesStructure,
+    LoadConfig,
+)
 from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
 from kiara.models.values.value import (
@@ -44,12 +46,10 @@ from kiara.models.values.value import (
     ValueSetReadOnly,
 )
 from kiara.models.values.value_schema import ValueSchema
-from kiara.modules.operations.included_core_operations.render_value import (
-    RenderValueOperationType,
-)
 from kiara.registries.data.data_store import DataArchive, DataStore
 from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import is_debug, log_message
+from kiara.utils.data import render_data
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -131,33 +131,23 @@ class DataRegistry(object):
     def NONE_VALUE(self) -> Value:
         return self._none_value
 
-    def suppoerted_event_types(self) -> Iterable[Type[KiaraEvent]]:
+    # def supported_event_types(self) -> Iterable[Type[KiaraEvent]]:
+    #
+    #     return [
+    #         DataStoreAddedEvent,
+    #         ValuePreStoreEvent,
+    #         ValueStoredEvent,
+    #         ValueCreatedEvent,
+    #     ]
 
-        return [
-            DataStoreAddedEvent,
-            ValuePreStoreEvent,
-            ValueStoredEvent,
-            ValueCreatedEvent,
-        ]
+    def retrieve_all_available_value_ids(self) -> List[uuid.UUID]:
 
-    # @property
-    # def aliases(self) -> AliasRegistry:
-    #
-    #     if self._alias_registry is not None:
-    #         return self._alias_registry
-    #
-    #     root_doc = "The root for all value aliases."
-    #     self._alias_registry = AliasRegistry()
-    #     self._alias_registry._data_registry = self
-    #     self._alias_registry._engine = self._engine
-    #
-    #     return self._alias_registry
-    #
-    # def register_alias(self, alias: str, value: Union[Value, uuid.UUID]):
-    #
-    #     value = self.get_value(value=value)
-    #     self.aliases.set_alias(alias=alias, value_id=value.value_id)
-    #     self.aliases.save(alias)
+        result = set()
+        for store in self._data_stores.values():
+            ids = store.value_ids
+            result.update(ids)
+
+        return result
 
     def register_data_archive(self, data_store: DataStore, alias: str = None):
 
@@ -489,6 +479,13 @@ class DataRegistry(object):
 
         return load_config
 
+    def _retrieve_bytes(
+        self, chunk_id: str, as_bytes: bool = True
+    ) -> Union[str, bytes]:
+
+        # TODO: support multiple stores
+        return self.get_archive().retrieve_bytes(chunk_id=chunk_id, as_bytes=as_bytes)
+
     def retrieve_value_data(self, value_id: uuid.UUID) -> Any:
 
         if value_id in self._cached_data.keys():
@@ -508,6 +505,29 @@ class DataRegistry(object):
 
         return data
 
+    def _provision_bytes(self, load_config: LoadConfig) -> Optional[BytesStructure]:
+
+        provisioning_strategy = load_config.provisioning_strategy
+        if provisioning_strategy == ByteProvisioningStrategy.INLINE:
+            return None
+
+        bytes_structure_map = {}
+        as_bytes = provisioning_strategy == ByteProvisioningStrategy.BYTES
+
+        for field, chunk_ids in load_config.bytes_map.chunk_id_map.items():
+            for chunk_id in chunk_ids:
+                bytes_structure_map[chunk_id] = self._retrieve_bytes(
+                    chunk_id=chunk_id, as_bytes=as_bytes
+                )
+
+        bytes_structure = BytesStructure.construct(
+            data_type=load_config.bytes_map.data_type,
+            data_type_config=load_config.bytes_map.data_type_config,
+            chunk_map=bytes_structure_map,
+        )
+
+        return bytes_structure
+
     def _load_data_from_load_config(
         self, load_config: LoadConfig, value_id: uuid.UUID
     ) -> Any:
@@ -515,10 +535,15 @@ class DataRegistry(object):
         logger.debug("value.load", module=load_config.module_type)
 
         # TODO: check whether modules and value types are available
+        inputs = load_config.inputs
+        if "bytes_structure" in load_config.inputs.keys():
+            bytes_structure = self._provision_bytes(load_config=load_config)
+            inputs = dict(load_config.inputs)
+            inputs["bytes_structure"] = bytes_structure
 
         try:
             job_config = self._kiara.job_registry.prepare_job_config(
-                manifest=load_config, inputs=load_config.inputs
+                manifest=load_config, inputs=inputs
             )
         except JobConfigException:
             if is_debug():
@@ -665,28 +690,9 @@ class DataRegistry(object):
         **render_config: Any,
     ) -> Any:
 
-        value = self.get_value(value_id=value_id)
-
-        op_type: RenderValueOperationType = self._kiara.operation_registry.get_operation_type("render_value")  # type: ignore
-        try:
-            op = op_type.get_operation_for_render_combination(
-                source_type=value.value_schema.type, target_type=target_type
-            )
-        except Exception:
-            op = None
-            if target_type == "terminal_renderable":
-                try:
-                    op = op_type.get_operation_for_render_combination(
-                        source_type="any", target_type="string"
-                    )
-                except Exception:
-                    pass
-            if op is None:
-                raise Exception(
-                    f"Can't find operation to render '{value.value_schema.type}' as '{target_type}."
-                )
-
-        assert op is not None
-        result = op.run(kiara=self._kiara, inputs={"value": value})
-        rendered = result.get_value_data("rendered_value")
-        return rendered
+        return render_data(
+            kiara=self._kiara,
+            value_id=value_id,
+            target_type=target_type,
+            **render_config,
+        )

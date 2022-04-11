@@ -126,7 +126,7 @@ class TypeRegistry(object):
         return self._type_hierarchy
 
     def get_type_lineage(self, data_type_name: str) -> Iterable[str]:
-        """Returns the shortest path between the specified type and the 'any' type, in reverse direction starting from the specified type."""
+        """Returns the shortest path between the specified type and the root, in reverse direction starting from the specified type."""
 
         if data_type_name not in self.data_type_classes.keys():
             raise Exception(f"No value type '{data_type_name}' registered.")

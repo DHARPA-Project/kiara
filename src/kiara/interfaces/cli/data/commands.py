@@ -16,6 +16,7 @@ from rich.table import Table
 
 from kiara import Kiara
 from kiara.utils import StringYAML, is_debug, is_develop, log_message, rich_print
+from kiara.utils.data import render_value_list
 
 yaml = StringYAML()
 
@@ -32,26 +33,26 @@ def data(ctx):
     "-a",
     help="Also list values without aliases.",
     is_flag=True,
-    default=True,
+    default=False,
 )
-@click.option(
-    "--only-latest/--all-versions",
-    help="List all alias only_latest, not just the latest (default: '--only-latest').",
-    is_flag=True,
-    default=True,
-)
-@click.option(
-    "--tags/--no-tags",
-    help="List alias tags (default: '--tags').",
-    is_flag=True,
-    default=True,
-)
-@click.option(
-    "--all-info",
-    "-i",
-    help="Display all information and values. Overrides the other options.",
-    is_flag=True,
-)
+# @click.option(
+#     "--only-latest/--all-versions",
+#     help="List all alias only_latest, not just the latest (default: '--only-latest').",
+#     is_flag=True,
+#     default=True,
+# )
+# @click.option(
+#     "--tags/--no-tags",
+#     help="List alias tags (default: '--tags').",
+#     is_flag=True,
+#     default=True,
+# )
+# @click.option(
+#     "--all-info",
+#     "-i",
+#     help="Display all information and values. Overrides the other options.",
+#     is_flag=True,
+# )
 @click.option(
     "--show-pedigree",
     "-p",
@@ -73,9 +74,6 @@ def data(ctx):
 def list_values(
     ctx,
     all_ids,
-    only_latest,
-    tags,
-    all_info,
     show_pedigree,
     show_data,
     show_load_config,
@@ -84,7 +82,7 @@ def list_values(
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    if all_ids:
+    if not all_ids:
 
         alias_registry = kiara_obj.alias_registry
 
@@ -101,12 +99,10 @@ def list_values(
         rich_print(table)
     else:
 
-        table = kiara_obj.data_registry.get_archive().create_renderable(
-            show_pedigree=show_pedigree,
-            show_data=show_data,
-            show_load_config=show_load_config,
-        )
-        rich_print(table, show_pedigree=show_pedigree, show_data=show_data)
+        all_ids = kiara_obj.data_registry.retrieve_all_available_value_ids()
+
+        table = render_value_list(kiara=kiara_obj, values=all_ids)
+        rich_print(table)
 
 
 @data.command(name="explain")
@@ -226,13 +222,17 @@ if is_develop():
         data_store_path = kiara_obj.data_registry.get_archive().data_store_path
         paths["data_store"] = data_store_path
 
-        aliases_store_path = kiara_obj.alias_registry.default_alias_store.alias_store_path
+        aliases_store_path = (
+            kiara_obj.alias_registry.default_alias_store.alias_store_path
+        )
         paths["alias_store"] = aliases_store_path
 
         job_record_store_path = kiara_obj.job_registry.get_archive().job_store_path
         paths["jobs_record_store"] = job_record_store_path
 
-        destiny_store_path = kiara_obj.destiny_registry.default_destiny_store.destiny_store_path
+        destiny_store_path = (
+            kiara_obj.destiny_registry.default_destiny_store.destiny_store_path
+        )
         paths["destiny_store"] = destiny_store_path
 
         print()

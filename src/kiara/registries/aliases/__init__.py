@@ -8,7 +8,7 @@ from pydantic import Field, PrivateAttr, root_validator
 from sqlalchemy import and_, func
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, aliased
-from typing import TYPE_CHECKING, Dict, Iterable, Optional
+from typing import TYPE_CHECKING, Dict, Iterable, Optional, Set
 
 from kiara.models.aliases import AliasValueMap
 from kiara.models.documentation import DocumentationMetadataModel
@@ -189,7 +189,7 @@ class AliasRegistry(object):
         return self._default_alias_store
 
     @property
-    def all_aliases(self) -> Iterable[str]:
+    def all_aliases(self) -> Dict[str, uuid.UUID]:
 
         if self._all_aliases is not None:
             return self._all_aliases
@@ -216,7 +216,7 @@ class AliasRegistry(object):
                         )
                 all_aliases[alias] = store_id
 
-        self._all_aliases = sorted(all_aliases)
+        self._all_aliases = all_aliases
         return self._all_aliases
 
     def find_value_id_for_alias(self, alias: str) -> uuid.UUID:
@@ -235,6 +235,18 @@ class AliasRegistry(object):
 
         self._cached_aliases[alias] = value_id
         return value_id
+
+    def find_aliases_for_value_id(self, value_id: uuid.UUID) -> Set[str]:
+
+        print(self.all_aliases)
+        print(value_id)
+        matches = (
+            alias for alias, v_id in self.all_aliases.items() if v_id == value_id
+        )
+
+        result = set(matches)
+        print(result)
+        return result
 
     def register_aliases(self, value_id: uuid.UUID, *aliases: str):
 

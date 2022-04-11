@@ -24,7 +24,12 @@ class FileModel(KiaraModel):
     """Describes properties for the 'file' value type."""
 
     @classmethod
-    def load_file(cls, source: str, import_time: Optional[datetime.datetime] = None):
+    def load_file(
+        cls,
+        source: str,
+        file_name: Optional[str] = None,
+        import_time: Optional[datetime.datetime] = None,
+    ):
         """Utility method to read metadata of a file from disk and optionally move it into a data archive location."""
 
         import filetype
@@ -39,7 +44,9 @@ class FileModel(KiaraModel):
         if not os.path.isfile(os.path.realpath(source)):
             raise ValueError(f"Path is not a file: {source}")
 
-        file_name = os.path.basename(source)
+        if file_name is None:
+            file_name = os.path.basename(source)
+
         path: str = os.path.abspath(source)
         if import_time:
             file_import_time = import_time
@@ -76,7 +83,7 @@ class FileModel(KiaraModel):
     mime_type: str = Field(description="The mime type of the file.")
     file_name: str = Field("The name of the file.")
     size: int = Field(description="The size of the file.")
-    path: str = Field(description="The archive path of the file.")
+    path: str = Field(description="The path to the file.")
 
     @validator("path")
     def ensure_abs_path(cls, value):
@@ -90,7 +97,10 @@ class FileModel(KiaraModel):
 
     @property
     def model_data_hash(self) -> int:
-        return self.file_hash
+        return {
+            "file_name": self.file_name,
+            "file_hash": self.file_hash,
+        }
 
     def _retrieve_data_to_hash(self) -> Any:
         raise NotImplementedError()
@@ -99,15 +109,17 @@ class FileModel(KiaraModel):
         return self.path
 
     def get_category_alias(self) -> str:
-        return "instance.metadata.file"
+        return "instance.file_model"
 
-    def copy_file(self, target: str) -> "FileModel":
+    def copy_file(self, target: str, new_name: Optional[str] = None) -> "FileModel":
 
         target_path: str = os.path.abspath(target)
         os.makedirs(os.path.dirname(target_path), exist_ok=True)
 
         shutil.copy2(self.path, target_path)
-        fm = FileModel.load_file(target, import_time=self.import_time)
+        fm = FileModel.load_file(
+            target, file_name=new_name, import_time=self.import_time
+        )
 
         if self._file_hash is not None:
             fm._file_hash = self._file_hash

@@ -22,7 +22,7 @@ from kiara.models.module.persistence import (
     LoadConfig,
 )
 from kiara.models.runtime_environment import RuntimeEnvironment
-from kiara.models.values.value import ORPHAN, Value, ValuePedigree
+from kiara.models.values.value import Value, ValuePedigree
 from kiara.models.values.value_schema import ValueSchema
 from kiara.registries import ARCHIVE_CONFIG_CLS, BaseArchive
 
@@ -253,15 +253,6 @@ class BaseDataStore(DataStore):
         pass
 
     def store_value(self, value: Value) -> LoadConfig:
-
-        if value.pedigree != ORPHAN:
-            for value_id in value.pedigree.inputs.values():
-                if not self.has_value(value_id=value_id):
-                    other = self.kiara_context.data_registry.get_value(
-                        value_id=value_id
-                    )
-                    assert other and other.value_id == value_id
-                    self.store_value(other)
 
         logger.debug(
             "store.value",

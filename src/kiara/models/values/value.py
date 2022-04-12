@@ -272,8 +272,7 @@ class Value(ValueDetails):
         self._data_retrieved = True
         return self._value_data
 
-    @property
-    def load_config(self) -> Optional[LoadConfig]:
+    def retrieve_load_config(self) -> Optional[LoadConfig]:
         return self._data_registry.retrieve_load_config(value_id=self.value_id)
 
     def __repr__(self):

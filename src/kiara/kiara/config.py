@@ -9,6 +9,7 @@ from ruamel import yaml
 from typing import Any, Dict, List, Mapping, Optional
 
 from kiara.defaults import (
+    DEFAULT_ALIAS_STORE_MARKER,
     DEFAULT_DATA_STORE_MARKER,
     DEFAULT_JOB_STORE_MARKER,
     KIARA_CONTEXTS_FOLDER,
@@ -75,7 +76,22 @@ def create_default_archives():
         config=job_archive_config,
     )
 
-    return {DEFAULT_DATA_STORE_MARKER: data_store, DEFAULT_JOB_STORE_MARKER: job_store}
+    alias_store_type = "filesystem_alias_store"
+    alias_store_config = {
+        "base_path": os.path.join(KIARA_STORES_FOLDER, alias_store_type)
+    }
+    alias_store_id = ID_REGISTRY.generate(comment="default alias store id")
+    alias_store = KiaraArchiveConfig.construct(
+        archive_id=str(alias_store_id),
+        archive_type=alias_store_type,
+        config=alias_store_config,
+    )
+
+    return {
+        DEFAULT_DATA_STORE_MARKER: data_store,
+        DEFAULT_JOB_STORE_MARKER: job_store,
+        DEFAULT_ALIAS_STORE_MARKER: alias_store,
+    }
 
 
 class KiaraBaseConfig(BaseSettings):

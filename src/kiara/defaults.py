@@ -81,6 +81,9 @@ DEFAULT_DATA_STORE_MARKER = "default_data_store"
 DEFAULT_JOB_STORE_MARKER = "default_job_store"
 """Name for the default context job store."""
 
+DEFAULT_ALIAS_STORE_MARKER = "default_alias_store"
+"""Name for the default context job store."""
+
 PIPELINE_PARENT_MARKER = "__pipeline__"
 """Marker string in the pipeline structure that indicates a parent pipeline element."""
 

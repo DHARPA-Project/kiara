@@ -12,11 +12,10 @@ import shutil
 import sys
 from rich import box
 from rich.panel import Panel
-from rich.table import Table
 
 from kiara import Kiara
+from kiara.models.values.info import RENDER_FIELDS, ValuesInfo
 from kiara.utils import StringYAML, is_debug, is_develop, log_message, rich_print
-from kiara.utils.data import render_value_list
 
 yaml = StringYAML()
 
@@ -54,6 +53,13 @@ def data(ctx):
 #     is_flag=True,
 # )
 @click.option(
+    "--show-value_id",
+    "-i",
+    help="Display value id information for each value.",
+    default=False,
+    is_flag=True,
+)
+@click.option(
     "--show-pedigree",
     "-p",
     help="Display pedigree information for each value.",
@@ -74,6 +80,7 @@ def data(ctx):
 def list_values(
     ctx,
     all_ids,
+    show_value_id,
     show_pedigree,
     show_data,
     show_load_config,
@@ -83,26 +90,38 @@ def list_values(
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     if not all_ids:
-
         alias_registry = kiara_obj.alias_registry
-
-        table = Table(show_lines=True, box=box.SIMPLE)
-        table.add_column("alias")
-        table.add_column("value")
-
-        for alias in alias_registry.all_aliases:
-
-            value_id = alias_registry.find_value_id_for_alias(alias)
-            rendered = kiara_obj.data_registry.render_data(value_id=value_id)
-            table.add_row(alias, rendered)
-
-        rich_print(table)
+        value_ids = [v.value_id for v in alias_registry.aliases.values()]
     else:
+        data_registry = kiara_obj.data_registry
+        data_registry.retrieve_all_available_value_ids()
+        value_ids = kiara_obj.data_registry.retrieve_all_available_value_ids()
 
-        all_ids = kiara_obj.data_registry.retrieve_all_available_value_ids()
+    list_by_alias = True
+    show_internal = False
 
-        table = render_value_list(kiara=kiara_obj, values=all_ids)
-        rich_print(table)
+    render_fields = [k for k, v in RENDER_FIELDS.items() if v["show_default"]]
+    if list_by_alias:
+        render_fields[0] = "aliases"
+        render_fields[1] = "value_id"
+
+    if not show_value_id and not all_ids:
+        render_fields.remove("value_id")
+    if show_data:
+        render_fields.append("data")
+    if show_pedigree:
+        render_fields.append("pedigree")
+    if show_load_config:
+        render_fields.append("load_config")
+
+    values_info_model = ValuesInfo.create_from_values(kiara_obj, *value_ids)
+    renderable = values_info_model.create_renderable(
+        render_type="terminal",
+        list_by_alias=list_by_alias,
+        show_internal=show_internal,
+        render_fields=render_fields,
+    )
+    rich_print(renderable)
 
 
 @data.command(name="explain")
@@ -222,9 +241,7 @@ if is_develop():
         data_store_path = kiara_obj.data_registry.get_archive().data_store_path
         paths["data_store"] = data_store_path
 
-        aliases_store_path = (
-            kiara_obj.alias_registry.default_alias_store.alias_store_path
-        )
+        aliases_store_path = kiara_obj.alias_registry.get_archive().alias_store_path
         paths["alias_store"] = aliases_store_path
 
         job_record_store_path = kiara_obj.job_registry.get_archive().job_store_path

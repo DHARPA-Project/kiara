@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import abc
 import uuid
 from pydantic import Field, validator

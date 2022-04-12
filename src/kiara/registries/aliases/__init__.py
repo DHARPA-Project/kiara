@@ -1,18 +1,26 @@
 # -*- coding: utf-8 -*-
 import abc
-import os
 import structlog
 import uuid
-from pathlib import Path
 from pydantic import Field, PrivateAttr, root_validator
 from sqlalchemy import and_, func
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, aliased
-from typing import TYPE_CHECKING, Dict, Iterable, Optional, Set
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Dict,
+    Iterable,
+    Mapping,
+    NamedTuple,
+    Optional,
+    Set,
+)
 
 from kiara.models.aliases import AliasValueMap
 from kiara.models.documentation import DocumentationMetadataModel
-from kiara.registries.ids import ID_REGISTRY
+from kiara.models.events.alias_registry import AliasArchiveAddedEvent
+from kiara.registries import BaseArchive
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -20,13 +28,13 @@ if TYPE_CHECKING:
 logger = structlog.getLogger()
 
 
-class AliasArchive(abc.ABC):
-    @abc.abstractmethod
-    def get_alias_archive_id(self) -> uuid.UUID:
-        pass
+class AliasArchive(BaseArchive):
+    @classmethod
+    def supported_item_types(cls) -> Iterable[str]:
+        return ["alias"]
 
     @abc.abstractmethod
-    def retrieve_all_aliases(self) -> Optional[Iterable[str]]:
+    def retrieve_all_aliases(self) -> Optional[Mapping[str, uuid.UUID]]:
         """Retrieve a list of all aliases registered in this archive.
 
         The result of this method can be 'None', for cases where the aliases are determined dynamically.
@@ -40,6 +48,13 @@ class AliasArchive(abc.ABC):
     def find_value_id_for_alias(self, alias: str) -> Optional[uuid.UUID]:
         pass
 
+    @abc.abstractmethod
+    def find_aliases_for_value_id(self, value_id: uuid.UUID) -> Optional[Set[str]]:
+        pass
+
+    def is_writeable(cls) -> bool:
+        return False
+
 
 class AliasStore(AliasArchive):
     @abc.abstractmethod
@@ -47,216 +62,194 @@ class AliasStore(AliasArchive):
         pass
 
 
-class FileSystemAliasArchive(AliasArchive):
-    @classmethod
-    def create_from_kiara_context(cls, kiara: "Kiara"):
-
-        base_path = Path(kiara.context_config.data_directory) / "alias_store"
-        base_path.mkdir(parents=True, exist_ok=True)
-        result = cls(base_path=base_path, store_id=kiara.id)
-        ID_REGISTRY.update_metadata(
-            result.get_alias_archive_id(), kiara_id=kiara.id, obj=result
-        )
-        return result
-
-    def __init__(self, base_path: Path, store_id: uuid.UUID):
-
-        if not base_path.is_dir():
-            raise Exception(
-                f"Can't create file system archive instance, base path does not exist or is not a folder: {base_path.as_posix()}."
-            )
-
-        self._store_id: uuid.UUID = store_id
-        self._base_path: Path = base_path
-        self._aliases_path: Path = self._base_path / "aliases"
-        self._value_id_path: Path = self._base_path / "value_ids"
-
-    @property
-    def alias_store_path(self) -> Path:
-        return self._base_path
-
-    def _translate_alias(self, alias: str) -> Path:
-
-        if "." in alias:
-            tokens = alias.split(".")
-            alias_path = (
-                self._aliases_path.joinpath(*tokens[0:-1]) / f"{tokens[-1]}.alias"
-            )
-        else:
-            alias_path = self._aliases_path / f"{alias}.alias"
-        return alias_path
-
-    def _translate_alias_path(self, alias_path: Path) -> str:
-
-        relative = alias_path.relative_to(self._aliases_path).as_posix()[:-6]
-
-        if os.path.sep not in relative:
-            alias = relative
-        else:
-            alias = ".".join(relative.split(os.path.sep))
-
-        return alias
-
-    def _translate_value_id(self, value_id: uuid.UUID) -> Path:
-
-        tokens = str(value_id).split("-")
-        value_id_path = (
-            self._value_id_path.joinpath(*tokens[0:-1]) / f"{tokens[-1]}.value"
-        )
-        return value_id_path
-
-    def _translate_value_path(self, value_path: Path) -> uuid.UUID:
-
-        relative = value_path.relative_to(self._value_id_path).as_posix()[:-6]
-        value_id_str = "-".join(relative.split(os.path.sep))
-
-        return uuid.UUID(value_id_str)
-
-    def get_alias_archive_id(self) -> uuid.UUID:
-        return self._store_id
-
-    def retrieve_all_aliases(self) -> Iterable[str]:
-
-        all_aliases = self._aliases_path.rglob("*.alias")
-        result = []
-        for alias_path in all_aliases:
-            alias = self._translate_alias_path(alias_path=alias_path)
-            result.append(alias)
-
-        return sorted(result)
-
-    def find_value_id_for_alias(self, alias: str) -> Optional[uuid.UUID]:
-
-        alias_path = self._translate_alias(alias)
-        if not alias_path.exists():
-            return None
-        resolved = alias_path.resolve()
-
-        assert resolved.name.endswith(".value")
-
-        value_id = self._translate_value_path(value_path=resolved)
-        return value_id
-
-
-class FileSystemAliasStore(FileSystemAliasArchive, AliasStore):
-    def register_aliases(self, value_id: uuid.UUID, *aliases: str):
-
-        value_path = self._translate_value_id(value_id=value_id)
-        value_path.parent.mkdir(parents=True, exist_ok=True)
-        value_path.touch()
-
-        for alias in aliases:
-            alias_path = self._translate_alias(alias)
-            alias_path.parent.mkdir(parents=True, exist_ok=True)
-            if alias_path.exists():
-                resolved = alias_path.resolve()
-                if resolved == value_path:
-                    continue
-                alias_path.unlink()
-            alias_path.symlink_to(value_path)
+class AliasItem(NamedTuple):
+    full_alias: str
+    rel_alias: str
+    value_id: uuid.UUID
+    alias_archive: str
+    alias_archive_id: uuid.UUID
 
 
 class AliasRegistry(object):
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
-        self._alias_archives: Dict[uuid.UUID, AliasArchive] = {}
-        self._default_alias_store: Optional[AliasStore] = None
-        default_archive = FileSystemAliasStore.create_from_kiara_context(self._kiara)
-        self.register_alias_archive(default_archive)
 
-        self._cached_aliases: Dict[str, uuid.UUID] = {}
-        self._all_aliases: Optional[Dict[str, uuid.UUID]] = None
+        self._event_callback: Callable = self._kiara.event_registry.add_producer(self)
 
-    def register_alias_archive(self, alias_store: AliasStore):
+        self._alias_archives: Dict[str, AliasArchive] = {}
+        """All registered archives/stores."""
 
-        as_id = alias_store.get_alias_archive_id()
-        if as_id in self._alias_archives.keys():
+        self._default_alias_store: Optional[str] = None
+        """The alias of the store where new aliases are stored by default."""
+
+        self._cached_aliases: Optional[Dict[str, AliasItem]] = None
+        self._cached_aliases_by_id: Optional[Dict[uuid.UUID, Set[AliasItem]]] = None
+
+    def register_archive(
+        self,
+        alias_store: AliasStore,
+        alias: str = None,
+        set_as_default_store: Optional[bool] = None,
+    ):
+
+        alias_archive_id = alias_store.register_archive(kiara=self._kiara)
+
+        if alias is None:
+            alias = str(alias_archive_id)
+
+        if "." in alias:
             raise Exception(
-                f"Can't register alias store, store id already registered: {as_id}."
+                f"Can't register alias archive with as '{alias}': registered name is not allowed to contain a '.' character (yet)."
             )
 
-        self._alias_archives[as_id] = alias_store
+        if alias in self._alias_archives.keys():
+            raise Exception(f"Can't add store, alias '{alias}' already registered.")
 
-        if self._default_alias_store is None and isinstance(alias_store, AliasStore):
-            self._default_alias_store = alias_store
+        self._alias_archives[alias] = alias_store
+        is_store = False
+        is_default_store = False
+        if isinstance(alias_store, AliasStore):
+            is_store = True
+            if set_as_default_store and self._default_alias_store is not None:
+                raise Exception(
+                    f"Can't set alias store '{alias}' as default store: default store already set."
+                )
+
+            if self._default_alias_store is None:
+                is_default_store = True
+                self._default_alias_store = alias
+
+        event = AliasArchiveAddedEvent.construct(
+            kiara_id=self._kiara.id,
+            alias_archive_id=alias_store.archive_id,
+            alias_archive_alias=alias,
+            is_store=is_store,
+            is_default_store=is_default_store,
+        )
+        self._event_callback(event)
 
     @property
-    def default_alias_store(self) -> AliasStore:
+    def default_alias_store(self) -> str:
 
         if self._default_alias_store is None:
             raise Exception("No default alias store set (yet).")
         return self._default_alias_store
 
-    @property
-    def all_aliases(self) -> Dict[str, uuid.UUID]:
+    def get_archive(self, archive_id: Optional[str] = None) -> AliasArchive:
+        if archive_id is None:
+            archive_id = self.default_alias_store
+            if archive_id is None:
+                raise Exception("Can't retrieve default alias archive, none set (yet).")
 
-        if self._all_aliases is not None:
-            return self._all_aliases
+        archive = self._alias_archives.get(archive_id, None)
+        if archive is None:
+            raise Exception(f"No archive registered for base alias '{archive_id}'.")
+        return archive
+
+    @property
+    def all_aliases(self) -> Iterable[str]:
+
+        return self.aliases.keys()
+
+    @property
+    def aliases_by_id(self) -> Mapping[uuid.UUID, Set[AliasItem]]:
+        if self._cached_aliases_by_id is None:
+            self.aliases  # noqa
+        return self._cached_aliases_by_id
+
+    @property
+    def aliases(self) -> Dict[str, AliasItem]:
+        """Retrieve a map of all available aliases, context wide, with the registered archive aliases as values."""
+
+        if self._cached_aliases is not None:
+            return self._cached_aliases
 
         # TODO: multithreading lock
 
-        all_aliases: Dict[str, uuid.UUID] = {}
-        for store_id, store in self._alias_archives.items():
-            a = store.retrieve_all_aliases()
-            if a is None:
+        all_aliases: Dict[str, AliasItem] = {}
+        all_aliases_by_id: Dict[uuid.UUID, Set[AliasItem]] = {}
+        for archive_alias, archive in self._alias_archives.items():
+            alias_map = archive.retrieve_all_aliases()
+            if alias_map is None:
                 continue
-            for alias in a:
-                if alias in all_aliases.keys():
-                    value_one = self._alias_archives[
-                        all_aliases[alias]
-                    ].find_value_id_for_alias(alias)
-                    value_two = store.find_value_id_for_alias(alias)
-                    if value_one == value_two:
-                        self._cached_aliases[alias] = value_one
-                        continue
-                    else:
-                        raise Exception(
-                            f"Multiple stores contain alias '{alias}'. This is not supported (yet)."
-                        )
-                all_aliases[alias] = store_id
+            for alias, v_id in alias_map.items():
+                if archive_alias == self.default_alias_store:
+                    final_alias = alias
+                else:
+                    final_alias = f"{archive_alias}.{alias}"
 
-        self._all_aliases = all_aliases
-        return self._all_aliases
+                if final_alias in all_aliases.keys():
+                    raise Exception(
+                        f"Inconsistent alias registry: alias '{final_alias}' available more than once."
+                    )
+                item = AliasItem(
+                    full_alias=final_alias,
+                    rel_alias=alias,
+                    value_id=v_id,
+                    alias_archive=archive_alias,
+                    alias_archive_id=archive.archive_id,
+                )
+                all_aliases[final_alias] = item
+                all_aliases_by_id.setdefault(v_id, set()).add(item)
 
-    def find_value_id_for_alias(self, alias: str) -> uuid.UUID:
+        self._cached_aliases = all_aliases
+        self._cached_aliases_by_id = all_aliases_by_id
+        return self._cached_aliases
 
-        value_id = self._cached_aliases.get(alias, None)
-        if value_id is not None:
-            return self._cached_aliases[alias]
+    def find_value_id_for_alias(self, alias: str) -> Optional[uuid.UUID]:
 
-        for alias_archive in self._alias_archives.values():
-            value_id = alias_archive.find_value_id_for_alias(alias=alias)
-            if value_id is not None:
-                break
+        alias_item = self.aliases.get(alias, None)
+        if alias_item is not None:
+            return alias_item.value_id
 
-        if value_id is None:
+        if "." not in alias:
             return None
 
-        self._cached_aliases[alias] = value_id
-        return value_id
+        archive_id, rest = alias.split(".", maxsplit=2)
+        archive = self.get_archive(archive_id=archive_id)
 
-    def find_aliases_for_value_id(self, value_id: uuid.UUID) -> Set[str]:
+        v_id = archive.find_value_id_for_alias(alias=rest)
+        # TODO: cache this?
+        return v_id
 
-        print(self.all_aliases)
-        print(value_id)
-        matches = (
-            alias for alias, v_id in self.all_aliases.items() if v_id == value_id
-        )
+    def find_aliases_for_value_id(
+        self, value_id: uuid.UUID, search_dynamic_archives: bool = False
+    ) -> Set[str]:
 
-        result = set(matches)
-        print(result)
-        return result
+        aliases = set([a.full_alias for a in self.aliases_by_id.get(value_id, [])])
+
+        if search_dynamic_archives:
+            for archive_alias, archive in self._alias_archives.items():
+                _aliases = archive.find_aliases_for_value_id(value_id=value_id)
+                # TODO: cache those results
+                if _aliases:
+                    for a in _aliases:
+                        aliases.add(f"{archive_alias}.{a}")
+
+        return aliases
 
     def register_aliases(self, value_id: uuid.UUID, *aliases: str):
 
-        self.default_alias_store.register_aliases(value_id, *aliases)
+        store_name = self.default_alias_store
+        store: AliasStore = self.get_archive(archive_id=store_name)  # type: ignore
+        self.aliases  # noqu
+        store.register_aliases(value_id, *aliases)
+
         for alias in aliases:
-            self._cached_aliases[alias] = value_id
-            if alias not in self.all_aliases:
-                self.all_aliases[
-                    alias
-                ] = self.default_alias_store.get_alias_archive_id()
+            alias_item = AliasItem(
+                full_alias=alias,
+                rel_alias=alias,
+                value_id=value_id,
+                alias_archive=store_name,
+                alias_archive_id=store.archive_id,
+            )
+
+            if alias in self.aliases.keys():
+                raise NotImplementedError()
+
+            self.aliases[alias] = alias_item
+            self._cached_aliases_by_id.setdefault(value_id, set()).add(alias_item)  # type: ignore
 
 
 class PersistentValueAliasMap(AliasValueMap):

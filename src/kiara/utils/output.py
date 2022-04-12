@@ -11,16 +11,25 @@ from pydantic import BaseModel, Field, root_validator
 from rich import box
 from rich.console import ConsoleRenderable, RenderableType, RenderGroup, RichCast
 from rich.table import Table as RichTable
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Optional, Type, Set
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Mapping,
+    Optional,
+    Set,
+    Type,
+)
 
 from kiara.defaults import SpecialValue
-from kiara.models.values.value_metadata import ValueMetadata
-from kiara.utils import dict_from_cli_args, orjson_dumps
-
 from kiara.models.values.value import ORPHAN, Value
+from kiara.utils import dict_from_cli_args, orjson_dumps
 
 if TYPE_CHECKING:
     from pyarrow import Table as ArrowTable
+
     from kiara.models.values.value_schema import ValueSchema
 
 
@@ -536,7 +545,9 @@ def create_table_from_field_schemas(
 
 
 def create_table_from_model_object(
-    model: BaseModel, render_config: Optional[Mapping[str, Any]] = None, exclude_fields: Optional[Set[str]] = None
+    model: BaseModel,
+    render_config: Optional[Mapping[str, Any]] = None,
+    exclude_fields: Optional[Set[str]] = None,
 ):
 
     model_cls = model.__class__
@@ -603,7 +614,9 @@ def extract_renderable(item: Any, render_config: Optional[Mapping[str, Any]] = N
             if isinstance(v, BaseModel):
                 v = v.dict()
             result[k] = v
-        return orjson_dumps(result, option=orjson.OPT_INDENT_2|orjson.OPT_NON_STR_KEYS)
+        return orjson_dumps(
+            result, option=orjson.OPT_INDENT_2 | orjson.OPT_NON_STR_KEYS
+        )
     elif isinstance(item, Iterable):
         _all = []
         for i in item:
@@ -655,10 +668,12 @@ def create_renderable_from_values(
                 pedigree = value.pedigree.json(option=orjson.OPT_INDENT_2)
             row.append(pedigree)
         if show_data:
-            data =  value._data_registry.render_data(value_id=value.value_id, target_type="terminal_renderable", **config)
+            data = value._data_registry.render_data(
+                value_id=value.value_id, target_type="terminal_renderable", **config
+            )
             row.append(data)
         if show_load_config:
-            load_config = value.load_config
+            load_config = value.retrieve_load_config()
             if load_config is None:
                 load_config_str: RenderableType = "-- not stored (yet) --"
             else:

@@ -6,7 +6,7 @@ from bidict import bidict
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Type
 
 from kiara.models.events import KiaraEvent
-from kiara.models.events.data_registry import (
+from kiara.models.events.job_registry import (
     JobArchiveAddedEvent,
     JobRecordPreStoreEvent,
     JobRecordStoredEvent,

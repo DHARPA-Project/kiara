@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 import orjson
 import uuid
-from pydantic import BaseModel
-from typing import Optional
+from pydantic import BaseModel, Field
 
-from kiara.utils import orjson_dumps, camel_case_to_snake_case
+from kiara.utils import camel_case_to_snake_case, orjson_dumps
 
 
 class KiaraEvent(BaseModel):
-
     class Config:
         json_loads = orjson.loads
         json_dumps = orjson_dumps
@@ -22,5 +20,8 @@ class KiaraEvent(BaseModel):
         return name
 
 
+class RegistryEvent(KiaraEvent):
 
-
+    kiara_id: uuid.UUID = Field(
+        description="The id of the kiara context the value was created in."
+    )

@@ -175,6 +175,9 @@ class Kiara(object):
                 if supported_type == "job_record":
                     self.job_registry.register_job_archive(archive, alias=archive_alias)
 
+                if supported_type == "alias":
+                    self.alias_registry.register_archive(archive, alias=archive_alias)
+
     def _run_alembic_migrations(self):
         script_location = os.path.abspath(KIARA_DB_MIGRATIONS_FOLDER)
         dsn = self._config.db_url

@@ -25,7 +25,7 @@ from kiara.defaults import (
 )
 from kiara.exceptions import InvalidValuesException, JobConfigException
 from kiara.models.events.data_registry import (
-    DataStoreAddedEvent,
+    DataArchiveAddedEvent,
     ValueCreatedEvent,
     ValuePreStoreEvent,
     ValueStoredEvent,
@@ -65,7 +65,7 @@ class DataRegistry(object):
 
         self._event_callback: Callable = self._kiara.event_registry.add_producer(self)
 
-        self._data_stores: Dict[str, DataStore] = {}
+        self._data_archives: Dict[str, DataArchive] = {}
 
         self._default_data_store: Optional[str] = None
 
@@ -143,30 +143,41 @@ class DataRegistry(object):
     def retrieve_all_available_value_ids(self) -> List[uuid.UUID]:
 
         result = set()
-        for store in self._data_stores.values():
+        for store in self._data_archives.values():
             ids = store.value_ids
             result.update(ids)
 
         return result
 
-    def register_data_archive(self, data_store: DataStore, alias: str = None):
+    def register_data_archive(
+        self,
+        data_store: DataStore,
+        alias: str = None,
+        set_as_default_store: Optional[bool] = None,
+    ):
 
         data_store_id = data_store.register_archive(kiara=self._kiara)
         if alias is None:
             alias = str(data_store_id)
 
-        if alias in self._data_stores.keys():
+        if alias in self._data_archives.keys():
             raise Exception(f"Can't add store, alias '{alias}' already registered.")
-        self._data_stores[alias] = data_store
+        self._data_archives[alias] = data_store
         is_store = False
         is_default_store = False
         if isinstance(data_store, DataStore):
             is_store = True
-            if self._default_data_store is None:
+
+            if set_as_default_store and self._default_data_store is not None:
+                raise Exception(
+                    f"Can't set data store '{alias}' as default store: default store already set."
+                )
+
+            if self._default_data_store is None or set_as_default_store:
                 is_default_store = True
                 self._default_data_store = alias
 
-        event = DataStoreAddedEvent.construct(
+        event = DataArchiveAddedEvent.construct(
             kiara_id=self._kiara.id,
             data_archive_id=data_store.archive_id,
             data_archive_alias=alias,
@@ -182,16 +193,16 @@ class DataRegistry(object):
         return self._default_data_store
 
     @property
-    def data_stores(self) -> Mapping[str, DataStore]:
-        return self._data_stores
+    def data_archives(self) -> Mapping[str, DataArchive]:
+        return self._data_archives
 
     def get_archive(self, store_id: Optional[str] = None) -> DataArchive:
         if store_id is None:
             store_id = self.default_data_store
             if store_id is None:
-                raise Exception("Can't retrieve deafult data archive, none set (yet).")
+                raise Exception("Can't retrieve default data archive, none set (yet).")
 
-        return self._data_stores[store_id]
+        return self._data_archives[store_id]
 
     # def add_hook(self, hook: DataEventHook):
     #
@@ -207,7 +218,7 @@ class DataRegistry(object):
             return self._value_store_map[value_id]
 
         matches = []
-        for store_id, store in self.data_stores.items():
+        for store_id, store in self.data_archives.items():
             match = store.has_value(value_id=value_id)
             if match:
                 matches.append(store_id)
@@ -229,13 +240,15 @@ class DataRegistry(object):
             if hasattr(value_id, "value_id"):
                 value_id = value_id.value_id
             else:
-                value_id = uuid.UUID(value_id)
+                value_id = uuid.UUID(
+                    value_id
+                )  # this should fail if not string or wrong string format
 
         if value_id in self._registered_values.keys():
             return self._registered_values[value_id]
 
         matches = []
-        for store_id, store in self.data_stores.items():
+        for store_id, store in self.data_archives.items():
             match = store.has_value(value_id=value_id)
             if match:
                 matches.append(store_id)
@@ -257,7 +270,7 @@ class DataRegistry(object):
 
     def store_value(
         self,
-        value: Value,
+        value: Union[Value, uuid.UUID],
         store_id: Optional[str] = None,
         skip_if_exists: bool = True,
     ):
@@ -265,11 +278,17 @@ class DataRegistry(object):
         if store_id is None:
             store_id = self.default_data_store
 
+        if isinstance(value, uuid.UUID):
+            value = self.get_value(value)
+
         store: DataStore = self.get_archive(store_id=store_id)  # type: ignore
         if not isinstance(store, DataStore):
             raise Exception(f"Can't store value into store '{store_id}': not writable.")
 
         # make sure all property values are available
+        if value.pedigree != ORPHAN:
+            for value_id in value.pedigree.inputs.values():
+                self.store_value(value=value_id, store_id=store_id, skip_if_exists=True)
 
         if not store.has_value(value.value_id) or not skip_if_exists:
             event = ValuePreStoreEvent.construct(kiara_id=self._kiara.id, value=value)
@@ -298,7 +317,7 @@ class DataRegistry(object):
         stored = self._values_by_hash.get(value_hash, None)
         if stored is None:
             matches: Dict[uuid.UUID, List[str]] = {}
-            for store_id, store in self.data_stores.items():
+            for store_id, store in self.data_archives.items():
                 value_ids = store.find_values_with_hash(
                     value_hash=value_hash, data_type_name=data_type_name
                 )

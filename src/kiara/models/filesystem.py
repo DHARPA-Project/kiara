@@ -95,15 +95,11 @@ class FileModel(KiaraModel):
     def _retrieve_category_id(self) -> str:
         return FILE_MODEL_CATEOGORY_ID
 
-    @property
-    def model_data_hash(self) -> int:
+    def _retrieve_data_to_hash(self) -> Any:
         return {
             "file_name": self.file_name,
             "file_hash": self.file_hash,
         }
-
-    def _retrieve_data_to_hash(self) -> Any:
-        raise NotImplementedError()
 
     def get_id(self) -> str:
         return self.path

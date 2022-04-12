@@ -201,11 +201,17 @@ def load_all_subclasses_for_entry_point(
     log2 = logging.getLogger("stevedore")
     out_hdlr = logging.StreamHandler(sys.stdout)
     out_hdlr.setFormatter(
-        logging.Formatter(f"{entry_point_name} plugin search error -> %(message)s")
+        logging.Formatter(
+            f"{entry_point_name} plugin search message/error -> %(message)s"
+        )
     )
     out_hdlr.setLevel(logging.INFO)
     log2.addHandler(out_hdlr)
-    log2.setLevel(logging.INFO)
+    if is_debug():
+        log2.setLevel(logging.DEBUG)
+    else:
+        out_hdlr.setLevel(logging.INFO)
+        log2.setLevel(logging.INFO)
 
     log_message("events.loading.entry_points", entry_point_name=entry_point_name)
 
@@ -292,9 +298,14 @@ def load_all_subclasses_for_entry_point(
 
     for k, v in result_dynamic.items():
         if k in result_entrypoints.keys():
-            raise Exception(
-                f"Duplicate item name '{k}' for type {entry_point_name}: {v} -- {result_entrypoints[k]}"
-            )
+            msg = f"Duplicate item name '{k}' for type {entry_point_name}: {v} -- {result_entrypoints[k]}."
+            try:
+                if type_id_key not in v.__dict__.keys():
+                    msg = f"{msg} Most likely the name is picked up from a subclass, try to add a '{type_id_key}' class attribute to your implementing class, with the name you want to give your type as value."
+            except Exception:
+                pass
+
+            raise Exception(msg)
         result_entrypoints[k] = v
 
     return result_entrypoints

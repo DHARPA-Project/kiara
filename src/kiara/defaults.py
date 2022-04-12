@@ -221,3 +221,6 @@ VALUE_PEDIGREE_TYPE_CATEGORY_ID = "instance.value_pedigree"
 
 FILE_MODEL_CATEOGORY_ID = "instance.model.file"
 FILE_BUNDLE_MODEL_CATEOGORY_ID = "instance.model.file_bundle"
+
+ARRAY_MODEL_CATEOGORY_ID = "instance.model.array"
+TABLE_MODEL_CATEOGORY_ID = "instance.model.table"

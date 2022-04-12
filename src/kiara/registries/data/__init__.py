@@ -436,7 +436,7 @@ class DataRegistry(object):
                 else:
                     skalars = []
                     for v in existing:
-                        if v.data_type.characteristics.is_skalar:
+                        if v.data_type.characteristics.is_scalar:
                             skalars.append(v)
 
                     if len(skalars) == 1:

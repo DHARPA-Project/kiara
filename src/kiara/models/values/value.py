@@ -524,6 +524,7 @@ class ValueSet(KiaraModel, MutableMapping[str, Value]):  # type: ignore
                 )
             else:
                 rendered = value.create_renderable(**config)
+
             table.add_row(field_name, rendered)
 
         return table

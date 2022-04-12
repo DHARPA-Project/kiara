@@ -1,15 +1,15 @@
+# -*- coding: utf-8 -*-
 import os
-import uuid
-from typing import Optional, Mapping, Any, Dict, Union, List
-
-from pydantic import BaseModel, Field
 import structlog
+import uuid
+from pydantic import BaseModel, Field
 from rich import box
-from rich.console import RenderableType, RenderGroup
+from rich.console import RenderableType
 from rich.table import Table
+from typing import Any, Dict, List, Mapping, Optional, Union
 
 from kiara import Kiara
-from kiara.exceptions import NoSuchExecutionTargetException, FailedJobException
+from kiara.exceptions import FailedJobException, NoSuchExecutionTargetException
 from kiara.models.module.jobs import JobConfig, JobStatus
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
@@ -18,11 +18,17 @@ from kiara.utils import is_debug
 
 logger = structlog.getLogger()
 
+
 class StoreValueResult(BaseModel):
 
     value: Value = Field(description="The stored value.")
-    aliases: List[str] = Field(description="The aliases that where assigned to the value when stored.")
-    error: Optional[str] = Field(description="An error that occured while trying to store.")
+    aliases: List[str] = Field(
+        description="The aliases that where assigned to the value when stored."
+    )
+    error: Optional[str] = Field(
+        description="An error that occured while trying to store."
+    )
+
 
 class StoreValuesResult(BaseModel):
 
@@ -37,18 +43,27 @@ class StoreValuesResult(BaseModel):
         table.add_column("alias(es)")
 
         for field_name, value_result in self.__root__.items():
-            row = [field_name, str(value_result.value.value_schema.type), str(value_result.value.value_id)]
+            row = [
+                field_name,
+                str(value_result.value.value_schema.type),
+                str(value_result.value.value_id),
+            ]
             if value_result.aliases:
-                row.append(', '.join(value_result.aliases))
+                row.append(", ".join(value_result.aliases))
             else:
                 row.append("")
             table.add_row(*row)
 
         return table
 
-class KiaraOperation(object):
 
-    def __init__(self, kiara: "Kiara", operation_name: str, operation_config: Optional[Mapping[str, Any]]=None):
+class KiaraOperation(object):
+    def __init__(
+        self,
+        kiara: "Kiara",
+        operation_name: str,
+        operation_config: Optional[Mapping[str, Any]] = None,
+    ):
 
         self._kiara: Kiara = kiara
         self._operation_name: str = operation_name
@@ -84,10 +99,12 @@ class KiaraOperation(object):
             return self._inputs
 
         self._invalidate()
-        self._inputs = self._kiara.data_registry.create_valueset(self._inputs_raw, self.operation.inputs_schema)
+        self._inputs = self._kiara.data_registry.create_valueset(
+            self._inputs_raw, self.operation.inputs_schema
+        )
         return self._inputs
 
-    def set_input(self, field: Optional[str], value: Any=None):
+    def set_input(self, field: Optional[str], value: Any = None):
 
         if field is None:
             if value is None:
@@ -96,7 +113,9 @@ class KiaraOperation(object):
                 return
             else:
                 if not isinstance(value, Mapping):
-                    raise Exception(f"Can't set inputs dictionary (if no key is provided, value must be 'None' or of type 'Mapping').")
+                    raise Exception(
+                        f"Can't set inputs dictionary (if no key is provided, value must be 'None' or of type 'Mapping')."
+                    )
 
                 self._inputs_raw.clear()
                 self.set_inputs(**value)
@@ -136,7 +155,9 @@ class KiaraOperation(object):
     def operation_config(self) -> Mapping[str, Any]:
         return self._operation_config
 
-    def set_operation_config_value(self, key: Optional[str], value: Any=None) -> Mapping[str, Any]:
+    def set_operation_config_value(
+        self, key: Optional[str], value: Any = None
+    ) -> Mapping[str, Any]:
 
         if key is None:
             if value is None:
@@ -153,7 +174,9 @@ class KiaraOperation(object):
                         self._operation = None
                     return self._operation_config
                 except Exception as e:
-                    raise Exception(f"Can't set configuration value dictionary (if no key is provided, value must be 'None' or of type 'Mapping'): {e}")
+                    raise Exception(
+                        f"Can't set configuration value dictionary (if no key is provided, value must be 'None' or of type 'Mapping'): {e}"
+                    )
 
         self._operation_config[key] = value
         self._invalidate()
@@ -172,11 +195,20 @@ class KiaraOperation(object):
         if isinstance(module_or_operation, str):
             if module_or_operation in self._kiara.operation_registry.operation_ids:
 
-                operation = self._kiara.operation_registry.get_operation(module_or_operation)
+                operation = self._kiara.operation_registry.get_operation(
+                    module_or_operation
+                )
                 if self._operation_config:
                     raise Exception(
                         f"Specified run target '{module_or_operation}' is an operation, additional module configuration is not allowed."
                     )
+            else:
+                manifest = Manifest(
+                    module_type=module_or_operation,
+                    module_config=self._operation_config,
+                )
+                module = self._kiara.create_module(manifest=manifest)
+                operation = Operation.create_from_module(module=module)
 
         elif module_or_operation in self._kiara.module_type_names:
 
@@ -194,11 +226,13 @@ class KiaraOperation(object):
             # )
 
         if operation is None:
+
             merged = set(self._kiara.module_type_names)
             merged.update(self._kiara.operation_registry.operation_ids)
-            raise NoSuchExecutionTargetException(selected_target=self.operation_name,
+            raise NoSuchExecutionTargetException(
+                selected_target=self.operation_name,
                 msg=f"Invalid run target name '{module_or_operation}'. Must be a path to a pipeline file, or one of the available modules/operations.",
-                available_targets=sorted(merged)
+                available_targets=sorted(merged),
             )
 
         self._operation = operation
@@ -210,7 +244,9 @@ class KiaraOperation(object):
         if self._job_config is not None:
             return self._job_config
 
-        self._job_config = self.operation.prepare_job_config(kiara=self._kiara, inputs=self.operation_inputs)
+        self._job_config = self.operation.prepare_job_config(
+            kiara=self._kiara, inputs=self.operation_inputs
+        )
         return self._job_config
 
     def queue_job(self) -> uuid.UUID:
@@ -221,11 +257,15 @@ class KiaraOperation(object):
 
         job_id = self._kiara.job_registry.execute_job(job_config=job_config, wait=False)
 
-        self._queued_jobs[job_id] = {"job_config": job_config, "operation": operation, "inputs": inputs}
+        self._queued_jobs[job_id] = {
+            "job_config": job_config,
+            "operation": operation,
+            "inputs": inputs,
+        }
         self._last_job = job_id
         return job_id
 
-    def retrieve_result(self, job_id: Optional[uuid.UUID]=None) -> ValueSet:
+    def retrieve_result(self, job_id: Optional[uuid.UUID] = None) -> ValueSet:
 
         if job_id in self._results.keys():
             return self._results[job_id]
@@ -249,7 +289,11 @@ class KiaraOperation(object):
         self._results[job_id] = outputs
         return outputs
 
-    def save_result(self, job_id: Optional[uuid.UUID]=None, aliases: Union[None, str, Mapping]=None) -> StoreValuesResult:
+    def save_result(
+        self,
+        job_id: Optional[uuid.UUID] = None,
+        aliases: Union[None, str, Mapping] = None,
+    ) -> StoreValuesResult:
 
         if job_id is None:
             job_id = self._last_job
@@ -274,10 +318,17 @@ class KiaraOperation(object):
                     else:
                         alias_map[field_name] = sorted(aliases[field_name])
                 else:
-                    logger.warning("ignore.field_alias", ignored_field_name=field_name, reason="field name not in results", available_field_names=sorted(result.field_names))
+                    logger.warning(
+                        "ignore.field_alias",
+                        ignored_field_name=field_name,
+                        reason="field name not in results",
+                        available_field_names=sorted(result.field_names),
+                    )
                     continue
         else:
-            raise Exception(f"Invalid type '{type(aliases)}' for aliases parameter, must be string or mapping.")
+            raise Exception(
+                f"Invalid type '{type(aliases)}' for aliases parameter, must be string or mapping."
+            )
 
         values = {}
         for field_name in result.field_names:
@@ -291,17 +342,23 @@ class KiaraOperation(object):
             value = values[field_name]
             try:
                 if field_aliases:
-                    self._kiara.alias_registry.register_aliases(value.value_id, *field_aliases)
+                    self._kiara.alias_registry.register_aliases(
+                        value.value_id, *field_aliases
+                    )
 
-                stored[field_name] = StoreValueResult.construct(value=value, aliases=field_aliases, error=None)
+                stored[field_name] = StoreValueResult.construct(
+                    value=value, aliases=field_aliases, error=None
+                )
 
             except Exception as e:
                 if is_debug():
                     import traceback
+
                     traceback.print_exc()
-                stored[field_name] = StoreValueResult.construct(value-value, aliases=field_aliases, error=str(e))
+                stored[field_name] = StoreValueResult.construct(
+                    value - value, aliases=field_aliases, error=str(e)
+                )
 
         self._kiara.job_registry.store_job_record(job_id=job_id)
 
         return StoreValuesResult.construct(__root__=stored)
-

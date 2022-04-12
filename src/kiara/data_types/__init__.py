@@ -121,7 +121,7 @@ TYPE_CONFIG_CLS = TypeVar("TYPE_CONFIG_CLS", bound=DataTypeConfig)
 
 class DataTypeCharacteristics(BaseModel):
 
-    is_skalar: bool = Field(
+    is_scalar: bool = Field(
         description="Whether the data desribed by this data type behaves like a skalar.",
         default=False,
     )

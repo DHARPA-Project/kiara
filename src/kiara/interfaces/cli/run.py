@@ -10,6 +10,7 @@
 import os.path
 import rich_click as click
 import sys
+import uuid
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
@@ -166,6 +167,15 @@ def run(
 
     inputs_dict = dict_from_cli_args(*inputs, list_keys=list_keys)
 
+    temp = {}
+    for k, v in inputs_dict.items():
+        try:
+            _v = uuid.UUID(v)
+            temp[k] = _v
+        except Exception:
+            temp[k] = v
+        inputs_dict = temp
+
     kiara_op.set_inputs(**inputs_dict)
 
     try:
@@ -200,8 +210,16 @@ def run(
         sys.exit(1)
 
     print()
-    rich_print("[b]Result(s):[/b]")
-    rich_print(outputs)
+    if len(outputs) > 1:
+        rich_print("[b]Results:[/b]")
+    else:
+        rich_print("[b]Result:[/b]")
+
+    for field_name, value in outputs.items():
+        print()
+        rich_print(f"* [b i]{field_name}[/b i]")
+        rich_print(kiara_obj.data_registry.render_data(value.value_id))
+
     # for k, v in outputs.items():
     #     rendered = kiara_obj.data_registry.render_data(v)
     #     rich_print(rendered)

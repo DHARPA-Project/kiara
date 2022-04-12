@@ -23,8 +23,8 @@ from kiara.defaults import (
 from kiara.models import KiaraModel
 from kiara.models.values.value import Value
 
-SKALAR_CHARACTERISTICS = DataTypeCharacteristics(
-    is_skalar=True, is_json_serializable=True
+SCALAR_CHARACTERISTICS = DataTypeCharacteristics(
+    is_scalar=True, is_json_serializable=True
 )
 
 
@@ -146,7 +146,7 @@ class StringType(AnyType[str, DataTypeConfig]):
         return KIARA_HASH_FUNCTION(data)
 
     def _retrieve_characteristics(self) -> DataTypeCharacteristics:
-        return SKALAR_CHARACTERISTICS
+        return SCALAR_CHARACTERISTICS
 
     def validate(cls, value: Any) -> None:
 

@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
 from pathlib import Path
-from typing import Any, Iterable, List, Mapping, Optional, Union, Tuple
+from typing import Any, Iterable, List, Mapping, Optional, Union
 
 from kiara.defaults import MODULE_TYPE_NAME_KEY
 from kiara.models.module.pipeline.value_refs import StepValueAddress
-
-# def generate_step_alias(step_id: str, value_name):
-#     return f"{step_id}.{value_name}"
 from kiara.utils import get_data_from_file
 
 

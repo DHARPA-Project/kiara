@@ -24,19 +24,6 @@ import typing
 from .kiara import Kiara, explain  # noqa
 from .modules import KiaraModule  # noqa
 
-# from .pipeline.pipeline import Pipeline  # noqa
-# from .pipeline.structure import PipelineStructure  # noqa
-# from .pipeline.controller import PipelineController  # noqa
-# from .pipeline.module import PipelineModule  # noqa
-# from .data.registry import DataRegistry  # noqa
-from .utils.class_loading import (
-    find_kiara_modules_under,
-    find_value_metadata_models_under,
-    find_pipeline_base_path_for_module,
-    find_data_types_under,
-    KiaraEntryPointItem,
-)
-
 try:
     builtins = __import__("__builtin__")
 except ImportError:

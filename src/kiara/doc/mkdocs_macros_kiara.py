@@ -30,7 +30,7 @@ def define_env(env):
     def get_schema_for_model(model_class: Union[str, Type[BaseModel]]):
 
         if isinstance(model_class, str):
-            _class: typing.Type[BaseModel] = locate(model_class)  # type: ignore
+            _class: Type[BaseModel] = locate(model_class)  # type: ignore
         else:
             _class = model_class
 
@@ -43,7 +43,7 @@ def define_env(env):
 
         try:
             if isinstance(obj, str):
-                _obj: typing.Type[BaseModel] = locate(obj)  # type: ignore
+                _obj: Type[BaseModel] = locate(obj)  # type: ignore
             else:
                 _obj = obj
 

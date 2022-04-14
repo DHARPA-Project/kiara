@@ -464,9 +464,7 @@ def find_pipeline_base_path_for_module(module: Union[str, ModuleType]) -> Option
     path = os.path.dirname(module_file)
 
     if not os.path.exists:
-        log_message(
-            "ignore.pipeline_folder", path=path, reason=f"folder does not exist"
-        )
+        log_message("ignore.pipeline_folder", path=path, reason="folder does not exist")
         return None
 
     return path

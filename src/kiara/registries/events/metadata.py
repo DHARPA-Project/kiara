@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
-import uuid
-from typing import TYPE_CHECKING, Iterable, Any
+from typing import TYPE_CHECKING, Any, Iterable
 
 from kiara.models.events import KiaraEvent
 from kiara.models.values.value import Value
+from kiara.modules.operations.included_core_operations.metadata import (
+    ExtractMetadataDetails,
+    ExtractMetadataOperationType,
+)
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
 
 
 class CreateMetadataDestinies(object):
-
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
@@ -27,14 +29,16 @@ class CreateMetadataDestinies(object):
 
         for event in events:
             if event.get_event_type() == "value_pre_store":  # type: ignore
-                self.resolve_all_metadata(event.value) # type: ignore
+                self.resolve_all_metadata(event.value)  # type: ignore
 
     def attach_metadata(self, value: Value):
 
         assert not value.is_stored
 
         if self._skip_internal_types:
-            lineage = self._kiara.type_registry.get_type_lineage(value.value_schema.type)
+            lineage = self._kiara.type_registry.get_type_lineage(
+                value.value_schema.type
+            )
             if "any" not in lineage:
                 return
 
@@ -55,10 +59,13 @@ class CreateMetadataDestinies(object):
 
         assert not value.is_stored
 
-        aliases = self._kiara.destiny_registry.get_destiny_aliases_for_value(value_id=value.value_id)
+        aliases = self._kiara.destiny_registry.get_destiny_aliases_for_value(
+            value_id=value.value_id
+        )
 
         for alias in aliases:
-            destiny = self._kiara.destiny_registry.get_destiny(value_id=value.value_id, destiny_alias=alias)
-            v = self._kiara.destiny_registry.resolve_destiny(destiny)
+            destiny = self._kiara.destiny_registry.get_destiny(
+                value_id=value.value_id, destiny_alias=alias
+            )
+            self._kiara.destiny_registry.resolve_destiny(destiny)
             self._kiara.destiny_registry.attach_as_property(destiny)
-

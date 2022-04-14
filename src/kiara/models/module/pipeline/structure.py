@@ -3,7 +3,7 @@ import networkx as nx
 from functools import lru_cache
 from networkx import NetworkXNoPath, NodeNotFound
 from pydantic import Field, PrivateAttr, root_validator
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Optional, Set
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Set
 
 from kiara.defaults import PIPELINE_STRUCTURE_TYPE_CATEGORY_ID
 from kiara.models import KiaraModel
@@ -17,154 +17,6 @@ from kiara.models.module.pipeline.value_refs import (
     generate_step_alias,
 )
 from kiara.models.values.value_schema import ValueSchema
-
-if TYPE_CHECKING:
-    # from kiara.info.pipelines import PipelineStructureDesc
-    from kiara.models.module.pipeline import PipelineConfig
-
-
-# class StepValueAddress(BaseModel):
-#     """Small model to describe the address of a value of a step, within a Pipeline/PipelineStructure."""
-#
-#     class Config:
-#         extra = Extra.forbid
-#
-#     step_id: str = Field(description="The id of a step within a pipeline.")
-#     value_name: str = Field(
-#         description="The name of the value (output name or pipeline input name)."
-#     )
-#     sub_value: Optional[Dict[str, Any]] = Field(
-#         default=None,
-#         description="A reference to a subitem of a value (e.g. column, list item)",
-#     )
-#
-#     @property
-#     def alias(self):
-#         """An alias string for this address (in the form ``[step_id].[value_name]``)."""
-#         return generate_step_alias(self.step_id, self.value_name)
-#
-#     def __eq__(self, other):
-#
-#         if not isinstance(other, StepValueAddress):
-#             return False
-#
-#         return (self.step_id, self.value_name, self.sub_value) == (
-#             other.step_id,
-#             other.value_name,
-#             other.sub_value,
-#         )
-#
-#     def __hash__(self):
-#
-#         return hash((self.step_id, self.value_name, self.sub_value))
-#
-#     def __repr__(self):
-#
-#         if self.sub_value:
-#             sub_value = f" sub_value={self.sub_value}"
-#         else:
-#             sub_value = ""
-#         return f"StepValueAddres(step_id={self.step_id}, value_name={self.value_name}{sub_value})"
-#
-#     def __str__(self):
-#         return self.__repr__()
-
-
-# class PipelineStep(Manifest):
-#     """A step within a pipeline-structure, includes information about it's connection(s) and other metadata."""
-#
-#     class Config:
-#         validate_assignment = True
-#         extra = Extra.forbid
-#
-#     @classmethod
-#     def create_steps(
-#         cls, *steps: "PipelineStepConfig", kiara: "Kiara"
-#     ) -> List["PipelineStep"]:
-#
-#         result: List[PipelineStep] = []
-#
-#
-#         for step in steps:
-#
-#             type_cls = kiara.get_module_class(step.module_type)
-#             input_links = {}
-#             for input_field, sources  in step.get("input_links", {}).items():
-#                 if isinstance(sources, str):
-#                     sources = [sources]
-#                     input_links[input_field] = sources
-#
-#             print("----")
-#             dbg(input_links)
-#             _s = PipelineStep(
-#                 step_id=step.step_id,
-#                 module_type=step.module_type,
-#                 module_config=copy.deepcopy(step.module_config),
-#                 input_links=input_links,
-#                 module_class=PythonClass.from_class(type_cls)
-#             )
-#             result.append(_s)
-#
-#         return result
-#
-#     @validator("step_id")
-#     def _validate_step_id(cls, v):
-#
-#         assert isinstance(v, str)
-#         if "." in v:
-#             raise ValueError("Step ids can't contain '.' characters.")
-#
-#         return v
-#
-#     step_id: str = Field(description="Locally unique id (within a pipeline) of this step.")
-#
-#     module_type: str = Field(description="The module type.")
-#     module_config: Dict[str, Any] = Field(
-#         description="The module config.", default_factory=dict
-#     )
-#     # required: bool = Field(
-#     #     description="Whether this step is required within the workflow.\n\nIn some cases, when none of the pipeline outputs have a required input that connects to a step, then it is not necessary for this step to have been executed, even if it is placed before a step in the execution hierarchy. This also means that the pipeline inputs that are connected to this step might not be required.",
-#     #     default=True,
-#     # )
-#     # processing_stage: Optional[int] = Field(
-#     #     default=None,
-#     #     description="The stage number this step is executed within the pipeline.",
-#     # )
-#     input_links: Mapping[str, List[StepValueAddress]] = Field(
-#         description="The links that connect to inputs of the module.",
-#         default_factory=list,
-#     )
-#     module_class: PythonClass = Field(description="The class of the underlying module.")
-#     _module: Optional["KiaraModule"] = PrivateAttr(default=None)
-#
-#     def _retrieve_data_to_hash(self) -> Any:
-#         return self.dict()
-#
-#     def _retrieve_id(self) -> str:
-#         return str(self.model_data_hash)
-#
-#     def _retrieve_category_id(self) -> str:
-#         return PIPELINE_STEP_TYPE_CATEGORY_ID
-#
-#     # def __init__(self, **data):  # type: ignore
-#     #
-#     #     self._id: uuid.UUID = uuid.uuid4()
-#     #     kiara = data.pop("_kiara", None)
-#     #     if kiara is None:
-#     #         from kiara import Kiara
-#     #
-#     #         kiara = Kiara.instance()
-#     #
-#     #     super().__init__(**data)
-#     #     self._kiara: "Kiara" = kiara
-#     #
-#
-#     @property
-#     def module(self) -> "KiaraModule":
-#         if self._module is None:
-#             m_cls = self.module_class.get_class()
-#             self._module = m_cls(module_config=self.module_config)
-#         return self._module
 
 
 def generate_pipeline_endpoint_name(step_id: str, value_name: str):
@@ -299,8 +151,8 @@ class PipelineStructure(KiaraModel):
         _output_aliases: Dict[str, str] = output_aliases
 
         values["steps"] = _steps
-        values["input_aliases"] = input_aliases
-        values["output_aliases"] = output_aliases
+        values["input_aliases"] = _input_aliases
+        values["output_aliases"] = _output_aliases
         return values
 
     # this is hardcoded for now

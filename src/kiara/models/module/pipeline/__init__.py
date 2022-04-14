@@ -201,6 +201,8 @@ class PipelineStep(Manifest):
 
     def __str__(self):
         return f"step: {self.step_id} (module: {self.module_type})"
+
+
 class PipelineConfig(KiaraModuleConfig):
     """A class to hold the configuration for a [PipelineModule][kiara.pipeline.module.PipelineModule].
 

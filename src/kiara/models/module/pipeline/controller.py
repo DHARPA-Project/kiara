@@ -6,7 +6,6 @@ from typing import Mapping, Optional
 from kiara.kiara import JobRegistry
 from kiara.models.events.pipeline import PipelineDetails, PipelineEvent
 from kiara.models.module.pipeline.pipeline import Pipeline, PipelineListener
-from kiara.processing import ModuleProcessor
 from kiara.utils import is_debug
 
 logger = structlog.getLogger()
@@ -18,7 +17,6 @@ class PipelineController(PipelineListener):
 
 
 class SinglePipelineController(PipelineController):
-
     def __init__(self, pipeline: Pipeline, job_registry: JobRegistry):
 
         self._pipeline: Pipeline = pipeline
@@ -57,7 +55,6 @@ class SinglePipelineController(PipelineController):
         self._pipeline_details = None
 
     def set_processing_results(self, job_ids: Mapping[str, uuid.UUID]):
-
 
         self._job_registry.wait_for(*job_ids.values())
 

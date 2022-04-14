@@ -2,12 +2,11 @@
 import copy
 import uuid
 from pydantic import Field, PrivateAttr
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional
 
 from kiara.defaults import DESTINY_CATEGORY_ID, SpecialValue
 from kiara.models.module import KiaraModuleClass
 from kiara.models.module.manifest import Manifest
-from kiara.models.values.value import Value
 from kiara.models.values.value_schema import ValueSchema
 from kiara.registries.ids import ID_REGISTRY
 from kiara.utils.hashing import compute_hash
@@ -95,7 +94,9 @@ class Destiny(Manifest):
     )
     result_field_name: str = Field(description="The name of the result field.")
     result_schema: ValueSchema = Field(description="The value schema of the result.")
-    result_value_id: Optional[uuid.UUID] = Field(description="The value id of the result.")
+    result_value_id: Optional[uuid.UUID] = Field(
+        description="The value id of the result."
+    )
 
     _is_stored: bool = PrivateAttr(default=False)
     _job_id: Optional[uuid.UUID] = PrivateAttr(default=None)

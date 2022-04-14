@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import networkx as nx
 from pydantic.main import BaseModel
-from typing import TYPE_CHECKING, Any, Iterable, Optional, Type
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Type
 
 from kiara.defaults import KIARA_DEFAULT_ROOT_NODE_ID, PYDANTIC_USE_CONSTRUCT
 from kiara.utils import log_message
@@ -26,7 +26,7 @@ def create_pydantic_model(
 def retrieve_data_subcomponent_keys(data: Any) -> Iterable[str]:
 
     if hasattr(data, "__custom_root_type__") and data.__custom_root_type__:
-        if isinstance(data.__root__, typing.Mapping):  # type: ignore
+        if isinstance(data.__root__, Mapping):  # type: ignore
             result = set()
             for k, v in data.__root__.items():  # type: ignore
                 if isinstance(v, BaseModel):
@@ -57,7 +57,7 @@ def get_subcomponent_from_model(data: "KiaraModel", path: str) -> "KiaraModel":
         return sc.get_subcomponent(rest)
 
     if hasattr(data, "__custom_root_type__") and data.__custom_root_type__:
-        if isinstance(data.__root__, typing.Mapping):  # type: ignore
+        if isinstance(data.__root__, Mapping):  # type: ignore
             if path in data.__root__.keys():  # type: ignore
                 return data.__root__[path]  # type: ignore
             else:
@@ -80,7 +80,9 @@ def get_subcomponent_from_model(data: "KiaraModel", path: str) -> "KiaraModel":
         if path in data.__fields__.keys():
             return getattr(data, path)
         else:
-            raise KeyError(f"No subcomponent for key '{path}' in model: {data.model_id}.")
+            raise KeyError(
+                f"No subcomponent for key '{path}' in model: {data.model_id}."
+            )
 
 
 def assemble_subcomponent_tree(data: "KiaraModel") -> Optional[nx.DiGraph]:

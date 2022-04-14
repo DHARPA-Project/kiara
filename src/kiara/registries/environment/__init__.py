@@ -105,7 +105,7 @@ class EnvironmentRegistry(object):
             schemas[k] = v[0].schema_json()
             hashes[k] = self.environments[k].model_data_hash
 
-        cls: typing.Type[BaseModel] = create_model("KiaraRuntimeInfo", **models)  # type: ignore
+        cls: Type[BaseModel] = create_model("KiaraRuntimeInfo", **models)  # type: ignore
         data = {}
         for k2, v2 in self.environments.items():
             d = v2.dict()

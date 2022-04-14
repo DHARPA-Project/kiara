@@ -214,5 +214,3 @@ class JobRecord(JobConfig):
         h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
         self._outputs_hash = h[obj]
         return self._outputs_hash
-
-

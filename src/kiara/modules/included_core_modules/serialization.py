@@ -10,7 +10,7 @@ from kiara.data_types.included_core_types.serialization import (
 )
 from kiara.defaults import ANY_TYPE_NAME, SERIALIZED_DATA_TYPE_NAME
 from kiara.models.module import KiaraModuleConfig
-from kiara.models.values.value import Value, ValueSet
+from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
 
 
@@ -69,7 +69,7 @@ class SerializeValueModule(KiaraModule):
     def get_serialization_format_name(self) -> str:
         pass
 
-    def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
+    def process(self, inputs: ValueMap, outputs: ValueMap) -> None:
 
         value = inputs.get_value_obj(self.get_config_value("source_type"))
         config = inputs.get_value_obj("serialization_config")
@@ -153,7 +153,7 @@ class UnpickleModule(KiaraModule):
             }
         }
 
-    def process(self, inputs: ValueSet, outputs: ValueSet):
+    def process(self, inputs: ValueMap, outputs: ValueMap):
 
         import pickle5 as pickle
 

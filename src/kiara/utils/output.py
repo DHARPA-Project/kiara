@@ -89,7 +89,7 @@ class OutputDetails(BaseModel):
         return result
 
 
-# def pretty_print_arrow_table(
+# def pretty_print_table(
 #     table: "Table",
 #     rows_head: typing.Optional[int] = None,
 #     rows_tail: typing.Optional[int] = None,

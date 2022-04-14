@@ -8,7 +8,7 @@ from kiara.models.module.operation import (
     OperationConfig,
 )
 from kiara.models.python_class import PythonClass
-from kiara.models.values.value import ValueSet
+from kiara.models.values.value import ValueMap
 from kiara.modules import KiaraModule, ValueSetSchema
 from kiara.modules.operations import OperationType
 from kiara.utils.class_loading import find_all_value_metadata_models
@@ -39,7 +39,7 @@ class ExtractMetadataDetails(BaseOperationDetails):
     def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
         return {self.input_field_name: inputs["value"]}
 
-    def create_operation_outputs(self, outputs: ValueSet) -> ValueSet:
+    def create_operation_outputs(self, outputs: ValueMap) -> ValueMap:
 
         return outputs
 

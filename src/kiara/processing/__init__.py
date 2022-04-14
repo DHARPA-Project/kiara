@@ -8,10 +8,10 @@ from typing import Any, Dict, List, Optional, Protocol, Union
 from kiara.exceptions import KiaraProcessingException
 from kiara.models.module.jobs import ActiveJob, JobConfig, JobLog, JobRecord, JobStatus
 from kiara.models.values.value import (
+    ValueMap,
+    ValueMapReadOnly,
+    ValueMapWritable,
     ValuePedigree,
-    ValueSet,
-    ValueSetReadOnly,
-    ValueSetWritable,
 )
 from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import is_debug
@@ -54,7 +54,7 @@ class ModuleProcessor(abc.ABC):
         self._active_jobs: Dict[uuid.UUID, ActiveJob] = {}
         self._failed_jobs: Dict[uuid.UUID, ActiveJob] = {}
         self._finished_jobs: Dict[uuid.UUID, ActiveJob] = {}
-        self._output_refs: Dict[uuid.UUID, ValueSetWritable] = {}
+        self._output_refs: Dict[uuid.UUID, ValueMapWritable] = {}
         self._job_records: Dict[uuid.UUID, JobRecord] = {}
 
         self._listeners: List[JobStatusListener] = []
@@ -112,7 +112,7 @@ class ModuleProcessor(abc.ABC):
 
         module = self._kiara.create_module(manifest=job_config)
 
-        outputs = ValueSetWritable.create_from_schema(
+        outputs = ValueMapWritable.create_from_schema(
             kiara=self._kiara, schema=module.outputs_schema, pedigree=result_pedigree
         )
         job_id = ID_REGISTRY.generate(kiara_id=self._kiara.id)
@@ -174,7 +174,7 @@ class ModuleProcessor(abc.ABC):
                     pass
             if isinstance(e, KiaraProcessingException):
                 e._module = module
-                e._inputs = ValueSetReadOnly.create_from_ids(
+                e._inputs = ValueMapReadOnly.create_from_ids(
                     data_registry=self._kiara.data_registry, **job_config.inputs
                 )
                 job._exception = e
@@ -183,7 +183,7 @@ class ModuleProcessor(abc.ABC):
                 kpe = KiaraProcessingException(
                     e,
                     module=module,
-                    inputs=ValueSetReadOnly.create_from_ids(
+                    inputs=ValueMapReadOnly.create_from_ids(
                         self._kiara.data_registry, **job_config.inputs
                     ),
                 )
@@ -258,8 +258,8 @@ class ModuleProcessor(abc.ABC):
         self,
         job_id: uuid.UUID,
         module: "KiaraModule",
-        inputs: ValueSet,
-        outputs: ValueSetWritable,
+        inputs: ValueMap,
+        outputs: ValueMapWritable,
         job_log: JobLog,
     ) -> str:
         pass

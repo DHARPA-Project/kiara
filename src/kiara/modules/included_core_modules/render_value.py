@@ -6,7 +6,7 @@ from typing import Any, Dict, Iterable, Mapping, Tuple, Union
 
 from kiara.models import KiaraModel
 from kiara.models.module import KiaraModuleConfig
-from kiara.models.values.value import Value, ValueSet
+from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule
 from kiara.utils.output import create_table_from_model_object
@@ -80,7 +80,7 @@ class RenderValueModule(KiaraModule):
             }
         }
 
-    def process(self, inputs: ValueSet, outputs: ValueSet):
+    def process(self, inputs: ValueMap, outputs: ValueMap):
 
         source_type = self.get_config_value("source_type")
         target_type = self.get_config_value("target_type")
@@ -131,7 +131,7 @@ class ValueTypeRenderModule(KiaraModule):
             }
         }
 
-    def process(self, inputs: ValueSet, outputs: ValueSet):
+    def process(self, inputs: ValueMap, outputs: ValueMap):
 
         source_type = self.get_config_value("source_type")
         target_type = self.get_config_value("target_type")

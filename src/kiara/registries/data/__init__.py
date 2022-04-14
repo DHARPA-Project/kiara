@@ -43,9 +43,9 @@ from kiara.models.values.value import (
     ORPHAN,
     UnloadableData,
     Value,
+    ValueMap,
+    ValueMapReadOnly,
     ValuePedigree,
-    ValueSet,
-    ValueSetReadOnly,
 )
 from kiara.models.values.value_schema import ValueSchema
 from kiara.registries.data.data_store import DataArchive, DataStore
@@ -272,10 +272,12 @@ class DataRegistry(object):
                         raise Exception(
                             f"Can't retrieve value for '{value_id}': invalid reference type '{ref_type}'."
                         )
+        else:
+            _value_id = value_id
 
         assert _value_id is not None
 
-        if value_id in self._registered_values.keys():
+        if _value_id in self._registered_values.keys():
             value = self._registered_values[_value_id]
             return value
 
@@ -653,7 +655,7 @@ class DataRegistry(object):
 
         return result_value.data
 
-    def load_values(self, values: Mapping[str, Optional[uuid.UUID]]) -> ValueSet:
+    def load_values(self, values: Mapping[str, Optional[uuid.UUID]]) -> ValueMap:
 
         value_items = {}
         schemas = {}
@@ -665,7 +667,7 @@ class DataRegistry(object):
             value_items[field_name] = value
             schemas[field_name] = value.value_schema
 
-        return ValueSetReadOnly(value_items=value_items, values_schema=schemas)
+        return ValueMapReadOnly(value_items=value_items, values_schema=schemas)
 
     def load_data(self, values: Mapping[str, Optional[uuid.UUID]]) -> Mapping[str, Any]:
 
@@ -674,7 +676,7 @@ class DataRegistry(object):
 
     def create_valueset(
         self, data: Mapping[str, Any], schema: Mapping[str, ValueSchema]
-    ) -> ValueSet:
+    ) -> ValueMap:
         """Extract a set of [Value][kiara.data.values.Value] from Python data and ValueSchemas."""
 
         input_details = {}
@@ -731,7 +733,7 @@ class DataRegistry(object):
                 invalid_values={k: str(v) for k, v in failed.items()},
             )
 
-        return ValueSetReadOnly(value_items=values, values_schema=schema)  # type: ignore
+        return ValueMapReadOnly(value_items=values, values_schema=schema)  # type: ignore
 
     # def retrieve_or_create_value(
     #     self, value_or_data: Any, value_schema: ValueSchema

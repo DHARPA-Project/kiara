@@ -34,7 +34,7 @@ from kiara.models.module import KiaraModuleConfig
 from kiara.models.module.jobs import JobLog
 
 # from kiara.data.values import ValueOrm, ValueLineage, ValueSchema
-# from kiara.data.values.value_set import SlottedValueSet, ValueSet
+# from kiara.data.values.value_set import SlottedValueSet, ValueMap
 # from kiara.defaults import SpecialValue
 # from kiara.exceptions import KiaraModuleConfigException
 # from kiara.metadata import MetadataModel
@@ -56,7 +56,7 @@ from kiara.utils.values import (
 )
 
 if TYPE_CHECKING:
-    from kiara.models.values.value import ValueSet
+    from kiara.models.values.value import ValueMap
 
 
 yaml = StringYAML()
@@ -390,7 +390,7 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
             )
 
     def process_step(
-        self, inputs: "ValueSet", outputs: "ValueSet", job_log: JobLog
+        self, inputs: "ValueMap", outputs: "ValueMap", job_log: JobLog
     ) -> None:
         """Kick off processing for a specific set of input/outputs.
 

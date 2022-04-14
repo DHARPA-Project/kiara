@@ -176,7 +176,7 @@ class Value(ValueDetails):
     _data_registry: "DataRegistry" = PrivateAttr(default=None)
     _data_type: "DataType" = PrivateAttr(default=None)
     _is_stored: bool = PrivateAttr(default=False)
-    _cached_properties: Optional["ValueSet"] = PrivateAttr(default=None)
+    _cached_properties: Optional["ValueMap"] = PrivateAttr(default=None)
 
     property_refs: Mapping[str, uuid.UUID] = Field(
         description="Links to values that are properties of this value.",
@@ -305,7 +305,7 @@ class Value(ValueDetails):
         return self._data_type
 
     @property
-    def property_values(self) -> "ValueSet":
+    def property_values(self) -> "ValueMap":
 
         if self._cached_properties is not None:
             return self._cached_properties
@@ -386,7 +386,7 @@ class UnloadableData(KiaraModel):
         return self.value.model_data_hash
 
 
-class ValueSet(KiaraModel, MutableMapping[str, Value]):  # type: ignore
+class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
 
     values_schema: Dict[str, ValueSchema] = Field(
         description="The schemas for all the values in this set."
@@ -430,7 +430,7 @@ class ValueSet(KiaraModel, MutableMapping[str, Value]):  # type: ignore
     def get_value_data_for_fields(
         self, *field_names: str, raise_exception_when_unset: bool = False
     ) -> Dict[str, Any]:
-        """Return the data for a one or several fields of this ValueSet.
+        """Return the data for a one or several fields of this ValueMap.
 
         If a value is unset, by default 'None' is returned for it. Unless 'raise_exception_when_unset' is set to 'True',
         in which case an Exception will be raised (obviously).
@@ -532,12 +532,12 @@ class ValueSet(KiaraModel, MutableMapping[str, Value]):  # type: ignore
         return table
 
 
-class ValueSetReadOnly(ValueSet):  # type: ignore
+class ValueMapReadOnly(ValueMap):  # type: ignore
     @classmethod
     def create_from_ids(cls, data_registry: "DataRegistry", **value_ids: uuid.UUID):
 
         values = {k: data_registry.get_value(v) for k, v in value_ids.items()}
-        return ValueSetReadOnly.construct(value_items=values)
+        return ValueMapReadOnly.construct(value_items=values)
 
     value_items: Dict[str, Value] = Field(
         description="The values contained in this set."
@@ -563,13 +563,13 @@ class ValueSetReadOnly(ValueSet):  # type: ignore
         return self.value_items[field_name]
 
 
-class ValueSetWritable(ValueSet):  # type: ignore
+class ValueMapWritable(ValueMap):  # type: ignore
     @classmethod
     def create_from_schema(
         cls, kiara: "Kiara", schema: Mapping[str, ValueSchema], pedigree: ValuePedigree
-    ) -> "ValueSetWritable":
+    ) -> "ValueMapWritable":
 
-        v = ValueSetWritable(values_schema=schema, pedigree=pedigree)
+        v = ValueMapWritable(values_schema=schema, pedigree=pedigree)
         v._data_registry = kiara.data_registry
         return v
 

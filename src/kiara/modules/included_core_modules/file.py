@@ -9,7 +9,7 @@ from kiara.models.module.persistence import (
     BytesStructure,
     LoadConfig,
 )
-from kiara.models.values.value import Value, ValueSet
+from kiara.models.values.value import Value, ValueMap
 from kiara.modules import ValueSetSchema
 from kiara.modules.included_core_modules.persistence import PersistValueModule
 
@@ -30,7 +30,7 @@ class ImportFileModule(KiaraModule):
 
         return {"file": {"type": "file", "doc": "The loaded files."}}
 
-    def process(self, inputs: ValueSet, outputs: ValueSet):
+    def process(self, inputs: ValueMap, outputs: ValueMap):
 
         path = inputs.get_value_data("path")
 
@@ -64,7 +64,7 @@ class LoadFileFromStoreModule(KiaraModule):
 
         return {"file": {"type": "file", "doc": "The loaded files."}}
 
-    def process(self, inputs: ValueSet, outputs: ValueSet):
+    def process(self, inputs: ValueMap, outputs: ValueMap):
 
         file_name = inputs.get_value_data("file_name")
         import_time_str = inputs.get_value_data("import_time")

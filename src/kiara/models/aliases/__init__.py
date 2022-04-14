@@ -7,7 +7,7 @@ from rich.tree import Tree
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional
 
 from kiara.defaults import NONE_VALUE_ID, VALUES_CATEGORY_ID
-from kiara.models.values.value import Value, ValueSet
+from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.utils import rich_print
 
@@ -20,7 +20,7 @@ logger = structlog.getLogger()
 VALUE_ALIAS_SEPARATOR = "."
 
 
-class AliasValueMap(ValueSet):
+class AliasValueMap(ValueMap):
 
     alias: Optional[str] = Field(description="This maps own (full) alias.")
     version: int = Field(description="The version of this map (in this maps parent).")

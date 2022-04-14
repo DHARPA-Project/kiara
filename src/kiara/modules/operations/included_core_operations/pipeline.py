@@ -12,7 +12,7 @@ from kiara.models.module.operation import (
     OperationSchema,
     PipelineOperationConfig,
 )
-from kiara.models.values.value import Value, ValueSet
+from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule
 from kiara.modules.included_core_modules.pipeline import PipelineModule
@@ -60,7 +60,7 @@ class PipelineOperationDetails(OperationDetails):
     def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
         return inputs
 
-    def create_operation_outputs(self, outputs: ValueSet) -> Mapping[str, Value]:
+    def create_operation_outputs(self, outputs: ValueMap) -> Mapping[str, Value]:
         return outputs
 
 

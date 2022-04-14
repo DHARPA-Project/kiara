@@ -9,7 +9,7 @@ from kiara.models.module.operation import (
     Operation,
     OperationConfig,
 )
-from kiara.models.values.value import Value, ValueSet
+from kiara.models.values.value import Value, ValueMap
 from kiara.modules import KiaraModule, ValueSetSchema
 from kiara.modules.included_core_modules.render_value import RenderValueModule
 from kiara.modules.operations import OperationType
@@ -50,7 +50,7 @@ class RenderValueDetails(BaseOperationDetails):
             "render_config": inputs.get("render_config", None),
         }
 
-    def create_operation_outputs(self, outputs: ValueSet) -> Mapping[str, Value]:
+    def create_operation_outputs(self, outputs: ValueMap) -> Mapping[str, Value]:
 
         return {"rendered_value": outputs.get_value_obj("rendered_value")}
 

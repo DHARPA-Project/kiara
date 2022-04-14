@@ -6,7 +6,7 @@ from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.module.pipeline.controller import SinglePipelineBatchController
 from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.models.module.pipeline.structure import PipelineStructure
-from kiara.models.values.value import ValueSet, ValueSetWritable
+from kiara.models.values.value import ValueMap, ValueMapWritable
 from kiara.modules import KIARA_CONFIG, KiaraModule, ValueSetSchema
 
 if TYPE_CHECKING:
@@ -45,7 +45,7 @@ class PipelineModule(KiaraModule):
         pipeline_structure: PipelineStructure = self.config.structure
         return pipeline_structure.pipeline_outputs_schema
 
-    def process(self, inputs: ValueSet, outputs: ValueSetWritable, job_log: JobLog):
+    def process(self, inputs: ValueMap, outputs: ValueMapWritable, job_log: JobLog):
 
         pipeline_structure: PipelineStructure = self.config.structure
 

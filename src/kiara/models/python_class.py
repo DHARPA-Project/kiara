@@ -2,7 +2,7 @@
 import importlib
 from pydantic.fields import Field, PrivateAttr
 from types import ModuleType
-from typing import Any, Dict, TYPE_CHECKING, Type
+from typing import TYPE_CHECKING, Any, Dict, Type
 
 from kiara.models import KiaraModel
 from kiara.models.documentation import ContextMetadataModel

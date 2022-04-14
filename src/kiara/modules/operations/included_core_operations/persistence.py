@@ -11,7 +11,7 @@ from kiara.models.module.operation import (
     Operation,
     OperationConfig,
 )
-from kiara.models.values.value import Value, ValueSet
+from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule, ValueSetSchema
 from kiara.modules.included_core_modules.persistence import PersistValueModule
@@ -61,7 +61,7 @@ class PersistValueDetails(BaseOperationDetails):
             "persistence_config": inputs.get("persistence_config", {}),
         }
 
-    def create_operation_outputs(self, outputs: ValueSet) -> Mapping[str, Value]:
+    def create_operation_outputs(self, outputs: ValueMap) -> Mapping[str, Value]:
 
         return outputs
 

@@ -13,7 +13,7 @@ from kiara.exceptions import FailedJobException, NoSuchExecutionTargetException
 from kiara.models.module.jobs import JobConfig, JobStatus
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
-from kiara.models.values.value import Value, ValueSet
+from kiara.models.values.value import Value, ValueMap
 from kiara.utils import is_debug
 
 logger = structlog.getLogger()
@@ -76,13 +76,13 @@ class KiaraOperation(object):
         self._inputs_raw: Dict[str, Any] = {}
 
         self._operation: Optional[Operation] = None
-        self._inputs: Optional[ValueSet] = None
+        self._inputs: Optional[ValueMap] = None
 
         self._job_config: Optional[JobConfig] = None
 
         self._queued_jobs: Dict[uuid.UUID, Dict[str, Any]] = {}
         self._last_job: Optional[uuid.UUID] = None
-        self._results: Dict[uuid.UUID, ValueSet] = {}
+        self._results: Dict[uuid.UUID, ValueMap] = {}
 
     def validate(self):
 
@@ -93,7 +93,7 @@ class KiaraOperation(object):
         self._job_config = None
 
     @property
-    def operation_inputs(self) -> ValueSet:
+    def operation_inputs(self) -> ValueMap:
 
         if self._inputs is not None:
             return self._inputs
@@ -265,7 +265,7 @@ class KiaraOperation(object):
         self._last_job = job_id
         return job_id
 
-    def retrieve_result(self, job_id: Optional[uuid.UUID] = None) -> ValueSet:
+    def retrieve_result(self, job_id: Optional[uuid.UUID] = None) -> ValueMap:
 
         if job_id in self._results.keys():
             assert job_id is not None

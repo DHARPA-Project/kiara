@@ -606,11 +606,11 @@ class Pipeline(object):
 #
 #         return result
 #
-#     # def get_step_inputs(self, step_id: str) -> ValueSet:
+#     # def get_step_inputs(self, step_id: str) -> ValueMap:
 #     #     """Return all inputs for a step id (incl. inputs that are not pipeline inputs but connected to other modules output)."""
 #     #     return self._step_inputs[step_id]
 #     #
-#     # def get_step_outputs(self, step_id: str) -> ValueSet:
+#     # def get_step_outputs(self, step_id: str) -> ValueMap:
 #     #     """Return all outputs for a step id (incl. outputs that are not pipeline outputs)."""
 #     #     return self._step_outputs[step_id]
 #

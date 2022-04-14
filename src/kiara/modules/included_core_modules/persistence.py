@@ -14,7 +14,7 @@ from kiara.models.module.persistence import (
     LoadConfig,
 )
 from kiara.models.python_class import PythonClass
-from kiara.models.values.value import Value, ValueSet
+from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule, ModuleCharacteristics, ValueSetSchema
 from kiara.utils import orjson_dumps
@@ -93,7 +93,7 @@ class PersistValueModule(KiaraModule):
     def get_persistence_format_name(self) -> str:
         pass
 
-    def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
+    def process(self, inputs: ValueMap, outputs: ValueMap) -> None:
 
         source_type = self.get_config_value("source_type")
         value = inputs.get_value_obj(source_type)
@@ -173,7 +173,7 @@ class LoadInlineDataModule(KiaraModule):
             "value": {"type": data_type, "doc": f"The deserialized {data_type} value."}
         }
 
-    def process(self, inputs: ValueSet, outputs: ValueSet):
+    def process(self, inputs: ValueMap, outputs: ValueMap):
 
         data_str = inputs.get_value_data("json_data")
         data = orjson.loads(data_str)
@@ -245,7 +245,7 @@ class LoadPickledDataModule(KiaraModule):
             }
         }
 
-    def process(self, inputs: ValueSet, outputs: ValueSet):
+    def process(self, inputs: ValueMap, outputs: ValueMap):
 
         import pickle5 as pickle
 
@@ -333,7 +333,7 @@ class LoadInternalModelModule(KiaraModule):
     def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
         return ModuleCharacteristics(is_internal=True)
 
-    def process(self, inputs: ValueSet, outputs: ValueSet):
+    def process(self, inputs: ValueMap, outputs: ValueMap):
 
         data_str = inputs.get_value_data("model_data")
         data = orjson.loads(data_str)

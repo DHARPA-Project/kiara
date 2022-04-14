@@ -45,7 +45,7 @@ from kiara.models.module.jobs import JobConfig
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.python_class import PythonClass
-from kiara.models.values.value import Value, ValueSet, ValueSetReadOnly
+from kiara.models.values.value import Value, ValueMap, ValueMapReadOnly
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import InputOutputObject, KiaraModule, ValueSetSchema
 from kiara.utils.output import create_table_from_field_schemas
@@ -133,7 +133,7 @@ class OperationDetails(KiaraModel):
         pass
 
     @abc.abstractmethod
-    def create_operation_outputs(self, outputs: ValueSet) -> Mapping[str, Value]:
+    def create_operation_outputs(self, outputs: ValueMap) -> Mapping[str, Value]:
         pass
 
 
@@ -322,26 +322,26 @@ class Operation(Manifest):
         )
         return job_config
 
-    def run(self, kiara: "Kiara", inputs: Any) -> ValueSet:
+    def run(self, kiara: "Kiara", inputs: Any) -> ValueMap:
 
         logger.debug("run.operation", operation_id=self.operation_id)
         job_config = self.prepare_job_config(kiara=kiara, inputs=inputs)
 
         job_id = kiara.job_registry.execute_job(job_config=job_config)
-        outputs: ValueSet = kiara.job_registry.retrieve_result(job_id=job_id)
+        outputs: ValueMap = kiara.job_registry.retrieve_result(job_id=job_id)
 
         result = self.process_job_outputs(outputs=outputs)
 
         return result
 
-    def process_job_outputs(self, outputs: ValueSet) -> ValueSet:
+    def process_job_outputs(self, outputs: ValueMap) -> ValueMap:
 
         op_outputs = self.operation_details.create_operation_outputs(outputs=outputs)
 
-        value_set = ValueSetReadOnly(value_items=op_outputs, values_schema=self.outputs_schema)  # type: ignore
+        value_set = ValueMapReadOnly(value_items=op_outputs, values_schema=self.outputs_schema)  # type: ignore
         return value_set
 
-    # def run(self, _attach_lineage: bool = True, **inputs: Any) -> ValueSet:
+    # def run(self, _attach_lineage: bool = True, **inputs: Any) -> ValueMap:
     #
     #     return self.module.run(_attach_lineage=_attach_lineage, **inputs)
 

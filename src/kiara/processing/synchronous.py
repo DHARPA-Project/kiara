@@ -6,7 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import uuid
 
-from kiara.models.values.value import ValueSet, ValueSetWritable
+from kiara.models.values.value import ValueMap, ValueMapWritable
 from kiara.modules import KiaraModule
 from kiara.processing import JobLog, JobStatus, ModuleProcessor, ProcessorConfig
 
@@ -26,8 +26,8 @@ class SynchronousProcessor(ModuleProcessor):
         self,
         job_id: uuid.UUID,
         module: "KiaraModule",
-        inputs: ValueSet,
-        outputs: ValueSetWritable,
+        inputs: ValueMap,
+        outputs: ValueMapWritable,
         job_log: JobLog,
     ):
 

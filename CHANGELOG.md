@@ -78,7 +78,7 @@
     - DataValue -> removed
     - LinkedValue -> removed
     - ValueUpdateHandler -> ValueUpdateHandler
-  - kiara.data.values.ValueSet*-related -> kiara.data.values.value_set
+  - kiara.data.values.ValueMap*-related -> kiara.data.values.value_set
 - removed 'pipeline_id' attribute from 'PipelineStructure' class, but 'Pipeline" has 'id' and 'title' fields now instead
 - refactored 'DataRegistry' and 'Value' object:
   - 'Value' objects are now immutable, and can only be created via a registry
@@ -86,7 +86,7 @@
   - removed linked values, replaced by 'ValueSlot' class
   - 'ValueSlot' basically contains the history of all (immutable) Value objects on a specific spot (mostly within a pipeline, but can be used elsewhere)
   - 'set_value_data' on 'Value' class is removed (since values are no immutable)
-  - the interface of 'ValueSet' however is mostly unchanged, and all 'set/get value_obj/value_data' methods should still work as before
+  - the interface of 'ValueMap' however is mostly unchanged, and all 'set/get value_obj/value_data' methods should still work as before
 - data store is now just a 'DataRegistry' subclass that persists to disk instead of memory, this means that getting data into the data store now uses the 'register_data' method, and getting it out uses 'get_value_obj'
 - aliases can now only contain alphanumeric characters, '_' and '-"
 - removed some data import modules/operations until I settled on a data onboarding strategy (current one was leaky). This is mostly relevant for the operation that imports a table from a (path) string -- use a mini-pipeline as replacement and save the table manually, something like: https://github.com/DHARPA-Project/kiara/blob/main/tests/resources/pipelines/table_import.json
@@ -185,8 +185,8 @@
 ## Version 0.0.2
 
 - metadata extraction method renamed to 'extract_type_metadata'; also, the type metadata format changed slightly: information extracted by type goes into 'type' subkey, python class information gets added under 'python' (automatically)
-- type-hint signature of parameters in ``process`` method in a ``KiaraModule`` changed from ``StepInputs``/``StepOutputs`` to ``ValueSet``
-- change all input and output data access within modules to use ``ValueSet.get_value_data()``  ``ValueSet.set_value(s)`` instead of direct attribute access -- for now, direct attribute access is removed because it's not clear whether the access should be for the value object, or the data itself
+- type-hint signature of parameters in ``process`` method in a ``KiaraModule`` changed from ``StepInputs``/``StepOutputs`` to ``ValueMap``
+- change all input and output data access within modules to use ``ValueMap.get_value_data()``  ``ValueMap.set_value(s)`` instead of direct attribute access -- for now, direct attribute access is removed because it's not clear whether the access should be for the value object, or the data itself
 - 'dict' attribute in ValueData class renamed to 'get_all_value_data'
 - added 'ModuleProcessor' class, to be able to implement different module execution strategies (multithreaded, multiprocess, ...)
 - renamed ``kiara.config`` module to ``kiara.module_config``

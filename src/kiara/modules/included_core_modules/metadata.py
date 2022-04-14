@@ -10,7 +10,7 @@ from typing import Any, Mapping, Type, Union
 from kiara.exceptions import KiaraProcessingException
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.python_class import PythonClass
-from kiara.models.values.value import ValueSet
+from kiara.models.values.value import ValueMap
 from kiara.models.values.value_metadata import ValueMetadata
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule
@@ -58,7 +58,7 @@ class ExtractMetadataModule(KiaraModule):
 
         return outputs
 
-    def process(self, inputs: ValueSet, outputs: ValueSet) -> None:
+    def process(self, inputs: ValueMap, outputs: ValueMap) -> None:
 
         # metadata_key = self.get_config_value("metadata_key")
         # data_type = self.get_config_value("data_type")

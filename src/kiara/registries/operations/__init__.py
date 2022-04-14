@@ -160,11 +160,13 @@ class OperationRegistry(object):
                 deferred_module_names.setdefault(module_type, []).append(op_config)
             else:
                 module_config = op_config.retrieve_module_config(kiara=self._kiara)
+
                 manifest = Manifest.construct(
                     module_type=module_type, module_config=module_config
                 )
 
                 ops = self._create_operations(manifest=manifest, doc=op_config.doc)
+
                 for op_type_name, _op in ops.items():
                     if _op.operation_id in operations.keys():
                         raise Exception(f"Duplicate operation id: {_op.operation_id}")
@@ -206,11 +208,15 @@ class OperationRegistry(object):
                             )
 
                             manifest = Manifest.construct(
-                                module_type="pipeline", module_config=module_config
+                                module_type="pipeline",
+                                module_config=module_config,
                             )
                             ops = self._create_operations(
                                 manifest=manifest, doc=op_config.doc
                             )
+
+                        else:
+                            raise NotImplementedError()
 
                     else:
                         raise NotImplementedError()
@@ -269,6 +275,7 @@ class OperationRegistry(object):
 
         module = self._kiara.create_module(manifest)
         op_types = {}
+
         for op_name, op_type in self.operation_types.items():
 
             op_details = op_type.check_matching_operation(module=module)

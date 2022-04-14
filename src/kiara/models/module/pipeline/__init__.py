@@ -296,7 +296,8 @@ class PipelineConfig(KiaraModuleConfig):
         steps = data.pop("steps")
         steps = PipelineStep.create_steps(*steps, kiara=kiara, module_map=module_map)
         data["steps"] = steps
-        return PipelineConfig(pipeline_id=pipeline_id, **data)
+        result = PipelineConfig(pipeline_id=pipeline_id, **data)
+        return result
 
     class Config:
         extra = Extra.allow

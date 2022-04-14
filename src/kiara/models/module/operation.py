@@ -225,13 +225,14 @@ class PipelineOperationConfig(OperationConfig):
         return "pipeline"
 
     def retrieve_module_config(self, kiara: "Kiara") -> Mapping[str, Any]:
+
         pipeline_config = PipelineConfig.from_config(
             pipeline_id=self.pipeline_id,
             data=self.pipeline_config,
             kiara=kiara,
             module_map=self.module_map,
         )
-        return pipeline_config
+        return pipeline_config.dict()
 
     @property
     def required_module_types(self) -> Iterable[str]:
@@ -256,7 +257,7 @@ class Operation(Manifest):
         details = CustomModuleOperationDetails.create_from_module(module=module)
         operation = Operation(
             module_type=module.module_type_name,
-            module_config=module.config,
+            module_config=module.config.dict(),
             operation_id=op_id,
             operation_details=details,
             module_details=KiaraModuleClass.from_module(module),

@@ -192,9 +192,9 @@ class KiaraOperation(object):
 
         module_or_operation = self._operation_name
         operation: Optional[Operation] = None
+
         if isinstance(module_or_operation, str):
             if module_or_operation in self._kiara.operation_registry.operation_ids:
-
                 operation = self._kiara.operation_registry.get_operation(
                     module_or_operation
                 )

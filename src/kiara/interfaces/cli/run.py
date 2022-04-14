@@ -20,7 +20,7 @@ from kiara.exceptions import (
     NoSuchExecutionTargetException,
 )
 from kiara.interfaces.python_api import KiaraOperation
-from kiara.utils import dict_from_cli_args, rich_print
+from kiara.utils import dict_from_cli_args, is_debug, rich_print
 from kiara.utils.output import OutputDetails
 
 
@@ -130,6 +130,10 @@ def run(
         sys.exit(1)
     except Exception as e:
         print()
+        if is_debug():
+            import traceback
+
+            traceback.print_exc()
         rich_print(str(e))
         sys.exit(1)
 

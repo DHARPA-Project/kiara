@@ -41,7 +41,7 @@ class KiaraArchive(abc.ABC):
 
 class BaseArchive(KiaraArchive, Generic[ARCHIVE_CONFIG_CLS]):
 
-    _config_cls: ClassVar[Type[ARCHIVE_CONFIG_CLS]] = ArchiveConfig
+    _config_cls = ArchiveConfig
 
     def __init__(self, archive_id: uuid.UUID, config: ARCHIVE_CONFIG_CLS):
 

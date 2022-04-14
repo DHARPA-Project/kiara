@@ -31,7 +31,7 @@ from kiara.utils import orjson_dumps
 try:
     from typing import Literal
 except Exception:
-    from typing_extensions import Literal  # type: ignore
+    from typing_extensions import Literal  # type: ignore  # noqa
 
 from pydantic import BaseModel, Field, validator
 
@@ -114,10 +114,10 @@ class PipelineDetails(BaseModel):
         default_factory=dict,
     )
 
-    pipeline_inputs: Dict[str, Optional[uuid.UUID]] = Field(
+    pipeline_inputs: Dict[str, uuid.UUID] = Field(
         description="The current pipeline inputs."
     )
-    pipeline_outputs: Dict[str, Optional[uuid.UUID]] = Field(
+    pipeline_outputs: Dict[str, uuid.UUID] = Field(
         description="The current pipeline outputs."
     )
 

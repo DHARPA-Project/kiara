@@ -18,7 +18,7 @@ class LoadConfigSchema(DataTypeConfig):
 
 
 class LoadConfigValueType(InternalType[LoadConfig, LoadConfigSchema]):
-    """An value type that contains data that describes how to (re-)load a value from disk.
+    """A value type that contains data that describes how to (re-)load a value from disk.
 
     This is mostly used internally in kiara, but might be exposed to users in certain cases (for example when exporting
     a value in the native kiara file format).

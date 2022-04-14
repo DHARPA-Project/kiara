@@ -9,7 +9,7 @@ import orjson
 from abc import ABC, abstractmethod
 from pydantic import BaseModel, Field, root_validator
 from rich import box
-from rich.console import ConsoleRenderable, RenderableType, RenderGroup, RichCast
+from rich.console import ConsoleRenderable, Group, RenderableType, RichCast
 from rich.table import Table as RichTable
 from typing import (
     TYPE_CHECKING,
@@ -446,7 +446,7 @@ def create_table_from_base_model_cls(model_cls: Type[BaseModel]):
         else:
             try:
                 default = json.dumps(default, indent=2)
-            except:
+            except Exception:
                 default = str(default)
         row.append(default)
         table.add_row(*row)
@@ -621,7 +621,7 @@ def extract_renderable(item: Any, render_config: Optional[Mapping[str, Any]] = N
         _all = []
         for i in item:
             _all.append(extract_renderable(i))
-        rg = RenderGroup(*_all)
+        rg = Group(*_all)
         return rg
     else:
         return str(item)

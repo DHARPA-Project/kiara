@@ -6,12 +6,11 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 """Module related subcommands for the cli."""
-
 import orjson
 import os.path
 import rich_click as click
-import typing
 from rich.panel import Panel
+from typing import Any, Iterable, List
 
 from kiara import Kiara
 
@@ -44,14 +43,14 @@ def module(ctx):
 )
 @click.argument("filter", nargs=-1, required=False)
 @click.pass_context
-def list_modules(ctx, full_doc: bool, filter: typing.Iterable[str], format: str):
+def list_modules(ctx, full_doc: bool, filter: Iterable[str], format: str):
     """List available module data_types."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     if filter:
         title = f"Filtered modules: {filter}"
-        module_types_names = []
+        module_types_names: List[str] = []
 
         for m in kiara_obj.module_type_names:
             match = True
@@ -66,7 +65,7 @@ def list_modules(ctx, full_doc: bool, filter: typing.Iterable[str], format: str)
                 module_types_names.append(m)
     else:
         title = "All modules"
-        module_types_names = kiara_obj.module_type_names
+        module_types_names = list(kiara_obj.module_type_names)
 
     module_types = {
         n: kiara_obj.module_registry.get_module_class(n) for n in module_types_names
@@ -133,7 +132,7 @@ def explain_module_type(ctx, module_type: str, format: str):
     nargs=-1,
 )
 @click.pass_context
-def explain_module(ctx, module_type: str, module_config: typing.Iterable[typing.Any]):
+def explain_module(ctx, module_type: str, module_config: Iterable[Any]):
     """Describe a module instance.
 
     This command shows information and metadata about an instantiated *kiara* module.
@@ -159,8 +158,8 @@ try:
         MODULE_DEV_STREAMLIT_FILE,
         MODULE_INFO_UI_STREAMLIT_FILE,
     )
-    from kiara_streamlit.utils import run_streamlit
-    from streamlit.cli import configurator_options
+    from kiara_streamlit.utils import run_streamlit  # type: ignore
+    from streamlit.cli import configurator_options  # type: ignore
 
     @module.command("dev")
     @configurator_options

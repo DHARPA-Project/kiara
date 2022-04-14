@@ -16,11 +16,7 @@ from kiara.models.documentation import (
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
-from kiara.models.info import (
-    KiaraInfoModel,
-    KiaraTypeInfoModel,
-    TypeInfoModelGroupMixin,
-)
+from kiara.models.info import KiaraTypeInfoModel, TypeInfoModelGroup
 from kiara.models.python_class import PythonClass
 from kiara.utils import orjson_dumps
 
@@ -81,6 +77,7 @@ class MetadataTypeInfoModel(KiaraTypeInfoModel):
     def base_class(self) -> Type[ValueMetadata]:
         return ValueMetadata
 
+    @classmethod
     def category_name(cls) -> str:
         return "value_metadata"
 
@@ -119,9 +116,9 @@ class MetadataTypeInfoModel(KiaraTypeInfoModel):
         return table
 
 
-class MetadataTypeClassesInfo(TypeInfoModelGroupMixin):
+class MetadataTypeClassesInfo(TypeInfoModelGroup):
     @classmethod
-    def base_info_class(cls) -> Type[KiaraInfoModel]:
+    def base_info_class(cls) -> Type[KiaraTypeInfoModel]:
         return MetadataTypeInfoModel
 
     type_name: Literal["value_metadata"] = "value_metadata"

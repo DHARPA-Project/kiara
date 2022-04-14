@@ -66,7 +66,7 @@ class ExtractMetadataModule(KiaraModule):
 
         value = inputs.get_value_obj("value")
 
-        metadata_model_cls: Type[ValueMetadata] = metadata_model.get_class()
+        metadata_model_cls: Type[ValueMetadata] = metadata_model.get_class()  # type: ignore
         metadata = metadata_model_cls.create_value_metadata(value=value)
 
         if not isinstance(metadata, metadata_model_cls):
@@ -74,13 +74,13 @@ class ExtractMetadataModule(KiaraModule):
                 f"Invalid metadata model result, should be class '{metadata_model_cls.__name__}', but is: {metadata.__class__.__name__}. This is most likely a bug."
             )
 
-        if isinstance(metadata, Mapping):
-            md = metadata_model_cls(metadata)
-        elif isinstance(metadata, metadata_model_cls):
-            md = metadata
-        else:
-            raise KiaraProcessingException(
-                f"Invalid type '{type(metadata)}' for result metadata, must be a mapping or subclass of '{metadata_model_cls.__name__}'."
-            )
+        # if isinstance(metadata, Mapping):
+        #     md = metadata_model_cls(**metadata)
+        # elif isinstance(metadata, metadata_model_cls):
+        #     md = metadata
+        # else:
+        #     raise KiaraProcessingException(
+        #         f"Invalid type '{type(metadata)}' for result metadata, must be a mapping or subclass of '{metadata_model_cls.__name__}'."
+        #     )
 
-        outputs.set_value("value_metadata", md)
+        outputs.set_value("value_metadata", metadata)

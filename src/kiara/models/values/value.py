@@ -197,7 +197,7 @@ class Value(ValueDetails):
         value = None
         try:
             value_temp = value
-            value_id = value_id.value_id
+            value_id = value_id.value_id  # type: ignore
             value = value_temp
         except Exception:
             # in case a Value object was provided
@@ -213,6 +213,8 @@ class Value(ValueDetails):
                 raise Exception(
                     f"Can't add property to value '{self.value_id}': referenced value '{value.value_id}' already locked, so it's not possible to add the property backlink (as requested)."
                 )
+
+        assert value is not None
 
         if self._is_stored:
             raise Exception(
@@ -320,10 +322,10 @@ class Value(ValueDetails):
 
         from kiara.utils.output import extract_renderable
 
-        show_metadata = render_config.get("show_metadata", True)
+        # show_metadata = render_config.get("show_metadata", True)
         show_pedigree = render_config.get("show_pedigree", False)
         show_load_config = render_config.get("show_load_config", False)
-        show_data = render_config.get("show_data", False)
+        # show_data = render_config.get("show_data", False)
 
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("Key", style="i")

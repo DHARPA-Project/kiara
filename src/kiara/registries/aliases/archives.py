@@ -109,6 +109,7 @@ class FileSystemAliasStore(FileSystemAliasArchive, AliasStore):
 
     _archive_type_name = "filesystem_alias_store"
 
+    @classmethod
     def is_writeable(cls) -> bool:
         return True
 

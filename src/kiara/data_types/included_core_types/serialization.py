@@ -84,7 +84,7 @@ class SerializedValueType(
         return SerializedValueModel
 
     @classmethod
-    def data_type_config_class(cls) -> Type[DataTypeConfig]:
+    def data_type_config_class(cls) -> Type[SerializedValueTypeConfigSchema]:
         return SerializedValueTypeConfigSchema
 
     def is_immutable(self) -> bool:

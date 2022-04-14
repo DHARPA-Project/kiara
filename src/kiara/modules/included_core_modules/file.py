@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from dateutil import parser
-from typing import Any, Mapping
+from typing import Any, List, Mapping, Tuple, Union
 
 from kiara import KiaraModule
 from kiara.models.filesystem import FileModel
@@ -71,12 +71,15 @@ class LoadFileFromStoreModule(KiaraModule):
 
         bytes_structure: BytesStructure = inputs.get_value_data("bytes_structure")
         assert len(bytes_structure.chunk_map) == 1
-        key = next(iter(bytes_structure.chunk_map))
 
         import_time = parser.parse(import_time_str)
 
+        file_chunks = bytes_structure.chunk_map[file_name]
+        assert len(file_chunks) == 1
+        chunk = file_chunks[0]
+        assert isinstance(chunk, str)
         file = FileModel.load_file(
-            source=bytes_structure.chunk_map[key],
+            source=chunk,
             file_name=file_name,
             import_time=import_time,
         )
@@ -95,16 +98,16 @@ class SaveFileToStoreModule(PersistValueModule):
 
     def data_type__file(
         self, value: Value, persistence_config: Mapping[str, Any]
-    ) -> LoadConfig:
+    ) -> Tuple[LoadConfig, BytesStructure]:
         """Persist single files into a local kiara data store."""
 
         file: FileModel = value.data
 
-        bytes_structure_data = {file.file_name: [file.path]}
+        bytes_structure_data: Mapping[str, List[Union[str, bytes]]] = {
+            file.file_name: [file.path]
+        }
         bytes_structure = BytesStructure.construct(
-            data_type="file",
-            data_type_config={},
-            chunk_map=bytes_structure_data,
+            data_type="file", data_type_config={}, chunk_map=bytes_structure_data
         )
 
         load_config_data = {

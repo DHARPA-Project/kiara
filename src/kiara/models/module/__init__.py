@@ -2,7 +2,7 @@
 import inspect
 import orjson.orjson
 import textwrap
-from pydantic import Extra, Field, PrivateAttr
+from pydantic import Extra, PrivateAttr
 from pydantic.fields import Field
 from pydantic.main import BaseModel
 from pydantic.schema import (
@@ -28,11 +28,7 @@ from kiara.models.documentation import (
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
-from kiara.models.info import (
-    KiaraInfoModel,
-    KiaraTypeInfoModel,
-    TypeInfoModelGroupMixin,
-)
+from kiara.models.info import KiaraTypeInfoModel, TypeInfoModelGroup
 from kiara.models.python_class import PythonClass
 from kiara.models.values.value_schema import ValueSchema
 
@@ -290,15 +286,12 @@ class KiaraModuleTypeInfo(KiaraTypeInfoModel["KiaraModule"]):
         table.add_row("Context", self.context.create_renderable())
 
         if include_config_schema:
-            if self.config:
-                config_cls = self.config.python_class.get_class()
-                from kiara.utils.output import create_table_from_base_model_cls
+            config_cls = self.python_class.get_class()._config_cls  # type: ignore
+            from kiara.utils.output import create_table_from_base_model_cls
 
-                table.add_row(
-                    "Module config", create_table_from_base_model_cls(config_cls)
-                )
-            else:
-                table.add_row("Module config", "-- no config --")
+            table.add_row(
+                "Module config schema", create_table_from_base_model_cls(config_cls)
+            )
 
         table.add_row("Python class", self.python_class.create_renderable())
 
@@ -309,9 +302,9 @@ class KiaraModuleTypeInfo(KiaraTypeInfoModel["KiaraModule"]):
         return table
 
 
-class ModuleTypeClassesInfo(TypeInfoModelGroupMixin):
+class ModuleTypeClassesInfo(TypeInfoModelGroup):
     @classmethod
-    def base_info_class(cls) -> Type[KiaraInfoModel]:
+    def base_info_class(cls) -> Type[KiaraTypeInfoModel]:
         return KiaraModuleTypeInfo
 
     type_name: Literal["module_type"] = "module_type"

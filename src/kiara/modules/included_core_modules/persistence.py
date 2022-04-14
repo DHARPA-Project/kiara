@@ -200,7 +200,7 @@ class SavePickleToDiskModule(PersistValueModule):
 
         pickled_bytes = pickle.dumps(value.data, protocol=5)
 
-        bytes_structure_data = {
+        bytes_structure_data: Dict[str, Any] = {
             "data_type": value.value_schema.type,
             "data_type_config": value.value_schema.type_config,
             "chunk_map": {"serialized_value.pickle": [pickled_bytes]},
@@ -326,7 +326,7 @@ class LoadInternalModelModule(KiaraModule):
         return {
             "internal_model": {
                 "type": "internal_model",
-                "doc": f"The deserialized internal_model value, loaded from the data store.",
+                "doc": "The deserialized internal_model value, loaded from the data store.",
             }
         }
 

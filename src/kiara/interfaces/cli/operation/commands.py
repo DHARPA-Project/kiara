@@ -14,7 +14,7 @@ from rich.panel import Panel
 
 from kiara import Kiara
 from kiara.models.module.operation import OperationGroupInfo, OperationTypeClassesInfo
-from kiara.utils import log_message, rich_print
+from kiara.utils import rich_print
 
 
 @click.group()
@@ -174,19 +174,10 @@ def explain(ctx, operation_id: str, source: bool):
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     if os.path.isfile(os.path.realpath(operation_id)):
-        try:
-            _operation_id = kiara_obj.register_pipeline_description(data=operation_id)
-            if _operation_id is None:
-                print(
-                    f"Unknown error when trying to import '{operation_id}' as pipeline."
-                )
-                sys.exit(1)
-            else:
-                operation_id = _operation_id
-        except Exception as e:
-            log_message(f"Tried to import '{operation_id}' as pipeline, failed: {e}")
+        raise NotImplementedError()
+    else:
+        op_config = kiara_obj.operation_registry.get_operation(operation_id)
 
-    op_config = kiara_obj.operation_registry.get_operation(operation_id)
     if not op_config:
         print()
         print(f"No operation with id '{operation_id}' registered.")

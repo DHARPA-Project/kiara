@@ -78,11 +78,11 @@ class SerializeValueModule(KiaraModule):
         func = getattr(self, func_name)
 
         if config.is_set:
-            config = config.value_data
+            _config = config.data
         else:
-            config = {}
+            _config = {}
 
-        result: SerializedValueModel = func(value=value, config=config)
+        result: SerializedValueModel = func(value=value, config=_config)
         outputs.set_value("serialized_value", result)
 
 
@@ -98,12 +98,12 @@ class PickleModule(SerializeValueModule):
 
         import pickle5 as pickle
 
-        pickled = pickle.dumps(value.value_data, protocol=5)
+        pickled = pickle.dumps(value.data, protocol=5)
         data = {"value": pickled}
 
         data_type_name = value.data_type_name
 
-        deserialization_config = {
+        deserialization_config: Dict[str, Any] = {
             "module_type": "value.serialize.pickle",
             "module_config": {"target_type": data_type_name},
             "output_name": data_type_name,
@@ -158,7 +158,7 @@ class UnpickleModule(KiaraModule):
         import pickle5 as pickle
 
         target_type = self.get_config_value("target_type")
-        _bytes = inputs.get_all_value_data("bytes")
+        _bytes = inputs.get_value_data("bytes")
 
         data = pickle.loads(_bytes)
 

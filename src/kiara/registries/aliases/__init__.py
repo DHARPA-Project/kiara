@@ -2,10 +2,6 @@
 import abc
 import structlog
 import uuid
-from pydantic import Field, PrivateAttr, root_validator
-from sqlalchemy import and_, func
-from sqlalchemy.engine import Engine
-from sqlalchemy.orm import Session, aliased
 from typing import (
     TYPE_CHECKING,
     Callable,
@@ -17,8 +13,6 @@ from typing import (
     Set,
 )
 
-from kiara.models.aliases import AliasValueMap
-from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.events.alias_registry import AliasArchiveAddedEvent
 from kiara.registries import BaseArchive
 
@@ -52,6 +46,7 @@ class AliasArchive(BaseArchive):
     def find_aliases_for_value_id(self, value_id: uuid.UUID) -> Optional[Set[str]]:
         pass
 
+    @classmethod
     def is_writeable(cls) -> bool:
         return False
 
@@ -88,12 +83,12 @@ class AliasRegistry(object):
 
     def register_archive(
         self,
-        alias_store: AliasStore,
+        archive: AliasArchive,
         alias: str = None,
         set_as_default_store: Optional[bool] = None,
     ):
 
-        alias_archive_id = alias_store.register_archive(kiara=self._kiara)
+        alias_archive_id = archive.register_archive(kiara=self._kiara)
 
         if alias is None:
             alias = str(alias_archive_id)
@@ -106,10 +101,10 @@ class AliasRegistry(object):
         if alias in self._alias_archives.keys():
             raise Exception(f"Can't add store, alias '{alias}' already registered.")
 
-        self._alias_archives[alias] = alias_store
+        self._alias_archives[alias] = archive
         is_store = False
         is_default_store = False
-        if isinstance(alias_store, AliasStore):
+        if isinstance(archive, AliasStore):
             is_store = True
             if set_as_default_store and self._default_alias_store is not None:
                 raise Exception(
@@ -122,7 +117,7 @@ class AliasRegistry(object):
 
         event = AliasArchiveAddedEvent.construct(
             kiara_id=self._kiara.id,
-            alias_archive_id=alias_store.archive_id,
+            alias_archive_id=archive.archive_id,
             alias_archive_alias=alias,
             is_store=is_store,
             is_default_store=is_default_store,
@@ -156,7 +151,7 @@ class AliasRegistry(object):
     def aliases_by_id(self) -> Mapping[uuid.UUID, Set[AliasItem]]:
         if self._cached_aliases_by_id is None:
             self.aliases  # noqa
-        return self._cached_aliases_by_id
+        return self._cached_aliases_by_id  # type: ignore
 
     @property
     def aliases(self) -> Dict[str, AliasItem]:
@@ -246,97 +241,99 @@ class AliasRegistry(object):
             )
 
             if alias in self.aliases.keys():
-                raise NotImplementedError()
+                logger.info("alias.replace", alias=alias)
+                # raise NotImplementedError()
 
             self.aliases[alias] = alias_item
             self._cached_aliases_by_id.setdefault(value_id, set()).add(alias_item)  # type: ignore
 
 
-class PersistentValueAliasMap(AliasValueMap):
-    # def __init__(self, data_registry: "DataRegistry", engine: Engine, doc: Any = None):
-    #
-    #     self._data_registry: DataRegistry = data_registry
-    #     self._engine: Engine = engine
-    #     doc = DocumentationMetadataModel.create(doc)
-    #     v_doc = self._data_registry.register_data(
-    #         doc, schema=ValueSchema(type="doc"), pedigree=ORPHAN
-    #     )
-    #     super().__init__(alias="", version=0, value=v_doc)
-    #
-    #     self._load_all_aliases()
-    doc: Optional[DocumentationMetadataModel] = Field(
-        description="Description of the values this map contains."
-    )
-    _engine: Engine = PrivateAttr(default=None)
-
-    @root_validator(pre=True)
-    def _fill_defaults(cls, values):
-        if "values_schema" not in values.keys():
-            values["values_schema"] = {}
-
-        if "version" not in values.keys():
-            values["version"] = 0
-        else:
-            assert values["version"] == 0
-
-        return values
-
-    def _load_all_aliases(self):
-
-        with Session(bind=self._engine, future=True) as session:  # type: ignore
-
-            alias_a = aliased(AliasOrm)
-            alias_b = aliased(AliasOrm)
-
-            result = (
-                session.query(alias_b)
-                .join(
-                    alias_a,
-                    and_(
-                        alias_a.alias == alias_b.alias,
-                        alias_a.version < alias_b.version,
-                    ),
-                )
-                .where(alias_b.value_id != None)
-                .order_by(func.length(alias_b.alias), alias_b.alias)
-            )
-
-            for r in result:
-                value = self._data_registry.get_value(r.value_id)
-                self.set_alias(r.alias, value=value)
-
-    def save(self, *aliases):
-
-        for alias in aliases:
-            self._persist(alias)
-
-    def _persist(self, alias: str):
-
-        return
-
-        with Session(bind=self._engine, future=True) as session:  # type: ignore
-
-            current = []
-            tokens = alias.split(".")
-            for token in tokens:
-                current.append(token)
-                current_path = ".".join(current)
-                alias_map = self.get_alias(current_path)
-                if alias_map.is_stored:
-                    continue
-
-                value_id = None
-                if alias_map.assoc_value:
-                    value_id = alias_map.assoc_value
-
-                if value_id is None:
-                    continue
-                alias_map_orm = AliasOrm(
-                    value_id=value_id,
-                    created=alias_map.created,
-                    version=alias_map.version,
-                    alias=current_path,
-                )
-                session.add(alias_map_orm)
-
-            session.commit()
+#
+# class PersistentValueAliasMap(AliasValueMap):
+#     # def __init__(self, data_registry: "DataRegistry", engine: Engine, doc: Any = None):
+#     #
+#     #     self._data_registry: DataRegistry = data_registry
+#     #     self._engine: Engine = engine
+#     #     doc = DocumentationMetadataModel.create(doc)
+#     #     v_doc = self._data_registry.register_data(
+#     #         doc, schema=ValueSchema(type="doc"), pedigree=ORPHAN
+#     #     )
+#     #     super().__init__(alias="", version=0, value=v_doc)
+#     #
+#     #     self._load_all_aliases()
+#     doc: Optional[DocumentationMetadataModel] = Field(
+#         description="Description of the values this map contains."
+#     )
+#     _engine: Engine = PrivateAttr(default=None)
+#
+#     @root_validator(pre=True)
+#     def _fill_defaults(cls, values):
+#         if "values_schema" not in values.keys():
+#             values["values_schema"] = {}
+#
+#         if "version" not in values.keys():
+#             values["version"] = 0
+#         else:
+#             assert values["version"] == 0
+#
+#         return values
+#
+#     def _load_all_aliases(self):
+#
+#         with Session(bind=self._engine, future=True) as session:  # type: ignore
+#
+#             alias_a = aliased(AliasOrm)
+#             alias_b = aliased(AliasOrm)
+#
+#             result = (
+#                 session.query(alias_b)
+#                 .join(
+#                     alias_a,
+#                     and_(
+#                         alias_a.alias == alias_b.alias,
+#                         alias_a.version < alias_b.version,
+#                     ),
+#                 )
+#                 .where(alias_b.value_id != None)
+#                 .order_by(func.length(alias_b.alias), alias_b.alias)
+#             )
+#
+#             for r in result:
+#                 value = self._data_registry.get_value(r.value_id)
+#                 self.set_alias(r.alias, value=value)
+#
+#     def save(self, *aliases):
+#
+#         for alias in aliases:
+#             self._persist(alias)
+#
+#     def _persist(self, alias: str):
+#
+#         return
+#
+#         with Session(bind=self._engine, future=True) as session:  # type: ignore
+#
+#             current = []
+#             tokens = alias.split(".")
+#             for token in tokens:
+#                 current.append(token)
+#                 current_path = ".".join(current)
+#                 alias_map = self.get_alias(current_path)
+#                 if alias_map.is_stored:
+#                     continue
+#
+#                 value_id = None
+#                 if alias_map.assoc_value:
+#                     value_id = alias_map.assoc_value
+#
+#                 if value_id is None:
+#                     continue
+#                 alias_map_orm = AliasOrm(
+#                     value_id=value_id,
+#                     created=alias_map.created,
+#                     version=alias_map.version,
+#                     alias=current_path,
+#                 )
+#                 session.add(alias_map_orm)
+#
+#             session.commit()

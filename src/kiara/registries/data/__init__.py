@@ -12,9 +12,11 @@ from typing import (
     Mapping,
     Optional,
     Set,
+    Tuple,
     Union,
 )
 
+from kiara.data_types import DataType
 from kiara.defaults import (
     INVALID_HASH_MARKER,
     NONE_VALUE_ID,
@@ -140,9 +142,9 @@ class DataRegistry(object):
     #         ValueCreatedEvent,
     #     ]
 
-    def retrieve_all_available_value_ids(self) -> List[uuid.UUID]:
+    def retrieve_all_available_value_ids(self) -> Set[uuid.UUID]:
 
-        result = set()
+        result: Set[uuid.UUID] = set()
         for store in self._data_archives.values():
             ids = store.value_ids
             result.update(ids)
@@ -151,21 +153,21 @@ class DataRegistry(object):
 
     def register_data_archive(
         self,
-        data_store: DataStore,
+        archive: DataArchive,
         alias: str = None,
         set_as_default_store: Optional[bool] = None,
     ):
 
-        data_store_id = data_store.register_archive(kiara=self._kiara)
+        data_store_id = archive.register_archive(kiara=self._kiara)
         if alias is None:
             alias = str(data_store_id)
 
         if alias in self._data_archives.keys():
             raise Exception(f"Can't add store, alias '{alias}' already registered.")
-        self._data_archives[alias] = data_store
+        self._data_archives[alias] = archive
         is_store = False
         is_default_store = False
-        if isinstance(data_store, DataStore):
+        if isinstance(archive, DataStore):
             is_store = True
 
             if set_as_default_store and self._default_data_store is not None:
@@ -179,7 +181,7 @@ class DataRegistry(object):
 
         event = DataArchiveAddedEvent.construct(
             kiara_id=self._kiara.id,
-            data_archive_id=data_store.archive_id,
+            data_archive_id=archive.archive_id,
             data_archive_alias=alias,
             is_store=is_store,
             is_default_store=is_default_store,
@@ -233,23 +235,53 @@ class DataRegistry(object):
         self._value_store_map[value_id] = matches[0]
         return matches[0]
 
-    def get_value(self, value_id: uuid.UUID) -> Value:
-
+    def get_value(self, value_id: Union[uuid.UUID, Value, str]) -> Value:
+        _value_id = None
         if not isinstance(value_id, uuid.UUID):
             # fallbacks for common mistakes, this should error out if not a Value or string.
             if hasattr(value_id, "value_id"):
-                value_id = value_id.value_id
+                _value_id: Optional[uuid.UUID] = value_id.value_id  # type: ignore
             else:
-                value_id = uuid.UUID(
-                    value_id
-                )  # this should fail if not string or wrong string format
+                try:
+                    _value_id = uuid.UUID(
+                        value_id  # type: ignore
+                    )  # this should fail if not string or wrong string format
+                except ValueError:
+                    if not isinstance(value_id, str):
+                        raise Exception(
+                            f"Can't retrieve value for '{value_id}': invalid type '{type(value_id)}'."
+                        )
+
+                    if ":" not in value_id:
+                        raise Exception(
+                            f"Can't retrieve value for '{value_id}': can't determine reference type."
+                        )
+
+                    ref_type, rest = value_id.split(":", maxsplit=1)
+                    if ref_type == "value":
+                        _value_id = uuid.UUID(rest)
+                    elif ref_type == "alias":
+                        _value_id = self._kiara.alias_registry.find_value_id_for_alias(
+                            alias=rest
+                        )
+                        if _value_id is None:
+                            raise Exception(
+                                f"Can't retrive value for alias '{rest}': no such alias registered."
+                            )
+                    else:
+                        raise Exception(
+                            f"Can't retrieve value for '{value_id}': invalid reference type '{ref_type}'."
+                        )
+
+        assert _value_id is not None
 
         if value_id in self._registered_values.keys():
-            return self._registered_values[value_id]
+            value = self._registered_values[_value_id]
+            return value
 
         matches = []
         for store_id, store in self.data_archives.items():
-            match = store.has_value(value_id=value_id)
+            match = store.has_value(value_id=_value_id)
             if match:
                 matches.append(store_id)
 
@@ -260,13 +292,13 @@ class DataRegistry(object):
                 f"Found value with id '{value_id}' in multiple archives, this is not supported (yet): {matches}"
             )
 
-        self._value_store_map[value_id] = matches[0]
-        stored_value = self.get_archive(matches[0]).retrieve_value(value_id=value_id)
+        self._value_store_map[_value_id] = matches[0]
+        stored_value = self.get_archive(matches[0]).retrieve_value(value_id=_value_id)
         stored_value._set_registry(self)
         stored_value._is_stored = True
 
-        self._registered_values[value_id] = stored_value
-        return self._registered_values[value_id]
+        self._registered_values[_value_id] = stored_value
+        return self._registered_values[_value_id]
 
     def store_value(
         self,
@@ -347,71 +379,47 @@ class DataRegistry(object):
         reuse_existing: bool = True,
     ) -> Value:
 
-        value = self._create_value(
+        value, newly_created = self._create_value(
             data=data,
             schema=schema,
             pedigree=pedigree,
             pedigree_output_name=pedigree_output_name,
             reuse_existing=reuse_existing,
         )
-        self._values_by_hash.setdefault(value.value_hash, set()).add(value.value_id)
-        self._registered_values[value.value_id] = value
-        self._cached_data[value.value_id] = data
+
+        if newly_created:
+            self._values_by_hash.setdefault(value.value_hash, set()).add(value.value_id)
+            self._registered_values[value.value_id] = value
+            self._cached_data[value.value_id] = data
 
         return value
 
-    def _create_value(
-        self,
-        data: Any,
-        schema: Optional[ValueSchema] = None,
-        pedigree: Optional[ValuePedigree] = None,
-        pedigree_output_name: str = None,
-        reuse_existing: bool = True,
-        value_id: Optional[uuid.UUID] = None,
-    ) -> Value:
+    def _find_existing_value(
+        self, data: Any, schema: Optional[ValueSchema]
+    ) -> Tuple[
+        Optional[Value], Optional[DataType], Optional[ValueStatus], Optional[int]
+    ]:
 
         if schema is None:
             raise NotImplementedError()
 
-        if pedigree is None:
-            raise NotImplementedError()
-
-        if reuse_existing and value_id:
-            raise Exception(
-                f"Can't create value with pre-registered id '{value_id}': 'reuse_existing' set to True, which is not allowed if 'value_id' is set."
-            )
-
-        if pedigree_output_name is None:
-            if pedigree == ORPHAN:
-                pedigree_output_name = ORPHAN_PEDIGREE_OUTPUT_NAME
-            else:
-                raise NotImplementedError()
-
-        if schema.type not in self._kiara.data_type_names:
-            raise Exception(
-                f"Can't register data of type '{schema.type}': type not registered. Available types: {', '.join(self._kiara.data_type_names)}"
-            )
-
-        if isinstance(data, str) and data.startswith("value:"):
-            data = uuid.UUID(data[6:])
-
-        if isinstance(data, uuid.UUID):
-            data = self.get_value(value_id=data)
-
         if isinstance(data, Value):
 
             if data.value_id in self._registered_values.keys():
-                if reuse_existing:
-                    return data
-                else:
-                    raise Exception(
-                        f"Can't register value '{data.value_id}: already registered"
-                    )
+                return (data, None, None, None)
 
-            raise NotImplementedError()
-            self._registered_values[data.value_id] = data
-            return data
+            raise NotImplementedError("Importing values not supported (yet).")
+            # self._registered_values[data.value_id] = data
+            # return data
 
+        try:
+            value = self.get_value(value_id=data)
+            return (value, None, None, None)
+        except Exception:
+            # TODO: differentiate between 'value not found' and other type of errors
+            pass
+
+        # no obvious matches, so we try to find data that has the same hash
         data_type = self._kiara.type_registry.retrieve_data_type(
             data_type_name=schema.type, data_type_config=schema.type_config
         )
@@ -428,7 +436,7 @@ class DataRegistry(object):
             )
 
         existing_value: Optional[Value] = None
-        if reuse_existing and value_hash != INVALID_HASH_MARKER:
+        if value_hash != INVALID_HASH_MARKER:
             existing = self.find_values_for_hash(value_hash=value_hash)
             if existing:
                 if len(existing) == 1:
@@ -452,14 +460,78 @@ class DataRegistry(object):
 
         if existing_value is not None:
             self._load_configs[existing_value.value_id] = None
-            return existing_value
+            return (existing_value, data_type, status, value_hash)
 
-        if value_id:
-            v_id = value_id
-        else:
-            v_id = ID_REGISTRY.generate(
-                type="value", kiara_id=self._kiara.id, pre_registered=False
+        return (None, data_type, status, value_hash)
+
+    def _create_value(
+        self,
+        data: Any,
+        schema: Optional[ValueSchema] = None,
+        pedigree: Optional[ValuePedigree] = None,
+        pedigree_output_name: str = None,
+        reuse_existing: bool = True,
+        data_is_value_reference: Optional[bool] = None,
+    ) -> Tuple[Value, bool]:
+        """Create a new value, or return an existing one that matches the incoming data or reference.
+
+        Arguments:
+            data: the (raw) data, or a reference to an existing value
+
+
+        Returns:
+            a tuple containing of the value object, and a boolean indicating whether the value was newly created (True), or already existing (False)
+        """
+
+        if schema is None:
+            raise NotImplementedError()
+
+        if schema.type not in self._kiara.data_type_names:
+            raise Exception(
+                f"Can't register data of type '{schema.type}': type not registered. Available types: {', '.join(self._kiara.data_type_names)}"
             )
+
+        data_type: Optional[DataType] = None
+        status: Optional[ValueStatus] = None
+        value_hash: Optional[int] = None
+
+        if reuse_existing:
+            existing, data_type, status, value_hash = self._find_existing_value(
+                data=data, schema=schema
+            )
+            if existing is not None:
+                # TODO: check pedigree
+                return (existing, False)
+
+        if pedigree is None:
+            pedigree = ORPHAN
+
+        if pedigree_output_name is None:
+            if pedigree == ORPHAN:
+                pedigree_output_name = ORPHAN_PEDIGREE_OUTPUT_NAME
+            else:
+                raise NotImplementedError()
+
+        v_id = ID_REGISTRY.generate(
+            type="value", kiara_id=self._kiara.id, pre_registered=False
+        )
+
+        if data_type is None or status is None or value_hash is None:
+            data_type = self._kiara.type_registry.retrieve_data_type(
+                data_type_name=schema.type, data_type_config=schema.type_config
+            )
+
+            if data == SpecialValue.NOT_SET:
+                status = ValueStatus.NOT_SET
+                value_hash = INVALID_HASH_MARKER
+            elif data == SpecialValue.NO_VALUE:
+                status = ValueStatus.NONE
+                value_hash = INVALID_HASH_MARKER
+            else:
+                data, status, value_hash = data_type._pre_examine_data(
+                    data=data, schema=schema
+                )
+
         value, data = data_type.assemble_value(
             value_id=v_id,
             data=data,
@@ -476,7 +548,7 @@ class DataRegistry(object):
         event = ValueCreatedEvent(kiara_id=self._kiara.id, value=value)
         self._event_callback(event)
 
-        return value
+        return (value, True)
 
     def retrieve_load_config(self, value_id: uuid.UUID) -> Optional[LoadConfig]:
 
@@ -492,7 +564,8 @@ class DataRegistry(object):
                 return None
 
             store = self.get_archive(store_id)
-            self.get_value(value_id=value_id)
+            assert value_id in self._registered_values.keys()
+            # self.get_value(value_id=value_id)
             load_config = store.retrieve_load_config(value=value_id)
             self._load_configs[value_id] = load_config
 
@@ -530,13 +603,15 @@ class DataRegistry(object):
         if provisioning_strategy == ByteProvisioningStrategy.INLINE:
             return None
 
-        bytes_structure_map = {}
+        bytes_structure_map: Dict[str, List[Union[str, bytes]]] = {}
         as_bytes = provisioning_strategy == ByteProvisioningStrategy.BYTES
+
+        assert load_config.bytes_map is not None
 
         for field, chunk_ids in load_config.bytes_map.chunk_id_map.items():
             for chunk_id in chunk_ids:
-                bytes_structure_map[chunk_id] = self._retrieve_bytes(
-                    chunk_id=chunk_id, as_bytes=as_bytes
+                bytes_structure_map.setdefault(field, []).append(
+                    self._retrieve_bytes(chunk_id=chunk_id, as_bytes=as_bytes)
                 )
 
         bytes_structure = BytesStructure.construct(
@@ -554,10 +629,9 @@ class DataRegistry(object):
         logger.debug("value.load", module=load_config.module_type)
 
         # TODO: check whether modules and value types are available
-        inputs = load_config.inputs
+        inputs: Dict[str, Any] = dict(load_config.inputs)
         if "bytes_structure" in load_config.inputs.keys():
             bytes_structure = self._provision_bytes(load_config=load_config)
-            inputs = dict(load_config.inputs)
             inputs["bytes_structure"] = bytes_structure
 
         try:
@@ -586,6 +660,7 @@ class DataRegistry(object):
         for field_name, value_id in values.items():
             if value_id is None:
                 value_id = NONE_VALUE_ID
+
             value = self.get_value(value_id=value_id)
             value_items[field_name] = value
             schemas[field_name] = value.value_schema
@@ -625,14 +700,17 @@ class DataRegistry(object):
 
             if input_name not in data.keys():
                 value_data = SpecialValue.NOT_SET
-            elif data[input_name] == None:
+            elif data[input_name] is None:
                 value_data = SpecialValue.NO_VALUE
             else:
                 value_data = data[input_name]
             try:
-                value = self.retrieve_or_create_value(
-                    value_data, value_schema=value_schema
+                value = self.register_data(
+                    data=value_data, schema=value_schema, reuse_existing=True
                 )
+                # value = self.retrieve_or_create_value(
+                #     value_data, value_schema=value_schema
+                # )
                 values[input_name] = value
             except Exception as e:
                 if is_debug():
@@ -644,9 +722,10 @@ class DataRegistry(object):
         if failed:
             msg = []
             for k, v in failed.items():
+                _v = str(v)
                 if not str(v):
-                    v = str(type(v).__name__)
-                msg.append(f"{k}: {v}")
+                    _v = type(v).__name__
+                msg.append(f"{k}: {_v}")
             raise InvalidValuesException(
                 msg=f"Can't create values instance: {', '.join(msg)}",
                 invalid_values={k: str(v) for k, v in failed.items()},
@@ -654,43 +733,43 @@ class DataRegistry(object):
 
         return ValueSetReadOnly(value_items=values, values_schema=schema)  # type: ignore
 
-    def retrieve_or_create_value(
-        self, value_or_data: Any, value_schema: ValueSchema
-    ) -> Value:
-
-        if isinstance(value_or_data, Value):
-            if value_or_data.value_id in self._registered_values.keys():
-                existing = self._registered_values[value_or_data.value_id]
-                if existing == value_or_data:
-                    return existing
-
-            raise NotImplementedError()
-
-        elif isinstance(value_or_data, uuid.UUID):
-            existing = self.get_value(value_or_data)
-            # TODO: maybe check whether value is correct type or subtype?
-            return existing
-        elif isinstance(value_or_data, str):
-            valid_uuid = False
-            try:
-                v_id = uuid.UUID(value_or_data)
-                valid_uuid = True
-                existing = self.get_value(v_id)
-                # TODO: maybe check whether value is correct type or subtype?
-                return existing
-            except Exception as e:
-                pass
-
-            if valid_uuid:
-                raise NotImplementedError()
-
-        value = self.register_data(
-            data=value_or_data,
-            schema=value_schema,
-            pedigree=ORPHAN,
-            pedigree_output_name="__void__",
-        )
-        return value
+    # def retrieve_or_create_value(
+    #     self, value_or_data: Any, value_schema: ValueSchema
+    # ) -> Value:
+    #
+    #     if isinstance(value_or_data, Value):
+    #         if value_or_data.value_id in self._registered_values.keys():
+    #             existing = self._registered_values[value_or_data.value_id]
+    #             if existing == value_or_data:
+    #                 return existing
+    #
+    #         raise NotImplementedError()
+    #
+    #     elif isinstance(value_or_data, uuid.UUID):
+    #         existing = self.get_value(value_or_data)
+    #         # TODO: maybe check whether value is correct type or subtype?
+    #         return existing
+    #     elif isinstance(value_or_data, str):
+    #         valid_uuid = False
+    #         try:
+    #             v_id = uuid.UUID(value_or_data)
+    #             valid_uuid = True
+    #             existing = self.get_value(v_id)
+    #             # TODO: maybe check whether value is correct type or subtype?
+    #             return existing
+    #         except Exception as e:
+    #             pass
+    #
+    #         if valid_uuid:
+    #             raise NotImplementedError()
+    #
+    #     value = self.register_data(
+    #         data=value_or_data,
+    #         schema=value_schema,
+    #         pedigree=ORPHAN,
+    #         pedigree_output_name="__void__",
+    #     )
+    #     return value
 
     def create_renderable(self, **config: Any) -> RenderableType:
         """Create a renderable for this module configuration."""
@@ -708,6 +787,8 @@ class DataRegistry(object):
         target_type="terminal_renderable",
         **render_config: Any,
     ) -> Any:
+
+        assert isinstance(value_id, uuid.UUID)
 
         return render_data(
             kiara=self._kiara,

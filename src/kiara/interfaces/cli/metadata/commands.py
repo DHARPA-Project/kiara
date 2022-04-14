@@ -4,17 +4,13 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
+import orjson
 import rich_click as click
 import sys
 from rich.panel import Panel
-from rich.syntax import Syntax
 
 from kiara import Kiara
-from kiara.info.metadata import MetadataModelsInfo
-from kiara.metadata.core_models import MetadataModelMetadata
 from kiara.utils import rich_print
-from kiara.utils.class_loading import find_all_value_metadata_models
 
 
 @click.group()
@@ -24,55 +20,74 @@ def metadata(ctx):
 
 
 @metadata.command(name="list")
+@click.option(
+    "--format",
+    "-f",
+    help="The output format. Defaults to 'terminal'.",
+    type=click.Choice(["terminal", "json", "html"]),
+    default="terminal",
+)
 @click.pass_context
-def list_metadata(ctx):
+def list_metadata(ctx, format):
     """List available metadata schemas."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
+    metadata_types = kiara_obj.context_info.metadata_types
 
-    keys = kiara_obj.metadata_mgmt.all_schemas.keys()
-    print()
-    info = MetadataModelsInfo.from_metadata_keys(*keys, kiara=kiara_obj)
-    kiara_obj.explain(
-        Panel(info, title="Available metadata schemas", title_align="left")
-    )
+    if format == "terminal":
+        rich_print()
+        rich_print(metadata_types)
+    elif format == "json":
+        print(metadata_types.json(option=orjson.OPT_INDENT_2))
+    elif format == "html":
+        print(metadata_types.create_html())
 
 
 @metadata.command(name="explain")
 @click.argument("metadata_key", nargs=1, required=True)
 @click.option(
-    "--json-schema",
-    "-j",
-    help="Only print json schema.",
+    "--format",
+    "-f",
+    help="The output format. Defaults to 'terminal'.",
+    type=click.Choice(["terminal", "html", "json", "json-schema"]),
+    default="terminal",
+)
+@click.option(
+    "--details",
+    "-d",
+    help="Print more metadata schema details (for 'terminal' format).",
     is_flag=True,
 )
-@click.option("--details", "-d", help="Print more schema details.", is_flag=True)
 @click.pass_context
-def explain_metadata(ctx, metadata_key, json_schema, details):
+def explain_metadata(ctx, metadata_key, format, details):
     """Print details for a specific metadata schema."""
 
-    # kiara_obj: Kiara = ctx.obj["kiara"]
+    kiara_obj: Kiara = ctx.obj["kiara"]
+    metadata_types = kiara_obj.context_info.metadata_types
 
-    schemas = find_all_value_metadata_models()
-    if metadata_key not in schemas.keys():
+    if metadata_key not in metadata_types.keys():
         print()
         print(f"No metadata schema for key '{metadata_key}' found...")
         sys.exit(1)
 
-    if not json_schema:
-        info = MetadataModelMetadata.from_model_class(schemas[metadata_key])
-        print()
-        title = f"Metadata schema: [b]{metadata_key}[/b]"
-        renderable = Panel(
-            info.create_renderable(display_schema=details),
-            title=title,
-            title_align="left",
-        )
-    else:
-        renderable = Syntax(
-            schemas[metadata_key].schema_json(indent=2),
-            "json",
-            background_color="default",
-        )
+    info_obj = metadata_types[metadata_key]
 
-    rich_print(renderable)
+    if format == "terminal":
+        rich_print()
+        config = {"include_schema": details}
+        renderable = info_obj.create_renderable(**config)
+        rich_print(
+            Panel(
+                renderable,
+                title=f"Metadata details for: [b]{metadata_key}[/b]",
+                title_align="left",
+            )
+        )
+    elif format == "json":
+        json_schema = info_obj.json(option=orjson.OPT_INDENT_2)
+        print(json_schema)
+    elif format == "json-schema":
+        json_schema = info_obj.schema_json(option=orjson.OPT_INDENT_2)
+        print(json_schema)
+    elif format == "html":
+        print(info_obj.create_html())

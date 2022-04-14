@@ -15,7 +15,8 @@ if TYPE_CHECKING:
 
 
 class InternalType(
-    DataType[object, DataTypeConfig], Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]
+    DataType[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS],
+    Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS],
 ):
     """'A 'marker' base data type for data types that are (mainly) used internally in kiara.."""
 
@@ -28,13 +29,13 @@ class InternalType(
     # def is_immutable(self) -> bool:
     #     return False
 
-    def calculate_hash(self, data: Any) -> int:
+    def calculate_hash(self, data: TYPE_PYTHON_CLS) -> int:
         return INVALID_HASH_MARKER
         # raise Exception(
         #     f"Calculating the hash for type '{self.__class__._value_type_name}' is not supported. If your type inherits from 'any', make sure to implement the 'calculate_hash' method."
         # )
 
-    def calculate_size(self, data: Any) -> int:
+    def calculate_size(self, data: TYPE_PYTHON_CLS) -> int:
         return INVALID_SIZE_MARKER
         # raise Exception(
         #     f"Calculating size for type '{self.__class__._value_type_name}' is not supported. If your type inherits from 'any', make sure to implement the 'calculate_hash' method."
@@ -80,7 +81,7 @@ class InternalModelValueType(InternalType[KiaraModel, DataTypeConfig]):
         return KiaraModel
 
     @classmethod
-    def data_type_config_class(cls) -> Type[TYPE_CONFIG_CLS]:
+    def data_type_config_class(cls) -> Type[DataTypeConfig]:
         return DataTypeConfig
 
     def calculate_size(self, data: KiaraModel) -> int:
@@ -106,7 +107,7 @@ class DocumentationModelValueType(InternalModelValueType):
 
     _data_type_name = "doc"
 
-    def parse_python_obj(self, data: Any) -> TYPE_PYTHON_CLS:
+    def parse_python_obj(self, data: Any) -> DocumentationMetadataModel:
 
         return DocumentationMetadataModel.create(data)
 

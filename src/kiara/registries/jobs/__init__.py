@@ -67,28 +67,28 @@ class JobRegistry(object):
 
         return [JobArchiveAddedEvent, JobRecordPreStoreEvent, JobRecordStoredEvent]
 
-    def register_job_archive(self, job_store: JobStore, alias: Optional[str] = None):
+    def register_job_archive(self, archive: JobArchive, alias: Optional[str] = None):
 
         if alias is None:
-            alias = str(job_store.archive_id)
+            alias = str(archive.archive_id)
 
         if alias in self._job_archives.keys():
             raise Exception(
                 f"Can't register job store, store id already registered: {alias}."
             )
 
-        self._job_archives[alias] = job_store
+        self._job_archives[alias] = archive
 
         is_store = False
         is_default_store = False
-        if isinstance(job_store, JobStore):
+        if isinstance(archive, JobStore):
             is_store = True
             if self._default_job_store is None:
                 self._default_job_store = alias
 
         event = JobArchiveAddedEvent.construct(
             kiara_id=self._kiara.id,
-            job_archive_id=job_store.archive_id,
+            job_archive_id=archive.archive_id,
             job_archive_alias=alias,
             is_store=is_store,
             is_default_store=is_default_store,
@@ -243,7 +243,11 @@ class JobRegistry(object):
         job_id = self._processor.create_job(job_config=job_config)
         self._active_jobs[job_config.job_hash] = job_id
 
-        self._processor.queue_job(job_id=job_id)
+        try:
+            self._processor.queue_job(job_id=job_id)
+        except Exception as e:
+            log.error("error.queue_job", job_id=job_id)
+            raise e
 
         if wait:
             self._processor.wait_for(job_id)

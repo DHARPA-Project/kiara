@@ -7,7 +7,7 @@ from rich.table import Table
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
 
 from kiara.models.module.persistence import LoadConfig
-from kiara.models.values.value import ORPHAN, Value, ValuePedigree
+from kiara.models.values.value import ORPHAN, Value
 from kiara.models.values.value_schema import ValueSchema
 from kiara.utils import is_debug, log_message
 from kiara.utils.output import create_table_from_model_object
@@ -34,7 +34,7 @@ def render_value_data(value: Value):
     return renderable
 
 
-RENDER_FIELDS = {
+RENDER_FIELDS: Dict[str, Dict[str, Any]] = {
     "value_id": {"show_default": True, "render": {"terminal": str}},
     "aliases": {"show_default": True, "render": {"terminal": lambda x: ", ".join(x)}},
     "type": {
@@ -100,7 +100,6 @@ class ValueInfo(Value):
     aliases: List[str] = Field(
         description="The aliases that are registered for this value."
     )
-    pedigree: Optional[ValuePedigree] = Field(description="This values' pedigree.")
     load_config: Optional[LoadConfig] = Field(
         description="The load config associated with this value."
     )

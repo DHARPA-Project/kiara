@@ -9,9 +9,10 @@
 import orjson.orjson
 import rich_click as click
 from rich.panel import Panel
-from typing import Iterable
+from typing import Dict, Iterable, Type
 
 from kiara import Kiara
+from kiara.data_types import DataType
 from kiara.models.values.data_type import DataTypeClassesInfo, DataTypeClassInfo
 from kiara.utils import rich_print
 from kiara.utils.graphs import print_ascii_graph
@@ -53,13 +54,13 @@ def list_types(
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     if not include_internal_types:
-        type_classes = {}
+        type_classes: Dict[str, Type[DataType]] = {}
         for name, cls in kiara_obj.data_type_classes.items():
             lineage = kiara_obj.type_registry.get_type_lineage(name)
             if "any" in lineage:
                 type_classes[name] = cls
     else:
-        type_classes = kiara_obj.data_type_classes
+        type_classes = dict(kiara_obj.data_type_classes)
 
     title = "Available data types"
     if filter:

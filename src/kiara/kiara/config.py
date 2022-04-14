@@ -5,7 +5,7 @@ from pydantic import BaseModel, root_validator
 from pydantic.config import Extra
 from pydantic.env_settings import BaseSettings
 from pydantic.fields import Field
-from ruamel import yaml
+from ruamel import yaml as r_yaml
 from typing import Any, Dict, List, Mapping, Optional
 
 from kiara.defaults import (
@@ -22,7 +22,7 @@ from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import get_data_from_file, log_message
 from kiara.utils.db import get_kiara_db_url
 
-yaml = yaml.YAML()
+yaml = r_yaml.YAML()
 
 
 def config_file_settings_source(settings: BaseSettings) -> Dict[str, Any]:
@@ -162,7 +162,7 @@ class KiaraGlobalConfig(KiaraBaseConfig):
     @classmethod
     def find_current_contexts(cls) -> Dict[str, KiaraContextConfig]:
 
-        contexts = {}
+        contexts: Dict[str, KiaraContextConfig] = {}
 
         if not os.path.exists(KIARA_CONTEXTS_FOLDER):
             return contexts

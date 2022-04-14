@@ -12,7 +12,7 @@ from abc import abstractmethod
 from deepdiff import DeepHash
 from pydantic import BaseModel, Field, ValidationError
 from rich import box
-from rich.console import Console, ConsoleOptions, RenderGroup, RenderResult
+from rich.console import Console, ConsoleOptions, Group, RenderResult
 from rich.panel import Panel
 from typing import (
     TYPE_CHECKING,
@@ -95,9 +95,9 @@ class InputOutputObject(abc.ABC):
     ):
 
         self._alias: str = alias
-        self._inputs_schema: typing.Mapping[str, ValueSchema] = None  # type: ignore
-        self._outputs_schema: typing.Mapping[str, ValueSchema] = None  # type: ignore
-        self._constants: typing.Mapping[str, ValueSchema] = None  # type: ignore
+        self._inputs_schema: Mapping[str, ValueSchema] = None  # type: ignore
+        self._outputs_schema: Mapping[str, ValueSchema] = None  # type: ignore
+        self._constants: Mapping[str, ValueSchema] = None  # type: ignore
 
         if config is None:
             config = KiaraModuleConfig()
@@ -459,7 +459,7 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
         r_gro.append(table)
 
         yield Panel(
-            RenderGroup(*r_gro),
+            Group(*r_gro),
             box=box.ROUNDED,
             title_align="left",
             title=f"Module: [b]{self.module_type_name}[/b]",

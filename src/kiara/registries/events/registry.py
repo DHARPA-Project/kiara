@@ -2,43 +2,52 @@
 import fnmatch
 import uuid
 from functools import partial
-from typing import TYPE_CHECKING, Dict, List, Type, Callable, Iterable
+from typing import TYPE_CHECKING, Callable, Dict, Iterable, List
 
 from kiara.models.events import KiaraEvent
-from kiara.registries.events import EventListener, EventProducer, AsyncEventListener
+from kiara.registries.events import AsyncEventListener, EventListener, EventProducer
 from kiara.registries.ids import ID_REGISTRY
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
 
+
 class AllEvents(KiaraEvent):
     pass
 
-class EventRegistry(object):
 
+class EventRegistry(object):
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
         self._producers: Dict[uuid.UUID, EventProducer] = {}
         self._listeners: Dict[uuid.UUID, EventListener] = {}
-        self._subscriptions: Dict[uuid.UUID, Iterable[str]] = {}
+        self._subscriptions: Dict[uuid.UUID, List[str]] = {}
 
     def add_producer(self, producer: EventProducer) -> Callable:
 
-        producer_id = ID_REGISTRY.generate(obj=producer, comment="adding event producer")
+        producer_id = ID_REGISTRY.generate(
+            obj=producer, comment="adding event producer"
+        )
         func = partial(self.handle_events, producer_id)
         return func
 
     def add_listener(self, listener, *subscriptions: str):
 
         if not subscriptions:
-            subscriptions = ["*"]
+            _subscriptions = ["*"]
+        else:
+            _subscriptions = list(subscriptions)
 
-        listener_id = ID_REGISTRY.generate(obj=listener, comment="adding event listener")
+        listener_id = ID_REGISTRY.generate(
+            obj=listener, comment="adding event listener"
+        )
         self._listeners[listener_id] = listener
-        self._subscriptions[listener_id] = subscriptions
+        self._subscriptions[listener_id] = _subscriptions
 
-    def _matches_subscription(self, events: Iterable[KiaraEvent], subscriptions: Iterable[str]) -> Iterable[KiaraEvent]:
+    def _matches_subscription(
+        self, events: Iterable[KiaraEvent], subscriptions: Iterable[str]
+    ) -> Iterable[KiaraEvent]:
 
         result = []
         for subscription in subscriptions:
@@ -53,8 +62,10 @@ class EventRegistry(object):
 
         event_targets: Dict[uuid.UUID, List[KiaraEvent]] = {}
 
-        for l_id,  listener in self._listeners.items():
-            matches = self._matches_subscription(events=events, subscriptions=self._subscriptions[l_id])
+        for l_id, listener in self._listeners.items():
+            matches = self._matches_subscription(
+                events=events, subscriptions=self._subscriptions[l_id]
+            )
             if matches:
                 event_targets.setdefault(l_id, []).extend(matches)
 
@@ -69,7 +80,8 @@ class EventRegistry(object):
                 continue
 
             a_listener: AsyncEventListener = self._listeners[l_id]  # type: ignore
-            if not hasattr(a_listener, 'wait_for_processing'):
-                raise Exception("Can't wait for processing of event for listener: listener does not provide 'wait_for_processing' method.")
+            if not hasattr(a_listener, "wait_for_processing"):
+                raise Exception(
+                    "Can't wait for processing of event for listener: listener does not provide 'wait_for_processing' method."
+                )
             a_listener.wait_for_processing(response)
-

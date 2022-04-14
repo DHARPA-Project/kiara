@@ -6,7 +6,7 @@ from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.module.pipeline.controller import SinglePipelineBatchController
 from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.models.module.pipeline.structure import PipelineStructure
-from kiara.models.values.value import ValueSet
+from kiara.models.values.value import ValueSet, ValueSetWritable
 from kiara.modules import KIARA_CONFIG, KiaraModule, ValueSetSchema
 
 if TYPE_CHECKING:
@@ -25,6 +25,7 @@ class PipelineModule(KiaraModule):
         self._job_registry: Optional[JobRegistry] = None
         super().__init__(module_config=module_config)
 
+    @classmethod
     def is_pipeline(cls) -> bool:
         return True
 
@@ -44,13 +45,16 @@ class PipelineModule(KiaraModule):
         pipeline_structure: PipelineStructure = self.config.structure
         return pipeline_structure.pipeline_outputs_schema
 
-    def process(self, inputs: ValueSet, outputs: ValueSet, job_log: JobLog):
+    def process(self, inputs: ValueSet, outputs: ValueSetWritable, job_log: JobLog):
 
         pipeline_structure: PipelineStructure = self.config.structure
 
         pipeline = Pipeline(
             structure=pipeline_structure, data_registry=outputs._data_registry
         )
+
+        assert self._job_registry is not None
+
         controller = SinglePipelineBatchController(
             pipeline=pipeline, job_registry=self._job_registry
         )

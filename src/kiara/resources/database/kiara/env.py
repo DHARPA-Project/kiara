@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
-from alembic import context
+from alembic import context  # type: ignore
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 
@@ -8,6 +8,7 @@ from sqlalchemy import engine_from_config, pool
 # access to the values within the .ini file in use.
 from kiara import Kiara
 from kiara.defaults import KIARA_DB_MIGRATIONS_FOLDER
+from kiara.kiara.orm import Base
 
 config = context.config
 
@@ -19,14 +20,12 @@ config.set_main_option("sqlalchemy.url", kiara._config.db_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
-fileConfig(config.config_file_name)
+fileConfig(config.config_file_name)  # type: ignore
 
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-
-from kiara.kiara.orm import Base
 
 target_metadata = Base.metadata
 

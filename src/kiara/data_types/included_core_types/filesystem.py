@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import orjson.orjson
 import structlog
-from rich.console import RenderGroup
+from rich.console import Group
 from typing import Any, Mapping, Type
 
 from kiara.data_types import DataTypeConfig
@@ -91,7 +91,7 @@ class FileValueType(KiaraModelValueType[FileModel, DataTypeConfig]):
                         break
                     lines.append(l.rstrip())
 
-            return RenderGroup(*lines)
+            return Group(*lines)
         except UnicodeDecodeError:
             # found non-text data
             lines = [
@@ -101,10 +101,10 @@ class FileValueType(KiaraModelValueType[FileModel, DataTypeConfig]):
                 "",
                 data.json(option=orjson.OPT_INDENT_2),
             ]
-            return RenderGroup(*lines)
+            return Group(*lines)
 
 
-class FileBundleValueType(AnyType[FileModel, DataTypeConfig]):
+class FileBundleValueType(AnyType[FileBundle, DataTypeConfig]):
     """A bundle of files (like a folder, zip archive, etc.)."""
 
     _data_type_name = "file_bundle"

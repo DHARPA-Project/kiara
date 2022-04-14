@@ -4,6 +4,7 @@ import pprint
 from pydantic import BaseModel, Field, validator
 from typing import Any, Dict, Iterable, Mapping, Tuple, Union
 
+from kiara.models import KiaraModel
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.values.value import Value, ValueSet
 from kiara.models.values.value_schema import ValueSchema
@@ -25,7 +26,7 @@ class RenderValueConfig(KiaraModuleConfig):
 
 class RenderValueModule(KiaraModule):
 
-    _module_type_name = None
+    _module_type_name: str = None  # type: ignore
     _config_cls = RenderValueConfig
 
     @classmethod
@@ -36,14 +37,14 @@ class RenderValueModule(KiaraModule):
             if (
                 len(attr) <= 16
                 or not attr.startswith("render__")
-                or not "__as__" in attr
+                or "__as__" not in attr
             ):
                 continue
 
             attr = attr[8:]
             end_start_type = attr.find("__as__")
             source_type = attr[0:end_start_type]
-            target_type = attr[end_start_type + 6 :]
+            target_type = attr[end_start_type + 6 :]  # noqa
             result.append((source_type, target_type))
         return result
 
@@ -160,7 +161,7 @@ class RenderAnyValueModule(RenderValueModule):
     def render__any__as__string(self, value: Value, render_config: Dict[str, Any]):
 
         data = value.data
-        if isinstance(data, KiaraModule):
+        if isinstance(data, KiaraModel):
             return data.json(option=orjson.OPT_INDENT_2)
         else:
             return str(data)

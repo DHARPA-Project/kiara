@@ -16,6 +16,7 @@ from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import (
     ManifestOperationConfig,
     Operation,
+    OperationConfig,
     OperationTypeClassesInfo,
     OperationTypeInfo,
     PipelineOperationConfig,
@@ -122,7 +123,7 @@ class OperationRegistry(object):
         if self._operations is not None:
             return self._operations
 
-        all_op_configs = set()
+        all_op_configs: Set[OperationConfig] = set()
         for op_type in self.operation_types.values():
             included_ops = op_type.retrieve_included_operation_configs()
             for op in included_ops:
@@ -140,7 +141,7 @@ class OperationRegistry(object):
         operations: Dict[str, Operation] = {}
         operations_by_type: Dict[str, List[str]] = {}
 
-        deferred_module_names: Dict[str, List[str]] = {}
+        deferred_module_names: Dict[str, List[OperationConfig]] = {}
 
         # first iteration
         for op_config in all_op_configs:
@@ -164,12 +165,12 @@ class OperationRegistry(object):
                 )
 
                 ops = self._create_operations(manifest=manifest, doc=op_config.doc)
-                for op_type_name, op in ops.items():
-                    if op.operation_id in operations.keys():
-                        raise Exception(f"Duplicate operation id: {op.operation_id}")
-                    operations[op.operation_id] = op
+                for op_type_name, _op in ops.items():
+                    if _op.operation_id in operations.keys():
+                        raise Exception(f"Duplicate operation id: {_op.operation_id}")
+                    operations[_op.operation_id] = _op
                     operations_by_type.setdefault(op_type_name, []).append(
-                        op.operation_id
+                        _op.operation_id
                     )
 
         while deferred_module_names:
@@ -223,18 +224,18 @@ class OperationRegistry(object):
                         # manifest = Manifest.construct(module_type=operation.module_type,
                         #                       module_config=new_module_config)
 
-                    for op_type_name, op in ops.items():
+                    for op_type_name, _op in ops.items():
 
-                        if op.operation_id in operations.keys():
+                        if _op.operation_id in operations.keys():
                             raise Exception(
-                                f"Duplicate operation id: {op.operation_id}"
+                                f"Duplicate operation id: {_op.operation_id}"
                             )
 
-                        operations[op.operation_id] = op
+                        operations[_op.operation_id] = _op
                         operations_by_type.setdefault(op_type_name, []).append(
-                            op.operation_id
+                            _op.operation_id
                         )
-                        assert op.operation_id == op_config.pipeline_id
+                        assert _op.operation_id == op_config.pipeline_id
 
                     for _op_id in deferred_module_names.keys():
                         if op_config in deferred_module_names[_op_id]:

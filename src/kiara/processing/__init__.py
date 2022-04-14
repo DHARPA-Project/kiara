@@ -3,7 +3,7 @@ import abc
 import uuid
 from datetime import datetime
 from pydantic import BaseModel
-from typing import Any, Dict, List, Optional, Protocol, Union, Mapping
+from typing import Any, Dict, List, Optional, Protocol, Union
 
 from kiara.exceptions import KiaraProcessingException
 from kiara.models.module.jobs import ActiveJob, JobConfig, JobLog, JobRecord, JobStatus
@@ -50,7 +50,7 @@ class ModuleProcessor(abc.ABC):
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
-        self._created_jobs: Dict[uuid.UUID, Dict[Any]] = {}
+        self._created_jobs: Dict[uuid.UUID, Dict[str, Any]] = {}
         self._active_jobs: Dict[uuid.UUID, ActiveJob] = {}
         self._failed_jobs: Dict[uuid.UUID, ActiveJob] = {}
         self._finished_jobs: Dict[uuid.UUID, ActiveJob] = {}
@@ -63,8 +63,8 @@ class ModuleProcessor(abc.ABC):
         self, job_id: uuid.UUID, old_status: Optional[JobStatus], new_status: JobStatus
     ):
 
-        for l in self._listeners:
-            l.job_status_changed(
+        for listener in self._listeners:
+            listener.job_status_changed(
                 job_id=job_id, old_status=old_status, new_status=new_status
             )
 
@@ -245,8 +245,8 @@ class ModuleProcessor(abc.ABC):
         for job_id in job_ids:
             job = self._job_records.get(job_id, None)
             if job is None:
-                job = self._failed_jobs.get(job_id, None)
-                if job is None:
+                _job = self._failed_jobs.get(job_id, None)
+                if _job is None:
                     raise Exception(f"Can't find job with id: {job_id}")
 
     @abc.abstractmethod

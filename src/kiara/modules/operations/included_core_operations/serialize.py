@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from pydantic import Field
-from typing import Any, Iterable, Mapping, Optional, Union
+from typing import Any, Dict, Iterable, Mapping, Optional, Union
 
 from kiara import KiaraModule
 from kiara.data_types.included_core_types.serialization import SerializedValueType
@@ -103,7 +103,7 @@ class SerializeOperationType(OperationType[SerializeDetails]):
             if schema.type != SERIALIZED_DATA_TYPE_NAME:
                 continue
             else:
-                if match != None:
+                if match is not None:
                     log_message(
                         "ignore.operation",
                         reason=f"More than one field of type '{SERIALIZED_DATA_TYPE_NAME}'",
@@ -117,7 +117,7 @@ class SerializeOperationType(OperationType[SerializeDetails]):
             return None
 
         if len(module.inputs_schema) == 1:
-            input_field = next(iter(module.inputs_schema.keys()))
+            input_field: Optional[str] = next(iter(module.inputs_schema.keys()))
         else:
             input_field_match = None
             for field_name, schema in module.inputs_schema.items():
@@ -139,11 +139,9 @@ class SerializeOperationType(OperationType[SerializeDetails]):
 
         input_field_type = module.inputs_schema[input_field].type
         value_schema: ValueSchema = module.outputs_schema[match]
-        serialized_value_type: SerializedValueType = (
-            self._kiara.type_registry.retrieve_data_type(
-                data_type_name=value_schema.type,
-                data_type_config=value_schema.type_config,
-            )
+        serialized_value_type: SerializedValueType = self._kiara.type_registry.retrieve_data_type(  # type: ignore  # type: ignore
+            data_type_name=value_schema.type,
+            data_type_config=value_schema.type_config,
         )  # type: ignore
 
         if input_field_type == "any":
@@ -153,7 +151,7 @@ class SerializeOperationType(OperationType[SerializeDetails]):
                 f"serialize.{input_field_type}.as.{serialized_value_type.format_name}"
             )
 
-        details = {
+        details: Dict[str, Any] = {
             "operation_id": operation_id,
             "value_input_field": input_field,
             "value_input_type": input_field_type,
@@ -170,6 +168,7 @@ class SerializeOperationType(OperationType[SerializeDetails]):
         serialize_op: Optional[Operation] = None
         for data_type in lineage:
             match = []
+            op = None
             for op in self.operations.values():
                 details = self.retrieve_operation_details(op)
                 if details.value_input_type == data_type:
@@ -177,6 +176,7 @@ class SerializeOperationType(OperationType[SerializeDetails]):
 
             if match:
                 if len(match) > 1:
+                    assert op is not None
                     raise Exception(
                         f"Multiple serialization operations found for type of '{op.operation_id}'. This is not supported (yet)."
                     )

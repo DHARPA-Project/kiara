@@ -5,7 +5,7 @@ from deepdiff import DeepHash
 from pydantic import Extra, Field, PrivateAttr, validator
 from rich.console import RenderableType
 from rich.syntax import Syntax
-from typing import Any, Dict, Mapping, Optional
+from typing import Any, Mapping, Optional
 
 from kiara.defaults import (
     KIARA_HASH_FUNCTION,
@@ -28,7 +28,7 @@ class Manifest(KiaraModel):
     _manifest_hash: Optional[int] = PrivateAttr(default=None)
 
     module_type: str = Field(description="The module type.")
-    module_config: Dict[str, Any] = Field(
+    module_config: Mapping[str, Any] = Field(
         default_factory=dict, description="The configuration for the module."
     )
     # python_class: PythonClass = Field(description="The python class that implements this module.")

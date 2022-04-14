@@ -8,7 +8,7 @@ from kiara.models.events import RegistryEvent
 
 class AliasArchiveAddedEvent(RegistryEvent):
 
-    event_type: Literal["alias_archive"] = "alias_archive_added"
+    event_type: Literal["alias_archive_added"] = "alias_archive_added"
     alias_archive_id: uuid.UUID = Field(
         description="The unique id of this data archive."
     )

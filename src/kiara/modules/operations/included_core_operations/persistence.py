@@ -114,15 +114,15 @@ class PersistValueOperationType(OperationType[PersistValueDetails]):
         if len(module.inputs_schema) != 1:
             return None
 
-        if "save" not in module._module_type_name:
-            return None
+        # if "save" not in module.module_type_name:
+        #     return None
         match = None
 
         for field_name, schema in module.outputs_schema.items():
             if schema.type != LOAD_CONFIG_DATA_TYPE_NAME:
                 continue
             else:
-                if match != None:
+                if match is not None:
                     log_message(
                         "ignore.operation",
                         reason=f"More than one field of type '{LOAD_CONFIG_DATA_TYPE_NAME}'",
@@ -158,15 +158,13 @@ class PersistValueOperationType(OperationType[PersistValueDetails]):
 
         input_field_type = module.inputs_schema[input_field].type
         value_schema: ValueSchema = module.outputs_schema[match]
-        load_config_type: LoadConfigValueType = (
-            self._kiara.type_registry.retrieve_data_type(
-                data_type_name=value_schema.type,
-                data_type_config=value_schema.type_config,
-            )
+        load_config_type: LoadConfigValueType = self._kiara.type_registry.retrieve_data_type(  # type: ignore  # type: ignore
+            data_type_name=value_schema.type,
+            data_type_config=value_schema.type_config,
         )  # type: ignore
 
-        persistence_target = load_config_type.type_config.persistence_target
-        persistence_format = load_config_type.type_config.persistence_format
+        persistence_target = load_config_type.type_config.persistence_target  # type: ignore
+        persistence_format = load_config_type.type_config.persistence_format  # type: ignore
 
         if input_field_type == "any":
             operation_id = f"save.to.{persistence_target}.as.{persistence_format}"

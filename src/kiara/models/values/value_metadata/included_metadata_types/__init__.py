@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 from pydantic import Field
-from typing import Iterable
+from typing import TYPE_CHECKING, Iterable
 
 from kiara.models.filesystem import FileModel
 from kiara.models.python_class import PythonClass
 from kiara.models.values.value_metadata import ValueMetadata
+
+if TYPE_CHECKING:
+    from kiara.models.values.value import Value
 
 
 class PythonClassMetadata(ValueMetadata):

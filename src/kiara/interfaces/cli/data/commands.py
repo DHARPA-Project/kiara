@@ -9,7 +9,6 @@
 
 import rich_click as click
 import shutil
-import sys
 from rich import box
 from rich.panel import Panel
 
@@ -207,13 +206,13 @@ def load_value(ctx, value_id: str):
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     value = kiara_obj.data_registry.get_value(value_id=value_id)
-    if value is None:
-        print(f"No value available for id: {value_id}")
-        sys.exit(1)
+    # if value is None:
+    #     print(f"No value available for id: {value_id}")
+    #     sys.exit(1)
 
     try:
         renderable = kiara_obj.data_registry.render_data(
-            value_id, target_type="terminal_renderable"
+            value.value_id, target_type="terminal_renderable"
         )
     except Exception as e:
 

@@ -114,7 +114,7 @@ class KiaraOperation(object):
             else:
                 if not isinstance(value, Mapping):
                     raise Exception(
-                        f"Can't set inputs dictionary (if no key is provided, value must be 'None' or of type 'Mapping')."
+                        "Can't set inputs dictionary (if no key is provided, value must be 'None' or of type 'Mapping')."
                     )
 
                 self._inputs_raw.clear()
@@ -168,9 +168,9 @@ class KiaraOperation(object):
                 return self._operation_config
             else:
                 try:
-                    old = self._operation_config
+                    old_conf = self._operation_config
                     self._operation_config = dict(value)
-                    if old != self._operation_config:
+                    if old_conf != self._operation_config:
                         self._operation = None
                     return self._operation_config
                 except Exception as e:
@@ -268,6 +268,7 @@ class KiaraOperation(object):
     def retrieve_result(self, job_id: Optional[uuid.UUID] = None) -> ValueSet:
 
         if job_id in self._results.keys():
+            assert job_id is not None
             return self._results[job_id]
 
         if job_id is None:
@@ -356,7 +357,7 @@ class KiaraOperation(object):
 
                     traceback.print_exc()
                 stored[field_name] = StoreValueResult.construct(
-                    value - value, aliases=field_aliases, error=str(e)
+                    value=value, aliases=field_aliases, error=str(e)
                 )
 
         self._kiara.job_registry.store_job_record(job_id=job_id)

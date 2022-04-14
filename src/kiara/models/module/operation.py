@@ -4,7 +4,7 @@ import orjson
 import structlog
 from pydantic import Field, PrivateAttr, validator
 from rich import box
-from rich.console import RenderableType, RenderGroup
+from rich.console import Group, RenderableType
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
@@ -38,7 +38,7 @@ from kiara.models.info import (
     InfoModelGroup,
     KiaraInfoModel,
     KiaraTypeInfoModel,
-    TypeInfoModelGroupMixin,
+    TypeInfoModelGroup,
 )
 from kiara.models.module import KiaraModuleClass, KiaraModuleTypeInfo
 from kiara.models.module.jobs import JobConfig
@@ -52,6 +52,7 @@ from kiara.utils.output import create_table_from_field_schemas
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
+    from kiara.modules.operations import OperationType
 
 
 logger = structlog.getLogger()
@@ -370,6 +371,7 @@ class Operation(Manifest):
             _add_required=True,
             _add_default=True,
             _show_header=True,
+            _constants=None,
             **self.operation_details.inputs_schema,
         )
         # constants = self.module_config.get("constants")
@@ -385,6 +387,7 @@ class Operation(Manifest):
             _add_required=False,
             _add_default=False,
             _show_header=True,
+            _constants=None,
             **self.operation_details.outputs_schema,
         )
         # outputs_table = create_table_from_field_schemas(
@@ -414,7 +417,7 @@ class Operation(Manifest):
         module_md = module_type_md.create_renderable(
             include_doc=False, include_src=False, include_config_schema=False
         )
-        m_md = RenderGroup(desc, module_md)
+        m_md = Group(desc, module_md)
         table.add_row("Module metadata", m_md)
 
         if config.get("include_src", True):
@@ -425,7 +428,9 @@ class Operation(Manifest):
 
 class OperationTypeInfo(KiaraTypeInfoModel):
     @classmethod
-    def create_from_type_class(cls, type_cls: Type["OperationType"]):
+    def create_from_type_class(
+        cls, type_cls: Type["OperationType"]
+    ) -> "OperationTypeInfo":
 
         authors_md = AuthorsMetadataModel.from_class(type_cls)
         doc = DocumentationMetadataModel.from_class_doc(type_cls)
@@ -462,9 +467,9 @@ class OperationTypeInfo(KiaraTypeInfoModel):
         return self.type_name
 
 
-class OperationTypeClassesInfo(TypeInfoModelGroupMixin):
+class OperationTypeClassesInfo(TypeInfoModelGroup):
     @classmethod
-    def base_info_class(cls) -> Type[KiaraInfoModel]:
+    def base_info_class(cls) -> Type[KiaraTypeInfoModel]:
         return OperationTypeInfo
 
     type_name: Literal["operation_type"] = "operation_type"
@@ -528,6 +533,10 @@ class OperationInfo(KiaraInfoModel):
 
 
 class OperationGroupInfo(InfoModelGroup):
+    @classmethod
+    def base_info_class(cls) -> Type[KiaraInfoModel]:
+        return OperationInfo
+
     @classmethod
     def create_from_operations(
         cls, kiara: "Kiara", group_alias: Optional[str] = None, **items: Operation

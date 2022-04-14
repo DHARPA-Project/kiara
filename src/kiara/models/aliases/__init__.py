@@ -6,7 +6,7 @@ from pydantic import Field, PrivateAttr
 from rich.tree import Tree
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional
 
-from kiara.defaults import VALUES_CATEGORY_ID
+from kiara.defaults import NONE_VALUE_ID, VALUES_CATEGORY_ID
 from kiara.models.values.value import Value, ValueSet
 from kiara.models.values.value_schema import ValueSchema
 from kiara.utils import rich_print
@@ -90,6 +90,7 @@ class AliasValueMap(ValueSet):
                     f"No field name '{child}'. Available fields: {', '.join(self.values_schema.keys())}"
                 )
             child_map = self.get_child_map(child)
+            assert child_map is not None
             return child_map.get_child_map(rest)
 
     def get_value_obj(self, field_name: str) -> Value:
@@ -102,21 +103,23 @@ class AliasValueMap(ValueSet):
 
         return self._data_registry.get_value(value_id=item.assoc_value)
 
-    def get_value_id(self, field_name: str) -> Optional[uuid.UUID]:
+    def get_value_id(self, field_name: str) -> uuid.UUID:
 
         item = self.get_child_map(field_name=field_name)
         if item is None:
-            return item
+            return NONE_VALUE_ID
         else:
-            return item.assoc_value
+            return item.assoc_value if item.assoc_value is not None else NONE_VALUE_ID
 
     def get_all_value_ids(
         self,
-    ) -> Dict[str, Optional[uuid.UUID]]:
+    ) -> Dict[str, uuid.UUID]:
 
-        result = {}
+        result: Dict[str, uuid.UUID] = {}
         for k in self.values_schema.keys():
             v_id = self.get_value_id(field_name=k)
+            if v_id is None:
+                v_id = NONE_VALUE_ID
             result[k] = v_id
         return result
 
@@ -145,6 +148,8 @@ class AliasValueMap(ValueSet):
                     field_name=child, schema=ValueSchema(type="none")
                 )
                 child_map = self.set_alias(alias=child, value_id=None)
+
+            assert child_map is not None
 
             child_map.set_alias_schema(alias=rest, schema=schema)
 
@@ -210,7 +215,7 @@ class AliasValueMap(ValueSet):
 
         if VALUE_ALIAS_SEPARATOR not in alias:
             child = None
-            field_name = alias
+            field_name: Optional[str] = alias
             rest = None
         else:
             child, rest = alias.split(VALUE_ALIAS_SEPARATOR, maxsplit=1)
@@ -236,7 +241,7 @@ class AliasValueMap(ValueSet):
                 else:
                     self.set_alias_schema(alias=child, schema=ValueSchema(type="any"))
 
-            field_item = None
+            field_item: Optional[AliasValueMap] = None
             try:
                 field_item = self.get_child_map(field_name=child)
             except KeyError:
@@ -252,7 +257,7 @@ class AliasValueMap(ValueSet):
                 schemas = {}
                 self.value_items[child] = {}
             else:
-                max_version = max(field_item.keys())
+                max_version = len(field_item.keys())
                 new_version = max_version + 1
                 assert field_item.alias == new_alias
                 assert field_item.version == max_version
@@ -281,6 +286,7 @@ class AliasValueMap(ValueSet):
         value: Optional[Value] = None
         if value_id is not None:
             value = self._data_registry.get_value(value_id=value_id)
+            assert value is not None
             assert value.value_id == value_id
 
         if field_name not in self.values_schema.keys():
@@ -292,7 +298,7 @@ class AliasValueMap(ValueSet):
                 if value_id is None:
                     value_schema = ValueSchema(type="none")
                 else:
-                    value_schema = value.value_schema
+                    value_schema = value.value_schema  # type: ignore
                 self.set_alias_schema(alias=field_name, schema=value_schema)
 
         field_items = self.value_items.get(field_name, None)

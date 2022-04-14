@@ -9,6 +9,7 @@
 """
 import logging
 import rich_click as click
+import structlog
 import typing
 
 from kiara.kiara import Kiara
@@ -22,7 +23,7 @@ from .dev.commands import dev_group
 # from .environment.commands import env_group
 # from .explain import explain
 # from .info.commands import info
-# from .metadata.commands import metadata
+from .metadata.commands import metadata
 from .module.commands import module
 from .operation.commands import operation
 from .pipeline.commands import pipeline
@@ -40,7 +41,6 @@ click.rich_click.USE_RICH_MARKUP = True
 #     pass
 
 # click.anyio_backend = "asyncio"
-import structlog
 
 if is_debug():
     structlog.configure(
@@ -66,7 +66,7 @@ def cli(ctx, context, pipeline_folder: typing.Tuple[str]):
     """Main cli entry-point, contains all the sub-commands."""
 
     ctx.obj = {}
-    extra_config = {}
+    extra_config: typing.Dict[str, typing.Any] = {}
     if pipeline_folder:
         extra_config["extra_pipeline_folders"] = list(pipeline_folder)
     if context:
@@ -85,7 +85,7 @@ cli.add_command(operation)
 cli.add_command(module)
 cli.add_command(pipeline)
 # cli.add_command(info)
-# cli.add_command(metadata)
+cli.add_command(metadata)
 cli.add_command(type_group)
 # cli.add_command(env_group)
 # cli.add_command(server)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from pydantic import Field
-from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Union
 
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.operation import (
@@ -164,6 +164,9 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
                 return None
             target_type = schema.type
 
+        if target_type is None:
+            raise Exception("No target type available.")
+
         input_field_match = None
         render_config_match = None
 
@@ -208,7 +211,7 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
     def get_target_types_for(self, source_type: str) -> Mapping[str, Operation]:
 
         # TODO: support for sub-types
-        result = {}
+        result: Dict[str, Operation] = {}
         for operation in self.operations.values():
             details = self.retrieve_operation_details(operation)
 

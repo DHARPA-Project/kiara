@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 import orjson
 import os
-from sqlalchemy.engine import Engine
 from typing import Any, Mapping
 
-from kiara.kiara.orm import EnvironmentOrm, MetadataSchemaOrm
 from kiara.utils import orjson_dumps
 
 
@@ -32,48 +30,48 @@ def orm_json_deserialize(obj: str) -> Any:
     return orjson.loads(obj)
 
 
-def ensure_current_environments_persisted(
-    engine: Engine,
-) -> Mapping[str, EnvironmentOrm]:
-
-    from kiara.kiara import EnvironmentRegistry
-
-    envs = {}
-    with engine.create_session() as session:
-        for (
-            env_name,
-            env,
-        ) in EnvironmentRegistry.instance().current_environments.items():
-
-            md = (
-                session.query(EnvironmentOrm)
-                .filter_by(metadata_hash=env.model_data_hash)
-                .first()
-            )
-            if not md:
-
-                md_schema = (
-                    session.query(MetadataSchemaOrm)
-                    .filter_by(metadata_schema_hash=env.get_schema_hash())
-                    .first()
-                )
-                if not md_schema:
-                    md_schema = MetadataSchemaOrm(
-                        metadata_schema_hash=env.get_schema_hash(),
-                        metadata_type=env.get_category_alias(),
-                        metadata_schema=env.schema_json(),
-                    )
-                    session.add(md_schema)
-                    session.commit()
-
-                md = EnvironmentOrm(
-                    metadata_hash=env.model_data_hash,
-                    metadata_schema_id=md_schema.id,
-                    metadata_payload=env,
-                )
-                session.add(md)
-                session.commit()
-
-            envs[env_name] = md
-
-    return envs
+# def ensure_current_environments_persisted(
+#     engine: Engine,
+# ) -> Mapping[str, EnvironmentOrm]:
+#
+#     from kiara.kiara import EnvironmentRegistry
+#
+#     envs = {}
+#     with engine.create_session() as session:
+#         for (
+#             env_name,
+#             env,
+#         ) in EnvironmentRegistry.instance().current_environments.items():
+#
+#             md = (
+#                 session.query(EnvironmentOrm)
+#                 .filter_by(metadata_hash=env.model_data_hash)
+#                 .first()
+#             )
+#             if not md:
+#
+#                 md_schema = (
+#                     session.query(MetadataSchemaOrm)
+#                     .filter_by(metadata_schema_hash=env.get_schema_hash())
+#                     .first()
+#                 )
+#                 if not md_schema:
+#                     md_schema = MetadataSchemaOrm(
+#                         metadata_schema_hash=env.get_schema_hash(),
+#                         metadata_type=env.get_category_alias(),
+#                         metadata_schema=env.schema_json(),
+#                     )
+#                     session.add(md_schema)
+#                     session.commit()
+#
+#                 md = EnvironmentOrm(
+#                     metadata_hash=env.model_data_hash,
+#                     metadata_schema_id=md_schema.id,
+#                     metadata_payload=env,
+#                 )
+#                 session.add(md)
+#                 session.commit()
+#
+#             envs[env_name] = md
+#
+#     return envs

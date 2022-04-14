@@ -47,4 +47,4 @@ class OperationType(abc.ABC, Generic[OPERATION_TYPE_DETAILS]):
         if isinstance(operation, str):
             operation = self.operations[operation]
 
-        return operation.operation_details
+        return operation.operation_details  # type: ignore

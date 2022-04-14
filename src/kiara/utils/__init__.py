@@ -154,7 +154,7 @@ def dict_from_cli_args(
                 config.setdefault(k, []).append(v)
             else:
                 if k in config.keys():
-                    logger.warning(f"duplicate.key", old_value=k, new_value=v)
+                    logger.warning("duplicate.key", old_value=k, new_value=v)
                 config[k] = v
     return config
 
@@ -282,6 +282,8 @@ def orjson_dumps(v, *, default=None, **args):
     except Exception as e:
         if is_debug():
             print(f"Error dumping json data: {e}")
+            from kiara import dbg
+
             dbg(v)
 
         raise e

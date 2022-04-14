@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from pydantic import Field, PrivateAttr
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Union
 import structlog
+from pydantic import Field, PrivateAttr
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Union
 
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.operation import (
@@ -20,6 +20,7 @@ if TYPE_CHECKING:
 
 
 logger = structlog.getLogger()
+
 
 class CustomModuleOperationDetails(OperationDetails):
     @classmethod
@@ -67,14 +68,20 @@ class CustomModuleOperationType(OperationType[CustomModuleOperationDetails]):
         for name, module_cls in self._kiara.module_type_classes.items():
             mod_conf = module_cls._config_cls
             if mod_conf.requires_config():
-                logger.debug("ignore.custom_operation", module_type=name, reason="config required")
+                logger.debug(
+                    "ignore.custom_operation",
+                    module_type=name,
+                    reason="config required",
+                )
                 continue
             doc = DocumentationMetadataModel.from_class_doc(module_cls)
             oc = ManifestOperationConfig(module_type=name, doc=doc)
             result.append(oc)
         return result
 
-    def check_matching_operation(self, module: "KiaraModule") -> Optional[str]:
+    def check_matching_operation(
+        self, module: "KiaraModule"
+    ) -> Optional[CustomModuleOperationDetails]:
         mod_conf = module.__class__._config_cls
 
         if not mod_conf.requires_config():

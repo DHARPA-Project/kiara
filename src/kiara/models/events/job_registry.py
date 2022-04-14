@@ -25,11 +25,11 @@ class JobArchiveAddedEvent(RegistryEvent):
 
 class JobRecordPreStoreEvent(RegistryEvent):
 
-    event_type: Literal["value_pre_store"] = "job_record_pre_store"
+    event_type: Literal["job_record_pre_store"] = "job_record_pre_store"
     job_record: JobRecord = Field(description="The job record.")
 
 
 class JobRecordStoredEvent(RegistryEvent):
 
-    event_type: Literal["value_stored"] = "job_record_stored"
+    event_type: Literal["job_record_stored"] = "job_record_stored"
     job_record: JobRecord = Field(description="The job record.")

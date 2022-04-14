@@ -164,7 +164,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
     ) -> int:
 
         if isinstance(data_type_config, Mapping):
-            data_type_config = cls.data_type_config_class()(**data_type_config)
+            data_type_config = cls.data_type_config_class()(**data_type_config)  # type: ignore
 
         obj = {
             "type": cls._data_type_name,  # type: ignore

@@ -2,7 +2,7 @@
 import os
 import structlog
 import uuid
-from alembic import command
+from alembic import command  # type: ignore
 from pydantic import Field
 from sqlalchemy.engine import Engine, create_engine
 from typing import (
@@ -23,18 +23,13 @@ from kiara.defaults import (
     KIARA_DB_MIGRATIONS_CONFIG,
     KIARA_DB_MIGRATIONS_FOLDER,
 )
-from kiara.exceptions import NoSuchExecutionTargetException
 from kiara.interfaces import get_console
 from kiara.kiara.config import KiaraContextConfig, KiaraGlobalConfig
 from kiara.models import KiaraModel
 from kiara.models.info import InfoModelGroup, KiaraInfoModel
 from kiara.models.module import KiaraModuleTypeInfo, ModuleTypeClassesInfo
 from kiara.models.module.manifest import Manifest
-from kiara.models.module.operation import (
-    Operation,
-    OperationGroupInfo,
-    OperationTypeClassesInfo,
-)
+from kiara.models.module.operation import OperationGroupInfo, OperationTypeClassesInfo
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.data_type import DataTypeClassesInfo
 from kiara.models.values.value import Value
@@ -55,7 +50,7 @@ from kiara.utils import is_debug, log_message
 from kiara.utils.class_loading import find_all_archive_types
 from kiara.utils.db import orm_json_deserialize, orm_json_serialize
 from kiara.utils.metadata import find_metadata_models
-from kiara.utils.operations import filter_operations_for_package
+from kiara.utils.operations import filter_operations
 
 if TYPE_CHECKING:
     from kiara.modules import KiaraModule
@@ -115,7 +110,9 @@ class Kiara(object):
             kc = KiaraGlobalConfig()
             config = kc.get_context()
 
-        self._id: uuid.UUID = ID_REGISTRY.generate(id=config.context_id, obj=self)
+        self._id: uuid.UUID = ID_REGISTRY.generate(
+            id=uuid.UUID(config.context_id), obj=self
+        )
         ID_REGISTRY.update_metadata(self._id, kiara_id=self._id)
         self._config: KiaraContextConfig = config
 
@@ -165,18 +162,18 @@ class Kiara(object):
                 )
 
             config_cls = archive_cls._config_cls
-            config = config_cls(**archive.config)
-            archive = archive_cls(archive_id=archive.archive_uuid, config=config)
-            for supported_type in archive.supported_item_types():
+            archive_config = config_cls(**archive.config)
+            archive_obj = archive_cls(archive_id=archive.archive_uuid, config=archive_config)  # type: ignore
+            for supported_type in archive_obj.supported_item_types():
                 if supported_type == "data":
                     self.data_registry.register_data_archive(
-                        archive, alias=archive_alias
+                        archive_obj, alias=archive_alias  # type: ignore
                     )
                 if supported_type == "job_record":
-                    self.job_registry.register_job_archive(archive, alias=archive_alias)
+                    self.job_registry.register_job_archive(archive_obj, alias=archive_alias)  # type: ignore
 
                 if supported_type == "alias":
-                    self.alias_registry.register_archive(archive, alias=archive_alias)
+                    self.alias_registry.register_archive(archive_obj, alias=archive_alias)  # type: ignore
 
     def _run_alembic_migrations(self):
         script_location = os.path.abspath(KIARA_DB_MIGRATIONS_FOLDER)
@@ -285,40 +282,40 @@ class Kiara(object):
     def get_value(self, value: Union[uuid.UUID, str, Value]):
         pass
 
-    def run(self, module_or_operation: str, module_config: Mapping[str, Any] = None):
-
-        if isinstance(module_or_operation, str):
-            if module_or_operation in self.operation_registry.operation_ids:
-
-                operation = self.operation_registry.get_operation(module_or_operation)
-                if module_config:
-                    print(
-                        f"Specified run target '{module_or_operation}' is an operation, additional module configuration is not allowed."
-                    )
-
-        elif module_or_operation in self.module_type_names:
-
-            if module_config is None:
-                module_config = {}
-            manifest = Manifest(
-                module_type=module_or_operation, module_config=module_config
-            )
-
-            module = self.create_module(manifest=manifest)
-            operation = Operation.create_from_module(module)
-
-        elif os.path.isfile(module_or_operation):
-            raise NotImplementedError()
-            # module_name = kiara_obj.register_pipeline_description(
-            #     module_or_operation, raise_exception=True
-            # )
-        else:
-            merged = list(self.module_type_names)
-            merged.extend(self.operation_registry.operation_ids)
-            raise NoSuchExecutionTargetException(
-                msg=f"Invalid run target name '[i]{module_or_operation}[/i]'. Must be a path to a pipeline file, or one of the available modules/operations.",
-                available_targets=sorted(merged),
-            )
+    # def run(self, module_or_operation: str, module_config: Mapping[str, Any] = None):
+    #
+    #     if isinstance(module_or_operation, str):
+    #         if module_or_operation in self.operation_registry.operation_ids:
+    #
+    #             operation = self.operation_registry.get_operation(module_or_operation)
+    #             if module_config:
+    #                 print(
+    #                     f"Specified run target '{module_or_operation}' is an operation, additional module configuration is not allowed."
+    #                 )
+    #
+    #     elif module_or_operation in self.module_type_names:
+    #
+    #         if module_config is None:
+    #             module_config = {}
+    #         manifest = Manifest(
+    #             module_type=module_or_operation, module_config=module_config
+    #         )
+    #
+    #         module = self.create_module(manifest=manifest)
+    #         operation = Operation.create_from_module(module)
+    #
+    #     elif os.path.isfile(module_or_operation):
+    #         raise NotImplementedError()
+    #         # module_name = kiara_obj.register_pipeline_description(
+    #         #     module_or_operation, raise_exception=True
+    #         # )
+    #     else:
+    #         merged = list(self.module_type_names)
+    #         merged.extend(self.operation_registry.operation_ids)
+    #         raise NoSuchExecutionTargetException(
+    #             msg=f"Invalid run target name '[i]{module_or_operation}[/i]'. Must be a path to a pipeline file, or one of the available modules/operations.",
+    #             available_targets=sorted(merged),
+    #         )
 
 
 class KiaraContextInfo(KiaraModel):
@@ -336,7 +333,7 @@ class KiaraContextInfo(KiaraModel):
         operation_types = kiara.operation_registry.get_context_metadata(
             only_for_package=package_filter
         )
-        operations = filter_operations_for_package(kiara=kiara, pkg_name=package_filter)
+        operations = filter_operations(kiara=kiara, pkg_name=package_filter)
 
         metadata_types = find_metadata_models(only_for_package=package_filter)
 
@@ -381,7 +378,7 @@ class KiaraContextInfo(KiaraModel):
     def get_info(self, item_type: str, item_id: str) -> KiaraInfoModel:
 
         if "data_type" in item_type:
-            group_info = self.data_types
+            group_info: InfoModelGroup = self.data_types
         elif "module" in item_type:
             group_info = self.module_types
         elif "metadata" in item_type:
@@ -406,7 +403,7 @@ class KiaraContextInfo(KiaraModel):
 
     def get_all_info(self, skip_empty_types: bool = True) -> Dict[str, InfoModelGroup]:
 
-        result = {}
+        result: Dict[str, InfoModelGroup] = {}
         if self.data_types or not skip_empty_types:
             result["data_types"] = self.data_types
         if self.module_types or not skip_empty_types:

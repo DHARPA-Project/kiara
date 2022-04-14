@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
+import orjson
 import os
+import structlog
 import uuid
 from pathlib import Path
-from typing import Mapping, Optional, Set, Iterable, Tuple
-
-import orjson
-import structlog
+from typing import TYPE_CHECKING, Set, Tuple
 
 from kiara.models.module.destiniy import Destiny
-from kiara.models.values.value_schema import ValueSchema
 from kiara.registries.destinies import DestinyArchive, DestinyStore
 from kiara.registries.ids import ID_REGISTRY
 
+if TYPE_CHECKING:
+    from kiara.kiara import Kiara
+
 logger = structlog.getLogger()
 
-class FileSystemDestinyArchive(DestinyArchive):
 
+class FileSystemDestinyArchive(DestinyArchive):
     @classmethod
     def create_from_kiara_context(cls, kiara: "Kiara"):
 
@@ -67,7 +68,7 @@ class FileSystemDestinyArchive(DestinyArchive):
         tokens = str(value_id).split("-")
         value_id_path = self._value_id_path.joinpath(*tokens)
 
-        full_path = value_id_path / f'{destiny_alias}.json'
+        full_path = value_id_path / f"{destiny_alias}.json"
         return full_path
 
     def _translate_value_id_path(self, value_path: Path) -> uuid.UUID:
@@ -99,16 +100,14 @@ class FileSystemDestinyArchive(DestinyArchive):
 
         return result
 
-    def get_destiny_aliases_for_value(
-        self, value_id: uuid.UUID
-    ) -> Set[str]:
+    def get_destiny_aliases_for_value(self, value_id: uuid.UUID) -> Set[str]:
 
         tokens = str(value_id).split("-")
         value_id_path = self._value_id_path.joinpath(*tokens)
 
         aliases = value_id_path.glob("*.json")
 
-        return (a.name[0:-5] for a in aliases)
+        return set(a.name[0:-5] for a in aliases)
 
     def get_destiny(self, value_id: uuid.UUID, destiny_alias: str) -> Destiny:
 
@@ -124,10 +123,7 @@ class FileSystemDestinyArchive(DestinyArchive):
 
 
 class FileSystemDestinyStore(FileSystemDestinyArchive, DestinyStore):
-
-    def persist_destiny(
-        self, destiny: Destiny
-    ):
+    def persist_destiny(self, destiny: Destiny):
 
         destiny_path = self._translate_destiny_id_to_path(destiny_id=destiny.destiny_id)
         destiny_path.parent.mkdir(parents=True, exist_ok=True)
@@ -135,7 +131,9 @@ class FileSystemDestinyStore(FileSystemDestinyArchive, DestinyStore):
 
         for value_id in destiny.fixed_inputs.values():
 
-            path = self._translate_value_id(value_id=value_id, destiny_alias=destiny.destiny_alias)
+            path = self._translate_value_id(
+                value_id=value_id, destiny_alias=destiny.destiny_alias
+            )
             if path.exists():
                 logger.debug("replace.destiny.file", path=path.as_posix())
                 path.unlink()
@@ -145,6 +143,3 @@ class FileSystemDestinyStore(FileSystemDestinyArchive, DestinyStore):
 
             path.parent.mkdir(parents=True, exist_ok=True)
             path.symlink_to(destiny_path)
-
-
-

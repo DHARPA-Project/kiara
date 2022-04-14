@@ -13,11 +13,7 @@ from kiara.models.documentation import (
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
-from kiara.models.info import (
-    KiaraInfoModel,
-    KiaraTypeInfoModel,
-    TypeInfoModelGroupMixin,
-)
+from kiara.models.info import KiaraTypeInfoModel, TypeInfoModelGroup
 from kiara.models.python_class import PythonClass
 
 
@@ -95,9 +91,9 @@ class DataTypeClassInfo(KiaraTypeInfoModel[DataType]):
         return table
 
 
-class DataTypeClassesInfo(TypeInfoModelGroupMixin):
+class DataTypeClassesInfo(TypeInfoModelGroup):
     @classmethod
-    def base_info_class(cls) -> Type[KiaraInfoModel]:
+    def base_info_class(cls) -> Type[KiaraTypeInfoModel]:
         return DataTypeClassInfo
 
     type_name: Literal["data_type"] = "data_type"

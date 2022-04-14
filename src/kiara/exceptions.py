@@ -30,7 +30,7 @@ class KiaraModuleConfigException(Exception):
         self._module_cls = module_cls
         self._config = config
 
-        self._parent: typing.Optional[Exception] = parent
+        self._parent: Optional[Exception] = parent
 
         if not msg.endswith("."):
             _msg = msg + "."

@@ -1,27 +1,26 @@
 # -*- coding: utf-8 -*-
 import uuid
-from typing import TYPE_CHECKING, Dict, Mapping, Optional, Set, Union, Iterable, Tuple, List
+from typing import TYPE_CHECKING, Dict, Iterable, List, Optional, Set, Tuple, Union
 
 from kiara.models.module.destiniy import Destiny
 from kiara.models.module.manifest import Manifest
 from kiara.models.values.value import Value
 from kiara.registries.destinies import DestinyArchive, DestinyStore
-from kiara.registries.destinies.file_system_store import FileSystemDestinyStore
-from kiara.utils import log_message
+from kiara.registries.destinies.filesystem_store import FileSystemDestinyStore
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
 
 
 class DestinyRegistry(object):
-
-
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
         self._destiny_archives: Dict[str, DestinyArchive] = {}
         self._default_destiny_store: Optional[str] = None
-        default_metadata_archive = FileSystemDestinyStore.create_from_kiara_context(self._kiara)
+        default_metadata_archive = FileSystemDestinyStore.create_from_kiara_context(
+            self._kiara
+        )
         self.register_destiny_archive("metadata", default_metadata_archive)
 
         self._all_values: Optional[Dict[uuid.UUID, Set[str]]] = None
@@ -42,7 +41,9 @@ class DestinyRegistry(object):
     def register_destiny_archive(self, registered_name: str, alias_store: DestinyStore):
 
         if not registered_name.isalnum():
-            raise Exception(f"Can't register destiny archive with name '{registered_name}: name must only contain alphanumeric characters.'")
+            raise Exception(
+                f"Can't register destiny archive with name '{registered_name}: name must only contain alphanumeric characters.'"
+            )
 
         if registered_name in self._destiny_archives.keys():
             raise Exception(
@@ -59,12 +60,15 @@ class DestinyRegistry(object):
     def _split_alias(self, alias: str) -> Tuple[str, str]:
 
         if "." not in alias:
+            assert self._default_destiny_store is not None
             return self._default_destiny_store, alias
 
         store_id, rest = alias.split(".", maxsplit=1)
 
         if store_id not in self._destiny_archives.keys():
-            raise Exception(f"Invalid alias '{alias}', no store with prefix '{store_id}' registered. Available prefixes: {', '.join(self._destiny_archives.keys())}")
+            raise Exception(
+                f"Invalid alias '{alias}', no store with prefix '{store_id}' registered. Available prefixes: {', '.join(self._destiny_archives.keys())}"
+            )
 
         return (store_id, rest)
 
@@ -103,7 +107,9 @@ class DestinyRegistry(object):
 
         destiny = self._destinies_by_value.get(value_id, {}).get(destiny_alias, None)
         if destiny is None:
-            raise Exception(f"No destiny '{destiny_alias}' available for value '{value_id}'.")
+            raise Exception(
+                f"No destiny '{destiny_alias}' available for value '{value_id}'."
+            )
 
         return destiny
 
@@ -130,7 +136,9 @@ class DestinyRegistry(object):
         all_stored_values.update(self._destinies_by_value.keys())
         return all_stored_values
 
-    def get_destiny_aliases_for_value(self, value_id: uuid.UUID, alias_filter: Optional[str]=None) -> Iterable[str]:
+    def get_destiny_aliases_for_value(
+        self, value_id: uuid.UUID, alias_filter: Optional[str] = None
+    ) -> Iterable[str]:
 
         # TODO: cache the result of this
 
@@ -141,7 +149,9 @@ class DestinyRegistry(object):
         aliases: Set[str] = set()
         if all_stores:
             for prefix in all_stores:
-                all_aliases = self._destiny_archives[prefix].get_destiny_aliases_for_value(value_id=value_id)
+                all_aliases = self._destiny_archives[
+                    prefix
+                ].get_destiny_aliases_for_value(value_id=value_id)
                 if all_aliases is not None:
                     aliases.update((f"{prefix}.{a}" for a in all_aliases))
 
@@ -150,7 +160,6 @@ class DestinyRegistry(object):
             aliases.update(current.keys())
 
         return sorted(aliases)
-
 
     # def get_destinies_for_value(
     #     self,
@@ -161,7 +170,6 @@ class DestinyRegistry(object):
     #
     #
     #     return self._destinies_by_value.get(value_id, {})
-
 
     def resolve_destiny(self, destiny: Destiny) -> Value:
 
@@ -174,7 +182,11 @@ class DestinyRegistry(object):
 
         return value
 
-    def attach_as_property(self, destiny: Union[uuid.UUID, Destiny], field_names: Optional[Iterable[str]]=None):
+    def attach_as_property(
+        self,
+        destiny: Union[uuid.UUID, Destiny],
+        field_names: Optional[Iterable[str]] = None,
+    ):
 
         if field_names:
             raise NotImplementedError()
@@ -191,29 +203,38 @@ class DestinyRegistry(object):
 
         if already_stored:
             stored = (str(v) for v in already_stored)
-            raise Exception(f"Can't attach destiny as property, value(s) already stored: {', '.join(stored)}")
+            raise Exception(
+                f"Can't attach destiny as property, value(s) already stored: {', '.join(stored)}"
+            )
 
         store_id = self._destiny_store_map[destiny.destiny_id]
 
         full_path = f"{store_id}.{destiny.destiny_alias}"
 
         for v in values.values():
-            v.add_property(value_id=destiny.result_value_id, property_path=full_path, add_origin_to_property_value=True)
+            assert destiny.result_value_id is not None
+            v.add_property(
+                value_id=destiny.result_value_id,
+                property_path=full_path,
+                add_origin_to_property_value=True,
+            )
 
-    def store_destiny(self, destiny_id: uuid.UUID):
+    def store_destiny(self, destiny_id: Union[Destiny, uuid.UUID]):
 
         try:
-            destiny_id = destiny_id.destiny_id
+            _destiny_id: uuid.UUID = destiny_id.destiny_id  # type: ignore
         except Exception:
             # just in case this is a 'Destiny' object
-            pass
+            _destiny_id = destiny_id  # type: ignore
 
-        store_id = self._destiny_store_map[destiny_id]
-        destiny = self._destinies[destiny_id]
+        store_id = self._destiny_store_map[_destiny_id]
+        destiny = self._destinies[_destiny_id]
         store: DestinyStore = self._destiny_archives[store_id]  # type: ignore
 
         if not isinstance(store, DestinyStore):
-            full_alias = f'{store_id}.{destiny.destiny_alias}'
-            raise Exception(f"Can't store destiny '{full_alias}': prefix '{store_id}' not writable in this kiara context.")
+            full_alias = f"{store_id}.{destiny.destiny_alias}"
+            raise Exception(
+                f"Can't store destiny '{full_alias}': prefix '{store_id}' not writable in this kiara context."
+            )
 
         store.persist_destiny(destiny=destiny)

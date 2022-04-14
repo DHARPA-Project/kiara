@@ -5,8 +5,8 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import os
 import rich_click as click
-from alembic import command
-from alembic.config import Config
+from alembic import command  # type: ignore
+from alembic.config import Config  # type: ignore
 from typing import Optional
 
 from kiara.defaults import KIARA_DB_MIGRATIONS_CONFIG, KIARA_DB_MIGRATIONS_FOLDER
@@ -25,7 +25,7 @@ def dev_group(ctx):
 @click.pass_context
 def test(ctx):
 
-    kiara_obj: Kiara = ctx.obj["kiara"]
+    # kiara_obj: Kiara = ctx.obj["kiara"]
 
     m = find_metadata_models()
     rich_print(m)

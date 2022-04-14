@@ -7,22 +7,24 @@
 
 import abc
 import dpath
-import logging
 import uuid
 from typing import Any, Dict, Iterable, List, Mapping, Optional
 
+from kiara.defaults import NONE_VALUE_ID
 from kiara.exceptions import InvalidValuesException
 from kiara.kiara import DataRegistry
+from kiara.models.aliases import AliasValueMap
+from kiara.models.events.pipeline import (
+    ChangedValue,
+    PipelineDetails,
+    PipelineEvent,
+    StepDetails,
+)
 from kiara.models.module.jobs import JobConfig
 from kiara.models.module.pipeline import StepStatus
 from kiara.models.module.pipeline.structure import PipelineStep, PipelineStructure
 from kiara.models.module.pipeline.value_refs import ValueRef
 from kiara.models.values.value import ORPHAN
-from kiara.registries.aliases import AliasValueMap
-
-log = logging.getLogger("kiara")
-
-from kiara.models.events.pipeline import PipelineDetails, PipelineEvent, StepDetails, ChangedValue
 
 
 class PipelineListener(abc.ABC):
@@ -40,7 +42,7 @@ class Pipeline(object):
 
         self._structure: PipelineStructure = structure
 
-        self._value_refs: Mapping[AliasMap, Iterable[ValueRef]] = None  # type: ignore
+        self._value_refs: Mapping[AliasValueMap, Iterable[ValueRef]] = None  # type: ignore
         # self._status: StepStatus = StepStatus.STALE
 
         self._steps_by_stage: Dict[int, Dict[str, PipelineStep]] = None  # type: ignore
@@ -117,31 +119,29 @@ class Pipeline(object):
     def structure(self) -> PipelineStructure:
         return self._structure
 
-    def get_current_pipeline_inputs(self) -> Dict[str, Optional[uuid.UUID]]:
+    def get_current_pipeline_inputs(self) -> Dict[str, uuid.UUID]:
         """All (pipeline) input values of this pipeline."""
 
         alias_map = self._all_values.get_alias("pipeline.inputs")
         return alias_map.get_all_value_ids()  # type: ignore
 
-    def get_current_pipeline_outputs(self) -> Dict[str, Optional[uuid.UUID]]:
+    def get_current_pipeline_outputs(self) -> Dict[str, uuid.UUID]:
         """All (pipeline) output values of this pipeline."""
 
         alias_map = self._all_values.get_alias("pipeline.outputs")
         return alias_map.get_all_value_ids()  # type: ignore
 
-    def get_current_step_inputs(self, step_id) -> Dict[str, Optional[uuid.UUID]]:
+    def get_current_step_inputs(self, step_id) -> Dict[str, uuid.UUID]:
 
         alias_map = self._all_values.get_alias(f"steps.{step_id}.inputs")
         return alias_map.get_all_value_ids()  # type: ignore
 
-    def get_current_step_outputs(self, step_id) -> Dict[str, Optional[uuid.UUID]]:
+    def get_current_step_outputs(self, step_id) -> Dict[str, uuid.UUID]:
 
         alias_map = self._all_values.get_alias(f"steps.{step_id}.outputs")
         return alias_map.get_all_value_ids()  # type: ignore
 
-    def get_inputs_for_steps(
-        self, *step_ids: str
-    ) -> Dict[str, Dict[str, Optional[uuid.UUID]]]:
+    def get_inputs_for_steps(self, *step_ids: str) -> Dict[str, Dict[str, uuid.UUID]]:
         """Retrieve value ids for the inputs of the specified steps (or all steps, if no argument provided."""
 
         result = {}
@@ -152,9 +152,7 @@ class Pipeline(object):
             result[step_id] = ids
         return result
 
-    def get_outputs_for_steps(
-        self, *step_ids: str
-    ) -> Dict[str, Dict[str, Optional[uuid.UUID]]]:
+    def get_outputs_for_steps(self, *step_ids: str) -> Dict[str, Dict[str, uuid.UUID]]:
         """Retrieve value ids for the outputs of the specified steps (or all steps, if no argument provided."""
 
         result = {}
@@ -180,7 +178,7 @@ class Pipeline(object):
         invalid = pipeline_inputs.check_invalid()
         if not invalid:
             status = StepStatus.INPUTS_READY
-            step_outputs = self._all_values.get_alias(f"pipeline.outputs")
+            step_outputs = self._all_values.get_alias("pipeline.outputs")
             assert step_outputs is not None
             invalid_outputs = step_outputs.check_invalid()
             # TODO: also check that all the pedigrees match up with current inputs
@@ -247,11 +245,11 @@ class Pipeline(object):
         notify_listeners: bool = True,
     ) -> Mapping[str, Mapping[str, Mapping[str, ChangedValue]]]:
 
-        values_to_set: Dict[str, Optional[uuid.UUID]] = {}
+        values_to_set: Dict[str, uuid.UUID] = {}
 
         for k, v in inputs.items():
             if v is None:
-                values_to_set[k] = None
+                values_to_set[k] = NONE_VALUE_ID
             else:
                 alias_map = self._all_values.get_alias("pipeline.inputs")
                 assert alias_map is not None
@@ -267,7 +265,7 @@ class Pipeline(object):
 
         if sync_to_step_inputs:
             changed = self.sync_pipeline_inputs(notify_listeners=False)
-            dpath.util.merge(changed_results, changed)
+            dpath.util.merge(changed_results, changed)  # type: ignore
 
         if notify_listeners:
             event = PipelineEvent.create_event(pipeline=self, changed=changed_results)
@@ -296,7 +294,7 @@ class Pipeline(object):
         for step_id in values_to_sync.keys():
             values = values_to_sync[step_id]
             step_changed = self._set_step_inputs(step_id=step_id, inputs=values)
-            dpath.util.merge(results, step_changed)
+            dpath.util.merge(results, step_changed)  # type: ignore
 
         if notify_listeners:
             event = PipelineEvent.create_event(pipeline=self, changed=results)
@@ -334,12 +332,12 @@ class Pipeline(object):
         notify_listeners: bool = True,
     ) -> Mapping[str, Mapping[str, Mapping[str, ChangedValue]]]:
 
-        results = {}
+        results: Dict[str, Dict[str, Dict[str, ChangedValue]]] = {}
         for step_id, outputs in changed_outputs.items():
             step_results = self.set_step_outputs(
                 step_id=step_id, outputs=outputs, notify_listeners=False
             )
-            dpath.util.merge(results, step_results)
+            dpath.util.merge(results, step_results)  # type: ignore
 
         if notify_listeners:
             event = PipelineEvent.create_event(pipeline=self, changed=results)
@@ -383,11 +381,11 @@ class Pipeline(object):
             changed_step_fields = self._set_step_inputs(
                 step_id=step_id, inputs=step_inputs
             )
-            dpath.util.merge(result, changed_step_fields)
+            dpath.util.merge(result, changed_step_fields)  # type: ignore
 
         if pipeline_outputs:
             changed_pipeline_outputs = self._set_pipeline_outputs(**pipeline_outputs)
-            dpath.util.merge(
+            dpath.util.merge(  # type: ignore
                 result, {"__pipeline__": {"outputs": changed_pipeline_outputs}}
             )
 
@@ -411,7 +409,9 @@ class Pipeline(object):
 
         invalid = {}
         for k in values.keys():
-            if k not in self._all_values.get_alias(alias).values_schema.keys():
+            _alias = self._all_values.get_alias(alias)
+            assert _alias is not None
+            if k not in _alias.values_schema.keys():
                 invalid[
                     k
                 ] = f"Invalid field '{k}'. Available fields: {', '.join(self.get_current_pipeline_inputs().keys())}"
@@ -419,7 +419,7 @@ class Pipeline(object):
         if invalid:
             raise InvalidValuesException(invalid_values=invalid)
 
-        alias_map: AliasValueMap = self._all_values.get_alias(alias)
+        alias_map: Optional[AliasValueMap] = self._all_values.get_alias(alias)
         assert alias_map is not None
 
         values_to_set: Dict[str, Optional[uuid.UUID]] = {}
@@ -439,7 +439,9 @@ class Pipeline(object):
                 values_to_set[field_name] = new_value
                 changed[field_name] = ChangedValue(old=current_value_id, new=new_value)
 
-        self._all_values.get_alias(alias).set_aliases(**values_to_set)
+        _alias = self._all_values.get_alias(alias)
+        assert _alias is not None
+        _alias.set_aliases(**values_to_set)
 
         return changed
 

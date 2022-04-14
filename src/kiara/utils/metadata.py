@@ -11,7 +11,7 @@ def find_metadata_models(
 
     models = find_all_value_metadata_models()
 
-    group = MetadataTypeClassesInfo.create_from_type_items(group_alias=alias, **models)
+    group: MetadataTypeClassesInfo = MetadataTypeClassesInfo.create_from_type_items(group_alias=alias, **models)  # type: ignore
 
     if only_for_package:
         temp = {}
@@ -20,7 +20,7 @@ def find_metadata_models(
                 temp[key] = info
 
         group = MetadataTypeClassesInfo.construct(
-            group_id=group.group_id, group_alias=group.group_alias, type_infos=temp
+            group_id=group.group_id, group_alias=group.group_alias, type_infos=temp  # type: ignore
         )
 
     return group

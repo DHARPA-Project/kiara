@@ -64,7 +64,7 @@ class NoneType(DataType[SpecialValue, DataTypeConfig]):
 
 
 class AnyType(
-    DataType[object, DataTypeConfig], Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]
+    DataType[TYPE_PYTHON_CLS, DataTypeConfig], Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]
 ):
     """'Any' type, the parent type for most other types.
 
@@ -84,13 +84,13 @@ class AnyType(
     # def is_immutable(self) -> bool:
     #     return False
 
-    def calculate_hash(self, data: Any) -> int:
+    def calculate_hash(self, data: TYPE_PYTHON_CLS) -> int:
         return INVALID_HASH_MARKER
         # raise Exception(
         #     f"Calculating the hash for type '{self.__class__._value_type_name}' is not supported. If your type inherits from 'any', make sure to implement the 'calculate_hash' method."
         # )
 
-    def calculate_size(self, data: Any) -> int:
+    def calculate_size(self, data: TYPE_PYTHON_CLS) -> int:
         return INVALID_SIZE_MARKER
         # raise Exception(
         #     f"Calculating size for type '{self.__class__._value_type_name}' is not supported. If your type inherits from 'any', make sure to implement the 'calculate_hash' method."
@@ -162,7 +162,7 @@ KIARA_MODEL_CLS = TypeVar("KIARA_MODEL_CLS", bound=KiaraModel)
 
 
 class KiaraModelValueType(
-    AnyType[KiaraModel, DataTypeConfig], Generic[KIARA_MODEL_CLS, TYPE_CONFIG_CLS]
+    AnyType[KIARA_MODEL_CLS, TYPE_CONFIG_CLS], Generic[KIARA_MODEL_CLS, TYPE_CONFIG_CLS]
 ):
     """A value type that is used internally.
 
@@ -172,7 +172,7 @@ class KiaraModelValueType(
     _data_type_name = None  # type: ignore
 
     @classmethod
-    def data_type_config_class(cls) -> Type[TYPE_CONFIG_CLS]:
+    def data_type_config_class(cls) -> Type[DataTypeConfig]:
         return DataTypeConfig
 
     @abc.abstractmethod
@@ -182,7 +182,7 @@ class KiaraModelValueType(
     def parse_python_obj(self, data: Any) -> KIARA_MODEL_CLS:
 
         if isinstance(data, self.__class__.python_class()):
-            return data
+            return data  # type: ignore
 
         data = self.create_model_from_python_obj(data)
         return data

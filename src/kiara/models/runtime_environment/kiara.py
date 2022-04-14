@@ -14,7 +14,7 @@ from kiara.models.documentation import (
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
-from kiara.models.info import KiaraTypeInfoModel, TypeInfoModelGroupMixin
+from kiara.models.info import KiaraTypeInfoModel, TypeInfoModelGroup
 from kiara.models.python_class import PythonClass
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.value_metadata import MetadataTypeClassesInfo
@@ -47,6 +47,7 @@ class ArchiveTypeInfoModel(KiaraTypeInfoModel):
     def base_class(self) -> Type[KiaraArchive]:
         return KiaraArchive
 
+    @classmethod
     def category_name(cls) -> str:
         return "archive_type"
 
@@ -83,7 +84,7 @@ class ArchiveTypeInfoModel(KiaraTypeInfoModel):
         return table
 
 
-class ArchiveTypeClassesInfo(TypeInfoModelGroupMixin):
+class ArchiveTypeClassesInfo(TypeInfoModelGroup):
     @classmethod
     def base_info_class(cls) -> Type[ArchiveTypeInfoModel]:
         return ArchiveTypeInfoModel
@@ -96,22 +97,22 @@ class ArchiveTypeClassesInfo(TypeInfoModelGroupMixin):
 
 def find_archive_types(
     alias: Optional[str] = None, only_for_package: Optional[str] = None
-) -> MetadataTypeClassesInfo:
+) -> ArchiveTypeClassesInfo:
 
     archive_types = find_all_archive_types()
 
-    group = ArchiveTypeClassesInfo.create_from_type_items(
+    group: ArchiveTypeClassesInfo = ArchiveTypeClassesInfo.create_from_type_items(  # type: ignore
         group_alias=alias, **archive_types
     )
 
     if only_for_package:
-        temp = {}
+        temp: Dict[str, KiaraTypeInfoModel] = {}
         for key, info in group.items():
             if info.context.labels.get("package") == only_for_package:
-                temp[key] = info
+                temp[key] = info  # type: ignore
 
         group = ArchiveTypeClassesInfo.construct(
-            group_id=group.group_id, group_alias=group.group_alias, type_infos=temp
+            group_id=group.group_id, group_alias=group.group_alias, type_infos=temp  # type: ignore
         )
 
     return group
@@ -130,7 +131,7 @@ class KiaraTypesRuntimeEnvironment(RuntimeEnvironment):
     @classmethod
     def retrieve_environment_data(cls) -> Dict[str, Any]:
 
-        result = {}
+        result: Dict[str, Any] = {}
         result["metadata_types"] = find_metadata_models()
         result["archive_types"] = find_archive_types()
 

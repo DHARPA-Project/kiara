@@ -63,6 +63,11 @@ class FileSystemDataArchive(DataArchive, JobArchive):
     _archive_type_name = "filesystem_data_archive"
     _config_cls = FileSystemArchiveConfig
 
+    # @classmethod
+    # def supported_item_types(cls) -> Iterable[str]:
+    #
+    #     return ["data", "job_record"]
+
     @classmethod
     def is_writeable(cls) -> bool:
         return False
@@ -187,7 +192,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
             full_output_name = output_file.name[8:]
             start_value_id = full_output_name.find("__value_id__")
             output_name = full_output_name[0:start_value_id]
-            value_id_str = full_output_name[start_value_id + 12 : -5]
+            value_id_str = full_output_name[start_value_id + 12 : -5]  # noqa
 
             value_id = uuid.UUID(value_id_str)
             outputs[output_name] = value_id
@@ -342,12 +347,13 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
                 if isinstance(chunk, str):
                     addr = self.hashfs.put(chunk)
                 elif isinstance(chunk, bytes):
-                    chunk = BytesIO(chunk)
-                    addr = self.hashfs.put(chunk)
+                    _chunk = BytesIO(chunk)
+                    addr = self.hashfs.put(_chunk)
                 else:
-                    raise Exception(
-                        f"Can't persist chunk: invalid type '{type(chunk)}'"
-                    )
+                    addr = self.hashfs.put(chunk)
+                    # raise Exception(
+                    #     f"Can't persist chunk: invalid type '{type(chunk)}'"
+                    # )
                 bytes_alias_map.setdefault(key, []).append(addr.id)
 
         alias_structure = BytesAliasStructure.construct(
@@ -361,7 +367,7 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
         self, value: Value
     ) -> Tuple[LoadConfig, Optional[BytesStructure]]:
 
-        persist_op_type = self._kiara.operation_registry.operation_types.get(
+        persist_op_type = self.kiara_context.operation_registry.operation_types.get(
             "persist_value", None
         )
         if persist_op_type is None:
@@ -376,7 +382,7 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
         data_dir = working_dir / value.data_type_name / str(value.value_hash)
 
         result = op.run(
-            kiara=self._kiara,
+            kiara=self.kiara_context,
             inputs={
                 "value": value,
                 "persistence_config": {"temp_dir": data_dir.as_posix()},

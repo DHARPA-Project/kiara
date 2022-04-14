@@ -36,7 +36,7 @@ class DataArchive(BaseArchive):
     @classmethod
     def supported_item_types(cls) -> Iterable[str]:
 
-        return ["data", "job_record"]
+        return ["data"]
 
     def __init__(self, archive_id: uuid.UUID, config: ARCHIVE_CONFIG_CLS):
 
@@ -50,19 +50,22 @@ class DataArchive(BaseArchive):
     def retrieve_load_config(self, value: Union[uuid.UUID, Value]) -> LoadConfig:
 
         if isinstance(value, Value):
-            value_id = value.value_id
+            value_id: uuid.UUID = value.value_id
+            _value: Optional[Value] = value
         else:
             value_id = value
-            value = None
+            _value = None
 
         if value_id in self._load_config_cache.keys():
             return self._load_config_cache[value_id]
 
-        if value is None:
-            value = self.retrieve_value(value_id)
+        if _value is None:
+            _value = self.retrieve_value(value_id)
 
-        load_config = self._retrieve_load_config(value=value)
-        self._load_config_cache[value.value_id] = load_config
+        assert _value is not None
+
+        load_config = self._retrieve_load_config(value=_value)
+        self._load_config_cache[_value.value_id] = load_config
         return load_config
 
     @abc.abstractmethod
@@ -166,7 +169,7 @@ class DataArchive(BaseArchive):
             raise NotImplementedError()
 
         if value_hash in self._value_hash_index.keys():
-            value_ids = self._value_hash_index[value_hash]
+            value_ids: Optional[Set[uuid.UUID]] = self._value_hash_index[value_hash]
         else:
             value_ids = self._find_values_with_hash(
                 value_hash=value_hash, data_type_name=data_type_name
@@ -175,6 +178,7 @@ class DataArchive(BaseArchive):
                 value_ids = set()
             self._value_hash_index[value_hash] = value_ids
 
+        assert value_ids is not None
         return value_ids
 
     @abc.abstractmethod
@@ -183,7 +187,7 @@ class DataArchive(BaseArchive):
         value_hash: int,
         value_size: Optional[int] = None,
         data_type_name: Optional[str] = None,
-    ) -> Optional[Set[Value]]:
+    ) -> Optional[Set[uuid.UUID]]:
         pass
 
     @abc.abstractmethod
@@ -291,7 +295,7 @@ class BaseDataStore(DataStore):
 
         if not load_config:
             raise Exception(
-                f"Can't write load config, no load config returned when persisting value."
+                "Can't write load config, no load config returned when persisting value."
             )
         if not isinstance(load_config, LoadConfig):
             raise Exception(
@@ -303,7 +307,7 @@ class BaseDataStore(DataStore):
             and not bytes_structure
         ):
             raise Exception(
-                f"Can't write load config, no bytes structure returned when persisting value."
+                "Can't write load config, no bytes structure returned when persisting value."
             )
 
         if bytes_structure and not isinstance(bytes_structure, BytesStructure):

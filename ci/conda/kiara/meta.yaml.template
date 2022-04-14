@@ -28,6 +28,7 @@ requirements:
     - distro>=1.6.0
     - dpath>=2.0.0
     - filetype>=1.0.0,<2.0.0
+    - hashfs>=0.7.2<8.0.0
     - importlib_metadata>=3.0
     - mkdocstrings>=0.17.0
     - mmh3>=3.0.0

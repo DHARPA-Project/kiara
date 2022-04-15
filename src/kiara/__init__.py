@@ -11,31 +11,18 @@ __all__ = [
     "Kiara",
     "explain",
     "KiaraModule",
-    "Pipeline",
-    "PipelineStructure",
-    "PipelineController",
-    "PipelineModule",
-    "DataRegistry",
-    "find_kiara_modules_under",
-    "find_pipeline_base_path_for_module",
-    "KiaraEntryPointItem",
+    # "Pipeline",
+    # "PipelineStructure",
+    # "PipelineController",
+    # "PipelineModule",
+    # "DataRegistry",
     "get_version",
 ]
 import os
 import typing
 
 from .kiara import Kiara, explain  # noqa
-from .module import KiaraModule  # noqa
-from .pipeline.pipeline import Pipeline  # noqa
-from .pipeline.structure import PipelineStructure  # noqa
-from .pipeline.controller import PipelineController  # noqa
-from .pipeline.module import PipelineModule  # noqa
-from .data.registry import DataRegistry  # noqa
-from .utils.class_loading import (
-    find_kiara_modules_under,
-    find_pipeline_base_path_for_module,
-    KiaraEntryPointItem,
-)
+from .modules import KiaraModule  # noqa
 
 try:
     builtins = __import__("__builtin__")

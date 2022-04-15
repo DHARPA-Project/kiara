@@ -8,7 +8,7 @@ import typing
 from inspect import cleandoc
 
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
-from kiara.utils.output import first_line
+from kiara.utils import first_line
 
 
 def extract_doc_from_cls(cls: typing.Type, only_first_line: bool = False):

@@ -14,7 +14,7 @@ def test_info():
 
     runner = CliRunner()
 
-    result = runner.invoke(cli, "info --json")
+    result = runner.invoke(cli, "info --format json")
 
     assert "table.query.sql" in result.stdout
     json.loads(result.stdout)

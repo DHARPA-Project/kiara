@@ -54,13 +54,17 @@ def get_extra_requires(add_all=True, add_all_dev=True, add_all_modules=True):
     if add_all_modules:
         all_modules = set()
         for e_n, deps in extras.items():
-            if not e_n.startswith("dev_"):
+            if e_n.startswith("modules_"):
                 all_modules.update(deps)
-        extras["all_modules"] = all_modules
+        extras["modules_all"] = all_modules
 
-    # add tag `all` at the end
     if add_all_dev:
-        extras["all_dev"] = set(vv for v in extras.values() for vv in v)
+        all_modules_dev = set()
+        for e_n, deps in extras.items():
+            if not e_n.startswith("modules_"):
+                all_modules_dev.update(deps)
+
+        extras["all_dev"] = all_modules_dev
 
     return extras
 

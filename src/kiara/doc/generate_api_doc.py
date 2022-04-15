@@ -15,7 +15,7 @@ from types import ModuleType
 def gen_pages_for_module(
     module: typing.Union[str, ModuleType], prefix: str = "api_reference"
 ):
-    """Generate pages for a set of modules (using the [mkdocstring](https://github.com/mkdocstrings/mkdocstrings) package."""
+    """Generate modules for a set of modules (using the [mkdocstring](https://github.com/mkdocstrings/mkdocstrings) package."""
 
     result = {}
     modules_info = get_source_tree(module)
@@ -58,7 +58,9 @@ def get_source_tree(module: typing.Union[str, ModuleType]):
             f"Invalid type '{type(module)}', input needs to be a string or module."
         )
 
-    module_root = os.path.dirname(module.__file__)
+    module_file = module.__file__
+    assert module_file is not None
+    module_root = os.path.dirname(module_file)
     module_name = module.__name__
 
     src = {}

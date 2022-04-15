@@ -53,7 +53,7 @@ def define_env(env):
         extra_env: Optional[Dict[str, str]] = None,
         fake_command: Optional[str] = None,
     ):
-        """Execute the provided command, save the output and return it to be used in documentation pages."""
+        """Execute the provided command, save the output and return it to be used in documentation modules."""
 
         hashes = DeepHash(command)
         hash_str = hashes[command]

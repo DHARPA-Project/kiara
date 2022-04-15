@@ -7,15 +7,23 @@
 
 import importlib
 import inspect
-import logging
 import os
 import sys
-import typing
 from stevedore import ExtensionManager
 from types import ModuleType
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
 
-from kiara.data.types import ValueType
-from kiara.metadata import MetadataModel
 from kiara.utils import (
     _get_all_subclasses,
     _import_modules_recursively,
@@ -24,123 +32,188 @@ from kiara.utils import (
     log_message,
 )
 
-if typing.TYPE_CHECKING:
-    from kiara.module import KiaraModule
-    from kiara.operations import OperationType
+if TYPE_CHECKING:
+    from kiara.modules import KiaraModule
+    from kiara.modules.operations import OperationType
+    from kiara.models.values.value_metadata import ValueMetadata
+    from kiara.data_types import DataType
+    from kiara.registries import KiaraArchive
 
-log = logging.getLogger("kiara")
+import logging
+import structlog
 
-KiaraEntryPointItem = typing.Union[typing.Type, typing.Tuple, typing.Callable]
-KiaraEntryPointIterable = typing.Iterable[KiaraEntryPointItem]
+logger = structlog.getLogger()
 
-SUBCLASS_TYPE = typing.TypeVar("SUBCLASS_TYPE")
+KiaraEntryPointItem = Union[Type, Tuple, Callable]
+KiaraEntryPointIterable = Iterable[KiaraEntryPointItem]
+
+SUBCLASS_TYPE = TypeVar("SUBCLASS_TYPE")
 
 
-def _get_subclass_name(module: typing.Type) -> str:
+def _default_id_func(cls: Type) -> str:
     """Utility method to auto-generate a more or less nice looking id_or_alias for a class."""
 
-    name = camel_case_to_snake_case(module.__name__)
+    name = camel_case_to_snake_case(cls.__name__)
+    path = cls.__module__
+
+    if path.startswith("kiara_modules."):
+        tokens = path.split(".")
+        if len(tokens) == 2:
+            path = tokens[1]
+        else:
+            path = ".".join(tokens[2:])
+
+    if path:
+        full_name = f"{path}.{name}"
+    else:
+        full_name = name
+    return full_name
+
+
+def _cls_name_id_func(cls: Type) -> str:
+    """Utility method to auto-generate a more or less nice looking id_or_alias for a class."""
+
+    name = camel_case_to_snake_case(cls.__name__)
     return name
 
 
 def find_subclasses_under(
-    base_class: typing.Type[SUBCLASS_TYPE],
-    module: typing.Union[str, ModuleType],
-    prefix: typing.Optional[str] = "",
-    remove_namespace_tokens: typing.Optional[typing.Iterable[str]] = None,
-    module_name_func: typing.Callable = None,
-) -> typing.Mapping[str, typing.Type[SUBCLASS_TYPE]]:
+    base_class: Type[SUBCLASS_TYPE],
+    python_module: Union[str, ModuleType],
+) -> List[Type[SUBCLASS_TYPE]]:
     """Find all (non-abstract) subclasses of a base class that live under a module (recursively).
 
     Arguments:
         base_class: the parent class
-        module: the module to search
-        prefix: a string to use as a result items namespace prefix, defaults to an empty string, use 'None' to indicate the module path should be used
-        remove_namespace_tokens: a list of strings to remove from module names when autogenerating subclass ids, and prefix is None
+        python_module: the Python module to search
 
     Returns:
-        a map containing the (fully namespaced) id of the subclass as key, and the actual class object as value
+        a list of all subclasses
     """
 
     if hasattr(sys, "frozen"):
         raise NotImplementedError("Pyinstaller bundling not supported yet.")
 
-    if isinstance(module, str):
-        module = importlib.import_module(module)
+    if isinstance(python_module, str):
+        python_module = importlib.import_module(python_module)
 
-    _import_modules_recursively(module)
+    _import_modules_recursively(python_module)
 
-    subclasses: typing.Iterable[typing.Type[SUBCLASS_TYPE]] = _get_all_subclasses(
-        base_class
-    )
+    subclasses: Iterable[Type[SUBCLASS_TYPE]] = _get_all_subclasses(base_class)
 
-    result = {}
+    result = []
     for sc in subclasses:
 
-        if not sc.__module__.startswith(module.__name__):
+        if not sc.__module__.startswith(python_module.__name__):
             continue
 
-        if inspect.isabstract(sc):
-            if is_debug():
-                # import traceback
-                # traceback.print_stack()
-                log.warning(f"Ignoring abstract subclass: {sc}")
-            else:
-                log.debug(f"Ignoring abstract subclass: {sc}")
-            continue
-
-        if module_name_func is None:
-            module_name_func = _get_subclass_name
-        name = module_name_func(sc)
-        path = sc.__module__[len(module.__name__) + 1 :]  # noqa
-
-        if path:
-            full_name = f"{path}.{name}"
-        else:
-            full_name = name
-
-        if prefix is None:
-            prefix = module.__name__ + "."
-            if remove_namespace_tokens:
-                for rnt in remove_namespace_tokens:
-                    if prefix.startswith(rnt):
-                        prefix = prefix[0 : -len(rnt)]  # noqa
-
-        if prefix:
-            full_name = f"{prefix}.{full_name}"
-
-        result[full_name] = sc
+        result.append(sc)
 
     return result
 
 
+def _process_subclass(
+    sub_class: Type,
+    base_class: Type,
+    type_id_key: Optional[str],
+    type_id_func: Optional[Callable],
+    type_id_no_attach: bool,
+    attach_python_metadata: Union[bool, str] = False,
+    ignore_abstract_classes: bool = True,
+) -> Optional[str]:
+    """Process subclasses of a base class that live under a module (recursively).
+
+    Arguments:
+        base_class: the parent class
+        python_module: the Python module to search
+        ignore_abstract_classes: whether to include abstract classes in the result
+        type_id_key: if provided, the found classes will have their id attached as an attribute, using the value of this as the name. if an attribute of this name already exists, it will be used as id without further processing
+        type_id_func: a function to take the found class as input, and returns a string representing the id of the class. By default, the module path + "." + class name (snake-case) is used (minus the string 'kiara_modules.<project_name>'', if it exists at the beginning
+        type_id_no_attach: in case you want to use the type_id_key to set the id, but don't want it attached to classes that don't have it, set this to true. In most cases, you won't need this option
+        attach_python_metadata: whether to attach a [PythonClass][kiara.models.python_class.PythonClass] metadata model to the class. By default, '_python_class' is used as attribute name if this argument is 'True', If this argument is a string, that will be used as name instead.
+
+    Returns:
+        the type id
+    """
+    is_abstract = inspect.isabstract(sub_class)
+    if ignore_abstract_classes and is_abstract:
+        log_message(
+            "ignore.subclass",
+            sub_class=sub_class,
+            base_class=base_class,
+            reason="subclass is abstract",
+        )
+        return None
+
+    if type_id_func is None:
+        type_id_func = _default_id_func
+
+    if type_id_key:
+
+        if hasattr(sub_class, type_id_key):
+            type_id = getattr(sub_class, type_id_key)
+            if not type_id and not is_abstract:
+                raise Exception(
+                    f"Class attribute '{type_id_key}' is 'None' for class '{sub_class.__name__}', this is not allowed."
+                )
+            elif not type_id:
+                type_id = type_id_func(sub_class)
+        else:
+            type_id = type_id_func(sub_class)
+            if not type_id_no_attach:
+                setattr(sub_class, type_id_key, type_id)
+    else:
+        type_id = type_id_func(sub_class)
+
+    if attach_python_metadata:
+        from kiara.models.python_class import PythonClass
+
+        pm_key = "_python_class"
+        if isinstance(attach_python_metadata, str):
+            pm_key = attach_python_metadata
+        pc = PythonClass.from_class(sub_class)
+        setattr(sub_class, pm_key, pc)
+
+    return type_id
+
+
 def load_all_subclasses_for_entry_point(
     entry_point_name: str,
-    base_class: typing.Type[SUBCLASS_TYPE],
-    set_id_attribute: typing.Union[None, str] = None,
-    remove_namespace_tokens: typing.Union[typing.Iterable[str], bool, None] = None,
-) -> typing.Dict[str, typing.Type[SUBCLASS_TYPE]]:
+    base_class: Type[SUBCLASS_TYPE],
+    ignore_abstract_classes: bool = True,
+    type_id_key: Optional[str] = None,
+    type_id_func: Callable = None,
+    type_id_no_attach: bool = False,
+    attach_python_metadata: Union[bool, str] = False,
+) -> Dict[str, Type[SUBCLASS_TYPE]]:
     """Find all subclasses of a base class via package entry points.
 
     Arguments:
         entry_point_name: the entry point name to query entries for
         base_class: the base class to look for
-        set_id_attribute: whether to set the entry point id as attribute to the class, if None, no id attribute will be set, if a string, the attribute with that name will be set
-        remove_namespace_tokens: a list of strings to remove from module names when autogenerating subclass ids, and prefix is None, or a boolean in which case all or none namespaces will be removed
-
-    TODO
+        ignore_abstract_classes: whether to include abstract classes in the result
+        type_id_key: if provided, the found classes will have their id attached as an attribute, using the value of this as the name. if an attribute of this name already exists, it will be used as id without further processing
+        type_id_func: a function to take the found class as input, and returns a string representing the id of the class. By default, the module path + "." + class name (snake-case) is used (minus the string 'kiara_modules.<project_name>'', if it exists at the beginning
+        type_id_no_attach: in case you want to use the type_id_key to set the id, but don't want it attached to classes that don't have it, set this to true. In most cases, you won't need this option
+        attach_python_metadata: whether to attach a [PythonClass][kiara.models.python_class.PythonClass] metadata model to the class. By default, '_python_class' is used as attribute name if this argument is 'True', If this argument is a string, that will be used as name instead.
     """
 
     log2 = logging.getLogger("stevedore")
     out_hdlr = logging.StreamHandler(sys.stdout)
     out_hdlr.setFormatter(
-        logging.Formatter(f"{entry_point_name} plugin search error -> %(message)s")
+        logging.Formatter(
+            f"{entry_point_name} plugin search message/error -> %(message)s"
+        )
     )
     out_hdlr.setLevel(logging.INFO)
     log2.addHandler(out_hdlr)
-    log2.setLevel(logging.INFO)
+    if is_debug():
+        log2.setLevel(logging.DEBUG)
+    else:
+        out_hdlr.setLevel(logging.INFO)
+        log2.setLevel(logging.INFO)
 
-    log.debug(f"Finding {entry_point_name} items from search paths...")
+    log_message("events.loading.entry_points", entry_point_name=entry_point_name)
 
     mgr = ExtensionManager(
         namespace=entry_point_name,
@@ -148,40 +221,75 @@ def load_all_subclasses_for_entry_point(
         propagate_map_exceptions=True,
     )
 
-    result_entrypoints: typing.Dict[str, typing.Type] = {}
-    result_dynamic: typing.Dict[str, typing.Type] = {}
+    result_entrypoints: Dict[str, Type[SUBCLASS_TYPE]] = {}
+    result_dynamic: Dict[str, Type[SUBCLASS_TYPE]] = {}
     for plugin in mgr:
         name = plugin.name
 
-        if isinstance(plugin.plugin, type) and issubclass(plugin.plugin, base_class):
-            ep = plugin.entry_point
-            module_cls = ep.load()
+        if isinstance(plugin.plugin, type):
+            # this means an actual (sub-)class was provided in the entrypoint
 
-            if set_id_attribute:
-                if hasattr(module_cls, set_id_attribute):
-                    if not getattr(module_cls, set_id_attribute) == name:
-                        log.warning(
-                            f"Item id mismatch for type {entry_point_name}: {getattr(module_cls, set_id_attribute)} != {name}, entry point key takes precedence: {name})"
-                        )
-                        setattr(module_cls, set_id_attribute, name)
+            cls = plugin.plugin
+            if not issubclass(cls, base_class):
+                log_message(
+                    "ignore.entrypoint",
+                    entry_point=name,
+                    base_class=base_class,
+                    sub_class=plugin.plugin,
+                    reason=f"Entry point reference not a subclass of '{base_class}'.",
+                )
+                continue
 
-                else:
-                    setattr(module_cls, set_id_attribute, name)
-            result_entrypoints[name] = module_cls
+            _process_subclass(
+                sub_class=cls,
+                base_class=base_class,
+                type_id_key=type_id_key,
+                type_id_func=type_id_func,
+                type_id_no_attach=type_id_no_attach,
+                attach_python_metadata=attach_python_metadata,
+                ignore_abstract_classes=ignore_abstract_classes,
+            )
+
+            result_entrypoints[name] = cls
         elif (
             isinstance(plugin.plugin, tuple)
             and len(plugin.plugin) >= 1
             and callable(plugin.plugin[0])
         ) or callable(plugin.plugin):
-            modules = _callable_wrapper(plugin.plugin)
+            try:
+                if callable(plugin.plugin):
+                    func = plugin.plugin
+                    args = []
+                else:
+                    func = plugin.plugin[0]
+                    args = plugin.plugin[1:]
+                classes = func(*args)
+            except Exception as e:
+                if is_debug():
+                    import traceback
 
-            for k, v in modules.items():
-                _name = f"{name}.{k}"
-                if _name in result_dynamic.keys():
+                    traceback.print_exc()
+                raise Exception(f"Error trying to load plugin '{plugin.plugin}': {e}")
+
+            for sub_class in classes:
+                type_id = _process_subclass(
+                    sub_class=sub_class,
+                    base_class=base_class,
+                    type_id_key=type_id_key,
+                    type_id_func=type_id_func,
+                    type_id_no_attach=type_id_no_attach,
+                    attach_python_metadata=attach_python_metadata,
+                    ignore_abstract_classes=ignore_abstract_classes,
+                )
+
+                if type_id is None:
+                    continue
+
+                if type_id in result_dynamic.keys():
                     raise Exception(
-                        f"Duplicate item name for type {entry_point_name}: {_name}"
+                        f"Duplicate item name for type {entry_point_name}: {type_id}"
                     )
-                result_dynamic[_name] = v
+                result_dynamic[type_id] = sub_class
 
         else:
             raise Exception(
@@ -190,230 +298,160 @@ def load_all_subclasses_for_entry_point(
 
     for k, v in result_dynamic.items():
         if k in result_entrypoints.keys():
-            raise Exception(f"Duplicate item name for type {entry_point_name}: {k}")
+            msg = f"Duplicate item name '{k}' for type {entry_point_name}: {v} -- {result_entrypoints[k]}."
+            try:
+                if type_id_key not in v.__dict__.keys():
+                    msg = f"{msg} Most likely the name is picked up from a subclass, try to add a '{type_id_key}' class attribute to your implementing class, with the name you want to give your type as value."
+            except Exception:
+                pass
+
+            raise Exception(msg)
         result_entrypoints[k] = v
 
-    result: typing.Dict[str, typing.Type[SUBCLASS_TYPE]] = {}
-    for k, v in result_entrypoints.items():
-
-        if remove_namespace_tokens:
-            if remove_namespace_tokens is True:
-                k = k.split(".")[-1]
-            elif isinstance(remove_namespace_tokens, typing.Iterable):
-                for rnt in remove_namespace_tokens:
-                    if k.startswith(rnt):
-                        k = k[len(rnt) :]  # noqa
-
-        if k in result.keys():
-            raise Exception(f"Duplicate item name for base class {base_class}: {k}")
-        result[k] = v
-
-    return result
+    return result_entrypoints
 
 
-def find_all_kiara_modules() -> typing.Dict[str, typing.Type["KiaraModule"]]:
+def find_all_kiara_modules() -> Dict[str, Type["KiaraModule"]]:
     """Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.
 
     TODO
     """
 
-    from kiara.module import KiaraModule
+    from kiara.modules import KiaraModule
 
     modules = load_all_subclasses_for_entry_point(
         entry_point_name="kiara.modules",
         base_class=KiaraModule,  # type: ignore
-        set_id_attribute="_module_type_name",
-        remove_namespace_tokens=["core."],
+        type_id_key="_module_type_name",
+        attach_python_metadata=True,
     )
+
     result = {}
     # need to test this, since I couldn't add an abstract method to the KiaraModule class itself (mypy complained because it is potentially overloaded)
     for k, cls in modules.items():
 
         if not hasattr(cls, "process"):
-            msg = f"Ignoring module class '{cls}': no 'process' method."
-            if is_debug():
-                log.warning(msg)
-            else:
-                log.debug(msg)
+            # TODO: check signature of process method
+            log_message("ignore.module.class", cls=cls, reason="no 'process' method")
             continue
-
-        # TODO: check signature of process method
-
-        if k.startswith("_"):
-            tokens = k.split(".")
-            if len(tokens) == 1:
-                k = k[1:]
-            else:
-                k = ".".join(tokens[1:])
 
         result[k] = cls
     return result
 
 
-def find_all_metadata_schemas() -> typing.Dict[str, typing.Type["MetadataModel"]]:
+def find_all_value_metadata_models() -> Dict[str, Type["ValueMetadata"]]:
     """Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.
 
     TODO
     """
+
+    from kiara.models.values.value_metadata import ValueMetadata
 
     return load_all_subclasses_for_entry_point(
-        entry_point_name="kiara.metadata_schemas",
-        base_class=MetadataModel,
-        set_id_attribute="_metadata_key",
-        remove_namespace_tokens=["core."],
+        entry_point_name="kiara.value_metadata",
+        base_class=ValueMetadata,  # type: ignore
+        type_id_key="_metadata_key",
+        type_id_func=_cls_name_id_func,
+        attach_python_metadata=False,
     )
 
 
-def find_all_value_types() -> typing.Dict[str, typing.Type["ValueType"]]:
+def find_all_archive_types() -> Dict[str, Type["KiaraArchive"]]:
+    """Find all [KiaraArchive][kiara.registries.KiaraArchive] subclasses via package entry points."""
+
+    from kiara.registries import KiaraArchive
+
+    return load_all_subclasses_for_entry_point(
+        entry_point_name="kiara.archive_type",
+        base_class=KiaraArchive,  # type: ignore
+        type_id_key="_archive_type_name",
+        type_id_func=_cls_name_id_func,
+        attach_python_metadata=False,
+    )
+
+
+def find_all_data_types() -> Dict[str, Type["DataType"]]:
     """Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.
 
     TODO
     """
 
-    all_value_types = load_all_subclasses_for_entry_point(
-        entry_point_name="kiara.value_types",
-        base_class=ValueType,
-        set_id_attribute="_value_type_name",
-        remove_namespace_tokens=True,
+    from kiara.data_types import DataType
+
+    all_data_types = load_all_subclasses_for_entry_point(
+        entry_point_name="kiara.data_types",
+        base_class=DataType,  # type: ignore
+        type_id_key="_data_type_name",
+        type_id_func=_cls_name_id_func,
     )
 
-    invalid = [x for x in all_value_types.keys() if "." in x]
+    invalid = [x for x in all_data_types.keys() if "." in x]
     if invalid:
         raise Exception(
             f"Invalid value type name(s), type names can't contain '.': {', '.join(invalid)}"
         )
 
-    return all_value_types
+    return all_data_types
 
 
-def find_all_operation_types() -> typing.Dict[str, typing.Type["OperationType"]]:
+def find_all_operation_types() -> Dict[str, Type["OperationType"]]:
 
-    from kiara.operations import OperationType
+    from kiara.modules.operations import OperationType
 
     return load_all_subclasses_for_entry_point(
         entry_point_name="kiara.operation_types",
-        base_class=OperationType,
-        set_id_attribute="_operation_type_name",
-        remove_namespace_tokens=["core."],
+        base_class=OperationType,  # type: ignore
+        type_id_key="_operation_type_name",
     )
-
-
-def _get_and_set_module_name(module: typing.Type["KiaraModule"]):
-
-    if hasattr(module, "_module_type_name"):
-        return module._module_type_name  # type: ignore
-    else:
-        name = camel_case_to_snake_case(module.__name__)
-        if name.endswith("_module"):
-            name = name[0:-7]
-        if not inspect.isabstract(module):
-            setattr(module, "_module_type_name", name)
-        return name
-
-
-def _get_and_set_metadata_model_name(module: typing.Type["KiaraModule"]):
-
-    if hasattr(module, "_metadata_key"):
-        return module._metadata_key  # type: ignore
-    else:
-        name = camel_case_to_snake_case(module.__name__)
-        if name.endswith("_metadata"):
-            name = name[0:-9]
-        if not inspect.isabstract(module):
-            setattr(module, "_metadata_key", name)
-        return name
-
-
-def _get_and_set_value_type_name(module: typing.Type["KiaraModule"]):
-
-    if hasattr(module, "_value_type_name"):
-        return module._value_type_name  # type: ignore
-    else:
-        name = camel_case_to_snake_case(module.__name__)
-        if name.endswith("_type"):
-            name = name[0:-5]
-        if not inspect.isabstract(module):
-            setattr(module, "_value_type_name", name)
-        return name
-
-
-def _get_and_set_operation_type_name(module: typing.Type["KiaraModule"]):
-
-    if hasattr(module, "_operation_type_name"):
-        return module._operation_type_name  # type: ignore
-    else:
-        name = camel_case_to_snake_case(module.__name__)
-        if name.endswith("_type"):
-            name = name[0:-5]
-        if not inspect.isabstract(module):
-            setattr(module, "_operation_type_name", name)
-        return name
 
 
 def find_kiara_modules_under(
-    module: typing.Union[str, ModuleType],
-    prefix: typing.Optional[str] = "",
-    remove_namespace_tokens: typing.Optional[typing.Iterable[str]] = None,
-) -> typing.Mapping[str, typing.Type["KiaraModule"]]:
+    module: Union[str, ModuleType],
+) -> List[Type["KiaraModule"]]:
 
-    from kiara.module import KiaraModule
-
-    if remove_namespace_tokens is None:
-        remove_namespace_tokens = ["kiara_modules."]
+    from kiara.modules import KiaraModule
 
     return find_subclasses_under(
         base_class=KiaraModule,  # type: ignore
-        module=module,
-        prefix=prefix,
-        remove_namespace_tokens=remove_namespace_tokens,
-        module_name_func=_get_and_set_module_name,
+        python_module=module,
     )
 
 
-def find_metadata_schemas_under(
-    module: typing.Union[str, ModuleType], prefix: typing.Optional[str] = ""
-) -> typing.Mapping[str, typing.Type[MetadataModel]]:
+def find_value_metadata_models_under(
+    module: Union[str, ModuleType]
+) -> List[Type["ValueMetadata"]]:
+
+    from kiara.models.values.value_metadata import ValueMetadata
 
     return find_subclasses_under(
-        base_class=MetadataModel,
-        module=module,
-        prefix=prefix,
-        remove_namespace_tokens=[],
-        module_name_func=_get_and_set_metadata_model_name,
+        base_class=ValueMetadata,  # type: ignore
+        python_module=module,
     )
 
 
-def find_value_types_under(
-    module: typing.Union[str, ModuleType], prefix: typing.Optional[str] = ""
-) -> typing.Mapping[str, typing.Type[ValueType]]:
+def find_data_types_under(module: Union[str, ModuleType]) -> List[Type["DataType"]]:
+
+    from kiara.data_types import DataType
 
     return find_subclasses_under(
-        base_class=ValueType,
-        module=module,
-        prefix=prefix,
-        remove_namespace_tokens=[],
-        module_name_func=_get_and_set_value_type_name,
+        base_class=DataType,  # type: ignore
+        python_module=module,
     )
 
 
 def find_operations_under(
-    module: typing.Union[str, ModuleType], prefix: typing.Optional[str] = ""
-) -> typing.Mapping[str, typing.Type["OperationType"]]:
+    module: Union[str, ModuleType]
+) -> List[Type["OperationType"]]:
 
-    from kiara.operations import OperationType
+    from kiara.modules.operations import OperationType
 
     return find_subclasses_under(
-        base_class=OperationType,
-        module=module,
-        prefix=prefix,
-        remove_namespace_tokens=[],
-        module_name_func=_get_and_set_operation_type_name,
+        base_class=OperationType,  # type: ignore
+        python_module=module,
     )
 
 
-def find_pipeline_base_path_for_module(
-    module: typing.Union[str, ModuleType]
-) -> typing.Optional[str]:
+def find_pipeline_base_path_for_module(module: Union[str, ModuleType]) -> Optional[str]:
 
     if hasattr(sys, "frozen"):
         raise NotImplementedError("Pyinstaller bundling not supported yet.")
@@ -421,10 +459,12 @@ def find_pipeline_base_path_for_module(
     if isinstance(module, str):
         module = importlib.import_module(module)
 
-    path = os.path.dirname(module.__file__)
+    module_file = module.__file__
+    assert module_file is not None
+    path = os.path.dirname(module_file)
 
     if not os.path.exists:
-        log_message(f"Pipelines folder '{path}' does not exist, ignoring...")
+        log_message("ignore.pipeline_folder", path=path, reason="folder does not exist")
         return None
 
     return path
@@ -432,7 +472,9 @@ def find_pipeline_base_path_for_module(
 
 def find_all_kiara_pipeline_paths(
     skip_errors: bool = False,
-) -> typing.Dict[str, typing.List[typing.Tuple[typing.Optional[str], str]]]:
+) -> List[str]:
+
+    import logging
 
     log2 = logging.getLogger("stevedore")
     out_hdlr = logging.StreamHandler(sys.stdout)
@@ -443,98 +485,73 @@ def find_all_kiara_pipeline_paths(
     log2.addHandler(out_hdlr)
     log2.setLevel(logging.INFO)
 
-    log.debug("Loading kiara pipelines...")
+    log_message("events.loading.pipelines")
 
     mgr = ExtensionManager(
         namespace="kiara.pipelines", invoke_on_load=False, propagate_map_exceptions=True
     )
 
-    result_entrypoints: typing.Dict[str, typing.Tuple[typing.Optional[str], str]] = {}
-    result_dynamic: typing.Dict[str, typing.Tuple[typing.Optional[str], str]] = {}
+    paths: List[str] = []
     # TODO: make sure we load 'core' first?
     for plugin in mgr:
 
         name = plugin.name
-
         if (
             isinstance(plugin.plugin, tuple)
             and len(plugin.plugin) >= 1
             and callable(plugin.plugin[0])
         ) or callable(plugin.plugin):
-            pipeline_path_tuple = _find_pipeline_folders_using_callable(plugin.plugin)
-            result_dynamic[name] = pipeline_path_tuple
+            try:
+                if callable(plugin.plugin):
+                    func = plugin.plugin
+                    args = []
+                else:
+                    func = plugin.plugin[0]
+                    args = plugin.plugin[1:]
+                result = func(*args)
+                if isinstance(result, str):
+                    paths.append(result)
+                else:
+                    paths.extend(result)
+            except Exception as e:
+                if is_debug():
+                    import traceback
 
-        # elif isinstance(plugin.plugin, str):
-        #     if skip_errors:
-        #         continue
-        #
-        #     raise NotImplementedError(
-        #         f"Finding pipeline paths using item '{plugin.plugin}' not supported."
-        #     )
-        #     # module_name = plugin.plugin
-        #     # try:
-        #     #     m = importlib.import_module(module_name)
-        #     #     pipeline_path_tuple = _find_pipeline_folders_using_callable(m)
-        #     # except Exception:
-        #     #     raise Exception(
-        #     #         f"Can't load pipelines for module '{module_name}': module does not exist"
-        #     #     )
-        #     # result_entrypoints[name] = pipeline_path_tuple
-        # elif isinstance(plugin.plugin, typing.Mapping):
-        #     if skip_errors:
-        #         continue
-        #     raise NotImplementedError(
-        #         f"Finding pipeline paths for mapping '{plugin.plugin}' not supported."
-        #     )
-        # elif isinstance(plugin.plugin, typing.Iterable):
-        #     if skip_errors:
-        #         continue
-        #     raise NotImplementedError(
-        #         f"Finding pipeline paths for iterable '{plugin.plugin}' not supported."
-        #     )
-        #     result_entrypoints[name] = plugin.plugin
-        # elif isinstance(plugin.plugin, ModuleType):
-        #     if skip_errors:
-        #         continue
-        #     # print(f"Entrypoint type not supported yet: {plugin.plugin}")
-        #     raise NotImplementedError(
-        #         f"Pipeline entrypoint lookup ModuleType not supported yet: {plugin.plugin}"
-        #     )
-        #     # result_entrypoints[name] = _find_pipeline_folders_using_callable(
-        #     #     plugin.plugin
-        #     # )
+                    traceback.print_exc()
+                if skip_errors:
+                    log_message(
+                        "ignore.pipline_entrypoint", entrypoint_name=name, reason=str(e)
+                    )
+                    continue
+                raise Exception(f"Error trying to load plugin '{plugin.plugin}': {e}")
         else:
-            msg = f"Can't load pipelines for entrypoint '{name}': invalid plugin type '{type(plugin.plugin)}'"
             if skip_errors:
-                log_message(msg)
+                log_message(
+                    "ignore.pipline_entrypoint",
+                    entrypoint_name=name,
+                    reason=f"invalid plugin type '{type(plugin.plugin)}'",
+                )
                 continue
+            msg = f"Can't load pipelines for entrypoint '{name}': invalid plugin type '{type(plugin.plugin)}'"
             raise Exception(msg)
 
-    result: typing.Dict[str, typing.List[typing.Tuple[typing.Optional[str], str]]] = {}
-
-    for k, v in result_entrypoints.items():
-        result.setdefault(k, []).append(v)
-
-    for k, v in result_dynamic.items():
-        result.setdefault(k, []).append(v)
-
-    return result
+    return paths
 
 
-def _find_pipeline_folders_using_callable(
-    func: typing.Union[typing.Callable, typing.Tuple]
-) -> typing.Tuple[typing.Optional[str], str]:
-
-    if not callable(func):
-        assert len(func) >= 2
-        args = func[1]
-        assert len(args) == 1
-        module_path: typing.Optional[str] = args[0]
-    else:
-        module_path = None
-    path = _callable_wrapper(func=func)  # type: ignore
-    assert isinstance(path, str)
-    return (module_path, path)
+# def _find_pipeline_folders_using_callable(
+#     func: Union[Callable, Tuple]
+# ) -> Tuple[Optional[str], str]:
+#
+#     if not callable(func):
+#         assert len(func) >= 2
+#         args = func[1]
+#         assert len(args) == 1
+#         module_path: Optional[str] = args[0]
+#     else:
+#         module_path = None
+#     path = _callable_wrapper(func=func)  # type: ignore
+#     assert isinstance(path, str)
+#     return (module_path, path)
 
 
 # def _find_kiara_modules_using_callable(
@@ -543,36 +560,3 @@ def _find_pipeline_folders_using_callable(
 #
 #     # TODO: typecheck?
 #     return _callable_wrapper(func=func)  # type: ignore
-
-
-def _callable_wrapper(func: typing.Union[typing.Callable, typing.Tuple]) -> typing.Any:
-
-    _func = None
-    _args = None
-    _kwargs = None
-    if isinstance(func, tuple):
-        if len(func) >= 1:
-            _func = func[0]
-        if len(func) >= 2:
-            _args = func[1]
-        if len(func) >= 3:
-            _kwargs = func[2]
-
-        if len(func) > 3:
-            raise ValueError(f"Can't parse entry: {func}")
-    elif callable(func):
-        _func = func
-    else:
-        raise TypeError(f"Invalid entry type: {type(func)}")
-
-    if not _args:
-        _args = []
-    if not _kwargs:
-        _kwargs = {}
-
-    if isinstance(_args, str):
-        _args = [_args]
-
-    assert _func is not None
-    result = _func(*_args, **_kwargs)
-    return result

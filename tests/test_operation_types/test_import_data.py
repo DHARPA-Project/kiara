@@ -5,7 +5,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import os
-from kiara_modules.core.metadata_schemas import KiaraFile, KiaraFileBundle
+from kiara_modules.core.metadata_models import KiaraFile, KiaraFileBundle
 
 from kiara import Kiara
 from kiara.operations.data_import import DataImportModule, ImportDataOperationType

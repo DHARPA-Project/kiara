@@ -80,4 +80,5 @@ For details (and other, minor targets), check the ``Makefile``.
 
 This project is MPL v2.0 licensed, for the license text please check the [LICENSE](/LICENSE) file in this repository.
 
-[Copyright (c) 2021 DHARPA project](https://dharpa.org)
+[Copyright (c) 2021, 2022 DHARPA project](https://dharpa.org)
+Copyright (c) 2022 Markus Binsteiner

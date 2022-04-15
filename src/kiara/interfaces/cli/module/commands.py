@@ -7,18 +7,17 @@
 
 """Module related subcommands for the cli."""
 
-import click
 import os.path
-import sys
-import typing
-from rich.panel import Panel
+import rich_click as click
+from typing import Any, Iterable, List
 
 from kiara import Kiara
-from kiara.info.modules import ModuleTypesGroupInfo
-from kiara.interfaces.cli.utils import _create_module_instance
-from kiara.metadata.module_models import KiaraModuleTypeMetadata
+
+# from kiara.interfaces.cli.utils import _create_module_instance
+from kiara.models.module import KiaraModuleTypeInfo, ModuleTypeClassesInfo
+from kiara.models.module.manifest import Manifest
 from kiara.utils import dict_from_cli_args, log_message
-from kiara.utils.output import rich_print
+from kiara.utils.cli import output_format_option, terminal_print_model
 
 
 @click.group()
@@ -29,44 +28,24 @@ def module(ctx):
 
 @module.command(name="list")
 @click.option(
-    "--only-pipeline-modules", "-p", is_flag=True, help="Only list pipeline modules."
-)
-@click.option(
-    "--only-core-modules",
-    "-c",
-    is_flag=True,
-    help="Only list core (aka 'Python') modules.",
-)
-@click.option(
     "--full-doc",
     "-d",
     is_flag=True,
-    help="Display the full documentation for every module type.",
+    help="Display the full documentation for every module type (when using 'terminal' output format).",
 )
+@output_format_option()
 @click.argument("filter", nargs=-1, required=False)
 @click.pass_context
-def list_modules(
-    ctx,
-    only_pipeline_modules: bool,
-    only_core_modules: bool,
-    full_doc: bool,
-    filter: typing.Iterable[str],
-):
-    """List available module types."""
-
-    if only_pipeline_modules and only_core_modules:
-        rich_print()
-        rich_print(
-            "Please provide either '--only-core-modules' or '--only-pipeline-modules', not both."
-        )
-        sys.exit(1)
+def list_modules(ctx, full_doc: bool, filter: Iterable[str], format: str):
+    """List available module data_types."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     if filter:
-        module_types = []
+        title = f"Filtered modules: {filter}"
+        module_types_names: List[str] = []
 
-        for m in kiara_obj.available_module_types:
+        for m in kiara_obj.module_type_names:
             match = True
 
             for f in filter:
@@ -74,47 +53,34 @@ def list_modules(
                 if f.lower() not in m.lower():
                     match = False
                     break
-                # else:
-                #     m_cls = kiara_obj.get_module_class(m)
-                #     doc = m_cls.get_type_metadata().documentation.full_doc
-                #
-                #     if f.lower() not in doc.lower():
-                #         match = False
-                #         break
 
             if match:
-                module_types.append(m)
+                module_types_names.append(m)
     else:
-        module_types = kiara_obj.available_module_types
+        title = "All modules"
+        module_types_names = list(kiara_obj.module_type_names)
 
-    renderable = ModuleTypesGroupInfo.create_renderable_from_type_names(
-        kiara=kiara_obj,
-        type_names=module_types,
-        ignore_non_pipeline_modules=only_pipeline_modules,
-        ignore_pipeline_modules=only_core_modules,
-        include_full_doc=full_doc,
+    module_types = {
+        n: kiara_obj.module_registry.get_module_class(n) for n in module_types_names
+    }
+
+    module_types_info = ModuleTypeClassesInfo.create_from_type_items(
+        group_alias=title, **module_types
     )
-    if only_pipeline_modules:
-        title = "Available pipeline modules"
-    elif only_core_modules:
-        title = "Available core modules"
-    else:
-        title = "Available modules"
 
-    p = Panel(renderable, title_align="left", title=title)
-    print()
-    kiara_obj.explain(p)
+    terminal_print_model(module_types_info, format=format, in_panel=title)
 
 
 @module.command(name="explain")
 @click.argument("module_type", nargs=1, required=True)
+@output_format_option()
 @click.pass_context
-def explain_module_type(ctx, module_type: str):
+def explain_module_type(ctx, module_type: str, format: str):
     """Print details of a module type.
 
-    This is different to the 'explain-instance' command, because module types need to be
+    This is different to the 'explain-instance' command, because module data_types need to be
     instantiated with configuration, before we can query all their properties (like
-    input/output types).
+    input/output data_types).
     """
 
     kiara_obj: Kiara = ctx.obj["kiara"]
@@ -126,11 +92,12 @@ def explain_module_type(ctx, module_type: str):
     else:
         _module_type = module_type
 
-    m_cls = kiara_obj.get_module_class(_module_type)
-    info = KiaraModuleTypeMetadata.from_module_class(m_cls)
+    m_cls = kiara_obj.module_registry.get_module_class(_module_type)
+    info = KiaraModuleTypeInfo.create_from_type_class(m_cls)
 
-    rich_print()
-    rich_print(info.create_panel(title=f"Module type: [b i]{module_type}[/b i]"))
+    terminal_print_model(
+        info, format=format, in_panel=f"Module type: [b i]{module_type}[/b i]"
+    )
 
 
 @module.command("explain-instance")
@@ -139,8 +106,9 @@ def explain_module_type(ctx, module_type: str):
     "module_config",
     nargs=-1,
 )
+@output_format_option()
 @click.pass_context
-def explain_module(ctx, module_type: str, module_config: typing.Iterable[typing.Any]):
+def explain_module(ctx, module_type: str, module_config: Iterable[Any], format: str):
     """Describe a module instance.
 
     This command shows information and metadata about an instantiated *kiara* module.
@@ -151,11 +119,16 @@ def explain_module(ctx, module_type: str, module_config: typing.Iterable[typing.
     else:
         module_config = {}
 
-    module_obj = _create_module_instance(
-        ctx, module_type=module_type, module_config=module_config
+    kiara_obj: Kiara = ctx.obj["kiara"]
+
+    mc = Manifest(module_type=module_type, module_config=module_config)
+    module_obj = kiara_obj.create_module(mc)
+
+    terminal_print_model(
+        module_obj.create_renderable(),  # type: ignore
+        format=format,
+        in_panel=f"Module instance of type: [b i]{module_type}[/b i]",
     )
-    rich_print()
-    rich_print(module_obj)
 
 
 try:
@@ -164,8 +137,8 @@ try:
         MODULE_DEV_STREAMLIT_FILE,
         MODULE_INFO_UI_STREAMLIT_FILE,
     )
-    from kiara_streamlit.utils import run_streamlit
-    from streamlit.cli import configurator_options
+    from kiara_streamlit.utils import run_streamlit  # type: ignore
+    from streamlit.cli import configurator_options  # type: ignore
 
     @module.command("dev")
     @configurator_options
@@ -214,7 +187,6 @@ try:
             module_name=module_name,
             streamlit_flags=kwargs,
         )
-
 
 except Exception as e:  # noqa
     log_message(

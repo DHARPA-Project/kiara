@@ -1,0 +1,7 @@
+{% for item, info in items.items() %}
+
+### `{{ info.type_name }}` ### {: #kiara_info.{{ item_type }}.{{ info.type_name }} }
+
+::: kiara_info.{{ item_type }}.{{ info.type_name }}
+    handler: kiara
+{% endfor %}

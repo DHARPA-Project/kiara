@@ -13,56 +13,60 @@ jobs:
           fetch-depth: 0
       - uses: wagoid/commitlint-github-action@v4
 
-  test-linux:
-    name: pytest on linux
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python_version: [3.6, 3.7, 3.8, 3.9]
-    steps:
-      - name: "Set up Python ${{ matrix.python_version }}"
-        uses: actions/setup-python@v2
-        with:
-          python-version: "${{ matrix.python_version }}"
-      - name: pip cache
-        id: pip-cache
-        uses: actions/cache@v1
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*') }}
-      - uses: actions/checkout@v2
-      - name: install kiara_modules.core
-        run: pip install -U --pre --extra-index-url https://pypi.fury.io/dharpa/ kiara_modules.core[all]
-      - name: install kiara
-        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]
-      - name: test with pytest
-        run: make test
+#  test-linux:
+#    name: pytest on linux
+#    runs-on: ubuntu-latest
+#    strategy:
+#      matrix:
+#        python_version: ["3.8", "3.9", "3.10"]
+#    steps:
+#      - name: "Set up Python ${{ matrix.python_version }}"
+#        uses: actions/setup-python@v2
+#        with:
+#          python-version: "${{ matrix.python_version }}"
+#      - name: pip cache
+#        id: pip-cache
+#        uses: actions/cache@v1
+#        with:
+#          path: ~/.cache/pip
+#          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*') }}
+#      - uses: actions/checkout@v2
+#      - name: install kiara_modules.core
+#        run: pip install -U --pre --extra-index-url https://pypi.fury.io/dharpa/ kiara_modules.core[all]
+#      - name: install kiara
+#        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]
+#      - name: display installed kiara and module package versions
+#        run: pip list | grep kiara
+#      - name: test with pytest
+#        run: make test
 
-  coverage:
-    name: test coverage
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Set up Python 3.9"
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-      - name: pip cache
-        id: pip-cache
-        uses: actions/cache@v1
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*') }}
-      - uses: actions/checkout@v2
-      - name: install kiara_modules.core
-        run: pip install -U --pre --extra-index-url https://pypi.fury.io/dharpa/ kiara_modules.core[all]
-      - name: install kiara
-        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]
-      - name: Run coverage
-        run: coverage run -m pytest tests
-      - name: Upload coverage data to coveralls.io
-        run: coveralls --service=github
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#  coverage:
+#    name: test coverage
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: "Set up Python 3.9"
+#        uses: actions/setup-python@v2
+#        with:
+#          python-version: 3.9
+#      - name: pip cache
+#        id: pip-cache
+#        uses: actions/cache@v1
+#        with:
+#          path: ~/.cache/pip
+#          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*') }}
+#      - uses: actions/checkout@v2
+#      - name: install kiara_modules.core
+#        run: pip install -U --pre --extra-index-url https://pypi.fury.io/dharpa/ kiara_modules.core[all]
+#      - name: install kiara
+#        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]
+#      - name: display installed kiara and module package versions
+#        run: pip list | grep kiara
+#      - name: Run coverage
+#        run: coverage run -m pytest tests
+#      - name: Upload coverage data to coveralls.io
+#        run: coveralls --service=github
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   mypy-linux:
     name: mypy check on linux
@@ -111,7 +115,7 @@ jobs:
     name: build documentation
     runs-on: ubuntu-latest
     needs:
-      - test-linux
+#      - test-linux
       - mypy-linux
       - flake8-linux
     steps:
@@ -145,7 +149,7 @@ jobs:
     name: publish python package
     runs-on: ubuntu-latest
     needs:
-      - test-linux
+#      - test-linux
       - mypy-linux
       - flake8-linux
     env:
@@ -179,32 +183,32 @@ jobs:
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
 
-  test_conda_package_build:
+  test_conda_package_build_3_8:
     name: test conda package build
     runs-on: ubuntu-latest
     if: ${{ startsWith(github.ref, 'refs/tags') != true }}
-    env:
-      ANACONDA_PUSH_TOKEN: ${{ secrets.ANACONDA_PUSH_TOKEN }}
-#      needs:
-#        - test-linux
-#        - mypy-linux
-#        - flake8-linux
+    strategy:
+      matrix:
+        python_version: ["3.8", "3.9", "3.10"]
     steps:
       - uses: actions/checkout@v1
       - uses: conda-incubator/setup-miniconda@v2
       - name: install conda build packages
-        run: conda install conda-build anaconda-client
+        run: conda install -c conda-forge conda-build anaconda-client boa
       - name: build conda package
-        run: cd ci/conda/ && ./build-conda-packages.sh kiara develop
+        run: cd ci/conda/ && ./build-conda-packages.sh kiara develop "${{ matrix.python_version }}" true
 
   publish_conda_package:
     name: publish conda package
     runs-on: ubuntu-latest
     if: ${{ startsWith(github.ref, 'refs/tags') }}
+    strategy:
+      matrix:
+        python_version: ["3.8", "3.9", "3.10"]
     env:
       ANACONDA_PUSH_TOKEN: ${{ secrets.ANACONDA_PUSH_TOKEN }}
     needs:
-      - test-linux
+#      - test-linux
       - mypy-linux
       - flake8-linux
     steps:
@@ -214,19 +218,17 @@ jobs:
           auto-activate-base: false
           activate-environment: "anaconda-build-env"
       - name: install conda build packages
-        run: conda install -n anaconda-build-env conda-build anaconda-client
-#      - name: extract tag name
-#        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+        run: conda install -c conda-forge -n anaconda-build-env conda-build anaconda-client boa
       - name: build conda package
         shell: bash -l {0}
-        run: conda activate anaconda-build-env && cd ci/conda/ && ./build-conda-packages.sh kiara "${GITHUB_REF#refs/*/}" false
+        run: conda activate anaconda-build-env && cd ci/conda/ && ./build-conda-packages.sh kiara "${GITHUB_REF#refs/*/}" "${{ matrix.python_version }}" false
 
   merge_tag_to_main:
     name: merge current tag to main branch
     runs-on: ubuntu-latest
     if: ${{ startsWith(github.ref, 'refs/tags') }}
     needs:
-      - test-linux
+#      - test-linux
       - mypy-linux
       - flake8-linux
     steps:

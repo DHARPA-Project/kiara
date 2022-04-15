@@ -5,18 +5,14 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-import click
 import os
+import rich_click as click
 import sys
 import typing
-from rich import box
-from rich.panel import Panel
-from rich.table import Table
 
 from kiara import Kiara
-from kiara.operations import OperationType
-from kiara.utils import log_message
-from kiara.utils.output import rich_print
+from kiara.models.module.operation import OperationGroupInfo, OperationTypeClassesInfo
+from kiara.utils.cli import output_format_option, terminal_print_model
 
 
 @click.group()
@@ -25,111 +21,113 @@ def operation(ctx):
     """Metadata-related sub-commands."""
 
 
+@operation.command("list-types")
+@click.option(
+    "--full-doc",
+    "-d",
+    is_flag=True,
+    help="Display the full documentation for every operation type (when using 'terminal' output format).",
+)
+@click.argument("filter", nargs=-1, required=False)
+@output_format_option()
+@click.pass_context
+def list_types(ctx, full_doc, format: str, filter: typing.Iterable[str]):
+
+    kiara_obj: Kiara = ctx.obj["kiara"]
+
+    op_mgmt = kiara_obj.operation_registry
+
+    op_types = op_mgmt.operation_type_classes
+
+    title = "Available operation types"
+    if filter:
+        title = "Filtered data types"
+        temp = {}
+        for k, v in op_types.items():
+            match = True
+            for f in filter:
+                if f.lower() not in k.lower():
+                    match = False
+                    break
+            if match:
+                temp[k] = v
+        op_types = temp
+
+    operation_types_info = OperationTypeClassesInfo.create_from_type_items(
+        group_alias="all_items", **op_types
+    )
+
+    terminal_print_model(operation_types_info, format=format, in_panel=title)
+
+
 @operation.command(name="list")
 @click.option(
-    "--by-type", "-t", is_flag=True, help="List the operations by operation type."
+    "--by-type",
+    "-t",
+    is_flag=True,
+    help="List the operations by operation type (when using 'terminal' as format).",
 )
 @click.argument("filter", nargs=-1, required=False)
 @click.option(
-    "--full-doc", "-d", is_flag=True, help="Display the full doc for all operations."
+    "--full-doc",
+    "-d",
+    is_flag=True,
+    help="Display the full doc for all operations (when using 'terminal' as format).",
 )
 @click.option(
-    "--omit-default",
-    "-o",
+    "--include-internal-operations",
+    "-i",
+    help="Whether to include operations that are mainly used internally.",
     is_flag=True,
-    help="Don't list operations that have no specific operation type associated with them.",
 )
+@output_format_option()
 @click.pass_context
-def list(
-    ctx, by_type: bool, filter: typing.Iterable[str], full_doc: bool, omit_default: bool
+def list_operations(
+    ctx,
+    by_type: bool,
+    filter: typing.Iterable[str],
+    full_doc: bool,
+    include_internal_operations: bool,
+    format: str,
 ):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    if by_type:
-        title = "Operations by type"
-        all_operations_types = kiara_obj.operation_mgmt.operation_types
+    operations = kiara_obj.operation_registry.operations
+    title = "Available operations"
+    if filter:
+        title = "Filtered operations"
+        temp = {}
+        for op_id, op in operations.items():
+            match = True
+            for f in filter:
+                if f.lower() not in op_id.lower():
+                    match = False
+                    break
+            if match:
+                temp[op_id] = op
+        operations = temp
 
-        table = Table(box=box.SIMPLE, show_header=True)
-        table.add_column("Type", no_wrap=True, style="b green")
-        table.add_column("Id", no_wrap=True)
-        table.add_column("Description", no_wrap=False, style="i")
+    if not include_internal_operations:
+        temp = {}
+        for op_id, op in operations.items():
+            if not op.operation_details.is_internal_operation:
+                temp[op_id] = op
 
-        for operation_name in sorted(all_operations_types.keys()):
+        operations = temp
 
-            if operation_name == "all":
-                continue
+    ops_info = OperationGroupInfo.create_from_operations(
+        kiara=kiara_obj, group_alias=title, **operations
+    )
 
-            operation_details: OperationType = all_operations_types[operation_name]
-            first_line_value = True
-
-            for op_id, op_config in sorted(operation_details.operations.items()):
-
-                if full_doc:
-                    desc = op_config.doc.full_doc
-                else:
-                    desc = op_config.doc.description
-
-                if filter:
-                    match = True
-                    for f in filter:
-                        if (
-                            f.lower() not in operation_name.lower()
-                            and f.lower() not in op_id.lower()
-                            and f.lower() not in desc.lower()
-                        ):
-                            match = False
-                            break
-                    if not match:
-                        continue
-
-                row = []
-                if first_line_value:
-                    row.append(operation_name)
-                else:
-                    row.append("")
-
-                row.append(op_id)
-                row.append(desc)
-
-                table.add_row(*row)
-                first_line_value = False
-
-    else:
-        title = "All operations"
-        table = Table(box=box.SIMPLE, show_header=True)
-        table.add_column("Id", no_wrap=True, style="b")
-        table.add_column("Type(s)", style="green")
-        table.add_column("Description", style="i")
-
-        for op_id, config in kiara_obj.operation_mgmt.profiles.items():
-
-            types = kiara_obj.operation_mgmt.get_types_for_id(op_id)
-
-            if omit_default and len(types) == 1:
-                continue
-
-            types.remove("all")
-
-            if full_doc:
-                desc = config.doc.full_doc
-            else:
-                desc = config.doc.description
-            # desc = config.module_cls.get_type_metadata().documentation.description
-            if filter:
-                match = True
-                for f in filter:
-                    if f.lower() not in op_id.lower() and f.lower() not in desc.lower():
-                        match = False
-                        break
-                if match:
-                    table.add_row(op_id, ", ".join(types), desc)
-
-            else:
-                table.add_row(op_id, ", ".join(types), desc)
-
-    panel = Panel(table, title=title, title_align="left", box=box.ROUNDED)
-    rich_print(panel)
+    terminal_print_model(
+        ops_info,
+        format=format,
+        in_panel=title,
+        include_internal_operations=include_internal_operations,
+        full_doc=full_doc,
+        by_type=by_type,
+    )
 
 
 @operation.command()
@@ -140,33 +138,25 @@ def list(
     help="Show module source code (or pipeline configuration).",
     is_flag=True,
 )
+@output_format_option()
 @click.pass_context
-def explain(ctx, operation_id: str, source: bool):
+def explain(ctx, operation_id: str, source: bool, format: str):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     if os.path.isfile(os.path.realpath(operation_id)):
-        try:
-            _operation_id = kiara_obj.register_pipeline_description(data=operation_id)
-            if _operation_id is None:
-                print(
-                    f"Unknown error when trying to import '{operation_id}' as pipeline."
-                )
-                sys.exit(1)
-            else:
-                operation_id = _operation_id
-        except Exception as e:
-            log_message(f"Tried to import '{operation_id}' as pipeline, failed: {e}")
+        raise NotImplementedError()
+    else:
+        op_config = kiara_obj.operation_registry.get_operation(operation_id)
 
-    op_config = kiara_obj.operation_mgmt.profiles.get(operation_id)
     if not op_config:
         print()
         print(f"No operation with id '{operation_id}' registered.")
         sys.exit(1)
 
-    print()
-    rich_print(
-        op_config.create_panel(
-            title=f"Operation: [b i]{operation_id}[/b i]", include_src=source
-        )
+    terminal_print_model(
+        op_config,
+        format=format,
+        in_panel=f"Operation: [b i]{operation_id}[/b i]",
+        include_src=source,
     )

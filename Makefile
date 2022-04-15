@@ -20,7 +20,6 @@ clean-build: ## remove build artifacts
 	rm -fr dist/
 	rm -fr .eggs/
 	find . -name '*.egg' -exec rm -fr {} +
-	find . -name '*.egg-info' -exec rm -fr {} +
 
 clean-pyc: ## remove Python file artifacts
 	find . -name '*.pyc' -exec rm -f {} +
@@ -38,7 +37,7 @@ clean-test: ## remove test and coverage artifacts
 init: clean ## initialize a development environment (to be run in virtualenv)
 	git init
 	git checkout -b develop || true
-	#pip install -U pip
+	pip install -U pip
 	pip install --extra-index-url https://pypi.fury.io/dharpa/ --extra-index-url https://gitlab.com/api/v4/projects/25344049/packages/pypi/simple -U -e '.[all_dev]'
 	pre-commit install
 	pre-commit install --hook-type commit-msg
@@ -48,7 +47,7 @@ init: clean ## initialize a development environment (to be run in virtualenv)
 	git add "*" ".*"
 
 update-modules:  ## update default modules dependency
-	pip install --extra-index-url https://pypi.fury.io/dharpa/ --extra-index-url https://gitlab.com/api/v4/projects/25344049/packages/pypi/simple -U -e '.[all_modules]'
+	pip install --extra-index-url https://pypi.fury.io/dharpa/ --extra-index-url https://gitlab.com/api/v4/projects/25344049/packages/pypi/simple -U -e '.[modules_all]'
 
 setup-cfg-fmt: # format setup.cfg
 	setup-cfg-fmt setup.cfg || true

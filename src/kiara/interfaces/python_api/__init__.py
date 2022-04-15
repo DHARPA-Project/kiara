@@ -1,678 +1,370 @@
 # -*- coding: utf-8 -*-
 
-#  Copyright (c) 2021, University of Luxembourg / DHARPA project
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-"""A Python API for creating workflow sessions and dynamic pipelines in *kiara*."""
-
-import abc
-import copy
-import typing
+import os
+import structlog
 import uuid
 from pydantic import BaseModel, Field
 from rich import box
-from rich.console import Console, ConsoleOptions, RenderGroup, RenderResult
-from rich.jupyter import JupyterMixin
-from rich.panel import Panel
-from slugify import slugify
-
-from kiara import Kiara, KiaraModule, Pipeline, PipelineController, PipelineStructure
-from kiara.data import Value, ValueSet
-from kiara.info.pipelines import create_pipeline_step_table
-from kiara.interfaces.python_api.controller import ApiController
-from kiara.metadata.module_models import KiaraModuleInstanceMetadata
-from kiara.module_config import ModuleConfig
-from kiara.pipeline.config import PipelineConfig, PipelineStepConfig
-from kiara.pipeline.structure import generate_pipeline_endpoint_name
-
-
-class DataPointSubValue(object):
-    def __init__(self, data_point: "DataPoint", sub_value_name: str):
-
-        self._data_point: DataPoint = data_point
-        self._sub_value_name: str = sub_value_name
-
-    @property
-    def point_id(self) -> str:
-
-        return f"{self._data_point.point_id}.{self._sub_value_name}"
-
-
-class DataPoint(JupyterMixin):
-    def __init__(self, data_points: "DataPoints", field_name: str):
-
-        self._points: DataPoints = data_points
-        self._field_name: str = field_name
-        self._links: typing.List[typing.Union[DataPoint, DataPointSubValue]] = []
-        self._value: typing.Any = None
-        self._sub_values: typing.Dict[str, DataPointSubValue] = {}
-
-    def add_link(self, link: typing.Union["DataPoint", "DataPointSubValue"]):
-
-        if self._value is not None:
-            raise Exception("Can't link data point that has value set.")
-        self._links.append(link)
-
-    def set_links(self, *links: typing.Union["DataPoint", "DataPointSubValue"]):
-
-        if self._value is not None:
-            raise Exception("Can't link data point that has value set.")
-        self._links.clear()
-        self._links.extend(links)
-
-    def get_links(
-        self,
-    ) -> typing.Iterable[typing.Union["DataPoint", "DataPointSubValue"]]:
-        return self._links
-
-    def set_value(self, value: typing.Any):
-
-        if self._links:
-            raise Exception("Can't set value for data point that has links set.")
-        self._value = value
-
-    def __getattr__(self, item):
-
-        if item in ["value", "metadata", "data", "point_id"]:
-            return self.__getattribute__(item)
-
-        if item in self._sub_values.keys():
-            return self._sub_values[item]
-
-        self._sub_values[item] = DataPointSubValue(data_point=self, sub_value_name=item)
-        return self._sub_values[item]
-
-    @property
-    def value(self) -> Value:
-        step = self._points._get_step()
-        if isinstance(self._points, InputDataPoints):
-            value = step.workflow.get_input_value(step, self._field_name)
-        else:
-            value = step.workflow.get_output_value(step, self._field_name)
-        value.get_metadata()
-        return value
-
-    @property
-    def metadata(self) -> typing.Mapping[str, typing.Mapping[str, typing.Any]]:
-
-        return self.value.get_metadata()
-
-    @property
-    def data(self) -> typing.Any:
-        return self.value.get_value_data()
-
-    @property
-    def point_id(self) -> str:
-
-        return f"{self._points._get_step().id}.{self._field_name}"
-
-    def __repr__(self):
-        if isinstance(self._points, InputDataPoints):
-            _type = "input"
-        else:
-            _type = "output"
-        return f"DataPoint(step={self._points._get_step().id} type={_type} field_name={self._field_name})"
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-        yield self.value
-
-
-class DataPoints(typing.MutableMapping[str, DataPoint]):
-    def __init__(self, step: "Step"):
-
-        self.__dict__["_data"] = {}
-        self.__dict__["_step"] = step
-
-    def __getitem__(self, item):
-
-        return self._get_data_point(item)
-
-    def __delitem__(self, key):
-
-        raise NotImplementedError()
-
-    def __iter__(self):
-        return iter(self._data)
-
-    def __len__(self):
-        return len(self._data)
-
-    def __setitem__(self, key, value):
-        raise NotImplementedError()
-
-    def __getattr__(self, item):
-
-        if item.startswith("_"):
-            return self.__dict__[item]
-        else:
-            return self._get_data_point(item)
-
-    def __setattr__(self, key, value):
-
-        if key.startswith("_"):
-            if key in self.__dict__.keys():
-                raise Exception(f"{key} already set.")
-            self.__dict__[key] = value
-        elif key in self.__dict__["_data"].keys():
-            self._update_data_point(key, self.__dict__["_data"][key], value)
-        else:
-            self._add_data_point(key, value)
-
-    def _get_step(self) -> "Step":
-        return self.__dict__["_step"]
-
-    def _get_kiara(self) -> "Kiara":
-        return self._get_step()._kiara
-
-    def _get_data_point(self, field_name: str) -> DataPoint:
-
-        if field_name in self._data.keys():
-            value = self._data[field_name]
-            assert isinstance(value, DataPoint)
-            return self._data[field_name]
-        else:
-            return self._add_data_point(field_name, None)
-
-    @abc.abstractmethod
-    def _add_data_point(self, field_name: str, value: typing.Any) -> DataPoint:
-        pass
-
-    @abc.abstractmethod
-    def _update_data_point(
-        self, field_name: str, data_point: DataPoint, value: typing.Any
-    ) -> DataPoint:
-        pass
-
-
-def iterable_is_all_data_points(input: typing.Iterable):
-
-    if not isinstance(input, typing.Iterable):
-        return False
-
-    for item in input:
-        if not isinstance(item, (DataPoint, DataPoints, Step, DataPointSubValue)):
-            return False
-
-    return True
-
-
-class InputDataPoints(DataPoints):
-    def __init__(self, step: "Step"):
-
-        super().__init__(step=step)
-        self._inputs: typing.Dict[str, typing.Any] = {}
-
-    def _add_data_point(self, field_name: str, value: typing.Any) -> DataPoint:
-
-        if field_name not in self._get_step().input_names:
-            raise Exception(
-                f"Invalid input name '{field_name}'. Available inputs: {', '.join(self._get_step().input_names)}"
-            )
-
-        dp = DataPoint(data_points=self, field_name=field_name)
-        self._data[field_name] = dp
-        return self._update_data_point(
-            field_name=field_name, data_point=dp, value=value
-        )
-
-    def _update_data_point(
-        self, field_name: str, data_point: DataPoint, value: typing.Any
-    ) -> DataPoint:
-
-        if value is None:
-            # TODO: remote links/values?
-            return data_point
-        if isinstance(value, (DataPoint, DataPoints, Step, DataPointSubValue)):
-
-            if isinstance(value, (DataPoint, DataPointSubValue)):
-                self.add_link(value)
-                data_point.set_links(value)
-                return data_point
-            else:
-                raise NotImplementedError()
-
-        elif isinstance(value, typing.Mapping):
-            data_point.set_value(value)
-            self._get_step().workflow.set_input(
-                step_id=self._get_step().id, field_name=field_name, value=value
-            )
-            return data_point
-
-        elif iterable_is_all_data_points(value):
-            for link in value:
-                self.add_link(link)
-
-            data_point.set_links(*value)
-            return data_point
-        elif isinstance(value, typing.Iterable):
-            data_point.set_value(value)
-            self._get_step().workflow.set_input(
-                step_id=self._get_step().id, field_name=field_name, value=value
-            )
-            return data_point
-        else:
-            data_point.set_value(value)
-            self._get_step().workflow.set_input(
-                step_id=self._get_step().id, field_name=field_name, value=value
-            )
-            return data_point
-            # raise Exception(
-            #     f"Can't update data point, invalid value type: {type(value)}"
-            # )
-
-    def add_link(
-        self, link: typing.Union[DataPoint, DataPoints, "Step", DataPointSubValue]
-    ):
-
-        if isinstance(link, DataPoint):
-            data_point = link
-        elif isinstance(link, DataPointSubValue):
-            data_point = link._data_point
-        else:
-            raise NotImplementedError()
-
-        assert isinstance(data_point._points, OutputDataPoints)
-
-        this_step: Step = self._get_step()
-        other_step: Step = data_point._points._get_step()
-        other_step.workflow = this_step.workflow
-
-
-class OutputDataPoints(DataPoints):
-    def __init__(self, step: "Step"):
-
-        super().__init__(step=step)
-        self._outputs: typing.Dict[str, typing.Any] = {}
-
-    def _add_data_point(self, field_name: str, value: typing.Any) -> DataPoint:
-
-        if field_name not in self._get_step().output_names:
-            raise Exception(
-                f"Invalid output name '{field_name}'. Available outputs: {', '.join(self._get_step().output_names)}"
-            )
-
-        dp = DataPoint(data_points=self, field_name=field_name)
-        self._data[field_name] = dp
-        self._update_data_point(field_name=field_name, data_point=dp, value=value)
-        return dp
-
-    def _update_data_point(
-        self, field_name: str, data_point: DataPoint, value: typing.Any
-    ) -> DataPoint:
-
-        if value is not None:
-            raise NotImplementedError()
-
-        return data_point
-
-
-class Workflow(JupyterMixin):
-    def __init__(self, kiara: "Kiara"):
-
-        self._kiara: Kiara = kiara
-        self._id: str = str(uuid.uuid4())
-        self._controller: PipelineController = ApiController()
-
-        self._steps: typing.Dict[str, Step] = {}
-        self._pipeline_conf: typing.Optional[PipelineConfig] = None
-        self._structure: typing.Optional[PipelineStructure] = None
-        self._pipeline: typing.Optional[Pipeline] = None
-
-        self._inputs: typing.Dict[str, typing.Any] = {}
-
-    @property
-    def id(self) -> str:
-        return self._id
-
-    def invalidate(self):
-        self._pipeline_conf = None
-        self._structure = None
-        self._pipeline = None
-
-    @property
-    def steps(self) -> typing.Mapping[str, "Step"]:
-        return self._steps
-
-    def add_step(self, step: "Step"):
-
-        if step.id in self._steps.keys():
-            raise Exception(f"Step '{step.id}' already part of structure.")
-
-        self._steps[step.id] = step
-        self._steps[step.id]._structure = self
-        self.invalidate()
-
-    def set_input(self, step_id: str, field_name: str, value: typing.Any):
-
-        # TODO: validate that this is not a link?
-        self._inputs.setdefault(step_id, {})[field_name] = value
-        if self._pipeline is not None:
-            ep_name = generate_pipeline_endpoint_name(
-                step_id=step_id, value_name=field_name
-            )
-            self._pipeline.inputs.set_value(ep_name, value)
-
-    def merge(self, other_workflow: "Workflow"):
-
-        if other_workflow == self:
-            return
-
-        duplicates = set()
-        other_steps = set()
-        for step in other_workflow.steps.values():
-            if step.id in self.steps.keys():
-                duplicates.add(step.id)
-            else:
-                other_steps.add(step)
-                other_steps.update(step.workflow.steps.values())
-
-        if duplicates:
-            raise Exception(
-                f"Can't merge workflows, duplicate step id(s): {', '.join(duplicates)}"
-            )
-
-        duplicate_inputs = set()
-        for k in other_workflow._inputs.keys():
-            if k in self._inputs.keys():
-                duplicate_inputs.add(k)
-
-        if duplicate_inputs:
-            raise Exception(
-                f"Can't merge workflows, duplicate input key(s): {', '.join(duplicate_inputs)}"
-            )
-
-        for step in other_steps:
-            self.add_step(step)
-
-        self._inputs.update(other_workflow._inputs)
-
-    @property
-    def pipeline_config(self) -> PipelineConfig:
-
-        if self._pipeline_conf is not None:
-            return self._pipeline_conf
-
-        steps: typing.List[PipelineStepConfig] = []
-        for step in self.steps.values():
-            input_links: typing.Dict[str, typing.List[str]] = {}
-            for input_name, data_point in step.input.items():
-                for link in data_point.get_links():
-                    input_links.setdefault(input_name, []).append(link.point_id)
-
-            step_conf = PipelineStepConfig(
-                step_id=step.id,
-                module_type=step.module_type,
-                module_config=dict(step.module_config),
-                input_links=input_links,  # type: ignore
-            )
-            steps.append(step_conf)
-
-        self._pipeline_conf = PipelineConfig(steps=steps)
-        return self._pipeline_conf
-
-    @property
-    def structure(self) -> PipelineStructure:
-
-        if self._structure is not None:
-            return self._structure
-
-        self._structure = self.pipeline_config.create_pipeline_structure(
-            kiara=self._kiara
-        )
-        return self._structure
-
-    @property
-    def pipeline(self) -> Pipeline:
-
-        if self._pipeline is not None:
-            return self._pipeline
-
-        self._pipeline = Pipeline(structure=self.structure, controller=self._controller)
-        inputs = {}
-        for step_id, details in self._inputs.items():
-            for value_name, value in details.items():
-                ep_name = generate_pipeline_endpoint_name(
-                    step_id=step_id, value_name=value_name
-                )
-                inputs[ep_name] = value
-        self._pipeline.inputs.set_values(**inputs)
-        return self._pipeline
-
-    @property
-    def inputs(self):
-
-        table = self.pipeline.inputs._create_rich_table()
-        return table
-
-    @property
-    def outputs(self):
-
-        table = self.pipeline.outputs._create_rich_table()
-        return table
-
-    def get_input_value(
-        self, step: typing.Union[str, "Step"], field_name: str
-    ) -> Value:
-
-        if isinstance(step, Step):
-            step = step.id
-
-        return self.pipeline.controller.get_pipeline_input(  # type: ignore
-            step_id=step, field_name=field_name
-        )
-
-    def get_output_value(
-        self, step: typing.Union[str, "Step"], field_name: str
-    ) -> Value:
-
-        if isinstance(step, Step):
-            step = step.id
-
-        return self.pipeline.controller.get_pipeline_output(  # type: ignore
-            step_id=step, field_name=field_name
-        )
-
-    def get_all_output_values(self) -> ValueSet:
-        return self.pipeline.controller.pipeline_outputs
-
-    def process(self):
-
-        return self.pipeline.controller.process_pipeline()
-
-    def __eq__(self, other):
-
-        if not isinstance(other, Workflow):
-            return False
-        return self.id == other.id
-
-    def __hash__(self):
-        return hash(self.id)
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-
-        yield self.pipeline
-
-
-class Step(JupyterMixin):
-    def __init__(
-        self,
-        module_type: str,
-        module_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
-        step_id: typing.Optional[str] = None,
-        kiara: typing.Optional["Kiara"] = None,
-    ):
-
-        if kiara is None:
-            from kiara.kiara import Kiara
-
-            kiara = Kiara.instance()
-
-        self._kiara: Kiara = kiara
-
-        self._module_type: str = module_type
-        if module_config is None:
-            module_config = {}
-        else:
-            module_config = dict(copy.deepcopy(module_config))
-        self._module_config: typing.Dict[str, typing.Any] = module_config
-        self._module: typing.Optional[KiaraModule] = None
-
-        if not step_id:
-            add_uuid = False
-            if "module_type" in self._module_config.keys():
-                if add_uuid:
-                    stem = f"{self._module_type}_{self._module_config['module_type']}_{uuid.uuid4()}"
-                else:
-                    stem = f"{self._module_type}_{self._module_config['module_type']}"
-            else:
-                if add_uuid:
-                    stem = f"{self._module_type}_{uuid.uuid4()}"
-                else:
-                    stem = self._module_type
-
-            step_id = slugify(stem, separator="_")
-
-        self._step_id: str = step_id
-
-        self._inputs: InputDataPoints = InputDataPoints(self)
-        self._outputs: OutputDataPoints = OutputDataPoints(self)
-
-        self._profile_config: typing.Optional[ModuleConfig] = None
-
-        self._structure: typing.Optional[Workflow] = None
-
-        self._info: typing.Optional[StepInfo] = None
-
-    @property
-    def id(self) -> str:
-        return self._step_id
-
-    @property
-    def info(self) -> "StepInfo":
-        if self._info is None:
-            module_metadata = KiaraModuleInstanceMetadata.from_module_obj(self.module)
-            self._info = StepInfo(
-                step_id=self._step_id, module_metadata=module_metadata
-            )
-        return self._info
-
-    @property
-    def module_type(self) -> str:
-        return self._module_type
-
-    @property
-    def module_config(self) -> typing.Mapping[str, typing.Any]:
-        return self._module_config
-
-    def invalidate(self) -> None:
-        self._profile_config = None
-        self._module = None
-
-    def config(self) -> ModuleConfig:
-
-        if self._profile_config is not None:
-            return self._profile_config
-
-        self._profile_config = ModuleConfig(
-            module_type=self._module_type, module_config=self._module_config
-        )
-        return self._profile_config
-
-    @property
-    def workflow(self) -> Workflow:
-
-        if self._structure is not None:
-            return self._structure
-
-        self._structure = Workflow(kiara=self._kiara)
-        self._structure.add_step(self)
-        return self._structure
-
-    @workflow.setter
-    def workflow(self, structure: Workflow):
-
-        current_structure = self.workflow
-        structure.merge(current_structure)
-
-    @property
-    def module(self) -> KiaraModule:
-
-        if self._module is not None:
-            return self._module
-
-        self._module = self._kiara.create_module(
-            module_type=self._module_type, module_config=self._module_config
-        )
-        return self._module
-
-    @property
-    def input_names(self):
-        return self.module.input_names
-
-    @property
-    def output_names(self):
-        return self.module.output_names
-
-    @property
-    def input_schemas(self):
-        return self.module.input_schemas
-
-    @property
-    def output_schemas(self):
-        return self.module.output_schemas
-
-    @property
-    def input(self) -> DataPoints:
-        return self._inputs
-
-    @property
-    def output(self) -> DataPoints:
-        return self._outputs
-
-    def __eq__(self, other):
-
-        if not isinstance(other, Step):
-            return False
-
-        return self.id == other.id
-
-    def __hash__(self):
-
-        return hash(self.id)
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-
-        current_state = self.workflow.pipeline.get_current_state()
-        step = current_state.structure.steps[self.id]
-        step_table = create_pipeline_step_table(current_state, step)
-        yield step_table
-
-
-class StepInfo(JupyterMixin, BaseModel):
-
-    step_id: str = Field(description="The step id.")
-    module_metadata: KiaraModuleInstanceMetadata = Field(
-        description="The module metadata."
+from rich.console import RenderableType
+from rich.table import Table
+from typing import Any, Dict, List, Mapping, Optional, Union
+
+from kiara import Kiara
+from kiara.exceptions import FailedJobException, NoSuchExecutionTargetException
+from kiara.models.module.jobs import JobConfig, JobStatus
+from kiara.models.module.manifest import Manifest
+from kiara.models.module.operation import Operation
+from kiara.models.values.value import Value, ValueMap
+from kiara.utils import is_debug
+
+logger = structlog.getLogger()
+
+
+class StoreValueResult(BaseModel):
+
+    value: Value = Field(description="The stored value.")
+    aliases: List[str] = Field(
+        description="The aliases that where assigned to the value when stored."
+    )
+    error: Optional[str] = Field(
+        description="An error that occured while trying to store."
     )
 
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
 
-        doc = self.module_metadata.type_metadata.documentation.create_renderable()
-        metadata = self.module_metadata.create_renderable(include_doc=False)
+class StoreValuesResult(BaseModel):
 
-        panel = Panel(
-            RenderGroup("", Panel(doc, box=box.SIMPLE), "", metadata),
-            title=f"Step info: [b]{self.step_id}[/b] (type: [i]{self.module_metadata.type_metadata.type_id}[/i])",
-            title_align="left",
+    __root__: Dict[str, StoreValueResult]
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        table = Table(show_header=True, show_lines=False, box=box.SIMPLE)
+        table.add_column("field", style="b")
+        table.add_column("data type", style="i")
+        table.add_column("stored id", style="i")
+        table.add_column("alias(es)")
+
+        for field_name, value_result in self.__root__.items():
+            row = [
+                field_name,
+                str(value_result.value.value_schema.type),
+                str(value_result.value.value_id),
+            ]
+            if value_result.aliases:
+                row.append(", ".join(value_result.aliases))
+            else:
+                row.append("")
+            table.add_row(*row)
+
+        return table
+
+
+class KiaraOperation(object):
+    def __init__(
+        self,
+        kiara: "Kiara",
+        operation_name: str,
+        operation_config: Optional[Mapping[str, Any]] = None,
+    ):
+
+        self._kiara: Kiara = kiara
+        self._operation_name: str = operation_name
+        if operation_config is None:
+            operation_config = {}
+        else:
+            operation_config = dict(operation_config)
+        self._operation_config: Dict[str, Any] = operation_config
+
+        self._inputs_raw: Dict[str, Any] = {}
+
+        self._operation: Optional[Operation] = None
+        self._inputs: Optional[ValueMap] = None
+
+        self._job_config: Optional[JobConfig] = None
+
+        self._queued_jobs: Dict[uuid.UUID, Dict[str, Any]] = {}
+        self._last_job: Optional[uuid.UUID] = None
+        self._results: Dict[uuid.UUID, ValueMap] = {}
+
+    def validate(self):
+
+        self.job_config  # noqa
+
+    def _invalidate(self):
+
+        self._job_config = None
+
+    @property
+    def operation_inputs(self) -> ValueMap:
+
+        if self._inputs is not None:
+            return self._inputs
+
+        self._invalidate()
+        self._inputs = self._kiara.data_registry.create_valueset(
+            self._inputs_raw, self.operation.inputs_schema
         )
-        yield panel
+        return self._inputs
+
+    def set_input(self, field: Optional[str], value: Any = None):
+
+        if field is None:
+            if value is None:
+                self._inputs_raw.clear()
+                self._invalidate()
+                return
+            else:
+                if not isinstance(value, Mapping):
+                    raise Exception(
+                        "Can't set inputs dictionary (if no key is provided, value must be 'None' or of type 'Mapping')."
+                    )
+
+                self._inputs_raw.clear()
+                self.set_inputs(**value)
+                self._invalidate()
+                return
+        else:
+            old = self._inputs_raw.get(field, None)
+            self._inputs_raw[field] = value
+            if old != value:
+                self._invalidate()
+            return
+
+    def set_inputs(self, **inputs: Any):
+
+        changed = False
+        for k, v in inputs.items():
+            old = self._inputs_raw.get(k, None)
+            self._inputs_raw[k] = v
+            if old != v:
+                changed = True
+
+        if changed:
+            self._invalidate()
+
+        return
+
+    @property
+    def operation_name(self) -> str:
+        return self._operation_name
+
+    @operation_name.setter
+    def operation_name(self, operation_name: str):
+        self._operation_name = operation_name
+        self._operation = None
+
+    @property
+    def operation_config(self) -> Mapping[str, Any]:
+        return self._operation_config
+
+    def set_operation_config_value(
+        self, key: Optional[str], value: Any = None
+    ) -> Mapping[str, Any]:
+
+        if key is None:
+            if value is None:
+                old = bool(self._operation_config)
+                self._operation_config.clear()
+                if old:
+                    self._operation = None
+                return self._operation_config
+            else:
+                try:
+                    old_conf = self._operation_config
+                    self._operation_config = dict(value)
+                    if old_conf != self._operation_config:
+                        self._operation = None
+                    return self._operation_config
+                except Exception as e:
+                    raise Exception(
+                        f"Can't set configuration value dictionary (if no key is provided, value must be 'None' or of type 'Mapping'): {e}"
+                    )
+
+        self._operation_config[key] = value
+        self._invalidate()
+        return self._operation_config
+
+    @property
+    def operation(self) -> "Operation":
+
+        if self._operation is not None:
+            return self._operation
+
+        self._invalidate()
+
+        module_or_operation = self._operation_name
+        operation: Optional[Operation] = None
+
+        if isinstance(module_or_operation, str):
+            if module_or_operation in self._kiara.operation_registry.operation_ids:
+                operation = self._kiara.operation_registry.get_operation(
+                    module_or_operation
+                )
+                if self._operation_config:
+                    raise Exception(
+                        f"Specified run target '{module_or_operation}' is an operation, additional module configuration is not allowed."
+                    )
+            else:
+                manifest = Manifest(
+                    module_type=module_or_operation,
+                    module_config=self._operation_config,
+                )
+                module = self._kiara.create_module(manifest=manifest)
+                operation = Operation.create_from_module(module=module)
+
+        elif module_or_operation in self._kiara.module_type_names:
+
+            manifest = Manifest(
+                module_type=module_or_operation, module_config=self._operation_config
+            )
+
+            module = self._kiara.create_module(manifest=manifest)
+            operation = Operation.create_from_module(module)
+
+        elif os.path.isfile(module_or_operation):
+            raise NotImplementedError()
+            # module_name = kiara_obj.register_pipeline_description(
+            #     module_or_operation, raise_exception=True
+            # )
+
+        if operation is None:
+
+            merged = set(self._kiara.module_type_names)
+            merged.update(self._kiara.operation_registry.operation_ids)
+            raise NoSuchExecutionTargetException(
+                selected_target=self.operation_name,
+                msg=f"Invalid run target name '{module_or_operation}'. Must be a path to a pipeline file, or one of the available modules/operations.",
+                available_targets=sorted(merged),
+            )
+
+        self._operation = operation
+        return self._operation
+
+    @property
+    def job_config(self) -> JobConfig:
+
+        if self._job_config is not None:
+            return self._job_config
+
+        self._job_config = self.operation.prepare_job_config(
+            kiara=self._kiara, inputs=self.operation_inputs
+        )
+        return self._job_config
+
+    def queue_job(self) -> uuid.UUID:
+
+        job_config = self.job_config
+        operation = self.operation
+        inputs = self.operation_inputs
+
+        job_id = self._kiara.job_registry.execute_job(job_config=job_config, wait=False)
+
+        self._queued_jobs[job_id] = {
+            "job_config": job_config,
+            "operation": operation,
+            "inputs": inputs,
+        }
+        self._last_job = job_id
+        return job_id
+
+    def retrieve_result(self, job_id: Optional[uuid.UUID] = None) -> ValueMap:
+
+        if job_id in self._results.keys():
+            assert job_id is not None
+            return self._results[job_id]
+
+        if job_id is None:
+            job_id = self._last_job
+
+        if job_id is None:
+            raise Exception("No job queued (yet).")
+
+        operation: Operation = self._queued_jobs[job_id]["operation"]  # type: ignore
+
+        status = self._kiara.job_registry.get_job_status(job_id=job_id)
+
+        if status == JobStatus.FAILED:
+            job = self._kiara.job_registry.get_active_job(job_id=job_id)
+            raise FailedJobException(job=job)
+
+        outputs = self._kiara.job_registry.retrieve_result(job_id)
+        outputs = operation.process_job_outputs(outputs=outputs)
+        self._results[job_id] = outputs
+        return outputs
+
+    def save_result(
+        self,
+        job_id: Optional[uuid.UUID] = None,
+        aliases: Union[None, str, Mapping] = None,
+    ) -> StoreValuesResult:
+
+        if job_id is None:
+            job_id = self._last_job
+
+        if job_id is None:
+            raise Exception("No job queued (yet).")
+
+        result = self.retrieve_result(job_id=job_id)
+
+        if aliases is None:
+            alias_map: Dict[str, List[str]] = {}
+        elif isinstance(aliases, str):
+            alias_map = {}
+            for field_name in result.field_names:
+                alias_map[field_name] = [f"{aliases}.{field_name}"]
+        elif isinstance(aliases, Mapping):
+            alias_map = {}
+            for field_name in aliases.keys():
+                if field_name in result.field_names:
+                    if isinstance(aliases[field_name], str):
+                        alias_map[field_name] = [aliases[field_name]]
+                    else:
+                        alias_map[field_name] = sorted(aliases[field_name])
+                else:
+                    logger.warning(
+                        "ignore.field_alias",
+                        ignored_field_name=field_name,
+                        reason="field name not in results",
+                        available_field_names=sorted(result.field_names),
+                    )
+                    continue
+        else:
+            raise Exception(
+                f"Invalid type '{type(aliases)}' for aliases parameter, must be string or mapping."
+            )
+
+        values = {}
+        for field_name in result.field_names:
+            value = result.get_value_obj(field_name)
+            values[field_name] = value
+            self._kiara.data_registry.store_value(value=value, skip_if_exists=True)
+
+        stored = {}
+        for field_name, field_aliases in alias_map.items():
+
+            value = values[field_name]
+            try:
+                if field_aliases:
+                    self._kiara.alias_registry.register_aliases(
+                        value.value_id, *field_aliases
+                    )
+
+                stored[field_name] = StoreValueResult.construct(
+                    value=value, aliases=field_aliases, error=None
+                )
+
+            except Exception as e:
+                if is_debug():
+                    import traceback
+
+                    traceback.print_exc()
+                stored[field_name] = StoreValueResult.construct(
+                    value=value, aliases=field_aliases, error=str(e)
+                )
+
+        self._kiara.job_registry.store_job_record(job_id=job_id)
+
+        return StoreValuesResult.construct(__root__=stored)

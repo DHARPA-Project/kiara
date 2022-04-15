@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+
+#  Copyright (c) 2021, Markus Binsteiner
+#
+#  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
+
 from deepdiff import DeepHash
 from mmh3 import hash_from_buffer
 from pydantic import BaseModel, Field, PrivateAttr

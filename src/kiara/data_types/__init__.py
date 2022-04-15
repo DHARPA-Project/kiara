@@ -40,14 +40,13 @@ from kiara.models.values import ValueStatus
 from kiara.models.values.value import Value, ValuePedigree
 from kiara.models.values.value_schema import ValueSchema
 
-
-def get_type_name(obj: Any):
-    """Utility function to get a pretty string from the class of an object."""
-
-    if obj.__class__.__module__ == "builtins":
-        return obj.__class__.__name__
-    else:
-        return f"{obj.__class__.__module__}.{obj.__class__.__name__}"
+# def get_type_name(obj: Any):
+#     """Utility function to get a pretty string from the class of an object."""
+#
+#     if obj.__class__.__module__ == "builtins":
+#         return obj.__class__.__name__
+#     else:
+#         return f"{obj.__class__.__module__}.{obj.__class__.__name__}"
 
 
 class DataTypeConfig(BaseModel):

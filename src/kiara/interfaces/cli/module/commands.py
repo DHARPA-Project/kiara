@@ -6,6 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 """Module related subcommands for the cli."""
+
 import orjson
 import os.path
 import rich_click as click

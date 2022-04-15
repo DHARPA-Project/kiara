@@ -7,6 +7,7 @@
 
 """A command-line interface for *Kiara*.
 """
+
 import logging
 import rich_click as click
 import structlog

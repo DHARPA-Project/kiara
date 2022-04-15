@@ -5,16 +5,14 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-import orjson
 import os
 import rich_click as click
 import sys
 import typing
-from rich.panel import Panel
 
 from kiara import Kiara
 from kiara.models.module.operation import OperationGroupInfo, OperationTypeClassesInfo
-from kiara.utils import rich_print
+from kiara.utils.cli import output_format_option, terminal_print_model
 
 
 @click.group()
@@ -31,13 +29,7 @@ def operation(ctx):
     help="Display the full documentation for every operation type (when using 'terminal' output format).",
 )
 @click.argument("filter", nargs=-1, required=False)
-@click.option(
-    "--format",
-    "-f",
-    help="The output format. Defaults to 'terminal'.",
-    type=click.Choice(["terminal", "json", "html"]),
-    default="terminal",
-)
+@output_format_option()
 @click.pass_context
 def list_types(ctx, full_doc, format: str, filter: typing.Iterable[str]):
 
@@ -65,18 +57,7 @@ def list_types(ctx, full_doc, format: str, filter: typing.Iterable[str]):
         group_alias="all_items", **op_types
     )
 
-    if format == "terminal":
-        print()
-        p = Panel(
-            operation_types_info.create_renderable(full_doc=full_doc),
-            title_align="left",
-            title=title,
-        )
-        rich_print(p)
-    elif format == "json":
-        print(operation_types_info.json(option=orjson.OPT_INDENT_2))
-    elif format == "html":
-        print(operation_types_info.create_html())
+    terminal_print_model(operation_types_info, format=format, in_panel=title)
 
 
 @operation.command(name="list")
@@ -99,13 +80,7 @@ def list_types(ctx, full_doc, format: str, filter: typing.Iterable[str]):
     help="Whether to include operations that are mainly used internally.",
     is_flag=True,
 )
-@click.option(
-    "--format",
-    "-f",
-    help="The output format. Defaults to 'terminal'.",
-    type=click.Choice(["terminal", "json", "html"]),
-    default="terminal",
-)
+@output_format_option()
 @click.pass_context
 def list_operations(
     ctx,
@@ -145,19 +120,14 @@ def list_operations(
         kiara=kiara_obj, group_alias=title, **operations
     )
 
-    if format == "terminal":
-        print()
-        rich_print(
-            ops_info.create_renderable(
-                full_doc=full_doc,
-                by_type=by_type,
-                include_internal_operations=include_internal_operations,
-            )
-        )
-    elif format == "json":
-        print(ops_info.json(option=orjson.OPT_INDENT_2))
-    elif format == "html":
-        print(ops_info.create_html())
+    terminal_print_model(
+        ops_info,
+        format=format,
+        in_panel=title,
+        include_internal_operations=include_internal_operations,
+        full_doc=full_doc,
+        by_type=by_type,
+    )
 
 
 @operation.command()
@@ -168,8 +138,9 @@ def list_operations(
     help="Show module source code (or pipeline configuration).",
     is_flag=True,
 )
+@output_format_option()
 @click.pass_context
-def explain(ctx, operation_id: str, source: bool):
+def explain(ctx, operation_id: str, source: bool, format: str):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
@@ -183,9 +154,9 @@ def explain(ctx, operation_id: str, source: bool):
         print(f"No operation with id '{operation_id}' registered.")
         sys.exit(1)
 
-    print()
-    rich_print(
-        op_config.create_panel(
-            title=f"Operation: [b i]{operation_id}[/b i]", include_src=source
-        )
+    terminal_print_model(
+        op_config,
+        format=format,
+        in_panel=f"Operation: [b i]{operation_id}[/b i]",
+        include_src=source,
     )

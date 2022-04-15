@@ -12,14 +12,13 @@ import rich_click as click
 import sys
 import typing
 from rich import box
-from rich.panel import Panel
 from rich.table import Table
 
 from kiara import Kiara
-from kiara.models.module.operation import Operation
+from kiara.models.module.operation import Operation, OperationGroupInfo
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.modules.included_core_modules.pipeline import PipelineModule
-from kiara.utils import rich_print
+from kiara.utils.cli import output_format_option, terminal_print_model
 from kiara.utils.graphs import print_ascii_graph
 
 
@@ -59,12 +58,9 @@ def pipeline(ctx):
     help="Display the full documentation for every module type.",
 )
 @click.argument("filter", nargs=-1, required=False)
+@output_format_option()
 @click.pass_context
-def list_pipelines(
-    ctx,
-    full_doc: bool,
-    filter: typing.Iterable[str],
-):
+def list_pipelines(ctx, full_doc: bool, filter: typing.Iterable[str], format: str):
     """List available module data_types."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
@@ -75,39 +71,39 @@ def list_pipelines(
     table.add_column("Id", no_wrap=True)
     table.add_column("Description", no_wrap=False, style="i")
 
-    for op_id in sorted(kiara_obj.operation_registry.operations_by_type["pipeline"]):
-        operation = kiara_obj.operation_registry.get_operation(op_id)
+    op_ids = kiara_obj.operation_registry.operations_by_type["pipeline"]
 
-        if full_doc:
-            desc = operation.doc.full_doc
-        else:
-            desc = operation.doc.description
-
-        if filter:
+    title = "Available pipelines"
+    if filter:
+        title = "Filtered pipelines"
+        temp = {}
+        for op_id in op_ids:
+            op = kiara_obj.operation_registry.get_operation(op_id)
             match = True
             for f in filter:
-                if f.lower() not in op_id.lower() and f.lower() not in desc.lower():
+                if f.lower() not in op_id.lower():
                     match = False
                     break
-            if not match:
-                continue
+            if match:
+                temp[op_id] = op
+        operations = temp
 
-        row = []
+    else:
+        operations = {
+            op_id: kiara_obj.operation_registry.get_operation(op_id) for op_id in op_ids
+        }
 
-        row.append(op_id)
-        row.append(desc)
-
-        table.add_row(*row)
-
-    panel = Panel(table, title="Pipelines", title_align="left", box=box.ROUNDED)
-    print()
-    rich_print(panel)
+    ops_info = OperationGroupInfo.create_from_operations(
+        kiara=kiara_obj, group_alias=title, **operations
+    )
+    terminal_print_model(ops_info, format=format, in_panel=title, full_doc=full_doc)
 
 
 @pipeline.command()
 @click.argument("pipeline-id-or-path", nargs=1)
+@output_format_option()
 @click.pass_context
-def explain(ctx, pipeline_id_or_path: str):
+def explain(ctx, pipeline_id_or_path: str, format: str):
     """Print details about pipeline inputs, outputs, and overall structure."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
@@ -116,7 +112,9 @@ def explain(ctx, pipeline_id_or_path: str):
         kiara_obj=kiara_obj, pipeline_id_or_path=pipeline_id_or_path
     )
 
-    rich_print(pc)
+    terminal_print_model(
+        pc, format=format, in_panel=f"Pipeline: [b i]{pipeline_id_or_path}[/b i]"
+    )
 
 
 @pipeline.command()

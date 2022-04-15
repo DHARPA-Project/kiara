@@ -7,19 +7,17 @@
 
 """Module related subcommands for the cli."""
 
-import orjson
 import os.path
 import rich_click as click
-from rich.panel import Panel
 from typing import Any, Iterable, List
 
 from kiara import Kiara
 
 # from kiara.interfaces.cli.utils import _create_module_instance
-from kiara.kiara import explain
 from kiara.models.module import KiaraModuleTypeInfo, ModuleTypeClassesInfo
 from kiara.models.module.manifest import Manifest
-from kiara.utils import dict_from_cli_args, log_message, rich_print
+from kiara.utils import dict_from_cli_args, log_message
+from kiara.utils.cli import output_format_option, terminal_print_model
 
 
 @click.group()
@@ -35,13 +33,7 @@ def module(ctx):
     is_flag=True,
     help="Display the full documentation for every module type (when using 'terminal' output format).",
 )
-@click.option(
-    "--format",
-    "-f",
-    help="The output format. Defaults to 'terminal'.",
-    type=click.Choice(["terminal", "json", "html"]),
-    default="terminal",
-)
+@output_format_option()
 @click.argument("filter", nargs=-1, required=False)
 @click.pass_context
 def list_modules(ctx, full_doc: bool, filter: Iterable[str], format: str):
@@ -76,26 +68,12 @@ def list_modules(ctx, full_doc: bool, filter: Iterable[str], format: str):
         group_alias=title, **module_types
     )
 
-    if format == "terminal":
-        renderable = module_types_info.create_renderable(full_doc=full_doc)
-        p = Panel(renderable, title_align="left", title=title)
-        print()
-        explain(p)
-    elif format == "json":
-        print(module_types_info.json(option=orjson.OPT_INDENT_2))
-    elif format == "html":
-        print(module_types_info.create_html())
+    terminal_print_model(module_types_info, format=format, in_panel=title)
 
 
 @module.command(name="explain")
-@click.option(
-    "--format",
-    "-f",
-    help="The output format. Defaults to 'terminal'.",
-    type=click.Choice(["terminal", "json", "html"]),
-    default="terminal",
-)
 @click.argument("module_type", nargs=1, required=True)
+@output_format_option()
 @click.pass_context
 def explain_module_type(ctx, module_type: str, format: str):
     """Print details of a module type.
@@ -117,13 +95,9 @@ def explain_module_type(ctx, module_type: str, format: str):
     m_cls = kiara_obj.module_registry.get_module_class(_module_type)
     info = KiaraModuleTypeInfo.create_from_type_class(m_cls)
 
-    if format == "terminal":
-        rich_print()
-        rich_print(info.create_panel(title=f"Module type: [b i]{module_type}[/b i]"))
-    elif format == "json":
-        print(info.json(option=orjson.OPT_INDENT_2))
-    elif format == "html":
-        print(info.create_html())
+    terminal_print_model(
+        info, format=format, in_panel=f"Module type: [b i]{module_type}[/b i]"
+    )
 
 
 @module.command("explain-instance")
@@ -132,8 +106,9 @@ def explain_module_type(ctx, module_type: str, format: str):
     "module_config",
     nargs=-1,
 )
+@output_format_option()
 @click.pass_context
-def explain_module(ctx, module_type: str, module_config: Iterable[Any]):
+def explain_module(ctx, module_type: str, module_config: Iterable[Any], format: str):
     """Describe a module instance.
 
     This command shows information and metadata about an instantiated *kiara* module.
@@ -149,8 +124,11 @@ def explain_module(ctx, module_type: str, module_config: Iterable[Any]):
     mc = Manifest(module_type=module_type, module_config=module_config)
     module_obj = kiara_obj.create_module(mc)
 
-    rich_print()
-    rich_print(module_obj)
+    terminal_print_model(
+        module_obj.create_renderable(),  # type: ignore
+        format=format,
+        in_panel=f"Module instance of type: [b i]{module_type}[/b i]",
+    )
 
 
 try:

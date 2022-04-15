@@ -27,9 +27,6 @@ class OSRuntimeEnvironment(RuntimeEnvironment):
     os_specific: typing.Dict[str, typing.Any] = Field(
         description="OS specific platform metadata.", default_factory=dict
     )
-    uname: typing.Optional[typing.Dict[str, str]] = Field(
-        description="Platform uname information."
-    )
 
     @classmethod
     def retrieve_environment_data(self) -> typing.Dict[str, typing.Any]:
@@ -39,11 +36,10 @@ class OSRuntimeEnvironment(RuntimeEnvironment):
         if platform_system == "Linux":
             import distro
 
-            data = distro.linux_distribution()
             os_specific["distribution"] = {
-                "name": data[0],
-                "version": data[1],
-                "codename": data[2],
+                "name": distro.name(),
+                "version": distro.version(),
+                "codename": distro.codename(),
             }
         elif platform_system == "Darwin":
             mac_version = platform.mac_ver()

@@ -3,7 +3,7 @@
 
 
 from kiara.interfaces.python_api import Step
-from kiara.utils import rich_print
+from kiara.utils.cli import terminal_print
 
 step_read_files_in_folder = Step(
     "onboarding.folder.import", step_id="read_files_in_folder"
@@ -154,4 +154,4 @@ step_create_date_range_filter.input.latest = "2000-01-01"
 step_remove_stopwords.input.languages = ["italian", "german"]
 step_generate_lda.input.compute_coherence = True
 workflow.process()
-rich_print(workflow)
+terminal_print(workflow)

@@ -8,7 +8,9 @@
 
 import inspect
 from pydantic import BaseModel, Field, create_model
-from typing import Dict, Iterable, Mapping, Optional, Type
+from rich import box
+from rich.table import Table
+from typing import Any, Dict, Iterable, Mapping, Optional, Type
 
 from kiara.models.runtime_environment import RuntimeEnvironment, logger
 from kiara.utils import _get_all_subclasses, is_debug, to_camel_case
@@ -124,3 +126,17 @@ class EnvironmentRegistry(object):
         model = cls.construct(**data)  # type: ignore
         self._full_env_model = model
         return self._full_env_model
+
+    def create_renderable(self, **config: Any):
+
+        full_details = config.get("full_details", False)
+
+        table = Table(show_header=True, box=box.SIMPLE)
+        table.add_column("environment key", style="b")
+        table.add_column("details")
+
+        for env_name, env in self.environments.items():
+            renderable = env.create_renderable(summary=not full_details)
+            table.add_row(env_name, renderable)
+
+        return table

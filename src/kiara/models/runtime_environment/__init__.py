@@ -6,10 +6,14 @@
 
 import structlog
 from abc import abstractmethod
-from typing import Any, Dict, get_args
+from rich import box
+from rich.console import RenderableType
+from rich.table import Table
+from typing import Any, Dict, Optional, get_args
 
 from kiara.defaults import ENVIRONMENT_TYPE_CATEGORY_ID
 from kiara.models import KiaraModel
+from kiara.utils.output import extract_renderable
 
 logger = structlog.get_logger()
 
@@ -53,6 +57,12 @@ class RuntimeEnvironment(KiaraModel):
     def retrieve_environment_data(cls) -> Dict[str, Any]:
         pass
 
+    def _create_renderable_for_field(
+        self, field_name: str, for_summary: bool = False
+    ) -> Optional[RenderableType]:
+
+        return extract_renderable(getattr(self, field_name))
+
     def _retrieve_id(self) -> str:
         return self.__class__.get_environment_type_name()
 
@@ -61,3 +71,19 @@ class RuntimeEnvironment(KiaraModel):
 
     def _retrieve_data_to_hash(self) -> Any:
         return self.dict()
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        summary = config.get("summary", False)
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("field")
+        table.add_column("summary")
+        for field_name, field in self.__fields__.items():
+            summary_item = self._create_renderable_for_field(
+                field_name, for_summary=summary
+            )
+            if summary_item is not None:
+                table.add_row(field_name, summary_item)
+
+        return table

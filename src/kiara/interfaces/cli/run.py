@@ -20,7 +20,8 @@ from kiara.exceptions import (
     NoSuchExecutionTargetException,
 )
 from kiara.interfaces.python_api import KiaraOperation
-from kiara.utils import dict_from_cli_args, is_debug, rich_print
+from kiara.utils import dict_from_cli_args, is_debug
+from kiara.utils.cli import terminal_print
 from kiara.utils.output import OutputDetails
 
 
@@ -121,12 +122,12 @@ def run(
         operation = kiara_op.operation
     except NoSuchExecutionTargetException as nset:
         print()
-        rich_print(nset)
+        terminal_print(nset)
         print()
         print("Existing operations:")
         print()
         for n in nset.avaliable_targets:
-            rich_print(f"  - [i]{n}[/i]")
+            terminal_print(f"  - [i]{n}[/i]")
         sys.exit(1)
     except Exception as e:
         print()
@@ -134,7 +135,7 @@ def run(
             import traceback
 
             traceback.print_exc()
-        rich_print(str(e))
+        terminal_print(str(e))
         sys.exit(1)
 
     # =========================================================================
@@ -177,11 +178,11 @@ def run(
         operation_inputs = kiara_op.operation_inputs
     except InvalidValuesException as ive:
         print()
-        rich_print(str(ive))
+        terminal_print(str(ive))
         print()
         print("Details:\n")
         for k, v in ive.invalid_inputs.items():
-            rich_print(f"  - [b]{k}[/b]: [i]{v}[/i]")
+            terminal_print(f"  - [b]{k}[/b]: [i]{v}[/i]")
         sys.exit(1)
 
     invalid = operation_inputs.check_invalid()
@@ -190,7 +191,7 @@ def run(
         print("Can't create operation inputs, invalid field(s):")
         print()
         for k, v in invalid.items():
-            rich_print(f"  - [b]{k}[/b]: [i]{v}[/i]")
+            terminal_print(f"  - [b]{k}[/b]: [i]{v}[/i]")
         sys.exit(1)
 
     # =========================================================================
@@ -201,20 +202,20 @@ def run(
         outputs = kiara_op.retrieve_result(job_id=job_id)
     except FailedJobException as fje:
         print()
-        rich_print(f"[red b]Job failed[/red b]: {fje.job.error}")
+        terminal_print(f"[red b]Job failed[/red b]: {fje.job.error}")
         sys.exit(1)
 
     if not silent:
         print()
         if len(outputs) > 1:
-            rich_print("[b]Results:[/b]")
+            terminal_print("[b]Results:[/b]")
         else:
-            rich_print("[b]Result:[/b]")
+            terminal_print("[b]Result:[/b]")
 
         for field_name, value in outputs.items():
             print()
-            rich_print(f"* [b i]{field_name}[/b i]")
-            rich_print(kiara_obj.data_registry.render_data(value.value_id))
+            terminal_print(f"* [b i]{field_name}[/b i]")
+            terminal_print(kiara_obj.data_registry.render_data(value.value_id))
 
     # for k, v in outputs.items():
     #     rendered = kiara_obj.data_registry.render_data(v)
@@ -225,5 +226,5 @@ def run(
         save_results = kiara_op.save_result(job_id=job_id, aliases=final_aliases)
         if not silent:
             print()
-            rich_print("[b]Stored value(s):[/b]")
-            rich_print(save_results)
+            terminal_print("[b]Stored value(s):[/b]")
+            terminal_print(save_results)

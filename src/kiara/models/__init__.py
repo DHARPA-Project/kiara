@@ -185,10 +185,14 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
 
         from kiara.utils.output import extract_renderable
 
+        include = config.get("include", None)
+
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("Key", style="i")
         table.add_column("Value")
         for k in self.__fields__.keys():
+            if include is not None and k not in include:
+                continue
             attr = getattr(self, k)
             v = extract_renderable(attr)
             table.add_row(k, v)

@@ -5,13 +5,11 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-import orjson
 import rich_click as click
 import sys
-from rich.panel import Panel
 
 from kiara import Kiara
-from kiara.utils import rich_print
+from kiara.utils.cli import output_format_option, terminal_print_model
 
 
 @click.group()
@@ -21,13 +19,7 @@ def metadata(ctx):
 
 
 @metadata.command(name="list")
-@click.option(
-    "--format",
-    "-f",
-    help="The output format. Defaults to 'terminal'.",
-    type=click.Choice(["terminal", "json", "html"]),
-    default="terminal",
-)
+@output_format_option()
 @click.pass_context
 def list_metadata(ctx, format):
     """List available metadata schemas."""
@@ -35,30 +27,20 @@ def list_metadata(ctx, format):
     kiara_obj: Kiara = ctx.obj["kiara"]
     metadata_types = kiara_obj.context_info.metadata_types
 
-    if format == "terminal":
-        rich_print()
-        rich_print(metadata_types)
-    elif format == "json":
-        print(metadata_types.json(option=orjson.OPT_INDENT_2))
-    elif format == "html":
-        print(metadata_types.create_html())
+    terminal_print_model(
+        metadata_types, format=format, in_panel="Available metadata types"
+    )
 
 
 @metadata.command(name="explain")
 @click.argument("metadata_key", nargs=1, required=True)
-@click.option(
-    "--format",
-    "-f",
-    help="The output format. Defaults to 'terminal'.",
-    type=click.Choice(["terminal", "html", "json", "json-schema"]),
-    default="terminal",
-)
 @click.option(
     "--details",
     "-d",
     help="Print more metadata schema details (for 'terminal' format).",
     is_flag=True,
 )
+@output_format_option()
 @click.pass_context
 def explain_metadata(ctx, metadata_key, format, details):
     """Print details for a specific metadata schema."""
@@ -73,22 +55,8 @@ def explain_metadata(ctx, metadata_key, format, details):
 
     info_obj = metadata_types[metadata_key]
 
-    if format == "terminal":
-        rich_print()
-        config = {"include_schema": details}
-        renderable = info_obj.create_renderable(**config)
-        rich_print(
-            Panel(
-                renderable,
-                title=f"Metadata details for: [b]{metadata_key}[/b]",
-                title_align="left",
-            )
-        )
-    elif format == "json":
-        json_schema = info_obj.json(option=orjson.OPT_INDENT_2)
-        print(json_schema)
-    elif format == "json-schema":
-        json_schema = info_obj.schema_json(option=orjson.OPT_INDENT_2)
-        print(json_schema)
-    elif format == "html":
-        print(info_obj.create_html())
+    terminal_print_model(
+        info_obj,
+        format=format,
+        in_pane=f"Details for metadata type: [b i]{metadata_key}[/b i]",
+    )

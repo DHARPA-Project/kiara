@@ -11,7 +11,7 @@ from typing import Optional
 
 from kiara.defaults import KIARA_DB_MIGRATIONS_CONFIG, KIARA_DB_MIGRATIONS_FOLDER
 from kiara.kiara import Kiara
-from kiara.utils import rich_print
+from kiara.utils.cli import terminal_print
 from kiara.utils.metadata import find_metadata_models
 
 
@@ -28,7 +28,7 @@ def test(ctx):
     # kiara_obj: Kiara = ctx.obj["kiara"]
 
     m = find_metadata_models()
-    rich_print(m)
+    terminal_print(m)
 
     # for value_id in kiara_obj.destiny_registry.all_values:
     #     print("-----")

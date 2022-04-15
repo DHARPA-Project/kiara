@@ -12,6 +12,7 @@ from pydantic import BaseModel, root_validator
 from pydantic.config import Extra
 from pydantic.env_settings import BaseSettings
 from pydantic.fields import Field
+from rich.console import RenderableType
 from ruamel import yaml as r_yaml
 from typing import Any, Dict, List, Mapping, Optional
 
@@ -28,6 +29,7 @@ from kiara.registries.environment import EnvironmentRegistry
 from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import get_data_from_file, log_message
 from kiara.utils.db import get_kiara_db_url
+from kiara.utils.output import create_table_from_model_object
 
 yaml = r_yaml.YAML()
 
@@ -325,3 +327,6 @@ class KiaraGlobalConfig(KiaraBaseConfig):
 
         kc = KiaraContextConfig(**selected_dict)
         return kc
+
+    def create_renderable(self, **config) -> RenderableType:
+        return create_table_from_model_object(self)

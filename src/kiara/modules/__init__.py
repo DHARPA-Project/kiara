@@ -11,16 +11,13 @@ import uuid
 from abc import abstractmethod
 from deepdiff import DeepHash
 from pydantic import BaseModel, Field, ValidationError
-from rich import box
-from rich.console import Console, ConsoleOptions, Group, RenderResult
-from rich.panel import Panel
+from rich.console import RenderableType
 from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
     Generic,
     Iterable,
-    List,
     Mapping,
     Optional,
     Type,
@@ -32,23 +29,8 @@ from kiara.defaults import KIARA_HASH_FUNCTION
 from kiara.exceptions import KiaraModuleConfigException
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.module.jobs import JobLog
-
-# from kiara.data.values import ValueOrm, ValueLineage, ValueSchema
-# from kiara.data.values.value_set import SlottedValueSet, ValueMap
-# from kiara.defaults import SpecialValue
-# from kiara.exceptions import KiaraModuleConfigException
-# from kiara.metadata import MetadataModel
-# from kiara.metadata.module_models import (
-#     KiaraModuleInstanceMetadata,
-#     KiaraModuleTypeInfo,
-# )
-# from kiara.module_config import KIARA_CONFIG, ModuleConfig, KiaraModuleConfig
-# from kiara.operations import Operation
-# from kiara.processing import JobLog
 from kiara.models.values.value_schema import ValueSchema
 from kiara.utils import StringYAML, is_debug
-
-# from kiara.utils.modules import create_schemas, overlay_constants_and_defaults
 from kiara.utils.values import (
     augment_values,
     create_schema_dict,
@@ -57,7 +39,7 @@ from kiara.utils.values import (
 
 if TYPE_CHECKING:
     from kiara.models.values.value import ValueMap
-
+    from kiara.modules.operations import Operation
 
 yaml = StringYAML()
 
@@ -334,6 +316,7 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
 
         super().__init__(alias=self.__class__._module_type_name, config=self._config)  # type: ignore
 
+        self._operation: Optional[Operation] = None
         # self._merged_input_schemas: typing.Mapping[str, ValueSchema] = None  # type: ignore
 
     @property
@@ -443,24 +426,12 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.module_id} module_type={self.module_type_name} input_names={list(self.input_names)} output_names={list(self.output_names)})"
 
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
+    def create_renderable(self, **config) -> RenderableType:
 
-        if not hasattr(self.__class__, "_module_type_name"):
-            raise Exception(
-                "Invalid model class, no '_module_type_name' attribute added. This is a bug"
-            )
+        if self._operation is not None:
+            return self._operation
 
-        r_gro: List[Any] = []
-        raise NotImplementedError()
-        md = self.info
-        table = md.create_renderable()
-        r_gro.append(table)
+        from kiara.models.module.operation import Operation
 
-        yield Panel(
-            Group(*r_gro),
-            box=box.ROUNDED,
-            title_align="left",
-            title=f"Module: [b]{self.module_type_name}[/b]",
-        )
+        self._operation = Operation.create_from_module(self)
+        return self._operation

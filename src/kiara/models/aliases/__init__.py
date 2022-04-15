@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional
 from kiara.defaults import NONE_VALUE_ID, VALUES_CATEGORY_ID
 from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
-from kiara.utils import rich_print
+from kiara.utils.cli import terminal_print
 
 if TYPE_CHECKING:
     from kiara.kiara import DataRegistry
@@ -345,7 +345,7 @@ class AliasValueMap(ValueMap):
     def print_tree(self):
 
         t = self.get_tree("base")
-        rich_print(t)
+        terminal_print(t)
 
     def get_tree(self, base_name: str) -> Tree:
 

@@ -596,7 +596,9 @@ def extract_renderable(item: Any, render_config: Optional[Mapping[str, Any]] = N
 
     inline_models_as_json = render_config.setdefault("inline_models_as_json", True)
 
-    if isinstance(item, (ConsoleRenderable, RichCast, str)):
+    if hasattr(item, "create_renderable"):
+        return item.create_renderable(**render_config)
+    elif isinstance(item, (ConsoleRenderable, RichCast, str)):
         return item
     elif isinstance(item, BaseModel) and not inline_models_as_json:
         return create_table_from_model_object(item)

@@ -11,6 +11,7 @@ import structlog
 from pydantic import Field, PrivateAttr, validator
 from rich import box
 from rich.console import Group, RenderableType
+from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
@@ -361,6 +362,7 @@ class Operation(Manifest):
         """
 
         include_full_doc = config.get("include_full_doc", True)
+        include_src = config.get("include_src", False)
 
         table = Table(box=box.SIMPLE, show_header=False, show_lines=True)
         table.add_column("Property", style="i")
@@ -427,7 +429,7 @@ class Operation(Manifest):
         m_md = Group(desc, module_md)
         table.add_row("Module metadata", m_md)
 
-        if config.get("include_src", True):
+        if include_src:
             table.add_row("Source code", module_type_md.process_src)
 
         return table
@@ -596,15 +598,19 @@ class OperationGroupInfo(InfoModelGroup):
             except KeyError:
                 pass
 
+            desc_str = op_info.documentation.description
             if full_doc:
-                desc = op_info.documentation.full_doc
+                desc = Markdown(op_info.documentation.full_doc)
             else:
-                desc = op_info.documentation.description
+                desc = Markdown(op_info.documentation.description)
 
             if filter:
                 match = True
                 for f in filter:
-                    if f.lower() not in op_id.lower() and f.lower() not in desc.lower():
+                    if (
+                        f.lower() not in op_id.lower()
+                        and f.lower() not in desc_str.lower()
+                    ):
                         match = False
                         break
                 if match:
@@ -663,9 +669,9 @@ class OperationGroupInfo(InfoModelGroup):
                     continue
 
                 if full_doc:
-                    desc = op_info.documentation.full_doc
+                    desc = Markdown(op_info.documentation.full_doc)
                 else:
-                    desc = op_info.documentation.description
+                    desc = Markdown(op_info.documentation.description)
 
                 row = []
                 if first_line_value:

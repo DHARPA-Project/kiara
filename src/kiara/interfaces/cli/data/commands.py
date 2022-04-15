@@ -6,15 +6,14 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 """Data-related sub-commands for the cli."""
-
 import rich_click as click
 import shutil
-from rich import box
-from rich.panel import Panel
+import sys
 
 from kiara import Kiara
 from kiara.models.values.info import RENDER_FIELDS, ValuesInfo
-from kiara.utils import StringYAML, is_debug, is_develop, log_message, rich_print
+from kiara.utils import StringYAML, is_debug, is_develop, log_message
+from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
 
 yaml = StringYAML()
 
@@ -33,24 +32,6 @@ def data(ctx):
     is_flag=True,
     default=False,
 )
-# @click.option(
-#     "--only-latest/--all-versions",
-#     help="List all alias only_latest, not just the latest (default: '--only-latest').",
-#     is_flag=True,
-#     default=True,
-# )
-# @click.option(
-#     "--tags/--no-tags",
-#     help="List alias tags (default: '--tags').",
-#     is_flag=True,
-#     default=True,
-# )
-# @click.option(
-#     "--all-info",
-#     "-i",
-#     help="Display all information and values. Overrides the other options.",
-#     is_flag=True,
-# )
 @click.option(
     "--show-value_id",
     "-i",
@@ -75,9 +56,11 @@ def data(ctx):
 @click.option(
     "--show-load-config", "-l", help="Display this values' load config.", is_flag=True
 )
+@output_format_option()
 @click.pass_context
 def list_values(
     ctx,
+    format,
     all_ids,
     show_value_id,
     show_pedigree,
@@ -114,13 +97,22 @@ def list_values(
         render_fields.append("load_config")
 
     values_info_model = ValuesInfo.create_from_values(kiara_obj, *value_ids)
-    renderable = values_info_model.create_renderable(
-        render_type="terminal",
-        list_by_alias=list_by_alias,
-        show_internal=show_internal,
-        render_fields=render_fields,
+
+    render_config = {
+        "render_type": "terminal",
+        "list_by_alias": list_by_alias,
+        "show_internal": show_internal,
+        "render_fields": render_fields,
+    }
+
+    if not all_ids:
+        title = "Available aliases"
+    else:
+        title = "Available values"
+
+    terminal_print_model(
+        values_info_model, format=format, in_panel=title, **render_config
     )
-    rich_print(renderable)
 
 
 @data.command(name="explain")
@@ -138,31 +130,34 @@ def list_values(
 @click.option(
     "--load-config", "-l", help="Display this values' load config.", is_flag=True
 )
+@output_format_option()
 @click.pass_context
 def explain_value(
-    ctx, value_id: str, metadata: bool, pedigree: bool, load_config: bool
+    ctx, value_id: str, metadata: bool, pedigree: bool, load_config: bool, format: str
 ):
     """Print the metadata of a stored value."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
+    render_config = {
+        "show_metadata": metadata,
+        "show_pedigree": pedigree,
+        "show_load_config": load_config,
+    }
+
+    all_values = []
     for v_id in value_id:
         value = kiara_obj.data_registry.get_value(v_id)
-        print()
         if not value:
-            print(f"No saved value found for: {v_id}")
-            continue
-        table = value.create_renderable(
-            show_metadata=metadata, show_pedigree=pedigree, show_load_config=load_config
-        )
-        rich_print(
-            Panel(
-                table,
-                box=box.ROUNDED,
-                title_align="left",
-                title=f"Value: [b]{v_id}[/b]",
-            )
-        )
+            terminal_print(f"No saved value found for: {v_id}")
+            sys.exit(1)
+        all_values.append(value)
+
+    if len(all_values) == 1:
+        title = f"Value details for: [b i]{v_id}[/b i]"
+    else:
+        title = "Value details"
+    terminal_print_model(*all_values, format=format, in_panel=title, **render_config)
 
 
 # @data.command(name="explain-lineage")
@@ -224,7 +219,7 @@ def load_value(ctx, value_id: str):
 
         renderable = [str(value.data)]
 
-    rich_print(renderable)
+    terminal_print(renderable)
 
 
 if is_develop():

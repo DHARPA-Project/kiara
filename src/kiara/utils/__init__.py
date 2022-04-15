@@ -14,7 +14,6 @@ import orjson
 import os
 import re
 import structlog
-import typing
 import yaml
 from io import StringIO
 from pathlib import Path
@@ -23,10 +22,9 @@ from rich.console import ConsoleRenderable, RichCast
 from ruamel.yaml import YAML
 from slugify import slugify
 from types import ModuleType
-from typing import Any, Union
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Type, TypeVar, Union
 
 from kiara.defaults import INVALID_VALUE_NAMES
-from kiara.interfaces import get_console
 
 logger = structlog.get_logger()
 
@@ -61,13 +59,13 @@ def log_message(msg: str, **data):
     #     logger.debug(msg, **data)
 
 
-def is_rich_renderable(item: typing.Any):
+def is_rich_renderable(item: Any):
     return isinstance(item, (ConsoleRenderable, RichCast, str))
 
 
 def get_data_from_file(
-    path: Union[str, Path], content_type: typing.Optional[str] = None
-) -> typing.Any:
+    path: Union[str, Path], content_type: Optional[str] = None
+) -> Any:
 
     if isinstance(path, str):
         path = Path(os.path.expanduser(path))
@@ -94,7 +92,7 @@ def get_data_from_file(
     return data
 
 
-_AUTO_MODULE_ID: typing.Dict[str, int] = {}
+_AUTO_MODULE_ID: Dict[str, int] = {}
 
 
 def get_auto_workflow_alias(module_type: str, use_incremental_ids: bool = False) -> str:
@@ -120,13 +118,13 @@ def get_auto_workflow_alias(module_type: str, use_incremental_ids: bool = False)
 
 
 def dict_from_cli_args(
-    *args: str, list_keys: typing.Optional[typing.Iterable[str]] = None
-) -> typing.Dict[str, typing.Any]:
+    *args: str, list_keys: Optional[Iterable[str]] = None
+) -> Dict[str, Any]:
 
     if not args:
         return {}
 
-    config: typing.Dict[str, typing.Any] = {}
+    config: Dict[str, Any] = {}
     for arg in args:
         if "=" in arg:
             key, value = arg.split("=", maxsplit=1)
@@ -138,11 +136,11 @@ def dict_from_cli_args(
         elif os.path.isfile(os.path.realpath(os.path.expanduser(arg))):
             path = os.path.realpath(os.path.expanduser(arg))
             part_config = get_data_from_file(path)
-            assert isinstance(part_config, typing.Mapping)
+            assert isinstance(part_config, Mapping)
         else:
             try:
                 part_config = json.loads(arg)
-                assert isinstance(part_config, typing.Mapping)
+                assert isinstance(part_config, Mapping)
             except Exception:
                 raise Exception(f"Could not parse argument into data: {arg}")
 
@@ -180,12 +178,12 @@ class StringYAML(YAML):
             return stream.getvalue()
 
 
-SUBCLASS_TYPE = typing.TypeVar("SUBCLASS_TYPE")
+SUBCLASS_TYPE = TypeVar("SUBCLASS_TYPE")
 
 
 def _get_all_subclasses(
-    cls: typing.Type[SUBCLASS_TYPE], ignore_abstract: bool = False
-) -> typing.Iterable[typing.Type[SUBCLASS_TYPE]]:
+    cls: Type[SUBCLASS_TYPE], ignore_abstract: bool = False
+) -> Iterable[Type[SUBCLASS_TYPE]]:
 
     result = []
     for subclass in cls.__subclasses__():
@@ -209,7 +207,7 @@ def _import_modules_recursively(module: ModuleType):
             _import_modules_recursively(submodule_mod)
 
 
-def check_valid_field_names(*field_names) -> typing.List[str]:
+def check_valid_field_names(*field_names) -> List[str]:
     """Check whether the provided field names are all valid.
 
     Returns:
@@ -224,14 +222,12 @@ def create_valid_identifier(text: str):
     return slugify(text, separator="_")
 
 
-def merge_dicts(
-    *dicts: typing.Mapping[str, typing.Any]
-) -> typing.Dict[str, typing.Any]:
+def merge_dicts(*dicts: Mapping[str, Any]) -> Dict[str, Any]:
 
     if not dicts:
         return {}
 
-    current: typing.Dict[str, typing.Any] = {}
+    current: Dict[str, Any] = {}
     for d in dicts:
         dpath.util.merge(current, copy.deepcopy(d))
 
@@ -240,7 +236,7 @@ def merge_dicts(
 
 def find_free_id(
     stem: str,
-    current_ids: typing.Iterable[str],
+    current_ids: Iterable[str],
     sep="_",
 ) -> str:
     """Find a free var (or other name) based on a stem string, based on a list of provided existing names.
@@ -287,18 +283,6 @@ def orjson_dumps(v, *, default=None, **args):
             dbg(v)
 
         raise e
-
-
-def rich_print(msg: Any = None, **config: Any) -> None:
-
-    if msg is None:
-        msg = ""
-    console = get_console()
-
-    if hasattr(msg, "create_renderable"):
-        msg = msg.create_renderable(**config)  # type: ignore
-
-    console.print(msg)
 
 
 def first_line(text: str):

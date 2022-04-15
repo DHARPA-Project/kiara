@@ -17,13 +17,11 @@ from kiara.kiara import Kiara
 from kiara.kiara.config import KiaraGlobalConfig
 from kiara.utils import is_debug, is_develop
 
-from .config.commands import config
+from .context.commands import context
 from .data.commands import data
 from .dev.commands import dev_group
 
-# from .environment.commands import env_group
 # from .explain import explain
-# from .info.commands import info
 from .metadata.commands import metadata
 from .module.commands import module
 from .operation.commands import operation
@@ -91,7 +89,7 @@ cli.add_command(type_group)
 # cli.add_command(env_group)
 # cli.add_command(server)
 # cli.add_command(client)
-cli.add_command(config)
+cli.add_command(context)
 if is_develop():
     cli.add_command(dev_group)
 

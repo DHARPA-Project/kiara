@@ -7,15 +7,13 @@
 
 """Type-related subcommands for the cli."""
 
-import orjson.orjson
 import rich_click as click
-from rich.panel import Panel
 from typing import Dict, Iterable, Type
 
 from kiara import Kiara
 from kiara.data_types import DataType
 from kiara.models.values.data_type import DataTypeClassesInfo, DataTypeClassInfo
-from kiara.utils import rich_print
+from kiara.utils.cli import output_format_option, terminal_print_model
 from kiara.utils.graphs import print_ascii_graph
 
 
@@ -39,13 +37,7 @@ def type_group(ctx):
     help="Also list types that are only (or mostly) used internally.",
 )
 @click.argument("filter", nargs=-1, required=False)
-@click.option(
-    "--format",
-    "-f",
-    help="The output format. Defaults to 'terminal'.",
-    type=click.Choice(["terminal", "json", "html"]),
-    default="terminal",
-)
+@output_format_option()
 @click.pass_context
 def list_types(
     ctx, full_doc, include_internal_types: bool, filter: Iterable[str], format: str
@@ -81,18 +73,9 @@ def list_types(
         group_alias=title, **type_classes
     )
 
-    if format == "terminal":
-        print()
-        p = Panel(
-            data_types_info.create_renderable(full_doc=full_doc),
-            title_align="left",
-            title="Available data types",
-        )
-        rich_print(p)
-    elif format == "json":
-        print(data_types_info.json(option=orjson.orjson.OPT_INDENT_2))
-    elif format == "html":
-        print(data_types_info.create_html())
+    terminal_print_model(
+        data_types_info, format=format, in_panel="Available data types"
+    )
 
 
 @type_group.command(name="hierarchy")
@@ -111,8 +94,9 @@ def hierarchy(ctx, details):
 
 @type_group.command(name="explain")
 @click.argument("data_type", nargs=1, required=True)
+@output_format_option()
 @click.pass_context
-def explain_data_type(ctx, data_type: str):
+def explain_data_type(ctx, data_type: str, format: str):
     """Print details of a module type.
 
     This is different to the 'explain-instance' command, because module data_types need to be
@@ -125,5 +109,6 @@ def explain_data_type(ctx, data_type: str):
     dt_cls = kiara_obj.type_registry.get_data_type_cls(data_type)
     info = DataTypeClassInfo.create_from_type_class(dt_cls)
 
-    rich_print()
-    rich_print(info.create_panel(title=f"Value type: [b i]{data_type}[/b i]"))
+    terminal_print_model(
+        info, format=format, in_panel=f"Data type: [b i]{data_type}[/b i]"
+    )

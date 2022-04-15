@@ -70,6 +70,8 @@ class SerializeOperationType(OperationType[SerializeDetails]):
       - an input field called 'value'
     """
 
+    _operation_type_name = "serialize"
+
     def retrieve_included_operation_configs(
         self,
     ) -> Iterable[Union[Mapping, OperationConfig]]:

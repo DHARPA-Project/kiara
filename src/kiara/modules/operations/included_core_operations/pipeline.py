@@ -71,6 +71,9 @@ class PipelineOperationDetails(OperationDetails):
 
 
 class PipelineOperationType(OperationType[PipelineOperationDetails]):
+
+    _operation_type_name = "pipeline"
+
     def __init__(self, kiara: "Kiara", op_type_name: str):
 
         super().__init__(kiara=kiara, op_type_name=op_type_name)

@@ -30,21 +30,6 @@ markdown_extensions:
 - pymdownx.highlight
 - pymdownx.superfences
 
-nav:
-#- Home: index.md
-#- Install: install.md
-#- Architecture:
-#    - Overview: architecture/index.md
-#    - Data:
-#      - Overview: architecture/data/index.md
-#      - Formats: architecture/data/data_formats.ipynb
-#    - Workflows:
-#      - Workflows: architecture/workflows/index.md
-#      - Modularity: architecture/workflows/modularity/modularity.ipynb
-#    - Metadata: architecture/metadata.md
-#    - Decisions: architecture/decisions.md
-#    - Assumptions: architecture/assumptions.md
-
 extra:
   version:
     provider: mike
@@ -52,12 +37,21 @@ extra:
 plugins:
 - search
 - mknotebooks
+- autorefs
 - mkdocstrings:
     default_handler: python
     handlers:
       python:
+        rendering:
+          show_if_no_docstring: true
+          heading_level: 2
+          show_category_heading: true
         selection:
           docstring_style: google
+          filters:
+            - "!^_"  # exlude all members starting with _
+            - "^_config_cls"
+            - "^process"
     watch:
       - "src"
     enable_inventory: true

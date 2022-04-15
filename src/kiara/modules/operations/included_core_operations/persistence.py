@@ -83,6 +83,8 @@ class PersistValueOperationType(OperationType[PersistValueDetails]):
       - an input field called 'value'
     """
 
+    _operation_type_name = "persist_value"
+
     def retrieve_included_operation_configs(
         self,
     ) -> Iterable[Union[Mapping, OperationConfig]]:

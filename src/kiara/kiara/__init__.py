@@ -383,7 +383,7 @@ class KiaraContextInfo(KiaraModel):
 
     def get_info(self, item_type: str, item_id: str) -> KiaraInfoModel:
 
-        if "data_type" in item_type:
+        if "data_type" == item_type or "data_types" == item_type:
             group_info: InfoModelGroup = self.data_types
         elif "module" in item_type:
             group_info = self.module_types
@@ -404,7 +404,6 @@ class KiaraContextInfo(KiaraModel):
             raise Exception(
                 f"Can't determine item type '{item_type}', use one of: {', '.join(item_types)}"
             )
-
         return group_info[item_id]
 
     def get_all_info(self, skip_empty_types: bool = True) -> Dict[str, InfoModelGroup]:

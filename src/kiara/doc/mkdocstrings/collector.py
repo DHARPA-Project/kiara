@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 import builtins
-from mkdocstrings.handlers.base import BaseCollector, CollectorItem
+from mkdocstrings.handlers.base import BaseCollector, CollectionError, CollectorItem
 from mkdocstrings.loggers import get_logger
 
 from kiara.kiara import Kiara, KiaraContextInfo
@@ -56,6 +56,12 @@ class KiaraCollector(BaseCollector):
         item_id = ".".join(tokens[2:])
 
         ctx: KiaraContextInfo = builtins.plugin_package_context_info  # type: ignore
-        item: KiaraInfoModel = ctx.get_info(item_type=item_type, item_id=item_id)
+        try:
+            item: KiaraInfoModel = ctx.get_info(item_type=item_type, item_id=item_id)
+        except Exception:
+            import traceback
+
+            traceback.print_exc()
+            raise CollectionError(f"Invalid id: {identifier}")
 
         return {"obj": item, "identifier": identifier}

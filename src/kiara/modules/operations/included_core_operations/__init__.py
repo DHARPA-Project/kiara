@@ -66,6 +66,9 @@ class CustomModuleOperationDetails(OperationDetails):
 
 
 class CustomModuleOperationType(OperationType[CustomModuleOperationDetails]):
+
+    _operation_type_name = "custom_module"
+
     def retrieve_included_operation_configs(
         self,
     ) -> Iterable[Union[Mapping, OperationConfig]]:

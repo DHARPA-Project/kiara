@@ -398,11 +398,12 @@ def find_all_operation_types() -> Dict[str, Type["OperationType"]]:
 
     from kiara.modules.operations import OperationType
 
-    return load_all_subclasses_for_entry_point(
+    result = load_all_subclasses_for_entry_point(
         entry_point_name="kiara.operation_types",
         base_class=OperationType,  # type: ignore
         type_id_key="_operation_type_name",
     )
+    return result
 
 
 def find_kiara_modules_under(

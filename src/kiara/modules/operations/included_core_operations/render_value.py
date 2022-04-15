@@ -69,6 +69,8 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
     - exactly two input fields, one of them named after the type it supports, and the other called 'render_config', of type 'dict'
     """
 
+    _operation_type_name = "render_value"
+
     def _calculate_op_id(self, source_type: str, target_type: str):
 
         if source_type == "any":

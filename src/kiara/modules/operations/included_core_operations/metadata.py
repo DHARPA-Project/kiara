@@ -59,6 +59,8 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
     - exactly one output field, whose field name is called 'value_metadata', and where the value has the type 'internal_model'
     """
 
+    _operation_type_name = "extract_metadata"
+
     def retrieve_included_operation_configs(
         self,
     ) -> Iterable[Union[Mapping, OperationConfig]]:

@@ -1,31 +1,17 @@
 # -*- coding: utf-8 -*-
-import mkdocs_gen_files
 
-from kiara import Kiara
-from kiara.doc.gen_info_pages import generate_pages_and_summary_for_types
+import builtins
 
-kiara = Kiara.instance()
+from kiara.doc.gen_info_pages import generate_detail_pages
+from kiara.kiara import Kiara, KiaraContextInfo
 
-types = ["type", "module", "operation_type"]
+pkg_name = "kiara"
 
-type_details = generate_pages_and_summary_for_types(
-    kiara=kiara, types=types, limit_to_package="kiara"
+kiara: Kiara = Kiara.instance()
+context_info = KiaraContextInfo.create_from_kiara_instance(
+    kiara=kiara, package_filter=pkg_name
 )
 
-summary_content = []
-for name, details in type_details.items():
-    line = f"* [{details['name']}]({details['path']})"
-    summary_content.append(line)
+generate_detail_pages(context_info=context_info)
 
-
-nav = [
-    "* [Home](index.md)",
-    "* [Install](install.md)",
-    "* [Architecture](architecture/)",
-]
-nav.extend(summary_content)
-
-nav.append("* [API docs](reference/)")
-
-with mkdocs_gen_files.open("SUMMARY.md", "w") as f:
-    f.write("\n".join(nav))
+builtins.plugin_package_context_info = context_info

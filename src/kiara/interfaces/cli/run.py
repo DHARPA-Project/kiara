@@ -11,6 +11,8 @@ import os.path
 import rich_click as click
 import sys
 from pathlib import Path
+from pydantic import ValidationError
+from rich.console import Group
 from typing import Dict, Iterable, List
 
 from kiara import Kiara
@@ -22,7 +24,7 @@ from kiara.exceptions import (
 from kiara.interfaces.python_api import KiaraOperation
 from kiara.utils import dict_from_cli_args, is_debug
 from kiara.utils.cli import terminal_print
-from kiara.utils.output import OutputDetails
+from kiara.utils.output import OutputDetails, create_table_from_base_model_cls
 
 
 @click.command()
@@ -129,8 +131,31 @@ def run(
         for n in nset.avaliable_targets:
             terminal_print(f"  - [i]{n}[/i]")
         sys.exit(1)
+    except ValidationError as ve:
+
+        renderables = [""]
+        renderables.append("Invalid module configuration:")
+        renderables.append("")
+        for error in ve.errors():
+            loc = ", ".join(error["loc"])  # type: ignore
+            renderables.append(f"  [b]{loc}[/b]: [red]{error['msg']}[/red]")
+
+        try:
+            m = kiara_obj.module_registry.get_module_class(kiara_op.operation_name)
+            schema = create_table_from_base_model_cls(m._config_cls)
+            renderables.append("")
+            renderables.append(f"Module configuration schema for '[b i]{m._module_type_name}[/b i]':")  # type: ignore
+            renderables.append("")
+            renderables.append(schema)
+        except Exception:
+            pass
+
+        msg = Group(*renderables)
+        terminal_print()
+        terminal_print(msg, in_panel="[b red]Module configuration error[/b red]")
+        sys.exit(1)
     except Exception as e:
-        print()
+        terminal_print()
         if is_debug():
             import traceback
 

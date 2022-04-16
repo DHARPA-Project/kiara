@@ -34,7 +34,7 @@ from kiara.utils import (
 
 if TYPE_CHECKING:
     from kiara.modules import KiaraModule
-    from kiara.modules.operations import OperationType
+    from kiara.operations import OperationType
     from kiara.models.values.value_metadata import ValueMetadata
     from kiara.data_types import DataType
     from kiara.registries import KiaraArchive
@@ -396,7 +396,7 @@ def find_all_data_types() -> Dict[str, Type["DataType"]]:
 
 def find_all_operation_types() -> Dict[str, Type["OperationType"]]:
 
-    from kiara.modules.operations import OperationType
+    from kiara.operations import OperationType
 
     result = load_all_subclasses_for_entry_point(
         entry_point_name="kiara.operation_types",
@@ -444,7 +444,7 @@ def find_operations_under(
     module: Union[str, ModuleType]
 ) -> List[Type["OperationType"]]:
 
-    from kiara.modules.operations import OperationType
+    from kiara.operations import OperationType
 
     return find_subclasses_under(
         base_class=OperationType,  # type: ignore

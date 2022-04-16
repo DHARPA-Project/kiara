@@ -10,7 +10,7 @@ import uuid
 from typing import TYPE_CHECKING, Any, Optional
 
 from kiara.models.module.operation import Operation
-from kiara.modules.operations.included_core_operations.render_value import (
+from kiara.operations.included_core_operations.render_value import (
     RenderValueOperationType,
 )
 

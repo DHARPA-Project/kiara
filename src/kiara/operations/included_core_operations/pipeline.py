@@ -22,7 +22,7 @@ from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule
 from kiara.modules.included_core_modules.pipeline import PipelineModule
-from kiara.modules.operations import OperationType
+from kiara.operations import OperationType
 from kiara.utils import is_debug
 from kiara.utils.class_loading import find_all_kiara_pipeline_paths
 from kiara.utils.pipelines import check_doc_sidecar, get_pipeline_details_from_path

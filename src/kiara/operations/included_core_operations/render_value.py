@@ -18,7 +18,7 @@ from kiara.models.module.operation import (
 from kiara.models.values.value import Value, ValueMap
 from kiara.modules import KiaraModule, ValueSetSchema
 from kiara.modules.included_core_modules.render_value import RenderValueModule
-from kiara.modules.operations import OperationType
+from kiara.operations import OperationType
 from kiara.utils import log_message
 
 if TYPE_CHECKING:

@@ -33,7 +33,7 @@ from kiara.models.module.persistence import (
     LoadConfig,
 )
 from kiara.models.values.value import Value
-from kiara.modules.operations.included_core_operations.persistence import (
+from kiara.operations.included_core_operations.persistence import (
     PersistValueOperationType,
 )
 from kiara.registries import FileSystemArchiveConfig

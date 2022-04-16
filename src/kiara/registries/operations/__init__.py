@@ -27,7 +27,7 @@ from kiara.models.module.operation import (
     OperationTypeInfo,
     PipelineOperationConfig,
 )
-from kiara.modules.operations import OperationType
+from kiara.operations import OperationType
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara

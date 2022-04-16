@@ -59,7 +59,7 @@ from kiara.utils.output import create_table_from_field_schemas
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
-    from kiara.modules.operations import OperationType
+    from kiara.operations import OperationType
 
 
 logger = structlog.getLogger()
@@ -250,7 +250,7 @@ class Operation(Manifest):
     @classmethod
     def create_from_module(cls, module: KiaraModule) -> "Operation":
 
-        from kiara.modules.operations.included_core_operations import (
+        from kiara.operations.included_core_operations import (
             CustomModuleOperationDetails,
         )
 
@@ -453,7 +453,7 @@ class OperationTypeInfo(KiaraTypeInfoModel):
 
     @classmethod
     def base_class(self) -> Type["OperationType"]:
-        from kiara.modules.operations import OperationType
+        from kiara.operations import OperationType
 
         return OperationType
 

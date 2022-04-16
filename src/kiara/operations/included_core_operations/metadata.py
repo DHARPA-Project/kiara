@@ -16,7 +16,7 @@ from kiara.models.module.operation import (
 from kiara.models.python_class import PythonClass
 from kiara.models.values.value import ValueMap
 from kiara.modules import KiaraModule, ValueSetSchema
-from kiara.modules.operations import OperationType
+from kiara.operations import OperationType
 from kiara.utils.class_loading import find_all_value_metadata_models
 
 

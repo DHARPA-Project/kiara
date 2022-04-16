@@ -22,7 +22,7 @@ from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import ValueSetSchema
 from kiara.modules.included_core_modules.serialization import SerializeValueModule
-from kiara.modules.operations import OperationType
+from kiara.operations import OperationType
 from kiara.utils import log_message
 
 

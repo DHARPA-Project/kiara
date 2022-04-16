@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, Iterable
 
 from kiara.models.events import KiaraEvent
 from kiara.models.values.value import Value
-from kiara.modules.operations.included_core_operations.metadata import (
+from kiara.operations.included_core_operations.metadata import (
     ExtractMetadataDetails,
     ExtractMetadataOperationType,
 )

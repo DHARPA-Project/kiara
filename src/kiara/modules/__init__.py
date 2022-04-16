@@ -39,7 +39,7 @@ from kiara.utils.values import (
 
 if TYPE_CHECKING:
     from kiara.models.values.value import ValueMap
-    from kiara.modules.operations import Operation
+    from kiara.operations import Operation
 
 yaml = StringYAML()
 

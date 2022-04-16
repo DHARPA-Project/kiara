@@ -21,7 +21,7 @@ from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule, ValueSetSchema
 from kiara.modules.included_core_modules.persistence import PersistValueModule
-from kiara.modules.operations import OperationType
+from kiara.operations import OperationType
 from kiara.utils import log_message
 
 if TYPE_CHECKING:

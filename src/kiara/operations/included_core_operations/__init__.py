@@ -19,7 +19,7 @@ from kiara.models.module.operation import (
 from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule
-from kiara.modules.operations import OperationType
+from kiara.operations import OperationType
 
 if TYPE_CHECKING:
     pass

@@ -15,7 +15,7 @@ from kiara.operations.included_core_operations.render_value import (
 )
 
 if TYPE_CHECKING:
-    from kiara.kiara import Kiara
+    from kiara.context import Kiara
 
 logger = structlog.getLogger()
 

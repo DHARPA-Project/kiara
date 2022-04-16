@@ -21,7 +21,7 @@ __all__ = [
 import os
 import typing
 
-from .kiara import Kiara, explain  # noqa
+from .context import Kiara, explain  # noqa
 from .modules import KiaraModule  # noqa
 
 try:

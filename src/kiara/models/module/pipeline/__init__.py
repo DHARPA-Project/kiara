@@ -24,7 +24,7 @@ from kiara.utils.output import create_table_from_model_object
 from kiara.utils.pipelines import ensure_step_value_addresses
 
 if TYPE_CHECKING:
-    from kiara.kiara import Kiara
+    from kiara.context import Kiara
     from kiara.models.module.pipeline.structure import PipelineStructure
     from kiara.modules import KiaraModule
 

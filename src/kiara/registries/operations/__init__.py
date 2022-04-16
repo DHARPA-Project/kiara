@@ -30,7 +30,7 @@ from kiara.models.module.operation import (
 from kiara.operations import OperationType
 
 if TYPE_CHECKING:
-    from kiara.kiara import Kiara
+    from kiara.context import Kiara
 
 
 class OperationRegistry(object):

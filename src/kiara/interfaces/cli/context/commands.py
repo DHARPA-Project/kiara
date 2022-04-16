@@ -8,7 +8,7 @@ import sys
 from rich.panel import Panel
 
 from kiara import Kiara
-from kiara.kiara.config import KiaraGlobalConfig
+from kiara.context.config import KiaraGlobalConfig
 from kiara.registries.environment import EnvironmentRegistry
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
 from kiara.utils.output import create_table_from_base_model_cls

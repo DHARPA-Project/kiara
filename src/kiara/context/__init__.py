@@ -23,6 +23,7 @@ from typing import (
     Union,
 )
 
+from kiara.context.config import KiaraContextConfig, KiaraGlobalConfig
 from kiara.data_types import DataType
 from kiara.defaults import (
     CONTEXT_INFO_CATEGORY_ID,
@@ -30,7 +31,6 @@ from kiara.defaults import (
     KIARA_DB_MIGRATIONS_FOLDER,
 )
 from kiara.interfaces import get_console
-from kiara.kiara.config import KiaraContextConfig, KiaraGlobalConfig
 from kiara.models import KiaraModel
 from kiara.models.info import InfoModelGroup, KiaraInfoModel
 from kiara.models.module import KiaraModuleTypeInfo, ModuleTypeClassesInfo

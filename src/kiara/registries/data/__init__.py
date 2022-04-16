@@ -60,7 +60,7 @@ from kiara.utils import is_debug, log_message
 from kiara.utils.data import render_data
 
 if TYPE_CHECKING:
-    from kiara.kiara import Kiara
+    from kiara.context import Kiara
 
 logger = structlog.getLogger()
 

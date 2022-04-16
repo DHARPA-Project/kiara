@@ -10,9 +10,9 @@ import dpath
 import uuid
 from typing import Any, Dict, Iterable, List, Mapping, Optional
 
+from kiara.context import DataRegistry
 from kiara.defaults import NONE_VALUE_ID
 from kiara.exceptions import InvalidValuesException
-from kiara.kiara import DataRegistry
 from kiara.models.aliases import AliasValueMap
 from kiara.models.events.pipeline import (
     ChangedValue,

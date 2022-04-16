@@ -13,8 +13,8 @@ import rich_click as click
 import structlog
 import typing
 
-from kiara.kiara import Kiara
-from kiara.kiara.config import KiaraGlobalConfig
+from kiara.context import Kiara
+from kiara.context.config import KiaraGlobalConfig
 from kiara.utils import is_debug, is_develop, log_message
 
 from .context.commands import context

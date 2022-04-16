@@ -15,7 +15,7 @@ from kiara.registries.destinies import DestinyArchive, DestinyStore
 from kiara.registries.destinies.filesystem_store import FileSystemDestinyStore
 
 if TYPE_CHECKING:
-    from kiara.kiara import Kiara
+    from kiara.context import Kiara
 
 
 class DestinyRegistry(object):

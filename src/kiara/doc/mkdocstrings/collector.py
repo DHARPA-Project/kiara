@@ -9,7 +9,7 @@ import builtins
 from mkdocstrings.handlers.base import BaseCollector, CollectionError, CollectorItem
 from mkdocstrings.loggers import get_logger
 
-from kiara.kiara import Kiara, KiaraContextInfo
+from kiara.context import Kiara, KiaraContextInfo
 from kiara.models.info import KiaraInfoModel
 
 logger = get_logger(__name__)

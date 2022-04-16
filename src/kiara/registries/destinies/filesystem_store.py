@@ -17,7 +17,7 @@ from kiara.registries.destinies import DestinyArchive, DestinyStore
 from kiara.registries.ids import ID_REGISTRY
 
 if TYPE_CHECKING:
-    from kiara.kiara import Kiara
+    from kiara.context import Kiara
 
 logger = structlog.getLogger()
 

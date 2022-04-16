@@ -33,7 +33,7 @@ from kiara.utils import is_debug
 try:
     from typing import Literal
 
-    from kiara.kiara import Kiara
+    from kiara.context import Kiara
     from kiara.modules import KiaraModule
 
 except Exception:

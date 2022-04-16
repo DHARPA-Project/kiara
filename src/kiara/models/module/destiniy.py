@@ -17,7 +17,7 @@ from kiara.registries.ids import ID_REGISTRY
 from kiara.utils.hashing import compute_hash
 
 if TYPE_CHECKING:
-    from kiara.kiara import Kiara
+    from kiara.context import Kiara
     from kiara.modules import KiaraModule
 
 

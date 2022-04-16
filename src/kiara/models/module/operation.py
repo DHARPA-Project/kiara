@@ -58,7 +58,7 @@ from kiara.modules import InputOutputObject, KiaraModule, ValueSetSchema
 from kiara.utils.output import create_table_from_field_schemas
 
 if TYPE_CHECKING:
-    from kiara.kiara import Kiara
+    from kiara.context import Kiara
     from kiara.operations import OperationType
 
 

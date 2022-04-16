@@ -17,7 +17,7 @@ from kiara.models.values.value_schema import ValueSchema
 from kiara.utils.cli import terminal_print
 
 if TYPE_CHECKING:
-    from kiara.kiara import DataRegistry
+    from kiara.context import DataRegistry
 
 
 logger = structlog.getLogger()

@@ -7,8 +7,8 @@
 import mkdocs_gen_files
 import os
 
+from kiara.context import KiaraContextInfo
 from kiara.defaults import KIARA_RESOURCES_FOLDER
-from kiara.kiara import KiaraContextInfo
 from kiara.models.info import InfoModelGroup
 
 _jinja_env = None

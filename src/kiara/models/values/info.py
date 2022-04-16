@@ -18,7 +18,7 @@ from kiara.registries.aliases import AliasRegistry
 from kiara.utils import is_debug, log_message
 
 if TYPE_CHECKING:
-    from kiara.kiara import Kiara
+    from kiara.context import Kiara
 
 
 def render_value_data(value: Value):

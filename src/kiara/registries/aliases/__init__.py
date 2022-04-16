@@ -22,7 +22,7 @@ from kiara.models.events.alias_registry import AliasArchiveAddedEvent
 from kiara.registries import BaseArchive
 
 if TYPE_CHECKING:
-    from kiara.kiara import Kiara
+    from kiara.context import Kiara
 
 logger = structlog.getLogger()
 

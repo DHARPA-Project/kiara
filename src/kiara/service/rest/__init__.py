@@ -9,7 +9,7 @@ from hypercorn.asyncio import serve
 from typing import Optional
 
 from kiara import Kiara
-from kiara.kiara import KiaraContextInfo
+from kiara.context import KiaraContextInfo
 from kiara.models.module.operation import OperationGroupInfo
 
 

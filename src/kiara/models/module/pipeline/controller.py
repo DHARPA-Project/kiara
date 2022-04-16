@@ -9,7 +9,7 @@ import structlog
 import uuid
 from typing import Mapping, Optional
 
-from kiara.kiara import JobRegistry
+from kiara.context import JobRegistry
 from kiara.models.events.pipeline import PipelineDetails, PipelineEvent
 from kiara.models.module.pipeline.pipeline import Pipeline, PipelineListener
 from kiara.utils import is_debug

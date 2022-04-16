@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from pydoc import locate
 from typing import Any, Type, Union
 
-from kiara.kiara import Kiara, KiaraContextInfo
+from kiara.context import Kiara, KiaraContextInfo
 from kiara.utils import StringYAML
 
 yaml = StringYAML()

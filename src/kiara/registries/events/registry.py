@@ -15,7 +15,7 @@ from kiara.registries.events import AsyncEventListener, EventListener, EventProd
 from kiara.registries.ids import ID_REGISTRY
 
 if TYPE_CHECKING:
-    from kiara.kiara import Kiara
+    from kiara.context import Kiara
 
 
 class AllEvents(KiaraEvent):

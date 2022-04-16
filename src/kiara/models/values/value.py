@@ -48,8 +48,8 @@ log = logging.getLogger("kiara")
 yaml = StringYAML()
 
 if TYPE_CHECKING:
+    from kiara.context import Kiara
     from kiara.data_types import DataType
-    from kiara.kiara import Kiara
     from kiara.registries.data import DataRegistry
 
 

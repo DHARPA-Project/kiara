@@ -25,7 +25,7 @@ from kiara.models import KiaraModel
 from kiara.models.module.manifest import InputsManifest
 
 if TYPE_CHECKING:
-    from kiara.kiara import DataRegistry
+    from kiara.context import DataRegistry
     from kiara.modules import KiaraModule
 
 

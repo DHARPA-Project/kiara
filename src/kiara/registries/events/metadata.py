@@ -15,7 +15,7 @@ from kiara.operations.included_core_operations.metadata import (
 )
 
 if TYPE_CHECKING:
-    from kiara.kiara import Kiara
+    from kiara.context import Kiara
 
 
 class CreateMetadataDestinies(object):

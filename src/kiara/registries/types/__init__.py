@@ -26,7 +26,7 @@ from kiara.utils.class_loading import find_all_data_types
 if TYPE_CHECKING:
     import networkx as nx
 
-    from kiara.kiara import Kiara
+    from kiara.context import Kiara
 
 
 TYPE_PROFILE_MAP = {

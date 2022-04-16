@@ -9,8 +9,8 @@ from alembic import command  # type: ignore
 from alembic.config import Config  # type: ignore
 from typing import Optional
 
+from kiara.context import Kiara
 from kiara.defaults import KIARA_DB_MIGRATIONS_CONFIG, KIARA_DB_MIGRATIONS_FOLDER
-from kiara.kiara import Kiara
 from kiara.utils.cli import terminal_print
 from kiara.utils.metadata import find_metadata_models
 

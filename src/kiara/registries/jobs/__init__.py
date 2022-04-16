@@ -25,7 +25,7 @@ from kiara.processing.synchronous import SynchronousProcessor
 from kiara.registries import BaseArchive
 
 if TYPE_CHECKING:
-    from kiara.kiara import Kiara
+    from kiara.context import Kiara
 
 
 logger = structlog.getLogger()

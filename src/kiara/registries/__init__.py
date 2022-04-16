@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, ClassVar, Generic, Iterable, Optional, Type, T
 from kiara.utils import orjson_dumps
 
 if TYPE_CHECKING:
-    from kiara.kiara import Kiara
+    from kiara.context import Kiara
 
 
 class ArchiveConfig(BaseModel):

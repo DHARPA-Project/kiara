@@ -136,6 +136,21 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://dharpa.org/kiara/latest/reference/kiara/context/__init__/</loc>
+         <lastmod>2022-04-16</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://dharpa.org/kiara/latest/reference/kiara/context/config/</loc>
+         <lastmod>2022-04-16</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://dharpa.org/kiara/latest/reference/kiara/context/orm/</loc>
+         <lastmod>2022-04-16</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/data_types/__init__/</loc>
          <lastmod>2022-04-16</lastmod>
          <changefreq>daily</changefreq>
@@ -307,21 +322,6 @@
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/python_api/__init__/</loc>
-         <lastmod>2022-04-16</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://dharpa.org/kiara/latest/reference/kiara/kiara/__init__/</loc>
-         <lastmod>2022-04-16</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://dharpa.org/kiara/latest/reference/kiara/kiara/config/</loc>
-         <lastmod>2022-04-16</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://dharpa.org/kiara/latest/reference/kiara/kiara/orm/</loc>
          <lastmod>2022-04-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -531,37 +531,37 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://dharpa.org/kiara/latest/reference/kiara/modules/operations/__init__/</loc>
+         <loc>https://dharpa.org/kiara/latest/reference/kiara/operations/__init__/</loc>
          <lastmod>2022-04-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://dharpa.org/kiara/latest/reference/kiara/modules/operations/included_core_operations/__init__/</loc>
+         <loc>https://dharpa.org/kiara/latest/reference/kiara/operations/included_core_operations/__init__/</loc>
          <lastmod>2022-04-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://dharpa.org/kiara/latest/reference/kiara/modules/operations/included_core_operations/metadata/</loc>
+         <loc>https://dharpa.org/kiara/latest/reference/kiara/operations/included_core_operations/metadata/</loc>
          <lastmod>2022-04-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://dharpa.org/kiara/latest/reference/kiara/modules/operations/included_core_operations/persistence/</loc>
+         <loc>https://dharpa.org/kiara/latest/reference/kiara/operations/included_core_operations/persistence/</loc>
          <lastmod>2022-04-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://dharpa.org/kiara/latest/reference/kiara/modules/operations/included_core_operations/pipeline/</loc>
+         <loc>https://dharpa.org/kiara/latest/reference/kiara/operations/included_core_operations/pipeline/</loc>
          <lastmod>2022-04-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://dharpa.org/kiara/latest/reference/kiara/modules/operations/included_core_operations/render_value/</loc>
+         <loc>https://dharpa.org/kiara/latest/reference/kiara/operations/included_core_operations/render_value/</loc>
          <lastmod>2022-04-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://dharpa.org/kiara/latest/reference/kiara/modules/operations/included_core_operations/serialize/</loc>
+         <loc>https://dharpa.org/kiara/latest/reference/kiara/operations/included_core_operations/serialize/</loc>
          <lastmod>2022-04-16</lastmod>
          <changefreq>daily</changefreq>
     </url>

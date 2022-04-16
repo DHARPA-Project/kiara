@@ -497,7 +497,7 @@ class OperationInfo(KiaraInfoModel):
         )
 
         op_info = OperationInfo.construct(
-            type_name="operation",
+            type_name=operation.operation_id,
             operation_types=op_types,
             operation=operation,
             documentation=operation.doc,

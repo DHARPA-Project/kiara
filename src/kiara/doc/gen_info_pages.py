@@ -34,7 +34,6 @@ def render_item_listing(item_type: str, items: InfoModelGroup, sub_path: str = "
     list_template = get_jina_env().get_template("info_listing.j2")
 
     render_args = {"items": items.get_type_infos(), "item_type": item_type}
-
     rendered = list_template.render(**render_args)
     path = f"{sub_path}/{item_type}.md"
     with mkdocs_gen_files.open(path, "w") as f:
@@ -65,7 +64,6 @@ def generate_detail_pages(
         if add_summary_page:
             summary.insert(0, "* [Summary](index.md)")
 
-        print("\n".join(summary))
         with mkdocs_gen_files.open(f"{sub_path}/SUMMARY.md", "w") as f:
             f.write("\n".join(summary))
 

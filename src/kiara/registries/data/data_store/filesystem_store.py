@@ -56,6 +56,7 @@ class EntityType(Enum):
     VALUE_DATA = "value_data"
     ENVIRONMENT = "environments"
     MANIFEST = "manifests"
+    DESTINY_LINK = "destiny_links"
 
 
 DEFAULT_HASHFS_DEPTH = 4
@@ -240,6 +241,29 @@ class FileSystemDataArchive(DataArchive, JobArchive):
 
         return result
 
+    def _find_destinies_for_value(
+        self, value_id: uuid.UUID, alias_filter: Optional[str] = None
+    ) -> Optional[Mapping[str, uuid.UUID]]:
+
+        destiny_dir = self.get_path(entity_type=EntityType.DESTINY_LINK)
+        destiny_value_dir = destiny_dir / str(value_id)
+
+        if not destiny_value_dir.exists():
+            return None
+
+        destinies = {}
+        for alias_link in destiny_value_dir.glob("*.json"):
+            assert alias_link.is_symlink()
+
+            alias = alias_link.name[0:-5]
+            resolved = alias_link.resolve()
+
+            value_id_str = resolved.parent.name
+            value_id = uuid.UUID(value_id_str)
+            destinies[alias] = value_id
+
+        return destinies
+
     def _retrieve_all_value_ids(
         self, data_type_name: Optional[str] = None
     ) -> Iterable[uuid.UUID]:
@@ -340,6 +364,25 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
         value_data = value.dict()
         value_file.write_text(orjson_dumps(value_data, option=orjson.OPT_NON_STR_KEYS))
 
+    def _persist_destiny_backlinks(self, value: Value):
+
+        destiny_dir = self.get_path(entity_type=EntityType.DESTINY_LINK)
+
+        for value_id, backlink in value.destiny_backlinks.items():
+
+            destiny_value_dir = destiny_dir / str(value_id)
+            destiny_value_dir.mkdir(parents=True, exist_ok=True)
+            destiny_file = destiny_value_dir / f"{backlink}.json"
+            assert not destiny_file.exists()
+
+            value_dir = self.get_path(entity_type=EntityType.VALUE) / str(
+                value.value_id
+            )
+            value_file = value_dir / VALUE_DETAILS_FILE_NAME
+            assert value_file.exists()
+
+            destiny_file.symlink_to(value_file)
+
     def _persist_bytes(self, bytes_structure: BytesStructure) -> BytesAliasStructure:
 
         bytes_alias_map: Dict[str, List[str]] = {}
@@ -399,19 +442,6 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
         bytes_structure: BytesStructure = result.get_value_data("bytes_structure")
 
         return load_config, bytes_structure
-
-    # def _persist_manifest(self, manifest: Manifest):
-    #
-    #     base_path = self.get_path(entity_type=EntityType.MANIFEST)
-    #     manifest_folder = base_path / str(manifest.manifest_hash)
-    #
-    #     if manifest_folder.exists():
-    #         return
-    #     else:
-    #         manifest_folder.mkdir(parents=True, exist_ok=False)
-    #
-    #     manifest_info_file = manifest_folder / "manifest.json"
-    #     manifest_info_file.write_text(orjson_dumps(manifest.manifest_data))
 
     def _persist_value_pedigree(self, value: Value):
 

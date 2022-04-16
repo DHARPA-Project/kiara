@@ -103,8 +103,8 @@ class DataArchive(BaseArchive):
             pedigree=pedigree,
             pedigree_output_name=value_data["pedigree_output_name"],
             data_type_class=value_data["data_type_class"],
-            property_refs=value_data["property_refs"],
-            destiny_details=value_data["destiny_details"],
+            property_links=value_data["property_links"],
+            destiny_backlinks=value_data["destiny_backlinks"],
         )
 
         self._value_cache[value_id] = value
@@ -196,6 +196,20 @@ class DataArchive(BaseArchive):
     ) -> Optional[Set[uuid.UUID]]:
         pass
 
+    def find_destinies_for_value(
+        self, value_id: uuid.UUID, alias_filter: Optional[str] = None
+    ) -> Optional[Mapping[str, uuid.UUID]]:
+
+        return self._find_destinies_for_value(
+            value_id=value_id, alias_filter=alias_filter
+        )
+
+    @abc.abstractmethod
+    def _find_destinies_for_value(
+        self, value_id: uuid.UUID, alias_filter: Optional[str] = None
+    ) -> Optional[Mapping[str, uuid.UUID]]:
+        pass
+
     @abc.abstractmethod
     def retrieve_bytes(self, chunk_id: str, as_bytes: bool = True) -> Union[bytes, str]:
         pass
@@ -262,6 +276,10 @@ class BaseDataStore(DataStore):
     ):
         pass
 
+    @abc.abstractmethod
+    def _persist_destiny_backlinks(self, value: Value):
+        pass
+
     def store_value(self, value: Value) -> LoadConfig:
 
         logger.debug(
@@ -326,6 +344,8 @@ class BaseDataStore(DataStore):
             load_config.bytes_map = alias_structure
         self._persist_load_config(value=value, load_config=load_config)
         self._persist_value_details(value=value)
+        if value.destiny_backlinks:
+            self._persist_destiny_backlinks(value=value)
 
         return load_config
 

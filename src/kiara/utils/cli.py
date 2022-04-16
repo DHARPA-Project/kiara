@@ -154,7 +154,7 @@ def terminal_print_model(
         else:
             rg = []
             for model in models[0:-1]:
-                renderable = extract_renderable(model)
+                renderable = extract_renderable(model, render_config)
                 rg.append(renderable)
                 rg.append(Rule())
             rg.append(models[-1])

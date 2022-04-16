@@ -339,7 +339,9 @@ class KiaraContextInfo(KiaraModel):
         operation_types = kiara.operation_registry.get_context_metadata(
             only_for_package=package_filter
         )
-        operations = filter_operations(kiara=kiara, pkg_name=package_filter)
+        operations = filter_operations(
+            kiara=kiara, pkg_name=package_filter, **kiara.operation_registry.operations
+        )
 
         metadata_types = find_metadata_models(only_for_package=package_filter)
 

@@ -11,7 +11,8 @@ import uuid
 from pydantic import PrivateAttr
 from pydantic.fields import Field
 from rich import box
-from rich.console import RenderableType
+from rich.console import Group, RenderableType
+from rich.rule import Rule
 from rich.table import Table
 from typing import (
     TYPE_CHECKING,
@@ -184,11 +185,11 @@ class Value(ValueDetails):
     _is_stored: bool = PrivateAttr(default=False)
     _cached_properties: Optional["ValueMap"] = PrivateAttr(default=None)
 
-    property_refs: Mapping[str, uuid.UUID] = Field(
+    property_links: Mapping[str, uuid.UUID] = Field(
         description="Links to values that are properties of this value.",
         default_factory=dict,
     )
-    destiny_details: Mapping[uuid.UUID, str] = Field(
+    destiny_backlinks: Mapping[uuid.UUID, str] = Field(
         description="Backlinks to values that this value acts as destiny/or property for.",
         default_factory=dict,
     )
@@ -227,12 +228,12 @@ class Value(ValueDetails):
                 f"Can't add property to value '{self.value_id}': value already locked."
             )
 
-        if property_path in self.property_refs.keys():
+        if property_path in self.property_links.keys():
             raise Exception(
                 f"Can't add property to value '{self.value_id}': property '{property_path}' already set."
             )
 
-        self.property_refs[property_path] = value_id  # type: ignore
+        self.property_links[property_path] = value_id  # type: ignore
 
         if add_origin_to_property_value:
             value.add_destiny_details(
@@ -248,7 +249,7 @@ class Value(ValueDetails):
                 f"Can't set destiny_refs to value '{self.value_id}': value already locked."
             )
 
-        self.destiny_details[value_id] = destiny_alias  # type: ignore
+        self.destiny_backlinks[value_id] = destiny_alias  # type: ignore
 
     @property
     def data(self) -> Any:
@@ -316,27 +317,55 @@ class Value(ValueDetails):
         if self._cached_properties is not None:
             return self._cached_properties
 
-        self._cached_properties = self._data_registry.load_values(self.property_refs)
+        self._cached_properties = self._data_registry.load_values(self.property_links)
         return self._cached_properties
 
     @property
-    def property_data(self) -> Mapping[str, Any]:
+    def property_names(self) -> Iterable[str]:
+        return self.property_links.keys()
 
-        return self._data_registry.load_data(self.property_refs)
+    def get_property_value(self, property_key) -> "Value":
+
+        if property_key not in self.property_links.keys():
+            raise Exception(
+                f"Value '{self.value_id}' has no property with key '{property_key}."
+            )
+
+        return self._data_registry.get_value(self.property_links[property_key])
+
+    def get_property_data(self, property_key: str) -> Any:
+
+        return self.get_property_value(property_key=property_key).data
 
     def create_renderable(self, **render_config: Any) -> RenderableType:
 
         from kiara.utils.output import extract_renderable
 
-        # show_metadata = render_config.get("show_metadata", True)
         show_pedigree = render_config.get("show_pedigree", False)
         show_load_config = render_config.get("show_load_config", False)
-        # show_data = render_config.get("show_data", False)
+        show_properties = render_config.get("show_properties", False)
+        show_destinies = render_config.get("show_destinies", False)
+        show_destiny_backlinks = render_config.get("show_destiny_backlinks", False)
+        show_data = render_config.get("show_data_preview", False)
 
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("Key", style="i")
         table.add_column("Value")
-        for k in self.__fields__.keys():
+
+        table.add_row("value_id", str(self.value_id))
+        if hasattr(self, "aliases"):
+            if not self.aliases:  # type: ignore
+                aliases_str = "-- n/a --"
+            else:
+                aliases_str = ", ".join(self.aliases)  # type: ignore
+            table.add_row("aliases", aliases_str)
+        table.add_row("kiara_id", str(self.kiara_id))
+        table.add_row("", "")
+        table.add_row("", Rule())
+        for k in sorted(self.__fields__.keys()):
+
+            if k in ["load_config", "value_id", "aliases", "kiara_id"]:
+                continue
 
             attr = getattr(self, k)
             if k in ["pedigree_output_name", "pedigree"]:
@@ -347,6 +376,17 @@ class Value(ValueDetails):
             else:
                 v = extract_renderable(attr)
             table.add_row(k, v)
+
+        if (
+            show_pedigree
+            or show_load_config
+            or show_properties
+            or show_destinies
+            or show_destiny_backlinks
+        ):
+            table.add_row("", "")
+            table.add_row("", Rule())
+            table.add_row("", "")
 
         if show_pedigree:
             pedigree = getattr(self, "pedigree")
@@ -370,6 +410,46 @@ class Value(ValueDetails):
                 table.add_row("load_config", "-- no load config (yet?) --")
             else:
                 table.add_row("load_config", load_config.create_renderable())
+
+        if show_properties:
+            if not self.property_links:
+                table.add_row("properties", "{}")
+            else:
+                properties = self._data_registry.load_values(self.property_links)
+                pr = properties.create_renderable(show_header=False)
+                table.add_row("properties", pr)
+
+        if hasattr(self, "destiny_links") and show_destinies:
+            if not self.destiny_links:  # type: ignore
+                table.add_row("destinies", "{}")
+            else:
+                destinies = self._data_registry.load_values(self.destiny_links)  # type: ignore
+                dr = destinies.create_renderable(show_header=False)
+                table.add_row("destinies", dr)
+
+        if show_destiny_backlinks:
+            if not self.destiny_backlinks:
+                table.add_row("destiny backlinks", "{}")
+            else:
+                destiny_items: List[Any] = []
+                for v_id, alias in self.destiny_backlinks.items():
+                    destiny_items.append(Rule())
+                    destiny_items.append(
+                        f"[b]Value: [i]{v_id}[/i] (destiny alias: {alias})[/b]"
+                    )
+                    rendered = self._data_registry.render_data(
+                        value_id=v_id, **render_config
+                    )
+                    destiny_items.append(rendered)
+                table.add_row("destiny backlinks", Group(*destiny_items))
+
+        if show_data:
+            rendered = self._data_registry.render_data(
+                self.value_id, target_type="terminal_renderable"
+            )
+            table.add_row("", "")
+            table.add_row("", Rule())
+            table.add_row("data preview", rendered)
 
         return table
 
@@ -519,10 +599,13 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
     def create_renderable(self, **config: Any) -> RenderableType:
 
         render_value_data = config.get("render_value_data", True)
+        field_title = config.get("field_title", "field")
+        value_title = config.get("value_title", "value")
+        show_header = config.get("show_header", True)
 
-        table = Table(show_lines=False, show_header=True, box=box.SIMPLE)
-        table.add_column("field", style="b")
-        table.add_column("value", style="i")
+        table = Table(show_lines=False, show_header=show_header, box=box.SIMPLE)
+        table.add_column(field_title, style="b")
+        table.add_column(value_title, style="i")
 
         for field_name in self.field_names:
             value = self.get_value_obj(field_name=field_name)

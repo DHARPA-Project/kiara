@@ -85,6 +85,10 @@ class DestinyRegistry(object):
         manifest: Manifest,
         result_field_name: Optional[str] = None,
     ) -> Destiny:
+        """Add a destiny for one (or in some rare cases several) values.
+
+        A destiny alias must be unique for every one of the involved input values.
+        """
 
         if not values:
             raise Exception("Can't add destiny, no values provided.")

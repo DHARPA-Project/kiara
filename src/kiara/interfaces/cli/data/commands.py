@@ -11,7 +11,7 @@ import shutil
 import sys
 
 from kiara import Kiara
-from kiara.models.values.info import RENDER_FIELDS, ValuesInfo
+from kiara.models.values.info import RENDER_FIELDS, ValueInfo, ValuesInfo
 from kiara.utils import StringYAML, is_debug, is_develop, log_message
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
 
@@ -31,6 +31,12 @@ def data(ctx):
     help="Also list values without aliases.",
     is_flag=True,
     default=False,
+)
+@click.option(
+    "--internal",
+    "-I",
+    help="Also list values that are used mostly internally (e.g. metadata for other values, ...).",
+    is_flag=True,
 )
 @click.option(
     "--show-value_id",
@@ -62,6 +68,7 @@ def list_values(
     ctx,
     format,
     all_ids,
+    internal,
     show_value_id,
     show_pedigree,
     show_data,
@@ -80,7 +87,6 @@ def list_values(
         value_ids = kiara_obj.data_registry.retrieve_all_available_value_ids()
 
     list_by_alias = True
-    show_internal = False
 
     render_fields = [k for k, v in RENDER_FIELDS.items() if v["show_default"]]
     if list_by_alias:
@@ -101,7 +107,7 @@ def list_values(
     render_config = {
         "render_type": "terminal",
         "list_by_alias": list_by_alias,
-        "show_internal": show_internal,
+        "show_internal": internal,
         "render_fields": render_fields,
     }
 
@@ -125,15 +131,43 @@ def list_values(
     default=True,
 )
 @click.option(
-    "--pedigree", "-p", help="Display pedigree information for the value.", is_flag=True
+    "--pedigree", "-P", help="Display pedigree information for the value.", is_flag=True
 )
 @click.option(
     "--load-config", "-l", help="Display this values' load config.", is_flag=True
 )
+@click.option("--preview-data", "-d", help="Display a data preview.", is_flag=True)
+@click.option(
+    "--properties",
+    "-p",
+    help="Resolve and display properties of this value.",
+    is_flag=True,
+)
+@click.option(
+    "--destinies",
+    "-D",
+    help="Resolve and display values destinies for this value.",
+    is_flag=True,
+)
+@click.option(
+    "--destiny-backlinks",
+    "-B",
+    help="Resolve and display values this value is a destiny for.",
+    is_flag=True,
+)
 @output_format_option()
 @click.pass_context
 def explain_value(
-    ctx, value_id: str, metadata: bool, pedigree: bool, load_config: bool, format: str
+    ctx,
+    value_id: str,
+    metadata: bool,
+    pedigree: bool,
+    load_config: bool,
+    format: str,
+    preview_data: bool,
+    properties: bool,
+    destinies: bool,
+    destiny_backlinks: bool,
 ):
     """Print the metadata of a stored value."""
 
@@ -143,6 +177,10 @@ def explain_value(
         "show_metadata": metadata,
         "show_pedigree": pedigree,
         "show_load_config": load_config,
+        "show_data_preview": preview_data,
+        "show_properties": properties,
+        "show_destinies": destinies,
+        "show_destiny_backlinks": destiny_backlinks,
     }
 
     all_values = []
@@ -157,7 +195,12 @@ def explain_value(
         title = f"Value details for: [b i]{v_id}[/b i]"
     else:
         title = "Value details"
-    terminal_print_model(*all_values, format=format, in_panel=title, **render_config)
+
+    v_infos = (
+        ValueInfo.create_from_value(kiara=kiara_obj, value=v) for v in all_values
+    )
+
+    terminal_print_model(*v_infos, format=format, in_panel=title, **render_config)
 
 
 # @data.command(name="explain-lineage")

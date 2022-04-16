@@ -1,4 +1,3 @@
 * [Home](index.md)
-* [Included](included.md)
-* [Package contents](info/)
+* [Included components](included_components/)
 * [API reference](reference/)

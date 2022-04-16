@@ -29,21 +29,25 @@ def get_jina_env():
     return _jinja_env
 
 
-def render_item_listing(item_type: str, items: InfoModelGroup):
+def render_item_listing(item_type: str, items: InfoModelGroup, sub_path: str = "info"):
 
     list_template = get_jina_env().get_template("info_listing.j2")
 
     render_args = {"items": items.get_type_infos(), "item_type": item_type}
 
     rendered = list_template.render(**render_args)
-    path = f"info/{item_type}.md"
+    path = f"{sub_path}/{item_type}.md"
     with mkdocs_gen_files.open(path, "w") as f:
         f.write(rendered)
 
     return path
 
 
-def generate_detail_pages(context_info: KiaraContextInfo):
+def generate_detail_pages(
+    context_info: KiaraContextInfo,
+    sub_path: str = "info",
+    add_summary_page: bool = False,
+):
 
     pages = {}
     summary = []
@@ -51,12 +55,18 @@ def generate_detail_pages(context_info: KiaraContextInfo):
     all_info = context_info.get_all_info(skip_empty_types=True)
 
     for item_type, items_info in all_info.items():
-        summary.append(f"- [{item_type}]({item_type}.md)")
-        path = render_item_listing(item_type=item_type, items=items_info)
+        summary.append(f"* [{item_type}]({item_type}.md)")
+        path = render_item_listing(
+            item_type=item_type, items=items_info, sub_path=sub_path
+        )
         pages[item_type] = path
 
     if summary:
-        with mkdocs_gen_files.open("info/SUMMARY.md", "w") as f:
+        if add_summary_page:
+            summary.insert(0, "* [Summary](index.md)")
+
+        print("\n".join(summary))
+        with mkdocs_gen_files.open(f"{sub_path}/SUMMARY.md", "w") as f:
             f.write("\n".join(summary))
 
     return pages

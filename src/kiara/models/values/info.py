@@ -8,15 +8,14 @@
 import uuid
 from pydantic import BaseModel, Field, PrivateAttr
 from rich import box
-from rich.console import RenderableType
 from rich.table import Table
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
 
 from kiara.models.module.persistence import LoadConfig
 from kiara.models.values.value import ORPHAN, Value
 from kiara.models.values.value_schema import ValueSchema
+from kiara.registries.aliases import AliasRegistry
 from kiara.utils import is_debug, log_message
-from kiara.utils.output import create_table_from_model_object
 
 if TYPE_CHECKING:
     from kiara.kiara import Kiara
@@ -63,9 +62,21 @@ RENDER_FIELDS: Dict[str, Dict[str, Any]] = {
 
 class ValueInfo(Value):
     @classmethod
-    def create_from_value(cls, kiara: "Kiara", value: Value):
+    def create_from_value(
+        cls,
+        kiara: "Kiara",
+        value: Value,
+        resolve_aliases: bool = True,
+        resolve_destinies: bool = True,
+    ):
 
-        aliases = kiara.alias_registry.find_aliases_for_value_id(value.value_id)
+        if resolve_aliases:
+            aliases = sorted(
+                kiara.alias_registry.find_aliases_for_value_id(value.value_id)
+            )
+        else:
+            aliases = None
+
         if value.is_stored:
             load_config = kiara.data_registry.retrieve_load_config(
                 value_id=value.value_id
@@ -77,6 +88,21 @@ class ValueInfo(Value):
             value.data_type_name
         )
 
+        if resolve_destinies:
+            destiny_links = kiara.data_registry.find_destinies_for_value(
+                value_id=value.value_id
+            )
+            filtered_destinies = {}
+            for alias, value_id in destiny_links.items():
+                if (
+                    alias in value.property_links.keys()
+                    and value_id == value.property_links[alias]
+                ):
+                    continue
+                filtered_destinies[alias] = value_id
+        else:
+            filtered_destinies = None
+
         model = ValueInfo.construct(
             value_id=value.value_id,
             kiara_id=value.kiara_id,
@@ -87,13 +113,14 @@ class ValueInfo(Value):
             pedigree=value.pedigree,
             pedigree_output_name=value.pedigree_output_name,
             data_type_class=value.data_type_class,
-            property_refs=value.property_refs,
-            destiny_details=value.destiny_details,
-            aliases=list(aliases),
+            property_links=value.property_links,
+            destiny_links=filtered_destinies,
+            destiny_backlinks=value.destiny_backlinks,
+            aliases=aliases,
             load_config=load_config,
-            properties={},
         )
         model._set_registry(value._data_registry)
+        model._alias_registry = kiara.alias_registry  # type: ignore
         model._is_stored = value._is_stored
         model._data_type = value._data_type
         model._value_data = value._value_data
@@ -103,15 +130,18 @@ class ValueInfo(Value):
 
     value_id: uuid.UUID = Field(description="The value id.")
     value_schema: ValueSchema = Field(description="The data schema of this value.")
-    aliases: List[str] = Field(
+    aliases: Optional[List[str]] = Field(
         description="The aliases that are registered for this value."
     )
     load_config: Optional[LoadConfig] = Field(
         description="The load config associated with this value."
     )
-    properties: Mapping[str, Any] = Field(description="The values' properties.")
+    destiny_links: Optional[Mapping[str, uuid.UUID]] = Field(
+        description="References to all the values that act as destiny for this value in this context."
+    )
 
     _is_internal: bool = PrivateAttr(default=False)
+    _alias_registry: AliasRegistry = PrivateAttr(default=None)
 
     def _retrieve_id(self) -> str:
         return str(self.value_id)
@@ -122,8 +152,25 @@ class ValueInfo(Value):
     def _retrieve_data_to_hash(self) -> Any:
         return self.value_id
 
-    def create_renderable(self, **config: Any) -> RenderableType:
-        return create_table_from_model_object(self)
+    def resolve_aliases(self):
+        aliases = self._alias_registry.find_aliases_for_value_id(self.value_id)
+        if aliases:
+            aliases = sorted(aliases)
+        self.aliases = aliases
+
+    def resolve_destinies(self):
+        destiny_links = self._data_registry.find_destinies_for_value(
+            value_id=self.value_id
+        )
+        filtered_destinies = {}
+        for alias, value_id in destiny_links.items():
+            if (
+                alias in self.property_links.keys()
+                and value_id == self.property_links[alias]
+            ):
+                continue
+            filtered_destinies[alias] = value_id
+        self.destiny_links = filtered_destinies
 
 
 class ValuesInfo(BaseModel):

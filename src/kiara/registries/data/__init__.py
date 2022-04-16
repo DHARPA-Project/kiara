@@ -76,13 +76,9 @@ class DataRegistry(object):
         self._data_archives: Dict[str, DataArchive] = {}
 
         self._default_data_store: Optional[str] = None
-
-        # self.register_data_archive(FilesystemDataStore(kiara=self._kiara), alias=DEFAULT_STORE_MARKER)
-
         self._registered_values: Dict[uuid.UUID, Value] = {}
 
-        self._value_store_map: Dict[uuid.UUID, str] = {}
-        # self._job_store_map: Dict[int, uuid.UUID] = {}
+        self._value_archive_lookup_map: Dict[uuid.UUID, str] = {}
 
         self._values_by_hash: Dict[int, Set[uuid.UUID]] = {}
 
@@ -138,15 +134,6 @@ class DataRegistry(object):
     @property
     def NONE_VALUE(self) -> Value:
         return self._none_value
-
-    # def supported_event_types(self) -> Iterable[Type[KiaraEvent]]:
-    #
-    #     return [
-    #         DataStoreAddedEvent,
-    #         ValuePreStoreEvent,
-    #         ValueStoredEvent,
-    #         ValueCreatedEvent,
-    #     ]
 
     def retrieve_all_available_value_ids(self) -> Set[uuid.UUID]:
 
@@ -212,18 +199,10 @@ class DataRegistry(object):
 
         return self._data_archives[store_id]
 
-    # def add_hook(self, hook: DataEventHook):
-    #
-    #     event_types = hook.get_subscribed_event_types()
-    #     if isinstance(event_types, str):
-    #         event_types = [event_types]
-    #     for event_type in event_types:
-    #         self._event_hooks.setdefault(event_type, []).append(hook)
-
     def find_store_id_for_value(self, value_id: uuid.UUID) -> Optional[str]:
 
-        if value_id in self._value_store_map.keys():
-            return self._value_store_map[value_id]
+        if value_id in self._value_archive_lookup_map.keys():
+            return self._value_archive_lookup_map[value_id]
 
         matches = []
         for store_id, store in self.data_archives.items():
@@ -238,7 +217,7 @@ class DataRegistry(object):
                 f"Found value with id '{value_id}' in multiple archives, this is not supported (yet): {matches}"
             )
 
-        self._value_store_map[value_id] = matches[0]
+        self._value_archive_lookup_map[value_id] = matches[0]
         return matches[0]
 
     def get_value(self, value_id: Union[uuid.UUID, Value, str]) -> Value:
@@ -300,7 +279,7 @@ class DataRegistry(object):
                 f"Found value with id '{value_id}' in multiple archives, this is not supported (yet): {matches}"
             )
 
-        self._value_store_map[_value_id] = matches[0]
+        self._value_archive_lookup_map[_value_id] = matches[0]
         stored_value = self.get_archive(matches[0]).retrieve_value(value_id=_value_id)
         stored_value._set_registry(self)
         stored_value._is_stored = True
@@ -335,7 +314,7 @@ class DataRegistry(object):
             self._event_callback(event)
             load_config = store.store_value(value)
             value._is_stored = True
-            self._value_store_map[value.value_id] = store_id
+            self._value_archive_lookup_map[value.value_id] = store_id
             self._load_configs[value.value_id] = load_config
             property_values = value.property_values
 
@@ -370,13 +349,36 @@ class DataRegistry(object):
                     raise Exception(
                         f"Found multiple stores for value id '{v_id}', this is not supported (yet)."
                     )
-                self._value_store_map[v_id] = store_ids[0]
+                self._value_archive_lookup_map[v_id] = store_ids[0]
                 stored.add(v_id)
 
             if stored:
                 self._values_by_hash[value_hash] = stored
 
         return set((self.get_value(value_id=v_id) for v_id in stored))
+
+    def find_destinies_for_value(
+        self, value_id: uuid.UUID, alias_filter: str = None
+    ) -> Mapping[str, uuid.UUID]:
+
+        if alias_filter:
+            raise NotImplementedError()
+
+        all_destinies: Dict[str, uuid.UUID] = {}
+        for archive_id, archive in self._data_archives.items():
+            destinies: Optional[
+                Mapping[str, uuid.UUID]
+            ] = archive.find_destinies_for_value(
+                value_id=value_id, alias_filter=alias_filter
+            )
+            if not destinies:
+                continue
+            for k, v in destinies.items():
+                if k in all_destinies.keys():
+                    raise Exception(f"Duplicate destiny '{k}' for value '{value_id}'.")
+                all_destinies[k] = v
+
+        return all_destinies
 
     def register_data(
         self,
@@ -740,44 +742,6 @@ class DataRegistry(object):
             )
 
         return ValueMapReadOnly(value_items=values, values_schema=schema)  # type: ignore
-
-    # def retrieve_or_create_value(
-    #     self, value_or_data: Any, value_schema: ValueSchema
-    # ) -> Value:
-    #
-    #     if isinstance(value_or_data, Value):
-    #         if value_or_data.value_id in self._registered_values.keys():
-    #             existing = self._registered_values[value_or_data.value_id]
-    #             if existing == value_or_data:
-    #                 return existing
-    #
-    #         raise NotImplementedError()
-    #
-    #     elif isinstance(value_or_data, uuid.UUID):
-    #         existing = self.get_value(value_or_data)
-    #         # TODO: maybe check whether value is correct type or subtype?
-    #         return existing
-    #     elif isinstance(value_or_data, str):
-    #         valid_uuid = False
-    #         try:
-    #             v_id = uuid.UUID(value_or_data)
-    #             valid_uuid = True
-    #             existing = self.get_value(v_id)
-    #             # TODO: maybe check whether value is correct type or subtype?
-    #             return existing
-    #         except Exception as e:
-    #             pass
-    #
-    #         if valid_uuid:
-    #             raise NotImplementedError()
-    #
-    #     value = self.register_data(
-    #         data=value_or_data,
-    #         schema=value_schema,
-    #         pedigree=ORPHAN,
-    #         pedigree_output_name="__void__",
-    #     )
-    #     return value
 
     def create_renderable(self, **config: Any) -> RenderableType:
         """Create a renderable for this module configuration."""

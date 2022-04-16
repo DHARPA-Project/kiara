@@ -119,10 +119,6 @@ class OperationDetails(KiaraModel):
     def _retrieve_data_to_hash(self) -> Any:
         return self.dict()
 
-    @abc.abstractmethod
-    def get_operation_schema(self) -> OperationSchema:
-        pass
-
     @property
     def inputs_schema(self) -> Mapping[str, ValueSchema]:
         """The input schema for this module."""
@@ -135,26 +131,25 @@ class OperationDetails(KiaraModel):
 
         return self.get_operation_schema().outputs_schema
 
-    @abc.abstractmethod
-    def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
-        pass
+    def get_operation_schema(self) -> OperationSchema:
+        raise NotImplementedError()
 
-    @abc.abstractmethod
+    def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
+        raise NotImplementedError()
+
     def create_operation_outputs(self, outputs: ValueMap) -> Mapping[str, Value]:
-        pass
+        raise NotImplementedError()
 
 
 class BaseOperationDetails(OperationDetails):
 
     _op_schema: OperationSchema = PrivateAttr(default=None)
 
-    @abc.abstractmethod
     def retrieve_inputs_schema(cls) -> ValueSetSchema:
-        pass
+        raise NotImplementedError()
 
-    @abc.abstractmethod
     def retrieve_outputs_schema(cls) -> ValueSetSchema:
-        pass
+        raise NotImplementedError()
 
     def get_operation_schema(self) -> OperationSchema:
 
@@ -419,7 +414,7 @@ class Operation(Manifest):
         table.add_row("Module config", conf)
 
         module_type_md = KiaraModuleTypeInfo.create_from_type_class(
-            self.module_details.get_class()
+            self.module_details.get_class()  # type: ignore
         )
 
         desc = module_type_md.documentation.description

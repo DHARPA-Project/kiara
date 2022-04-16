@@ -24,8 +24,8 @@ if TYPE_CHECKING:
 class Destiny(Manifest):
     """A destiny is basically a link to a potential future transformation result involving one or several values as input.
 
-    It is immutable, once executed, each of the input values can only have one destiny with a specific category/key combination.
-    This is similar to what is usually called a 'future' in programming languages, but more deterministic.
+    It is immutable, once executed, each of the input values can only have one destiny with a specific alias.
+    This is similar to what is usually called a 'future' in programming languages, but more deterministic, sorta.
     """
 
     @classmethod

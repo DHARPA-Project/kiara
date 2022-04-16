@@ -55,8 +55,6 @@ plugins:
     watch:
       - "src"
     enable_inventory: true
-#- frkl-docgen:
-#    main_module: "kiara"
 - macros:
    modules:
      - kiara.doc.mkdocs_macros_cli
@@ -65,7 +63,6 @@ plugins:
     scripts:
       - scripts/documentation/gen_info_pages.py
       - scripts/documentation/gen_api_doc_pages.py
-#      - scripts/documentation/gen_schemas.py
 - literate-nav:
     nav_file: SUMMARY.md
 - section-index

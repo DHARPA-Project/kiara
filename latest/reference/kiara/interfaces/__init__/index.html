@@ -1334,10 +1334,63 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_2" type="checkbox" id="__nav_3_1_6_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../python_api/__init__/">python_api</a>
+          
+            <label for="__nav_3_1_6_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="python_api" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_6_2">
+          <span class="md-nav__icon md-icon"></span>
+          python_api
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../python_api/__init__/" class="md-nav__link">
-        python_api
+      <a href="../python_api/batch/" class="md-nav__link">
+        batch
       </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../python_api/operation/" class="md-nav__link">
+        operation
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -4022,19 +4075,382 @@
 
 
 
-<h5 id="kiara.interfaces.python_api.KiaraOperation" class="doc doc-heading">
+<h5 id="kiara.interfaces.python_api.StoreValueResult" class="doc doc-heading">
         <code>
-KiaraOperation        </code>
+StoreValueResult            (<span title="pydantic.main.BaseModel">BaseModel</span>)
+        </code>
 
 
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
 
-<a href="#kiara.interfaces.python_api.KiaraOperation" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.interfaces.python_api.StoreValueResult" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">StoreValueResult</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+
+    <span class="n">value</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The stored value.&quot;</span><span class="p">)</span>
+    <span class="n">aliases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The aliases that where assigned to the value when stored.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">error</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;An error that occured while trying to store.&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h6 id="kiara.interfaces.python_api.StoreValueResult-attributes">Attributes<a href="#kiara.interfaces.python_api.StoreValueResult-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.python_api.StoreValueResult.aliases" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">aliases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.StoreValueResult.aliases" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The aliases that where assigned to the value when stored.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.python_api.StoreValueResult.error" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">error</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.StoreValueResult.error" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>An error that occured while trying to store.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.python_api.StoreValueResult.value" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">value</span><span class="p">:</span> <span class="n">Value</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.StoreValueResult.value" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The stored value.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h5 id="kiara.interfaces.python_api.StoreValuesResult" class="doc doc-heading">
+        <code>
+StoreValuesResult            (<span title="pydantic.main.BaseModel">BaseModel</span>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.StoreValuesResult" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">StoreValuesResult</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+
+    <span class="n">__root__</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StoreValueResult</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;field&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;data type&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;stored id&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;alias(es)&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value_result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">field_name</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">),</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">),</span>
+            <span class="p">]</span>
+            <span class="k">if</span> <span class="n">value_result</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">aliases</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">table</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.interfaces.python_api.StoreValuesResult.create_renderable" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.python_api.StoreValuesResult.create_renderable" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;field&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;data type&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;stored id&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;alias(es)&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value_result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">field_name</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">),</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">value_result</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">aliases</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">table</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+
+<h4 id="kiara.interfaces.python_api-modules">Modules<a href="#kiara.interfaces.python_api-modules" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h5 id="kiara.interfaces.python_api.batch" class="doc doc-heading">
+        <code>batch</code>
+
+
+
+<a href="#kiara.interfaces.python_api.batch" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+<h6 id="kiara.interfaces.python_api.batch-classes">Classes<a href="#kiara.interfaces.python_api.batch-classes" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h7 id="kiara.interfaces.python_api.batch.BatchConfig" class="doc doc-heading">
+        <code>
+BatchConfig            (<a class="autorefs autorefs-internal" title="kiara.models.module.pipeline.PipelineConfig" href="../../models/module/pipeline/__init__/#kiara.models.module.pipeline.PipelineConfig">PipelineConfig</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.batch.BatchConfig" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>A class to hold the configuration for a single or set of batch module runs.</p>
+<p>This class is similar to the [<code>PipelineConfig</code>][kiara.models.pipeline.PipelineConfig] one, except in the way it
+handles references to inputs/outputs of the its steps.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/batch.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">BatchConfig</span><span class="p">(</span><span class="n">PipelineConfig</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A class to hold the configuration for a single or set of batch module runs.</span>
+
+<span class="sd">    This class is similar to the [`PipelineConfig`][kiara.models.pipeline.PipelineConfig] one, except in the way it</span>
+<span class="sd">    handles references to inputs/outputs of the its steps.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_data_hash</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">BATCH_CONFIG_TYPE_CATEGORY_ID</span>
+
+    <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+
+    <span class="nd">@root_validator</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">_validate_aliases</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;XXX&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_aliases&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output_aliases&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># values[&quot;input_aliases&quot;] = &quot;auto_all_outputs&quot;</span>
+        <span class="c1"># values[&quot;output_aliases&quot;] = &quot;auto_all_outputs&quot;</span>
+
+        <span class="k">return</span> <span class="n">values</span>
+</code></pre></div>
+        </details>
+
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h5 id="kiara.interfaces.python_api.operation" class="doc doc-heading">
+        <code>operation</code>
+
+
+
+<a href="#kiara.interfaces.python_api.operation" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h7 id="kiara.interfaces.python_api.operation.KiaraOperation" class="doc doc-heading">
+        <code>
+KiaraOperation        </code>
+
+
+
+<a href="#kiara.interfaces.python_api.operation.KiaraOperation" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraOperation</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -4357,7 +4773,7 @@ KiaraOperation        </code>
 
 
 
-<h7 id="kiara.interfaces.python_api.KiaraOperation.job_config" class="doc doc-heading">
+<h9 id="kiara.interfaces.python_api.operation.KiaraOperation.job_config" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">job_config</span><span class="p">:</span> <span class="n">JobConfig</span></code>
 
   <span class="doc doc-properties">
@@ -4365,7 +4781,7 @@ KiaraOperation        </code>
       <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
   </span>
 
-<a href="#kiara.interfaces.python_api.KiaraOperation.job_config" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.interfaces.python_api.operation.KiaraOperation.job_config" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
@@ -4379,7 +4795,7 @@ KiaraOperation        </code>
 
 
 
-<h7 id="kiara.interfaces.python_api.KiaraOperation.operation" class="doc doc-heading">
+<h9 id="kiara.interfaces.python_api.operation.KiaraOperation.operation" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span></code>
 
   <span class="doc doc-properties">
@@ -4387,7 +4803,7 @@ KiaraOperation        </code>
       <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
   </span>
 
-<a href="#kiara.interfaces.python_api.KiaraOperation.operation" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.interfaces.python_api.operation.KiaraOperation.operation" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
@@ -4401,7 +4817,7 @@ KiaraOperation        </code>
 
 
 
-<h7 id="kiara.interfaces.python_api.KiaraOperation.operation_config" class="doc doc-heading">
+<h9 id="kiara.interfaces.python_api.operation.KiaraOperation.operation_config" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operation_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
 
   <span class="doc doc-properties">
@@ -4409,7 +4825,7 @@ KiaraOperation        </code>
       <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
   </span>
 
-<a href="#kiara.interfaces.python_api.KiaraOperation.operation_config" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.interfaces.python_api.operation.KiaraOperation.operation_config" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
@@ -4423,7 +4839,7 @@ KiaraOperation        </code>
 
 
 
-<h7 id="kiara.interfaces.python_api.KiaraOperation.operation_inputs" class="doc doc-heading">
+<h9 id="kiara.interfaces.python_api.operation.KiaraOperation.operation_inputs" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operation_inputs</span><span class="p">:</span> <span class="n">ValueMap</span></code>
 
   <span class="doc doc-properties">
@@ -4431,7 +4847,7 @@ KiaraOperation        </code>
       <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
   </span>
 
-<a href="#kiara.interfaces.python_api.KiaraOperation.operation_inputs" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.interfaces.python_api.operation.KiaraOperation.operation_inputs" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
@@ -4445,7 +4861,7 @@ KiaraOperation        </code>
 
 
 
-<h7 id="kiara.interfaces.python_api.KiaraOperation.operation_name" class="doc doc-heading">
+<h9 id="kiara.interfaces.python_api.operation.KiaraOperation.operation_name" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operation_name</span><span class="p">:</span> <span class="nb">str</span></code>
 
   <span class="doc doc-properties">
@@ -4453,7 +4869,7 @@ KiaraOperation        </code>
       <small class="doc doc-property doc-property-writable"><code>writable</code></small>
   </span>
 
-<a href="#kiara.interfaces.python_api.KiaraOperation.operation_name" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.interfaces.python_api.operation.KiaraOperation.operation_name" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
@@ -4470,17 +4886,17 @@ KiaraOperation        </code>
 
 
 
-<h7 id="kiara.interfaces.python_api.KiaraOperation.queue_job" class="doc doc-heading">
+<h9 id="kiara.interfaces.python_api.operation.KiaraOperation.queue_job" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">queue_job</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
-<a href="#kiara.interfaces.python_api.KiaraOperation.queue_job" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.interfaces.python_api.operation.KiaraOperation.queue_job" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
+          <summary>Source code in <code>kiara/interfaces/python_api/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">queue_job</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
 
     <span class="n">job_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_config</span>
@@ -4508,17 +4924,17 @@ KiaraOperation        </code>
 
 
 
-<h7 id="kiara.interfaces.python_api.KiaraOperation.retrieve_result" class="doc doc-heading">
+<h9 id="kiara.interfaces.python_api.operation.KiaraOperation.retrieve_result" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">retrieve_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
-<a href="#kiara.interfaces.python_api.KiaraOperation.retrieve_result" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.interfaces.python_api.operation.KiaraOperation.retrieve_result" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
+          <summary>Source code in <code>kiara/interfaces/python_api/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -4555,17 +4971,17 @@ KiaraOperation        </code>
 
 
 
-<h7 id="kiara.interfaces.python_api.KiaraOperation.save_result" class="doc doc-heading">
+<h9 id="kiara.interfaces.python_api.operation.KiaraOperation.save_result" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">save_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
-<a href="#kiara.interfaces.python_api.KiaraOperation.save_result" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.interfaces.python_api.operation.KiaraOperation.save_result" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
+          <summary>Source code in <code>kiara/interfaces/python_api/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">save_result</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">job_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -4651,17 +5067,17 @@ KiaraOperation        </code>
 
 
 
-<h7 id="kiara.interfaces.python_api.KiaraOperation.set_input" class="doc doc-heading">
+<h9 id="kiara.interfaces.python_api.operation.KiaraOperation.set_input" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">set_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
-<a href="#kiara.interfaces.python_api.KiaraOperation.set_input" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.interfaces.python_api.operation.KiaraOperation.set_input" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
+          <summary>Source code in <code>kiara/interfaces/python_api/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="n">field</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -4697,17 +5113,17 @@ KiaraOperation        </code>
 
 
 
-<h7 id="kiara.interfaces.python_api.KiaraOperation.set_inputs" class="doc doc-heading">
+<h9 id="kiara.interfaces.python_api.operation.KiaraOperation.set_inputs" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">set_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">inputs</span><span class="p">)</span></code>
 
 
-<a href="#kiara.interfaces.python_api.KiaraOperation.set_inputs" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.interfaces.python_api.operation.KiaraOperation.set_inputs" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
+          <summary>Source code in <code>kiara/interfaces/python_api/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">inputs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 
     <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
@@ -4733,17 +5149,17 @@ KiaraOperation        </code>
 
 
 
-<h7 id="kiara.interfaces.python_api.KiaraOperation.set_operation_config_value" class="doc doc-heading">
+<h9 id="kiara.interfaces.python_api.operation.KiaraOperation.set_operation_config_value" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">set_operation_config_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
-<a href="#kiara.interfaces.python_api.KiaraOperation.set_operation_config_value" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.interfaces.python_api.operation.KiaraOperation.set_operation_config_value" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
+          <summary>Source code in <code>kiara/interfaces/python_api/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_operation_config_value</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -4782,17 +5198,17 @@ KiaraOperation        </code>
 
 
 
-<h7 id="kiara.interfaces.python_api.KiaraOperation.validate" class="doc doc-heading">
+<h9 id="kiara.interfaces.python_api.operation.KiaraOperation.validate" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
-<a href="#kiara.interfaces.python_api.KiaraOperation.validate" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.interfaces.python_api.operation.KiaraOperation.validate" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
+          <summary>Source code in <code>kiara/interfaces/python_api/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">job_config</span>  <span class="c1"># noqa</span>
@@ -4814,117 +5230,6 @@ KiaraOperation        </code>
 
 
 
-  <div class="doc doc-object doc-class">
-
-
-
-<h5 id="kiara.interfaces.python_api.StoreValueResult" class="doc doc-heading">
-        <code>
-StoreValueResult            (<span title="pydantic.main.BaseModel">BaseModel</span>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.interfaces.python_api.StoreValueResult" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">StoreValueResult</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-
-    <span class="n">value</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The stored value.&quot;</span><span class="p">)</span>
-    <span class="n">aliases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The aliases that where assigned to the value when stored.&quot;</span>
-    <span class="p">)</span>
-    <span class="n">error</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;An error that occured while trying to store.&quot;</span>
-    <span class="p">)</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-<h6 id="kiara.interfaces.python_api.StoreValueResult-attributes">Attributes<a href="#kiara.interfaces.python_api.StoreValueResult-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.interfaces.python_api.StoreValueResult.aliases" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">aliases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.interfaces.python_api.StoreValueResult.aliases" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>The aliases that where assigned to the value when stored.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.interfaces.python_api.StoreValueResult.error" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">error</span><span class="p">:</span> <span class="nb">str</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-  </span>
-
-<a href="#kiara.interfaces.python_api.StoreValueResult.error" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>An error that occured while trying to store.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.interfaces.python_api.StoreValueResult.value" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">value</span><span class="p">:</span> <span class="n">Value</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.interfaces.python_api.StoreValueResult.value" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>The stored value.</p>
-    </div>
-
-  </div>
-
-
-
-
 
 
 
@@ -4934,124 +5239,6 @@ StoreValueResult            (<span title="pydantic.main.BaseModel">BaseModel</sp
     </div>
 
   </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h5 id="kiara.interfaces.python_api.StoreValuesResult" class="doc doc-heading">
-        <code>
-StoreValuesResult            (<span title="pydantic.main.BaseModel">BaseModel</span>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.interfaces.python_api.StoreValuesResult" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">StoreValuesResult</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-
-    <span class="n">__root__</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StoreValueResult</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
-
-        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;field&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;data type&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;stored id&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;alias(es)&quot;</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value_result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">row</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">field_name</span><span class="p">,</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">),</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">),</span>
-            <span class="p">]</span>
-            <span class="k">if</span> <span class="n">value_result</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
-                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">aliases</span><span class="p">))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">table</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h7 id="kiara.interfaces.python_api.StoreValuesResult.create_renderable" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
-
-
-<a href="#kiara.interfaces.python_api.StoreValuesResult.create_renderable" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
-
-    <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;field&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;data type&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;stored id&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;alias(es)&quot;</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value_result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">row</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">field_name</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">),</span>
-            <span class="nb">str</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">),</span>
-        <span class="p">]</span>
-        <span class="k">if</span> <span class="n">value_result</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
-            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">aliases</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">table</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
 
 
 

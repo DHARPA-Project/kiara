@@ -1332,10 +1332,63 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_2" type="checkbox" id="__nav_3_1_6_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../../interfaces/python_api/__init__/">python_api</a>
+          
+            <label for="__nav_3_1_6_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="python_api" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_6_2">
+          <span class="md-nav__icon md-icon"></span>
+          python_api
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../../../../interfaces/python_api/__init__/" class="md-nav__link">
-        python_api
+      <a href="../../../../interfaces/python_api/batch/" class="md-nav__link">
+        batch
       </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../interfaces/python_api/operation/" class="md-nav__link">
+        operation
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -1739,19 +1792,6 @@
     kiara.models.module.pipeline.structure
   </a>
   
-    <nav class="md-nav" aria-label="kiara.models.module.pipeline.structure">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kiara.models.module.pipeline.structure.ALLOWED_INPUT_ALIAS_MARKERS" class="md-nav__link">
-    ALLOWED_INPUT_ALIAS_MARKERS
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -1765,26 +1805,6 @@
           <li class="md-nav__item">
   <a href="#kiara.models.module.pipeline.structure.PipelineStructure" class="md-nav__link">
     PipelineStructure
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#kiara.models.module.pipeline.structure-functions" class="md-nav__link">
-    Functions
-  </a>
-  
-    <nav class="md-nav" aria-label="Functions">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kiara.models.module.pipeline.structure.calculate_shortest_field_aliases" class="md-nav__link">
-    calculate_shortest_field_aliases()
   </a>
   
 </li>
@@ -3289,19 +3309,6 @@
     kiara.models.module.pipeline.structure
   </a>
   
-    <nav class="md-nav" aria-label="kiara.models.module.pipeline.structure">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kiara.models.module.pipeline.structure.ALLOWED_INPUT_ALIAS_MARKERS" class="md-nav__link">
-    ALLOWED_INPUT_ALIAS_MARKERS
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -3315,26 +3322,6 @@
           <li class="md-nav__item">
   <a href="#kiara.models.module.pipeline.structure.PipelineStructure" class="md-nav__link">
     PipelineStructure
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#kiara.models.module.pipeline.structure-functions" class="md-nav__link">
-    Functions
-  </a>
-  
-    <nav class="md-nav" aria-label="Functions">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kiara.models.module.pipeline.structure.calculate_shortest_field_aliases" class="md-nav__link">
-    calculate_shortest_field_aliases()
   </a>
   
 </li>
@@ -3383,24 +3370,6 @@
 
 
 
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="kiara.models.module.pipeline.structure.ALLOWED_INPUT_ALIAS_MARKERS" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">ALLOWED_INPUT_ALIAS_MARKERS</span></code>
-
-
-<a href="#kiara.models.module.pipeline.structure.ALLOWED_INPUT_ALIAS_MARKERS" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-    </div>
-
-  </div>
 
 
 <h2 id="kiara.models.module.pipeline.structure-classes">Classes<a href="#kiara.models.module.pipeline.structure-classes" class="headerlink" title="Permanent link">&para;</a></h2>
@@ -3452,39 +3421,8 @@ PipelineStructure            (<a class="autorefs autorefs-internal" title="kiara
         <span class="n">_config</span><span class="p">:</span> <span class="n">PipelineConfig</span> <span class="o">=</span> <span class="n">pipeline_config</span>
         <span class="n">_steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PipelineStep</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_config</span><span class="o">.</span><span class="n">steps</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">_config</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">:</span>
-            <span class="n">input_aliases</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_config</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">_config</span><span class="o">.</span><span class="n">input_aliases</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ALLOWED_INPUT_ALIAS_MARKERS</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Can&#39;t create pipeline, invalid value &#39;</span><span class="si">{</span><span class="n">_config</span><span class="o">.</span><span class="n">input_aliases</span><span class="si">}</span><span class="s2">&#39; for &#39;input_aliases&#39;. Either specify a dict, or use one of: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ALLOWED_INPUT_ALIAS_MARKERS</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="p">)</span>
-
-                <span class="n">input_aliases</span> <span class="o">=</span> <span class="n">calculate_shortest_field_aliases</span><span class="p">(</span>
-                    <span class="n">_steps</span><span class="p">,</span> <span class="n">_config</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">,</span> <span class="s2">&quot;inputs&quot;</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">input_aliases</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">_config</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">)</span>
-
-        <span class="n">_input_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">input_aliases</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">_config</span><span class="o">.</span><span class="n">output_aliases</span><span class="p">:</span>
-            <span class="n">output_aliases</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_config</span><span class="o">.</span><span class="n">output_aliases</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">_config</span><span class="o">.</span><span class="n">output_aliases</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ALLOWED_INPUT_ALIAS_MARKERS</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Can&#39;t create pipeline, invalid value &#39;</span><span class="si">{</span><span class="n">_config</span><span class="o">.</span><span class="n">output_aliases</span><span class="si">}</span><span class="s2">&#39; for &#39;output_aliases&#39;. Either specify a dict, or use one of: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ALLOWED_INPUT_ALIAS_MARKERS</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="p">)</span>
-
-                <span class="n">output_aliases</span> <span class="o">=</span> <span class="n">calculate_shortest_field_aliases</span><span class="p">(</span>
-                    <span class="n">_steps</span><span class="p">,</span> <span class="n">_config</span><span class="o">.</span><span class="n">output_aliases</span><span class="p">,</span> <span class="s2">&quot;outputs&quot;</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">output_aliases</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">_config</span><span class="o">.</span><span class="n">output_aliases</span><span class="p">)</span>
-
-        <span class="n">_output_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_aliases</span>
+        <span class="n">_input_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">_config</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">)</span>
+        <span class="n">_output_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">_config</span><span class="o">.</span><span class="n">output_aliases</span><span class="p">)</span>
 
         <span class="n">values</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_steps</span>
         <span class="n">values</span><span class="p">[</span><span class="s2">&quot;input_aliases&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_input_aliases</span>
@@ -3721,16 +3659,18 @@ PipelineStructure            (<a class="autorefs autorefs-internal" title="kiara
                 <span class="n">step_alias</span> <span class="o">=</span> <span class="n">generate_step_alias</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span> <span class="n">output_name</span><span class="p">)</span>
                 <span class="n">outputs</span><span class="p">[</span><span class="n">step_alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">step_output</span>
 
-                <span class="n">step_output_name</span> <span class="o">=</span> <span class="n">generate_pipeline_endpoint_name</span><span class="p">(</span>
-                    <span class="n">step_id</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="n">output_name</span>
-                <span class="p">)</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_aliases</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">step_output_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_aliases</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                        <span class="n">step_output_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_aliases</span><span class="p">[</span><span class="n">step_output_name</span><span class="p">]</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_all_workflow_outputs</span><span class="p">:</span>
-                            <span class="c1"># this output is not interesting for the workflow</span>
-                            <span class="n">step_output_name</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="c1"># step_output_name = generate_pipeline_endpoint_name(</span>
+                <span class="c1">#     step_id=step.step_id, value_name=output_name</span>
+                <span class="c1"># )</span>
+                <span class="n">step_output_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">output_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_aliases</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">step_output_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_aliases</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">step_output_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_aliases</span><span class="p">[</span><span class="n">step_output_name</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_all_workflow_outputs</span><span class="p">:</span>
+                        <span class="c1"># this output is not interesting for the workflow</span>
+                        <span class="n">step_output_name</span> <span class="o">=</span> <span class="kc">None</span>
 
                 <span class="k">if</span> <span class="n">step_output_name</span><span class="p">:</span>
                     <span class="n">step_output_address</span> <span class="o">=</span> <span class="n">StepValueAddress</span><span class="p">(</span>
@@ -3822,16 +3762,17 @@ PipelineStructure            (<a class="autorefs autorefs-internal" title="kiara
 
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c1"># this means we connect to pipeline input</span>
-                    <span class="n">pipeline_input_name</span> <span class="o">=</span> <span class="n">generate_pipeline_endpoint_name</span><span class="p">(</span>
-                        <span class="n">step_id</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="n">input_name</span>
-                    <span class="p">)</span>
+                    <span class="c1"># pipeline_input_name = generate_pipeline_endpoint_name(</span>
+                    <span class="c1">#     step_id=step.step_id, value_name=input_name</span>
+                    <span class="c1"># )</span>
+                    <span class="n">pipeline_input_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">input_name</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="c1"># check whether this input has an alias associated with it</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">pipeline_input_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_aliases</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                            <span class="c1"># this means we use the pipeline alias</span>
-                            <span class="n">pipeline_input_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">[</span>
-                                <span class="n">pipeline_input_name</span>
-                            <span class="p">]</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+                    <span class="k">if</span> <span class="n">pipeline_input_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_aliases</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="c1"># this means we use the pipeline alias</span>
+                        <span class="n">pipeline_input_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">[</span><span class="n">pipeline_input_name</span><span class="p">]</span>
 
                     <span class="k">if</span> <span class="n">pipeline_input_name</span> <span class="ow">in</span> <span class="n">existing_pipeline_input_points</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                         <span class="c1"># we already created a pipeline input with this name</span>
@@ -4616,39 +4557,8 @@ PipelineStructure            (<a class="autorefs autorefs-internal" title="kiara
     <span class="n">_config</span><span class="p">:</span> <span class="n">PipelineConfig</span> <span class="o">=</span> <span class="n">pipeline_config</span>
     <span class="n">_steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PipelineStep</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_config</span><span class="o">.</span><span class="n">steps</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">_config</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">:</span>
-        <span class="n">input_aliases</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_config</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">_config</span><span class="o">.</span><span class="n">input_aliases</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ALLOWED_INPUT_ALIAS_MARKERS</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t create pipeline, invalid value &#39;</span><span class="si">{</span><span class="n">_config</span><span class="o">.</span><span class="n">input_aliases</span><span class="si">}</span><span class="s2">&#39; for &#39;input_aliases&#39;. Either specify a dict, or use one of: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ALLOWED_INPUT_ALIAS_MARKERS</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="p">)</span>
-
-            <span class="n">input_aliases</span> <span class="o">=</span> <span class="n">calculate_shortest_field_aliases</span><span class="p">(</span>
-                <span class="n">_steps</span><span class="p">,</span> <span class="n">_config</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">,</span> <span class="s2">&quot;inputs&quot;</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">input_aliases</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">_config</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">)</span>
-
-    <span class="n">_input_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">input_aliases</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">_config</span><span class="o">.</span><span class="n">output_aliases</span><span class="p">:</span>
-        <span class="n">output_aliases</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_config</span><span class="o">.</span><span class="n">output_aliases</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">_config</span><span class="o">.</span><span class="n">output_aliases</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ALLOWED_INPUT_ALIAS_MARKERS</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t create pipeline, invalid value &#39;</span><span class="si">{</span><span class="n">_config</span><span class="o">.</span><span class="n">output_aliases</span><span class="si">}</span><span class="s2">&#39; for &#39;output_aliases&#39;. Either specify a dict, or use one of: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ALLOWED_INPUT_ALIAS_MARKERS</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="p">)</span>
-
-            <span class="n">output_aliases</span> <span class="o">=</span> <span class="n">calculate_shortest_field_aliases</span><span class="p">(</span>
-                <span class="n">_steps</span><span class="p">,</span> <span class="n">_config</span><span class="o">.</span><span class="n">output_aliases</span><span class="p">,</span> <span class="s2">&quot;outputs&quot;</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">output_aliases</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">_config</span><span class="o">.</span><span class="n">output_aliases</span><span class="p">)</span>
-
-    <span class="n">_output_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_aliases</span>
+    <span class="n">_input_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">_config</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">)</span>
+    <span class="n">_output_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">_config</span><span class="o">.</span><span class="n">output_aliases</span><span class="p">)</span>
 
     <span class="n">values</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_steps</span>
     <span class="n">values</span><span class="p">[</span><span class="s2">&quot;input_aliases&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_input_aliases</span>
@@ -4670,92 +4580,6 @@ PipelineStructure            (<a class="autorefs autorefs-internal" title="kiara
 
   </div>
 
-
-<h2 id="kiara.models.module.pipeline.structure-functions">Functions<a href="#kiara.models.module.pipeline.structure-functions" class="headerlink" title="Permanent link">&para;</a></h2>
-
-  <div class="doc doc-object doc-function">
-
-
-
-<h3 id="kiara.models.module.pipeline.structure.calculate_shortest_field_aliases" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">calculate_shortest_field_aliases</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">alias_type</span><span class="p">,</span> <span class="n">alias_for</span><span class="p">)</span></code>
-
-
-<a href="#kiara.models.module.pipeline.structure.calculate_shortest_field_aliases" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-      <p>Utility method to figure out the best field aliases automatically.</p>
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/pipeline/structure.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">calculate_shortest_field_aliases</span><span class="p">(</span>
-    <span class="n">steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PipelineStep</span><span class="p">],</span> <span class="n">alias_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">alias_for</span><span class="p">:</span> <span class="nb">str</span>
-<span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Utility method to figure out the best field aliases automatically.&quot;&quot;&quot;</span>
-
-    <span class="k">assert</span> <span class="n">alias_for</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="s2">&quot;outputs&quot;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">alias_type</span> <span class="o">==</span> <span class="s2">&quot;auto_all_outputs&quot;</span><span class="p">:</span>
-
-        <span class="n">aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
-
-        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
-
-            <span class="k">if</span> <span class="n">alias_for</span> <span class="o">==</span> <span class="s2">&quot;inputs&quot;</span><span class="p">:</span>
-                <span class="n">field_names</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">input_names</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">field_names</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">output_names</span>
-
-            <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">field_names</span><span class="p">:</span>
-                <span class="n">aliases</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="p">)</span>
-
-        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">step_ids</span> <span class="ow">in</span> <span class="n">aliases</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">step_ids</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">result</span><span class="p">[</span>
-                    <span class="n">generate_pipeline_endpoint_name</span><span class="p">(</span><span class="n">step_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">field_name</span><span class="p">)</span>
-                <span class="p">]</span> <span class="o">=</span> <span class="n">field_name</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">step_ids</span><span class="p">:</span>
-                    <span class="n">generated</span> <span class="o">=</span> <span class="n">generate_pipeline_endpoint_name</span><span class="p">(</span><span class="n">step_id</span><span class="p">,</span> <span class="n">field_name</span><span class="p">)</span>
-                    <span class="n">result</span><span class="p">[</span><span class="n">generated</span><span class="p">]</span> <span class="o">=</span> <span class="n">generated</span>
-
-    <span class="k">elif</span> <span class="n">alias_type</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
-
-        <span class="n">aliases</span> <span class="o">=</span> <span class="p">{}</span>
-
-        <span class="k">for</span> <span class="n">stage_nr</span><span class="p">,</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
-
-            <span class="n">_field_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">if</span> <span class="n">alias_for</span> <span class="o">==</span> <span class="s2">&quot;inputs&quot;</span><span class="p">:</span>
-                <span class="n">_field_names</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">input_names</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">stage_nr</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">_field_names</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">output_names</span>
-
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">_field_names</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">_field_names</span><span class="p">:</span>
-                <span class="n">aliases</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="p">)</span>
-
-        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">step_ids</span> <span class="ow">in</span> <span class="n">aliases</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">step_ids</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">result</span><span class="p">[</span>
-                    <span class="n">generate_pipeline_endpoint_name</span><span class="p">(</span><span class="n">step_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">field_name</span><span class="p">)</span>
-                <span class="p">]</span> <span class="o">=</span> <span class="n">field_name</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">step_ids</span><span class="p">:</span>
-                    <span class="n">generated</span> <span class="o">=</span> <span class="n">generate_pipeline_endpoint_name</span><span class="p">(</span><span class="n">step_id</span><span class="p">,</span> <span class="n">field_name</span><span class="p">)</span>
-                    <span class="n">result</span><span class="p">[</span><span class="n">generated</span><span class="p">]</span> <span class="o">=</span> <span class="n">generated</span>
-
-    <span class="k">return</span> <span class="n">result</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
 
 
 

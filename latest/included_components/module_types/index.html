@@ -1465,10 +1465,63 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_2" type="checkbox" id="__nav_3_1_6_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/interfaces/python_api/__init__/">python_api</a>
+          
+            <label for="__nav_3_1_6_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="python_api" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_6_2">
+          <span class="md-nav__icon md-icon"></span>
+          python_api
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../../reference/kiara/interfaces/python_api/__init__/" class="md-nav__link">
-        python_api
+      <a href="../../reference/kiara/interfaces/python_api/batch/" class="md-nav__link">
+        batch
       </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/python_api/operation/" class="md-nav__link">
+        operation
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -3728,114 +3781,104 @@
                                        <a href="https://dharpa.org/kiara_documentation/">https://dharpa.org/kiara_documentatio…</a>   
                                                                                 
  <span style="font-style: italic">Module config schema  </span>                                                         
-                         <span style="font-weight: bold"> Field    </span> <span style="font-weight: bold"> Type     </span> <span style="font-weight: bold"> Descrip… </span> <span style="font-weight: bold"> Required </span> <span style="font-weight: bold"> Default </span>  
+                         <span style="font-weight: bold"> Field    </span> <span style="font-weight: bold"> Type   </span> <span style="font-weight: bold"> Descript… </span> <span style="font-weight: bold"> Required </span> <span style="font-weight: bold"> Default  </span>  
                          ─────────────────────────────────────────────────────  
-                          constan…   object     Value      no                   
-                                                constan…                        
-                                                for this                        
-                                                module.                         
+                          constan…   object   Value       no                    
+                                              constants                         
+                                              for this                          
+                                              module.                           
                                                                                 
-                          context    object     Metadata   no                   
-                                                for this                        
-                                                workflo…                        
+                          context    object   Metadata    no                    
+                                              for this                          
+                                              workflow.                         
                                                                                 
-                          defaults   object     Value      no                   
-                                                defaults                        
-                                                for this                        
-                                                module.                         
+                          defaults   object   Value       no                    
+                                              defaults                          
+                                              for this                          
+                                              module.                           
                                                                                 
-                          documen…   string     Documen…   no         "-- n/a   
-                                                about                 --"       
-                                                what the                        
-                                                pipeline                        
-                                                does.                           
+                          documen…   string   Document…   no         "-- n/a    
+                                              about                  --"        
+                                              what the                          
+                                              pipeline                          
+                                              does.                             
                                                                                 
-                          input_a…   -- check   A map of   no                   
-                                     source     input                           
-                                     --         aliases,                        
-                                                with the                        
-                                                calcula…                        
-                                                (&lt;step_…                        
-                                                --                              
-                                                double                          
-                                                undersc…                        
-                                                name as                         
-                                                key, and                        
-                                                a string                        
-                                                (the                            
-                                                resulti…                        
-                                                workflow                        
-                                                input                           
-                                                alias)                          
-                                                as                              
-                                                value.                          
-                                                Check                           
-                                                the                             
-                                                documen…                        
-                                                for the                         
-                                                config                          
-                                                class                           
-                                                for                             
-                                                which                           
-                                                marker                          
-                                                strings                         
-                                                can be                          
-                                                used to                         
-                                                automat…                        
-                                                create                          
-                                                this map                        
-                                                if                              
-                                                possibl…                        
+                          input_a…   object   A map of    yes                   
+                                              input                             
+                                              aliases,                          
+                                              with the                          
+                                              calculat…                         
+                                              (&lt;step_i…                         
+                                              -- double                         
+                                              undersco…                         
+                                              name as                           
+                                              key, and                          
+                                              a string                          
+                                              (the                              
+                                              resulting                         
+                                              workflow                          
+                                              input                             
+                                              alias) as                         
+                                              value.                            
+                                              Check the                         
+                                              document…                         
+                                              for the                           
+                                              config                            
+                                              class for                         
+                                              which                             
+                                              marker                            
+                                              strings                           
+                                              can be                            
+                                              used to                           
+                                              automati…                         
+                                              create                            
+                                              this map                          
+                                              if                                
+                                              possible.                         
                                                                                 
-                          output_…   -- check   A map of   no                   
-                                     source     output                          
-                                     --         aliases,                        
-                                                with the                        
-                                                calcula…                        
-                                                (&lt;step_…                        
-                                                --                              
-                                                double                          
-                                                undersc…                        
-                                                name as                         
-                                                key, and                        
-                                                a string                        
-                                                (the                            
-                                                resulti…                        
-                                                workflow                        
-                                                output                          
-                                                alias)                          
-                                                as                              
-                                                value.                          
-                                                Check                           
-                                                the                             
-                                                documen…                        
-                                                for the                         
-                                                config                          
-                                                class                           
-                                                for                             
-                                                which                           
-                                                marker                          
-                                                strings                         
-                                                can be                          
-                                                used to                         
-                                                automat…                        
-                                                create                          
-                                                this map                        
-                                                if                              
-                                                possibl…                        
+                          output_…   object   A map of    yes                   
+                                              output                            
+                                              aliases,                          
+                                              with the                          
+                                              calculat…                         
+                                              (&lt;step_i…                         
+                                              -- double                         
+                                              undersco…                         
+                                              name as                           
+                                              key, and                          
+                                              a string                          
+                                              (the                              
+                                              resulting                         
+                                              workflow                          
+                                              output                            
+                                              alias) as                         
+                                              value.                            
+                                              Check the                         
+                                              document…                         
+                                              for the                           
+                                              config                            
+                                              class for                         
+                                              which                             
+                                              marker                            
+                                              strings                           
+                                              can be                            
+                                              used to                           
+                                              automati…                         
+                                              create                            
+                                              this map                          
+                                              if                                
+                                              possible.                         
                                                                                 
-                          pipelin…   string     The name   yes                  
-                                                of this                         
-                                                pipelin…                        
+                          pipelin…   string   The name    yes                   
+                                              of this                           
+                                              pipeline.                         
                                                                                 
-                          steps      array      A list     yes                  
-                                                of                              
-                                                steps/m…                        
-                                                of this                         
-                                                pipelin…                        
-                                                and                             
-                                                their                           
-                                                connect…                        
+                          steps      array    A list of   yes                   
+                                              steps/mo…                         
+                                              of this                           
+                                              pipeline,                         
+                                              and their                         
+                                              connecti…                         
                                                                                 
  <span style="font-style: italic">Python class          </span>                                                         
                          <span style="font-style: italic"> class_name  </span>  PipelineModule                          

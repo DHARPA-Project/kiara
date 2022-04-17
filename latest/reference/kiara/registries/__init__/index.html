@@ -1332,10 +1332,63 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_2" type="checkbox" id="__nav_3_1_6_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../interfaces/python_api/__init__/">python_api</a>
+          
+            <label for="__nav_3_1_6_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="python_api" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_6_2">
+          <span class="md-nav__icon md-icon"></span>
+          python_api
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../../interfaces/python_api/__init__/" class="md-nav__link">
-        python_api
+      <a href="../../interfaces/python_api/batch/" class="md-nav__link">
+        batch
       </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interfaces/python_api/operation/" class="md-nav__link">
+        operation
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -14956,6 +15009,24 @@ ModuleRegistry        </code>
 
 
 
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.registries.operations.logger" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">logger</span></code>
+
+
+<a href="#kiara.registries.operations.logger" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
 
   <div class="doc doc-object doc-class">
 
@@ -15093,34 +15164,55 @@ OperationRegistry        </code>
         <span class="c1"># first iteration</span>
         <span class="k">for</span> <span class="n">op_config</span> <span class="ow">in</span> <span class="n">all_op_configs</span><span class="p">:</span>
 
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">op_config</span><span class="p">,</span> <span class="n">PipelineOperationConfig</span><span class="p">):</span>
-                <span class="k">for</span> <span class="n">mt</span> <span class="ow">in</span> <span class="n">op_config</span><span class="o">.</span><span class="n">required_module_types</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">mt</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">module_type_names</span><span class="p">:</span>
-                        <span class="n">deferred_module_names</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">mt</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op_config</span><span class="p">)</span>
-                <span class="n">deferred_module_names</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="n">op_config</span>
-                <span class="p">)</span>
-                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
 
-            <span class="n">module_type</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">retrieve_module_type</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">module_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">module_type_names</span><span class="p">:</span>
-                <span class="n">deferred_module_names</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">module_type</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op_config</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">module_config</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">retrieve_module_config</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)</span>
-
-                <span class="n">manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
-                    <span class="n">module_type</span><span class="o">=</span><span class="n">module_type</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">module_config</span>
-                <span class="p">)</span>
-
-                <span class="n">ops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_operations</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">op_config</span><span class="o">.</span><span class="n">doc</span><span class="p">)</span>
-
-                <span class="k">for</span> <span class="n">op_type_name</span><span class="p">,</span> <span class="n">_op</span> <span class="ow">in</span> <span class="n">ops</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span> <span class="ow">in</span> <span class="n">operations</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Duplicate operation id: </span><span class="si">{</span><span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="n">operations</span><span class="p">[</span><span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">_op</span>
-                    <span class="n">operations_by_type</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">op_type_name</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">op_config</span><span class="p">,</span> <span class="n">PipelineOperationConfig</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">mt</span> <span class="ow">in</span> <span class="n">op_config</span><span class="o">.</span><span class="n">required_module_types</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">mt</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">module_type_names</span><span class="p">:</span>
+                            <span class="n">deferred_module_names</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">mt</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op_config</span><span class="p">)</span>
+                    <span class="n">deferred_module_names</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">op_config</span>
                     <span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="n">module_type</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">retrieve_module_type</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">module_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">module_type_names</span><span class="p">:</span>
+                    <span class="n">deferred_module_names</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">module_type</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op_config</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">module_config</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">retrieve_module_config</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)</span>
+
+                    <span class="n">manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
+                        <span class="n">module_type</span><span class="o">=</span><span class="n">module_type</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">module_config</span>
+                    <span class="p">)</span>
+
+                    <span class="n">ops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_operations</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">op_config</span><span class="o">.</span><span class="n">doc</span><span class="p">)</span>
+
+                    <span class="k">for</span> <span class="n">op_type_name</span><span class="p">,</span> <span class="n">_op</span> <span class="ow">in</span> <span class="n">ops</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span> <span class="ow">in</span> <span class="n">operations</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;Duplicate operation id: </span><span class="si">{</span><span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
+                        <span class="n">operations</span><span class="p">[</span><span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">_op</span>
+                        <span class="n">operations_by_type</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">op_type_name</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span>
+                        <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">details</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">module_id</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">retrieve_module_type</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)</span>
+                <span class="n">details</span><span class="p">[</span><span class="s2">&quot;module_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">module_id</span>
+                <span class="k">if</span> <span class="n">module_id</span> <span class="o">==</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span>
+                    <span class="n">details</span><span class="p">[</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_id</span>  <span class="c1"># type: ignore</span>
+                <span class="n">msg</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="n">e</span>
+                <span class="n">details</span><span class="p">[</span><span class="s2">&quot;details&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;invalid.operation&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">details</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
+                    <span class="kn">import</span> <span class="nn">traceback</span>
+
+                    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+
+                <span class="k">continue</span>
 
         <span class="k">while</span> <span class="n">deferred_module_names</span><span class="p">:</span>
 
@@ -15133,66 +15225,88 @@ OperationRegistry        </code>
                     <span class="k">continue</span>
 
                 <span class="k">for</span> <span class="n">op_config</span> <span class="ow">in</span> <span class="n">deferred_module_names</span><span class="p">[</span><span class="n">missing_op_id</span><span class="p">]:</span>
+                    <span class="k">try</span><span class="p">:</span>
 
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">op_config</span><span class="p">,</span> <span class="n">PipelineOperationConfig</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">op_config</span><span class="p">,</span> <span class="n">PipelineOperationConfig</span><span class="p">):</span>
 
-                        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span>
-                            <span class="n">mt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">module_type_names</span>
-                            <span class="ow">or</span> <span class="n">mt</span> <span class="ow">in</span> <span class="n">operations</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-                            <span class="k">for</span> <span class="n">mt</span> <span class="ow">in</span> <span class="n">op_config</span><span class="o">.</span><span class="n">required_module_types</span>
-                        <span class="p">):</span>
-                            <span class="n">module_map</span> <span class="o">=</span> <span class="p">{}</span>
-                            <span class="k">for</span> <span class="n">mt</span> <span class="ow">in</span> <span class="n">op_config</span><span class="o">.</span><span class="n">required_module_types</span><span class="p">:</span>
-                                <span class="k">if</span> <span class="n">mt</span> <span class="ow">in</span> <span class="n">operations</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                                    <span class="n">module_map</span><span class="p">[</span><span class="n">mt</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                                        <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="n">operations</span><span class="p">[</span><span class="n">mt</span><span class="p">]</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
-                                        <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="n">operations</span><span class="p">[</span><span class="n">mt</span><span class="p">]</span><span class="o">.</span><span class="n">module_config</span><span class="p">,</span>
-                                    <span class="p">}</span>
+                            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span>
+                                <span class="n">mt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">module_type_names</span>
+                                <span class="ow">or</span> <span class="n">mt</span> <span class="ow">in</span> <span class="n">operations</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                                <span class="k">for</span> <span class="n">mt</span> <span class="ow">in</span> <span class="n">op_config</span><span class="o">.</span><span class="n">required_module_types</span>
+                            <span class="p">):</span>
+                                <span class="n">module_map</span> <span class="o">=</span> <span class="p">{}</span>
+                                <span class="k">for</span> <span class="n">mt</span> <span class="ow">in</span> <span class="n">op_config</span><span class="o">.</span><span class="n">required_module_types</span><span class="p">:</span>
+                                    <span class="k">if</span> <span class="n">mt</span> <span class="ow">in</span> <span class="n">operations</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                                        <span class="n">module_map</span><span class="p">[</span><span class="n">mt</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                                            <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="n">operations</span><span class="p">[</span><span class="n">mt</span><span class="p">]</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
+                                            <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="n">operations</span><span class="p">[</span>
+                                                <span class="n">mt</span>
+                                            <span class="p">]</span><span class="o">.</span><span class="n">module_config</span><span class="p">,</span>
+                                        <span class="p">}</span>
 
-                            <span class="n">op_config</span><span class="o">.</span><span class="n">module_map</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">module_map</span><span class="p">)</span>
-                            <span class="n">module_config</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">retrieve_module_config</span><span class="p">(</span>
-                                <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span>
-                            <span class="p">)</span>
+                                <span class="n">op_config</span><span class="o">.</span><span class="n">module_map</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">module_map</span><span class="p">)</span>
+                                <span class="n">module_config</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">retrieve_module_config</span><span class="p">(</span>
+                                    <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span>
+                                <span class="p">)</span>
 
-                            <span class="n">manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
-                                <span class="n">module_type</span><span class="o">=</span><span class="s2">&quot;pipeline&quot;</span><span class="p">,</span>
-                                <span class="n">module_config</span><span class="o">=</span><span class="n">module_config</span><span class="p">,</span>
-                            <span class="p">)</span>
-                            <span class="n">ops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_operations</span><span class="p">(</span>
-                                <span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">op_config</span><span class="o">.</span><span class="n">doc</span>
-                            <span class="p">)</span>
+                                <span class="n">manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
+                                    <span class="n">module_type</span><span class="o">=</span><span class="s2">&quot;pipeline&quot;</span><span class="p">,</span>
+                                    <span class="n">module_config</span><span class="o">=</span><span class="n">module_config</span><span class="p">,</span>
+                                <span class="p">)</span>
+                                <span class="n">ops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_operations</span><span class="p">(</span>
+                                    <span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">op_config</span><span class="o">.</span><span class="n">doc</span>
+                                <span class="p">)</span>
+
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t find all required module types: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">op_config</span><span class="o">.</span><span class="n">required_module_types</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                                <span class="p">)</span>
 
                         <span class="k">else</span><span class="p">:</span>
                             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+                            <span class="c1"># module_type = op_config.retrieve_module_type(kiara=self._kiara)</span>
+                            <span class="c1"># module_config = op_config.retrieve_module_config(kiara=self._kiara)</span>
+                            <span class="c1">#</span>
+                            <span class="c1"># # TODO: merge dicts instead of update?</span>
+                            <span class="c1"># new_module_config = dict(base_config)</span>
+                            <span class="c1"># new_module_config.update(module_config)</span>
+                            <span class="c1">#</span>
+                            <span class="c1"># manifest = Manifest.construct(module_type=operation.module_type,</span>
+                            <span class="c1">#                       module_config=new_module_config)</span>
 
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-                        <span class="c1"># module_type = op_config.retrieve_module_type(kiara=self._kiara)</span>
-                        <span class="c1"># module_config = op_config.retrieve_module_config(kiara=self._kiara)</span>
-                        <span class="c1">#</span>
-                        <span class="c1"># # TODO: merge dicts instead of update?</span>
-                        <span class="c1"># new_module_config = dict(base_config)</span>
-                        <span class="c1"># new_module_config.update(module_config)</span>
-                        <span class="c1">#</span>
-                        <span class="c1"># manifest = Manifest.construct(module_type=operation.module_type,</span>
-                        <span class="c1">#                       module_config=new_module_config)</span>
+                        <span class="k">for</span> <span class="n">op_type_name</span><span class="p">,</span> <span class="n">_op</span> <span class="ow">in</span> <span class="n">ops</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
-                    <span class="k">for</span> <span class="n">op_type_name</span><span class="p">,</span> <span class="n">_op</span> <span class="ow">in</span> <span class="n">ops</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                            <span class="k">if</span> <span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span> <span class="ow">in</span> <span class="n">operations</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                                    <span class="sa">f</span><span class="s2">&quot;Duplicate operation id: </span><span class="si">{</span><span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span><span class="si">}</span><span class="s2">&quot;</span>
+                                <span class="p">)</span>
 
-                        <span class="k">if</span> <span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span> <span class="ow">in</span> <span class="n">operations</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                                <span class="sa">f</span><span class="s2">&quot;Duplicate operation id: </span><span class="si">{</span><span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="n">operations</span><span class="p">[</span><span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">_op</span>
+                            <span class="n">operations_by_type</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">op_type_name</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                <span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span>
                             <span class="p">)</span>
+                            <span class="k">assert</span> <span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span> <span class="o">==</span> <span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_id</span>
 
-                        <span class="n">operations</span><span class="p">[</span><span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">_op</span>
-                        <span class="n">operations_by_type</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">op_type_name</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                            <span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span>
-                        <span class="p">)</span>
-                        <span class="k">assert</span> <span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span> <span class="o">==</span> <span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_id</span>
+                        <span class="k">for</span> <span class="n">_op_id</span> <span class="ow">in</span> <span class="n">deferred_module_names</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                            <span class="k">if</span> <span class="n">op_config</span> <span class="ow">in</span> <span class="n">deferred_module_names</span><span class="p">[</span><span class="n">_op_id</span><span class="p">]:</span>
+                                <span class="n">deferred_module_names</span><span class="p">[</span><span class="n">_op_id</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">op_config</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">details</span> <span class="o">=</span> <span class="p">{}</span>
+                        <span class="n">module_id</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">retrieve_module_type</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)</span>
+                        <span class="n">details</span><span class="p">[</span><span class="s2">&quot;module_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">module_id</span>
+                        <span class="k">if</span> <span class="n">module_id</span> <span class="o">==</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span>
+                            <span class="n">details</span><span class="p">[</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_id</span>  <span class="c1"># type: ignore</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
+                            <span class="n">msg</span> <span class="o">=</span> <span class="n">e</span>
+                        <span class="n">details</span><span class="p">[</span><span class="s2">&quot;details&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;invalid.operation&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">details</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
+                            <span class="kn">import</span> <span class="nn">traceback</span>
 
-                    <span class="k">for</span> <span class="n">_op_id</span> <span class="ow">in</span> <span class="n">deferred_module_names</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                        <span class="k">if</span> <span class="n">op_config</span> <span class="ow">in</span> <span class="n">deferred_module_names</span><span class="p">[</span><span class="n">_op_id</span><span class="p">]:</span>
-                            <span class="n">deferred_module_names</span><span class="p">[</span><span class="n">_op_id</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">op_config</span><span class="p">)</span>
+                            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+
+                        <span class="k">continue</span>
 
             <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">dependencies</span> <span class="ow">in</span> <span class="n">deferred_module_names</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">dependencies</span><span class="p">:</span>
@@ -15202,9 +15316,13 @@ OperationRegistry        </code>
                 <span class="n">deferred_module_names</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">rdn</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">deferred_module_names</span><span class="p">)</span> <span class="o">==</span> <span class="n">deferred_length</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t resolve module name(s): </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">deferred_module_names</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">mn</span> <span class="ow">in</span> <span class="n">deferred_module_names</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">mn</span> <span class="ow">in</span> <span class="n">operations</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="k">continue</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                        <span class="s2">&quot;invalid.operation&quot;</span><span class="p">,</span> <span class="n">operation_id</span><span class="o">=</span><span class="n">mn</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="s2">&quot;-- n/a --&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">break</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_operations</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">missing_op_id</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">operations</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>

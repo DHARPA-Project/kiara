@@ -360,16 +360,18 @@ class PipelineStructure(KiaraModel):
                 step_alias = generate_step_alias(step.step_id, output_name)
                 outputs[step_alias] = step_output
 
-                step_output_name = generate_pipeline_endpoint_name(
-                    step_id=step.step_id, value_name=output_name
-                )
-                if self.output_aliases:
-                    if step_output_name in self.output_aliases.keys():
-                        step_output_name = self.output_aliases[step_output_name]
-                    else:
-                        if not self._add_all_workflow_outputs:
-                            # this output is not interesting for the workflow
-                            step_output_name = None
+                # step_output_name = generate_pipeline_endpoint_name(
+                #     step_id=step.step_id, value_name=output_name
+                # )
+                step_output_name = f"{step.step_id}.{output_name}"
+                if not self.output_aliases:
+                    raise NotImplementedError()
+                if step_output_name in self.output_aliases.keys():
+                    step_output_name = self.output_aliases[step_output_name]
+                else:
+                    if not self._add_all_workflow_outputs:
+                        # this output is not interesting for the workflow
+                        step_output_name = None
 
                 if step_output_name:
                     step_output_address = StepValueAddress(
@@ -461,16 +463,17 @@ class PipelineStructure(KiaraModel):
 
                 else:
                     # this means we connect to pipeline input
-                    pipeline_input_name = generate_pipeline_endpoint_name(
-                        step_id=step.step_id, value_name=input_name
-                    )
+                    # pipeline_input_name = generate_pipeline_endpoint_name(
+                    #     step_id=step.step_id, value_name=input_name
+                    # )
+                    pipeline_input_name = f"{step.step_id}.{input_name}"
                     # check whether this input has an alias associated with it
-                    if self.input_aliases:
-                        if pipeline_input_name in self.input_aliases.keys():
-                            # this means we use the pipeline alias
-                            pipeline_input_name = self.input_aliases[
-                                pipeline_input_name
-                            ]
+                    if not self.input_aliases:
+                        raise NotImplementedError()
+
+                    if pipeline_input_name in self.input_aliases.keys():
+                        # this means we use the pipeline alias
+                        pipeline_input_name = self.input_aliases[pipeline_input_name]
 
                     if pipeline_input_name in existing_pipeline_input_points.keys():
                         # we already created a pipeline input with this name

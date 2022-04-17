@@ -233,7 +233,7 @@ def create_output_alias_map(steps: Iterable[PipelineStep]) -> Dict[str, str]:
                 step_id=step.step_id, value_name=field_name
             )
             assert alias not in aliases.keys()
-            aliases[alias] = alias
+            aliases[f"{step.step_id}.{field_name}"] = alias
 
     return aliases
 

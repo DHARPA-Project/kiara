@@ -5,6 +5,7 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
+import structlog
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -15,6 +16,7 @@ from typing import (
     Optional,
     Set,
     Type,
+    Union,
 )
 
 from kiara.models.module import KiaraModuleClass
@@ -28,9 +30,13 @@ from kiara.models.module.operation import (
     PipelineOperationConfig,
 )
 from kiara.operations import OperationType
+from kiara.utils import is_debug
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
+
+
+logger = structlog.getLogger()
 
 
 class OperationRegistry(object):
@@ -152,34 +158,55 @@ class OperationRegistry(object):
         # first iteration
         for op_config in all_op_configs:
 
-            if isinstance(op_config, PipelineOperationConfig):
-                for mt in op_config.required_module_types:
-                    if mt not in self._kiara.module_type_names:
-                        deferred_module_names.setdefault(mt, []).append(op_config)
-                deferred_module_names.setdefault(op_config.pipeline_id, []).append(
-                    op_config
-                )
-                continue
+            try:
 
-            module_type = op_config.retrieve_module_type(kiara=self._kiara)
-            if module_type not in self._kiara.module_type_names:
-                deferred_module_names.setdefault(module_type, []).append(op_config)
-            else:
-                module_config = op_config.retrieve_module_config(kiara=self._kiara)
-
-                manifest = Manifest.construct(
-                    module_type=module_type, module_config=module_config
-                )
-
-                ops = self._create_operations(manifest=manifest, doc=op_config.doc)
-
-                for op_type_name, _op in ops.items():
-                    if _op.operation_id in operations.keys():
-                        raise Exception(f"Duplicate operation id: {_op.operation_id}")
-                    operations[_op.operation_id] = _op
-                    operations_by_type.setdefault(op_type_name, []).append(
-                        _op.operation_id
+                if isinstance(op_config, PipelineOperationConfig):
+                    for mt in op_config.required_module_types:
+                        if mt not in self._kiara.module_type_names:
+                            deferred_module_names.setdefault(mt, []).append(op_config)
+                    deferred_module_names.setdefault(op_config.pipeline_id, []).append(
+                        op_config
                     )
+                    continue
+
+                module_type = op_config.retrieve_module_type(kiara=self._kiara)
+                if module_type not in self._kiara.module_type_names:
+                    deferred_module_names.setdefault(module_type, []).append(op_config)
+                else:
+                    module_config = op_config.retrieve_module_config(kiara=self._kiara)
+
+                    manifest = Manifest.construct(
+                        module_type=module_type, module_config=module_config
+                    )
+
+                    ops = self._create_operations(manifest=manifest, doc=op_config.doc)
+
+                    for op_type_name, _op in ops.items():
+                        if _op.operation_id in operations.keys():
+                            raise Exception(
+                                f"Duplicate operation id: {_op.operation_id}"
+                            )
+                        operations[_op.operation_id] = _op
+                        operations_by_type.setdefault(op_type_name, []).append(
+                            _op.operation_id
+                        )
+            except Exception as e:
+                details: Dict[str, Any] = {}
+                module_id = op_config.retrieve_module_type(kiara=self._kiara)
+                details["module_id"] = module_id
+                if module_id == "pipeline":
+                    details["pipeline_id"] = op_config.pipeline_id  # type: ignore
+                msg: Union[str, Exception] = str(e)
+                if not msg:
+                    msg = e
+                details["details"] = msg
+                logger.error("invalid.operation", **details)
+                if is_debug():
+                    import traceback
+
+                    traceback.print_exc()
+
+                continue
 
         while deferred_module_names:
 
@@ -192,66 +219,88 @@ class OperationRegistry(object):
                     continue
 
                 for op_config in deferred_module_names[missing_op_id]:
+                    try:
 
-                    if isinstance(op_config, PipelineOperationConfig):
+                        if isinstance(op_config, PipelineOperationConfig):
 
-                        if all(
-                            mt in self._kiara.module_type_names
-                            or mt in operations.keys()
-                            for mt in op_config.required_module_types
-                        ):
-                            module_map = {}
-                            for mt in op_config.required_module_types:
-                                if mt in operations.keys():
-                                    module_map[mt] = {
-                                        "module_type": operations[mt].module_type,
-                                        "module_config": operations[mt].module_config,
-                                    }
+                            if all(
+                                mt in self._kiara.module_type_names
+                                or mt in operations.keys()
+                                for mt in op_config.required_module_types
+                            ):
+                                module_map = {}
+                                for mt in op_config.required_module_types:
+                                    if mt in operations.keys():
+                                        module_map[mt] = {
+                                            "module_type": operations[mt].module_type,
+                                            "module_config": operations[
+                                                mt
+                                            ].module_config,
+                                        }
 
-                            op_config.module_map.update(module_map)
-                            module_config = op_config.retrieve_module_config(
-                                kiara=self._kiara
-                            )
+                                op_config.module_map.update(module_map)
+                                module_config = op_config.retrieve_module_config(
+                                    kiara=self._kiara
+                                )
 
-                            manifest = Manifest.construct(
-                                module_type="pipeline",
-                                module_config=module_config,
-                            )
-                            ops = self._create_operations(
-                                manifest=manifest, doc=op_config.doc
-                            )
+                                manifest = Manifest.construct(
+                                    module_type="pipeline",
+                                    module_config=module_config,
+                                )
+                                ops = self._create_operations(
+                                    manifest=manifest, doc=op_config.doc
+                                )
+
+                            else:
+                                raise Exception(
+                                    f"Can't find all required module types: {', '.join(op_config.required_module_types)}"
+                                )
 
                         else:
                             raise NotImplementedError()
+                            # module_type = op_config.retrieve_module_type(kiara=self._kiara)
+                            # module_config = op_config.retrieve_module_config(kiara=self._kiara)
+                            #
+                            # # TODO: merge dicts instead of update?
+                            # new_module_config = dict(base_config)
+                            # new_module_config.update(module_config)
+                            #
+                            # manifest = Manifest.construct(module_type=operation.module_type,
+                            #                       module_config=new_module_config)
 
-                    else:
-                        raise NotImplementedError()
-                        # module_type = op_config.retrieve_module_type(kiara=self._kiara)
-                        # module_config = op_config.retrieve_module_config(kiara=self._kiara)
-                        #
-                        # # TODO: merge dicts instead of update?
-                        # new_module_config = dict(base_config)
-                        # new_module_config.update(module_config)
-                        #
-                        # manifest = Manifest.construct(module_type=operation.module_type,
-                        #                       module_config=new_module_config)
+                        for op_type_name, _op in ops.items():
 
-                    for op_type_name, _op in ops.items():
+                            if _op.operation_id in operations.keys():
+                                raise Exception(
+                                    f"Duplicate operation id: {_op.operation_id}"
+                                )
 
-                        if _op.operation_id in operations.keys():
-                            raise Exception(
-                                f"Duplicate operation id: {_op.operation_id}"
+                            operations[_op.operation_id] = _op
+                            operations_by_type.setdefault(op_type_name, []).append(
+                                _op.operation_id
                             )
+                            assert _op.operation_id == op_config.pipeline_id
 
-                        operations[_op.operation_id] = _op
-                        operations_by_type.setdefault(op_type_name, []).append(
-                            _op.operation_id
-                        )
-                        assert _op.operation_id == op_config.pipeline_id
+                        for _op_id in deferred_module_names.keys():
+                            if op_config in deferred_module_names[_op_id]:
+                                deferred_module_names[_op_id].remove(op_config)
+                    except Exception as e:
+                        details = {}
+                        module_id = op_config.retrieve_module_type(kiara=self._kiara)
+                        details["module_id"] = module_id
+                        if module_id == "pipeline":
+                            details["pipeline_id"] = op_config.pipeline_id  # type: ignore
+                        msg = str(e)
+                        if not msg:
+                            msg = e
+                        details["details"] = msg
+                        logger.error("invalid.operation", **details)
+                        if is_debug():
+                            import traceback
 
-                    for _op_id in deferred_module_names.keys():
-                        if op_config in deferred_module_names[_op_id]:
-                            deferred_module_names[_op_id].remove(op_config)
+                            traceback.print_exc()
+
+                        continue
 
             for name, dependencies in deferred_module_names.items():
                 if not dependencies:
@@ -261,9 +310,13 @@ class OperationRegistry(object):
                 deferred_module_names.pop(rdn)
 
             if len(deferred_module_names) == deferred_length:
-                raise Exception(
-                    f"Can't resolve module name(s): {', '.join(deferred_module_names.keys())}"
-                )
+                for mn in deferred_module_names:
+                    if mn in operations.keys():
+                        continue
+                    logger.error(
+                        "invalid.operation", operation_id=mn, details="-- n/a --"
+                    )
+                break
 
         self._operations = {}
         for missing_op_id in sorted(operations.keys()):

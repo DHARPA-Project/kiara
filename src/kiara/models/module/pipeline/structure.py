@@ -9,7 +9,7 @@ import networkx as nx
 from functools import lru_cache
 from networkx import NetworkXNoPath, NodeNotFound
 from pydantic import Field, PrivateAttr, root_validator
-from typing import Any, Dict, Iterable, List, Mapping, Optional, Set
+from typing import Any, Dict, Iterable, List, Mapping, Set
 
 from kiara.defaults import PIPELINE_STRUCTURE_TYPE_CATEGORY_ID
 from kiara.models import KiaraModel
@@ -30,71 +30,71 @@ def generate_pipeline_endpoint_name(step_id: str, value_name: str):
     return f"{step_id}__{value_name}"
 
 
-def calculate_shortest_field_aliases(
-    steps: List[PipelineStep], alias_type: str, alias_for: str
-):
-    """Utility method to figure out the best field aliases automatically."""
+# def calculate_shortest_field_aliases(
+#     steps: List[PipelineStep], alias_type: str, alias_for: str
+# ):
+#     """Utility method to figure out the best field aliases automatically."""
+#
+#     assert alias_for in ["inputs", "outputs"]
+#     if alias_type == "auto_all_outputs":
+#
+#         aliases: Dict[str, List[str]] = {}
+#
+#         for step in steps:
+#
+#             if alias_for == "inputs":
+#                 field_names = step.module.input_names
+#             else:
+#                 field_names = step.module.output_names
+#
+#             for field_name in field_names:
+#                 aliases.setdefault(field_name, []).append(step.step_id)
+#
+#         result = {}
+#         for field_name, step_ids in aliases.items():
+#             if len(step_ids) == 1:
+#                 result[
+#                     generate_pipeline_endpoint_name(step_ids[0], field_name)
+#                 ] = field_name
+#             else:
+#                 for step_id in step_ids:
+#                     generated = generate_pipeline_endpoint_name(step_id, field_name)
+#                     result[generated] = generated
+#
+#     elif alias_type == "auto":
+#
+#         aliases = {}
+#
+#         for stage_nr, step in enumerate(steps):
+#
+#             _field_names: Optional[Iterable[str]] = None
+#             if alias_for == "inputs":
+#                 _field_names = step.module.input_names
+#             else:
+#                 if stage_nr == len(steps) - 1:
+#                     _field_names = step.module.output_names
+#
+#             if not _field_names:
+#                 continue
+#
+#             for field_name in _field_names:
+#                 aliases.setdefault(field_name, []).append(step.step_id)
+#
+#         result = {}
+#         for field_name, step_ids in aliases.items():
+#             if len(step_ids) == 1:
+#                 result[
+#                     generate_pipeline_endpoint_name(step_ids[0], field_name)
+#                 ] = field_name
+#             else:
+#                 for step_id in step_ids:
+#                     generated = generate_pipeline_endpoint_name(step_id, field_name)
+#                     result[generated] = generated
+#
+#     return result
 
-    assert alias_for in ["inputs", "outputs"]
-    if alias_type == "auto_all_outputs":
 
-        aliases: Dict[str, List[str]] = {}
-
-        for step in steps:
-
-            if alias_for == "inputs":
-                field_names = step.module.input_names
-            else:
-                field_names = step.module.output_names
-
-            for field_name in field_names:
-                aliases.setdefault(field_name, []).append(step.step_id)
-
-        result = {}
-        for field_name, step_ids in aliases.items():
-            if len(step_ids) == 1:
-                result[
-                    generate_pipeline_endpoint_name(step_ids[0], field_name)
-                ] = field_name
-            else:
-                for step_id in step_ids:
-                    generated = generate_pipeline_endpoint_name(step_id, field_name)
-                    result[generated] = generated
-
-    elif alias_type == "auto":
-
-        aliases = {}
-
-        for stage_nr, step in enumerate(steps):
-
-            _field_names: Optional[Iterable[str]] = None
-            if alias_for == "inputs":
-                _field_names = step.module.input_names
-            else:
-                if stage_nr == len(steps) - 1:
-                    _field_names = step.module.output_names
-
-            if not _field_names:
-                continue
-
-            for field_name in _field_names:
-                aliases.setdefault(field_name, []).append(step.step_id)
-
-        result = {}
-        for field_name, step_ids in aliases.items():
-            if len(step_ids) == 1:
-                result[
-                    generate_pipeline_endpoint_name(step_ids[0], field_name)
-                ] = field_name
-            else:
-                for step_id in step_ids:
-                    generated = generate_pipeline_endpoint_name(step_id, field_name)
-                    result[generated] = generated
-
-    return result
-
-
-ALLOWED_INPUT_ALIAS_MARKERS = ["auto", "auto_all_outputs"]
+# ALLOWED_INPUT_ALIAS_MARKERS = ["auto", "auto_all_outputs"]
 
 
 class PipelineStructure(KiaraModel):
@@ -122,39 +122,8 @@ class PipelineStructure(KiaraModel):
         _config: PipelineConfig = pipeline_config
         _steps: List[PipelineStep] = list(_config.steps)
 
-        if not _config.input_aliases:
-            input_aliases = {}
-        else:
-            if isinstance(_config.input_aliases, str):
-                if _config.input_aliases not in ALLOWED_INPUT_ALIAS_MARKERS:
-                    raise Exception(
-                        f"Can't create pipeline, invalid value '{_config.input_aliases}' for 'input_aliases'. Either specify a dict, or use one of: {', '.join(ALLOWED_INPUT_ALIAS_MARKERS)}"
-                    )
-
-                input_aliases = calculate_shortest_field_aliases(
-                    _steps, _config.input_aliases, "inputs"
-                )
-            else:
-                input_aliases = dict(_config.input_aliases)
-
-        _input_aliases: Dict[str, str] = dict(input_aliases)  # type: ignore
-
-        if not _config.output_aliases:
-            output_aliases = {}
-        else:
-            if isinstance(_config.output_aliases, str):
-                if _config.output_aliases not in ALLOWED_INPUT_ALIAS_MARKERS:
-                    raise Exception(
-                        f"Can't create pipeline, invalid value '{_config.output_aliases}' for 'output_aliases'. Either specify a dict, or use one of: {', '.join(ALLOWED_INPUT_ALIAS_MARKERS)}"
-                    )
-
-                output_aliases = calculate_shortest_field_aliases(
-                    _steps, _config.output_aliases, "outputs"
-                )
-            else:
-                output_aliases = dict(_config.output_aliases)
-
-        _output_aliases: Dict[str, str] = output_aliases
+        _input_aliases: Dict[str, str] = dict(_config.input_aliases)
+        _output_aliases: Dict[str, str] = dict(_config.output_aliases)
 
         values["steps"] = _steps
         values["input_aliases"] = _input_aliases

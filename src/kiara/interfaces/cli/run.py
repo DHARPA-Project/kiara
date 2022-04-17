@@ -21,7 +21,7 @@ from kiara.exceptions import (
     InvalidValuesException,
     NoSuchExecutionTargetException,
 )
-from kiara.interfaces.python_api import KiaraOperation
+from kiara.interfaces.python_api.operation import KiaraOperation
 from kiara.utils import dict_from_cli_args, is_debug
 from kiara.utils.cli import terminal_print
 from kiara.utils.output import OutputDetails, create_table_from_base_model_cls

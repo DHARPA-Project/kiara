@@ -10,7 +10,7 @@ from enum import Enum
 from pydantic import Extra, Field, PrivateAttr, root_validator, validator
 from rich.console import RenderableType
 from slugify import slugify
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Optional
 
 from kiara.defaults import (
     PIPELINE_CONFIG_TYPE_CATEGORY_ID,
@@ -208,6 +208,36 @@ class PipelineStep(Manifest):
         return f"step: {self.step_id} (module: {self.module_type})"
 
 
+def create_input_alias_map(steps: Iterable[PipelineStep]) -> Dict[str, str]:
+
+    aliases: Dict[str, str] = {}
+    for step in steps:
+        field_names = step.module.input_names
+        for field_name in field_names:
+            alias = generate_pipeline_endpoint_name(
+                step_id=step.step_id, value_name=field_name
+            )
+            assert alias not in aliases.keys()
+            aliases[alias] = alias
+
+    return aliases
+
+
+def create_output_alias_map(steps: Iterable[PipelineStep]) -> Dict[str, str]:
+
+    aliases: Dict[str, str] = {}
+    for step in steps:
+        field_names = step.module.output_names
+        for field_name in field_names:
+            alias = generate_pipeline_endpoint_name(
+                step_id=step.step_id, value_name=field_name
+            )
+            assert alias not in aliases.keys()
+            aliases[alias] = alias
+
+    return aliases
+
+
 class PipelineConfig(KiaraModuleConfig):
     """A class to hold the configuration for a [PipelineModule][kiara.pipeline.module.PipelineModule].
 
@@ -283,10 +313,14 @@ class PipelineConfig(KiaraModuleConfig):
         pipeline_id = data.pop("module_type_name", None)
         if pipeline_id is None:
             pipeline_id = os.path.basename(path)
-        steps = data.pop("steps")
-        steps = PipelineStep.create_steps(*steps, kiara=kiara, module_map=module_map)
-        data["steps"] = steps
-        return PipelineConfig(pipeline_id=pipeline_id, **data)
+
+        return cls.from_config(
+            pipeline_id=pipeline_id, data=data, kiara=kiara, module_map=module_map
+        )
+        # steps = data.pop("steps")
+        # steps = PipelineStep.create_steps(*steps, kiara=kiara, module_map=module_map)
+        # data["steps"] = steps
+        # return cls(pipeline_id=pipeline_id, **data)
 
     @classmethod
     def from_config(
@@ -301,7 +335,12 @@ class PipelineConfig(KiaraModuleConfig):
         steps = data.pop("steps")
         steps = PipelineStep.create_steps(*steps, kiara=kiara, module_map=module_map)
         data["steps"] = steps
-        result = PipelineConfig(pipeline_id=pipeline_id, **data)
+        if not data.get("input_aliases"):
+            data["input_aliases"] = create_input_alias_map(steps)
+        if not data.get("output_aliases"):
+            data["output_aliases"] = create_output_alias_map(steps)
+
+        result = cls(pipeline_id=pipeline_id, **data)
         return result
 
     class Config:
@@ -312,12 +351,10 @@ class PipelineConfig(KiaraModuleConfig):
     steps: List[PipelineStep] = Field(
         description="A list of steps/modules of this pipeline, and their connections.",
     )
-    input_aliases: Union[str, Dict[str, str]] = Field(
-        default_factory=dict,
+    input_aliases: Dict[str, str] = Field(
         description="A map of input aliases, with the calculated (<step_id>__<input_name> -- double underscore!) name as key, and a string (the resulting workflow input alias) as value. Check the documentation for the config class for which marker strings can be used to automatically create this map if possible.",
     )
-    output_aliases: Union[str, Dict[str, str]] = Field(
-        default_factory=dict,
+    output_aliases: Dict[str, str] = Field(
         description="A map of output aliases, with the calculated (<step_id>__<output_name> -- double underscore!) name as key, and a string (the resulting workflow output alias) as value.  Check the documentation for the config class for which marker strings can be used to automatically create this map if possible.",
     )
     documentation: str = Field(
@@ -369,3 +406,40 @@ class PipelineConfig(KiaraModuleConfig):
     def create_renderable(self, **config: Any) -> RenderableType:
 
         return create_table_from_model_object(self, exclude_fields={"steps"})
+
+    # def create_input_alias_map(self) -> Dict[str, str]:
+    #
+    #     aliases: Dict[str, List[str]] = {}
+    #     for step in self.steps:
+    #         field_names = step.module.input_names
+    #         for field_name in field_names:
+    #             aliases.setdefault(field_name, []).append(step.step_id)
+    #
+    #     result: Dict[str, str] = {}
+    #     for field_name, step_ids in aliases.items():
+    #         for step_id in step_ids:
+    #             generated = generate_pipeline_endpoint_name(step_id, field_name)
+    #             result[generated] = generated
+    #
+    #     return result
+    #
+    # def create_output_alias_map(self) -> Dict[str, str]:
+    #
+    #     aliases: Dict[str, List[str]] = {}
+    #     for step in self.steps:
+    #         field_names = step.module.input_names
+    #         for field_name in field_names:
+    #             aliases.setdefault(field_name, []).append(step.step_id)
+    #
+    #     result: Dict[str, str] = {}
+    #     for field_name, step_ids in aliases.items():
+    #         for step_id in step_ids:
+    #             generated = generate_pipeline_endpoint_name(step_id, field_name)
+    #             result[generated] = generated
+    #
+    #     return result
+
+
+def generate_pipeline_endpoint_name(step_id: str, value_name: str):
+
+    return f"{step_id}__{value_name}"

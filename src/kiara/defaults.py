@@ -184,6 +184,8 @@ MODULE_CONFIG_METADATA_CATEGORY_ID = "metadata.module_config"
 MODULE_TYPE_CATEGORY_ID = "metadata.module"
 MODULE_TYPES_CATEGORY_ID = "modules"
 
+BATCH_CONFIG_TYPE_CATEGORY_ID = "instance.batch_config"
+
 PIPELINE_TYPE_CATEGORY_ID = "metadata.pipeline"
 PIPELINE_TYPES_CATEGORY_ID = "pipelines"
 PIPELINE_STEP_TYPE_CATEGORY_ID = "instance.pipeline_step"

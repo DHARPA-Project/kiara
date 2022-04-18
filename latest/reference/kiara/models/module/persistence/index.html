@@ -1387,6 +1387,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/utils/" class="md-nav__link">
+        utils
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3842,10 +3856,6 @@ LoadConfig            (<a class="autorefs autorefs-internal" title="kiara.models
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;In what form the  serialized bytes are returned.&quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="n">ByteProvisioningStrategy</span><span class="o">.</span><span class="n">INLINE</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="c1"># bytes_structure: Optional[BytesStructure] = Field(</span>
-    <span class="c1">#     description=&quot;A description of the bytes structure of the (serialized) data.&quot;,</span>
-    <span class="c1">#     default=None,</span>
-    <span class="c1"># )</span>
     <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A map translating from input field name to alias (key) in bytes_structure.&quot;</span>
     <span class="p">)</span>
@@ -3855,6 +3865,7 @@ LoadConfig            (<a class="autorefs autorefs-internal" title="kiara.models
     <span class="n">bytes_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BytesAliasStructure</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;References to the byte chunks for the inputs.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">)</span>
+    <span class="n">inline_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Inline values.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
@@ -3893,6 +3904,28 @@ LoadConfig            (<a class="autorefs autorefs-internal" title="kiara.models
     <div class="doc doc-contents ">
 
       <p>References to the byte chunks for the inputs.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.module.persistence.LoadConfig.inline_data" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">inline_data</span><span class="p">:</span> <span class="n">Any</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.module.persistence.LoadConfig.inline_data" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Inline values.</p>
     </div>
 
   </div>

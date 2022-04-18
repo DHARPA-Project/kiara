@@ -1387,6 +1387,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/utils/" class="md-nav__link">
+        utils
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -2243,6 +2257,13 @@
           <li class="md-nav__item">
   <a href="#kiara.modules.included_core_modules.persistence.SavePickleToDiskModule" class="md-nav__link">
     SavePickleToDiskModule
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.modules.included_core_modules.persistence.SaveStringModule" class="md-nav__link">
+    SaveStringModule
   </a>
   
 </li>
@@ -3429,6 +3450,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#kiara.modules.included_core_modules.persistence.SaveStringModule" class="md-nav__link">
+    SaveStringModule
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3570,9 +3598,9 @@ LoadInlineDataModule            (<a class="autorefs autorefs-internal" title="ki
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;json_data&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The serialized data as json string.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inline_data&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The data.&quot;</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -3587,10 +3615,8 @@ LoadInlineDataModule            (<a class="autorefs autorefs-internal" title="ki
 
     <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
 
-        <span class="n">data_str</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;json_data&quot;</span><span class="p">)</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data_str</span><span class="p">)</span>
-
-        <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;inline_data&quot;</span><span class="p">)</span>
+        <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -3700,9 +3726,9 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;json_data&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The serialized data as json string.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;inline_data&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The data.&quot;</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">}</span>
 </code></pre></div>
@@ -3762,10 +3788,8 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
           <summary>Source code in <code>kiara/modules/included_core_modules/persistence.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
 
-    <span class="n">data_str</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;json_data&quot;</span><span class="p">)</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data_str</span><span class="p">)</span>
-
-    <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;inline_data&quot;</span><span class="p">)</span>
+    <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -4016,7 +4040,10 @@ LoadPickledDataModule            (<a class="autorefs autorefs-internal" title="k
 
     <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
 
-        <span class="kn">import</span> <span class="nn">pickle5</span> <span class="k">as</span> <span class="nn">pickle</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">pickle5</span> <span class="k">as</span> <span class="nn">pickle</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">pickle</span>  <span class="c1"># type: ignore</span>
 
         <span class="n">data_type_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;data_type&quot;</span><span class="p">)</span>
 
@@ -4027,7 +4054,8 @@ LoadPickledDataModule            (<a class="autorefs autorefs-internal" title="k
         <span class="n">key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">bytes_structure</span><span class="o">.</span><span class="n">chunk_map</span><span class="p">))</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">bytes_structure</span><span class="o">.</span><span class="n">chunk_map</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
-        <span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">bytes_structure</span><span class="o">.</span><span class="n">chunk_map</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">data_type_name</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 </code></pre></div>
@@ -4199,7 +4227,10 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
           <summary>Source code in <code>kiara/modules/included_core_modules/persistence.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
 
-    <span class="kn">import</span> <span class="nn">pickle5</span> <span class="k">as</span> <span class="nn">pickle</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pickle5</span> <span class="k">as</span> <span class="nn">pickle</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pickle</span>  <span class="c1"># type: ignore</span>
 
     <span class="n">data_type_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;data_type&quot;</span><span class="p">)</span>
 
@@ -4210,7 +4241,8 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
     <span class="n">key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">bytes_structure</span><span class="o">.</span><span class="n">chunk_map</span><span class="p">))</span>
     <span class="n">value</span> <span class="o">=</span> <span class="n">bytes_structure</span><span class="o">.</span><span class="n">chunk_map</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
-    <span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">bytes_structure</span><span class="o">.</span><span class="n">chunk_map</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">data_type_name</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 </code></pre></div>
@@ -4831,7 +4863,7 @@ SaveInlineDataModule            (<a class="autorefs autorefs-internal" title="ki
           <summary>Source code in <code>kiara/modules/included_core_modules/persistence.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SaveInlineDataModule</span><span class="p">(</span><span class="n">PersistValueModule</span><span class="p">):</span>
 
-    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;value.save_inline&quot;</span>
+    <span class="n">_module_type_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
 
     <span class="k">def</span> <span class="nf">get_persistence_target_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;inline&quot;</span>
@@ -4839,34 +4871,26 @@ SaveInlineDataModule            (<a class="autorefs autorefs-internal" title="ki
     <span class="k">def</span> <span class="nf">get_persistence_format_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;json_string&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_create_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">type_hint</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_inline_load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 
         <span class="k">try</span><span class="p">:</span>
-
-            <span class="n">all_json</span> <span class="o">=</span> <span class="n">orjson_dumps</span><span class="p">({</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">})</span>
 
             <span class="n">load_config_data</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s2">&quot;provisioning_strategy&quot;</span><span class="p">:</span> <span class="n">ByteProvisioningStrategy</span><span class="o">.</span><span class="n">INLINE</span><span class="p">,</span>
                 <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="s2">&quot;value.load_inline&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;data_type&quot;</span><span class="p">:</span> <span class="n">type_hint</span><span class="p">},</span>
-                <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;json_data&quot;</span><span class="p">:</span> <span class="n">all_json</span><span class="p">},</span>
+                <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;data_type&quot;</span><span class="p">:</span> <span class="n">data_type</span><span class="p">},</span>
+                <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;inline_data&quot;</span><span class="p">:</span> <span class="n">LOAD_CONFIG_PLACEHOLDER</span><span class="p">},</span>
+                <span class="s2">&quot;inline_data&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
                 <span class="s2">&quot;output_name&quot;</span><span class="p">:</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span>
             <span class="p">}</span>
 
             <span class="n">load_config</span> <span class="o">=</span> <span class="n">LoadConfig</span><span class="p">(</span><span class="o">**</span><span class="n">load_config_data</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">KiaraProcessingException</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Can&#39;t serialize value of type &#39;</span><span class="si">{</span><span class="n">type_hint</span><span class="si">}</span><span class="s2">&#39; to json: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t serialize value of type &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39; to json: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">load_config</span>
-
-    <span class="k">def</span> <span class="nf">data_type__string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">persistence_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
-
-        <span class="n">load_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_json</span><span class="p">(</span>
-            <span class="n">data</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">type_hint</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">load_config</span><span class="p">,</span> <span class="kc">None</span>
 </code></pre></div>
         </details>
 
@@ -4886,23 +4910,37 @@ SaveInlineDataModule            (<a class="autorefs autorefs-internal" title="ki
 
 
 
-<h5 id="kiara.modules.included_core_modules.persistence.SaveInlineDataModule.data_type__string" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">data_type__string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">persistence_config</span><span class="p">)</span></code>
+<h5 id="kiara.modules.included_core_modules.persistence.SaveInlineDataModule.create_inline_load_config" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_inline_load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">data_type</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.persistence.SaveInlineDataModule.data_type__string" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.persistence.SaveInlineDataModule.create_inline_load_config" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/persistence.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">data_type__string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">persistence_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inline_load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 
-    <span class="n">load_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_json</span><span class="p">(</span>
-        <span class="n">data</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">type_hint</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span>
-    <span class="p">)</span>
-    <span class="k">return</span> <span class="n">load_config</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+
+        <span class="n">load_config_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;provisioning_strategy&quot;</span><span class="p">:</span> <span class="n">ByteProvisioningStrategy</span><span class="o">.</span><span class="n">INLINE</span><span class="p">,</span>
+            <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="s2">&quot;value.load_inline&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;data_type&quot;</span><span class="p">:</span> <span class="n">data_type</span><span class="p">},</span>
+            <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;inline_data&quot;</span><span class="p">:</span> <span class="n">LOAD_CONFIG_PLACEHOLDER</span><span class="p">},</span>
+            <span class="s2">&quot;inline_data&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
+            <span class="s2">&quot;output_name&quot;</span><span class="p">:</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">load_config</span> <span class="o">=</span> <span class="n">LoadConfig</span><span class="p">(</span><span class="o">**</span><span class="n">load_config_data</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">KiaraProcessingException</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t serialize value of type &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39; to json: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">load_config</span>
 </code></pre></div>
         </details>
     </div>
@@ -5187,7 +5225,10 @@ SavePickleToDiskModule            (<a class="autorefs autorefs-internal" title="
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">LoadConfig</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BytesStructure</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;Persist any Python object using &#39;pickle&#39;.&quot;&quot;&quot;</span>
 
-        <span class="kn">import</span> <span class="nn">pickle5</span> <span class="k">as</span> <span class="nn">pickle</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">pickle5</span> <span class="k">as</span> <span class="nn">pickle</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">pickle</span>  <span class="c1"># type: ignore</span>
 
         <span class="n">pickled_bytes</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 
@@ -5205,7 +5246,7 @@ SavePickleToDiskModule            (<a class="autorefs autorefs-internal" title="
             <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;data_type&quot;</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;bytes_structure&quot;</span><span class="p">:</span> <span class="s2">&quot;__dummy__&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;bytes_structure&quot;</span><span class="p">:</span> <span class="n">LOAD_CONFIG_PLACEHOLDER</span><span class="p">},</span>
             <span class="s2">&quot;output_name&quot;</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
         <span class="p">}</span>
 
@@ -5247,7 +5288,10 @@ SavePickleToDiskModule            (<a class="autorefs autorefs-internal" title="
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">LoadConfig</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BytesStructure</span><span class="p">]]:</span>
     <span class="sd">&quot;&quot;&quot;Persist any Python object using &#39;pickle&#39;.&quot;&quot;&quot;</span>
 
-    <span class="kn">import</span> <span class="nn">pickle5</span> <span class="k">as</span> <span class="nn">pickle</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pickle5</span> <span class="k">as</span> <span class="nn">pickle</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pickle</span>  <span class="c1"># type: ignore</span>
 
     <span class="n">pickled_bytes</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 
@@ -5265,7 +5309,7 @@ SavePickleToDiskModule            (<a class="autorefs autorefs-internal" title="
         <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;data_type&quot;</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
         <span class="p">},</span>
-        <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;bytes_structure&quot;</span><span class="p">:</span> <span class="s2">&quot;__dummy__&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;bytes_structure&quot;</span><span class="p">:</span> <span class="n">LOAD_CONFIG_PLACEHOLDER</span><span class="p">},</span>
         <span class="s2">&quot;output_name&quot;</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
     <span class="p">}</span>
 
@@ -5321,6 +5365,88 @@ SavePickleToDiskModule            (<a class="autorefs autorefs-internal" title="
           <summary>Source code in <code>kiara/modules/included_core_modules/persistence.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_persistence_target_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="s2">&quot;disk&quot;</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="kiara.modules.included_core_modules.persistence.SaveStringModule" class="doc doc-heading">
+        <code>
+SaveStringModule            (<a class="autorefs autorefs-internal" title="kiara.modules.included_core_modules.persistence.SaveInlineDataModule" href="#kiara.modules.included_core_modules.persistence.SaveInlineDataModule">SaveInlineDataModule</a>)
+        </code>
+
+
+
+<a href="#kiara.modules.included_core_modules.persistence.SaveStringModule" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/persistence.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SaveStringModule</span><span class="p">(</span><span class="n">SaveInlineDataModule</span><span class="p">):</span>
+
+    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;string.save_inline&quot;</span>
+
+    <span class="k">def</span> <span class="nf">data_type__string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">persistence_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+
+        <span class="n">load_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_inline_load_config</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">load_config</span><span class="p">,</span> <span class="kc">None</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.modules.included_core_modules.persistence.SaveStringModule.data_type__string" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">data_type__string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">persistence_config</span><span class="p">)</span></code>
+
+
+<a href="#kiara.modules.included_core_modules.persistence.SaveStringModule.data_type__string" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/persistence.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">data_type__string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">persistence_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+
+    <span class="n">load_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_inline_load_config</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">load_config</span><span class="p">,</span> <span class="kc">None</span>
 </code></pre></div>
         </details>
     </div>

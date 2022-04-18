@@ -1387,6 +1387,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../interfaces/python_api/utils/" class="md-nav__link">
+        utils
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3612,6 +3626,7 @@ Pipeline        </code>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">alias_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_values</span><span class="o">.</span><span class="n">get_alias</span><span class="p">(</span><span class="s2">&quot;pipeline.inputs&quot;</span><span class="p">)</span>
                 <span class="k">assert</span> <span class="n">alias_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="c1"># dbg(alias_map.__dict__)</span>
                 <span class="n">schema</span> <span class="o">=</span> <span class="n">alias_map</span><span class="o">.</span><span class="n">values_schema</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">register_data</span><span class="p">(</span>
                     <span class="n">data</span><span class="o">=</span><span class="n">v</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span> <span class="n">pedigree</span><span class="o">=</span><span class="n">ORPHAN</span><span class="p">,</span> <span class="n">reuse_existing</span><span class="o">=</span><span class="kc">True</span>
@@ -4477,6 +4492,7 @@ Pipeline        </code>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">alias_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_values</span><span class="o">.</span><span class="n">get_alias</span><span class="p">(</span><span class="s2">&quot;pipeline.inputs&quot;</span><span class="p">)</span>
             <span class="k">assert</span> <span class="n">alias_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="c1"># dbg(alias_map.__dict__)</span>
             <span class="n">schema</span> <span class="o">=</span> <span class="n">alias_map</span><span class="o">.</span><span class="n">values_schema</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
             <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">register_data</span><span class="p">(</span>
                 <span class="n">data</span><span class="o">=</span><span class="n">v</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span> <span class="n">pedigree</span><span class="o">=</span><span class="n">ORPHAN</span><span class="p">,</span> <span class="n">reuse_existing</span><span class="o">=</span><span class="kc">True</span>

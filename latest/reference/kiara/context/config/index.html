@@ -525,6 +525,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.context.config.KiaraConfig" class="md-nav__link">
+    KiaraConfig
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.context.config.KiaraContextConfig" class="md-nav__link">
     KiaraContextConfig
   </a>
@@ -532,8 +539,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kiara.context.config.KiaraGlobalConfig" class="md-nav__link">
-    KiaraGlobalConfig
+  <a href="#kiara.context.config.KiaraCurrentContextConfig" class="md-nav__link">
+    KiaraCurrentContextConfig
   </a>
   
 </li>
@@ -1488,6 +1495,20 @@
     <li class="md-nav__item">
       <a href="../../interfaces/python_api/operation/" class="md-nav__link">
         operation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interfaces/python_api/utils/" class="md-nav__link">
+        utils
       </a>
     </li>
   
@@ -3384,6 +3405,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.context.config.KiaraConfig" class="md-nav__link">
+    KiaraConfig
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.context.config.KiaraContextConfig" class="md-nav__link">
     KiaraContextConfig
   </a>
@@ -3391,8 +3419,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kiara.context.config.KiaraGlobalConfig" class="md-nav__link">
-    KiaraGlobalConfig
+  <a href="#kiara.context.config.KiaraCurrentContextConfig" class="md-nav__link">
+    KiaraCurrentContextConfig
   </a>
   
 </li>
@@ -3778,6 +3806,392 @@ Config        </code>
 
 
 
+<h3 id="kiara.context.config.KiaraConfig" class="doc doc-heading">
+        <code>
+KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSettings</span>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.context.config.KiaraConfig" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/context/config.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraConfig</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">env_prefix</span> <span class="o">=</span> <span class="s2">&quot;kiara_&quot;</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
+
+        <span class="nd">@classmethod</span>
+        <span class="k">def</span> <span class="nf">customise_sources</span><span class="p">(</span>
+            <span class="bp">cls</span><span class="p">,</span>
+            <span class="n">init_settings</span><span class="p">,</span>
+            <span class="n">env_settings</span><span class="p">,</span>
+            <span class="n">file_secret_settings</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">init_settings</span><span class="p">,</span> <span class="n">env_settings</span><span class="p">,</span> <span class="n">config_file_settings_source</span><span class="p">)</span>
+
+    <span class="n">base_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The base path to use for all data (unless otherwise specified.&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">kiara_app_dirs</span><span class="o">.</span><span class="n">user_data_dir</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">context_base_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The base path to look for contexts in.&quot;</span><span class="p">)</span>
+    <span class="n">stores_base_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The base path for the stores of this context.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">default_context</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The name of the default context to use if none is provided.&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">DEFAULT_CONTEXT_NAME</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="nd">@root_validator</span><span class="p">(</span><span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_set_paths</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+
+        <span class="n">base_path</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;base_path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">base_path</span><span class="p">:</span>
+            <span class="n">base_path</span> <span class="o">=</span> <span class="n">kiara_app_dirs</span><span class="o">.</span><span class="n">user_data_dir</span>
+            <span class="n">values</span><span class="p">[</span><span class="s2">&quot;base_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">base_path</span>
+
+        <span class="n">context_base_path</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;context_base_path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">context_base_path</span><span class="p">:</span>
+            <span class="n">context_base_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_path</span><span class="p">,</span> <span class="s2">&quot;contexts&quot;</span><span class="p">)</span>
+            <span class="n">values</span><span class="p">[</span><span class="s2">&quot;context_base_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">context_base_path</span>
+
+        <span class="n">stores_base_path</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stores_base_path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stores_base_path</span><span class="p">:</span>
+            <span class="n">stores_base_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_path</span><span class="p">,</span> <span class="s2">&quot;stores&quot;</span><span class="p">)</span>
+            <span class="n">values</span><span class="p">[</span><span class="s2">&quot;stores_base_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stores_base_path</span>
+
+        <span class="k">return</span> <span class="n">values</span>
+
+    <span class="k">def</span> <span class="nf">create_context_config</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_args</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraCurrentContextConfig&quot;</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="n">KiaraCurrentContextConfig</span><span class="p">(</span>
+            <span class="n">kiara_config</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context_name</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_args</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_context</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_args</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">:</span>
+
+        <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_context_config</span><span class="p">(</span><span class="n">context_name</span><span class="o">=</span><span class="n">context_name</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_args</span><span class="p">)</span>
+
+        <span class="kn">from</span> <span class="nn">kiara.context</span> <span class="kn">import</span> <span class="n">Kiara</span>
+
+        <span class="k">return</span> <span class="n">Kiara</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h4 id="kiara.context.config.KiaraConfig-attributes">Attributes<a href="#kiara.context.config.KiaraConfig-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.context.config.KiaraConfig.base_path" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">base_path</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.context.config.KiaraConfig.base_path" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The base path to use for all data (unless otherwise specified.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.context.config.KiaraConfig.context_base_path" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">context_base_path</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.context.config.KiaraConfig.context_base_path" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The base path to look for contexts in.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.context.config.KiaraConfig.default_context" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">default_context</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.context.config.KiaraConfig.default_context" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The name of the default context to use if none is provided.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.context.config.KiaraConfig.stores_base_path" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">stores_base_path</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.context.config.KiaraConfig.stores_base_path" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The base path for the stores of this context.</p>
+    </div>
+
+  </div>
+
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h5 id="kiara.context.config.KiaraConfig.Config" class="doc doc-heading">
+        <code>
+Config        </code>
+
+
+
+<a href="#kiara.context.config.KiaraConfig.Config" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/context/config.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+    <span class="n">env_prefix</span> <span class="o">=</span> <span class="s2">&quot;kiara_&quot;</span>
+    <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">customise_sources</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">init_settings</span><span class="p">,</span>
+        <span class="n">env_settings</span><span class="p">,</span>
+        <span class="n">file_secret_settings</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">init_settings</span><span class="p">,</span> <span class="n">env_settings</span><span class="p">,</span> <span class="n">config_file_settings_source</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.context.config.KiaraConfig.Config.env_prefix" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">env_prefix</span></code>
+
+
+<a href="#kiara.context.config.KiaraConfig.Config.env_prefix" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.context.config.KiaraConfig.Config.extra" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">extra</span></code>
+
+
+<a href="#kiara.context.config.KiaraConfig.Config.extra" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.context.config.KiaraConfig.Config.customise_sources" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">customise_sources</span><span class="p">(</span><span class="n">init_settings</span><span class="p">,</span> <span class="n">env_settings</span><span class="p">,</span> <span class="n">file_secret_settings</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.context.config.KiaraConfig.Config.customise_sources" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/context/config.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">customise_sources</span><span class="p">(</span>
+    <span class="bp">cls</span><span class="p">,</span>
+    <span class="n">init_settings</span><span class="p">,</span>
+    <span class="n">env_settings</span><span class="p">,</span>
+    <span class="n">file_secret_settings</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">init_settings</span><span class="p">,</span> <span class="n">env_settings</span><span class="p">,</span> <span class="n">config_file_settings_source</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.context.config.KiaraConfig.create_context" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_args</span><span class="p">)</span></code>
+
+
+<a href="#kiara.context.config.KiaraConfig.create_context" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/context/config.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_context</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_args</span><span class="p">:</span> <span class="n">Any</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">:</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_context_config</span><span class="p">(</span><span class="n">context_name</span><span class="o">=</span><span class="n">context_name</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_args</span><span class="p">)</span>
+
+    <span class="kn">from</span> <span class="nn">kiara.context</span> <span class="kn">import</span> <span class="n">Kiara</span>
+
+    <span class="k">return</span> <span class="n">Kiara</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.context.config.KiaraConfig.create_context_config" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_context_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_args</span><span class="p">)</span></code>
+
+
+<a href="#kiara.context.config.KiaraConfig.create_context_config" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/context/config.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_context_config</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_args</span><span class="p">:</span> <span class="n">Any</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraCurrentContextConfig&quot;</span><span class="p">:</span>
+
+    <span class="k">return</span> <span class="n">KiaraCurrentContextConfig</span><span class="p">(</span>
+        <span class="n">kiara_config</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context_name</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_args</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
 <h3 id="kiara.context.config.KiaraContextConfig" class="doc doc-heading">
         <code>
 KiaraContextConfig            (<a class="autorefs autorefs-internal" title="kiara.context.config.KiaraBaseConfig" href="#kiara.context.config.KiaraBaseConfig">KiaraBaseConfig</a>)
@@ -3985,9 +4399,9 @@ Config        </code>
 
 
 
-<h3 id="kiara.context.config.KiaraGlobalConfig" class="doc doc-heading">
+<h3 id="kiara.context.config.KiaraCurrentContextConfig" class="doc doc-heading">
         <code>
-KiaraGlobalConfig            (<a class="autorefs autorefs-internal" title="kiara.context.config.KiaraBaseConfig" href="#kiara.context.config.KiaraBaseConfig">KiaraBaseConfig</a>)
+KiaraCurrentContextConfig            (<a class="autorefs autorefs-internal" title="kiara.context.config.KiaraBaseConfig" href="#kiara.context.config.KiaraBaseConfig">KiaraBaseConfig</a>)
         </code>
 
 
@@ -3995,16 +4409,19 @@ KiaraGlobalConfig            (<a class="autorefs autorefs-internal" title="kiara
       <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
   </span>
 
-<a href="#kiara.context.config.KiaraGlobalConfig" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#kiara.context.config.KiaraCurrentContextConfig" class="headerlink" title="Permanent link">&para;</a></h3>
 
     <div class="doc doc-contents ">
 
+      <p>Configuration that holds the currently active context, as well as references to other available contexts.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/context/config.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraGlobalConfig</span><span class="p">(</span><span class="n">KiaraBaseConfig</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraCurrentContextConfig</span><span class="p">(</span><span class="n">KiaraBaseConfig</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Configuration that holds the currently active context, as well as references to other available contexts.&quot;&quot;&quot;</span>
+
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
-        <span class="n">env_prefix</span> <span class="o">=</span> <span class="s2">&quot;kiara_&quot;</span>
+        <span class="n">env_prefix</span> <span class="o">=</span> <span class="s2">&quot;kiara_context_&quot;</span>
         <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
 
         <span class="nd">@classmethod</span>
@@ -4017,12 +4434,13 @@ KiaraGlobalConfig            (<a class="autorefs autorefs-internal" title="kiara
             <span class="k">return</span> <span class="p">(</span>
                 <span class="n">init_settings</span><span class="p">,</span>
                 <span class="n">env_settings</span><span class="p">,</span>
-                <span class="n">config_file_settings_source</span><span class="p">,</span>
             <span class="p">)</span>
 
+    <span class="n">kiara_config</span><span class="p">:</span> <span class="n">KiaraConfig</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The base kiara configuration.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="n">KiaraConfig</span>
+    <span class="p">)</span>
     <span class="n">context</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;The path to an existing folder that houses the context, or the name of the context to use under the default kiara app data directory (</span><span class="si">{</span><span class="n">kiara_app_dirs</span><span class="o">.</span><span class="n">user_data_dir</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;default_context&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;The path to an existing folder that houses the context, or the name of the context to use under the default kiara app data directory (</span><span class="si">{</span><span class="n">kiara_app_dirs</span><span class="o">.</span><span class="n">user_data_dir</span><span class="si">}</span><span class="s2">).&quot;</span>
     <span class="p">)</span>
     <span class="n">context_configs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraContextConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The context configuration.&quot;</span>
@@ -4030,16 +4448,18 @@ KiaraGlobalConfig            (<a class="autorefs autorefs-internal" title="kiara
     <span class="c1"># overlay_config: KiaraConfig = Field(description=&quot;Extra config options to add to the selected context.&quot;)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">find_current_contexts</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraContextConfig</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">find_current_contexts</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">kiara_config</span><span class="p">:</span> <span class="n">KiaraConfig</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraContextConfig</span><span class="p">]:</span>
 
         <span class="n">contexts</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraContextConfig</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">KIARA_CONTEXTS_FOLDER</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">kiara_config</span><span class="o">.</span><span class="n">context_base_path</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">contexts</span>
 
-        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">KIARA_CONTEXTS_FOLDER</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">kiara_config</span><span class="o">.</span><span class="n">context_base_path</span><span class="p">):</span>
 
-            <span class="n">config_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">KIARA_CONTEXTS_FOLDER</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+            <span class="n">config_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">kiara_config</span><span class="o">.</span><span class="n">context_base_path</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
             <span class="n">k_config</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">load_context</span><span class="p">(</span><span class="n">config_dir</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">k_config</span><span class="p">:</span>
                 <span class="n">contexts</span><span class="p">[</span><span class="n">k_config</span><span class="o">.</span><span class="n">context_alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">k_config</span>
@@ -4048,7 +4468,11 @@ KiaraGlobalConfig            (<a class="autorefs autorefs-internal" title="kiara
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_context</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context_alias</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">context_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">kiara_config</span><span class="p">:</span> <span class="n">KiaraConfig</span><span class="p">,</span>
+        <span class="n">context_alias</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraContextConfig</span><span class="p">:</span>
 
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
@@ -4063,15 +4487,15 @@ KiaraGlobalConfig            (<a class="autorefs autorefs-internal" title="kiara
         <span class="n">config</span><span class="p">[</span><span class="s2">&quot;context_alias&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">context_alias</span>
         <span class="n">config</span><span class="p">[</span><span class="s2">&quot;context_folder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
 
-        <span class="n">config</span><span class="p">[</span><span class="s2">&quot;archives&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_default_archives</span><span class="p">()</span>
+        <span class="n">config</span><span class="p">[</span><span class="s2">&quot;archives&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_default_archives</span><span class="p">(</span><span class="n">kiara_config</span><span class="o">=</span><span class="n">kiara_config</span><span class="p">)</span>
 
-        <span class="n">kiara_config</span> <span class="o">=</span> <span class="n">KiaraContextConfig</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
+        <span class="n">kiara_context_config</span> <span class="o">=</span> <span class="n">KiaraContextConfig</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
         <span class="n">config_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;kiara_context.yaml&quot;</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">kiara_config</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span> <span class="n">f</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">kiara_config</span>
+        <span class="k">return</span> <span class="n">kiara_context_config</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load_context</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -4099,17 +4523,25 @@ KiaraGlobalConfig            (<a class="autorefs autorefs-internal" title="kiara
     <span class="k">def</span> <span class="nf">validate_global_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
 
         <span class="n">create_context</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;create_context&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="n">contexts</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">find_current_contexts</span><span class="p">()</span>
+
+        <span class="n">kiara_config</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kiara_config&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kiara_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kiara_config</span> <span class="o">=</span> <span class="n">KiaraConfig</span><span class="p">()</span>
+            <span class="n">values</span><span class="p">[</span><span class="s2">&quot;kiara_config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kiara_config</span>
+
+        <span class="n">contexts</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">find_current_contexts</span><span class="p">(</span><span class="n">kiara_config</span><span class="o">=</span><span class="n">kiara_config</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="s2">&quot;context_configs&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="k">assert</span> <span class="s2">&quot;overlay_config&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
-        <span class="n">context_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;context&quot;</span><span class="p">,</span> <span class="s2">&quot;default_context&quot;</span><span class="p">)</span>
+        <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;context&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">context_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">context_name</span> <span class="o">=</span> <span class="n">kiara_config</span><span class="o">.</span><span class="n">default_context</span>
         <span class="n">loaded_context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KiaraContextConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">assert</span> <span class="n">context_name</span> <span class="o">!=</span> <span class="s2">&quot;kiara_context.yaml&quot;</span>
 
-        <span class="k">if</span> <span class="n">context_name</span> <span class="o">!=</span> <span class="s2">&quot;default_context&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">context_name</span> <span class="o">!=</span> <span class="n">DEFAULT_CONTEXT_NAME</span><span class="p">:</span>
             <span class="n">context_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">context_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;kiara_context.yaml&quot;</span><span class="p">):</span>
                 <span class="n">context_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">context_name</span><span class="p">)</span>
@@ -4128,7 +4560,7 @@ KiaraGlobalConfig            (<a class="autorefs autorefs-internal" title="kiara
                     <span class="n">context_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">context_name</span><span class="p">))</span>
                 <span class="n">context_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
                 <span class="n">loaded_context</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_context</span><span class="p">(</span>
-                    <span class="n">path</span><span class="o">=</span><span class="n">context_dir</span><span class="p">,</span> <span class="n">context_id</span><span class="o">=</span><span class="n">context_id</span>
+                    <span class="n">path</span><span class="o">=</span><span class="n">context_dir</span><span class="p">,</span> <span class="n">context_id</span><span class="o">=</span><span class="n">context_id</span><span class="p">,</span> <span class="n">kiara_config</span><span class="o">=</span><span class="n">kiara_config</span>
                 <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">loaded_context</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -4153,14 +4585,17 @@ KiaraGlobalConfig            (<a class="autorefs autorefs-internal" title="kiara
                     <span class="n">match</span> <span class="o">=</span> <span class="n">context_name</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">create_context</span> <span class="ow">and</span> <span class="n">context_name</span> <span class="o">!=</span> <span class="s2">&quot;default_context&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">create_context</span> <span class="ow">and</span> <span class="n">context_name</span> <span class="o">!=</span> <span class="n">DEFAULT_CONTEXT_NAME</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t find context with name: </span><span class="si">{</span><span class="n">context_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
                 <span class="n">context_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
-                <span class="n">context_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">KIARA_CONTEXTS_FOLDER</span><span class="p">,</span> <span class="n">context_id</span><span class="p">)</span>
+                <span class="n">context_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">kiara_config</span><span class="o">.</span><span class="n">context_base_path</span><span class="p">,</span> <span class="n">context_id</span><span class="p">)</span>
 
                 <span class="n">kiara_config</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_context</span><span class="p">(</span>
-                    <span class="n">path</span><span class="o">=</span><span class="n">context_dir</span><span class="p">,</span> <span class="n">context_id</span><span class="o">=</span><span class="n">context_id</span><span class="p">,</span> <span class="n">context_alias</span><span class="o">=</span><span class="n">context_name</span>
+                    <span class="n">path</span><span class="o">=</span><span class="n">context_dir</span><span class="p">,</span>
+                    <span class="n">context_id</span><span class="o">=</span><span class="n">context_id</span><span class="p">,</span>
+                    <span class="n">context_alias</span><span class="o">=</span><span class="n">context_name</span><span class="p">,</span>
+                    <span class="n">kiara_config</span><span class="o">=</span><span class="n">kiara_config</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">contexts</span><span class="p">[</span><span class="n">context_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">kiara_config</span>
             <span class="k">else</span><span class="p">:</span>
@@ -4183,7 +4618,7 @@ KiaraGlobalConfig            (<a class="autorefs autorefs-internal" title="kiara
             <span class="p">)</span>
 
         <span class="n">selected_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context_configs</span><span class="p">[</span><span class="n">context_name</span><span class="p">]</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
-        <span class="n">overlay</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;context&quot;</span><span class="p">,</span> <span class="s2">&quot;context_configs&quot;</span><span class="p">})</span>
+        <span class="n">overlay</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;context&quot;</span><span class="p">,</span> <span class="s2">&quot;context_configs&quot;</span><span class="p">,</span> <span class="s2">&quot;kiara_config&quot;</span><span class="p">})</span>
         <span class="n">selected_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">overlay</span><span class="p">)</span>
 
         <span class="n">kc</span> <span class="o">=</span> <span class="n">KiaraContextConfig</span><span class="p">(</span><span class="o">**</span><span class="n">selected_dict</span><span class="p">)</span>
@@ -4201,20 +4636,21 @@ KiaraGlobalConfig            (<a class="autorefs autorefs-internal" title="kiara
 
 
 
-<h4 id="kiara.context.config.KiaraGlobalConfig-attributes">Attributes<a href="#kiara.context.config.KiaraGlobalConfig-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+<h4 id="kiara.context.config.KiaraCurrentContextConfig-attributes">Attributes<a href="#kiara.context.config.KiaraCurrentContextConfig-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
 
   <div class="doc doc-object doc-attribute">
 
 
 
-<h5 id="kiara.context.config.KiaraGlobalConfig.context" class="doc doc-heading">
+<h5 id="kiara.context.config.KiaraCurrentContextConfig.context" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">context</span><span class="p">:</span> <span class="nb">str</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
-<a href="#kiara.context.config.KiaraGlobalConfig.context" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.context.config.KiaraCurrentContextConfig.context" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -4229,7 +4665,7 @@ KiaraGlobalConfig            (<a class="autorefs autorefs-internal" title="kiara
 
 
 
-<h5 id="kiara.context.config.KiaraGlobalConfig.context_configs" class="doc doc-heading">
+<h5 id="kiara.context.config.KiaraCurrentContextConfig.context_configs" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">context_configs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">KiaraContextConfig</span><span class="p">]</span></code>
 
   <span class="doc doc-properties">
@@ -4237,11 +4673,33 @@ KiaraGlobalConfig            (<a class="autorefs autorefs-internal" title="kiara
       <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
-<a href="#kiara.context.config.KiaraGlobalConfig.context_configs" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.context.config.KiaraCurrentContextConfig.context_configs" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
       <p>The context configuration.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.context.config.KiaraCurrentContextConfig.kiara_config" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">kiara_config</span><span class="p">:</span> <span class="n">KiaraConfig</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.context.config.KiaraCurrentContextConfig.kiara_config" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The base kiara configuration.</p>
     </div>
 
   </div>
@@ -4253,13 +4711,13 @@ KiaraGlobalConfig            (<a class="autorefs autorefs-internal" title="kiara
 
 
 
-<h5 id="kiara.context.config.KiaraGlobalConfig.Config" class="doc doc-heading">
+<h5 id="kiara.context.config.KiaraCurrentContextConfig.Config" class="doc doc-heading">
         <code>
 Config        </code>
 
 
 
-<a href="#kiara.context.config.KiaraGlobalConfig.Config" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.context.config.KiaraCurrentContextConfig.Config" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -4267,7 +4725,7 @@ Config        </code>
         <details class="quote">
           <summary>Source code in <code>kiara/context/config.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
-    <span class="n">env_prefix</span> <span class="o">=</span> <span class="s2">&quot;kiara_&quot;</span>
+    <span class="n">env_prefix</span> <span class="o">=</span> <span class="s2">&quot;kiara_context_&quot;</span>
     <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
 
     <span class="nd">@classmethod</span>
@@ -4280,7 +4738,6 @@ Config        </code>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">init_settings</span><span class="p">,</span>
             <span class="n">env_settings</span><span class="p">,</span>
-            <span class="n">config_file_settings_source</span><span class="p">,</span>
         <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -4298,11 +4755,11 @@ Config        </code>
 
 
 
-<h7 id="kiara.context.config.KiaraGlobalConfig.Config.env_prefix" class="doc doc-heading">
+<h7 id="kiara.context.config.KiaraCurrentContextConfig.Config.env_prefix" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">env_prefix</span></code>
 
 
-<a href="#kiara.context.config.KiaraGlobalConfig.Config.env_prefix" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.context.config.KiaraCurrentContextConfig.Config.env_prefix" class="headerlink" title="Permanent link">&para;</a></h7>
 
     <div class="doc doc-contents ">
 
@@ -4316,11 +4773,11 @@ Config        </code>
 
 
 
-<h7 id="kiara.context.config.KiaraGlobalConfig.Config.extra" class="doc doc-heading">
+<h7 id="kiara.context.config.KiaraCurrentContextConfig.Config.extra" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">extra</span></code>
 
 
-<a href="#kiara.context.config.KiaraGlobalConfig.Config.extra" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.context.config.KiaraCurrentContextConfig.Config.extra" class="headerlink" title="Permanent link">&para;</a></h7>
 
     <div class="doc doc-contents ">
 
@@ -4337,14 +4794,14 @@ Config        </code>
 
 
 
-<h7 id="kiara.context.config.KiaraGlobalConfig.Config.customise_sources" class="doc doc-heading">
+<h7 id="kiara.context.config.KiaraCurrentContextConfig.Config.customise_sources" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">customise_sources</span><span class="p">(</span><span class="n">init_settings</span><span class="p">,</span> <span class="n">env_settings</span><span class="p">,</span> <span class="n">file_secret_settings</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#kiara.context.config.KiaraGlobalConfig.Config.customise_sources" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.context.config.KiaraCurrentContextConfig.Config.customise_sources" class="headerlink" title="Permanent link">&para;</a></h7>
 
     <div class="doc doc-contents ">
 
@@ -4361,7 +4818,6 @@ Config        </code>
     <span class="k">return</span> <span class="p">(</span>
         <span class="n">init_settings</span><span class="p">,</span>
         <span class="n">env_settings</span><span class="p">,</span>
-        <span class="n">config_file_settings_source</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -4387,14 +4843,14 @@ Config        </code>
 
 
 
-<h5 id="kiara.context.config.KiaraGlobalConfig.create_context" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_context</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">context_id</span><span class="p">,</span> <span class="n">context_alias</span><span class="p">)</span></code>
+<h5 id="kiara.context.config.KiaraCurrentContextConfig.create_context" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_context</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">context_id</span><span class="p">,</span> <span class="n">kiara_config</span><span class="p">,</span> <span class="n">context_alias</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#kiara.context.config.KiaraGlobalConfig.create_context" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.context.config.KiaraCurrentContextConfig.create_context" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -4403,7 +4859,11 @@ Config        </code>
           <summary>Source code in <code>kiara/context/config.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create_context</span><span class="p">(</span>
-    <span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context_alias</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="bp">cls</span><span class="p">,</span>
+    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">context_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">kiara_config</span><span class="p">:</span> <span class="n">KiaraConfig</span><span class="p">,</span>
+    <span class="n">context_alias</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraContextConfig</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
@@ -4418,15 +4878,15 @@ Config        </code>
     <span class="n">config</span><span class="p">[</span><span class="s2">&quot;context_alias&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">context_alias</span>
     <span class="n">config</span><span class="p">[</span><span class="s2">&quot;context_folder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
 
-    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;archives&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_default_archives</span><span class="p">()</span>
+    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;archives&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_default_archives</span><span class="p">(</span><span class="n">kiara_config</span><span class="o">=</span><span class="n">kiara_config</span><span class="p">)</span>
 
-    <span class="n">kiara_config</span> <span class="o">=</span> <span class="n">KiaraContextConfig</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">kiara_context_config</span> <span class="o">=</span> <span class="n">KiaraContextConfig</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
     <span class="n">config_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;kiara_context.yaml&quot;</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">kiara_config</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span> <span class="n">f</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">kiara_config</span>
+    <span class="k">return</span> <span class="n">kiara_context_config</span>
 </code></pre></div>
         </details>
     </div>
@@ -4439,11 +4899,11 @@ Config        </code>
 
 
 
-<h5 id="kiara.context.config.KiaraGlobalConfig.create_renderable" class="doc doc-heading">
+<h5 id="kiara.context.config.KiaraCurrentContextConfig.create_renderable" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
 
 
-<a href="#kiara.context.config.KiaraGlobalConfig.create_renderable" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.context.config.KiaraCurrentContextConfig.create_renderable" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -4464,14 +4924,14 @@ Config        </code>
 
 
 
-<h5 id="kiara.context.config.KiaraGlobalConfig.find_current_contexts" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">find_current_contexts</span><span class="p">()</span></code>
+<h5 id="kiara.context.config.KiaraCurrentContextConfig.find_current_contexts" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">find_current_contexts</span><span class="p">(</span><span class="n">kiara_config</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#kiara.context.config.KiaraGlobalConfig.find_current_contexts" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.context.config.KiaraCurrentContextConfig.find_current_contexts" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -4479,16 +4939,18 @@ Config        </code>
         <details class="quote">
           <summary>Source code in <code>kiara/context/config.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">find_current_contexts</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraContextConfig</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">find_current_contexts</span><span class="p">(</span>
+    <span class="bp">cls</span><span class="p">,</span> <span class="n">kiara_config</span><span class="p">:</span> <span class="n">KiaraConfig</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraContextConfig</span><span class="p">]:</span>
 
     <span class="n">contexts</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraContextConfig</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">KIARA_CONTEXTS_FOLDER</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">kiara_config</span><span class="o">.</span><span class="n">context_base_path</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">contexts</span>
 
-    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">KIARA_CONTEXTS_FOLDER</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">kiara_config</span><span class="o">.</span><span class="n">context_base_path</span><span class="p">):</span>
 
-        <span class="n">config_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">KIARA_CONTEXTS_FOLDER</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+        <span class="n">config_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">kiara_config</span><span class="o">.</span><span class="n">context_base_path</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
         <span class="n">k_config</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">load_context</span><span class="p">(</span><span class="n">config_dir</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">k_config</span><span class="p">:</span>
             <span class="n">contexts</span><span class="p">[</span><span class="n">k_config</span><span class="o">.</span><span class="n">context_alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">k_config</span>
@@ -4506,11 +4968,11 @@ Config        </code>
 
 
 
-<h5 id="kiara.context.config.KiaraGlobalConfig.get_context" class="doc doc-heading">
+<h5 id="kiara.context.config.KiaraCurrentContextConfig.get_context" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
-<a href="#kiara.context.config.KiaraGlobalConfig.get_context" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.context.config.KiaraCurrentContextConfig.get_context" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -4528,7 +4990,7 @@ Config        </code>
         <span class="p">)</span>
 
     <span class="n">selected_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context_configs</span><span class="p">[</span><span class="n">context_name</span><span class="p">]</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
-    <span class="n">overlay</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;context&quot;</span><span class="p">,</span> <span class="s2">&quot;context_configs&quot;</span><span class="p">})</span>
+    <span class="n">overlay</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;context&quot;</span><span class="p">,</span> <span class="s2">&quot;context_configs&quot;</span><span class="p">,</span> <span class="s2">&quot;kiara_config&quot;</span><span class="p">})</span>
     <span class="n">selected_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">overlay</span><span class="p">)</span>
 
     <span class="n">kc</span> <span class="o">=</span> <span class="n">KiaraContextConfig</span><span class="p">(</span><span class="o">**</span><span class="n">selected_dict</span><span class="p">)</span>
@@ -4545,14 +5007,14 @@ Config        </code>
 
 
 
-<h5 id="kiara.context.config.KiaraGlobalConfig.load_context" class="doc doc-heading">
+<h5 id="kiara.context.config.KiaraCurrentContextConfig.load_context" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">load_context</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#kiara.context.config.KiaraGlobalConfig.load_context" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.context.config.KiaraCurrentContextConfig.load_context" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -4592,14 +5054,14 @@ Config        </code>
 
 
 
-<h5 id="kiara.context.config.KiaraGlobalConfig.validate_global_config" class="doc doc-heading">
+<h5 id="kiara.context.config.KiaraCurrentContextConfig.validate_global_config" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">validate_global_config</span><span class="p">(</span><span class="n">values</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#kiara.context.config.KiaraGlobalConfig.validate_global_config" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.context.config.KiaraCurrentContextConfig.validate_global_config" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -4610,17 +5072,25 @@ Config        </code>
 <span class="k">def</span> <span class="nf">validate_global_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
 
     <span class="n">create_context</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;create_context&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-    <span class="n">contexts</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">find_current_contexts</span><span class="p">()</span>
+
+    <span class="n">kiara_config</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kiara_config&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">kiara_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">kiara_config</span> <span class="o">=</span> <span class="n">KiaraConfig</span><span class="p">()</span>
+        <span class="n">values</span><span class="p">[</span><span class="s2">&quot;kiara_config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kiara_config</span>
+
+    <span class="n">contexts</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">find_current_contexts</span><span class="p">(</span><span class="n">kiara_config</span><span class="o">=</span><span class="n">kiara_config</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="s2">&quot;context_configs&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
     <span class="k">assert</span> <span class="s2">&quot;overlay_config&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
-    <span class="n">context_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;context&quot;</span><span class="p">,</span> <span class="s2">&quot;default_context&quot;</span><span class="p">)</span>
+    <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;context&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">context_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">context_name</span> <span class="o">=</span> <span class="n">kiara_config</span><span class="o">.</span><span class="n">default_context</span>
     <span class="n">loaded_context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KiaraContextConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">assert</span> <span class="n">context_name</span> <span class="o">!=</span> <span class="s2">&quot;kiara_context.yaml&quot;</span>
 
-    <span class="k">if</span> <span class="n">context_name</span> <span class="o">!=</span> <span class="s2">&quot;default_context&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">context_name</span> <span class="o">!=</span> <span class="n">DEFAULT_CONTEXT_NAME</span><span class="p">:</span>
         <span class="n">context_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">context_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;kiara_context.yaml&quot;</span><span class="p">):</span>
             <span class="n">context_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">context_name</span><span class="p">)</span>
@@ -4639,7 +5109,7 @@ Config        </code>
                 <span class="n">context_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">context_name</span><span class="p">))</span>
             <span class="n">context_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
             <span class="n">loaded_context</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_context</span><span class="p">(</span>
-                <span class="n">path</span><span class="o">=</span><span class="n">context_dir</span><span class="p">,</span> <span class="n">context_id</span><span class="o">=</span><span class="n">context_id</span>
+                <span class="n">path</span><span class="o">=</span><span class="n">context_dir</span><span class="p">,</span> <span class="n">context_id</span><span class="o">=</span><span class="n">context_id</span><span class="p">,</span> <span class="n">kiara_config</span><span class="o">=</span><span class="n">kiara_config</span>
             <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">loaded_context</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -4664,14 +5134,17 @@ Config        </code>
                 <span class="n">match</span> <span class="o">=</span> <span class="n">context_name</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">create_context</span> <span class="ow">and</span> <span class="n">context_name</span> <span class="o">!=</span> <span class="s2">&quot;default_context&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">create_context</span> <span class="ow">and</span> <span class="n">context_name</span> <span class="o">!=</span> <span class="n">DEFAULT_CONTEXT_NAME</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t find context with name: </span><span class="si">{</span><span class="n">context_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
             <span class="n">context_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
-            <span class="n">context_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">KIARA_CONTEXTS_FOLDER</span><span class="p">,</span> <span class="n">context_id</span><span class="p">)</span>
+            <span class="n">context_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">kiara_config</span><span class="o">.</span><span class="n">context_base_path</span><span class="p">,</span> <span class="n">context_id</span><span class="p">)</span>
 
             <span class="n">kiara_config</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_context</span><span class="p">(</span>
-                <span class="n">path</span><span class="o">=</span><span class="n">context_dir</span><span class="p">,</span> <span class="n">context_id</span><span class="o">=</span><span class="n">context_id</span><span class="p">,</span> <span class="n">context_alias</span><span class="o">=</span><span class="n">context_name</span>
+                <span class="n">path</span><span class="o">=</span><span class="n">context_dir</span><span class="p">,</span>
+                <span class="n">context_id</span><span class="o">=</span><span class="n">context_id</span><span class="p">,</span>
+                <span class="n">context_alias</span><span class="o">=</span><span class="n">context_name</span><span class="p">,</span>
+                <span class="n">kiara_config</span><span class="o">=</span><span class="n">kiara_config</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">contexts</span><span class="p">[</span><span class="n">context_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">kiara_config</span>
         <span class="k">else</span><span class="p">:</span>
@@ -4719,6 +5192,10 @@ Config        </code>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">config_file_settings_source</span><span class="p">(</span><span class="n">settings</span><span class="p">:</span> <span class="n">BaseSettings</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">KIARA_MAIN_CONFIG_FILE</span><span class="p">):</span>
         <span class="n">config</span> <span class="o">=</span> <span class="n">get_data_from_file</span><span class="p">(</span><span class="n">KIARA_MAIN_CONFIG_FILE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid config file format, can&#39;t parse file: </span><span class="si">{</span><span class="n">KIARA_MAIN_CONFIG_FILE</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">config</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">return</span> <span class="n">config</span>
@@ -4735,7 +5212,7 @@ Config        </code>
 
 
 <h3 id="kiara.context.config.create_default_archives" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_default_archives</span><span class="p">()</span></code>
+<code class="highlight language-python"><span class="n">create_default_archives</span><span class="p">(</span><span class="n">kiara_config</span><span class="p">)</span></code>
 
 
 <a href="#kiara.context.config.create_default_archives" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -4745,7 +5222,7 @@ Config        </code>
 
         <details class="quote">
           <summary>Source code in <code>kiara/context/config.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_default_archives</span><span class="p">():</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_default_archives</span><span class="p">(</span><span class="n">kiara_config</span><span class="p">:</span> <span class="n">KiaraConfig</span><span class="p">):</span>
 
     <span class="n">env_registry</span> <span class="o">=</span> <span class="n">EnvironmentRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
 
@@ -4756,7 +5233,7 @@ Config        </code>
 
     <span class="n">data_store_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="s2">&quot;default data store id&quot;</span><span class="p">)</span>
     <span class="n">data_archive_config</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;base_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">KIARA_STORES_FOLDER</span><span class="p">,</span> <span class="n">data_store_type</span><span class="p">)</span>
+        <span class="s2">&quot;base_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">kiara_config</span><span class="o">.</span><span class="n">stores_base_path</span><span class="p">,</span> <span class="n">data_store_type</span><span class="p">)</span>
     <span class="p">}</span>
     <span class="n">data_store</span> <span class="o">=</span> <span class="n">KiaraArchiveConfig</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
         <span class="n">archive_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">data_store_id</span><span class="p">),</span>
@@ -4766,7 +5243,7 @@ Config        </code>
 
     <span class="n">job_store_type</span> <span class="o">=</span> <span class="s2">&quot;filesystem_job_store&quot;</span>
     <span class="n">job_archive_config</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;base_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">KIARA_STORES_FOLDER</span><span class="p">,</span> <span class="n">job_store_type</span><span class="p">)</span>
+        <span class="s2">&quot;base_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">kiara_config</span><span class="o">.</span><span class="n">stores_base_path</span><span class="p">,</span> <span class="n">job_store_type</span><span class="p">)</span>
     <span class="p">}</span>
     <span class="n">job_store_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="s2">&quot;default job store id&quot;</span><span class="p">)</span>
     <span class="n">job_store</span> <span class="o">=</span> <span class="n">KiaraArchiveConfig</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
@@ -4777,7 +5254,7 @@ Config        </code>
 
     <span class="n">alias_store_type</span> <span class="o">=</span> <span class="s2">&quot;filesystem_alias_store&quot;</span>
     <span class="n">alias_store_config</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;base_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">KIARA_STORES_FOLDER</span><span class="p">,</span> <span class="n">alias_store_type</span><span class="p">)</span>
+        <span class="s2">&quot;base_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">kiara_config</span><span class="o">.</span><span class="n">stores_base_path</span><span class="p">,</span> <span class="n">alias_store_type</span><span class="p">)</span>
     <span class="p">}</span>
     <span class="n">alias_store_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="s2">&quot;default alias store id&quot;</span><span class="p">)</span>
     <span class="n">alias_store</span> <span class="o">=</span> <span class="n">KiaraArchiveConfig</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>

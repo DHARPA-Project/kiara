@@ -1391,6 +1391,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../utils/" class="md-nav__link">
+        utils
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3307,6 +3321,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#kiara.interfaces.python_api.utils" class="md-nav__link">
+    utils
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3635,9 +3656,9 @@ StoreValuesResult            (<span title="pydantic.main.BaseModel">BaseModel</s
 
 
 
-<h5 id="kiara.interfaces.python_api.batch.BatchConfig" class="doc doc-heading">
+<h5 id="kiara.interfaces.python_api.batch.BatchOperation" class="doc doc-heading">
         <code>
-BatchConfig            (<a class="autorefs autorefs-internal" title="kiara.models.module.pipeline.PipelineConfig" href="../../../models/module/pipeline/__init__/#kiara.models.module.pipeline.PipelineConfig">PipelineConfig</a>)
+BatchOperation            (<span title="pydantic.main.BaseModel">BaseModel</span>)
         </code>
 
 
@@ -3645,47 +3666,487 @@ BatchConfig            (<a class="autorefs autorefs-internal" title="kiara.model
       <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
   </span>
 
-<a href="#kiara.interfaces.python_api.batch.BatchConfig" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.interfaces.python_api.batch.BatchOperation" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
-      <p>A class to hold the configuration for a single or set of batch module runs.</p>
-<p>This class is similar to the [<code>PipelineConfig</code>][kiara.models.pipeline.PipelineConfig] one, except in the way it
-handles references to inputs/outputs of the its steps.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/batch.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">BatchConfig</span><span class="p">(</span><span class="n">PipelineConfig</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A class to hold the configuration for a single or set of batch module runs.</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">BatchOperation</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">module_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
 
-<span class="sd">    This class is similar to the [`PipelineConfig`][kiara.models.pipeline.PipelineConfig] one, except in the way it</span>
-<span class="sd">    handles references to inputs/outputs of the its steps.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">get_data_from_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pipeline_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.yaml&quot;</span><span class="p">):</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
 
-    <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_data_hash</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">BATCH_CONFIG_TYPE_CATEGORY_ID</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">],</span>
+        <span class="n">module_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
 
-    <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">kiara</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
 
-    <span class="nd">@root_validator</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">_validate_aliases</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">save</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;save&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pipeline_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pipeline_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+        <span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span>
+            <span class="n">pipeline_id</span><span class="o">=</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span>
+        <span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;XXX&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="ow">not</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_aliases&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="ow">not</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output_aliases&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">pipeline_config</span><span class="o">=</span><span class="n">pipeline_config</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="n">save</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">_kiara</span> <span class="o">=</span> <span class="n">kiara</span>
+        <span class="k">return</span> <span class="n">result</span>
 
-        <span class="c1"># values[&quot;input_aliases&quot;] = &quot;auto_all_outputs&quot;</span>
-        <span class="c1"># values[&quot;output_aliases&quot;] = &quot;auto_all_outputs&quot;</span>
+    <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The batch name/alias.&quot;</span><span class="p">)</span>
+    <span class="n">pipeline_config</span><span class="p">:</span> <span class="n">PipelineConfig</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The configuration of the underlying pipeline.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The (base) inputs to use. Can be augmented before running the operation.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">save</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Configuration which values to save, under which alias(es).&quot;</span><span class="p">,</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">_kiara</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="nd">@root_validator</span><span class="p">(</span><span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">add_alias</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;alias&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">pc</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pipeline_config&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">pc</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No pipeline config provided.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pc</span><span class="p">,</span> <span class="n">PipelineConfig</span><span class="p">):</span>
+                <span class="n">alias</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">pipeline_id</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">alias</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">values</span><span class="p">[</span><span class="s2">&quot;alias&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">alias</span>
 
         <span class="k">return</span> <span class="n">values</span>
+
+    <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;save&quot;</span><span class="p">,</span> <span class="n">always</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">validate_save</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">save</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+
+        <span class="n">alias</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;alias&quot;</span><span class="p">]</span>
+        <span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;pipeline_config&quot;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pipeline_config</span><span class="p">,</span> <span class="n">PipelineConfig</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">save</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+            <span class="n">save_new</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">elif</span> <span class="n">save</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">field_names</span> <span class="o">=</span> <span class="n">pipeline_config</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">pipeline_outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="n">save_new</span> <span class="o">=</span> <span class="n">create_save_config</span><span class="p">(</span><span class="n">field_names</span><span class="o">=</span><span class="n">field_names</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="n">alias</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">save</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">field_names</span> <span class="o">=</span> <span class="n">pipeline_config</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">pipeline_outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="n">save_new</span> <span class="o">=</span> <span class="n">create_save_config</span><span class="p">(</span><span class="n">field_names</span><span class="o">=</span><span class="n">field_names</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="n">save</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">save</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+            <span class="n">save_new</span> <span class="o">=</span> <span class="n">save</span>
+            <span class="n">field_names</span> <span class="o">=</span> <span class="n">pipeline_config</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">pipeline_outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="n">save_new</span> <span class="o">=</span> <span class="n">create_save_config</span><span class="p">(</span><span class="n">field_names</span><span class="o">=</span><span class="n">field_names</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="n">save</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">save</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; for &#39;save&#39; attribute: must be None, bool, string or Mapping.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">save_new</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">save</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">augmented_inputs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
+
+        <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span>
+            <span class="n">structure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span>
+            <span class="n">data_registry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">pipeline_controller</span> <span class="o">=</span> <span class="n">SinglePipelineBatchController</span><span class="p">(</span>
+            <span class="n">pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">job_registry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">job_registry</span>
+        <span class="p">)</span>
+
+        <span class="n">run_inputs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">augmented_inputs</span><span class="p">:</span>
+            <span class="n">run_inputs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">augmented_inputs</span><span class="p">)</span>
+
+        <span class="n">pipeline</span><span class="o">.</span><span class="n">set_pipeline_inputs</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">run_inputs</span><span class="p">)</span>
+        <span class="n">pipeline_controller</span><span class="o">.</span><span class="n">process_pipeline</span><span class="p">()</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">load_values</span><span class="p">(</span>
+            <span class="n">pipeline</span><span class="o">.</span><span class="n">get_current_pipeline_outputs</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">save</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">save_values</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">alias_map</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
         </details>
 
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h6 id="kiara.interfaces.python_api.batch.BatchOperation-attributes">Attributes<a href="#kiara.interfaces.python_api.batch.BatchOperation-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.python_api.batch.BatchOperation.alias" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">alias</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.batch.BatchOperation.alias" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The batch name/alias.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.python_api.batch.BatchOperation.inputs" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.batch.BatchOperation.inputs" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The (base) inputs to use. Can be augmented before running the operation.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.python_api.batch.BatchOperation.pipeline_config" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pipeline_config</span><span class="p">:</span> <span class="n">PipelineConfig</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.batch.BatchOperation.pipeline_config" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The configuration of the underlying pipeline.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.python_api.batch.BatchOperation.save" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">save</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.batch.BatchOperation.save" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>Configuration which values to save, under which alias(es).</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.interfaces.python_api.batch.BatchOperation.add_alias" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">add_alias</span><span class="p">(</span><span class="n">values</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.batch.BatchOperation.add_alias" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/batch.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@root_validator</span><span class="p">(</span><span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">add_alias</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;alias&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">pc</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pipeline_config&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No pipeline config provided.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pc</span><span class="p">,</span> <span class="n">PipelineConfig</span><span class="p">):</span>
+            <span class="n">alias</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">pipeline_id</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">alias</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">values</span><span class="p">[</span><span class="s2">&quot;alias&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">alias</span>
+
+    <span class="k">return</span> <span class="n">values</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.interfaces.python_api.batch.BatchOperation.from_config" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">from_config</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.batch.BatchOperation.from_config" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/batch.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span>
+    <span class="bp">cls</span><span class="p">,</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">kiara</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">],</span>
+    <span class="n">module_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">kiara</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">save</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;save&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pipeline_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pipeline_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+    <span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span>
+        <span class="n">pipeline_id</span><span class="o">=</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span>
+    <span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">pipeline_config</span><span class="o">=</span><span class="n">pipeline_config</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="n">save</span><span class="p">)</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">_kiara</span> <span class="o">=</span> <span class="n">kiara</span>
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.interfaces.python_api.batch.BatchOperation.from_file" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.batch.BatchOperation.from_file" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/batch.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span>
+    <span class="bp">cls</span><span class="p">,</span>
+    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">kiara</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">module_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">get_data_from_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pipeline_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.yaml&quot;</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.interfaces.python_api.batch.BatchOperation.run" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">augmented_inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.python_api.batch.BatchOperation.run" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/batch.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">save</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">augmented_inputs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
+
+    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span>
+        <span class="n">structure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span>
+        <span class="n">data_registry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">pipeline_controller</span> <span class="o">=</span> <span class="n">SinglePipelineBatchController</span><span class="p">(</span>
+        <span class="n">pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">job_registry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">job_registry</span>
+    <span class="p">)</span>
+
+    <span class="n">run_inputs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">augmented_inputs</span><span class="p">:</span>
+        <span class="n">run_inputs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">augmented_inputs</span><span class="p">)</span>
+
+    <span class="n">pipeline</span><span class="o">.</span><span class="n">set_pipeline_inputs</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">run_inputs</span><span class="p">)</span>
+    <span class="n">pipeline_controller</span><span class="o">.</span><span class="n">process_pipeline</span><span class="p">()</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">load_values</span><span class="p">(</span>
+        <span class="n">pipeline</span><span class="o">.</span><span class="n">get_current_pipeline_outputs</span><span class="p">()</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">save</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">save_values</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">alias_map</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.interfaces.python_api.batch.BatchOperation.validate_save" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">validate_save</span><span class="p">(</span><span class="n">save</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.batch.BatchOperation.validate_save" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/batch.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;save&quot;</span><span class="p">,</span> <span class="n">always</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">validate_save</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">save</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+
+    <span class="n">alias</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;alias&quot;</span><span class="p">]</span>
+    <span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;pipeline_config&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pipeline_config</span><span class="p">,</span> <span class="n">PipelineConfig</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">save</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="n">save_new</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">elif</span> <span class="n">save</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">field_names</span> <span class="o">=</span> <span class="n">pipeline_config</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">pipeline_outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">save_new</span> <span class="o">=</span> <span class="n">create_save_config</span><span class="p">(</span><span class="n">field_names</span><span class="o">=</span><span class="n">field_names</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="n">alias</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">save</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">field_names</span> <span class="o">=</span> <span class="n">pipeline_config</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">pipeline_outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">save_new</span> <span class="o">=</span> <span class="n">create_save_config</span><span class="p">(</span><span class="n">field_names</span><span class="o">=</span><span class="n">field_names</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="n">save</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">save</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+        <span class="n">save_new</span> <span class="o">=</span> <span class="n">save</span>
+        <span class="n">field_names</span> <span class="o">=</span> <span class="n">pipeline_config</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">pipeline_outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">save_new</span> <span class="o">=</span> <span class="n">create_save_config</span><span class="p">(</span><span class="n">field_names</span><span class="o">=</span><span class="n">field_names</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="n">save</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">save</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; for &#39;save&#39; attribute: must be None, bool, string or Mapping.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">save_new</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
 
     </div>
 
@@ -3992,66 +4453,13 @@ KiaraOperation        </code>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No job queued (yet).&quot;</span><span class="p">)</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_result</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
+        <span class="n">alias_map</span> <span class="o">=</span> <span class="n">create_save_config</span><span class="p">(</span><span class="n">field_names</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">field_names</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="n">aliases</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">aliases</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">alias_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aliases</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">alias_map</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">field_names</span><span class="p">:</span>
-                <span class="n">alias_map</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">aliases</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aliases</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
-            <span class="n">alias_map</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">aliases</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">field_names</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aliases</span><span class="p">[</span><span class="n">field_name</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
-                        <span class="n">alias_map</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">aliases</span><span class="p">[</span><span class="n">field_name</span><span class="p">]]</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">alias_map</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">aliases</span><span class="p">[</span><span class="n">field_name</span><span class="p">])</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                        <span class="s2">&quot;ignore.field_alias&quot;</span><span class="p">,</span>
-                        <span class="n">ignored_field_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
-                        <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;field name not in results&quot;</span><span class="p">,</span>
-                        <span class="n">available_field_names</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">field_names</span><span class="p">),</span>
-                    <span class="p">)</span>
-                    <span class="k">continue</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Invalid type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">aliases</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; for aliases parameter, must be string or mapping.&quot;</span>
-            <span class="p">)</span>
-
-        <span class="n">values</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">field_names</span><span class="p">:</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
-            <span class="n">values</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">store_value</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">skip_if_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="n">stored</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field_aliases</span> <span class="ow">in</span> <span class="n">alias_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-
-            <span class="n">value</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">field_aliases</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">alias_registry</span><span class="o">.</span><span class="n">register_aliases</span><span class="p">(</span>
-                        <span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">,</span> <span class="o">*</span><span class="n">field_aliases</span>
-                    <span class="p">)</span>
-
-                <span class="n">stored</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">StoreValueResult</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
-                    <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="n">field_aliases</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="kc">None</span>
-                <span class="p">)</span>
-
-            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                    <span class="kn">import</span> <span class="nn">traceback</span>
-
-                    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
-                <span class="n">stored</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">StoreValueResult</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
-                    <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="n">field_aliases</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-                <span class="p">)</span>
+        <span class="n">store_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">save_values</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">alias_map</span><span class="o">=</span><span class="n">alias_map</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">job_registry</span><span class="o">.</span><span class="n">store_job_record</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">StoreValuesResult</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">__root__</span><span class="o">=</span><span class="n">stored</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">store_result</span>
 </code></pre></div>
         </details>
 
@@ -4290,66 +4698,13 @@ KiaraOperation        </code>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No job queued (yet).&quot;</span><span class="p">)</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_result</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
+    <span class="n">alias_map</span> <span class="o">=</span> <span class="n">create_save_config</span><span class="p">(</span><span class="n">field_names</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">field_names</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="n">aliases</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">aliases</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">alias_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aliases</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">alias_map</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">field_names</span><span class="p">:</span>
-            <span class="n">alias_map</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">aliases</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aliases</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
-        <span class="n">alias_map</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">aliases</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">field_names</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aliases</span><span class="p">[</span><span class="n">field_name</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
-                    <span class="n">alias_map</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">aliases</span><span class="p">[</span><span class="n">field_name</span><span class="p">]]</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">alias_map</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">aliases</span><span class="p">[</span><span class="n">field_name</span><span class="p">])</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;ignore.field_alias&quot;</span><span class="p">,</span>
-                    <span class="n">ignored_field_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
-                    <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;field name not in results&quot;</span><span class="p">,</span>
-                    <span class="n">available_field_names</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">field_names</span><span class="p">),</span>
-                <span class="p">)</span>
-                <span class="k">continue</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Invalid type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">aliases</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; for aliases parameter, must be string or mapping.&quot;</span>
-        <span class="p">)</span>
-
-    <span class="n">values</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">field_names</span><span class="p">:</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
-        <span class="n">values</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">store_value</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">skip_if_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="n">stored</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field_aliases</span> <span class="ow">in</span> <span class="n">alias_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-
-        <span class="n">value</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">field_aliases</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">alias_registry</span><span class="o">.</span><span class="n">register_aliases</span><span class="p">(</span>
-                    <span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">,</span> <span class="o">*</span><span class="n">field_aliases</span>
-                <span class="p">)</span>
-
-            <span class="n">stored</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">StoreValueResult</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
-                <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="n">field_aliases</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="kc">None</span>
-            <span class="p">)</span>
-
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                <span class="kn">import</span> <span class="nn">traceback</span>
-
-                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
-            <span class="n">stored</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">StoreValueResult</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
-                <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="n">field_aliases</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-            <span class="p">)</span>
+    <span class="n">store_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">save_values</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">alias_map</span><span class="o">=</span><span class="n">alias_map</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">job_registry</span><span class="o">.</span><span class="n">store_job_record</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">StoreValuesResult</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">__root__</span><span class="o">=</span><span class="n">stored</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">store_result</span>
 </code></pre></div>
         </details>
     </div>
@@ -4523,6 +4878,101 @@ KiaraOperation        </code>
 
   </div>
 
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h3 id="kiara.interfaces.python_api.utils" class="doc doc-heading">
+        <code>utils</code>
+
+
+
+<a href="#kiara.interfaces.python_api.utils" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.interfaces.python_api.utils.create_save_config" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_save_config</span><span class="p">(</span><span class="n">field_names</span><span class="p">,</span> <span class="n">aliases</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.python_api.utils.create_save_config" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/utils.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_save_config</span><span class="p">(</span>
+    <span class="n">field_names</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">aliases</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">field_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">field_names</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">aliases</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">alias_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aliases</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">alias_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">field_names</span><span class="p">:</span>
+            <span class="n">alias_map</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">aliases</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aliases</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+        <span class="n">alias_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">aliases</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">field_names</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aliases</span><span class="p">[</span><span class="n">field_name</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">alias_map</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">aliases</span><span class="p">[</span><span class="n">field_name</span><span class="p">]]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">alias_map</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">aliases</span><span class="p">[</span><span class="n">field_name</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;ignore.field_alias&quot;</span><span class="p">,</span>
+                    <span class="n">ignored_field_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
+                    <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;field name not in results&quot;</span><span class="p">,</span>
+                    <span class="n">available_field_names</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">field_names</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">aliases</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; for aliases parameter, must be string or mapping.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">alias_map</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
 
 
 

@@ -1387,6 +1387,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interfaces/python_api/utils/" class="md-nav__link">
+        utils
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -5630,7 +5644,7 @@ and attaching it to the :attr:<code>Command.params</code> list.</p>
 
 
 <h5 id="kiara.utils.cli.terminal_print" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">terminal_print</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">in_panel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rich_config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">terminal_print</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">in_panel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rich_config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">empty_line_before</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
 
 
 <a href="#kiara.utils.cli.terminal_print" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5644,6 +5658,7 @@ and attaching it to the :attr:<code>Command.params</code> list.</p>
     <span class="n">msg</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">in_panel</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">rich_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">empty_line_before</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
@@ -5658,6 +5673,8 @@ and attaching it to the :attr:<code>Command.params</code> list.</p>
     <span class="k">if</span> <span class="n">in_panel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="n">Panel</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">title_align</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">in_panel</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">empty_line_before</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">rich_config</span><span class="p">:</span>
         <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">**</span><span class="n">rich_config</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -5705,12 +5722,14 @@ and attaching it to the :attr:<code>Command.params</code> list.</p>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">empty_line_before</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">if</span> <span class="n">empty_line_before</span><span class="p">:</span>
-        <span class="n">terminal_print</span><span class="p">()</span>
-
     <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="n">OutputFormat</span><span class="o">.</span><span class="n">TERMINAL</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">terminal_print</span><span class="p">(</span><span class="n">models</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">in_panel</span><span class="o">=</span><span class="n">in_panel</span><span class="p">,</span> <span class="o">**</span><span class="n">render_config</span><span class="p">)</span>
+            <span class="n">terminal_print</span><span class="p">(</span>
+                <span class="n">models</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">in_panel</span><span class="o">=</span><span class="n">in_panel</span><span class="p">,</span>
+                <span class="n">empty_line_before</span><span class="o">=</span><span class="n">empty_line_before</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">render_config</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">rg</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
@@ -5724,7 +5743,11 @@ and attaching it to the :attr:<code>Command.params</code> list.</p>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">json_str</span> <span class="o">=</span> <span class="n">render_json_str</span><span class="p">(</span><span class="n">models</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="n">syntax</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span><span class="n">json_str</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
-            <span class="n">terminal_print</span><span class="p">(</span><span class="n">syntax</span><span class="p">,</span> <span class="n">rich_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;soft_wrap&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+            <span class="n">terminal_print</span><span class="p">(</span>
+                <span class="n">syntax</span><span class="p">,</span>
+                <span class="n">empty_line_before</span><span class="o">=</span><span class="n">empty_line_before</span><span class="p">,</span>
+                <span class="n">rich_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;soft_wrap&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">json_strs</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
@@ -5733,7 +5756,11 @@ and attaching it to the :attr:<code>Command.params</code> list.</p>
 
             <span class="n">json_str_full</span> <span class="o">=</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="s2">&quot;,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">json_strs</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
             <span class="n">syntax</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span><span class="n">json_str_full</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
-            <span class="n">terminal_print</span><span class="p">(</span><span class="n">syntax</span><span class="p">,</span> <span class="n">rich_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;soft_wrap&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+            <span class="n">terminal_print</span><span class="p">(</span>
+                <span class="n">syntax</span><span class="p">,</span>
+                <span class="n">empty_line_before</span><span class="o">=</span><span class="n">empty_line_before</span><span class="p">,</span>
+                <span class="n">rich_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;soft_wrap&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+            <span class="p">)</span>
 
     <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="n">OutputFormat</span><span class="o">.</span><span class="n">JSON_SCHEMA</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -5742,14 +5769,22 @@ and attaching it to the :attr:<code>Command.params</code> list.</p>
                 <span class="s2">&quot;json&quot;</span><span class="p">,</span>
                 <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">terminal_print</span><span class="p">(</span><span class="n">syntax</span><span class="p">,</span> <span class="n">rich_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;soft_wrap&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+            <span class="n">terminal_print</span><span class="p">(</span>
+                <span class="n">syntax</span><span class="p">,</span>
+                <span class="n">empty_line_before</span><span class="o">=</span><span class="n">empty_line_before</span><span class="p">,</span>
+                <span class="n">rich_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;soft_wrap&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">json_strs</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
                 <span class="n">json_strs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">render_json_schema_str</span><span class="p">(</span><span class="n">model</span><span class="p">))</span>
             <span class="n">json_str_full</span> <span class="o">=</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="s2">&quot;,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">json_strs</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
             <span class="n">syntax</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span><span class="n">json_str_full</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
-            <span class="n">terminal_print</span><span class="p">(</span><span class="n">syntax</span><span class="p">,</span> <span class="n">rich_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;soft_wrap&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+            <span class="n">terminal_print</span><span class="p">(</span>
+                <span class="n">syntax</span><span class="p">,</span>
+                <span class="n">empty_line_before</span><span class="o">=</span><span class="n">empty_line_before</span><span class="p">,</span>
+                <span class="n">rich_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;soft_wrap&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+            <span class="p">)</span>
     <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="n">OutputFormat</span><span class="o">.</span><span class="n">JSON_INCL_SCHEMA</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">models</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
@@ -5757,7 +5792,11 @@ and attaching it to the :attr:<code>Command.params</code> list.</p>
             <span class="nb">all</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;schema&quot;</span><span class="p">:</span> <span class="n">schema</span><span class="p">}</span>
             <span class="n">json_str</span> <span class="o">=</span> <span class="n">orjson_dumps</span><span class="p">(</span><span class="nb">all</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">)</span>
             <span class="n">syntax</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span><span class="n">json_str</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
-            <span class="n">terminal_print</span><span class="p">(</span><span class="n">syntax</span><span class="p">,</span> <span class="n">rich_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;soft_wrap&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+            <span class="n">terminal_print</span><span class="p">(</span>
+                <span class="n">syntax</span><span class="p">,</span>
+                <span class="n">empty_line_before</span><span class="o">=</span><span class="n">empty_line_before</span><span class="p">,</span>
+                <span class="n">rich_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;soft_wrap&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">all_data</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
@@ -5767,7 +5806,11 @@ and attaching it to the :attr:<code>Command.params</code> list.</p>
             <span class="n">json_str</span> <span class="o">=</span> <span class="n">orjson_dumps</span><span class="p">(</span><span class="n">all_data</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">)</span>
             <span class="c1"># print(json_str)</span>
             <span class="n">syntax</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span><span class="n">json_str</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
-            <span class="n">terminal_print</span><span class="p">(</span><span class="n">syntax</span><span class="p">,</span> <span class="n">rich_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;soft_wrap&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+            <span class="n">terminal_print</span><span class="p">(</span>
+                <span class="n">syntax</span><span class="p">,</span>
+                <span class="n">empty_line_before</span><span class="o">=</span><span class="n">empty_line_before</span><span class="p">,</span>
+                <span class="n">rich_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;soft_wrap&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+            <span class="p">)</span>
 
     <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="n">OutputFormat</span><span class="o">.</span><span class="n">HTML</span><span class="p">:</span>
 
@@ -5780,7 +5823,9 @@ and attaching it to the :attr:<code>Command.params</code> list.</p>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
         <span class="n">syntax</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span><span class="n">all_html</span><span class="p">,</span> <span class="s2">&quot;html&quot;</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
-        <span class="n">terminal_print</span><span class="p">(</span><span class="n">syntax</span><span class="p">,</span> <span class="n">rich_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;soft_wrap&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+        <span class="n">terminal_print</span><span class="p">(</span>
+            <span class="n">syntax</span><span class="p">,</span> <span class="n">empty_line_before</span><span class="o">=</span><span class="n">empty_line_before</span><span class="p">,</span> <span class="n">rich_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;soft_wrap&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+        <span class="p">)</span>
 </code></pre></div>
         </details>
     </div>

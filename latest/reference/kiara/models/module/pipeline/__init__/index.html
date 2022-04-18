@@ -1387,6 +1387,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../interfaces/python_api/utils/" class="md-nav__link">
+        utils
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3522,30 +3536,34 @@ to the shortest possible names for each case.</p>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">module_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">module_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">get_data_from_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;module_type_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">pipeline_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span>
             <span class="n">pipeline_id</span><span class="o">=</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span>
         <span class="p">)</span>
-        <span class="c1"># steps = data.pop(&quot;steps&quot;)</span>
-        <span class="c1"># steps = PipelineStep.create_steps(*steps, kiara=kiara, module_map=module_map)</span>
-        <span class="c1"># data[&quot;steps&quot;] = steps</span>
-        <span class="c1"># return cls(pipeline_id=pipeline_id, **data)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">pipeline_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
-        <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">module_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">kiara</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">kiara.context</span> <span class="kn">import</span> <span class="n">Kiara</span>
+
+            <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="n">steps</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;steps&quot;</span><span class="p">)</span>
@@ -3939,7 +3957,7 @@ Config        </code>
 
 
 <h5 id="kiara.models.module.pipeline.PipelineConfig.from_config" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">from_config</span><span class="p">(</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">from_config</span><span class="p">(</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
@@ -3957,9 +3975,14 @@ Config        </code>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">pipeline_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
-    <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
+    <span class="n">kiara</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">module_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">kiara</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">kiara.context</span> <span class="kn">import</span> <span class="n">Kiara</span>
+
+        <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="n">steps</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;steps&quot;</span><span class="p">)</span>
@@ -3985,7 +4008,7 @@ Config        </code>
 
 
 <h5 id="kiara.models.module.pipeline.PipelineConfig.from_file" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
@@ -4000,21 +4023,20 @@ Config        </code>
           <summary>Source code in <code>kiara/models/module/pipeline/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span>
-    <span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">module_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">cls</span><span class="p">,</span>
+    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">kiara</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">module_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="n">get_data_from_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-    <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;module_type_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">pipeline_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span>
         <span class="n">pipeline_id</span><span class="o">=</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span>
     <span class="p">)</span>
-    <span class="c1"># steps = data.pop(&quot;steps&quot;)</span>
-    <span class="c1"># steps = PipelineStep.create_steps(*steps, kiara=kiara, module_map=module_map)</span>
-    <span class="c1"># data[&quot;steps&quot;] = steps</span>
-    <span class="c1"># return cls(pipeline_id=pipeline_id, **data)</span>
 </code></pre></div>
         </details>
     </div>
@@ -4781,7 +4803,7 @@ StepStatus            (<span title="enum.Enum">Enum</span>)
                 <span class="n">step_id</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="n">field_name</span>
             <span class="p">)</span>
             <span class="k">assert</span> <span class="n">alias</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aliases</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-            <span class="n">aliases</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">alias</span>
+            <span class="n">aliases</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">alias</span>
 
     <span class="k">return</span> <span class="n">aliases</span>
 </code></pre></div>
@@ -5855,6 +5877,7 @@ Pipeline        </code>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">alias_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_values</span><span class="o">.</span><span class="n">get_alias</span><span class="p">(</span><span class="s2">&quot;pipeline.inputs&quot;</span><span class="p">)</span>
                 <span class="k">assert</span> <span class="n">alias_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="c1"># dbg(alias_map.__dict__)</span>
                 <span class="n">schema</span> <span class="o">=</span> <span class="n">alias_map</span><span class="o">.</span><span class="n">values_schema</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">register_data</span><span class="p">(</span>
                     <span class="n">data</span><span class="o">=</span><span class="n">v</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span> <span class="n">pedigree</span><span class="o">=</span><span class="n">ORPHAN</span><span class="p">,</span> <span class="n">reuse_existing</span><span class="o">=</span><span class="kc">True</span>
@@ -6720,6 +6743,7 @@ Pipeline        </code>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">alias_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_values</span><span class="o">.</span><span class="n">get_alias</span><span class="p">(</span><span class="s2">&quot;pipeline.inputs&quot;</span><span class="p">)</span>
             <span class="k">assert</span> <span class="n">alias_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="c1"># dbg(alias_map.__dict__)</span>
             <span class="n">schema</span> <span class="o">=</span> <span class="n">alias_map</span><span class="o">.</span><span class="n">values_schema</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
             <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">register_data</span><span class="p">(</span>
                 <span class="n">data</span><span class="o">=</span><span class="n">v</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span> <span class="n">pedigree</span><span class="o">=</span><span class="n">ORPHAN</span><span class="p">,</span> <span class="n">reuse_existing</span><span class="o">=</span><span class="kc">True</span>

@@ -1387,6 +1387,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/utils/" class="md-nav__link">
+        utils
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3952,6 +3966,9 @@ DataRegistry        </code>
         <span class="k">if</span> <span class="s2">&quot;bytes_structure&quot;</span> <span class="ow">in</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">bytes_structure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_provision_bytes</span><span class="p">(</span><span class="n">load_config</span><span class="o">=</span><span class="n">load_config</span><span class="p">)</span>
             <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;bytes_structure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bytes_structure</span>
+
+        <span class="k">if</span> <span class="s2">&quot;inline_data&quot;</span> <span class="ow">in</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;inline_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inline_data</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">job_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">job_registry</span><span class="o">.</span><span class="n">prepare_job_config</span><span class="p">(</span>

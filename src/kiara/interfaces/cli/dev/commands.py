@@ -11,7 +11,7 @@ from typing import Optional
 
 from kiara.context import Kiara
 from kiara.defaults import KIARA_DB_MIGRATIONS_CONFIG, KIARA_DB_MIGRATIONS_FOLDER
-from kiara.interfaces.python_api.batch import BatchConfig
+from kiara.interfaces.python_api.batch import BatchOperation
 from kiara.utils.cli import terminal_print
 
 
@@ -25,15 +25,15 @@ def dev_group(ctx):
 @click.pass_context
 def test(ctx):
 
-    kiara_obj: Kiara = ctx.obj["kiara"]
+    config = {"base_path": "/tmp/kiara_tests"}
+    kiara_obj = Kiara.create(config=config)
 
-    config = BatchConfig.from_file(
-        "/home/markus/projects/kiara_new/nand_batch.json", kiara=kiara_obj
+    batch_op = BatchOperation.from_file(
+        "/home/markus/projects/kiara_new/nand.json", kiara=kiara_obj
     )
-    # print(type(config))
-    # dbg(config.dict())
-    terminal_print(config.structure.pipeline_inputs_schema)
-    terminal_print(config.structure.pipeline_outputs_schema)
+    result = batch_op.run(save=True)
+
+    terminal_print(result)
 
 
 @dev_group.command("reinit-db")

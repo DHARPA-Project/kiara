@@ -8,7 +8,7 @@ import sys
 from rich.panel import Panel
 
 from kiara import Kiara
-from kiara.context.config import KiaraGlobalConfig
+from kiara.context.config import KiaraCurrentContextConfig
 from kiara.registries.environment import EnvironmentRegistry
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
 from kiara.utils.output import create_table_from_base_model_cls
@@ -46,7 +46,7 @@ def config(ctx):
 def print_config(ctx, format):
     """Print the (current) kiara context configuration."""
 
-    kgc: KiaraGlobalConfig = ctx.obj["kiara_global_config"]
+    kgc: KiaraCurrentContextConfig = ctx.obj["kiara_global_config"]
 
     terminal_print_model(
         kgc, format=format, in_panel=f"kiara context config: [b i]{kgc.context}[/b i]"
@@ -58,7 +58,7 @@ def print_config(ctx, format):
 def config_help(ctx):
     """Print available configuration options and information about them."""
 
-    table = create_table_from_base_model_cls(model_cls=KiaraGlobalConfig)
+    table = create_table_from_base_model_cls(model_cls=KiaraCurrentContextConfig)
     print()
     terminal_print(Panel(table))
 

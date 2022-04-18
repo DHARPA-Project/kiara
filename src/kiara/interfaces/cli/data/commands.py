@@ -169,7 +169,10 @@ def explain_value(
     destinies: bool,
     destiny_backlinks: bool,
 ):
-    """Print the metadata of a stored value."""
+    """Print the metadata of a stored value.
+
+    All of the 'show-additional-information' flags are only applied when the 'terminal' output format is selected. This might change in the future.
+    """
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 

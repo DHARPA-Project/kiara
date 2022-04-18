@@ -9,7 +9,7 @@ import orjson
 from pydantic import Field, validator
 from typing import Any, Dict, Iterable, Mapping, Optional, Tuple, Union
 
-from kiara.defaults import LOAD_CONFIG_DATA_TYPE_NAME
+from kiara.defaults import LOAD_CONFIG_DATA_TYPE_NAME, LOAD_CONFIG_PLACEHOLDER
 from kiara.exceptions import KiaraProcessingException
 from kiara.models import KiaraModel
 from kiara.models.module import KiaraModuleConfig
@@ -22,7 +22,6 @@ from kiara.models.python_class import PythonClass
 from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule, ModuleCharacteristics, ValueSetSchema
-from kiara.utils import orjson_dumps
 
 
 class PersistValueConfig(KiaraModuleConfig):
@@ -115,7 +114,7 @@ class PersistValueModule(KiaraModule):
 
 class SaveInlineDataModule(PersistValueModule):
 
-    _module_type_name = "value.save_inline"
+    _module_type_name: str = None  # type: ignore
 
     def get_persistence_target_name(self) -> str:
         return "inline"
@@ -123,32 +122,36 @@ class SaveInlineDataModule(PersistValueModule):
     def get_persistence_format_name(self) -> str:
         return "json_string"
 
-    def _create_json(self, data: Any, type_hint: str):
+    def create_inline_load_config(self, data: Any, data_type: str):
 
         try:
-
-            all_json = orjson_dumps({"value": data})
 
             load_config_data = {
                 "provisioning_strategy": ByteProvisioningStrategy.INLINE,
                 "module_type": "value.load_inline",
-                "module_config": {"data_type": type_hint},
-                "inputs": {"json_data": all_json},
+                "module_config": {"data_type": data_type},
+                "inputs": {"inline_data": LOAD_CONFIG_PLACEHOLDER},
+                "inline_data": data,
                 "output_name": "value",
             }
 
             load_config = LoadConfig(**load_config_data)
         except Exception as e:
             raise KiaraProcessingException(
-                f"Can't serialize value of type '{type_hint}' to json: {e}."
+                f"Can't serialize value of type '{data_type}' to json: {e}."
             )
 
         return load_config
 
+
+class SaveStringModule(SaveInlineDataModule):
+
+    _module_type_name = "string.save_inline"
+
     def data_type__string(self, value: Value, persistence_config: Mapping[str, Any]):
 
-        load_config = self._create_json(
-            data=value.data, type_hint=value.value_schema.type
+        load_config = self.create_inline_load_config(
+            data=value.data, data_type=value.value_schema.type
         )
         return load_config, None
 
@@ -163,9 +166,9 @@ class LoadInlineDataModule(KiaraModule):
     ) -> ValueSetSchema:
 
         return {
-            "json_data": {
-                "type": "string",
-                "doc": "The serialized data as json string.",
+            "inline_data": {
+                "type": "any",
+                "doc": "The data.",
             }
         }
 
@@ -180,10 +183,8 @@ class LoadInlineDataModule(KiaraModule):
 
     def process(self, inputs: ValueMap, outputs: ValueMap):
 
-        data_str = inputs.get_value_data("json_data")
-        data = orjson.loads(data_str)
-
-        outputs.set_value("value", data["value"])
+        data = inputs.get_value_data("inline_data")
+        outputs.set_value("value", data)
 
 
 class SavePickleToDiskModule(PersistValueModule):
@@ -201,7 +202,10 @@ class SavePickleToDiskModule(PersistValueModule):
     ) -> Tuple[LoadConfig, Optional[BytesStructure]]:
         """Persist any Python object using 'pickle'."""
 
-        import pickle5 as pickle
+        try:
+            import pickle5 as pickle
+        except Exception:
+            import pickle  # type: ignore
 
         pickled_bytes = pickle.dumps(value.data, protocol=5)
 
@@ -219,7 +223,7 @@ class SavePickleToDiskModule(PersistValueModule):
             "module_config": {
                 "data_type": value.value_schema.type,
             },
-            "inputs": {"bytes_structure": "__dummy__"},
+            "inputs": {"bytes_structure": LOAD_CONFIG_PLACEHOLDER},
             "output_name": value.value_schema.type,
         }
 
@@ -252,7 +256,10 @@ class LoadPickledDataModule(KiaraModule):
 
     def process(self, inputs: ValueMap, outputs: ValueMap):
 
-        import pickle5 as pickle
+        try:
+            import pickle5 as pickle
+        except Exception:
+            import pickle  # type: ignore
 
         data_type_name = self.get_config_value("data_type")
 
@@ -263,7 +270,8 @@ class LoadPickledDataModule(KiaraModule):
         key = next(iter(bytes_structure.chunk_map))
         value = bytes_structure.chunk_map[key]
 
-        data = pickle.loads(value)
+        assert len(bytes_structure.chunk_map) == 1
+        data = pickle.loads(value[0])
 
         outputs.set_value(data_type_name, data)
 

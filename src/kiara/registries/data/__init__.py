@@ -644,6 +644,9 @@ class DataRegistry(object):
             bytes_structure = self._provision_bytes(load_config=load_config)
             inputs["bytes_structure"] = bytes_structure
 
+        if "inline_data" in load_config.inputs.keys():
+            inputs["inline_data"] = load_config.inline_data
+
         try:
             job_config = self._kiara.job_registry.prepare_job_config(
                 manifest=load_config, inputs=inputs

@@ -9,6 +9,7 @@ import os
 import structlog
 import uuid
 from alembic import command  # type: ignore
+from pathlib import Path
 from pydantic import Field
 from sqlalchemy.engine import Engine, create_engine
 from typing import (
@@ -23,7 +24,11 @@ from typing import (
     Union,
 )
 
-from kiara.context.config import KiaraContextConfig, KiaraGlobalConfig
+from kiara.context.config import (
+    KiaraConfig,
+    KiaraContextConfig,
+    KiaraCurrentContextConfig,
+)
 from kiara.data_types import DataType
 from kiara.defaults import (
     CONTEXT_INFO_CATEGORY_ID,
@@ -31,6 +36,7 @@ from kiara.defaults import (
     KIARA_DB_MIGRATIONS_FOLDER,
 )
 from kiara.interfaces import get_console
+from kiara.interfaces.python_api import StoreValueResult, StoreValuesResult
 from kiara.models import KiaraModel
 from kiara.models.info import InfoModelGroup, KiaraInfoModel
 from kiara.models.module import KiaraModuleTypeInfo, ModuleTypeClassesInfo
@@ -38,7 +44,7 @@ from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import OperationGroupInfo, OperationTypeClassesInfo
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.data_type import DataTypeClassesInfo
-from kiara.models.values.value import Value
+from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_metadata import MetadataTypeClassesInfo
 from kiara.registries import KiaraArchive
 from kiara.registries.aliases import AliasRegistry
@@ -52,7 +58,7 @@ from kiara.registries.jobs import JobRegistry
 from kiara.registries.modules import ModuleRegistry
 from kiara.registries.operations import OperationRegistry
 from kiara.registries.types import TypeRegistry
-from kiara.utils import is_debug, log_message
+from kiara.utils import get_data_from_file, is_debug, log_message
 from kiara.utils.class_loading import find_all_archive_types
 from kiara.utils.db import orm_json_deserialize, orm_json_serialize
 from kiara.utils.metadata import find_metadata_models
@@ -110,10 +116,54 @@ class Kiara(object):
             cls._instance = Kiara()
         return cls._instance
 
+    @classmethod
+    def create(
+        cls,
+        config: Union[None, str, Path, KiaraConfig] = None,
+        context_name: Optional[str] = None,
+        **extra_context_args: Any,
+    ):
+
+        if config is None:
+            config = KiaraConfig()
+        elif isinstance(config, str):
+            if os.path.isfile(config):
+                config_data = get_data_from_file(config)
+                if not isinstance(config_data, Mapping):
+                    raise ValueError(
+                        f"Invalid config file format, can't parse file: {config}"
+                    )
+                config = KiaraConfig(**config_data)
+            else:
+                raise Exception(
+                    f"Can't read kiara config from file, file does not exist: {config}"
+                )
+        elif isinstance(config, Path):
+            if config.is_file():
+                config_data = get_data_from_file(config)
+                if not isinstance(config_data, Mapping):
+                    raise ValueError(
+                        f"Invalid config file format, can't parse file: {config}"
+                    )
+                config = KiaraConfig(**config_data)
+            else:
+                raise Exception(
+                    f"Can't read kiara config from file, file does not exist: {config.as_posix()}"
+                )
+        elif isinstance(config, Mapping):
+            config = KiaraConfig(**config)
+        elif not isinstance(config, KiaraConfig):
+            raise Exception(
+                f"Can't create kiara context instance, invalid config type: {type(config)}"
+            )
+
+        context = config.create_context(context_name=context_name, **extra_context_args)
+        return context
+
     def __init__(self, config: Optional[KiaraContextConfig] = None):
 
         if not config:
-            kc = KiaraGlobalConfig()
+            kc = KiaraCurrentContextConfig()
             config = kc.get_context()
 
         self._id: uuid.UUID = ID_REGISTRY.generate(
@@ -287,6 +337,39 @@ class Kiara(object):
 
     def get_value(self, value: Union[uuid.UUID, str, Value]):
         pass
+
+    def save_values(
+        self, values: ValueMap, alias_map: Mapping[str, Iterable[str]]
+    ) -> StoreValuesResult:
+
+        _values = {}
+        for field_name in values.field_names:
+            value = values.get_value_obj(field_name)
+            _values[field_name] = value
+            self.data_registry.store_value(value=value, skip_if_exists=True)
+
+        stored = {}
+        for field_name, field_aliases in alias_map.items():
+
+            value = _values[field_name]
+            try:
+                if field_aliases:
+                    self.alias_registry.register_aliases(value.value_id, *field_aliases)
+
+                stored[field_name] = StoreValueResult.construct(
+                    value=value, aliases=sorted(field_aliases), error=None
+                )
+
+            except Exception as e:
+                if is_debug():
+                    import traceback
+
+                    traceback.print_exc()
+                stored[field_name] = StoreValueResult.construct(
+                    value=value, aliases=sorted(field_aliases), error=str(e)
+                )
+
+        return StoreValuesResult.construct(__root__=stored)
 
     # def run(self, module_or_operation: str, module_config: Mapping[str, Any] = None):
     #

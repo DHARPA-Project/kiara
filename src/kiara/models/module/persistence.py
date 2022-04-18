@@ -51,10 +51,6 @@ class LoadConfig(Manifest):
         description="In what form the  serialized bytes are returned.",
         default=ByteProvisioningStrategy.INLINE,
     )
-    # bytes_structure: Optional[BytesStructure] = Field(
-    #     description="A description of the bytes structure of the (serialized) data.",
-    #     default=None,
-    # )
     inputs: Mapping[str, str] = Field(
         description="A map translating from input field name to alias (key) in bytes_structure."
     )
@@ -64,6 +60,7 @@ class LoadConfig(Manifest):
     bytes_map: Optional[BytesAliasStructure] = Field(
         description="References to the byte chunks for the inputs.", default=None
     )
+    inline_data: Optional[Any] = Field(description="Inline values.", default=None)
 
     def _retrieve_data_to_hash(self) -> Any:
         return self.dict()

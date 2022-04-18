@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 import os
 import uuid
-from typing import Any, Dict, List, Mapping, Optional, Union
+from typing import Any, Dict, Mapping, Optional, Union
 
 from kiara import Kiara
 from kiara.exceptions import FailedJobException, NoSuchExecutionTargetException
-from kiara.interfaces.python_api import StoreValueResult, StoreValuesResult, logger
+from kiara.interfaces.python_api import StoreValuesResult
+from kiara.interfaces.python_api.utils import create_save_config
 from kiara.models.module.jobs import JobConfig, JobStatus
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
 from kiara.models.values.value import ValueMap
-from kiara.utils import is_debug
 
 
 class KiaraOperation(object):
@@ -259,63 +259,10 @@ class KiaraOperation(object):
             raise Exception("No job queued (yet).")
 
         result = self.retrieve_result(job_id=job_id)
+        alias_map = create_save_config(field_names=result.field_names, aliases=aliases)
 
-        if aliases is None:
-            alias_map: Dict[str, List[str]] = {}
-        elif isinstance(aliases, str):
-            alias_map = {}
-            for field_name in result.field_names:
-                alias_map[field_name] = [f"{aliases}.{field_name}"]
-        elif isinstance(aliases, Mapping):
-            alias_map = {}
-            for field_name in aliases.keys():
-                if field_name in result.field_names:
-                    if isinstance(aliases[field_name], str):
-                        alias_map[field_name] = [aliases[field_name]]
-                    else:
-                        alias_map[field_name] = sorted(aliases[field_name])
-                else:
-                    logger.warning(
-                        "ignore.field_alias",
-                        ignored_field_name=field_name,
-                        reason="field name not in results",
-                        available_field_names=sorted(result.field_names),
-                    )
-                    continue
-        else:
-            raise Exception(
-                f"Invalid type '{type(aliases)}' for aliases parameter, must be string or mapping."
-            )
-
-        values = {}
-        for field_name in result.field_names:
-            value = result.get_value_obj(field_name)
-            values[field_name] = value
-            self._kiara.data_registry.store_value(value=value, skip_if_exists=True)
-
-        stored = {}
-        for field_name, field_aliases in alias_map.items():
-
-            value = values[field_name]
-            try:
-                if field_aliases:
-                    self._kiara.alias_registry.register_aliases(
-                        value.value_id, *field_aliases
-                    )
-
-                stored[field_name] = StoreValueResult.construct(
-                    value=value, aliases=field_aliases, error=None
-                )
-
-            except Exception as e:
-                if is_debug():
-                    import traceback
-
-                    traceback.print_exc()
-                stored[field_name] = StoreValueResult.construct(
-                    value=value, aliases=field_aliases, error=str(e)
-                )
+        store_result = self._kiara.save_values(values=result, alias_map=alias_map)
 
         self._kiara.job_registry.store_job_record(job_id=job_id)
 
-        return StoreValuesResult.construct(__root__=stored)
+        return store_result

@@ -14,15 +14,14 @@ from pydantic.env_settings import BaseSettings
 from pydantic.fields import Field
 from rich.console import RenderableType
 from ruamel import yaml as r_yaml
-from typing import Any, Dict, List, Mapping, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional
 
 from kiara.defaults import (
     DEFAULT_ALIAS_STORE_MARKER,
+    DEFAULT_CONTEXT_NAME,
     DEFAULT_DATA_STORE_MARKER,
     DEFAULT_JOB_STORE_MARKER,
-    KIARA_CONTEXTS_FOLDER,
     KIARA_MAIN_CONFIG_FILE,
-    KIARA_STORES_FOLDER,
     kiara_app_dirs,
 )
 from kiara.registries.environment import EnvironmentRegistry
@@ -31,15 +30,88 @@ from kiara.utils import get_data_from_file, log_message
 from kiara.utils.db import get_kiara_db_url
 from kiara.utils.output import create_table_from_model_object
 
+if TYPE_CHECKING:
+    from kiara.context import Kiara
+
 yaml = r_yaml.YAML()
 
 
 def config_file_settings_source(settings: BaseSettings) -> Dict[str, Any]:
     if os.path.isfile(KIARA_MAIN_CONFIG_FILE):
         config = get_data_from_file(KIARA_MAIN_CONFIG_FILE)
+        if not isinstance(config, Mapping):
+            raise ValueError(
+                f"Invalid config file format, can't parse file: {KIARA_MAIN_CONFIG_FILE}"
+            )
     else:
         config = {}
     return config
+
+
+class KiaraConfig(BaseSettings):
+    class Config:
+        env_prefix = "kiara_"
+        extra = Extra.forbid
+
+        @classmethod
+        def customise_sources(
+            cls,
+            init_settings,
+            env_settings,
+            file_secret_settings,
+        ):
+            return (init_settings, env_settings, config_file_settings_source)
+
+    base_path: str = Field(
+        description="The base path to use for all data (unless otherwise specified.",
+        default=kiara_app_dirs.user_data_dir,
+    )
+    context_base_path: str = Field(description="The base path to look for contexts in.")
+    stores_base_path: str = Field(
+        description="The base path for the stores of this context."
+    )
+    default_context: str = Field(
+        description="The name of the default context to use if none is provided.",
+        default=DEFAULT_CONTEXT_NAME,
+    )
+
+    @root_validator(pre=True)
+    def _set_paths(cls, values: Any):
+
+        base_path = values.get("base_path", None)
+        if not base_path:
+            base_path = kiara_app_dirs.user_data_dir
+            values["base_path"] = base_path
+
+        context_base_path = values.get("context_base_path", None)
+        if not context_base_path:
+            context_base_path = os.path.join(base_path, "contexts")
+            values["context_base_path"] = context_base_path
+
+        stores_base_path = values.get("stores_base_path", None)
+        if not stores_base_path:
+            stores_base_path = os.path.join(base_path, "stores")
+            values["stores_base_path"] = stores_base_path
+
+        return values
+
+    def create_context_config(
+        self, context_name: Optional[str] = None, **extra_args: Any
+    ) -> "KiaraCurrentContextConfig":
+
+        return KiaraCurrentContextConfig(
+            kiara_config=self, context=context_name, **extra_args
+        )
+
+    def create_context(
+        self, context_name: Optional[str] = None, **extra_args: Any
+    ) -> "Kiara":
+
+        config = self.create_context_config(context_name=context_name, **extra_args)
+
+        from kiara.context import Kiara
+
+        return Kiara(config=config.get_context())
 
 
 class KiaraArchiveConfig(BaseModel):
@@ -55,7 +127,7 @@ class KiaraArchiveConfig(BaseModel):
         return uuid.UUID(self.archive_id)
 
 
-def create_default_archives():
+def create_default_archives(kiara_config: KiaraConfig):
 
     env_registry = EnvironmentRegistry.instance()
 
@@ -66,7 +138,7 @@ def create_default_archives():
 
     data_store_id = ID_REGISTRY.generate(comment="default data store id")
     data_archive_config = {
-        "base_path": os.path.join(KIARA_STORES_FOLDER, data_store_type)
+        "base_path": os.path.join(kiara_config.stores_base_path, data_store_type)
     }
     data_store = KiaraArchiveConfig.construct(
         archive_id=str(data_store_id),
@@ -76,7 +148,7 @@ def create_default_archives():
 
     job_store_type = "filesystem_job_store"
     job_archive_config = {
-        "base_path": os.path.join(KIARA_STORES_FOLDER, job_store_type)
+        "base_path": os.path.join(kiara_config.stores_base_path, job_store_type)
     }
     job_store_id = ID_REGISTRY.generate(comment="default job store id")
     job_store = KiaraArchiveConfig.construct(
@@ -87,7 +159,7 @@ def create_default_archives():
 
     alias_store_type = "filesystem_alias_store"
     alias_store_config = {
-        "base_path": os.path.join(KIARA_STORES_FOLDER, alias_store_type)
+        "base_path": os.path.join(kiara_config.stores_base_path, alias_store_type)
     }
     alias_store_id = ID_REGISTRY.generate(comment="default alias store id")
     alias_store = KiaraArchiveConfig.construct(
@@ -141,9 +213,11 @@ class KiaraContextConfig(KiaraBaseConfig):
         return os.path.join(self.context_folder, "data")
 
 
-class KiaraGlobalConfig(KiaraBaseConfig):
+class KiaraCurrentContextConfig(KiaraBaseConfig):
+    """Configuration that holds the currently active context, as well as references to other available contexts."""
+
     class Config:
-        env_prefix = "kiara_"
+        env_prefix = "kiara_context_"
         extra = Extra.forbid
 
         @classmethod
@@ -156,12 +230,13 @@ class KiaraGlobalConfig(KiaraBaseConfig):
             return (
                 init_settings,
                 env_settings,
-                config_file_settings_source,
             )
 
+    kiara_config: KiaraConfig = Field(
+        description="The base kiara configuration.", default_factory=KiaraConfig
+    )
     context: str = Field(
-        description=f"The path to an existing folder that houses the context, or the name of the context to use under the default kiara app data directory ({kiara_app_dirs.user_data_dir}).",
-        default="default_context",
+        description=f"The path to an existing folder that houses the context, or the name of the context to use under the default kiara app data directory ({kiara_app_dirs.user_data_dir})."
     )
     context_configs: Dict[str, KiaraContextConfig] = Field(
         description="The context configuration."
@@ -169,16 +244,18 @@ class KiaraGlobalConfig(KiaraBaseConfig):
     # overlay_config: KiaraConfig = Field(description="Extra config options to add to the selected context.")
 
     @classmethod
-    def find_current_contexts(cls) -> Dict[str, KiaraContextConfig]:
+    def find_current_contexts(
+        cls, kiara_config: KiaraConfig
+    ) -> Dict[str, KiaraContextConfig]:
 
         contexts: Dict[str, KiaraContextConfig] = {}
 
-        if not os.path.exists(KIARA_CONTEXTS_FOLDER):
+        if not os.path.exists(kiara_config.context_base_path):
             return contexts
 
-        for f in os.listdir(KIARA_CONTEXTS_FOLDER):
+        for f in os.listdir(kiara_config.context_base_path):
 
-            config_dir = os.path.join(KIARA_CONTEXTS_FOLDER, f)
+            config_dir = os.path.join(kiara_config.context_base_path, f)
             k_config = cls.load_context(config_dir)
             if k_config:
                 contexts[k_config.context_alias] = k_config
@@ -187,7 +264,11 @@ class KiaraGlobalConfig(KiaraBaseConfig):
 
     @classmethod
     def create_context(
-        cls, path: str, context_id: str, context_alias: Optional[str]
+        cls,
+        path: str,
+        context_id: str,
+        kiara_config: KiaraConfig,
+        context_alias: Optional[str],
     ) -> KiaraContextConfig:
 
         if os.path.exists(path):
@@ -202,15 +283,15 @@ class KiaraGlobalConfig(KiaraBaseConfig):
         config["context_alias"] = context_alias
         config["context_folder"] = path
 
-        config["archives"] = create_default_archives()
+        config["archives"] = create_default_archives(kiara_config=kiara_config)
 
-        kiara_config = KiaraContextConfig(**config)
+        kiara_context_config = KiaraContextConfig(**config)
         config_file = os.path.join(path, "kiara_context.yaml")
 
         with open(config_file, "wt") as f:
             yaml.dump(kiara_config.dict(), f)
 
-        return kiara_config
+        return kiara_context_config
 
     @classmethod
     def load_context(cls, path: str):
@@ -238,17 +319,25 @@ class KiaraGlobalConfig(KiaraBaseConfig):
     def validate_global_config(cls, values):
 
         create_context = values.pop("create_context", False)
-        contexts = cls.find_current_contexts()
+
+        kiara_config = values.get("kiara_config", None)
+        if kiara_config is None:
+            kiara_config = KiaraConfig()
+            values["kiara_config"] = kiara_config
+
+        contexts = cls.find_current_contexts(kiara_config=kiara_config)
 
         assert "context_configs" not in values.keys()
         assert "overlay_config" not in values.keys()
 
-        context_name: str = values.get("context", "default_context")
+        context_name: Optional[str] = values.get("context", None)
+        if context_name is None:
+            context_name = kiara_config.default_context
         loaded_context: Optional[KiaraContextConfig] = None
 
         assert context_name != "kiara_context.yaml"
 
-        if context_name != "default_context":
+        if context_name != DEFAULT_CONTEXT_NAME:
             context_dir: Optional[str] = None
             if context_name.endswith("kiara_context.yaml"):
                 context_dir = os.path.dirname(context_name)
@@ -267,7 +356,7 @@ class KiaraGlobalConfig(KiaraBaseConfig):
                     context_dir = os.path.abspath(os.path.expanduser(context_name))
                 context_id = str(uuid.uuid4())
                 loaded_context = cls.create_context(
-                    path=context_dir, context_id=context_id
+                    path=context_dir, context_id=context_id, kiara_config=kiara_config
                 )
 
         if loaded_context is not None:
@@ -292,14 +381,17 @@ class KiaraGlobalConfig(KiaraBaseConfig):
                     match = context_name
 
             if not match:
-                if not create_context and context_name != "default_context":
+                if not create_context and context_name != DEFAULT_CONTEXT_NAME:
                     raise Exception(f"Can't find context with name: {context_name}")
 
                 context_id = str(uuid.uuid4())
-                context_dir = os.path.join(KIARA_CONTEXTS_FOLDER, context_id)
+                context_dir = os.path.join(kiara_config.context_base_path, context_id)
 
                 kiara_config = cls.create_context(
-                    path=context_dir, context_id=context_id, context_alias=context_name
+                    path=context_dir,
+                    context_id=context_id,
+                    context_alias=context_name,
+                    kiara_config=kiara_config,
                 )
                 contexts[context_name] = kiara_config
             else:
@@ -322,7 +414,7 @@ class KiaraGlobalConfig(KiaraBaseConfig):
             )
 
         selected_dict = self.context_configs[context_name].dict()
-        overlay = self.dict(exclude={"context", "context_configs"})
+        overlay = self.dict(exclude={"context", "context_configs", "kiara_config"})
         selected_dict.update(overlay)
 
         kc = KiaraContextConfig(**selected_dict)

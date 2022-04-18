@@ -4,8 +4,8 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
 import structlog
+import sys
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -208,6 +208,7 @@ class OperationRegistry(object):
 
                 continue
 
+        error_details = {}
         while deferred_module_names:
 
             deferred_length = len(deferred_module_names)
@@ -216,6 +217,7 @@ class OperationRegistry(object):
 
             for missing_op_id in deferred_module_names.keys():
                 if missing_op_id in operations.keys():
+                    remove_deferred_names.add(missing_op_id)
                     continue
 
                 for op_config in deferred_module_names[missing_op_id]:
@@ -252,8 +254,14 @@ class OperationRegistry(object):
                                 )
 
                             else:
+                                missing = (
+                                    mt
+                                    for mt in op_config.required_module_types
+                                    if mt not in self._kiara.module_type_names
+                                    and mt not in operations.keys()
+                                )
                                 raise Exception(
-                                    f"Can't find all required module types: {', '.join(op_config.required_module_types)}"
+                                    f"Can't find all required module types when processing pipeline '{missing_op_id}': {', '.join(missing)}"
                                 )
 
                         else:
@@ -294,12 +302,9 @@ class OperationRegistry(object):
                         if not msg:
                             msg = e
                         details["details"] = msg
-                        logger.error("invalid.operation", **details)
-                        if is_debug():
-                            import traceback
-
-                            traceback.print_exc()
-
+                        error_details[missing_op_id] = details
+                        exc_info = sys.exc_info()
+                        details["exception"] = exc_info
                         continue
 
             for name, dependencies in deferred_module_names.items():
@@ -313,9 +318,14 @@ class OperationRegistry(object):
                 for mn in deferred_module_names:
                     if mn in operations.keys():
                         continue
-                    logger.error(
-                        "invalid.operation", operation_id=mn, details="-- n/a --"
-                    )
+                    details = error_details.get(missing_op_id, {"details": "-- n/a --"})
+                    exception = details.pop("exception", None)
+                    if exception and is_debug():
+                        import traceback
+
+                        traceback.print_exception(*exception)
+
+                    logger.error(f"invalid.operation.{mn}", operation_id=mn, **details)
                 break
 
         self._operations = {}

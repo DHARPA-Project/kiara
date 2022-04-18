@@ -36,6 +36,7 @@ def terminal_print(
     msg: Any = None,
     in_panel: Optional[str] = None,
     rich_config: Optional[Mapping[str, Any]] = None,
+    empty_line_before: bool = False,
     **config: Any,
 ) -> None:
 
@@ -50,6 +51,8 @@ def terminal_print(
     if in_panel is not None:
         msg = Panel(msg, title_align="left", title=in_panel)
 
+    if empty_line_before:
+        console.print()
     if rich_config:
         console.print(msg, **rich_config)
     else:
@@ -145,12 +148,14 @@ def terminal_print_model(
         else:
             empty_line_before = False
 
-    if empty_line_before:
-        terminal_print()
-
     if format == OutputFormat.TERMINAL:
         if len(models) == 1:
-            terminal_print(models[0], in_panel=in_panel, **render_config)
+            terminal_print(
+                models[0],
+                in_panel=in_panel,
+                empty_line_before=empty_line_before,
+                **render_config,
+            )
         else:
             rg = []
             for model in models[0:-1]:
@@ -164,7 +169,11 @@ def terminal_print_model(
         if len(models) == 1:
             json_str = render_json_str(models[0])
             syntax = Syntax(json_str, "json", background_color="default")
-            terminal_print(syntax, rich_config={"soft_wrap": True})
+            terminal_print(
+                syntax,
+                empty_line_before=empty_line_before,
+                rich_config={"soft_wrap": True},
+            )
         else:
             json_strs = []
             for model in models:
@@ -173,7 +182,11 @@ def terminal_print_model(
 
             json_str_full = "[" + ",\n".join(json_strs) + "]"
             syntax = Syntax(json_str_full, "json", background_color="default")
-            terminal_print(syntax, rich_config={"soft_wrap": True})
+            terminal_print(
+                syntax,
+                empty_line_before=empty_line_before,
+                rich_config={"soft_wrap": True},
+            )
 
     elif format == OutputFormat.JSON_SCHEMA:
         if len(models) == 1:
@@ -182,14 +195,22 @@ def terminal_print_model(
                 "json",
                 background_color="default",
             )
-            terminal_print(syntax, rich_config={"soft_wrap": True})
+            terminal_print(
+                syntax,
+                empty_line_before=empty_line_before,
+                rich_config={"soft_wrap": True},
+            )
         else:
             json_strs = []
             for model in models:
                 json_strs.append(render_json_schema_str(model))
             json_str_full = "[" + ",\n".join(json_strs) + "]"
             syntax = Syntax(json_str_full, "json", background_color="default")
-            terminal_print(syntax, rich_config={"soft_wrap": True})
+            terminal_print(
+                syntax,
+                empty_line_before=empty_line_before,
+                rich_config={"soft_wrap": True},
+            )
     elif format == OutputFormat.JSON_INCL_SCHEMA:
         if len(models) == 1:
             data = models[0].dict()
@@ -197,7 +218,11 @@ def terminal_print_model(
             all = {"data": data, "schema": schema}
             json_str = orjson_dumps(all, option=orjson.OPT_INDENT_2)
             syntax = Syntax(json_str, "json", background_color="default")
-            terminal_print(syntax, rich_config={"soft_wrap": True})
+            terminal_print(
+                syntax,
+                empty_line_before=empty_line_before,
+                rich_config={"soft_wrap": True},
+            )
         else:
             all_data = []
             for model in models:
@@ -207,7 +232,11 @@ def terminal_print_model(
             json_str = orjson_dumps(all_data, option=orjson.OPT_INDENT_2)
             # print(json_str)
             syntax = Syntax(json_str, "json", background_color="default")
-            terminal_print(syntax, rich_config={"soft_wrap": True})
+            terminal_print(
+                syntax,
+                empty_line_before=empty_line_before,
+                rich_config={"soft_wrap": True},
+            )
 
     elif format == OutputFormat.HTML:
 
@@ -220,4 +249,6 @@ def terminal_print_model(
                 raise NotImplementedError()
 
         syntax = Syntax(all_html, "html", background_color="default")
-        terminal_print(syntax, rich_config={"soft_wrap": True})
+        terminal_print(
+            syntax, empty_line_before=empty_line_before, rich_config={"soft_wrap": True}
+        )

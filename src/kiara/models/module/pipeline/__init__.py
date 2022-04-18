@@ -218,7 +218,7 @@ def create_input_alias_map(steps: Iterable[PipelineStep]) -> Dict[str, str]:
                 step_id=step.step_id, value_name=field_name
             )
             assert alias not in aliases.keys()
-            aliases[alias] = alias
+            aliases[f"{step.step_id}.{field_name}"] = alias
 
     return aliases
 
@@ -306,30 +306,34 @@ class PipelineConfig(KiaraModuleConfig):
 
     @classmethod
     def from_file(
-        cls, path: str, kiara: "Kiara", module_map: Optional[Mapping[str, Any]] = None
+        cls,
+        path: str,
+        kiara: Optional["Kiara"] = None,
+        module_map: Optional[Mapping[str, Any]] = None,
     ):
 
         data = get_data_from_file(path)
-        pipeline_id = data.pop("module_type_name", None)
+        pipeline_id = data.pop("pipeline_id", None)
         if pipeline_id is None:
             pipeline_id = os.path.basename(path)
 
         return cls.from_config(
             pipeline_id=pipeline_id, data=data, kiara=kiara, module_map=module_map
         )
-        # steps = data.pop("steps")
-        # steps = PipelineStep.create_steps(*steps, kiara=kiara, module_map=module_map)
-        # data["steps"] = steps
-        # return cls(pipeline_id=pipeline_id, **data)
 
     @classmethod
     def from_config(
         cls,
         pipeline_id: str,
         data: Mapping[str, Any],
-        kiara: "Kiara",
+        kiara: Optional["Kiara"] = None,
         module_map: Optional[Mapping[str, Any]] = None,
     ):
+
+        if kiara is None:
+            from kiara.context import Kiara
+
+            kiara = Kiara.instance()
 
         data = dict(data)
         steps = data.pop("steps")

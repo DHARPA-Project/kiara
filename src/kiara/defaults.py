@@ -27,8 +27,8 @@ KIARA_RESOURCES_FOLDER = os.path.join(KIARA_MODULE_BASE_FOLDER, "resources")
 
 KIARA_MAIN_CONFIG_FILE = os.path.join(kiara_app_dirs.user_config_dir, "config.yaml")
 
-KIARA_CONTEXTS_FOLDER = os.path.join(kiara_app_dirs.user_data_dir, "contexts")
-KIARA_STORES_FOLDER = os.path.join(kiara_app_dirs.user_data_dir, "stores")
+# KIARA_CONTEXTS_FOLDER = os.path.join(kiara_app_dirs.user_data_dir, "contexts")
+# KIARA_STORES_FOLDER = os.path.join(kiara_app_dirs.user_data_dir, "stores")
 
 KIARA_DB_FILE = os.path.join(kiara_app_dirs.user_data_dir, "kiara.db")
 KIARA_DB_MIGRATIONS_CONFIG = os.path.join(
@@ -166,6 +166,7 @@ KIARA_HASH_FUNCTION = mmh3.hash
 
 ANY_TYPE_NAME = "any"
 
+LOAD_CONFIG_PLACEHOLDER = "__placeholder__"
 
 DATA_TYPE_CATEGORY_ID = "metadata.type"
 DATA_TYPES_CATEGORY_ID = "data_types"
@@ -227,3 +228,4 @@ FILE_BUNDLE_MODEL_CATEOGORY_ID = "instance.model.file_bundle"
 
 ARRAY_MODEL_CATEOGORY_ID = "instance.model.array"
 TABLE_MODEL_CATEOGORY_ID = "instance.model.table"
+DEFAULT_CONTEXT_NAME = "default_context"

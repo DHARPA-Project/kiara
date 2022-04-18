@@ -120,6 +120,7 @@ def _process_subclass(
     type_id_no_attach: bool,
     attach_python_metadata: Union[bool, str] = False,
     ignore_abstract_classes: bool = True,
+    ignore_modules_with_null_module_name: bool = True,
 ) -> Optional[str]:
     """Process subclasses of a base class that live under a module (recursively).
 
@@ -131,6 +132,7 @@ def _process_subclass(
         type_id_func: a function to take the found class as input, and returns a string representing the id of the class. By default, the module path + "." + class name (snake-case) is used (minus the string 'kiara_modules.<project_name>'', if it exists at the beginning
         type_id_no_attach: in case you want to use the type_id_key to set the id, but don't want it attached to classes that don't have it, set this to true. In most cases, you won't need this option
         attach_python_metadata: whether to attach a [PythonClass][kiara.models.python_class.PythonClass] metadata model to the class. By default, '_python_class' is used as attribute name if this argument is 'True', If this argument is a string, that will be used as name instead.
+        ignore_modules_with_null_module_name: ignore modules that have their '_module_type_name' attribute set to 'None', this is mostly useful to filter out base classes
 
     Returns:
         the type id
@@ -152,6 +154,14 @@ def _process_subclass(
 
         if hasattr(sub_class, type_id_key):
             type_id = getattr(sub_class, type_id_key)
+            if type_id is None and ignore_modules_with_null_module_name:
+                log_message(
+                    "ignore.subclass",
+                    sub_class=sub_class,
+                    base_class=base_class,
+                    reason="'_module_type_name' subclass is set to 'None'",
+                )
+                return None
             if not type_id and not is_abstract:
                 raise Exception(
                     f"Class attribute '{type_id_key}' is 'None' for class '{sub_class.__name__}', this is not allowed."

@@ -253,6 +253,7 @@ class Pipeline(object):
             else:
                 alias_map = self._all_values.get_alias("pipeline.inputs")
                 assert alias_map is not None
+                # dbg(alias_map.__dict__)
                 schema = alias_map.values_schema[k]
                 value = self._data_registry.register_data(
                     data=v, schema=schema, pedigree=ORPHAN, reuse_existing=True

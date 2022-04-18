@@ -11,10 +11,9 @@
 import logging
 import rich_click as click
 import structlog
-import typing
+from typing import Any, Dict, Optional, Tuple
 
 from kiara.context import Kiara
-from kiara.context.config import KiaraGlobalConfig
 from kiara.utils import is_debug, is_develop, log_message
 
 from .context.commands import context
@@ -50,7 +49,10 @@ else:
 
 
 @click.group()
-@click.option("--context", "-c", help="The kiara context to use.", required=False)
+@click.option("--config", "-c", help="The config file.", required=False)
+@click.option(
+    "--context-name", "-ctx", help="The kiara context to use.", required=False
+)
 @click.option(
     "--pipeline-folder",
     "-p",
@@ -59,20 +61,22 @@ else:
     required=False,
 )
 @click.pass_context
-def cli(ctx, context, pipeline_folder: typing.Tuple[str]):
+def cli(
+    ctx, config: Optional[str], context_name: Optional[str], pipeline_folder: Tuple[str]
+):
     """Main cli entry-point, contains all the sub-commands."""
 
     ctx.obj = {}
-    extra_config: typing.Dict[str, typing.Any] = {}
+    extra_context_config: Dict[str, Any] = {}
     if pipeline_folder:
-        extra_config["extra_pipeline_folders"] = list(pipeline_folder)
-    if context:
-        extra_config["context"] = context
-    extra_config["create_context"] = False
-    kc = KiaraGlobalConfig(**extra_config)
-    selected_config = kc.get_context()
-    ctx.obj["kiara_global_config"] = kc
-    ctx.obj["kiara"] = Kiara(config=selected_config)
+        extra_context_config["extra_pipeline_folders"] = list(pipeline_folder)
+
+    extra_context_config["create_context"] = False
+
+    kiara: Kiara = Kiara.create(
+        config=config, context_name=context_name, **extra_context_config
+    )
+    ctx.obj["kiara"] = kiara
 
 
 # cli.add_command(explain)

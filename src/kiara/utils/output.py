@@ -248,9 +248,10 @@ class TabularWrap(ABC):
         rows_tail: Optional[int] = None,
         max_row_height: Optional[int] = None,
         max_cell_length: Optional[int] = None,
+        show_table_header: bool = True,
     ) -> RenderableType:
 
-        rich_table = RichTable(box=box.SIMPLE)
+        rich_table = RichTable(box=box.SIMPLE, show_header=show_table_header)
         for cn in self.retrieve_column_names():
             rich_table.add_column(cn)
 

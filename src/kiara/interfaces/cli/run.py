@@ -218,14 +218,6 @@ def run(
         terminal_print(rg, in_panel=f"Run info: [b]{kiara_op.operation_name}[/b]")
         sys.exit(1)
 
-        terminal_print()
-        terminal_print(str(ive))
-        terminal_print()
-        print("Details:\n")
-        for k, v in ive.invalid_inputs.items():
-            terminal_print(f"  - [b]{k}[/b]: [i]{v}[/i]")
-        sys.exit(1)
-
     invalid = operation_inputs.check_invalid()
     if invalid:
         terminal_print()

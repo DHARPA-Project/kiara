@@ -3584,6 +3584,9 @@ StoreValuesResult            (<span title="pydantic.main.BaseModel">BaseModel</s
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">table</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="p">)</span>
 </code></pre></div>
         </details>
 

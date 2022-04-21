@@ -2122,8 +2122,22 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../modules/included_core_modules/file/" class="md-nav__link">
-        file
+      <a href="../../../modules/included_core_modules/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../modules/included_core_modules/filesystem/" class="md-nav__link">
+        filesystem
       </a>
     </li>
   
@@ -2277,6 +2291,20 @@
           included_core_operations
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/included_core_operations/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
           
             
               
@@ -3427,6 +3455,11 @@ OperationRegistry        </code>
         <span class="bp">self</span><span class="o">.</span><span class="n">_operations_by_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_initialized</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">operation_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OperationType</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operation_types</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -3435,7 +3468,16 @@ OperationRegistry        </code>
         <span class="c1"># TODO: support op type config</span>
         <span class="n">_operation_types</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">op_name</span><span class="p">,</span> <span class="n">op_cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_type_classes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">_operation_types</span><span class="p">[</span><span class="n">op_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">op_cls</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span> <span class="n">op_type_name</span><span class="o">=</span><span class="n">op_name</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">_operation_types</span><span class="p">[</span><span class="n">op_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">op_cls</span><span class="p">(</span>
+                    <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span> <span class="n">op_type_name</span><span class="o">=</span><span class="n">op_name</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
+                    <span class="kn">import</span> <span class="nn">traceback</span>
+
+                    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;ignore.operation_type&quot;</span><span class="p">,</span> <span class="n">operation_name</span><span class="o">=</span><span class="n">op_name</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_operation_types</span> <span class="o">=</span> <span class="n">_operation_types</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operation_types</span>
@@ -3605,7 +3647,6 @@ OperationRegistry        </code>
                                                 <span class="n">mt</span>
                                             <span class="p">]</span><span class="o">.</span><span class="n">module_config</span><span class="p">,</span>
                                         <span class="p">}</span>
-
                                 <span class="n">op_config</span><span class="o">.</span><span class="n">module_map</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">module_map</span><span class="p">)</span>
                                 <span class="n">module_config</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">retrieve_module_config</span><span class="p">(</span>
                                     <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span>
@@ -3631,7 +3672,9 @@ OperationRegistry        </code>
                                 <span class="p">)</span>
 
                         <span class="k">else</span><span class="p">:</span>
-                            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+                            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;Invalid type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">op_config</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
                             <span class="c1"># module_type = op_config.retrieve_module_type(kiara=self._kiara)</span>
                             <span class="c1"># module_config = op_config.retrieve_module_config(kiara=self._kiara)</span>
                             <span class="c1">#</span>
@@ -3763,6 +3806,28 @@ OperationRegistry        </code>
 
 
 
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.registries.operations.OperationRegistry.is_initialized" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">is_initialized</span><span class="p">:</span> <span class="nb">bool</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.registries.operations.OperationRegistry.is_initialized" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
 
 
 

@@ -2266,8 +2266,22 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../modules/included_core_modules/file/" class="md-nav__link">
-        file
+      <a href="../../../modules/included_core_modules/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../modules/included_core_modules/filesystem/" class="md-nav__link">
+        filesystem
       </a>
     </li>
   
@@ -2421,6 +2435,20 @@
           included_core_operations
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/included_core_operations/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
           
             
               
@@ -3993,6 +4021,9 @@ Operation            (<a class="autorefs autorefs-internal" title="kiara.models.
 
         <span class="n">include_full_doc</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_full_doc&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="n">include_src</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_src&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">include_inputs</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_inputs&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">include_outputs</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_outputs&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">include_module_details</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_moduel_details&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
         <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show_lines</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Property&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
@@ -4006,58 +4037,46 @@ Operation            (<a class="autorefs autorefs-internal" title="kiara.models.
 
         <span class="c1"># module_type_md = self.module.get_type_metadata()</span>
 
-        <span class="n">inputs_table</span> <span class="o">=</span> <span class="n">create_table_from_field_schemas</span><span class="p">(</span>
-            <span class="n">_add_required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">_add_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">_show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">_constants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_details</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="c1"># constants = self.module_config.get(&quot;constants&quot;)</span>
-        <span class="c1"># inputs_table = create_table_from_field_schemas(</span>
-        <span class="c1">#     _add_required=True,</span>
-        <span class="c1">#     _add_default=True,</span>
-        <span class="c1">#     _show_header=True,</span>
-        <span class="c1">#     _constants=constants,</span>
-        <span class="c1">#     **self.module.inputs_schema,</span>
-        <span class="c1"># )</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Inputs&quot;</span><span class="p">,</span> <span class="n">inputs_table</span><span class="p">)</span>
-        <span class="n">outputs_table</span> <span class="o">=</span> <span class="n">create_table_from_field_schemas</span><span class="p">(</span>
-            <span class="n">_add_required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">_add_default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">_show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">_constants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_details</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="c1"># outputs_table = create_table_from_field_schemas(</span>
-        <span class="c1">#     _add_required=False,</span>
-        <span class="c1">#     _add_default=False,</span>
-        <span class="c1">#     _show_header=True,</span>
-        <span class="c1">#     _constants=None,</span>
-        <span class="c1">#     **self.module.outputs_schema,</span>
-        <span class="c1"># )</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Outputs&quot;</span><span class="p">,</span> <span class="n">outputs_table</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">include_inputs</span><span class="p">:</span>
+            <span class="n">inputs_table</span> <span class="o">=</span> <span class="n">create_table_from_field_schemas</span><span class="p">(</span>
+                <span class="n">_add_required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">_add_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">_show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">_constants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_details</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Inputs&quot;</span><span class="p">,</span> <span class="n">inputs_table</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">include_outputs</span><span class="p">:</span>
+            <span class="n">outputs_table</span> <span class="o">=</span> <span class="n">create_table_from_field_schemas</span><span class="p">(</span>
+                <span class="n">_add_required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">_add_default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">_show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">_constants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_details</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Outputs&quot;</span><span class="p">,</span> <span class="n">outputs_table</span><span class="p">)</span>
 
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module type&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_type</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">include_module_details</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module type&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_type</span><span class="p">)</span>
 
-        <span class="n">module_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">)</span>
-        <span class="n">conf</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span>
-            <span class="n">module_config</span><span class="p">,</span>
-            <span class="s2">&quot;json&quot;</span><span class="p">,</span>
-            <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module config&quot;</span><span class="p">,</span> <span class="n">conf</span><span class="p">)</span>
+            <span class="n">module_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">)</span>
+            <span class="n">conf</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span>
+                <span class="n">module_config</span><span class="p">,</span>
+                <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+                <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module config&quot;</span><span class="p">,</span> <span class="n">conf</span><span class="p">)</span>
 
-        <span class="n">module_type_md</span> <span class="o">=</span> <span class="n">KiaraModuleTypeInfo</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">module_details</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
-        <span class="p">)</span>
+            <span class="n">module_type_md</span> <span class="o">=</span> <span class="n">KiaraModuleTypeInfo</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">module_details</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+            <span class="p">)</span>
 
-        <span class="n">desc</span> <span class="o">=</span> <span class="n">module_type_md</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">description</span>
-        <span class="n">module_md</span> <span class="o">=</span> <span class="n">module_type_md</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span>
-            <span class="n">include_doc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_src</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_config_schema</span><span class="o">=</span><span class="kc">False</span>
-        <span class="p">)</span>
-        <span class="n">m_md</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">module_md</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module metadata&quot;</span><span class="p">,</span> <span class="n">m_md</span><span class="p">)</span>
+            <span class="n">desc</span> <span class="o">=</span> <span class="n">module_type_md</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">description</span>
+            <span class="n">module_md</span> <span class="o">=</span> <span class="n">module_type_md</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span>
+                <span class="n">include_doc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_src</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_config_schema</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+            <span class="n">m_md</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">module_md</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module metadata&quot;</span><span class="p">,</span> <span class="n">m_md</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">include_src</span><span class="p">:</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Source code&quot;</span><span class="p">,</span> <span class="n">module_type_md</span><span class="o">.</span><span class="n">process_src</span><span class="p">)</span>
@@ -4311,6 +4330,9 @@ Operation            (<a class="autorefs autorefs-internal" title="kiara.models.
 
     <span class="n">include_full_doc</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_full_doc&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
     <span class="n">include_src</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_src&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">include_inputs</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_inputs&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">include_outputs</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_outputs&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">include_module_details</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_moduel_details&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
     <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show_lines</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Property&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
@@ -4324,58 +4346,46 @@ Operation            (<a class="autorefs autorefs-internal" title="kiara.models.
 
     <span class="c1"># module_type_md = self.module.get_type_metadata()</span>
 
-    <span class="n">inputs_table</span> <span class="o">=</span> <span class="n">create_table_from_field_schemas</span><span class="p">(</span>
-        <span class="n">_add_required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">_add_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">_show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">_constants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_details</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="c1"># constants = self.module_config.get(&quot;constants&quot;)</span>
-    <span class="c1"># inputs_table = create_table_from_field_schemas(</span>
-    <span class="c1">#     _add_required=True,</span>
-    <span class="c1">#     _add_default=True,</span>
-    <span class="c1">#     _show_header=True,</span>
-    <span class="c1">#     _constants=constants,</span>
-    <span class="c1">#     **self.module.inputs_schema,</span>
-    <span class="c1"># )</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Inputs&quot;</span><span class="p">,</span> <span class="n">inputs_table</span><span class="p">)</span>
-    <span class="n">outputs_table</span> <span class="o">=</span> <span class="n">create_table_from_field_schemas</span><span class="p">(</span>
-        <span class="n">_add_required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">_add_default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">_show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">_constants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_details</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="c1"># outputs_table = create_table_from_field_schemas(</span>
-    <span class="c1">#     _add_required=False,</span>
-    <span class="c1">#     _add_default=False,</span>
-    <span class="c1">#     _show_header=True,</span>
-    <span class="c1">#     _constants=None,</span>
-    <span class="c1">#     **self.module.outputs_schema,</span>
-    <span class="c1"># )</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Outputs&quot;</span><span class="p">,</span> <span class="n">outputs_table</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">include_inputs</span><span class="p">:</span>
+        <span class="n">inputs_table</span> <span class="o">=</span> <span class="n">create_table_from_field_schemas</span><span class="p">(</span>
+            <span class="n">_add_required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">_add_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">_show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">_constants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_details</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Inputs&quot;</span><span class="p">,</span> <span class="n">inputs_table</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">include_outputs</span><span class="p">:</span>
+        <span class="n">outputs_table</span> <span class="o">=</span> <span class="n">create_table_from_field_schemas</span><span class="p">(</span>
+            <span class="n">_add_required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">_add_default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">_show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">_constants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_details</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Outputs&quot;</span><span class="p">,</span> <span class="n">outputs_table</span><span class="p">)</span>
 
-    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module type&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_type</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">include_module_details</span><span class="p">:</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module type&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_type</span><span class="p">)</span>
 
-    <span class="n">module_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">)</span>
-    <span class="n">conf</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span>
-        <span class="n">module_config</span><span class="p">,</span>
-        <span class="s2">&quot;json&quot;</span><span class="p">,</span>
-        <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module config&quot;</span><span class="p">,</span> <span class="n">conf</span><span class="p">)</span>
+        <span class="n">module_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">)</span>
+        <span class="n">conf</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span>
+            <span class="n">module_config</span><span class="p">,</span>
+            <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module config&quot;</span><span class="p">,</span> <span class="n">conf</span><span class="p">)</span>
 
-    <span class="n">module_type_md</span> <span class="o">=</span> <span class="n">KiaraModuleTypeInfo</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">module_details</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
-    <span class="p">)</span>
+        <span class="n">module_type_md</span> <span class="o">=</span> <span class="n">KiaraModuleTypeInfo</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">module_details</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+        <span class="p">)</span>
 
-    <span class="n">desc</span> <span class="o">=</span> <span class="n">module_type_md</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">description</span>
-    <span class="n">module_md</span> <span class="o">=</span> <span class="n">module_type_md</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span>
-        <span class="n">include_doc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_src</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_config_schema</span><span class="o">=</span><span class="kc">False</span>
-    <span class="p">)</span>
-    <span class="n">m_md</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">module_md</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module metadata&quot;</span><span class="p">,</span> <span class="n">m_md</span><span class="p">)</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="n">module_type_md</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">description</span>
+        <span class="n">module_md</span> <span class="o">=</span> <span class="n">module_type_md</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span>
+            <span class="n">include_doc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_src</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_config_schema</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="n">m_md</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">module_md</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module metadata&quot;</span><span class="p">,</span> <span class="n">m_md</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">include_src</span><span class="p">:</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Source code&quot;</span><span class="p">,</span> <span class="n">module_type_md</span><span class="o">.</span><span class="n">process_src</span><span class="p">)</span>
@@ -5031,9 +5041,9 @@ OperationGroupInfo            (<a class="autorefs autorefs-internal" title="kiar
         <span class="nb">filter</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;filter&quot;</span><span class="p">,</span> <span class="p">[])</span>
 
         <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Id&quot;</span><span class="p">,</span> <span class="n">no_wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Id&quot;</span><span class="p">,</span> <span class="n">no_wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Type(s)&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Description&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Description&quot;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">op_id</span><span class="p">,</span> <span class="n">op_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_infos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
@@ -5097,7 +5107,7 @@ OperationGroupInfo            (<a class="autorefs autorefs-internal" title="kiar
 
         <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Type&quot;</span><span class="p">,</span> <span class="n">no_wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;b green&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Id&quot;</span><span class="p">,</span> <span class="n">no_wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Id&quot;</span><span class="p">,</span> <span class="n">no_wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">full_doc</span><span class="p">:</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Documentation&quot;</span><span class="p">,</span> <span class="n">no_wrap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -6054,7 +6064,8 @@ PipelineOperationConfig            (<a class="autorefs autorefs-internal" title=
 
     <span class="k">def</span> <span class="nf">retrieve_module_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
-        <span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span>
+        <span class="c1"># using _from_config here because otherwise we&#39;d enter an infinite loop</span>
+        <span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">_from_config</span><span class="p">(</span>
             <span class="n">pipeline_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_id</span><span class="p">,</span>
             <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_config</span><span class="p">,</span>
             <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span>
@@ -6192,7 +6203,8 @@ PipelineOperationConfig            (<a class="autorefs autorefs-internal" title=
           <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_module_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
-    <span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span>
+    <span class="c1"># using _from_config here because otherwise we&#39;d enter an infinite loop</span>
+    <span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">_from_config</span><span class="p">(</span>
         <span class="n">pipeline_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_id</span><span class="p">,</span>
         <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_config</span><span class="p">,</span>
         <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span>

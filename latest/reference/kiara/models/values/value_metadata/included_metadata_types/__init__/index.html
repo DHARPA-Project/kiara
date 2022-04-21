@@ -2060,6 +2060,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#kiara.models.values.value_metadata.included_metadata_types.FileBundleMetadata" class="md-nav__link">
+    FileBundleMetadata
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.models.values.value_metadata.included_metadata_types.FileMetadata" class="md-nav__link">
     FileMetadata
   </a>
@@ -2192,8 +2199,22 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../modules/included_core_modules/file/" class="md-nav__link">
-        file
+      <a href="../../../../../modules/included_core_modules/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../modules/included_core_modules/filesystem/" class="md-nav__link">
+        filesystem
       </a>
     </li>
   
@@ -2347,6 +2368,20 @@
           included_core_operations
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../operations/included_core_operations/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
           
             
               
@@ -3334,6 +3369,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#kiara.models.values.value_metadata.included_metadata_types.FileBundleMetadata" class="md-nav__link">
+    FileBundleMetadata
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.models.values.value_metadata.included_metadata_types.FileMetadata" class="md-nav__link">
     FileMetadata
   </a>
@@ -3387,6 +3429,150 @@
 
 
 <h2 id="kiara.models.values.value_metadata.included_metadata_types-classes">Classes<a href="#kiara.models.values.value_metadata.included_metadata_types-classes" class="headerlink" title="Permanent link">&para;</a></h2>
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="kiara.models.values.value_metadata.included_metadata_types.FileBundleMetadata" class="doc doc-heading">
+        <code>
+FileBundleMetadata            (<a class="autorefs autorefs-internal" title="kiara.models.values.value_metadata.ValueMetadata" href="../../__init__/#kiara.models.values.value_metadata.ValueMetadata">ValueMetadata</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.models.values.value_metadata.included_metadata_types.FileBundleMetadata" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>File stats.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/values/value_metadata/included_metadata_types/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">FileBundleMetadata</span><span class="p">(</span><span class="n">ValueMetadata</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;File stats.&quot;&quot;&quot;</span>
+
+    <span class="n">_metadata_key</span> <span class="o">=</span> <span class="s2">&quot;file_bundle&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_supported_data_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;file_bundle&quot;</span><span class="p">]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_value_metadata</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="s2">&quot;Value&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;FileBundleMetadata&quot;</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="n">FileBundleMetadata</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">file_bundle</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="n">file_bundle</span><span class="p">:</span> <span class="n">FileBundle</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The file-specific metadata.&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h4 id="kiara.models.values.value_metadata.included_metadata_types.FileBundleMetadata-attributes">Attributes<a href="#kiara.models.values.value_metadata.included_metadata_types.FileBundleMetadata-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.values.value_metadata.included_metadata_types.FileBundleMetadata.file_bundle" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">file_bundle</span><span class="p">:</span> <span class="n">FileBundle</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.values.value_metadata.included_metadata_types.FileBundleMetadata.file_bundle" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The file-specific metadata.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.models.values.value_metadata.included_metadata_types.FileBundleMetadata.create_value_metadata" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_value_metadata</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.models.values.value_metadata.included_metadata_types.FileBundleMetadata.create_value_metadata" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/values/value_metadata/included_metadata_types/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">create_value_metadata</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="s2">&quot;Value&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;FileBundleMetadata&quot;</span><span class="p">:</span>
+
+    <span class="k">return</span> <span class="n">FileBundleMetadata</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">file_bundle</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.models.values.value_metadata.included_metadata_types.FileBundleMetadata.retrieve_supported_data_types" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_supported_data_types</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.models.values.value_metadata.included_metadata_types.FileBundleMetadata.retrieve_supported_data_types" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/values/value_metadata/included_metadata_types/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_supported_data_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;file_bundle&quot;</span><span class="p">]</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
 
   <div class="doc doc-object doc-class">
 

@@ -2124,8 +2124,22 @@
   
   
     <li class="md-nav__item">
-      <a href="../../modules/included_core_modules/file/" class="md-nav__link">
-        file
+      <a href="../../modules/included_core_modules/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../modules/included_core_modules/filesystem/" class="md-nav__link">
+        filesystem
       </a>
     </li>
   
@@ -2279,6 +2293,20 @@
           included_core_operations
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/included_core_operations/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
           
             
               
@@ -3465,6 +3493,12 @@ how something was created, and in which environment.</p>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
 
     <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_in_path</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]):</span>
+
+        <span class="n">config</span> <span class="o">=</span> <span class="n">KiaraConfig</span><span class="p">(</span><span class="n">base_path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">KiaraConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -3638,7 +3672,8 @@ how something was created, and in which environment.</p>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">operation_registry</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationRegistry</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operation_registry</span>
+        <span class="n">op_registry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operation_registry</span>
+        <span class="k">return</span> <span class="n">op_registry</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data_registry</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataRegistry</span><span class="p">:</span>
@@ -3674,7 +3709,38 @@ how something was created, and in which environment.</p>
     <span class="c1"># ===================================================================================================</span>
     <span class="c1"># kiara session API methods</span>
 
-    <span class="k">def</span> <span class="nf">create_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">create_manifest</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">module_or_operation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Manifest</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="n">module_or_operation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_type_names</span><span class="p">:</span>
+
+            <span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">(</span>
+                <span class="n">module_type</span><span class="o">=</span><span class="n">module_or_operation</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">config</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">module_or_operation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operation_ids</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">config</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Specified run target &#39;</span><span class="si">{</span><span class="n">module_or_operation</span><span class="si">}</span><span class="s2">&#39; is an operation, additional module configuration is not allowed (yet).&quot;</span>
+                <span class="p">)</span>
+            <span class="n">manifest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">module_or_operation</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">module_or_operation</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t assemble operation, invalid operation/module name: </span><span class="si">{</span><span class="n">module_or_operation</span><span class="si">}</span><span class="s2">. Must be registered module or operation name, or file.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">manifest</span>
+
+    <span class="k">def</span> <span class="nf">create_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Manifest</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Create a [KiaraModule][kiara.module.KiaraModule] object from a module configuration.</span>
 
 <span class="sd">        Arguments:</span>
@@ -3683,8 +3749,34 @@ how something was created, and in which environment.</p>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_registry</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]):</span>
-        <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">queue</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Queue a job with the specified manifest and inputs.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">           manifest: the job manifest</span>
+<span class="sd">           inputs: the job inputs</span>
+<span class="sd">           wait: whether to wait for the job to be finished before returning</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            the job id that can be used to look up job status &amp; results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_registry</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="n">wait</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Queue a job with the specified manifest and inputs.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">           manifest: the job manifest</span>
+<span class="sd">           inputs: the job inputs</span>
+<span class="sd">           wait: whether to wait for the job to be finished before returning</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_registry</span><span class="o">.</span><span class="n">execute_and_retrieve</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">save_values</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">alias_map</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
@@ -4215,6 +4307,90 @@ how something was created, and in which environment.</p>
 
 
 
+<h5 id="kiara.context.Kiara.create_in_path" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_in_path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.context.Kiara.create_in_path" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/context/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">create_in_path</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]):</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="n">KiaraConfig</span><span class="p">(</span><span class="n">base_path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.context.Kiara.create_manifest" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_manifest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_or_operation</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+<a href="#kiara.context.Kiara.create_manifest" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/context/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_manifest</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">module_or_operation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Manifest</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="n">module_or_operation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_type_names</span><span class="p">:</span>
+
+        <span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">(</span>
+            <span class="n">module_type</span><span class="o">=</span><span class="n">module_or_operation</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">config</span>
+        <span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">module_or_operation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operation_ids</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">config</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Specified run target &#39;</span><span class="si">{</span><span class="n">module_or_operation</span><span class="si">}</span><span class="s2">&#39; is an operation, additional module configuration is not allowed (yet).&quot;</span>
+            <span class="p">)</span>
+        <span class="n">manifest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">module_or_operation</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">module_or_operation</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t assemble operation, invalid operation/module name: </span><span class="si">{</span><span class="n">module_or_operation</span><span class="si">}</span><span class="s2">. Must be registered module or operation name, or file.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">manifest</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
 <h5 id="kiara.context.Kiara.create_module" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">)</span></code>
 
@@ -4238,7 +4414,7 @@ how something was created, and in which environment.</p>
   <tbody>
       <tr>
         <td><code>manifest</code></td>
-        <td><code>Manifest</code></td>
+        <td><code>Union[kiara.models.module.manifest.Manifest, str]</code></td>
         <td><p>the module configuration</p></td>
         <td><em>required</em></td>
       </tr>
@@ -4246,7 +4422,7 @@ how something was created, and in which environment.</p>
 </table>
         <details class="quote">
           <summary>Source code in <code>kiara/context/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Manifest</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Create a [KiaraModule][kiara.module.KiaraModule] object from a module configuration.</span>
 
 <span class="sd">    Arguments:</span>
@@ -4254,31 +4430,6 @@ how something was created, and in which environment.</p>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_registry</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.context.Kiara.get_value" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></code>
-
-
-<a href="#kiara.context.Kiara.get_value" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/context/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]):</span>
-    <span class="k">pass</span>
 </code></pre></div>
         </details>
     </div>
@@ -4313,6 +4464,159 @@ how something was created, and in which environment.</p>
     <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="n">Kiara</span><span class="p">()</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.context.Kiara.process" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span></code>
+
+
+<a href="#kiara.context.Kiara.process" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Queue a job with the specified manifest and inputs.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>manifest</code></td>
+        <td><code>Manifest</code></td>
+        <td><p>the job manifest</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>inputs</code></td>
+        <td><code>Mapping[str, Any]</code></td>
+        <td><p>the job inputs</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>wait</code></td>
+        <td></td>
+        <td><p>whether to wait for the job to be finished before returning</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>      <p>Returns</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/context/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Queue a job with the specified manifest and inputs.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">       manifest: the job manifest</span>
+<span class="sd">       inputs: the job inputs</span>
+<span class="sd">       wait: whether to wait for the job to be finished before returning</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_registry</span><span class="o">.</span><span class="n">execute_and_retrieve</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.context.Kiara.queue" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">queue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+
+<a href="#kiara.context.Kiara.queue" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Queue a job with the specified manifest and inputs.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>manifest</code></td>
+        <td><code>Manifest</code></td>
+        <td><p>the job manifest</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>inputs</code></td>
+        <td><code>Mapping[str, Any]</code></td>
+        <td><p>the job inputs</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>wait</code></td>
+        <td><code>bool</code></td>
+        <td><p>whether to wait for the job to be finished before returning</p></td>
+        <td><code>False</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>UUID</code></td>
+      <td><p>the job id that can be used to look up job status &amp; results</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kiara/context/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">queue</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Queue a job with the specified manifest and inputs.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">       manifest: the job manifest</span>
+<span class="sd">       inputs: the job inputs</span>
+<span class="sd">       wait: whether to wait for the job to be finished before returning</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        the job id that can be used to look up job status &amp; results</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_registry</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="n">wait</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -5270,6 +5574,8 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
         <span class="k">if</span> <span class="ow">not</span> <span class="n">base_path</span><span class="p">:</span>
             <span class="n">base_path</span> <span class="o">=</span> <span class="n">kiara_app_dirs</span><span class="o">.</span><span class="n">user_data_dir</span>
             <span class="n">values</span><span class="p">[</span><span class="s2">&quot;base_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">base_path</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base_path</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+            <span class="n">base_path</span> <span class="o">=</span> <span class="n">base_path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
 
         <span class="n">context_base_path</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;context_base_path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">context_base_path</span><span class="p">:</span>

@@ -2176,8 +2176,22 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../modules/included_core_modules/file/" class="md-nav__link">
-        file
+      <a href="../../../modules/included_core_modules/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../modules/included_core_modules/filesystem/" class="md-nav__link">
+        filesystem
       </a>
     </li>
   
@@ -2331,6 +2345,20 @@
           included_core_operations
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/included_core_operations/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
           
             
               
@@ -3511,37 +3539,44 @@ KiaraOperation        </code>
         <span class="n">module_or_operation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operation_name</span>
         <span class="n">operation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module_or_operation</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">module_or_operation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operation_ids</span><span class="p">:</span>
-                <span class="n">operation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span>
-                    <span class="n">module_or_operation</span>
+        <span class="k">if</span> <span class="n">module_or_operation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operation_ids</span><span class="p">:</span>
+
+            <span class="n">operation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span>
+                <span class="n">module_or_operation</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operation_config</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Specified run target &#39;</span><span class="si">{</span><span class="n">module_or_operation</span><span class="si">}</span><span class="s2">&#39; is an operation, additional module configuration is not allowed.&quot;</span>
                 <span class="p">)</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operation_config</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Specified run target &#39;</span><span class="si">{</span><span class="n">module_or_operation</span><span class="si">}</span><span class="s2">&#39; is an operation, additional module configuration is not allowed.&quot;</span>
-                    <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">(</span>
-                    <span class="n">module_type</span><span class="o">=</span><span class="n">module_or_operation</span><span class="p">,</span>
-                    <span class="n">module_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_operation_config</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
-                <span class="n">operation</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">create_from_module</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">module_or_operation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">module_type_names</span><span class="p">:</span>
 
             <span class="n">manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">(</span>
                 <span class="n">module_type</span><span class="o">=</span><span class="n">module_or_operation</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_operation_config</span>
             <span class="p">)</span>
-
             <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
             <span class="n">operation</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">create_from_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">module_or_operation</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-            <span class="c1"># module_name = kiara_obj.register_pipeline_description(</span>
-            <span class="c1">#     module_or_operation, raise_exception=True</span>
+            <span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span>
+                <span class="n">module_or_operation</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span>
+            <span class="p">)</span>
+            <span class="n">manifest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
+                <span class="s2">&quot;pipeline&quot;</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
+            <span class="n">operation</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">create_from_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t assemble operation, invalid operation/module name: </span><span class="si">{</span><span class="n">module_or_operation</span><span class="si">}</span><span class="s2">. Must be registered module or operation name, or file.&quot;</span>
+            <span class="p">)</span>
+            <span class="c1"># manifest = Manifest(</span>
+            <span class="c1">#     module_type=module_or_operation,</span>
+            <span class="c1">#     module_config=self._operation_config,</span>
             <span class="c1"># )</span>
+            <span class="c1"># module = self._kiara.create_module(manifest=manifest)</span>
+            <span class="c1"># operation = Operation.create_from_module(module=module)</span>
 
         <span class="k">if</span> <span class="n">operation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 
@@ -3628,6 +3663,33 @@ KiaraOperation        </code>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">job_registry</span><span class="o">.</span><span class="n">store_job_record</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">store_result</span>
+
+    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+        <span class="n">show_operation_name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_operation_name&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">show_operation_doc</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_operation_doc&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">show_inputs_schema</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_inputs_schema&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">show_operation_name</span><span class="p">:</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Operation: [bold]</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_name</span><span class="si">}</span><span class="s2">[/bold]&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">show_operation_doc</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">full_doc</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">show_inputs_schema</span><span class="p">:</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Inputs:&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">op_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_inputs</span>
+                <span class="n">inputs</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">create_value_map_status_renderable</span><span class="p">(</span><span class="n">op_inputs</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">InvalidValuesException</span> <span class="k">as</span> <span class="n">ive</span><span class="p">:</span>
+                <span class="n">inputs</span> <span class="o">=</span> <span class="n">ive</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">inputs</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[red bold]</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">[/red bold]&quot;</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Group</span><span class="p">(</span><span class="o">*</span><span class="n">items</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -3750,6 +3812,55 @@ KiaraOperation        </code>
 
 
 
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.interfaces.python_api.operation.KiaraOperation.create_renderable" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.python_api.operation.KiaraOperation.create_renderable" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/operation.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+    <span class="n">show_operation_name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_operation_name&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">show_operation_doc</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_operation_doc&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">show_inputs_schema</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_inputs_schema&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">show_operation_name</span><span class="p">:</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Operation: [bold]</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_name</span><span class="si">}</span><span class="s2">[/bold]&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show_operation_doc</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">full_doc</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">show_inputs_schema</span><span class="p">:</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Inputs:&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">op_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_inputs</span>
+            <span class="n">inputs</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">create_value_map_status_renderable</span><span class="p">(</span><span class="n">op_inputs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">InvalidValuesException</span> <span class="k">as</span> <span class="n">ive</span><span class="p">:</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="n">ive</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[red bold]</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">[/red bold]&quot;</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Group</span><span class="p">(</span><span class="o">*</span><span class="n">items</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
 
 
 

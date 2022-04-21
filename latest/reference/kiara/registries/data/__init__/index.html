@@ -2122,8 +2122,22 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../modules/included_core_modules/file/" class="md-nav__link">
-        file
+      <a href="../../../modules/included_core_modules/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../modules/included_core_modules/filesystem/" class="md-nav__link">
+        filesystem
       </a>
     </li>
   
@@ -2277,6 +2291,20 @@
           included_core_operations
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/included_core_operations/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
           
             
               
@@ -3550,6 +3578,7 @@ DataRegistry        </code>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value_id</span><span class="p">,</span> <span class="s2">&quot;value_id&quot;</span><span class="p">):</span>
                 <span class="n">_value_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_id</span><span class="o">.</span><span class="n">value_id</span>  <span class="c1"># type: ignore</span>
             <span class="k">else</span><span class="p">:</span>
+
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">_value_id</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span>
                         <span class="n">value_id</span>  <span class="c1"># type: ignore</span>
@@ -3566,6 +3595,7 @@ DataRegistry        </code>
                         <span class="p">)</span>
 
                     <span class="n">ref_type</span><span class="p">,</span> <span class="n">rest</span> <span class="o">=</span> <span class="n">value_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
                     <span class="k">if</span> <span class="n">ref_type</span> <span class="o">==</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span>
                         <span class="n">_value_id</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
                     <span class="k">elif</span> <span class="n">ref_type</span> <span class="o">==</span> <span class="s2">&quot;alias&quot;</span><span class="p">:</span>
@@ -3930,22 +3960,66 @@ DataRegistry        </code>
 
         <span class="k">return</span> <span class="n">data</span>
 
-    <span class="k">def</span> <span class="nf">_provision_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">load_config</span><span class="p">:</span> <span class="n">LoadConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BytesStructure</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">_provision_bytes</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">load_config</span><span class="p">:</span> <span class="n">LoadConfig</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">BytesStructure</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]]:</span>
 
         <span class="n">provisioning_strategy</span> <span class="o">=</span> <span class="n">load_config</span><span class="o">.</span><span class="n">provisioning_strategy</span>
         <span class="k">if</span> <span class="n">provisioning_strategy</span> <span class="o">==</span> <span class="n">ByteProvisioningStrategy</span><span class="o">.</span><span class="n">INLINE</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-        <span class="n">bytes_structure_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">as_bytes</span> <span class="o">=</span> <span class="n">provisioning_strategy</span> <span class="o">==</span> <span class="n">ByteProvisioningStrategy</span><span class="o">.</span><span class="n">BYTES</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
 
         <span class="k">assert</span> <span class="n">load_config</span><span class="o">.</span><span class="n">bytes_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
-        <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">chunk_ids</span> <span class="ow">in</span> <span class="n">load_config</span><span class="o">.</span><span class="n">bytes_map</span><span class="o">.</span><span class="n">chunk_id_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">for</span> <span class="n">chunk_id</span> <span class="ow">in</span> <span class="n">chunk_ids</span><span class="p">:</span>
-                <span class="n">bytes_structure_map</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_bytes</span><span class="p">(</span><span class="n">chunk_id</span><span class="o">=</span><span class="n">chunk_id</span><span class="p">,</span> <span class="n">as_bytes</span><span class="o">=</span><span class="n">as_bytes</span><span class="p">)</span>
-                <span class="p">)</span>
+        <span class="n">bytes_structure_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">provisioning_strategy</span> <span class="o">==</span> <span class="n">ByteProvisioningStrategy</span><span class="o">.</span><span class="n">BYTES</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">chunk_ids</span> <span class="ow">in</span> <span class="n">load_config</span><span class="o">.</span><span class="n">bytes_map</span><span class="o">.</span><span class="n">chunk_id_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">chunk_id</span> <span class="ow">in</span> <span class="n">chunk_ids</span><span class="p">:</span>
+                    <span class="n">bytes_structure_map</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_bytes</span><span class="p">(</span><span class="n">chunk_id</span><span class="o">=</span><span class="n">chunk_id</span><span class="p">,</span> <span class="n">as_bytes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">provisioning_strategy</span> <span class="o">==</span> <span class="n">ByteProvisioningStrategy</span><span class="o">.</span><span class="n">FILE_PATH_MAP</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">chunk_ids</span> <span class="ow">in</span> <span class="n">load_config</span><span class="o">.</span><span class="n">bytes_map</span><span class="o">.</span><span class="n">chunk_id_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">chunk_id</span> <span class="ow">in</span> <span class="n">chunk_ids</span><span class="p">:</span>
+                    <span class="n">bytes_structure_map</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_bytes</span><span class="p">(</span><span class="n">chunk_id</span><span class="o">=</span><span class="n">chunk_id</span><span class="p">,</span> <span class="n">as_bytes</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">provisioning_strategy</span> <span class="o">==</span> <span class="n">ByteProvisioningStrategy</span><span class="o">.</span><span class="n">LINK_FOLDER</span><span class="p">:</span>
+
+            <span class="n">temp_f</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+
+            <span class="k">def</span> <span class="nf">cleanup</span><span class="p">():</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;deleting.temp_provisioning_folder&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">temp_f</span><span class="p">)</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">temp_f</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">cleanup</span><span class="p">)</span>
+
+            <span class="n">root_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">temp_f</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">rel_path</span><span class="p">,</span> <span class="n">chunk_ids</span> <span class="ow">in</span> <span class="n">load_config</span><span class="o">.</span><span class="n">bytes_map</span><span class="o">.</span><span class="n">chunk_id_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunk_ids</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Multiple chunks for file &#39;</span><span class="si">{</span><span class="n">rel_path</span><span class="si">}</span><span class="s2">&#39; provided, this is currently not supported when using the &#39;LINK_FOLDER&#39; provisioning strategy.&quot;</span>
+                    <span class="p">)</span>
+
+                <span class="n">chunk_id</span> <span class="o">=</span> <span class="n">chunk_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">byte_ref</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_bytes</span><span class="p">(</span><span class="n">chunk_id</span><span class="o">=</span><span class="n">chunk_id</span><span class="p">,</span> <span class="n">as_bytes</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">byte_ref</span><span class="p">)</span>
+
+                <span class="n">link</span> <span class="o">=</span> <span class="n">root_dir</span> <span class="o">/</span> <span class="n">rel_path</span>
+                <span class="n">link</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">link</span><span class="o">.</span><span class="n">symlink_to</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+                <span class="n">bytes_structure_map</span><span class="p">[</span><span class="n">rel_path</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">link</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()]</span>
+
+            <span class="n">path</span> <span class="o">=</span> <span class="n">root_dir</span>
+
+        <span class="k">elif</span> <span class="n">provisioning_strategy</span> <span class="o">==</span> <span class="n">ByteProvisioningStrategy</span><span class="o">.</span><span class="n">COPIED_FOLDER</span><span class="p">:</span>
+
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;xxxxxxxx&quot;</span><span class="p">)</span>
 
         <span class="n">bytes_structure</span> <span class="o">=</span> <span class="n">BytesStructure</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
             <span class="n">data_type</span><span class="o">=</span><span class="n">load_config</span><span class="o">.</span><span class="n">bytes_map</span><span class="o">.</span><span class="n">data_type</span><span class="p">,</span>
@@ -3953,7 +4027,7 @@ DataRegistry        </code>
             <span class="n">chunk_map</span><span class="o">=</span><span class="n">bytes_structure_map</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">bytes_structure</span>
+        <span class="k">return</span> <span class="n">bytes_structure</span><span class="p">,</span> <span class="n">path</span>
 
     <span class="k">def</span> <span class="nf">_load_data_from_load_config</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">load_config</span><span class="p">:</span> <span class="n">LoadConfig</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span>
@@ -3963,12 +4037,43 @@ DataRegistry        </code>
 
         <span class="c1"># TODO: check whether modules and value types are available</span>
         <span class="n">inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;bytes_structure&quot;</span> <span class="ow">in</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">bytes_structure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_provision_bytes</span><span class="p">(</span><span class="n">load_config</span><span class="o">=</span><span class="n">load_config</span><span class="p">)</span>
-            <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;bytes_structure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bytes_structure</span>
 
-        <span class="k">if</span> <span class="s2">&quot;inline_data&quot;</span> <span class="ow">in</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;inline_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inline_data</span>
+        <span class="n">bytes_structure</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_provision_bytes</span><span class="p">(</span><span class="n">load_config</span><span class="o">=</span><span class="n">load_config</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">load_config</span><span class="o">.</span><span class="n">provisioning_strategy</span> <span class="o">==</span> <span class="n">ByteProvisioningStrategy</span><span class="o">.</span><span class="n">INLINE</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;inline_data&quot;</span> <span class="ow">in</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">assert</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;inline_data&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">LOAD_CONFIG_PLACEHOLDER</span>
+                <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;inline_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inline_data</span>
+        <span class="k">elif</span> <span class="n">load_config</span><span class="o">.</span><span class="n">provisioning_strategy</span> <span class="o">==</span> <span class="n">ByteProvisioningStrategy</span><span class="o">.</span><span class="n">BYTES</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;inline_data&quot;</span> <span class="ow">in</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">assert</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;inline_data&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">LOAD_CONFIG_PLACEHOLDER</span>
+                <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;inline_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inline_data</span>
+            <span class="k">if</span> <span class="s2">&quot;bytes_structure&quot;</span> <span class="ow">in</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">assert</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;bytes_structure&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">LOAD_CONFIG_PLACEHOLDER</span>
+                <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;bytes_structure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bytes_structure</span>
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="n">load_config</span><span class="o">.</span><span class="n">provisioning_strategy</span> <span class="o">==</span> <span class="n">ByteProvisioningStrategy</span><span class="o">.</span><span class="n">FILE_PATH_MAP</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="s2">&quot;inline_data&quot;</span> <span class="ow">in</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">assert</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;inline_data&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">LOAD_CONFIG_PLACEHOLDER</span>
+                <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;inline_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inline_data</span>
+            <span class="k">if</span> <span class="s2">&quot;bytes_structure&quot;</span> <span class="ow">in</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">assert</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;bytes_structure&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">LOAD_CONFIG_PLACEHOLDER</span>
+                <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;bytes_structure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bytes_structure</span>
+        <span class="k">elif</span> <span class="n">load_config</span><span class="o">.</span><span class="n">provisioning_strategy</span> <span class="o">==</span> <span class="n">ByteProvisioningStrategy</span><span class="o">.</span><span class="n">LINK_FOLDER</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;inline_data&quot;</span> <span class="ow">in</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">assert</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;inline_data&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">LOAD_CONFIG_PLACEHOLDER</span>
+                <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;inline_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inline_data</span>
+            <span class="k">if</span> <span class="s2">&quot;bytes_structure&quot;</span> <span class="ow">in</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">assert</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;bytes_structure&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">LOAD_CONFIG_PLACEHOLDER</span>
+                <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;bytes_structure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bytes_structure</span>
+            <span class="k">if</span> <span class="s2">&quot;path&quot;</span> <span class="ow">in</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">assert</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">assert</span> <span class="n">load_config</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">LOAD_CONFIG_PLACEHOLDER</span>
+                <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="n">load_config</span><span class="o">.</span><span class="n">provisioning_strategy</span> <span class="o">==</span> <span class="n">ByteProvisioningStrategy</span><span class="o">.</span><span class="n">COPIED_FOLDER</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">job_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">job_registry</span><span class="o">.</span><span class="n">prepare_job_config</span><span class="p">(</span>
@@ -4529,6 +4634,7 @@ DataRegistry        </code>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value_id</span><span class="p">,</span> <span class="s2">&quot;value_id&quot;</span><span class="p">):</span>
             <span class="n">_value_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_id</span><span class="o">.</span><span class="n">value_id</span>  <span class="c1"># type: ignore</span>
         <span class="k">else</span><span class="p">:</span>
+
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">_value_id</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span>
                     <span class="n">value_id</span>  <span class="c1"># type: ignore</span>
@@ -4545,6 +4651,7 @@ DataRegistry        </code>
                     <span class="p">)</span>
 
                 <span class="n">ref_type</span><span class="p">,</span> <span class="n">rest</span> <span class="o">=</span> <span class="n">value_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
                 <span class="k">if</span> <span class="n">ref_type</span> <span class="o">==</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span>
                     <span class="n">_value_id</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="n">ref_type</span> <span class="o">==</span> <span class="s2">&quot;alias&quot;</span><span class="p">:</span>
@@ -7142,6 +7249,8 @@ FilesystemDataStore            (<a class="autorefs autorefs-internal" title="kia
                     <span class="c1"># raise Exception(</span>
                     <span class="c1">#     f&quot;Can&#39;t persist chunk: invalid type &#39;{type(chunk)}&#39;&quot;</span>
                     <span class="c1"># )</span>
+                <span class="c1"># we don&#39;t want anyone writing to a stored file</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">addr</span><span class="o">.</span><span class="n">abspath</span><span class="p">,</span> <span class="n">S_IREAD</span> <span class="o">|</span> <span class="n">S_IRGRP</span> <span class="o">|</span> <span class="n">S_IROTH</span><span class="p">)</span>
                 <span class="n">bytes_alias_map</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">addr</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 
         <span class="n">alias_structure</span> <span class="o">=</span> <span class="n">BytesAliasStructure</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>

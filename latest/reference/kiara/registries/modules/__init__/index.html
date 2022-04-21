@@ -2122,8 +2122,22 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../modules/included_core_modules/file/" class="md-nav__link">
-        file
+      <a href="../../../modules/included_core_modules/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../modules/included_core_modules/filesystem/" class="md-nav__link">
+        filesystem
       </a>
     </li>
   
@@ -2277,6 +2291,20 @@
           included_core_operations
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/included_core_operations/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
           
             
               
@@ -3486,12 +3514,15 @@ ModuleRegistry        </code>
 
         <span class="k">return</span> <span class="n">ModuleTypeClassesInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">group_alias</span><span class="o">=</span><span class="n">alias</span><span class="p">,</span> <span class="n">type_infos</span><span class="o">=</span><span class="n">result</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
-    <span class="k">def</span> <span class="nf">create_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">create_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Manifest</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Create a [KiaraModule][kiara.module.KiaraModule] object from a module configuration.</span>
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            manifest: the module configuration</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">manifest</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">module_type</span><span class="o">=</span><span class="n">manifest</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="p">{})</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_modules</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
             <span class="n">manifest</span><span class="o">.</span><span class="n">manifest_hash</span><span class="p">,</span> <span class="kc">None</span>
@@ -3577,7 +3608,7 @@ ModuleRegistry        </code>
   <tbody>
       <tr>
         <td><code>manifest</code></td>
-        <td><code>Manifest</code></td>
+        <td><code>Union[kiara.models.module.manifest.Manifest, str]</code></td>
         <td><p>the module configuration</p></td>
         <td><em>required</em></td>
       </tr>
@@ -3585,12 +3616,15 @@ ModuleRegistry        </code>
 </table>
         <details class="quote">
           <summary>Source code in <code>kiara/registries/modules/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Manifest</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Create a [KiaraModule][kiara.module.KiaraModule] object from a module configuration.</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        manifest: the module configuration</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">manifest</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">module_type</span><span class="o">=</span><span class="n">manifest</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="p">{})</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_modules</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
         <span class="n">manifest</span><span class="o">.</span><span class="n">manifest_hash</span><span class="p">,</span> <span class="kc">None</span>

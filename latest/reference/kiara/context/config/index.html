@@ -2236,8 +2236,22 @@
   
   
     <li class="md-nav__item">
-      <a href="../../modules/included_core_modules/file/" class="md-nav__link">
-        file
+      <a href="../../modules/included_core_modules/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../modules/included_core_modules/filesystem/" class="md-nav__link">
+        filesystem
       </a>
     </li>
   
@@ -2391,6 +2405,20 @@
           included_core_operations
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/included_core_operations/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
           
             
               
@@ -3857,6 +3885,8 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
         <span class="k">if</span> <span class="ow">not</span> <span class="n">base_path</span><span class="p">:</span>
             <span class="n">base_path</span> <span class="o">=</span> <span class="n">kiara_app_dirs</span><span class="o">.</span><span class="n">user_data_dir</span>
             <span class="n">values</span><span class="p">[</span><span class="s2">&quot;base_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">base_path</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base_path</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+            <span class="n">base_path</span> <span class="o">=</span> <span class="n">base_path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
 
         <span class="n">context_base_path</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;context_base_path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">context_base_path</span><span class="p">:</span>

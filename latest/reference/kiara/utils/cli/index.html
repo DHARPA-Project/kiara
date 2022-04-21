@@ -2122,8 +2122,22 @@
   
   
     <li class="md-nav__item">
-      <a href="../../modules/included_core_modules/file/" class="md-nav__link">
-        file
+      <a href="../../modules/included_core_modules/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../modules/included_core_modules/filesystem/" class="md-nav__link">
+        filesystem
       </a>
     </li>
   
@@ -2277,6 +2291,20 @@
           included_core_operations
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/included_core_operations/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
           
             
               
@@ -3910,8 +3938,9 @@ and attaching it to the :attr:<code>Command.params</code> list.</p>
             <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
                 <span class="n">renderable</span> <span class="o">=</span> <span class="n">extract_renderable</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">render_config</span><span class="p">)</span>
                 <span class="n">rg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">renderable</span><span class="p">)</span>
-                <span class="n">rg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Rule</span><span class="p">())</span>
-            <span class="n">rg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">models</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">rg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Rule</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">))</span>
+            <span class="n">last</span> <span class="o">=</span> <span class="n">extract_renderable</span><span class="p">(</span><span class="n">models</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">render_config</span><span class="p">)</span>
+            <span class="n">rg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">last</span><span class="p">)</span>
             <span class="n">group</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="o">*</span><span class="n">rg</span><span class="p">)</span>
             <span class="n">terminal_print</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">in_panel</span><span class="o">=</span><span class="n">in_panel</span><span class="p">,</span> <span class="o">**</span><span class="n">render_config</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="n">OutputFormat</span><span class="o">.</span><span class="n">JSON</span><span class="p">:</span>

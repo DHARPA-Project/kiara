@@ -592,6 +592,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#kiara.data_types.included_core_types.filesystem.SUPPORTED_FILE_TYPES" class="md-nav__link">
+    SUPPORTED_FILE_TYPES
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.data_types.included_core_types.filesystem.logger" class="md-nav__link">
     logger
   </a>
@@ -614,6 +621,13 @@
           <li class="md-nav__item">
   <a href="#kiara.data_types.included_core_types.filesystem.FileBundleValueType" class="md-nav__link">
     FileBundleValueType
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data_types.included_core_types.filesystem.FileTypeConfig" class="md-nav__link">
+    FileTypeConfig
   </a>
   
 </li>
@@ -2203,8 +2217,22 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../modules/included_core_modules/file/" class="md-nav__link">
-        file
+      <a href="../../../modules/included_core_modules/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../modules/included_core_modules/filesystem/" class="md-nav__link">
+        filesystem
       </a>
     </li>
   
@@ -2358,6 +2386,20 @@
           included_core_operations
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/included_core_operations/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
           
             
               
@@ -3338,6 +3380,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#kiara.data_types.included_core_types.filesystem.SUPPORTED_FILE_TYPES" class="md-nav__link">
+    SUPPORTED_FILE_TYPES
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.data_types.included_core_types.filesystem.logger" class="md-nav__link">
     logger
   </a>
@@ -3360,6 +3409,13 @@
           <li class="md-nav__item">
   <a href="#kiara.data_types.included_core_types.filesystem.FileBundleValueType" class="md-nav__link">
     FileBundleValueType
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.data_types.included_core_types.filesystem.FileTypeConfig" class="md-nav__link">
+    FileTypeConfig
   </a>
   
 </li>
@@ -3415,6 +3471,24 @@
 
 
 
+<h3 id="kiara.data_types.included_core_types.filesystem.SUPPORTED_FILE_TYPES" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">SUPPORTED_FILE_TYPES</span></code>
+
+
+<a href="#kiara.data_types.included_core_types.filesystem.SUPPORTED_FILE_TYPES" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="kiara.data_types.included_core_types.filesystem.logger" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">logger</span></code>
 
@@ -3449,14 +3523,25 @@ FileBundleValueType            (<a class="autorefs autorefs-internal" title="kia
 
         <details class="quote">
           <summary>Source code in <code>kiara/data_types/included_core_types/filesystem.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">FileBundleValueType</span><span class="p">(</span><span class="n">AnyType</span><span class="p">[</span><span class="n">FileBundle</span><span class="p">,</span> <span class="n">DataTypeConfig</span><span class="p">]):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">FileBundleValueType</span><span class="p">(</span><span class="n">AnyType</span><span class="p">[</span><span class="n">FileBundle</span><span class="p">,</span> <span class="n">FileTypeConfig</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;A bundle of files (like a folder, zip archive, etc.).&quot;&quot;&quot;</span>
 
     <span class="n">_data_type_name</span> <span class="o">=</span> <span class="s2">&quot;file_bundle&quot;</span>
 
     <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_available_type_profiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">ft</span> <span class="ow">in</span> <span class="n">SUPPORTED_FILE_TYPES</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ft</span><span class="si">}</span><span class="s2">_file_bundle&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;content_type&quot;</span><span class="p">:</span> <span class="n">ft</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">python_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">FileBundle</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">data_type_config_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">FileTypeConfig</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">FileTypeConfig</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">value_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">Value</span><span class="p">]:</span>
@@ -3468,7 +3553,7 @@ FileBundleValueType            (<a class="autorefs autorefs-internal" title="kia
     <span class="k">def</span> <span class="nf">calculate_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">FileBundle</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">file_bundle_hash</span>
 
-    <span class="k">def</span> <span class="nf">create_model_from_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileModel</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">create_model_from_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileBundle</span><span class="p">:</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">FileBundle</span><span class="o">.</span><span class="n">import_folder</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
@@ -3477,27 +3562,13 @@ FileBundleValueType            (<a class="autorefs autorefs-internal" title="kia
                 <span class="sa">f</span><span class="s2">&quot;Can&#39;t create FileBundle from data of type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">render_as__renderable</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">render_as__terminal_renderable</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 
-        <span class="n">max_no_included_files</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_no_files&quot;</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
-
-        <span class="n">data</span><span class="p">:</span> <span class="n">FileBundle</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
-        <span class="n">pretty</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;included_files&quot;</span><span class="p">})</span>
-        <span class="n">files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">included_files</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-        <span class="k">if</span> <span class="n">max_no_included_files</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_no_included_files</span><span class="p">:</span>
-                <span class="n">half</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">max_no_included_files</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
-                <span class="n">head</span> <span class="o">=</span> <span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">half</span><span class="p">]</span>
-                <span class="n">tail</span> <span class="o">=</span> <span class="n">files</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">half</span> <span class="p">:]</span>  <span class="c1"># noqa</span>
-                <span class="n">files</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">head</span>
-                    <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;..... output skipped .....&quot;</span><span class="p">,</span> <span class="s2">&quot;..... output skipped .....&quot;</span><span class="p">]</span>
-                    <span class="o">+</span> <span class="n">tail</span>
-                <span class="p">)</span>
-        <span class="n">pretty</span><span class="p">[</span><span class="s2">&quot;included_files&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">files</span>
-        <span class="k">return</span> <span class="n">orjson_dumps</span><span class="p">(</span><span class="n">pretty</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">)</span>
+        <span class="n">bundle</span><span class="p">:</span> <span class="n">FileBundle</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">renderable</span> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="o">**</span><span class="n">render_config</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">renderable</span>
 </code></pre></div>
         </details>
 
@@ -3579,7 +3650,7 @@ FileBundleValueType            (<a class="autorefs autorefs-internal" title="kia
 
         <details class="quote">
           <summary>Source code in <code>kiara/data_types/included_core_types/filesystem.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_model_from_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileModel</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_model_from_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileBundle</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">FileBundle</span><span class="o">.</span><span class="n">import_folder</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
@@ -3587,6 +3658,35 @@ FileBundleValueType            (<a class="autorefs autorefs-internal" title="kia
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Can&#39;t create FileBundle from data of type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
         <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.data_types.included_core_types.filesystem.FileBundleValueType.data_type_config_class" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">data_type_config_class</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.data_types.included_core_types.filesystem.FileBundleValueType.data_type_config_class" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data_types/included_core_types/filesystem.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">data_type_config_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">FileTypeConfig</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="n">FileTypeConfig</span>
 </code></pre></div>
         </details>
     </div>
@@ -3628,38 +3728,56 @@ FileBundleValueType            (<a class="autorefs autorefs-internal" title="kia
 
 
 
-<h5 id="kiara.data_types.included_core_types.filesystem.FileBundleValueType.render_as__renderable" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">render_as__renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">render_config</span><span class="p">)</span></code>
+<h5 id="kiara.data_types.included_core_types.filesystem.FileBundleValueType.render_as__terminal_renderable" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">render_as__terminal_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">render_config</span><span class="p">)</span></code>
 
 
-<a href="#kiara.data_types.included_core_types.filesystem.FileBundleValueType.render_as__renderable" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.data_types.included_core_types.filesystem.FileBundleValueType.render_as__terminal_renderable" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/data_types/included_core_types/filesystem.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">render_as__renderable</span><span class="p">(</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">render_as__terminal_renderable</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 
-    <span class="n">max_no_included_files</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_no_files&quot;</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+    <span class="n">bundle</span><span class="p">:</span> <span class="n">FileBundle</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
+    <span class="n">renderable</span> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="o">**</span><span class="n">render_config</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">renderable</span>
+</code></pre></div>
+        </details>
+    </div>
 
-    <span class="n">data</span><span class="p">:</span> <span class="n">FileBundle</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
-    <span class="n">pretty</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;included_files&quot;</span><span class="p">})</span>
-    <span class="n">files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">included_files</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-    <span class="k">if</span> <span class="n">max_no_included_files</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_no_included_files</span><span class="p">:</span>
-            <span class="n">half</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">max_no_included_files</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="n">head</span> <span class="o">=</span> <span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">half</span><span class="p">]</span>
-            <span class="n">tail</span> <span class="o">=</span> <span class="n">files</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">half</span> <span class="p">:]</span>  <span class="c1"># noqa</span>
-            <span class="n">files</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">head</span>
-                <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;..... output skipped .....&quot;</span><span class="p">,</span> <span class="s2">&quot;..... output skipped .....&quot;</span><span class="p">]</span>
-                <span class="o">+</span> <span class="n">tail</span>
-            <span class="p">)</span>
-    <span class="n">pretty</span><span class="p">[</span><span class="s2">&quot;included_files&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">files</span>
-    <span class="k">return</span> <span class="n">orjson_dumps</span><span class="p">(</span><span class="n">pretty</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">)</span>
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.data_types.included_core_types.filesystem.FileBundleValueType.retrieve_available_type_profiles" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_available_type_profiles</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.data_types.included_core_types.filesystem.FileBundleValueType.retrieve_available_type_profiles" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data_types/included_core_types/filesystem.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_available_type_profiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">ft</span> <span class="ow">in</span> <span class="n">SUPPORTED_FILE_TYPES</span><span class="p">:</span>
+        <span class="n">result</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ft</span><span class="si">}</span><span class="s2">_file_bundle&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;content_type&quot;</span><span class="p">:</span> <span class="n">ft</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
         </details>
     </div>
@@ -3711,6 +3829,79 @@ FileBundleValueType            (<a class="autorefs autorefs-internal" title="kia
 
 
 
+<h3 id="kiara.data_types.included_core_types.filesystem.FileTypeConfig" class="doc doc-heading">
+        <code>
+FileTypeConfig            (<a class="autorefs autorefs-internal" title="kiara.data_types.DataTypeConfig" href="../../__init__/#kiara.data_types.DataTypeConfig">DataTypeConfig</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.data_types.included_core_types.filesystem.FileTypeConfig" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data_types/included_core_types/filesystem.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">FileTypeConfig</span><span class="p">(</span><span class="n">DataTypeConfig</span><span class="p">):</span>
+
+    <span class="n">content_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The content type of this file.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h4 id="kiara.data_types.included_core_types.filesystem.FileTypeConfig-attributes">Attributes<a href="#kiara.data_types.included_core_types.filesystem.FileTypeConfig-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.data_types.included_core_types.filesystem.FileTypeConfig.content_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.data_types.included_core_types.filesystem.FileTypeConfig.content_type" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The content type of this file.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
 <h3 id="kiara.data_types.included_core_types.filesystem.FileValueType" class="doc doc-heading">
         <code>
 FileValueType            (<a class="autorefs autorefs-internal" title="kiara.data_types.included_core_types.KiaraModelValueType" href="../__init__/#kiara.data_types.included_core_types.KiaraModelValueType">KiaraModelValueType</a>)
@@ -3726,18 +3917,25 @@ FileValueType            (<a class="autorefs autorefs-internal" title="kiara.dat
 
         <details class="quote">
           <summary>Source code in <code>kiara/data_types/included_core_types/filesystem.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">FileValueType</span><span class="p">(</span><span class="n">KiaraModelValueType</span><span class="p">[</span><span class="n">FileModel</span><span class="p">,</span> <span class="n">DataTypeConfig</span><span class="p">]):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">FileValueType</span><span class="p">(</span><span class="n">KiaraModelValueType</span><span class="p">[</span><span class="n">FileModel</span><span class="p">,</span> <span class="n">FileTypeConfig</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;A file.&quot;&quot;&quot;</span>
 
     <span class="n">_data_type_name</span> <span class="o">=</span> <span class="s2">&quot;file&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_available_type_profiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">ft</span> <span class="ow">in</span> <span class="n">SUPPORTED_FILE_TYPES</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ft</span><span class="si">}</span><span class="s2">_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;content_type&quot;</span><span class="p">:</span> <span class="n">ft</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">result</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">python_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">FileModel</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">data_type_config_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">DataTypeConfig</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="n">DataTypeConfig</span>
+    <span class="k">def</span> <span class="nf">data_type_config_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">FileTypeConfig</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">FileTypeConfig</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">value_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">Value</span><span class="p">]:</span>
@@ -3930,8 +4128,8 @@ FileValueType            (<a class="autorefs autorefs-internal" title="kiara.dat
         <details class="quote">
           <summary>Source code in <code>kiara/data_types/included_core_types/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">data_type_config_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">DataTypeConfig</span><span class="p">]:</span>
-    <span class="k">return</span> <span class="n">DataTypeConfig</span>
+<span class="k">def</span> <span class="nf">data_type_config_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">FileTypeConfig</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="n">FileTypeConfig</span>
 </code></pre></div>
         </details>
     </div>
@@ -4062,6 +4260,38 @@ FileValueType            (<a class="autorefs autorefs-internal" title="kiara.dat
             <span class="n">data</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">),</span>
         <span class="p">]</span>
         <span class="k">return</span> <span class="n">Group</span><span class="p">(</span><span class="o">*</span><span class="n">lines</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.data_types.included_core_types.filesystem.FileValueType.retrieve_available_type_profiles" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_available_type_profiles</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.data_types.included_core_types.filesystem.FileValueType.retrieve_available_type_profiles" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data_types/included_core_types/filesystem.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_available_type_profiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">ft</span> <span class="ow">in</span> <span class="n">SUPPORTED_FILE_TYPES</span><span class="p">:</span>
+        <span class="n">result</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ft</span><span class="si">}</span><span class="s2">_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;content_type&quot;</span><span class="p">:</span> <span class="n">ft</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
         </details>
     </div>

@@ -2122,8 +2122,22 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../modules/included_core_modules/file/" class="md-nav__link">
-        file
+      <a href="../../../../modules/included_core_modules/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../modules/included_core_modules/filesystem/" class="md-nav__link">
+        filesystem
       </a>
     </li>
   
@@ -2277,6 +2291,20 @@
           included_core_operations
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../operations/included_core_operations/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
           
             
               
@@ -5488,6 +5516,8 @@ FilesystemDataStore            (<a class="autorefs autorefs-internal" title="kia
                     <span class="c1"># raise Exception(</span>
                     <span class="c1">#     f&quot;Can&#39;t persist chunk: invalid type &#39;{type(chunk)}&#39;&quot;</span>
                     <span class="c1"># )</span>
+                <span class="c1"># we don&#39;t want anyone writing to a stored file</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">addr</span><span class="o">.</span><span class="n">abspath</span><span class="p">,</span> <span class="n">S_IREAD</span> <span class="o">|</span> <span class="n">S_IRGRP</span> <span class="o">|</span> <span class="n">S_IROTH</span><span class="p">)</span>
                 <span class="n">bytes_alias_map</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">addr</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 
         <span class="n">alias_structure</span> <span class="o">=</span> <span class="n">BytesAliasStructure</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>

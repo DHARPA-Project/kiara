@@ -332,8 +332,22 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kiara_info.module_types.file_bundle.save_to_data_store" class="md-nav__link">
+    file_bundle.save_to_data_store
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kiara_info.module_types.import.file" class="md-nav__link">
     import.file
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.import.file_bundle" class="md-nav__link">
+    import.file_bundle
   </a>
   
 </li>
@@ -355,6 +369,13 @@
         <li class="md-nav__item">
   <a href="#kiara_info.module_types.load.file.from_data_store" class="md-nav__link">
     load.file.from_data_store
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.load.file_bundle.from_data_store" class="md-nav__link">
+    load.file_bundle.from_data_store
   </a>
   
 </li>
@@ -2255,8 +2276,22 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/kiara/modules/included_core_modules/file/" class="md-nav__link">
-        file
+      <a href="../../reference/kiara/modules/included_core_modules/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/modules/included_core_modules/filesystem/" class="md-nav__link">
+        filesystem
       </a>
     </li>
   
@@ -2410,6 +2445,20 @@
           included_core_operations
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/operations/included_core_operations/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
           
             
               
@@ -3389,8 +3438,22 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kiara_info.module_types.file_bundle.save_to_data_store" class="md-nav__link">
+    file_bundle.save_to_data_store
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kiara_info.module_types.import.file" class="md-nav__link">
     import.file
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.import.file_bundle" class="md-nav__link">
+    import.file_bundle
   </a>
   
 </li>
@@ -3412,6 +3475,13 @@
         <li class="md-nav__item">
   <a href="#kiara_info.module_types.load.file.from_data_store" class="md-nav__link">
     load.file.from_data_store
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.load.file_bundle.from_data_store" class="md-nav__link">
+    load.file_bundle.from_data_store
   </a>
   
 </li>
@@ -3564,10 +3634,72 @@
                          ─────────────────────────────────────────────────────  
                                                                                 
 </pre>
-<h3 id="kiara_info.module_types.import.file"><code>import.file</code><a class="headerlink" href="#kiara_info.module_types.import.file" title="Permanent link">&para;</a></h3>
+<h3 id="kiara_info.module_types.file_bundle.save_to_data_store"><code>file_bundle.save_to_data_store</code><a class="headerlink" href="#kiara_info.module_types.file_bundle.save_to_data_store" title="Permanent link">&para;</a></h3>
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">                                                                                
  <span style="font-style: italic">Documentation         </span>                                                         
                           -- n/a --                                             
+                                                                                
+ <span style="font-style: italic">Author(s)             </span>                                                         
+                          Markus Binsteiner  <span style="font-style: italic"> markus@frkl.io </span>                   
+                                                                                
+ <span style="font-style: italic">Context               </span>                                                         
+                         <span style="font-style: italic"> Labels     </span>  <span style="font-style: italic">package</span>: kiara                           
+                         <span style="font-style: italic"> References </span>  <span style="font-style: italic">source_repo</span>:                             
+                                       <a href="https://github.com/DHARPA-Project/kiara">https://github.com/DHARPA-Project/kia…</a>   
+                                       <span style="font-style: italic">documentation</span>:                           
+                                       <a href="https://dharpa.org/kiara_documentation/">https://dharpa.org/kiara_documentatio…</a>   
+                                                                                
+ <span style="font-style: italic">Module config schema  </span>                                                         
+                         <span style="font-weight: bold"> Field     </span> <span style="font-weight: bold"> Type   </span> <span style="font-weight: bold"> Descript… </span> <span style="font-weight: bold"> Required </span> <span style="font-weight: bold"> Default </span>  
+                         ─────────────────────────────────────────────────────  
+                          constants   object   Value       no                   
+                                               constants                        
+                                               for this                         
+                                               module.                          
+                                                                                
+                          defaults    object   Value       no                   
+                                               defaults                         
+                                               for this                         
+                                               module.                          
+                                                                                
+                          source_t…   string   The value   yes                  
+                                               type of                          
+                                               the                              
+                                               source.                          
+                                                                                
+                          source_t…   object   The value   no                   
+                                               type                             
+                                               config                           
+                                               (if                              
+                                               applicab…                        
+                                                                                
+ <span style="font-style: italic">Python class          </span>                                                         
+                         <span style="font-style: italic"> class_name  </span>  SaveFileBundleToStoreModule             
+                         <span style="font-style: italic"> module_name </span>  kiara.modules.included_core_modules.…   
+                         <span style="font-style: italic"> full_name   </span>  kiara.modules.included_core_modules.…   
+                                                                                
+ <span style="font-style: italic">Processing source code</span>  ─────────────────────────────────────────────────────  
+                          <span style="color: #66d9ef; text-decoration-color: #66d9ef; background-color: #ffffff">def</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> </span><span style="color: #a6e22e; text-decoration-color: #a6e22e; background-color: #ffffff">process</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">(self, inputs: ValueMap, outputs: Value…</span>   
+                                                                                
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    source_type </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> self</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">get_config_value(</span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #ffffff">"source_ty…</span>   
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    value </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> inputs</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">get_value_obj(source_type)</span>         
+                                                                                
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    func_name </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #ffffff">f"data_type__{</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">self</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">get_config_valu…</span>   
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    func </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> getattr(self, func_name)</span>                   
+                                                                                
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    result: LoadConfig</span>                                
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    bytes_structure: Optional[BytesStructure]</span>         
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    result, bytes_structure </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> func(value</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">value, pe…</span>   
+                                                                                
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    outputs</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">set_values(load_config</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">result, bytes_s…</span>   
+                                                                                
+                         ─────────────────────────────────────────────────────  
+                                                                                
+</pre>
+<h3 id="kiara_info.module_types.import.file"><code>import.file</code><a class="headerlink" href="#kiara_info.module_types.import.file" title="Permanent link">&para;</a></h3>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">                                                                                
+ <span style="font-style: italic">Documentation         </span>                                                         
+                          Import a file from the local filesystem.              
                                                                                 
  <span style="font-style: italic">Author(s)             </span>                                                         
                           Markus Binsteiner  <span style="font-style: italic"> markus@frkl.io </span>                   
@@ -3604,6 +3736,51 @@
                                                                                 
                           <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    file </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> FileModel</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">load_file(source</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">path)</span>           
                           <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    outputs</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">set_value(</span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #ffffff">"file"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">, file)</span>                   
+                                                                                
+                         ─────────────────────────────────────────────────────  
+                                                                                
+</pre>
+<h3 id="kiara_info.module_types.import.file_bundle"><code>import.file_bundle</code><a class="headerlink" href="#kiara_info.module_types.import.file_bundle" title="Permanent link">&para;</a></h3>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">                                                                                
+ <span style="font-style: italic">Documentation         </span>                                                         
+                          Import a folder (file_bundle) from the local          
+                          filesystem.                                           
+                                                                                
+ <span style="font-style: italic">Author(s)             </span>                                                         
+                          Markus Binsteiner  <span style="font-style: italic"> markus@frkl.io </span>                   
+                                                                                
+ <span style="font-style: italic">Context               </span>                                                         
+                         <span style="font-style: italic"> Labels     </span>  <span style="font-style: italic">package</span>: kiara                           
+                         <span style="font-style: italic"> References </span>  <span style="font-style: italic">source_repo</span>:                             
+                                       <a href="https://github.com/DHARPA-Project/kiara">https://github.com/DHARPA-Project/kia…</a>   
+                                       <span style="font-style: italic">documentation</span>:                           
+                                       <a href="https://dharpa.org/kiara_documentation/">https://dharpa.org/kiara_documentatio…</a>   
+                                                                                
+ <span style="font-style: italic">Module config schema  </span>                                                         
+                         <span style="font-weight: bold"> Field     </span> <span style="font-weight: bold"> Type   </span> <span style="font-weight: bold"> Descript… </span> <span style="font-weight: bold"> Required </span> <span style="font-weight: bold"> Default </span>  
+                         ─────────────────────────────────────────────────────  
+                          constants   object   Value       no                   
+                                               constants                        
+                                               for this                         
+                                               module.                          
+                                                                                
+                          defaults    object   Value       no                   
+                                               defaults                         
+                                               for this                         
+                                               module.                          
+                                                                                
+ <span style="font-style: italic">Python class          </span>                                                         
+                         <span style="font-style: italic"> class_name  </span>  ImportFileBundleModule                  
+                         <span style="font-style: italic"> module_name </span>  kiara.modules.included_core_modules.…   
+                         <span style="font-style: italic"> full_name   </span>  kiara.modules.included_core_modules.…   
+                                                                                
+ <span style="font-style: italic">Processing source code</span>  ─────────────────────────────────────────────────────  
+                          <span style="color: #66d9ef; text-decoration-color: #66d9ef; background-color: #ffffff">def</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> </span><span style="color: #a6e22e; text-decoration-color: #a6e22e; background-color: #ffffff">process</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">(self, inputs: ValueMap, outputs: Value…</span>   
+                                                                                
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    path </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> inputs</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">get_value_data(</span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #ffffff">"path"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">)</span>              
+                                                                                
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    file_bundle </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> FileBundle</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">import_folder(source</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">…</span>   
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    outputs</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">set_value(</span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #ffffff">"file_bundle"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">, file_bundle)</span>     
                                                                                 
                          ─────────────────────────────────────────────────────  
                                                                                 
@@ -3775,6 +3952,60 @@
                           <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">        import_time</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">import_time,</span>                      
                           <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    )</span>                                                 
                           <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    outputs</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">set_value(</span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #ffffff">"file"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">, file)</span>                   
+                                                                                
+                         ─────────────────────────────────────────────────────  
+                                                                                
+</pre>
+<h3 id="kiara_info.module_types.load.file_bundle.from_data_store"><code>load.file_bundle.from_data_store</code><a class="headerlink" href="#kiara_info.module_types.load.file_bundle.from_data_store" title="Permanent link">&para;</a></h3>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">                                                                                
+ <span style="font-style: italic">Documentation         </span>                                                         
+                          -- n/a --                                             
+                                                                                
+ <span style="font-style: italic">Author(s)             </span>                                                         
+                          Markus Binsteiner  <span style="font-style: italic"> markus@frkl.io </span>                   
+                                                                                
+ <span style="font-style: italic">Context               </span>                                                         
+                         <span style="font-style: italic"> Labels     </span>  <span style="font-style: italic">package</span>: kiara                           
+                         <span style="font-style: italic"> References </span>  <span style="font-style: italic">source_repo</span>:                             
+                                       <a href="https://github.com/DHARPA-Project/kiara">https://github.com/DHARPA-Project/kia…</a>   
+                                       <span style="font-style: italic">documentation</span>:                           
+                                       <a href="https://dharpa.org/kiara_documentation/">https://dharpa.org/kiara_documentatio…</a>   
+                                                                                
+ <span style="font-style: italic">Module config schema  </span>                                                         
+                         <span style="font-weight: bold"> Field     </span> <span style="font-weight: bold"> Type   </span> <span style="font-weight: bold"> Descript… </span> <span style="font-weight: bold"> Required </span> <span style="font-weight: bold"> Default </span>  
+                         ─────────────────────────────────────────────────────  
+                          constants   object   Value       no                   
+                                               constants                        
+                                               for this                         
+                                               module.                          
+                                                                                
+                          defaults    object   Value       no                   
+                                               defaults                         
+                                               for this                         
+                                               module.                          
+                                                                                
+ <span style="font-style: italic">Python class          </span>                                                         
+                         <span style="font-style: italic"> class_name  </span>  LoadFileBundleFromStoreModule           
+                         <span style="font-style: italic"> module_name </span>  kiara.modules.included_core_modules.…   
+                         <span style="font-style: italic"> full_name   </span>  kiara.modules.included_core_modules.…   
+                                                                                
+ <span style="font-style: italic">Processing source code</span>  ─────────────────────────────────────────────────────  
+                          <span style="color: #66d9ef; text-decoration-color: #66d9ef; background-color: #ffffff">def</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> </span><span style="color: #a6e22e; text-decoration-color: #a6e22e; background-color: #ffffff">process</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">(self, inputs: ValueMap, outputs: Value…</span>   
+                                                                                
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    path </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> inputs</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">get_value_data(</span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #ffffff">"path"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">)</span>              
+                                                                                
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    </span><span style="color: #75715e; text-decoration-color: #75715e; background-color: #ffffff"># bundle_name = inputs.get_value_data("bundle_…</span>   
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    </span><span style="color: #75715e; text-decoration-color: #75715e; background-color: #ffffff"># import_time_str = inputs.get_value_data("imp…</span>   
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    </span><span style="color: #75715e; text-decoration-color: #75715e; background-color: #ffffff"># import_time = parser.parse(import_time_str)</span>     
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    bundle_data </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> inputs</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">get_value_data(</span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #ffffff">"inline_da…</span>   
+                                                                                
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    file_bundle </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> FileBundle(</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">**</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">bundle_data)</span>           
+                                                                                
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    file_bundle</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">_path </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> path</span>                          
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    </span><span style="color: #66d9ef; text-decoration-color: #66d9ef; background-color: #ffffff">for</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> rel_path, model </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">in</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> file_bundle</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">included_fi…</span>   
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">        model</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">_path </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> os</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">path</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">join(path, rel_path)</span>    
+                                                                                
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    outputs</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">set_value(</span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #ffffff">"file_bundle"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">, file_bundle)</span>     
                                                                                 
                          ─────────────────────────────────────────────────────  
                                                                                 

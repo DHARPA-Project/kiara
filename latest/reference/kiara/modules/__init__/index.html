@@ -2124,8 +2124,22 @@
   
   
     <li class="md-nav__item">
-      <a href="../included_core_modules/file/" class="md-nav__link">
-        file
+      <a href="../included_core_modules/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../included_core_modules/filesystem/" class="md-nav__link">
+        filesystem
       </a>
     </li>
   
@@ -2279,6 +2293,20 @@
           included_core_operations
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/included_core_operations/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
           
             
               
@@ -3335,6 +3363,20 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.modules.included_core_modules.create_from.CreateFromModule._config_cls.source_type" class="md-nav__link">
+    source_type
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.modules.included_core_modules.create_from.CreateFromModule._config_cls.target_type" class="md-nav__link">
+    target_type
+  </a>
   
 </li>
       
@@ -5277,12 +5319,12 @@ ModuleCharacteristics            (<span title="pydantic.main.BaseModel">BaseMode
 
 
 
-<h5 id="kiara.modules.included_core_modules.file" class="doc doc-heading">
-        <code>file</code>
+<h5 id="kiara.modules.included_core_modules.create_from" class="doc doc-heading">
+        <code>create_from</code>
 
 
 
-<a href="#kiara.modules.included_core_modules.file" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.create_from" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -5295,27 +5337,694 @@ ModuleCharacteristics            (<span title="pydantic.main.BaseModel">BaseMode
 
 
 
-<h6 id="kiara.modules.included_core_modules.file-classes">Classes<a href="#kiara.modules.included_core_modules.file-classes" class="headerlink" title="Permanent link">&para;</a></h6>
+<h6 id="kiara.modules.included_core_modules.create_from-classes">Classes<a href="#kiara.modules.included_core_modules.create_from-classes" class="headerlink" title="Permanent link">&para;</a></h6>
 
   <div class="doc doc-object doc-class">
 
 
 
-<h7 id="kiara.modules.included_core_modules.file.ImportFileModule" class="doc doc-heading">
+<h7 id="kiara.modules.included_core_modules.create_from.CreateFromModule" class="doc doc-heading">
+        <code>
+CreateFromModule            (<a class="autorefs autorefs-internal" title="kiara.modules.KiaraModule" href="#kiara.modules.KiaraModule">KiaraModule</a>)
+        </code>
+
+
+
+<a href="#kiara.modules.included_core_modules.create_from.CreateFromModule" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/create_from.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">CreateFromModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
+
+    <span class="n">_module_type_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+    <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">CreateFromModuleConfig</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_supported_create_combinations</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">16</span>
+                <span class="ow">or</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;create__&quot;</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="s2">&quot;__from__&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">attr</span>
+            <span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="n">tokens</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">source_type</span> <span class="o">=</span> <span class="n">tokens</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">target_type</span> <span class="o">=</span> <span class="n">tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;source_type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span>
+                <span class="s2">&quot;target_type&quot;</span><span class="p">:</span> <span class="n">target_type</span><span class="p">,</span>
+                <span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="n">attr</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+
+        <span class="n">source_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">source_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="s2">&quot;base_name&quot;</span><span class="p">]</span>
+
+        <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">source_type</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to render.&quot;</span><span class="p">},</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">schema</span>
+
+    <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_type&quot;</span><span class="p">):</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_type&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The result value.&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
+
+        <span class="n">source_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
+        <span class="n">target_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_type&quot;</span><span class="p">)</span>
+
+        <span class="n">value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">source_type</span><span class="p">)</span>
+        <span class="n">render_config</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;render_config&quot;</span><span class="p">)</span>
+
+        <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;render__</span><span class="si">{</span><span class="n">source_type</span><span class="si">}</span><span class="s2">__as__</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
+        <span class="c1"># TODO: check function signature is valid</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">render_config</span><span class="o">=</span><span class="n">render_config</span><span class="p">)</span>
+
+        <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;rendered_value&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+<h8 id="kiara.modules.included_core_modules.create_from.CreateFromModule-classes">Classes<a href="#kiara.modules.included_core_modules.create_from.CreateFromModule-classes" class="headerlink" title="Permanent link">&para;</a></h8>
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h9 id="kiara.modules.included_core_modules.create_from.CreateFromModule._config_cls" class="doc doc-heading">
+        <code>
+_config_cls            (<a class="autorefs autorefs-internal" title="kiara.models.module.KiaraModuleConfig" href="../../models/module/__init__/#kiara.models.module.KiaraModuleConfig">KiaraModuleConfig</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-private"><code>private</code></small>
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.create_from.CreateFromModule._config_cls" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/create_from.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">CreateFromModuleConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
+
+    <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value type of the source value.&quot;</span><span class="p">)</span>
+    <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value type of the target.&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h10 id="kiara.modules.included_core_modules.create_from.CreateFromModule._config_cls-attributes">Attributes<a href="#kiara.modules.included_core_modules.create_from.CreateFromModule._config_cls-attributes" class="headerlink" title="Permanent link">&para;</a></h10>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h11 id="kiara.modules.included_core_modules.create_from.CreateFromModule._config_cls.source_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.create_from.CreateFromModule._config_cls.source_type" class="headerlink" title="Permanent link">&para;</a></h11>
+
+    <div class="doc doc-contents ">
+
+      <p>The value type of the source value.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h11 id="kiara.modules.included_core_modules.create_from.CreateFromModule._config_cls.target_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.create_from.CreateFromModule._config_cls.target_type" class="headerlink" title="Permanent link">&para;</a></h11>
+
+    <div class="doc doc-contents ">
+
+      <p>The value type of the target.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+<h8 id="kiara.modules.included_core_modules.create_from.CreateFromModule-methods">Methods<a href="#kiara.modules.included_core_modules.create_from.CreateFromModule-methods" class="headerlink" title="Permanent link">&para;</a></h8>
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.modules.included_core_modules.create_from.CreateFromModule.create_inputs_schema" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.modules.included_core_modules.create_from.CreateFromModule.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>Return the schema for this types' inputs.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/create_from.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+
+    <span class="n">source_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">source_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="s2">&quot;base_name&quot;</span><span class="p">]</span>
+
+    <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">source_type</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to render.&quot;</span><span class="p">},</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">schema</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.modules.included_core_modules.create_from.CreateFromModule.create_outputs_schema" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.modules.included_core_modules.create_from.CreateFromModule.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>Return the schema for this types' outputs.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/create_from.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_type&quot;</span><span class="p">):</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_type&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The result value.&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.modules.included_core_modules.create_from.CreateFromModule.process" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span></code>
+
+
+<a href="#kiara.modules.included_core_modules.create_from.CreateFromModule.process" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/create_from.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
+
+    <span class="n">source_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
+    <span class="n">target_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_type&quot;</span><span class="p">)</span>
+
+    <span class="n">value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">source_type</span><span class="p">)</span>
+    <span class="n">render_config</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;render_config&quot;</span><span class="p">)</span>
+
+    <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;render__</span><span class="si">{</span><span class="n">source_type</span><span class="si">}</span><span class="s2">__as__</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
+    <span class="c1"># TODO: check function signature is valid</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">render_config</span><span class="o">=</span><span class="n">render_config</span><span class="p">)</span>
+
+    <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;rendered_value&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.modules.included_core_modules.create_from.CreateFromModule.retrieve_supported_create_combinations" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_supported_create_combinations</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.create_from.CreateFromModule.retrieve_supported_create_combinations" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/create_from.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_supported_create_combinations</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">16</span>
+            <span class="ow">or</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;create__&quot;</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="s2">&quot;__from__&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">attr</span>
+        <span class="p">):</span>
+            <span class="k">continue</span>
+
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">source_type</span> <span class="o">=</span> <span class="n">tokens</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">target_type</span> <span class="o">=</span> <span class="n">tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;source_type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span>
+            <span class="s2">&quot;target_type&quot;</span><span class="p">:</span> <span class="n">target_type</span><span class="p">,</span>
+            <span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="n">attr</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h7 id="kiara.modules.included_core_modules.create_from.CreateFromModuleConfig" class="doc doc-heading">
+        <code>
+CreateFromModuleConfig            (<a class="autorefs autorefs-internal" title="kiara.models.module.KiaraModuleConfig" href="../../models/module/__init__/#kiara.models.module.KiaraModuleConfig">KiaraModuleConfig</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.create_from.CreateFromModuleConfig" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/create_from.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">CreateFromModuleConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
+
+    <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value type of the source value.&quot;</span><span class="p">)</span>
+    <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value type of the target.&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h8 id="kiara.modules.included_core_modules.create_from.CreateFromModuleConfig-attributes">Attributes<a href="#kiara.modules.included_core_modules.create_from.CreateFromModuleConfig-attributes" class="headerlink" title="Permanent link">&para;</a></h8>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.modules.included_core_modules.create_from.CreateFromModuleConfig.source_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.create_from.CreateFromModuleConfig.source_type" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>The value type of the source value.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.modules.included_core_modules.create_from.CreateFromModuleConfig.target_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.create_from.CreateFromModuleConfig.target_type" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>The value type of the target.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h5 id="kiara.modules.included_core_modules.filesystem" class="doc doc-heading">
+        <code>filesystem</code>
+
+
+
+<a href="#kiara.modules.included_core_modules.filesystem" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+<h6 id="kiara.modules.included_core_modules.filesystem-classes">Classes<a href="#kiara.modules.included_core_modules.filesystem-classes" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h7 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleModule" class="doc doc-heading">
+        <code>
+ImportFileBundleModule            (<a class="autorefs autorefs-internal" title="kiara.modules.KiaraModule" href="#kiara.modules.KiaraModule">KiaraModule</a>)
+        </code>
+
+
+
+<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>Import a folder (file_bundle) from the local filesystem.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ImportFileBundleModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Import a folder (file_bundle) from the local filesystem.&quot;&quot;&quot;</span>
+
+    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;import.file_bundle&quot;</span>
+
+    <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The local path of the folder to import.&quot;</span><span class="p">}</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;file_bundle&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The imported file bundle.&quot;</span><span class="p">}</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
+
+        <span class="n">file_bundle</span> <span class="o">=</span> <span class="n">FileBundle</span><span class="o">.</span><span class="n">import_folder</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="n">file_bundle</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<h8 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleModule-methods">Methods<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule-methods" class="headerlink" title="Permanent link">&para;</a></h8>
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleModule.create_inputs_schema" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>Return the schema for this types' inputs.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The local path of the folder to import.&quot;</span><span class="p">}</span>
+    <span class="p">}</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleModule.create_outputs_schema" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>Return the schema for this types' outputs.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;file_bundle&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The imported file bundle.&quot;</span><span class="p">}</span>
+    <span class="p">}</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleModule.process" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span></code>
+
+
+<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule.process" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
+
+    <span class="n">path</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
+
+    <span class="n">file_bundle</span> <span class="o">=</span> <span class="n">FileBundle</span><span class="o">.</span><span class="n">import_folder</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="n">file_bundle</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h7 id="kiara.modules.included_core_modules.filesystem.ImportFileModule" class="doc doc-heading">
         <code>
 ImportFileModule            (<a class="autorefs autorefs-internal" title="kiara.modules.KiaraModule" href="#kiara.modules.KiaraModule">KiaraModule</a>)
         </code>
 
 
 
-<a href="#kiara.modules.included_core_modules.file.ImportFileModule" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.modules.included_core_modules.filesystem.ImportFileModule" class="headerlink" title="Permanent link">&para;</a></h7>
 
     <div class="doc doc-contents ">
 
+      <p>Import a file from the local filesystem.</p>
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/file.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ImportFileModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Import a file from the local filesystem.&quot;&quot;&quot;</span>
 
     <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;import.file&quot;</span>
 
@@ -5350,24 +6059,24 @@ ImportFileModule            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 
-<h8 id="kiara.modules.included_core_modules.file.ImportFileModule-methods">Methods<a href="#kiara.modules.included_core_modules.file.ImportFileModule-methods" class="headerlink" title="Permanent link">&para;</a></h8>
+<h8 id="kiara.modules.included_core_modules.filesystem.ImportFileModule-methods">Methods<a href="#kiara.modules.included_core_modules.filesystem.ImportFileModule-methods" class="headerlink" title="Permanent link">&para;</a></h8>
 
   <div class="doc doc-object doc-method">
 
 
 
-<h9 id="kiara.modules.included_core_modules.file.ImportFileModule.create_inputs_schema" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.filesystem.ImportFileModule.create_inputs_schema" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.file.ImportFileModule.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.filesystem.ImportFileModule.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
       <p>Return the schema for this types' inputs.</p>
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/file.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
@@ -5385,18 +6094,18 @@ ImportFileModule            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 
-<h9 id="kiara.modules.included_core_modules.file.ImportFileModule.create_outputs_schema" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.filesystem.ImportFileModule.create_outputs_schema" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.file.ImportFileModule.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.filesystem.ImportFileModule.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
       <p>Return the schema for this types' outputs.</p>
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/file.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
@@ -5414,17 +6123,17 @@ ImportFileModule            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 
-<h9 id="kiara.modules.included_core_modules.file.ImportFileModule.process" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.filesystem.ImportFileModule.process" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.file.ImportFileModule.process" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.filesystem.ImportFileModule.process" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/file.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
 
     <span class="n">path</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
@@ -5453,23 +6162,223 @@ ImportFileModule            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 
-<h7 id="kiara.modules.included_core_modules.file.LoadFileFromStoreModule" class="doc doc-heading">
+<h7 id="kiara.modules.included_core_modules.filesystem.LoadFileBundleFromStoreModule" class="doc doc-heading">
+        <code>
+LoadFileBundleFromStoreModule            (<a class="autorefs autorefs-internal" title="kiara.modules.KiaraModule" href="#kiara.modules.KiaraModule">KiaraModule</a>)
+        </code>
+
+
+
+<a href="#kiara.modules.included_core_modules.filesystem.LoadFileBundleFromStoreModule" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">LoadFileBundleFromStoreModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
+
+    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;load.file_bundle.from_data_store&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_retrieve_module_characteristics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleCharacteristics</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ModuleCharacteristics</span><span class="p">(</span><span class="n">is_internal</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;inline_data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The file bundle metadata.&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The path to the provisioned file bundle.&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;file_bundle&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The loaded file_bundle value.&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
+
+        <span class="c1"># bundle_name = inputs.get_value_data(&quot;bundle_name&quot;)</span>
+        <span class="c1"># import_time_str = inputs.get_value_data(&quot;import_time&quot;)</span>
+        <span class="c1"># import_time = parser.parse(import_time_str)</span>
+        <span class="n">bundle_data</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;inline_data&quot;</span><span class="p">)</span>
+
+        <span class="n">file_bundle</span> <span class="o">=</span> <span class="n">FileBundle</span><span class="p">(</span><span class="o">**</span><span class="n">bundle_data</span><span class="p">)</span>
+
+        <span class="n">file_bundle</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="k">for</span> <span class="n">rel_path</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">file_bundle</span><span class="o">.</span><span class="n">included_files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">rel_path</span><span class="p">)</span>
+
+        <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="n">file_bundle</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<h8 id="kiara.modules.included_core_modules.filesystem.LoadFileBundleFromStoreModule-methods">Methods<a href="#kiara.modules.included_core_modules.filesystem.LoadFileBundleFromStoreModule-methods" class="headerlink" title="Permanent link">&para;</a></h8>
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.modules.included_core_modules.filesystem.LoadFileBundleFromStoreModule.create_inputs_schema" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.modules.included_core_modules.filesystem.LoadFileBundleFromStoreModule.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>Return the schema for this types' inputs.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;inline_data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The file bundle metadata.&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The path to the provisioned file bundle.&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.modules.included_core_modules.filesystem.LoadFileBundleFromStoreModule.create_outputs_schema" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.modules.included_core_modules.filesystem.LoadFileBundleFromStoreModule.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>Return the schema for this types' outputs.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;file_bundle&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The loaded file_bundle value.&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.modules.included_core_modules.filesystem.LoadFileBundleFromStoreModule.process" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span></code>
+
+
+<a href="#kiara.modules.included_core_modules.filesystem.LoadFileBundleFromStoreModule.process" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
+
+    <span class="n">path</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
+
+    <span class="c1"># bundle_name = inputs.get_value_data(&quot;bundle_name&quot;)</span>
+    <span class="c1"># import_time_str = inputs.get_value_data(&quot;import_time&quot;)</span>
+    <span class="c1"># import_time = parser.parse(import_time_str)</span>
+    <span class="n">bundle_data</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;inline_data&quot;</span><span class="p">)</span>
+
+    <span class="n">file_bundle</span> <span class="o">=</span> <span class="n">FileBundle</span><span class="p">(</span><span class="o">**</span><span class="n">bundle_data</span><span class="p">)</span>
+
+    <span class="n">file_bundle</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span>
+    <span class="k">for</span> <span class="n">rel_path</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">file_bundle</span><span class="o">.</span><span class="n">included_files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">rel_path</span><span class="p">)</span>
+
+    <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="n">file_bundle</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h7 id="kiara.modules.included_core_modules.filesystem.LoadFileFromStoreModule" class="doc doc-heading">
         <code>
 LoadFileFromStoreModule            (<a class="autorefs autorefs-internal" title="kiara.modules.KiaraModule" href="#kiara.modules.KiaraModule">KiaraModule</a>)
         </code>
 
 
 
-<a href="#kiara.modules.included_core_modules.file.LoadFileFromStoreModule" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.modules.included_core_modules.filesystem.LoadFileFromStoreModule" class="headerlink" title="Permanent link">&para;</a></h7>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/file.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">LoadFileFromStoreModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
 
     <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;load.file.from_data_store&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_retrieve_module_characteristics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleCharacteristics</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ModuleCharacteristics</span><span class="p">(</span><span class="n">is_internal</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -5526,24 +6435,24 @@ LoadFileFromStoreModule            (<a class="autorefs autorefs-internal" title=
 
 
 
-<h8 id="kiara.modules.included_core_modules.file.LoadFileFromStoreModule-methods">Methods<a href="#kiara.modules.included_core_modules.file.LoadFileFromStoreModule-methods" class="headerlink" title="Permanent link">&para;</a></h8>
+<h8 id="kiara.modules.included_core_modules.filesystem.LoadFileFromStoreModule-methods">Methods<a href="#kiara.modules.included_core_modules.filesystem.LoadFileFromStoreModule-methods" class="headerlink" title="Permanent link">&para;</a></h8>
 
   <div class="doc doc-object doc-method">
 
 
 
-<h9 id="kiara.modules.included_core_modules.file.LoadFileFromStoreModule.create_inputs_schema" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.filesystem.LoadFileFromStoreModule.create_inputs_schema" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.file.LoadFileFromStoreModule.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.filesystem.LoadFileFromStoreModule.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
       <p>Return the schema for this types' inputs.</p>
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/file.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
@@ -5571,18 +6480,18 @@ LoadFileFromStoreModule            (<a class="autorefs autorefs-internal" title=
 
 
 
-<h9 id="kiara.modules.included_core_modules.file.LoadFileFromStoreModule.create_outputs_schema" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.filesystem.LoadFileFromStoreModule.create_outputs_schema" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.file.LoadFileFromStoreModule.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.filesystem.LoadFileFromStoreModule.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
       <p>Return the schema for this types' outputs.</p>
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/file.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
@@ -5600,17 +6509,17 @@ LoadFileFromStoreModule            (<a class="autorefs autorefs-internal" title=
 
 
 
-<h9 id="kiara.modules.included_core_modules.file.LoadFileFromStoreModule.process" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.filesystem.LoadFileFromStoreModule.process" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.file.LoadFileFromStoreModule.process" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.filesystem.LoadFileFromStoreModule.process" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/file.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
 
     <span class="n">file_name</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;file_name&quot;</span><span class="p">)</span>
@@ -5653,20 +6562,207 @@ LoadFileFromStoreModule            (<a class="autorefs autorefs-internal" title=
 
 
 
-<h7 id="kiara.modules.included_core_modules.file.SaveFileToStoreModule" class="doc doc-heading">
+<h7 id="kiara.modules.included_core_modules.filesystem.SaveFileBundleToStoreModule" class="doc doc-heading">
+        <code>
+SaveFileBundleToStoreModule            (<a class="autorefs autorefs-internal" title="kiara.modules.included_core_modules.persistence.PersistValueModule" href="../included_core_modules/persistence/#kiara.modules.included_core_modules.persistence.PersistValueModule">PersistValueModule</a>)
+        </code>
+
+
+
+<a href="#kiara.modules.included_core_modules.filesystem.SaveFileBundleToStoreModule" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SaveFileBundleToStoreModule</span><span class="p">(</span><span class="n">PersistValueModule</span><span class="p">):</span>
+
+    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;file_bundle.save_to_data_store&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get_persistence_target_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;data_store&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get_persistence_format_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;file_bundle&quot;</span>
+
+    <span class="k">def</span> <span class="nf">data_type__file_bundle</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">persistence_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">LoadConfig</span><span class="p">,</span> <span class="n">BytesStructure</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Persist single files into a local kiara data store.&quot;&quot;&quot;</span>
+
+        <span class="n">file_bundle</span><span class="p">:</span> <span class="n">FileBundle</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="n">bytes_structure_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">rel_path</span><span class="p">,</span> <span class="n">file_model</span> <span class="ow">in</span> <span class="n">file_bundle</span><span class="o">.</span><span class="n">included_files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">bytes_structure_data</span><span class="p">[</span><span class="n">rel_path</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">file_model</span><span class="o">.</span><span class="n">path</span><span class="p">]</span>
+
+        <span class="n">bytes_structure</span> <span class="o">=</span> <span class="n">BytesStructure</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
+            <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="n">data_type_config</span><span class="o">=</span><span class="p">{},</span> <span class="n">chunk_map</span><span class="o">=</span><span class="n">bytes_structure_data</span>
+        <span class="p">)</span>
+
+        <span class="n">load_config_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;provisioning_strategy&quot;</span><span class="p">:</span> <span class="n">ByteProvisioningStrategy</span><span class="o">.</span><span class="n">LINK_FOLDER</span><span class="p">,</span>
+            <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="s2">&quot;load.file_bundle.from_data_store&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;inline_data&quot;</span><span class="p">:</span> <span class="n">LOAD_CONFIG_PLACEHOLDER</span><span class="p">,</span>
+                <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="n">LOAD_CONFIG_PLACEHOLDER</span><span class="p">,</span>
+                <span class="s2">&quot;bytes_structure&quot;</span><span class="p">:</span> <span class="n">LOAD_CONFIG_PLACEHOLDER</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;inline_data&quot;</span><span class="p">:</span> <span class="n">file_bundle</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
+            <span class="s2">&quot;output_name&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">load_config</span> <span class="o">=</span> <span class="n">LoadConfig</span><span class="p">(</span><span class="o">**</span><span class="n">load_config_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">load_config</span><span class="p">,</span> <span class="n">bytes_structure</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<h8 id="kiara.modules.included_core_modules.filesystem.SaveFileBundleToStoreModule-methods">Methods<a href="#kiara.modules.included_core_modules.filesystem.SaveFileBundleToStoreModule-methods" class="headerlink" title="Permanent link">&para;</a></h8>
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.modules.included_core_modules.filesystem.SaveFileBundleToStoreModule.data_type__file_bundle" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">data_type__file_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">persistence_config</span><span class="p">)</span></code>
+
+
+<a href="#kiara.modules.included_core_modules.filesystem.SaveFileBundleToStoreModule.data_type__file_bundle" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>Persist single files into a local kiara data store.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">data_type__file_bundle</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">persistence_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">LoadConfig</span><span class="p">,</span> <span class="n">BytesStructure</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Persist single files into a local kiara data store.&quot;&quot;&quot;</span>
+
+    <span class="n">file_bundle</span><span class="p">:</span> <span class="n">FileBundle</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
+
+    <span class="n">bytes_structure_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">rel_path</span><span class="p">,</span> <span class="n">file_model</span> <span class="ow">in</span> <span class="n">file_bundle</span><span class="o">.</span><span class="n">included_files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">bytes_structure_data</span><span class="p">[</span><span class="n">rel_path</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">file_model</span><span class="o">.</span><span class="n">path</span><span class="p">]</span>
+
+    <span class="n">bytes_structure</span> <span class="o">=</span> <span class="n">BytesStructure</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
+        <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="n">data_type_config</span><span class="o">=</span><span class="p">{},</span> <span class="n">chunk_map</span><span class="o">=</span><span class="n">bytes_structure_data</span>
+    <span class="p">)</span>
+
+    <span class="n">load_config_data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;provisioning_strategy&quot;</span><span class="p">:</span> <span class="n">ByteProvisioningStrategy</span><span class="o">.</span><span class="n">LINK_FOLDER</span><span class="p">,</span>
+        <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="s2">&quot;load.file_bundle.from_data_store&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;inline_data&quot;</span><span class="p">:</span> <span class="n">LOAD_CONFIG_PLACEHOLDER</span><span class="p">,</span>
+            <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="n">LOAD_CONFIG_PLACEHOLDER</span><span class="p">,</span>
+            <span class="s2">&quot;bytes_structure&quot;</span><span class="p">:</span> <span class="n">LOAD_CONFIG_PLACEHOLDER</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;inline_data&quot;</span><span class="p">:</span> <span class="n">file_bundle</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
+        <span class="s2">&quot;output_name&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">load_config</span> <span class="o">=</span> <span class="n">LoadConfig</span><span class="p">(</span><span class="o">**</span><span class="n">load_config_data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">load_config</span><span class="p">,</span> <span class="n">bytes_structure</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.modules.included_core_modules.filesystem.SaveFileBundleToStoreModule.get_persistence_format_name" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_persistence_format_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.modules.included_core_modules.filesystem.SaveFileBundleToStoreModule.get_persistence_format_name" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_persistence_format_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;file_bundle&quot;</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.modules.included_core_modules.filesystem.SaveFileBundleToStoreModule.get_persistence_target_name" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_persistence_target_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.modules.included_core_modules.filesystem.SaveFileBundleToStoreModule.get_persistence_target_name" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_persistence_target_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;data_store&quot;</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h7 id="kiara.modules.included_core_modules.filesystem.SaveFileToStoreModule" class="doc doc-heading">
         <code>
 SaveFileToStoreModule            (<a class="autorefs autorefs-internal" title="kiara.modules.included_core_modules.persistence.PersistValueModule" href="../included_core_modules/persistence/#kiara.modules.included_core_modules.persistence.PersistValueModule">PersistValueModule</a>)
         </code>
 
 
 
-<a href="#kiara.modules.included_core_modules.file.SaveFileToStoreModule" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.modules.included_core_modules.filesystem.SaveFileToStoreModule" class="headerlink" title="Permanent link">&para;</a></h7>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/file.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SaveFileToStoreModule</span><span class="p">(</span><span class="n">PersistValueModule</span><span class="p">):</span>
 
     <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;file.save_to_data_store&quot;</span>
@@ -5697,20 +6793,13 @@ SaveFileToStoreModule            (<a class="autorefs autorefs-internal" title="k
             <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;file_name&quot;</span><span class="p">:</span> <span class="n">file</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
                 <span class="s2">&quot;import_time&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">import_time</span><span class="p">),</span>
-                <span class="s2">&quot;bytes_structure&quot;</span><span class="p">:</span> <span class="s2">&quot;__dummy__&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;bytes_structure&quot;</span><span class="p">:</span> <span class="n">LOAD_CONFIG_PLACEHOLDER</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="s2">&quot;output_name&quot;</span><span class="p">:</span> <span class="s2">&quot;file&quot;</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="n">load_config</span> <span class="o">=</span> <span class="n">LoadConfig</span><span class="p">(</span><span class="o">**</span><span class="n">load_config_data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">load_config</span><span class="p">,</span> <span class="n">bytes_structure</span>
-
-    <span class="c1"># def data_type__table(self, value: Value, config: Any) -&gt; LoadConfig:</span>
-    <span class="c1">#</span>
-    <span class="c1">#     import pyarrow as pa</span>
-    <span class="c1">#     table: pa.Table  = value.data</span>
-    <span class="c1">#</span>
-    <span class="c1">#     pa.feather.write_feather(table)</span>
 </code></pre></div>
         </details>
 
@@ -5724,24 +6813,24 @@ SaveFileToStoreModule            (<a class="autorefs autorefs-internal" title="k
 
 
 
-<h8 id="kiara.modules.included_core_modules.file.SaveFileToStoreModule-methods">Methods<a href="#kiara.modules.included_core_modules.file.SaveFileToStoreModule-methods" class="headerlink" title="Permanent link">&para;</a></h8>
+<h8 id="kiara.modules.included_core_modules.filesystem.SaveFileToStoreModule-methods">Methods<a href="#kiara.modules.included_core_modules.filesystem.SaveFileToStoreModule-methods" class="headerlink" title="Permanent link">&para;</a></h8>
 
   <div class="doc doc-object doc-method">
 
 
 
-<h9 id="kiara.modules.included_core_modules.file.SaveFileToStoreModule.data_type__file" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.filesystem.SaveFileToStoreModule.data_type__file" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">data_type__file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">persistence_config</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.file.SaveFileToStoreModule.data_type__file" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.filesystem.SaveFileToStoreModule.data_type__file" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
       <p>Persist single files into a local kiara data store.</p>
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/file.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">data_type__file</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">persistence_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">LoadConfig</span><span class="p">,</span> <span class="n">BytesStructure</span><span class="p">]:</span>
@@ -5762,7 +6851,7 @@ SaveFileToStoreModule            (<a class="autorefs autorefs-internal" title="k
         <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;file_name&quot;</span><span class="p">:</span> <span class="n">file</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
             <span class="s2">&quot;import_time&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">import_time</span><span class="p">),</span>
-            <span class="s2">&quot;bytes_structure&quot;</span><span class="p">:</span> <span class="s2">&quot;__dummy__&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;bytes_structure&quot;</span><span class="p">:</span> <span class="n">LOAD_CONFIG_PLACEHOLDER</span><span class="p">,</span>
         <span class="p">},</span>
         <span class="s2">&quot;output_name&quot;</span><span class="p">:</span> <span class="s2">&quot;file&quot;</span><span class="p">,</span>
     <span class="p">}</span>
@@ -5781,17 +6870,17 @@ SaveFileToStoreModule            (<a class="autorefs autorefs-internal" title="k
 
 
 
-<h9 id="kiara.modules.included_core_modules.file.SaveFileToStoreModule.get_persistence_format_name" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.filesystem.SaveFileToStoreModule.get_persistence_format_name" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_persistence_format_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.file.SaveFileToStoreModule.get_persistence_format_name" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.filesystem.SaveFileToStoreModule.get_persistence_format_name" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/file.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_persistence_format_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="s2">&quot;file&quot;</span>
 </code></pre></div>
@@ -5806,17 +6895,17 @@ SaveFileToStoreModule            (<a class="autorefs autorefs-internal" title="k
 
 
 
-<h9 id="kiara.modules.included_core_modules.file.SaveFileToStoreModule.get_persistence_target_name" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.filesystem.SaveFileToStoreModule.get_persistence_target_name" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_persistence_target_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.file.SaveFileToStoreModule.get_persistence_target_name" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.filesystem.SaveFileToStoreModule.get_persistence_target_name" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/file.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_persistence_target_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="s2">&quot;data_store&quot;</span>
 </code></pre></div>
@@ -8563,7 +9652,7 @@ to the shortest possible names for each case.</p>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">kiara</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">module_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># module_map: Optional[Mapping[str, Any]] = None,</span>
     <span class="p">):</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">get_data_from_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -8571,9 +9660,7 @@ to the shortest possible names for each case.</p>
         <span class="k">if</span> <span class="n">pipeline_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span>
-            <span class="n">pipeline_id</span><span class="o">=</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span>
-        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">pipeline_id</span><span class="o">=</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span>
@@ -8581,13 +9668,27 @@ to the shortest possible names for each case.</p>
         <span class="n">pipeline_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
         <span class="n">kiara</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">module_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># module_map: Optional[Mapping[str, Any]] = None,</span>
     <span class="p">):</span>
 
         <span class="k">if</span> <span class="n">kiara</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">kiara.context</span> <span class="kn">import</span> <span class="n">Kiara</span>
 
             <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">:</span>
+            <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operations</span>  <span class="c1"># noqa</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_config</span><span class="p">(</span><span class="n">pipeline_id</span><span class="o">=</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_from_config</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">pipeline_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
+        <span class="n">module_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="n">steps</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;steps&quot;</span><span class="p">)</span>
@@ -8981,7 +10082,7 @@ Config        </code>
 
 
 <h11 id="kiara.modules.included_core_modules.pipeline.PipelineModule._config_cls.from_config" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">from_config</span><span class="p">(</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">from_config</span><span class="p">(</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
@@ -9000,7 +10101,7 @@ Config        </code>
     <span class="n">pipeline_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
     <span class="n">kiara</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">module_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="c1"># module_map: Optional[Mapping[str, Any]] = None,</span>
 <span class="p">):</span>
 
     <span class="k">if</span> <span class="n">kiara</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -9008,17 +10109,10 @@ Config        </code>
 
         <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
 
-    <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="n">steps</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;steps&quot;</span><span class="p">)</span>
-    <span class="n">steps</span> <span class="o">=</span> <span class="n">PipelineStep</span><span class="o">.</span><span class="n">create_steps</span><span class="p">(</span><span class="o">*</span><span class="n">steps</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span><span class="p">)</span>
-    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">steps</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_aliases&quot;</span><span class="p">):</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;input_aliases&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_input_alias_map</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output_aliases&quot;</span><span class="p">):</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;output_aliases&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_output_alias_map</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">:</span>
+        <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operations</span>  <span class="c1"># noqa</span>
 
-    <span class="n">result</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">pipeline_id</span><span class="o">=</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">result</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_config</span><span class="p">(</span><span class="n">pipeline_id</span><span class="o">=</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -9032,7 +10126,7 @@ Config        </code>
 
 
 <h11 id="kiara.modules.included_core_modules.pipeline.PipelineModule._config_cls.from_file" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
@@ -9050,7 +10144,7 @@ Config        </code>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">kiara</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">module_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="c1"># module_map: Optional[Mapping[str, Any]] = None,</span>
 <span class="p">):</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="n">get_data_from_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -9058,9 +10152,7 @@ Config        </code>
     <span class="k">if</span> <span class="n">pipeline_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span>
-        <span class="n">pipeline_id</span><span class="o">=</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span>
-    <span class="p">)</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">pipeline_id</span><span class="o">=</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -11051,6 +12143,9 @@ UnpickleModule            (<a class="autorefs autorefs-internal" title="kiara.mo
 
     <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;value.serialize.unpickle&quot;</span>
     <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">UnpickleConfig</span>
+
+    <span class="k">def</span> <span class="nf">_retrieve_module_characteristics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleCharacteristics</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ModuleCharacteristics</span><span class="p">(</span><span class="n">is_internal</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>

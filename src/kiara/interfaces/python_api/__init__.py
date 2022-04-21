@@ -52,3 +52,6 @@ class StoreValuesResult(BaseModel):
             table.add_row(*row)
 
         return table
+
+    def __len__(self):
+        return len(self.__root__)

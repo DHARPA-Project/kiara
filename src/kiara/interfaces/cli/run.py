@@ -254,16 +254,19 @@ def run(
         sys.exit(1)
 
     if not silent:
-        print()
         if len(outputs) > 1:
-            terminal_print("[b]Results:[/b]")
+            title = "[b]Results[/b]"
         else:
-            terminal_print("[b]Result:[/b]")
+            title = "[b]Result[/b]"
 
-        for field_name, value in outputs.items():
-            print()
-            terminal_print(f"* [b i]{field_name}[/b i]")
-            terminal_print(kiara_obj.data_registry.render_data(value.value_id))
+        # for field_name, value in outputs.items():
+        #     results.append("")
+        #     results.append(f"* [b i]{field_name}[/b i]")
+        #     results.append(kiara_obj.data_registry.render_data(value.value_id))
+
+        terminal_print(
+            outputs, in_panel=title, empty_line_before=True, show_data_type=True
+        )
 
     # for k, v in outputs.items():
     #     rendered = kiara_obj.data_registry.render_data(v)
@@ -273,6 +276,8 @@ def run(
 
         save_results = kiara_op.save_result(job_id=job_id, aliases=final_aliases)
         if not silent:
-            print()
-            terminal_print("[b]Stored value(s):[/b]")
-            terminal_print(save_results)
+            if len(save_results) == 1:
+                title = "[b]Stored result value[/b]"
+            else:
+                title = "[b]Stored result values[/b]"
+            terminal_print(save_results, in_panel=title, empty_line_before=True)

@@ -617,9 +617,12 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
         field_title = config.get("field_title", "field")
         value_title = config.get("value_title", "value")
         show_header = config.get("show_header", True)
+        show_type = config.get("show_data_type", False)
 
         table = Table(show_lines=False, show_header=show_header, box=box.SIMPLE)
         table.add_column(field_title, style="b")
+        if show_type:
+            table.add_column("data_type")
         table.add_column(value_title, style="i")
 
         for field_name in self.field_names:
@@ -631,7 +634,10 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
             else:
                 rendered = value.create_renderable(**config)
 
-            table.add_row(field_name, rendered)
+            if show_type:
+                table.add_row(field_name, value.value_schema.type, rendered)
+            else:
+                table.add_row(field_name, rendered)
 
         return table
 

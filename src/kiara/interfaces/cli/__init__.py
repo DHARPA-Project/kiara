@@ -44,7 +44,7 @@ if is_debug():
     )
 else:
     structlog.configure(
-        wrapper_class=structlog.make_filtering_bound_logger(logging.INFO),
+        wrapper_class=structlog.make_filtering_bound_logger(logging.WARNING),
     )
 
 

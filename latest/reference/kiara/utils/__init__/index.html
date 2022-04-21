@@ -7864,9 +7864,10 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
         <span class="n">rows_tail</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">max_row_height</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">max_cell_length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">show_table_header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
-        <span class="n">rich_table</span> <span class="o">=</span> <span class="n">RichTable</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+        <span class="n">rich_table</span> <span class="o">=</span> <span class="n">RichTable</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="n">show_table_header</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">cn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_column_names</span><span class="p">():</span>
             <span class="n">rich_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">cn</span><span class="p">)</span>
 
@@ -8039,7 +8040,7 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
 
 
 <h7 id="kiara.utils.output.TabularWrap.pretty_print" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">pretty_print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rows_head</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rows_tail</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_row_height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_cell_length</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">pretty_print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rows_head</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rows_tail</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_row_height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_cell_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_table_header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 
 <a href="#kiara.utils.output.TabularWrap.pretty_print" class="headerlink" title="Permanent link">&para;</a></h7>
@@ -8055,9 +8056,10 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
     <span class="n">rows_tail</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">max_row_height</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">max_cell_length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">show_table_header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
-    <span class="n">rich_table</span> <span class="o">=</span> <span class="n">RichTable</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+    <span class="n">rich_table</span> <span class="o">=</span> <span class="n">RichTable</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="n">show_table_header</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">cn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_column_names</span><span class="p">():</span>
         <span class="n">rich_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">cn</span><span class="p">)</span>
 

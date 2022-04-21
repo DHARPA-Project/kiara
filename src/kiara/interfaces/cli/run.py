@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 from pydantic import ValidationError
 from rich.console import Group
+from rich.rule import Rule
 from typing import Dict, Iterable, List
 
 from kiara import Kiara
@@ -202,9 +203,24 @@ def run(
     try:
         operation_inputs = kiara_op.operation_inputs
     except InvalidValuesException as ive:
-        print()
+
+        terminal_print()
+        rg = Group(
+            "",
+            f"Can't run operation: {ive}",
+            "",
+            Rule(),
+            "",
+            kiara_op.create_renderable(
+                show_operation_name=True, show_inputs_schema=True
+            ),
+        )
+        terminal_print(rg, in_panel=f"Run info: [b]{kiara_op.operation_name}[/b]")
+        sys.exit(1)
+
+        terminal_print()
         terminal_print(str(ive))
-        print()
+        terminal_print()
         print("Details:\n")
         for k, v in ive.invalid_inputs.items():
             terminal_print(f"  - [b]{k}[/b]: [i]{v}[/i]")
@@ -212,11 +228,18 @@ def run(
 
     invalid = operation_inputs.check_invalid()
     if invalid:
-        print()
-        print("Can't create operation inputs, invalid field(s):")
-        print()
-        for k, v in invalid.items():
-            terminal_print(f"  - [b]{k}[/b]: [i]{v}[/i]")
+        terminal_print()
+        rg = Group(
+            "",
+            "Can't run operation, invalid or insufficient inputs.",
+            "",
+            Rule(),
+            "",
+            kiara_op.create_renderable(
+                show_operation_name=True, show_inputs_schema=True
+            ),
+        )
+        terminal_print(rg, in_panel=f"Run info: [b]{kiara_op.operation_name}[/b]")
         sys.exit(1)
 
     # =========================================================================

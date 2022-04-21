@@ -4,28 +4,38 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-import json
-from jsonschema import validate
 
 from kiara import Kiara
-from kiara.operations.extract_metadata import ExtractMetadataOperationType
+from kiara.models.values.value_metadata import ValueMetadata
+from kiara.operations.included_core_operations.metadata import (
+    ExtractMetadataOperationType,
+)
 
 
-def test_extract_metadata_all_available_data(preseeded_data_store: Kiara):
+def test_extract_metadata_all_available_data(presseeded_data_store_minimal: Kiara):
 
-    op_type: ExtractMetadataOperationType = (
-        preseeded_data_store.operation_mgmt.operation_types["extract_metadata"]
+    op_type: ExtractMetadataOperationType = (  # type: ignore
+        presseeded_data_store_minimal.operation_registry.operation_types[
+            "extract_metadata"
+        ]
     )
-    for value_id in preseeded_data_store.data_store.value_ids:
-        value = preseeded_data_store.data_store.get_value_obj(value_id)
 
-        ops = op_type.get_all_operations_for_type(value.type_name)
+    for (
+        value_id
+    ) in presseeded_data_store_minimal.data_registry.retrieve_all_available_value_ids():
+
+        value = presseeded_data_store_minimal.data_registry.get_value(value_id)
+
+        ops = op_type.get_operations_for_data_type(value.value_schema.type)
 
         for op in ops.values():
-            inputs = {value.type_name: value}
-            result = op.module.run(**inputs)
+            inputs = {"value": value}
+            result = op.run(kiara=presseeded_data_store_minimal, inputs=inputs)
 
-            schema = json.loads(result["metadata_item_schema"].get_value_data())
-            item = result["metadata_item"].get_value_data()
-
-            validate(instance=item, schema=schema)
+            md = result.get_value_data("value_metadata")
+            assert isinstance(md, ValueMetadata)
+            # TODO: validate schema
+            # schema = json.loads(result["metadata_item_schema"].get_value_data())
+            # item = result["metadata_item"].get_value_data()
+            #
+            # validate(instance=item, schema=schema)

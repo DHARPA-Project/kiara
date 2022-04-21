@@ -233,6 +233,7 @@ def load_all_subclasses_for_entry_point(
 
     result_entrypoints: Dict[str, Type[SUBCLASS_TYPE]] = {}
     result_dynamic: Dict[str, Type[SUBCLASS_TYPE]] = {}
+
     for plugin in mgr:
         name = plugin.name
 
@@ -358,7 +359,7 @@ def find_all_value_metadata_models() -> Dict[str, Type["ValueMetadata"]]:
     from kiara.models.values.value_metadata import ValueMetadata
 
     return load_all_subclasses_for_entry_point(
-        entry_point_name="kiara.value_metadata",
+        entry_point_name="kiara.metadata_models",
         base_class=ValueMetadata,  # type: ignore
         type_id_key="_metadata_key",
         type_id_func=_cls_name_id_func,
@@ -434,10 +435,12 @@ def find_value_metadata_models_under(
 
     from kiara.models.values.value_metadata import ValueMetadata
 
-    return find_subclasses_under(
+    result = find_subclasses_under(
         base_class=ValueMetadata,  # type: ignore
         python_module=module,
     )
+
+    return result
 
 
 def find_data_types_under(module: Union[str, ModuleType]) -> List[Type["DataType"]]:

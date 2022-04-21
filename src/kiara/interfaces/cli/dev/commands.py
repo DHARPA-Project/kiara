@@ -11,8 +11,9 @@ from typing import Optional
 
 from kiara.context import Kiara
 from kiara.defaults import KIARA_DB_MIGRATIONS_CONFIG, KIARA_DB_MIGRATIONS_FOLDER
-from kiara.interfaces.python_api.batch import BatchOperation
-from kiara.utils.cli import terminal_print
+
+# noqa
+# type: ignore
 
 
 @click.group("dev")
@@ -25,15 +26,30 @@ def dev_group(ctx):
 @click.pass_context
 def test(ctx):
 
-    config = {"base_path": "/tmp/kiara_tests"}
-    kiara_obj = Kiara.create(config=config)
+    pass
 
-    batch_op = BatchOperation.from_file(
-        "/home/markus/projects/kiara_new/nand.json", kiara=kiara_obj
-    )
-    result = batch_op.run(save=True)
+    # DATA_FOLDER = "/home/markus/projects/kiara_new/kiara/examples/data"
+    # PIPELINES_FOLDER = "/home/markus/projects/kiara_new/kiara/tests/resources/pipelines"
+    #
+    # instance_path = "/tmp/kiara_tests"
+    # shutil.rmtree(instance_path, ignore_errors=True)
+    #
+    # kiara = Kiara.create_in_path(instance_path)
+    #
+    # pipeline = os.path.join(PIPELINES_FOLDER, "test_preseed_1.yaml")
+    # batch_op = BatchOperation.from_file(pipeline, kiara=kiara)
 
-    terminal_print(result)
+    # inputs = {
+    #     "edges_file_path": os.path.join(DATA_FOLDER, "journals/JournalEdges1902.csv"),
+    #     "nodes_file_path": os.path.join(DATA_FOLDER, "journals/JournalNodes1902.csv"),
+    #     "journals_folder_path": os.path.join(DATA_FOLDER, "journals"),
+    #     "text_corpus_folder_path": os.path.join(DATA_FOLDER, "text_corpus"),
+    #     "city_column_name": "City",
+    #     "label_column_name": "Label",
+    # }
+    #
+    # results = batch_op.run(save="journals_data")
+    # terminal_print(result)
 
 
 @dev_group.command("reinit-db")

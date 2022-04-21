@@ -6,31 +6,48 @@
 
 import orjson.orjson
 import structlog
+from pydantic import Field
 from rich.console import Group
-from typing import Any, Mapping, Type
+from typing import Any, Mapping, Optional, Type
 
 from kiara.data_types import DataTypeConfig
 from kiara.data_types.included_core_types import AnyType, KiaraModelValueType
 from kiara.defaults import KIARA_HASH_FUNCTION
 from kiara.models.filesystem import FileBundle, FileModel
 from kiara.models.values.value import Value
-from kiara.utils import orjson_dumps
 
 logger = structlog.getLogger()
 
 
-class FileValueType(KiaraModelValueType[FileModel, DataTypeConfig]):
+class FileTypeConfig(DataTypeConfig):
+
+    content_type: Optional[str] = Field(
+        description="The content type of this file.", default=None
+    )
+
+
+SUPPORTED_FILE_TYPES = ["csv", "json"]
+
+
+class FileValueType(KiaraModelValueType[FileModel, FileTypeConfig]):
     """A file."""
 
     _data_type_name = "file"
+
+    @classmethod
+    def retrieve_available_type_profiles(cls) -> Mapping[str, Mapping[str, Any]]:
+        result = {}
+        for ft in SUPPORTED_FILE_TYPES:
+            result[f"{ft}_file"] = {"content_type": ft}
+        return result
 
     @classmethod
     def python_class(cls) -> Type:
         return FileModel
 
     @classmethod
-    def data_type_config_class(cls) -> Type[DataTypeConfig]:
-        return DataTypeConfig
+    def data_type_config_class(cls) -> Type[FileTypeConfig]:
+        return FileTypeConfig
 
     @classmethod
     def value_class(cls) -> Type[Value]:
@@ -109,14 +126,25 @@ class FileValueType(KiaraModelValueType[FileModel, DataTypeConfig]):
             return Group(*lines)
 
 
-class FileBundleValueType(AnyType[FileBundle, DataTypeConfig]):
+class FileBundleValueType(AnyType[FileBundle, FileTypeConfig]):
     """A bundle of files (like a folder, zip archive, etc.)."""
 
     _data_type_name = "file_bundle"
 
     @classmethod
+    def retrieve_available_type_profiles(cls) -> Mapping[str, Mapping[str, Any]]:
+        result = {}
+        for ft in SUPPORTED_FILE_TYPES:
+            result[f"{ft}_file_bundle"] = {"content_type": ft}
+        return result
+
+    @classmethod
     def python_class(cls) -> Type:
         return FileBundle
+
+    @classmethod
+    def data_type_config_class(cls) -> Type[FileTypeConfig]:
+        return FileTypeConfig
 
     @classmethod
     def value_class(cls) -> Type[Value]:
@@ -128,7 +156,7 @@ class FileBundleValueType(AnyType[FileBundle, DataTypeConfig]):
     def calculate_hash(self, data: FileBundle) -> int:
         return data.file_bundle_hash
 
-    def create_model_from_python_obj(self, data: Any) -> FileModel:
+    def create_model_from_python_obj(self, data: Any) -> FileBundle:
 
         if isinstance(data, str):
             return FileBundle.import_folder(source=data)
@@ -137,24 +165,10 @@ class FileBundleValueType(AnyType[FileBundle, DataTypeConfig]):
                 f"Can't create FileBundle from data of type '{type(data)}'."
             )
 
-    def render_as__renderable(
+    def render_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
 
-        max_no_included_files = render_config.get("max_no_files", 40)
-
-        data: FileBundle = value.data
-        pretty = data.dict(exclude={"included_files"})
-        files = list(data.included_files.keys())
-        if max_no_included_files >= 0:
-            if len(files) > max_no_included_files:
-                half = int((max_no_included_files - 1) / 2)
-                head = files[0:half]
-                tail = files[-1 * half :]  # noqa
-                files = (
-                    head
-                    + ["..... output skipped .....", "..... output skipped ....."]
-                    + tail
-                )
-        pretty["included_files"] = files
-        return orjson_dumps(pretty, option=orjson.orjson.OPT_INDENT_2)
+        bundle: FileBundle = value.data
+        renderable = bundle.create_renderable(**render_config)
+        return renderable

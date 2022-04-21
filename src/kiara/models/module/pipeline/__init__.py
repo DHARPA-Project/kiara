@@ -4,7 +4,6 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-import copy
 import os
 from enum import Enum
 from pydantic import Extra, Field, PrivateAttr, root_validator, validator
@@ -54,6 +53,15 @@ class PipelineStep(Manifest):
 
         if module_map is None:
             module_map = {}
+        else:
+            module_map = dict(module_map)
+
+        if kiara.operation_registry.is_initialized:
+            for op_id, op in kiara.operation_registry.operations.items():
+                module_map[op_id] = {
+                    "module_type": op.module_type,
+                    "module_config": op.module_config,
+                }
 
         result: List[PipelineStep] = []
 
@@ -66,21 +74,22 @@ class PipelineStep(Manifest):
             module_config = step.get("module_config", {})
 
             if module_type not in kiara.module_type_names:
-                module_type_resolved = module_map.get(module_type, None)
-                if module_type_resolved is None:
-                    raise Exception(f"Can't resolve module type name: {module_type}")
-
-                module_config_resolved = dict(
-                    module_type_resolved.get("module_config", {})
-                )
-                module_config_resolved.update(module_config)
-                module_type = module_type_resolved["module_type"]
+                if module_type in module_map.keys():
+                    resolved_module_type = module_map[module_type]["module_type"]
+                    resolved_module_config = module_map[module_type]["module_config"]
+                    manifest = kiara.create_manifest(
+                        module_or_operation=resolved_module_type,
+                        config=resolved_module_config,
+                    )
+                else:
+                    raise Exception(f"Can't resolve module type: {module_type}")
             else:
-                module_config_resolved = module_config
+                manifest = kiara.create_manifest(
+                    module_or_operation=module_type, config=module_config
+                )
+                resolved_module_type = module_type
+                resolved_module_config = module_config
 
-            manifest = Manifest.construct(
-                module_type=module_type, module_config=module_config_resolved
-            )
             module = kiara.create_module(manifest=manifest)
 
             step_id = step.get("step_id", None)
@@ -96,8 +105,8 @@ class PipelineStep(Manifest):
             # TODO: do we really need the deepcopy here?
             _s = PipelineStep(
                 step_id=step_id,
-                module_type=module_type,
-                module_config=copy.deepcopy(module_config_resolved),
+                module_type=resolved_module_type,
+                module_config=dict(resolved_module_config),
                 input_links=input_links,  # type: ignore
                 module_details=KiaraModuleClass.from_module(module=module),
             )
@@ -309,7 +318,7 @@ class PipelineConfig(KiaraModuleConfig):
         cls,
         path: str,
         kiara: Optional["Kiara"] = None,
-        module_map: Optional[Mapping[str, Any]] = None,
+        # module_map: Optional[Mapping[str, Any]] = None,
     ):
 
         data = get_data_from_file(path)
@@ -317,9 +326,7 @@ class PipelineConfig(KiaraModuleConfig):
         if pipeline_id is None:
             pipeline_id = os.path.basename(path)
 
-        return cls.from_config(
-            pipeline_id=pipeline_id, data=data, kiara=kiara, module_map=module_map
-        )
+        return cls.from_config(pipeline_id=pipeline_id, data=data, kiara=kiara)
 
     @classmethod
     def from_config(
@@ -327,13 +334,27 @@ class PipelineConfig(KiaraModuleConfig):
         pipeline_id: str,
         data: Mapping[str, Any],
         kiara: Optional["Kiara"] = None,
-        module_map: Optional[Mapping[str, Any]] = None,
+        # module_map: Optional[Mapping[str, Any]] = None,
     ):
 
         if kiara is None:
             from kiara.context import Kiara
 
             kiara = Kiara.instance()
+
+        if not kiara.operation_registry.is_initialized:
+            kiara.operation_registry.operations  # noqa
+
+        return cls._from_config(pipeline_id=pipeline_id, data=data, kiara=kiara)
+
+    @classmethod
+    def _from_config(
+        cls,
+        pipeline_id: str,
+        data: Mapping[str, Any],
+        kiara: "Kiara",
+        module_map: Optional[Mapping[str, Any]] = None,
+    ):
 
         data = dict(data)
         steps = data.pop("steps")

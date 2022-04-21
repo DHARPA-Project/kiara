@@ -161,8 +161,9 @@ def terminal_print_model(
             for model in models[0:-1]:
                 renderable = extract_renderable(model, render_config)
                 rg.append(renderable)
-                rg.append(Rule())
-            rg.append(models[-1])
+                rg.append(Rule(style="b"))
+            last = extract_renderable(models[-1], render_config)
+            rg.append(last)
             group = Group(*rg)
             terminal_print(group, in_panel=in_panel, **render_config)
     elif format == OutputFormat.JSON:

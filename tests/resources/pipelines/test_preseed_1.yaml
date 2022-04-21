@@ -1,12 +1,12 @@
 module_type_name: gallery_onboarding
 steps:
-  - module_type: import.file.from.file_path
+  - module_type: import.file
     step_id: import_edges_file
-  - module_type: import.file.from.file_path
+  - module_type: import.file
     step_id: import_nodes_file
-  - module_type: import.file_bundle.from.folder_path
+  - module_type: import.file_bundle
     step_id: import_journal_csvs
-  - module_type: import.file_bundle.from.folder_path
+  - module_type: import.file_bundle
     step_id: import_text_corpus
   - module_type: create.table.from.csv_file
     step_id: create_edges_table

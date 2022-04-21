@@ -8,7 +8,7 @@
 """Base module for code that handles the import and management of [KiaraModule][kiara.module.KiaraModule] sub-classes."""
 
 import structlog
-from typing import TYPE_CHECKING, Dict, Iterable, Mapping, Optional, Type
+from typing import TYPE_CHECKING, Dict, Iterable, Mapping, Optional, Type, Union
 
 from kiara.models.module import KiaraModuleTypeInfo, ModuleTypeClassesInfo
 from kiara.models.module.manifest import Manifest
@@ -73,12 +73,15 @@ class ModuleRegistry(object):
 
         return ModuleTypeClassesInfo.construct(group_alias=alias, type_infos=result)  # type: ignore
 
-    def create_module(self, manifest: Manifest) -> "KiaraModule":
+    def create_module(self, manifest: Union[Manifest, str]) -> "KiaraModule":
         """Create a [KiaraModule][kiara.module.KiaraModule] object from a module configuration.
 
         Arguments:
             manifest: the module configuration
         """
+
+        if isinstance(manifest, str):
+            manifest = Manifest.construct(module_type=manifest, module_config={})
 
         if self._cached_modules.setdefault(manifest.module_type, {}).get(
             manifest.manifest_hash, None

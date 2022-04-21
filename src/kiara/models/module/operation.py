@@ -228,7 +228,8 @@ class PipelineOperationConfig(OperationConfig):
 
     def retrieve_module_config(self, kiara: "Kiara") -> Mapping[str, Any]:
 
-        pipeline_config = PipelineConfig.from_config(
+        # using _from_config here because otherwise we'd enter an infinite loop
+        pipeline_config = PipelineConfig._from_config(
             pipeline_id=self.pipeline_id,
             data=self.pipeline_config,
             kiara=kiara,
@@ -358,6 +359,9 @@ class Operation(Manifest):
 
         include_full_doc = config.get("include_full_doc", True)
         include_src = config.get("include_src", False)
+        include_inputs = config.get("include_inputs", True)
+        include_outputs = config.get("include_outputs", True)
+        include_module_details = config.get("include_moduel_details", True)
 
         table = Table(box=box.SIMPLE, show_header=False, show_lines=True)
         table.add_column("Property", style="i")
@@ -371,58 +375,46 @@ class Operation(Manifest):
 
         # module_type_md = self.module.get_type_metadata()
 
-        inputs_table = create_table_from_field_schemas(
-            _add_required=True,
-            _add_default=True,
-            _show_header=True,
-            _constants=None,
-            **self.operation_details.inputs_schema,
-        )
-        # constants = self.module_config.get("constants")
-        # inputs_table = create_table_from_field_schemas(
-        #     _add_required=True,
-        #     _add_default=True,
-        #     _show_header=True,
-        #     _constants=constants,
-        #     **self.module.inputs_schema,
-        # )
-        table.add_row("Inputs", inputs_table)
-        outputs_table = create_table_from_field_schemas(
-            _add_required=False,
-            _add_default=False,
-            _show_header=True,
-            _constants=None,
-            **self.operation_details.outputs_schema,
-        )
-        # outputs_table = create_table_from_field_schemas(
-        #     _add_required=False,
-        #     _add_default=False,
-        #     _show_header=True,
-        #     _constants=None,
-        #     **self.module.outputs_schema,
-        # )
-        table.add_row("Outputs", outputs_table)
+        if include_inputs:
+            inputs_table = create_table_from_field_schemas(
+                _add_required=True,
+                _add_default=True,
+                _show_header=True,
+                _constants=None,
+                **self.operation_details.inputs_schema,
+            )
+            table.add_row("Inputs", inputs_table)
+        if include_outputs:
+            outputs_table = create_table_from_field_schemas(
+                _add_required=False,
+                _add_default=False,
+                _show_header=True,
+                _constants=None,
+                **self.operation_details.outputs_schema,
+            )
+            table.add_row("Outputs", outputs_table)
 
-        table.add_row("Module type", self.module_type)
+        if include_module_details:
+            table.add_row("Module type", self.module_type)
 
-        module_config = self.module.config.json(option=orjson.OPT_INDENT_2)
-        conf = Syntax(
-            module_config,
-            "json",
-            background_color="default",
-        )
-        table.add_row("Module config", conf)
+            module_config = self.module.config.json(option=orjson.OPT_INDENT_2)
+            conf = Syntax(
+                module_config,
+                "json",
+                background_color="default",
+            )
+            table.add_row("Module config", conf)
 
-        module_type_md = KiaraModuleTypeInfo.create_from_type_class(
-            self.module_details.get_class()  # type: ignore
-        )
+            module_type_md = KiaraModuleTypeInfo.create_from_type_class(
+                self.module_details.get_class()  # type: ignore
+            )
 
-        desc = module_type_md.documentation.description
-        module_md = module_type_md.create_renderable(
-            include_doc=False, include_src=False, include_config_schema=False
-        )
-        m_md = Group(desc, module_md)
-        table.add_row("Module metadata", m_md)
+            desc = module_type_md.documentation.description
+            module_md = module_type_md.create_renderable(
+                include_doc=False, include_src=False, include_config_schema=False
+            )
+            m_md = Group(desc, module_md)
+            table.add_row("Module metadata", m_md)
 
         if include_src:
             table.add_row("Source code", module_type_md.process_src)
@@ -574,9 +566,9 @@ class OperationGroupInfo(InfoModelGroup):
         filter = config.get("filter", [])
 
         table = Table(box=box.SIMPLE, show_header=True)
-        table.add_column("Id", no_wrap=True, style="b")
+        table.add_column("Id", no_wrap=True, style="i")
         table.add_column("Type(s)", style="green")
-        table.add_column("Description", style="i")
+        table.add_column("Description")
 
         for op_id, op_info in self.type_infos.items():
 
@@ -640,7 +632,7 @@ class OperationGroupInfo(InfoModelGroup):
 
         table = Table(box=box.SIMPLE, show_header=True)
         table.add_column("Type", no_wrap=True, style="b green")
-        table.add_column("Id", no_wrap=True)
+        table.add_column("Id", no_wrap=True, style="i")
         if full_doc:
             table.add_column("Documentation", no_wrap=False, style="i")
         else:

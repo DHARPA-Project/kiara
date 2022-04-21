@@ -4,14 +4,15 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
 import orjson
+import os
 import structlog
 import uuid
 from enum import Enum
 from hashfs import HashFS
 from io import BytesIO
 from pathlib import Path
+from stat import S_IREAD, S_IRGRP, S_IROTH
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -403,6 +404,8 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
                     # raise Exception(
                     #     f"Can't persist chunk: invalid type '{type(chunk)}'"
                     # )
+                # we don't want anyone writing to a stored file
+                os.chmod(addr.abspath, S_IREAD | S_IRGRP | S_IROTH)
                 bytes_alias_map.setdefault(key, []).append(addr.id)
 
         alias_structure = BytesAliasStructure.construct(

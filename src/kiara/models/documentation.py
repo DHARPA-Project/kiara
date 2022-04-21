@@ -241,6 +241,13 @@ class DocumentationMetadataModel(KiaraModel):
         description="Detailed documentation of the item (in markdown).", default=None
     )
 
+    @property
+    def is_set(self) -> bool:
+        if self.description and self.description != DEFAULT_NO_DESC_VALUE:
+            return True
+        else:
+            return False
+
     def _retrieve_id(self) -> str:
         return str(self.model_data_hash)
 

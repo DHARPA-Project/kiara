@@ -8,6 +8,7 @@
 
 import os
 import uuid
+from pathlib import Path
 from pydantic import BaseModel, root_validator
 from pydantic.config import Extra
 from pydantic.env_settings import BaseSettings
@@ -82,6 +83,8 @@ class KiaraConfig(BaseSettings):
         if not base_path:
             base_path = kiara_app_dirs.user_data_dir
             values["base_path"] = base_path
+        elif isinstance(base_path, Path):
+            base_path = base_path.as_posix()
 
         context_base_path = values.get("context_base_path", None)
         if not context_base_path:

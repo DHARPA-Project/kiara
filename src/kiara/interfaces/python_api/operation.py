@@ -1,16 +1,24 @@
 # -*- coding: utf-8 -*-
 import os
 import uuid
-from typing import Any, Dict, Mapping, Optional, Union
+from rich.console import Group, RenderableType
+from rich.markdown import Markdown
+from typing import Any, Dict, List, Mapping, Optional, Union
 
 from kiara import Kiara
-from kiara.exceptions import FailedJobException, NoSuchExecutionTargetException
+from kiara.exceptions import (
+    FailedJobException,
+    InvalidValuesException,
+    NoSuchExecutionTargetException,
+)
 from kiara.interfaces.python_api import StoreValuesResult
 from kiara.interfaces.python_api.utils import create_save_config
 from kiara.models.module.jobs import JobConfig, JobStatus
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
+from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.values.value import ValueMap
+from kiara.utils.output import create_value_map_status_renderable
 
 
 class KiaraOperation(object):
@@ -149,37 +157,44 @@ class KiaraOperation(object):
         module_or_operation = self._operation_name
         operation: Optional[Operation] = None
 
-        if isinstance(module_or_operation, str):
-            if module_or_operation in self._kiara.operation_registry.operation_ids:
-                operation = self._kiara.operation_registry.get_operation(
-                    module_or_operation
+        if module_or_operation in self._kiara.operation_registry.operation_ids:
+
+            operation = self._kiara.operation_registry.get_operation(
+                module_or_operation
+            )
+            if self._operation_config:
+                raise Exception(
+                    f"Specified run target '{module_or_operation}' is an operation, additional module configuration is not allowed."
                 )
-                if self._operation_config:
-                    raise Exception(
-                        f"Specified run target '{module_or_operation}' is an operation, additional module configuration is not allowed."
-                    )
-            else:
-                manifest = Manifest(
-                    module_type=module_or_operation,
-                    module_config=self._operation_config,
-                )
-                module = self._kiara.create_module(manifest=manifest)
-                operation = Operation.create_from_module(module=module)
 
         elif module_or_operation in self._kiara.module_type_names:
 
             manifest = Manifest(
                 module_type=module_or_operation, module_config=self._operation_config
             )
-
             module = self._kiara.create_module(manifest=manifest)
             operation = Operation.create_from_module(module)
 
         elif os.path.isfile(module_or_operation):
-            raise NotImplementedError()
-            # module_name = kiara_obj.register_pipeline_description(
-            #     module_or_operation, raise_exception=True
+            pipeline_config = PipelineConfig.from_file(
+                module_or_operation, kiara=self._kiara
+            )
+            manifest = self._kiara.create_manifest(
+                "pipeline", config=pipeline_config.dict()
+            )
+            module = self._kiara.create_module(manifest=manifest)
+            operation = Operation.create_from_module(module)
+
+        else:
+            raise Exception(
+                f"Can't assemble operation, invalid operation/module name: {module_or_operation}. Must be registered module or operation name, or file."
+            )
+            # manifest = Manifest(
+            #     module_type=module_or_operation,
+            #     module_config=self._operation_config,
             # )
+            # module = self._kiara.create_module(manifest=manifest)
+            # operation = Operation.create_from_module(module=module)
 
         if operation is None:
 
@@ -266,3 +281,30 @@ class KiaraOperation(object):
         self._kiara.job_registry.store_job_record(job_id=job_id)
 
         return store_result
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        show_operation_name = config.get("show_operation_name", True)
+        show_operation_doc = config.get("show_operation_doc", True)
+        show_inputs_schema = config.get("show_inputs_schema", False)
+
+        items: List[Any] = []
+
+        if show_operation_name:
+            items.append(f"Operation: [bold]{self.operation_name}[/bold]")
+        if show_operation_doc and self.operation.doc.is_set:
+            items.append("")
+            items.append(Markdown(self.operation.doc.full_doc, style="i"))
+
+        if show_inputs_schema:
+            items.append("\nInputs:")
+            try:
+                op_inputs = self.operation_inputs
+                inputs: Any = create_value_map_status_renderable(op_inputs)
+            except InvalidValuesException as ive:
+                inputs = ive.create_renderable(**config)
+            except Exception as e:
+                inputs = f"[red bold]{e}[/red bold]"
+            items.append(inputs)
+
+        return Group(*items)

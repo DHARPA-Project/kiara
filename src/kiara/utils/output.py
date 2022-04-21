@@ -25,7 +25,7 @@ from typing import (
 )
 
 from kiara.defaults import SpecialValue
-from kiara.models.values.value import ORPHAN, Value
+from kiara.models.values.value import ORPHAN, Value, ValueMap
 from kiara.utils import dict_from_cli_args, orjson_dumps
 
 if TYPE_CHECKING:
@@ -492,12 +492,12 @@ def create_table_from_field_schemas(
     _show_header: bool = False,
     _constants: Optional[Mapping[str, Any]] = None,
     **fields: "ValueSchema",
-):
+) -> RichTable:
 
     table = RichTable(box=box.SIMPLE, show_header=_show_header)
-    table.add_column("Field name", style="i")
-    table.add_column("Type")
-    table.add_column("Description")
+    table.add_column("field name", style="i")
+    table.add_column("type")
+    table.add_column("description")
 
     if _add_required:
         table.add_column("Required")
@@ -539,6 +539,57 @@ def create_table_from_field_schemas(
                 else:
                     d = str(schema.default)
             row.append(d)
+
+        table.add_row(*row)
+
+    return table
+
+
+def create_value_map_status_renderable(
+    inputs: ValueMap, render_config: Optional[Mapping[str, Any]] = None
+) -> RichTable:
+
+    if render_config is None:
+        render_config = {}
+
+    show_required: bool = render_config.get("show_required", True)
+
+    table = RichTable(box=box.SIMPLE, show_header=True)
+    table.add_column("field name", style="i")
+    table.add_column("status", style="b")
+    table.add_column("type")
+    table.add_column("description")
+
+    if show_required:
+        table.add_column("required")
+
+    invalid = inputs.check_invalid()
+
+    for field_name, value in inputs.items():
+
+        row: List[RenderableType] = [field_name]
+
+        if field_name in invalid.keys():
+            row.append(f"[red]{invalid[field_name]}[/red]")
+        else:
+            row.append("[green]valid[/green]")
+
+        row.extend([value.value_schema.type, value.value_schema.doc.description])
+
+        if show_required:
+            req = value.value_schema.is_required()
+            if not req:
+                req_str = "no"
+            else:
+                if value.value_schema.default in [
+                    None,
+                    SpecialValue.NO_VALUE,
+                    SpecialValue.NOT_SET,
+                ]:
+                    req_str = "[b]yes[b]"
+                else:
+                    req_str = "no"
+            row.append(req_str)
 
         table.add_row(*row)
 

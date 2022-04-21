@@ -1,12 +1,8 @@
 {
-  "module_type_name": "table_import",
+  "pipeline_id": "table_import",
   "steps": [
     {
-      "module_type": "file.import",
-      "module_config": {
-        "source_profile": "file_path",
-        "source_type": "string"
-      },
+      "module_type": "import.file",
       "step_id": "import_file"
     },
     {

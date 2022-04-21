@@ -11,7 +11,10 @@ import os
 import shutil
 import structlog
 from deepdiff import DeepHash
-from pydantic import BaseModel, Field, PrivateAttr, validator
+from pydantic import BaseModel, Field, PrivateAttr
+from rich import box
+from rich.console import RenderableType
+from rich.table import Table
 from typing import Any, Dict, List, Mapping, Optional, Union
 
 from kiara.defaults import (
@@ -77,8 +80,8 @@ class FileModel(KiaraModel):
             mime_type=mime_type,
             size=size,
             file_name=file_name,
-            path=path,
         )
+        m._path = path
         return m
 
     _file_hash: Optional[str] = PrivateAttr(default=None)
@@ -89,14 +92,21 @@ class FileModel(KiaraModel):
     mime_type: str = Field(description="The mime type of the file.")
     file_name: str = Field("The name of the file.")
     size: int = Field(description="The size of the file.")
-    path: str = Field(description="The path to the file.")
 
-    @validator("path")
-    def ensure_abs_path(cls, value):
-        return os.path.abspath(value)
+    _path: Optional[str] = PrivateAttr(default=None)
+
+    # @validator("path")
+    # def ensure_abs_path(cls, value):
+    #     return os.path.abspath(value)
+
+    @property
+    def path(self) -> str:
+        if self._path is None:
+            raise Exception("File path not set for file model.")
+        return self._path
 
     def _retrieve_id(self) -> str:
-        return self.path
+        return self.file_hash
 
     def _retrieve_category_id(self) -> str:
         return FILE_MODEL_CATEOGORY_ID
@@ -107,8 +117,8 @@ class FileModel(KiaraModel):
             "file_hash": self.file_hash,
         }
 
-    def get_id(self) -> str:
-        return self.path
+    # def get_id(self) -> str:
+    #     return self.path
 
     def get_category_alias(self) -> str:
         return "instance.file_model"
@@ -198,9 +208,10 @@ class FileBundle(KiaraModel):
     def import_folder(
         cls,
         source: str,
+        bundle_name: Optional[str] = None,
         import_config: Union[None, Mapping[str, Any], FolderImportConfig] = None,
         import_time: Optional[datetime.datetime] = None,
-    ):
+    ) -> "FileBundle":
 
         if not source:
             raise ValueError("No source path provided.")
@@ -214,7 +225,7 @@ class FileBundle(KiaraModel):
         if source.endswith(os.path.sep):
             source = source[0:-1]
 
-        path = os.path.abspath(source)
+        abs_path = os.path.abspath(source)
 
         if import_config is None:
             _import_config = FolderImportConfig()
@@ -251,7 +262,7 @@ class FileBundle(KiaraModel):
             else:
                 return any(filename.endswith(ext) for ext in valid_extensions)
 
-        for root, dirnames, filenames in os.walk(path, topdown=True):
+        for root, dirnames, filenames in os.walk(abs_path, topdown=True):
 
             if exclude_dirs:
                 dirnames[:] = [d for d in dirnames if d not in exclude_dirs]
@@ -263,7 +274,7 @@ class FileBundle(KiaraModel):
             ]:
 
                 full_path = os.path.join(root, filename)
-                rel_path = os.path.relpath(full_path, path)
+                rel_path = os.path.relpath(full_path, abs_path)
 
                 file_model = FileModel.load_file(
                     full_path, import_time=bundle_import_time
@@ -271,25 +282,27 @@ class FileBundle(KiaraModel):
                 sum_size = sum_size + file_model.size
                 included_files[rel_path] = file_model
 
-        bundle_name = os.path.basename(source)
+        if bundle_name is None:
+            bundle_name = os.path.basename(source)
 
-        return FileBundle.create_from_file_models(
+        bundle = FileBundle.create_from_file_models(
             files=included_files,
-            path=path,
+            path=abs_path,
             bundle_name=bundle_name,
             sum_size=sum_size,
             import_time=bundle_import_time,
         )
+        return bundle
 
     @classmethod
     def create_from_file_models(
-        self,
+        cls,
         files: Mapping[str, FileModel],
         bundle_name: str,
         path: str,
         sum_size: Optional[int] = None,
         import_time: Optional[datetime.datetime] = None,
-    ):
+    ) -> "FileBundle":
 
         if import_time:
             bundle_import_time = import_time
@@ -300,7 +313,6 @@ class FileBundle(KiaraModel):
 
         result["included_files"] = files
 
-        result["path"] = path
         result["import_time"] = datetime.datetime.now().isoformat()
         result["number_of_files"] = len(files)
         result["bundle_name"] = bundle_name
@@ -312,11 +324,12 @@ class FileBundle(KiaraModel):
                 sum_size = sum_size + f.size
         result["size"] = sum_size
 
-        return FileBundle(**result)
+        bundle = FileBundle(**result)
+        bundle._path = path
+        return bundle
 
     _file_bundle_hash: Optional[int] = PrivateAttr(default=None)
 
-    path: str = Field(description="The archive path of the folder.")
     bundle_name: str = Field(description="The name of this bundle.")
     import_time: datetime.datetime = Field(
         description="The time when the file bundle was imported."
@@ -328,9 +341,16 @@ class FileBundle(KiaraModel):
         description="A map of all the included files, incl. their properties. Uses the relative path of each file as key."
     )
     size: int = Field(description="The size of all files in this folder, combined.")
+    _path: Optional[str] = PrivateAttr(default=None)
+
+    @property
+    def path(self) -> str:
+        if self._path is None:
+            raise Exception("File bundle path not set.")
+        return self._path
 
     def _retrieve_id(self) -> str:
-        return self.path
+        return str(self.file_bundle_hash)
 
     def _retrieve_category_id(self) -> str:
         return FILE_BUNDLE_MODEL_CATEOGORY_ID
@@ -408,6 +428,62 @@ class FileBundle(KiaraModel):
             fb._file_bundle_hash = self._file_bundle_hash
 
         return fb
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        show_bundle_hash = config.get("show_bundle_hash", False)
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("key")
+        table.add_column("value", style="i")
+
+        table.add_row("bundle name", self.bundle_name)
+        table.add_row("import_time", str(self.import_time))
+        table.add_row("number_of_files", str(self.number_of_files))
+        table.add_row("size", str(self.size))
+        if show_bundle_hash:
+            table.add_row("bundle_hash", str(self.file_bundle_hash))
+
+        content = self._create_content_table(**config)
+        table.add_row("included files", content)
+
+        return table
+
+    def _create_content_table(self, **render_config: Any) -> Table:
+
+        # show_content = render_config.get("show_content_preview", False)
+        max_no_included_files = render_config.get("max_no_files", 40)
+
+        table = Table(show_header=True, box=box.SIMPLE)
+        table.add_column("(relative) path")
+        table.add_column("size")
+        # if show_content:
+        #     table.add_column("content preview")
+
+        if (
+            max_no_included_files < 0
+            or len(self.included_files) <= max_no_included_files
+        ):
+            for f, model in self.included_files.items():
+                row = [f, str(model.size)]
+                table.add_row(*row)
+        else:
+            files = list(self.included_files.keys())
+            half = int((max_no_included_files - 1) / 2)
+            head = files[0:half]
+            tail = files[-1 * half :]  # noqa
+            for rel_path in head:
+                model = self.included_files[rel_path]
+                row = [rel_path, str(model.size)]
+                table.add_row(*row)
+            table.add_row("   ... output skipped ...", "")
+            table.add_row("   ... output skipped ...", "")
+            for rel_path in tail:
+                model = self.included_files[rel_path]
+                row = [rel_path, str(model.size)]
+                table.add_row(*row)
+
+        return table
 
     def __repr__(self):
         return f"FileBundle(name={self.bundle_name})"

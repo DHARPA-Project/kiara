@@ -69,8 +69,8 @@ def list_types(
                 temp[k] = v
         type_classes = temp
 
-    data_types_info = DataTypeClassesInfo.create_from_type_items(
-        group_alias=title, **type_classes
+    data_types_info = DataTypeClassesInfo.create_augmented_from_type_items(
+        kiara=kiara_obj, group_alias=title, **type_classes
     )
 
     terminal_print_model(
@@ -79,9 +79,15 @@ def list_types(
 
 
 @type_group.command(name="hierarchy")
-@click.option("--details", "-d", is_flag=True, help="Display full description.")
+@click.option(
+    "--include-internal",
+    "-i",
+    is_flag=True,
+    help="Display internally used data types.",
+    default=False,
+)
 @click.pass_context
-def hierarchy(ctx, details):
+def hierarchy(ctx, include_internal):
     """List available data_types (work in progress)."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
@@ -89,14 +95,18 @@ def hierarchy(ctx, details):
     type_mgmt = kiara_obj.type_registry
     print()
 
-    print_ascii_graph(type_mgmt.data_type_hierarchy)
+    if include_internal:
+        print_ascii_graph(type_mgmt.data_type_hierarchy)
+    else:
+        sub_graph = type_mgmt.get_sub_hierarchy("any")
+        print_ascii_graph(sub_graph)
 
 
 @type_group.command(name="explain")
-@click.argument("data_type", nargs=1, required=True)
+@click.argument("type_name", nargs=1, required=True)
 @output_format_option()
 @click.pass_context
-def explain_data_type(ctx, data_type: str, format: str):
+def explain_data_type(ctx, type_name: str, format: str):
     """Print details of a module type.
 
     This is different to the 'explain-instance' command, because module data_types need to be
@@ -106,9 +116,18 @@ def explain_data_type(ctx, data_type: str, format: str):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    dt_cls = kiara_obj.type_registry.get_data_type_cls(data_type)
-    info = DataTypeClassInfo.create_from_type_class(dt_cls)
+    data_type = kiara_obj.type_registry.retrieve_data_type(
+        data_type_name=type_name, data_type_config=None
+    )
+
+    instance_renderable = data_type.create_renderable(show_type_info=False)
+    type_renderable = DataTypeClassInfo.create_from_type_class(
+        type_cls=data_type.__class__, kiara=kiara_obj
+    )
 
     terminal_print_model(
-        info, format=format, in_panel=f"Data type: [b i]{data_type}[/b i]"
+        instance_renderable,
+        type_renderable,
+        format=format,
+        in_panel=f"Data type: [b i]{data_type.data_type_name}[/b i]",
     )

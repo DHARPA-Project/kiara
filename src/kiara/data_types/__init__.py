@@ -25,11 +25,14 @@ be discouraged, since this might not be trivial and there are quite a few things
 """
 import abc
 import copy
+import orjson
 import uuid
 from deepdiff import DeepHash
 from pydantic import BaseModel, Extra, Field, PrivateAttr, ValidationError
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderResult
+from rich.rule import Rule
+from rich.syntax import Syntax
 from rich.table import Table
 from typing import Any, Generic, Mapping, Optional, Tuple, Type, TypeVar, Union
 
@@ -40,13 +43,15 @@ from kiara.models.values import ValueStatus
 from kiara.models.values.value import Value, ValuePedigree
 from kiara.models.values.value_schema import ValueSchema
 
-# def get_type_name(obj: Any):
-#     """Utility function to get a pretty string from the class of an object."""
 #
 #     if obj.__class__.__module__ == "builtins":
 #         return obj.__class__.__name__
 #     else:
 #         return f"{obj.__class__.__module__}.{obj.__class__.__name__}"
+from kiara.utils import orjson_dumps
+
+# def get_type_name(obj: Any):
+#     """Utility function to get a pretty string from the class of an object."""
 
 
 class DataTypeConfig(BaseModel):
@@ -55,6 +60,11 @@ class DataTypeConfig(BaseModel):
     This is stored in the ``_config_cls`` class attribute in each ``DataType`` class. By default,
     a ``DataType`` is not configurable, unless the ``_config_cls`` class attribute points to a sub-class of this class.
     """
+
+    class Config:
+        json_loads = orjson.loads
+        json_dumps = orjson_dumps
+        extra = Extra.forbid
 
     @classmethod
     def requires_config(cls) -> bool:
@@ -66,10 +76,6 @@ class DataTypeConfig(BaseModel):
         return False
 
     _config_hash: Optional[int] = PrivateAttr(default=None)
-
-    class Config:
-        extra = Extra.forbid
-        # allow_mutation = False
 
     def get(self, key: str) -> Any:
         """Get the value for the specified configuation key."""
@@ -147,6 +153,10 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
      module needs the input data to do processing on it -- and even then it might be that it only requests a part of the
      data, say a single column of a table. Or when a frontend needs to display/visualize the data.
     """
+
+    @classmethod
+    def retrieve_available_type_profiles(cls) -> Mapping[str, Mapping[str, Any]]:
+        return {}
 
     @classmethod
     @abc.abstractmethod
@@ -410,11 +420,29 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
                 f"Invalid python type '{type(value)}', must be: {self.__class__.python_class()}"
             )
 
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
+    def create_renderable(self, **config):
 
-        raise NotImplementedError()
+        show_type_info = config.get("show_type_info", False)
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("key")
+        table.add_column("value", style="i")
+        table.add_row("type_name", self.data_type_name)
+        config_json = self.type_config.json(
+            exclude_unset=True, option=orjson.OPT_INDENT_2
+        )
+        config = Syntax(config_json, "json", background_color="default")
+        table.add_row("type_config", config)
+
+        if show_type_info:
+            from kiara.models.values.data_type import DataTypeClassInfo
+
+            info = DataTypeClassInfo.create_from_type_class(self.__class__)
+            table.add_row("", "")
+            table.add_row("", Rule())
+            table.add_row("type_info", info)
+
+        return table
 
 
 # class ValueTypeInfo(object):

@@ -165,6 +165,7 @@ class SerializeOperationType(OperationType[SerializeDetails]):
             "value_input_type": input_field_type,
             "serialized_value_output_field": match,
             "serialization_format": serialized_value_type.format_name,
+            "is_internal_operation": True,
         }
 
         result = SerializeDetails.construct(**details)

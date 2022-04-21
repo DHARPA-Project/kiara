@@ -5,7 +5,10 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Type, Union
+from rich import box
+from rich.console import RenderableType
+from rich.table import Table
+from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Optional, Type, Union
 
 if TYPE_CHECKING:
     from kiara import KiaraModule
@@ -154,6 +157,21 @@ class InvalidValuesException(Exception):
             _msg = msg
 
         super().__init__(_msg)
+
+    def create_renderable(self, **config: Any) -> Table:
+
+        table = Table(box=box.SIMPLE, show_header=True)
+
+        table.add_column("field name", style="i")
+        table.add_column("[red]error[/red]")
+
+        for field_name, error in self.invalid_inputs.items():
+
+            row: List[RenderableType] = [field_name]
+            row.append(error)
+            table.add_row(*row)
+
+        return table
 
 
 class JobConfigException(Exception):

@@ -18,6 +18,7 @@ from kiara.defaults import ANY_TYPE_NAME, SERIALIZED_DATA_TYPE_NAME
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
+from kiara.modules import ModuleCharacteristics
 
 
 class SerializeConfig(KiaraModuleConfig):
@@ -134,6 +135,9 @@ class UnpickleModule(KiaraModule):
 
     _module_type_name = "value.serialize.unpickle"
     _config_cls = UnpickleConfig
+
+    def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
+        return ModuleCharacteristics(is_internal=True)
 
     def create_inputs_schema(
         self,

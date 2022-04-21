@@ -6,7 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 from pydantic import Field
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Union
+from typing import Any, Dict, Iterable, Mapping, Optional, Union
 
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.operation import (
@@ -20,9 +20,6 @@ from kiara.modules import KiaraModule, ValueSetSchema
 from kiara.modules.included_core_modules.render_value import RenderValueModule
 from kiara.operations import OperationType
 from kiara.utils import log_message
-
-if TYPE_CHECKING:
-    pass
 
 
 class RenderValueDetails(BaseOperationDetails):
@@ -95,11 +92,11 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
                 target_type,
             ) in module_cls.retrieve_supported_render_combinations():
                 if source_type not in self._kiara.data_type_names:
-                    log_message("operation_config.ignore", operation_type="render_value", module_type=module_cls._module_type_name, source_type=source_type, target_type=target_type, reason=f"Source type '{source_type}' not registered.")  # type: ignore
+                    log_message("ignore.operation_config", operation_type="render_value", module_type=module_cls._module_type_name, source_type=source_type, target_type=target_type, reason=f"Source type '{source_type}' not registered.")  # type: ignore
                     continue
                 if target_type not in self._kiara.data_type_names:
                     log_message(
-                        "operation_config.ignore",
+                        "ignore.operation_config",
                         operation_type="render_value",
                         module_type=module_cls._module_type_name,
                         source_type=source_type,  # type: ignore

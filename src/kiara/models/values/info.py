@@ -5,9 +5,11 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
+import orjson
 import uuid
 from pydantic import BaseModel, Field, PrivateAttr
 from rich import box
+from rich.syntax import Syntax
 from rich.table import Table
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
 
@@ -15,7 +17,7 @@ from kiara.models.module.persistence import LoadConfig
 from kiara.models.values.value import ORPHAN, Value
 from kiara.models.values.value_schema import ValueSchema
 from kiara.registries.aliases import AliasRegistry
-from kiara.utils import is_debug, log_message
+from kiara.utils import is_debug, log_message, orjson_dumps
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -57,6 +59,16 @@ RENDER_FIELDS: Dict[str, Dict[str, Any]] = {
         "render": {"terminal": lambda p: "-- external data -- " if p == ORPHAN else p},
     },
     "load_config": {"show_default": False},
+    "data_type_config": {
+        "show_default": False,
+        "render": {
+            "terminal": lambda p: Syntax(
+                orjson_dumps(p, option=orjson.OPT_INDENT_2),
+                "json",
+                background_color="default",
+            )
+        },
+    },
 }
 
 
@@ -248,13 +260,12 @@ class ValuesInfo(BaseModel):
         render_map = self.create_render_map(render_type=render_type, **render_config)
 
         list_by_alias = render_config.get("list_by_alias", True)
-
         render_fields = render_config.get("render_fields", None)
         if not render_fields:
             render_fields = [k for k, v in RENDER_FIELDS.items() if v["show_default"]]
-            if list_by_alias:
-                render_fields.insert(0, "alias")
-                render_fields.remove("aliases")
+        if list_by_alias:
+            render_fields.insert(0, "alias")
+            render_fields.remove("aliases")
 
         table = Table(box=box.SIMPLE)
         for property in render_fields:

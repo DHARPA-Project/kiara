@@ -52,6 +52,8 @@ class TypeRegistry(object):
         self._type_hierarchy: Optional[nx.DiGraph] = None
         self._lineages_cache: Dict[str, List[str]] = {}
 
+        self._type_profiles: Optional[Dict[str, Mapping[str, Any]]] = None
+
     def invalidate_types(self):
 
         self._data_types = None
@@ -66,13 +68,23 @@ class TypeRegistry(object):
         else:
             data_type_config = dict(data_type_config)
 
-        cls = self.get_data_type_cls(type_name=data_type_name)
+        if data_type_name not in self.data_type_profiles.keys():
+            raise Exception(f"Data type name not registered: {data_type_name}")
 
-        hash = cls._calculate_data_type_hash(data_type_config)
+        data_type: str = self.data_type_profiles[data_type_name]["type_name"]
+        type_config = self.data_type_profiles[data_type_name]["type_config"]
+
+        if data_type_config:
+            type_config = dict(type_config)
+            type_config.update(data_type_config)
+
+        cls = self.get_data_type_cls(type_name=data_type)
+
+        hash = cls._calculate_data_type_hash(type_config)
         if hash in self._cached_data_type_objects.keys():
             return self._cached_data_type_objects[hash]
 
-        result = cls(**data_type_config)
+        result = cls(**type_config)
         assert result.data_type_hash == hash
         self._cached_data_type_objects[result.data_type_hash] = result
         return result
@@ -84,8 +96,27 @@ class TypeRegistry(object):
             return self._data_types
 
         self._data_types = bidict(find_all_data_types())
+        profiles: Dict[str, Mapping[str, Any]] = {
+            dn: {"type_name": dn, "type_config": {}} for dn in self._data_types.keys()
+        }
 
+        for name, cls in self._data_types.items():
+            cls_profiles = cls.retrieve_available_type_profiles()
+            for profile_name, type_config in cls_profiles.items():
+                if profile_name in profiles.keys():
+                    raise Exception(f"Duplicate data type profile: {profile_name}")
+                profiles[profile_name] = {"type_name": name, "type_config": type_config}
+
+        self._type_profiles = profiles
         return self._data_types
+
+    @property
+    def data_type_profiles(self) -> Mapping[str, Mapping[str, Any]]:
+
+        if self._type_profiles is None:
+            self.data_type_classes  # noqa
+        assert self._type_profiles is not None
+        return self._type_profiles
 
     @property
     def data_type_hierarchy(self) -> "nx.DiGraph":
@@ -110,13 +141,26 @@ class TypeRegistry(object):
         bases = {}
         for name, cls in self.data_type_classes.items():
             bases[name] = recursive_base_find(cls)
+
+        for profile_name, details in self.data_type_profiles.items():
+
+            if not details["type_config"]:
+                continue
+            if profile_name in bases.keys():
+                raise Exception(
+                    f"Invalid profile name '{profile_name}': shadowing data type. This is most likely a bug."
+                )
+            bases[profile_name] = [details["type_name"]]
+
         import networkx as nx
 
         hierarchy = nx.DiGraph()
         hierarchy.add_node(KIARA_ROOT_TYPE_NAME)
 
         for name, _bases in bases.items():
-            hierarchy.add_node(name, cls=self.data_type_classes[name])
+            profile_details = self.data_type_profiles[name]
+            cls = self.data_type_classes[profile_details["type_name"]]
+            hierarchy.add_node(name, cls=cls)
             if not _bases:
                 hierarchy.add_edge(KIARA_ROOT_TYPE_NAME, name)
             else:
@@ -126,11 +170,22 @@ class TypeRegistry(object):
         self._type_hierarchy = hierarchy
         return self._type_hierarchy
 
+    def get_sub_hierarchy(self, data_type: str):
+
+        import networkx as nx
+
+        graph: nx.DiGraph = self.data_type_hierarchy
+
+        desc = nx.descendants(graph, data_type)
+        desc.add(data_type)
+        sub_graph = graph.subgraph(desc)
+        return sub_graph
+
     def get_type_lineage(self, data_type_name: str) -> Iterable[str]:
         """Returns the shortest path between the specified type and the root, in reverse direction starting from the specified type."""
 
-        if data_type_name not in self.data_type_classes.keys():
-            raise Exception(f"No value type '{data_type_name}' registered.")
+        if data_type_name not in self.data_type_profiles.keys():
+            raise Exception(f"No data type '{data_type_name}' registered.")
 
         if data_type_name in self._lineages_cache.keys():
             return self._lineages_cache[data_type_name]
@@ -147,23 +202,48 @@ class TypeRegistry(object):
     def get_sub_types(self, data_type_name: str) -> Set[str]:
 
         if data_type_name not in self.data_type_classes.keys():
-            raise Exception(f"No value type '{data_type_name}' registered.")
+            raise Exception(f"No data type '{data_type_name}' registered.")
 
         import networkx as nx
 
         desc = nx.descendants(self.data_type_hierarchy, data_type_name)
         return desc
 
+    def get_associated_profiles(
+        self, data_type_name: str
+    ) -> Mapping[str, Mapping[str, Any]]:
+
+        if data_type_name not in self.data_type_classes.keys():
+            raise Exception(f"No data type '{data_type_name}' registered.")
+
+        result = {}
+        for profile_name, details in self.data_type_profiles.items():
+            if (
+                profile_name != data_type_name
+                and data_type_name == details["type_name"]
+            ):
+                result[profile_name] = details
+
+        return result
+
     @property
     def data_type_names(self) -> List[str]:
-        return list(self.data_type_classes.keys())
+        return list(self.data_type_profiles.keys())
 
     def get_data_type_cls(self, type_name: str) -> Type[DataType]:
 
-        t = self.data_type_classes.get(type_name, None)
+        _type_details = self.data_type_profiles.get(type_name, None)
+        if _type_details is None:
+            raise Exception(
+                f"No value type '{type_name}', available types: {', '.join(self.data_type_profiles.keys())}"
+            )
+
+        resolved_type_name: str = _type_details["type_name"]
+
+        t = self.data_type_classes.get(resolved_type_name, None)
         if t is None:
             raise Exception(
-                f"No value type '{type_name}', available types: {', '.join(self.data_type_classes.keys())}"
+                f"No value type '{type_name}', available types: {', '.join(self.data_type_profiles.keys())}"
             )
         return t
 
@@ -172,7 +252,7 @@ class TypeRegistry(object):
         md = self._data_type_metadata.get(type_name, None)
         if md is None:
             md = DataTypeClassInfo.create_from_type_class(
-                type_cls=self.get_data_type_cls(type_name=type_name)
+                type_cls=self.get_data_type_cls(type_name=type_name), kiara=self._kiara
             )
             self._data_type_metadata[type_name] = md
         return self._data_type_metadata[type_name]
@@ -182,7 +262,7 @@ class TypeRegistry(object):
     ) -> DataTypeClassesInfo:
 
         result = {}
-        for type_name in self.data_type_names:
+        for type_name in self.data_type_classes.keys():
             md = self.get_type_metadata(type_name=type_name)
             if only_for_package:
                 if md.context.labels.get("package") == only_for_package:
@@ -190,4 +270,6 @@ class TypeRegistry(object):
             else:
                 result[type_name] = md
 
-        return DataTypeClassesInfo.construct(group_alias=alias, type_infos=result)  # type: ignore
+        _result = DataTypeClassesInfo.construct(group_alias=alias, type_infos=result)  # type: ignore
+        _result._kiara = self._kiara
+        return _result

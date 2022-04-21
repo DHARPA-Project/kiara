@@ -46,6 +46,13 @@ def data(ctx):
     is_flag=True,
 )
 @click.option(
+    "--show-type-config",
+    "-c",
+    help="Display type details for each value.",
+    default=False,
+    is_flag=True,
+)
+@click.option(
     "--show-pedigree",
     "-p",
     help="Display pedigree information for each value.",
@@ -73,6 +80,7 @@ def list_values(
     show_pedigree,
     show_data,
     show_load_config,
+    show_type_config,
 ):
     """List all data items that are stored in kiara."""
 
@@ -95,6 +103,8 @@ def list_values(
 
     if not show_value_id and not all_ids:
         render_fields.remove("value_id")
+    if show_type_config:
+        render_fields.append("data_type_config")
     if show_data:
         render_fields.append("data")
     if show_pedigree:

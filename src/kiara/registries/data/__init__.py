@@ -4,9 +4,12 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
+import atexit
+import shutil
 import structlog
+import tempfile
 import uuid
+from pathlib import Path
 from rich.console import RenderableType
 from sqlalchemy.engine import Engine
 from typing import (
@@ -25,6 +28,7 @@ from typing import (
 from kiara.data_types import DataType
 from kiara.defaults import (
     INVALID_HASH_MARKER,
+    LOAD_CONFIG_PLACEHOLDER,
     NONE_VALUE_ID,
     NOT_SET_VALUE_ID,
     ORPHAN_PEDIGREE_OUTPUT_NAME,
@@ -227,6 +231,7 @@ class DataRegistry(object):
             if hasattr(value_id, "value_id"):
                 _value_id: Optional[uuid.UUID] = value_id.value_id  # type: ignore
             else:
+
                 try:
                     _value_id = uuid.UUID(
                         value_id  # type: ignore
@@ -243,6 +248,7 @@ class DataRegistry(object):
                         )
 
                     ref_type, rest = value_id.split(":", maxsplit=1)
+
                     if ref_type == "value":
                         _value_id = uuid.UUID(rest)
                     elif ref_type == "alias":
@@ -607,22 +613,66 @@ class DataRegistry(object):
 
         return data
 
-    def _provision_bytes(self, load_config: LoadConfig) -> Optional[BytesStructure]:
+    def _provision_bytes(
+        self, load_config: LoadConfig
+    ) -> Tuple[Optional[BytesStructure], Optional[Path]]:
 
         provisioning_strategy = load_config.provisioning_strategy
         if provisioning_strategy == ByteProvisioningStrategy.INLINE:
-            return None
-
-        bytes_structure_map: Dict[str, List[Union[str, bytes]]] = {}
-        as_bytes = provisioning_strategy == ByteProvisioningStrategy.BYTES
+            return None, None
 
         assert load_config.bytes_map is not None
 
-        for field, chunk_ids in load_config.bytes_map.chunk_id_map.items():
-            for chunk_id in chunk_ids:
-                bytes_structure_map.setdefault(field, []).append(
-                    self._retrieve_bytes(chunk_id=chunk_id, as_bytes=as_bytes)
-                )
+        bytes_structure_map: Dict[str, List[Union[str, bytes]]] = {}
+        path: Optional[Path] = None
+        if provisioning_strategy == ByteProvisioningStrategy.BYTES:
+
+            for field, chunk_ids in load_config.bytes_map.chunk_id_map.items():
+                for chunk_id in chunk_ids:
+                    bytes_structure_map.setdefault(field, []).append(
+                        self._retrieve_bytes(chunk_id=chunk_id, as_bytes=True)
+                    )
+
+        elif provisioning_strategy == ByteProvisioningStrategy.FILE_PATH_MAP:
+
+            for field, chunk_ids in load_config.bytes_map.chunk_id_map.items():
+                for chunk_id in chunk_ids:
+                    bytes_structure_map.setdefault(field, []).append(
+                        self._retrieve_bytes(chunk_id=chunk_id, as_bytes=False)
+                    )
+
+        elif provisioning_strategy == ByteProvisioningStrategy.LINK_FOLDER:
+
+            temp_f = tempfile.mkdtemp()
+
+            def cleanup():
+                logger.debug("deleting.temp_provisioning_folder", path=temp_f)
+                shutil.rmtree(temp_f, ignore_errors=True)
+
+            atexit.register(cleanup)
+
+            root_dir = Path(temp_f)
+
+            for rel_path, chunk_ids in load_config.bytes_map.chunk_id_map.items():
+                if len(chunk_ids) != 1:
+                    raise Exception(
+                        f"Multiple chunks for file '{rel_path}' provided, this is currently not supported when using the 'LINK_FOLDER' provisioning strategy."
+                    )
+
+                chunk_id = chunk_ids[0]
+                byte_ref: str = self._retrieve_bytes(chunk_id=chunk_id, as_bytes=False)  # type: ignore
+                path = Path(byte_ref)
+
+                link = root_dir / rel_path
+                link.parent.mkdir(parents=True, exist_ok=True)
+                link.symlink_to(path)
+                bytes_structure_map[rel_path] = [link.as_posix()]
+
+            path = root_dir
+
+        elif provisioning_strategy == ByteProvisioningStrategy.COPIED_FOLDER:
+
+            raise NotImplementedError("xxxxxxxx")
 
         bytes_structure = BytesStructure.construct(
             data_type=load_config.bytes_map.data_type,
@@ -630,7 +680,7 @@ class DataRegistry(object):
             chunk_map=bytes_structure_map,
         )
 
-        return bytes_structure
+        return bytes_structure, path
 
     def _load_data_from_load_config(
         self, load_config: LoadConfig, value_id: uuid.UUID
@@ -640,12 +690,43 @@ class DataRegistry(object):
 
         # TODO: check whether modules and value types are available
         inputs: Dict[str, Any] = dict(load_config.inputs)
-        if "bytes_structure" in load_config.inputs.keys():
-            bytes_structure = self._provision_bytes(load_config=load_config)
-            inputs["bytes_structure"] = bytes_structure
 
-        if "inline_data" in load_config.inputs.keys():
-            inputs["inline_data"] = load_config.inline_data
+        bytes_structure, path = self._provision_bytes(load_config=load_config)
+        if load_config.provisioning_strategy == ByteProvisioningStrategy.INLINE:
+            if "inline_data" in load_config.inputs.keys():
+                assert load_config.inputs["inline_data"] == LOAD_CONFIG_PLACEHOLDER
+                inputs["inline_data"] = load_config.inline_data
+        elif load_config.provisioning_strategy == ByteProvisioningStrategy.BYTES:
+            if "inline_data" in load_config.inputs.keys():
+                assert load_config.inputs["inline_data"] == LOAD_CONFIG_PLACEHOLDER
+                inputs["inline_data"] = load_config.inline_data
+            if "bytes_structure" in load_config.inputs.keys():
+                assert load_config.inputs["bytes_structure"] == LOAD_CONFIG_PLACEHOLDER
+                inputs["bytes_structure"] = bytes_structure
+        elif (
+            load_config.provisioning_strategy == ByteProvisioningStrategy.FILE_PATH_MAP
+        ):
+            if "inline_data" in load_config.inputs.keys():
+                assert load_config.inputs["inline_data"] == LOAD_CONFIG_PLACEHOLDER
+                inputs["inline_data"] = load_config.inline_data
+            if "bytes_structure" in load_config.inputs.keys():
+                assert load_config.inputs["bytes_structure"] == LOAD_CONFIG_PLACEHOLDER
+                inputs["bytes_structure"] = bytes_structure
+        elif load_config.provisioning_strategy == ByteProvisioningStrategy.LINK_FOLDER:
+            if "inline_data" in load_config.inputs.keys():
+                assert load_config.inputs["inline_data"] == LOAD_CONFIG_PLACEHOLDER
+                inputs["inline_data"] = load_config.inline_data
+            if "bytes_structure" in load_config.inputs.keys():
+                assert load_config.inputs["bytes_structure"] == LOAD_CONFIG_PLACEHOLDER
+                inputs["bytes_structure"] = bytes_structure
+            if "path" in load_config.inputs.keys():
+                assert path is not None
+                assert load_config.inputs["path"] == LOAD_CONFIG_PLACEHOLDER
+                inputs["path"] = path.as_posix()
+        elif (
+            load_config.provisioning_strategy == ByteProvisioningStrategy.COPIED_FOLDER
+        ):
+            raise NotImplementedError()
 
         try:
             job_config = self._kiara.job_registry.prepare_job_config(

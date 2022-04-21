@@ -4,6 +4,7 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
+
 import structlog
 import sys
 from typing import (
@@ -35,7 +36,6 @@ from kiara.utils import is_debug
 if TYPE_CHECKING:
     from kiara.context import Kiara
 
-
 logger = structlog.getLogger()
 
 
@@ -61,6 +61,11 @@ class OperationRegistry(object):
         self._operations_by_type: Optional[Dict[str, Iterable[str]]] = None
 
     @property
+    def is_initialized(self) -> bool:
+
+        return self._operations is not None
+
+    @property
     def operation_types(self) -> Mapping[str, OperationType]:
 
         if self._operation_types is not None:
@@ -69,7 +74,16 @@ class OperationRegistry(object):
         # TODO: support op type config
         _operation_types = {}
         for op_name, op_cls in self.operation_type_classes.items():
-            _operation_types[op_name] = op_cls(kiara=self._kiara, op_type_name=op_name)
+            try:
+                _operation_types[op_name] = op_cls(
+                    kiara=self._kiara, op_type_name=op_name
+                )
+            except Exception as e:
+                if is_debug():
+                    import traceback
+
+                    traceback.print_exc()
+                logger.debug("ignore.operation_type", operation_name=op_name, reason=e)
 
         self._operation_types = _operation_types
         return self._operation_types
@@ -239,7 +253,6 @@ class OperationRegistry(object):
                                                 mt
                                             ].module_config,
                                         }
-
                                 op_config.module_map.update(module_map)
                                 module_config = op_config.retrieve_module_config(
                                     kiara=self._kiara
@@ -265,7 +278,9 @@ class OperationRegistry(object):
                                 )
 
                         else:
-                            raise NotImplementedError()
+                            raise NotImplementedError(
+                                f"Invalid type: {type(op_config)}"
+                            )
                             # module_type = op_config.retrieve_module_type(kiara=self._kiara)
                             # module_config = op_config.retrieve_module_config(kiara=self._kiara)
                             #

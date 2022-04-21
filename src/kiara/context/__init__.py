@@ -44,7 +44,7 @@ from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import OperationGroupInfo, OperationTypeClassesInfo
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.data_type import DataTypeClassesInfo
-from kiara.models.values.value import Value, ValueMap
+from kiara.models.values.value import ValueMap
 from kiara.models.values.value_metadata import MetadataTypeClassesInfo
 from kiara.registries import KiaraArchive
 from kiara.registries.aliases import AliasRegistry
@@ -115,6 +115,12 @@ class Kiara(object):
         if cls._instance is None:
             cls._instance = Kiara()
         return cls._instance
+
+    @classmethod
+    def create_in_path(cls, path: Union[str, Path]):
+
+        config = KiaraConfig(base_path=path)
+        return cls.create(config=config)
 
     @classmethod
     def create(
@@ -290,7 +296,8 @@ class Kiara(object):
 
     @property
     def operation_registry(self) -> OperationRegistry:
-        return self._operation_registry
+        op_registry = self._operation_registry
+        return op_registry
 
     @property
     def data_registry(self) -> DataRegistry:
@@ -326,7 +333,38 @@ class Kiara(object):
     # ===================================================================================================
     # kiara session API methods
 
-    def create_module(self, manifest: Manifest) -> "KiaraModule":
+    def create_manifest(
+        self, module_or_operation: str, config: Optional[Mapping[str, Any]] = None
+    ) -> Manifest:
+
+        if config is None:
+            config = {}
+
+        if module_or_operation in self.module_type_names:
+
+            manifest: Manifest = Manifest(
+                module_type=module_or_operation, module_config=config
+            )
+
+        elif module_or_operation in self.operation_registry.operation_ids:
+
+            if config:
+                raise Exception(
+                    f"Specified run target '{module_or_operation}' is an operation, additional module configuration is not allowed (yet)."
+                )
+            manifest = self.operation_registry.get_operation(module_or_operation)
+
+        elif os.path.isfile(module_or_operation):
+            raise NotImplementedError()
+
+        else:
+            raise Exception(
+                f"Can't assemble operation, invalid operation/module name: {module_or_operation}. Must be registered module or operation name, or file."
+            )
+
+        return manifest
+
+    def create_module(self, manifest: Union[Manifest, str]) -> "KiaraModule":
         """Create a [KiaraModule][kiara.module.KiaraModule] object from a module configuration.
 
         Arguments:
@@ -335,8 +373,34 @@ class Kiara(object):
 
         return self._module_registry.create_module(manifest=manifest)
 
-    def get_value(self, value: Union[uuid.UUID, str, Value]):
-        pass
+    def queue(
+        self, manifest: Manifest, inputs: Mapping[str, Any], wait: bool = False
+    ) -> uuid.UUID:
+        """Queue a job with the specified manifest and inputs.
+
+        Arguments:
+           manifest: the job manifest
+           inputs: the job inputs
+           wait: whether to wait for the job to be finished before returning
+
+        Returns:
+            the job id that can be used to look up job status & results
+        """
+
+        return self.job_registry.execute(manifest=manifest, inputs=inputs, wait=wait)
+
+    def process(self, manifest: Manifest, inputs: Mapping[str, Any]) -> ValueMap:
+        """Queue a job with the specified manifest and inputs.
+
+        Arguments:
+           manifest: the job manifest
+           inputs: the job inputs
+           wait: whether to wait for the job to be finished before returning
+
+        Returns
+        """
+
+        return self.job_registry.execute_and_retrieve(manifest=manifest, inputs=inputs)
 
     def save_values(
         self, values: ValueMap, alias_map: Mapping[str, Iterable[str]]

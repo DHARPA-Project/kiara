@@ -596,6 +596,21 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
     def __str__(self):
         return self.__repr__()
 
+    def create_invalid_renderable(self, **config) -> Optional[RenderableType]:
+
+        inv = self.check_invalid()
+        if not inv:
+            return None
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("field name", style="i")
+        table.add_column("details", style="b red")
+
+        for field, err in inv.items():
+            table.add_row(field, err)
+
+        return table
+
     def create_renderable(self, **config: Any) -> RenderableType:
 
         render_value_data = config.get("render_value_data", True)

@@ -26,7 +26,6 @@ class BatchOperation(BaseModel):
         cls,
         path: str,
         kiara: Optional["Kiara"] = None,
-        module_map: Optional[Mapping[str, Any]] = None,
     ):
 
         data = get_data_from_file(path)
@@ -39,18 +38,14 @@ class BatchOperation(BaseModel):
                 name = name[0:-5]
             data["pipeline_id"] = name
 
-        return cls.from_config(data=data, kiara=kiara, module_map=module_map)
+        return cls.from_config(data=data, kiara=kiara)
 
     @classmethod
     def from_config(
         cls,
         data: Mapping[str, Any],
         kiara: Optional["Kiara"],
-        module_map: Optional[Mapping[str, Any]] = None,
     ):
-
-        if kiara is None:
-            kiara = Kiara.instance()
 
         data = dict(data)
         inputs = data.pop("inputs", {})
@@ -58,8 +53,12 @@ class BatchOperation(BaseModel):
         pipeline_id = data.pop("pipeline_id", None)
         if pipeline_id is None:
             pipeline_id = str(uuid.uuid4())
+
+        if kiara is None:
+            kiara = Kiara.instance()
+
         pipeline_config = PipelineConfig.from_config(
-            pipeline_id=pipeline_id, data=data, kiara=kiara, module_map=module_map
+            pipeline_id=pipeline_id, data=data, kiara=kiara
         )
 
         result = cls(pipeline_config=pipeline_config, inputs=inputs, save=save)
@@ -123,7 +122,7 @@ class BatchOperation(BaseModel):
         return save_new
 
     def run(
-        self, save: bool = False, augmented_inputs: Optional[Mapping[str, Any]] = None
+        self, save: bool = False, inputs: Optional[Mapping[str, Any]] = None
     ) -> ValueMap:
 
         pipeline = Pipeline(
@@ -135,8 +134,8 @@ class BatchOperation(BaseModel):
         )
 
         run_inputs = dict(self.inputs)
-        if augmented_inputs:
-            run_inputs.update(augmented_inputs)
+        if inputs:
+            run_inputs.update(inputs)
 
         pipeline.set_pipeline_inputs(inputs=run_inputs)
         pipeline_controller.process_pipeline()

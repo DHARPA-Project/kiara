@@ -29,14 +29,14 @@ class BatchOperation(BaseModel):
     ):
 
         data = get_data_from_file(path)
-        pipeline_id = data.get("pipeline_id", None)
+        pipeline_id = data.get("pipeline_name", None)
         if pipeline_id is None:
             name = os.path.basename(path)
             if name.endswith(".json"):
                 name = name[0:-5]
             elif name.endswith(".yaml"):
                 name = name[0:-5]
-            data["pipeline_id"] = name
+            data["pipeline_name"] = name
 
         return cls.from_config(data=data, kiara=kiara)
 
@@ -50,7 +50,7 @@ class BatchOperation(BaseModel):
         data = dict(data)
         inputs = data.pop("inputs", {})
         save = data.pop("save", False)
-        pipeline_id = data.pop("pipeline_id", None)
+        pipeline_id = data.pop("pipeline_name", None)
         if pipeline_id is None:
             pipeline_id = str(uuid.uuid4())
 
@@ -58,7 +58,7 @@ class BatchOperation(BaseModel):
             kiara = Kiara.instance()
 
         pipeline_config = PipelineConfig.from_config(
-            pipeline_id=pipeline_id, data=data, kiara=kiara
+            pipeline_name=pipeline_id, data=data, kiara=kiara
         )
 
         result = cls(pipeline_config=pipeline_config, inputs=inputs, save=save)
@@ -88,9 +88,9 @@ class BatchOperation(BaseModel):
             if not pc:
                 raise ValueError("No pipeline config provided.")
             if isinstance(pc, PipelineConfig):
-                alias = pc.pipeline_id
+                alias = pc.pipeline_name
             else:
-                alias = pc.get("pipeline_id", None)
+                alias = pc.get("pipeline_name", None)
             values["alias"] = alias
 
         return values

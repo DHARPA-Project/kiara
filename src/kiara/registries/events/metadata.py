@@ -25,7 +25,7 @@ class CreateMetadataDestinies(object):
         self._skip_internal_types: bool = True
 
     def supported_event_types(self) -> Iterable[str]:
-        return ["value_created", "value_pre_store"]
+        return ["value_created", "value_registered"]
 
     def handle_events(self, *events: KiaraEvent) -> Any:
 
@@ -34,7 +34,7 @@ class CreateMetadataDestinies(object):
                 self.attach_metadata(event.value)  # type: ignore
 
         for event in events:
-            if event.get_event_type() == "value_pre_store":  # type: ignore
+            if event.get_event_type() == "value_registered":  # type: ignore
                 self.resolve_all_metadata(event.value)  # type: ignore
 
     def attach_metadata(self, value: Value):
@@ -42,6 +42,9 @@ class CreateMetadataDestinies(object):
         assert not value.is_stored
 
         if self._skip_internal_types:
+
+            if value.value_schema.type == "any":
+                return
             lineage = self._kiara.type_registry.get_type_lineage(
                 value.value_schema.type
             )
@@ -62,6 +65,14 @@ class CreateMetadataDestinies(object):
             )
 
     def resolve_all_metadata(self, value: Value):
+
+        if self._skip_internal_types:
+
+            lineage = self._kiara.type_registry.get_type_lineage(
+                value.value_schema.type
+            )
+            if "any" not in lineage:
+                return
 
         assert not value.is_stored
 

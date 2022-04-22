@@ -156,12 +156,15 @@ def run(
         terminal_print(msg, in_panel="[b red]Module configuration error[/b red]")
         sys.exit(1)
     except Exception as e:
-        terminal_print()
         if is_debug():
             import traceback
 
             traceback.print_exc()
-        terminal_print(str(e))
+        terminal_print()
+        terminal_print(
+            f"Error when trying to validate the operation [i]'{kiara_op.operation_name}'[/i]:\n"
+        )
+        terminal_print(f"    [red]{e}[/red]")
         sys.exit(1)
 
     # =========================================================================
@@ -220,6 +223,7 @@ def run(
 
     invalid = operation_inputs.check_invalid()
     if invalid:
+
         terminal_print()
         rg = Group(
             "",

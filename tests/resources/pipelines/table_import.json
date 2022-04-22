@@ -1,5 +1,5 @@
 {
-  "pipeline_id": "table_import",
+  "pipeline_name": "table_import",
   "steps": [
     {
       "module_type": "import.file",

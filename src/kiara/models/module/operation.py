@@ -208,7 +208,7 @@ class ManifestOperationConfig(OperationConfig):
 
 class PipelineOperationConfig(OperationConfig):
 
-    pipeline_id: str = Field(description="The pipeline id.")
+    pipeline_name: str = Field(description="The pipeline id.")
     pipeline_config: Mapping[str, Any] = Field(description="The pipeline config data.")
     module_map: Dict[str, Any] = Field(
         description="A lookup map to resolves module names to operations.",
@@ -230,7 +230,7 @@ class PipelineOperationConfig(OperationConfig):
 
         # using _from_config here because otherwise we'd enter an infinite loop
         pipeline_config = PipelineConfig._from_config(
-            pipeline_id=self.pipeline_id,
+            pipeline_name=self.pipeline_name,
             data=self.pipeline_config,
             kiara=kiara,
             module_map=self.module_map,
@@ -244,12 +244,12 @@ class PipelineOperationConfig(OperationConfig):
 
     def __repr__(self):
 
-        return f"{self.__class__.__name__}(pipeline_id={self.pipeline_id} required_modules={list(self.required_module_types)} model_id={self.model_id}, category={self.category_id}, fields=[{', '.join(self.__fields__.keys())}])"
+        return f"{self.__class__.__name__}(pipeline_name={self.pipeline_name} required_modules={list(self.required_module_types)} model_id={self.model_id}, category={self.category_id}, fields=[{', '.join(self.__fields__.keys())}])"
 
 
 class Operation(Manifest):
     @classmethod
-    def create_from_module(cls, module: KiaraModule) -> "Operation":
+    def create_from_module(cls, module: KiaraModule, doc: Any = None) -> "Operation":
 
         from kiara.operations.included_core_operations import (
             CustomModuleOperationDetails,
@@ -258,13 +258,19 @@ class Operation(Manifest):
         op_id = f"{module.module_type_name}._{module.module_instance_hash}"
 
         details = CustomModuleOperationDetails.create_from_module(module=module)
+
+        if doc is not None:
+            doc = DocumentationMetadataModel.create(doc)
+        else:
+            doc = DocumentationMetadataModel.from_class_doc(module.__class__)
+
         operation = Operation(
             module_type=module.module_type_name,
             module_config=module.config.dict(),
             operation_id=op_id,
             operation_details=details,
             module_details=KiaraModuleClass.from_module(module),
-            doc=DocumentationMetadataModel.from_class_doc(module.__class__),
+            doc=doc,
         )
         operation._module = module
         return operation

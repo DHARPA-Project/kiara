@@ -22,20 +22,20 @@ from kiara.utils.cli import output_format_option, terminal_print_model
 from kiara.utils.graphs import print_ascii_graph
 
 
-def get_pipeline_config(kiara_obj: Kiara, pipeline_id_or_path: str) -> PipelineConfig:
+def get_pipeline_config(kiara_obj: Kiara, pipeline_name_or_path: str) -> PipelineConfig:
 
-    if os.path.isfile(pipeline_id_or_path):
-        pc = PipelineConfig.from_file(pipeline_id_or_path, kiara=kiara_obj)
+    if os.path.isfile(pipeline_name_or_path):
+        pc = PipelineConfig.from_file(pipeline_name_or_path, kiara=kiara_obj)
     else:
         operation: Operation = kiara_obj.operation_registry.get_operation(
-            pipeline_id_or_path
+            pipeline_name_or_path
         )
         pipeline_module: PipelineModule = operation.module  # type: ignore
 
         if not pipeline_module.is_pipeline():
             print()
             print(
-                f"Specified operation id exists, but is not a pipeline: {pipeline_id_or_path}."
+                f"Specified operation id exists, but is not a pipeline: {pipeline_name_or_path}."
             )
             sys.exit(1)
 
@@ -103,30 +103,30 @@ def list_pipelines(ctx, full_doc: bool, filter: typing.Iterable[str], format: st
 @click.argument("pipeline-id-or-path", nargs=1)
 @output_format_option()
 @click.pass_context
-def explain(ctx, pipeline_id_or_path: str, format: str):
+def explain(ctx, pipeline_name_or_path: str, format: str):
     """Print details about pipeline inputs, outputs, and overall structure."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     pc = get_pipeline_config(
-        kiara_obj=kiara_obj, pipeline_id_or_path=pipeline_id_or_path
+        kiara_obj=kiara_obj, pipeline_name_or_path=pipeline_name_or_path
     )
 
     terminal_print_model(
-        pc, format=format, in_panel=f"Pipeline: [b i]{pipeline_id_or_path}[/b i]"
+        pc, format=format, in_panel=f"Pipeline: [b i]{pipeline_name_or_path}[/b i]"
     )
 
 
 @pipeline.command()
 @click.argument("pipeline-id-or-path", nargs=1)
 @click.pass_context
-def execution_graph(ctx, pipeline_id_or_path: str):
+def execution_graph(ctx, pipeline_name_or_path: str):
     """Print the execution graph for a pipeline structure."""
 
     kiara_obj = ctx.obj["kiara"]
 
     pc = get_pipeline_config(
-        kiara_obj=kiara_obj, pipeline_id_or_path=pipeline_id_or_path
+        kiara_obj=kiara_obj, pipeline_name_or_path=pipeline_name_or_path
     )
 
     structure = pc.structure
@@ -142,13 +142,13 @@ def execution_graph(ctx, pipeline_id_or_path: str):
     help="Display full data-flow graph, incl. intermediate input/output connections.",
 )
 @click.pass_context
-def data_flow_graph(ctx, pipeline_id_or_path: str, full: bool):
+def data_flow_graph(ctx, pipeline_name_or_path: str, full: bool):
     """Print the data flow graph for a pipeline structure."""
 
     kiara_obj = ctx.obj["kiara"]
 
     pc = get_pipeline_config(
-        kiara_obj=kiara_obj, pipeline_id_or_path=pipeline_id_or_path
+        kiara_obj=kiara_obj, pipeline_name_or_path=pipeline_name_or_path
     )
 
     structure = pc.structure

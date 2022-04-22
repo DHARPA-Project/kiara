@@ -11,6 +11,7 @@ import sys
 import typing
 
 from kiara import Kiara
+from kiara.interfaces.python_api.operation import KiaraOperation
 from kiara.models.module.operation import OperationGroupInfo, OperationTypeClassesInfo
 from kiara.utils.cli import output_format_option, terminal_print_model
 
@@ -145,7 +146,8 @@ def explain(ctx, operation_id: str, source: bool, format: str):
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     if os.path.isfile(os.path.realpath(operation_id)):
-        raise NotImplementedError()
+        kiara_op = KiaraOperation(kiara=kiara_obj, operation_name=operation_id)
+        op_config = kiara_op.operation
     else:
         op_config = kiara_obj.operation_registry.get_operation(operation_id)
 

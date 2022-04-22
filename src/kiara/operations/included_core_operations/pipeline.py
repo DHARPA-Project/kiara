@@ -160,7 +160,7 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
 
         pipelines = {}
         for pipeline in all_pipelines:
-            name = pipeline["data"].get("pipeline_id", None)
+            name = pipeline["data"].get("pipeline_name", None)
             if name is None:
                 name = os.path.basename[pipeline["source"]]
                 if "." in name:
@@ -176,11 +176,11 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
         op_configs = []
         for pipeline_name, pipeline_data in self.pipeline_data.items():
             pipeline_config = dict(pipeline_data["data"])
-            pipeline_id = pipeline_config.pop("pipeline_id", None)
-            doc = pipeline_config.pop("documentation", None)
+            pipeline_id = pipeline_config.pop("pipeline_name", None)
+            doc = pipeline_config.pop("doc", None)
             # pipeline_config = PipelineConfig.from_config(data=pipeline_config, kiara=self._kiara)
             op_details = PipelineOperationConfig(
-                pipeline_id=pipeline_id, pipeline_config=pipeline_config, doc=doc
+                pipeline_name=pipeline_id, pipeline_config=pipeline_config, doc=doc
             )
             op_configs.append(op_details)
         return op_configs
@@ -192,7 +192,7 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
         if isinstance(module, PipelineModule):
 
             op_details = PipelineOperationDetails.create_operation_details(
-                operation_id=module.config.pipeline_id,
+                operation_id=module.config.pipeline_name,
                 pipeline_inputs_schema=module.inputs_schema,
                 pipeline_outputs_schema=module.outputs_schema,
             )

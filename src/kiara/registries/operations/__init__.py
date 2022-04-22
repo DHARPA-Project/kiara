@@ -178,9 +178,9 @@ class OperationRegistry(object):
                     for mt in op_config.required_module_types:
                         if mt not in self._kiara.module_type_names:
                             deferred_module_names.setdefault(mt, []).append(op_config)
-                    deferred_module_names.setdefault(op_config.pipeline_id, []).append(
-                        op_config
-                    )
+                    deferred_module_names.setdefault(
+                        op_config.pipeline_name, []
+                    ).append(op_config)
                     continue
 
                 module_type = op_config.retrieve_module_type(kiara=self._kiara)
@@ -209,7 +209,7 @@ class OperationRegistry(object):
                 module_id = op_config.retrieve_module_type(kiara=self._kiara)
                 details["module_id"] = module_id
                 if module_id == "pipeline":
-                    details["pipeline_id"] = op_config.pipeline_id  # type: ignore
+                    details["pipeline_name"] = op_config.pipeline_name  # type: ignore
                 msg: Union[str, Exception] = str(e)
                 if not msg:
                     msg = e
@@ -302,7 +302,7 @@ class OperationRegistry(object):
                             operations_by_type.setdefault(op_type_name, []).append(
                                 _op.operation_id
                             )
-                            assert _op.operation_id == op_config.pipeline_id
+                            assert _op.operation_id == op_config.pipeline_name
 
                         for _op_id in deferred_module_names.keys():
                             if op_config in deferred_module_names[_op_id]:
@@ -312,7 +312,7 @@ class OperationRegistry(object):
                         module_id = op_config.retrieve_module_type(kiara=self._kiara)
                         details["module_id"] = module_id
                         if module_id == "pipeline":
-                            details["pipeline_id"] = op_config.pipeline_id  # type: ignore
+                            details["pipeline_name"] = op_config.pipeline_name  # type: ignore
                         msg = str(e)
                         if not msg:
                             msg = e

@@ -138,33 +138,31 @@ class SinglePipelineBatchController(SinglePipelineController):
 
     def process_pipeline(self):
 
+        log = logger.bind(pipeline_id=self.pipeline.pipeline_id)
         if self._is_running:
-            logger.debug(
+            log.debug(
                 "ignore.pipeline_process",
                 reason="Pipeline already running.",
-                pipeline_id=self.pipeline.pipeline_id,
             )
             raise Exception("Pipeline already running.")
 
-        logger.debug("execute.pipeline", pipeline_id=self.pipeline.pipeline_id)
+        log.debug("execute.pipeline")
         self._is_running = True
         try:
             for idx, stage in enumerate(
                 self.pipeline.structure.processing_stages, start=1
             ):
 
-                logger.debug(
+                log.debug(
                     "execute.pipeline.stage",
-                    pipeline_id=self.pipeline.pipeline_id,
                     stage=idx,
                 )
 
                 job_ids = {}
                 for step_id in stage:
 
-                    logger.debug(
+                    log.debug(
                         "execute.pipeline.step",
-                        pipeline_id=self.pipeline.pipeline_id,
                         step_id=step_id,
                     )
 
@@ -177,22 +175,20 @@ class SinglePipelineBatchController(SinglePipelineController):
                             import traceback
 
                             traceback.print_exc()
-                        logger.error(
+                        log.error(
                             "error.processing.pipeline",
                             step_id=step_id,
-                            pipeline_id=self.pipeline.pipeline_id,
                             error=e,
                         )
                         return False
 
                 self.set_processing_results(job_ids=job_ids)
-                logger.debug(
+                log.debug(
                     "execute_finished.pipeline.stage",
-                    pipeline_id=self.pipeline.pipeline_id,
                     stage=idx,
                 )
 
         finally:
             self._is_running = False
 
-        logger.debug("execute_finished.pipeline", pipeline_id=self.pipeline.pipeline_id)
+        log.debug("execute_finished.pipeline")

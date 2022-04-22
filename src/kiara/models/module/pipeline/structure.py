@@ -7,7 +7,6 @@
 
 import networkx as nx
 from functools import lru_cache
-from networkx import NetworkXNoPath, NodeNotFound
 from pydantic import Field, PrivateAttr, root_validator
 from typing import Any, Dict, Iterable, List, Mapping, Set
 
@@ -104,8 +103,8 @@ class PipelineStructure(KiaraModel):
         description="The underlying pipeline config."
     )
     steps: List[PipelineStep] = Field(description="The pipeline steps ")
-    input_aliases: Dict[str, str] = Field(description="The (resolved) input aliases.")
-    output_aliases: Dict[str, str] = Field(description="The (resolved) output aliases.")
+    input_aliases: Dict[str, str] = Field(description="The input aliases.")
+    output_aliases: Dict[str, str] = Field(description="The output aliases.")
 
     @root_validator(pre=True)
     def validate_pipeline_config(cls, values):
@@ -124,6 +123,40 @@ class PipelineStructure(KiaraModel):
 
         _input_aliases: Dict[str, str] = dict(_config.input_aliases)
         _output_aliases: Dict[str, str] = dict(_config.output_aliases)
+
+        invalid_input_aliases = [a for a in _input_aliases.values() if "." in a]
+        if invalid_input_aliases:
+            raise Exception(
+                f"Invalid input aliases, aliases can't contain special characters: {', '.join(invalid_input_aliases)}."
+            )
+        invalid_output_aliases = [a for a in _input_aliases.values() if "." in a]
+        if invalid_input_aliases:
+            raise Exception(
+                f"Invalid input aliases, aliases can't contain special characters: {', '.join(invalid_output_aliases)}."
+            )
+
+        valid_input_names = set()
+        for step in _steps:
+            for input_name in step.module.input_names:
+                valid_input_names.add(f"{step.step_id}.{input_name}")
+        invalid_input_aliases = [
+            a for a in _input_aliases.keys() if a not in valid_input_names
+        ]
+        if invalid_input_aliases:
+            raise Exception(
+                f"Invalid input reference(s): {', '.join(invalid_input_aliases)}. Must be one of: {', '.join(valid_input_names)}"
+            )
+        valid_output_names = set()
+        for step in _steps:
+            for output_name in step.module.output_names:
+                valid_output_names.add(f"{step.step_id}.{output_name}")
+        invalid_output_names = [
+            a for a in _output_aliases.keys() if a not in valid_output_names
+        ]
+        if invalid_output_names:
+            raise Exception(
+                f"Invalid output reference(s): {', '.join(invalid_output_names)}. Must be one of: {', '.join(valid_output_names)}"
+            )
 
         values["steps"] = _steps
         values["input_aliases"] = _input_aliases
@@ -282,10 +315,11 @@ class PipelineStructure(KiaraModel):
     @property
     def pipeline_inputs_schema(self) -> Mapping[str, ValueSchema]:
 
-        return {
+        schemas = {
             input_name: w_in.value_schema
             for input_name, w_in in self.pipeline_input_refs.items()
         }
+        return schemas
 
     @property
     def pipeline_outputs_schema(self) -> Mapping[str, ValueSchema]:
@@ -575,54 +609,54 @@ class PipelineStructure(KiaraModel):
         # don't have a valid input set, because the inputs downstream they are connecting to are 'non-required'
         # optional_steps = []
 
-        last_stage = self._processing_stages[-1]
-
-        step_nodes: List[PipelineStep] = [
-            node
-            for node in self._data_flow_graph_simple.nodes
-            if isinstance(node, PipelineStep)
-        ]
-
-        all_required_inputs = []
-        for step_id in last_stage:
-
-            step = self.get_step(step_id)
-            step_nodes.remove(step)
-
-            for k, s_inp in self.get_step_input_refs(step_id).items():
-                if not s_inp.value_schema.is_required():
-                    continue
-                all_required_inputs.append(s_inp)
-
-        for pipeline_input in self.pipeline_input_refs.values():
-
-            for last_step_input in all_required_inputs:
-                try:
-                    path = nx.shortest_path(
-                        self._data_flow_graph_simple, pipeline_input, last_step_input
-                    )
-                    for p in path:
-                        if p in step_nodes:
-                            step_nodes.remove(p)
-                except (NetworkXNoPath, NodeNotFound):
-                    pass
-                    # print("NO PATH")
-                    # print(f"{pipeline_input} -> {last_step_input}")
-
-        for s in step_nodes:
-            self._steps_details[s.step_id]["required"] = False
-            # s.required = False
-
-        for input_name, inp in self.pipeline_input_refs.items():
-            steps = set()
-            for ci in inp.connected_inputs:
-                steps.add(ci.step_id)
-
-            optional = True
-            for step_id in steps:
-                step = self.get_step(step_id)
-                if self._steps_details[step_id]["required"]:
-                    optional = False
-                    break
-            if optional:
-                inp.value_schema.optional = True
+        # last_stage = self._processing_stages[-1]
+        #
+        # step_nodes: List[PipelineStep] = [
+        #     node
+        #     for node in self._data_flow_graph_simple.nodes
+        #     if isinstance(node, PipelineStep)
+        # ]
+        #
+        # all_required_inputs = []
+        # for step_id in last_stage:
+        #
+        #     step = self.get_step(step_id)
+        #     step_nodes.remove(step)
+        #
+        #     for k, s_inp in self.get_step_input_refs(step_id).items():
+        #         if not s_inp.value_schema.is_required():
+        #             continue
+        #         all_required_inputs.append(s_inp)
+        #
+        # for pipeline_input in self.pipeline_input_refs.values():
+        #
+        #     for last_step_input in all_required_inputs:
+        #         try:
+        #             path = nx.shortest_path(
+        #                 self._data_flow_graph_simple, pipeline_input, last_step_input
+        #             )
+        #             for p in path:
+        #                 if p in step_nodes:
+        #                     step_nodes.remove(p)
+        #         except (NetworkXNoPath, NodeNotFound):
+        #             pass
+        #             # print("NO PATH")
+        #             # print(f"{pipeline_input} -> {last_step_input}")
+        #
+        # for s in step_nodes:
+        #     self._steps_details[s.step_id]["required"] = False
+        #     # s.required = False
+        #
+        # for input_name, inp in self.pipeline_input_refs.items():
+        #     steps = set()
+        #     for ci in inp.connected_inputs:
+        #         steps.add(ci.step_id)
+        #
+        #     optional = True
+        #     for step_id in steps:
+        #         step = self.get_step(step_id)
+        #         if self._steps_details[step_id]["required"]:
+        #             optional = False
+        #             break
+        #     if optional:
+        #         inp.value_schema.optional = True

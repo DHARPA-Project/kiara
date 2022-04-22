@@ -322,16 +322,16 @@ class PipelineConfig(KiaraModuleConfig):
     ):
 
         data = get_data_from_file(path)
-        pipeline_id = data.pop("pipeline_id", None)
-        if pipeline_id is None:
-            pipeline_id = os.path.basename(path)
+        pipeline_name = data.pop("pipeline_name", None)
+        if pipeline_name is None:
+            pipeline_name = os.path.basename(path)
 
-        return cls.from_config(pipeline_id=pipeline_id, data=data, kiara=kiara)
+        return cls.from_config(pipeline_name=pipeline_name, data=data, kiara=kiara)
 
     @classmethod
     def from_config(
         cls,
-        pipeline_id: str,
+        pipeline_name: str,
         data: Mapping[str, Any],
         kiara: Optional["Kiara"] = None,
         # module_map: Optional[Mapping[str, Any]] = None,
@@ -345,12 +345,13 @@ class PipelineConfig(KiaraModuleConfig):
         if not kiara.operation_registry.is_initialized:
             kiara.operation_registry.operations  # noqa
 
-        return cls._from_config(pipeline_id=pipeline_id, data=data, kiara=kiara)
+        config = cls._from_config(pipeline_name=pipeline_name, data=data, kiara=kiara)
+        return config
 
     @classmethod
     def _from_config(
         cls,
-        pipeline_id: str,
+        pipeline_name: str,
         data: Mapping[str, Any],
         kiara: "Kiara",
         module_map: Optional[Mapping[str, Any]] = None,
@@ -365,14 +366,15 @@ class PipelineConfig(KiaraModuleConfig):
         if not data.get("output_aliases"):
             data["output_aliases"] = create_output_alias_map(steps)
 
-        result = cls(pipeline_id=pipeline_id, **data)
+        result = cls(pipeline_name=pipeline_name, **data)
+
         return result
 
     class Config:
-        extra = Extra.allow
+        extra = Extra.ignore
         validate_assignment = True
 
-    pipeline_id: str = Field(description="The name of this pipeline.")
+    pipeline_name: str = Field(description="The name of this pipeline.")
     steps: List[PipelineStep] = Field(
         description="A list of steps/modules of this pipeline, and their connections.",
     )
@@ -382,7 +384,7 @@ class PipelineConfig(KiaraModuleConfig):
     output_aliases: Dict[str, str] = Field(
         description="A map of output aliases, with the calculated (<step_id>__<output_name> -- double underscore!) name as key, and a string (the resulting workflow output alias) as value.  Check the documentation for the config class for which marker strings can be used to automatically create this map if possible.",
     )
-    documentation: str = Field(
+    doc: str = Field(
         default="-- n/a --", description="Documentation about what the pipeline does."
     )
     context: Dict[str, Any] = Field(
@@ -425,8 +427,8 @@ class PipelineConfig(KiaraModuleConfig):
 
         from kiara.models.module.pipeline.structure import PipelineStructure
 
-        structure = PipelineStructure(pipeline_config=self)
-        return structure
+        self._structure = PipelineStructure(pipeline_config=self)
+        return self._structure
 
     def create_renderable(self, **config: Any) -> RenderableType:
 

@@ -216,7 +216,7 @@ class DocumentationMetadataModel(KiaraModel):
         elif desc and not doc:
             return cls.from_string(desc)
         else:
-            return DocumentationMetadataModel(description=desc, doc=doc)
+            return cls(description=desc, doc=doc)
 
     @classmethod
     def create(cls, item: Any):

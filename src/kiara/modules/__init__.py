@@ -204,7 +204,11 @@ class InputOutputObject(abc.ABC):
 
             return self._outputs_schema
         except Exception as e:
-            raise Exception(f"Can't create output schemas for instance '{self.alias}': {e}")  # type: ignore
+            if is_debug():
+                import traceback
+
+                traceback.print_exc()
+            raise Exception(f"Can't create output schemas for instance of module '{self.alias}': {e}")  # type: ignore
 
     @property
     def input_names(self) -> Iterable[str]:

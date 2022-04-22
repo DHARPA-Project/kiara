@@ -40,6 +40,7 @@ from kiara.models.events.data_registry import (
     DataArchiveAddedEvent,
     ValueCreatedEvent,
     ValuePreStoreEvent,
+    ValueRegisteredEvent,
     ValueStoredEvent,
 )
 from kiara.models.module.persistence import (
@@ -237,6 +238,9 @@ class DataRegistry(object):
                         value_id  # type: ignore
                     )  # this should fail if not string or wrong string format
                 except ValueError:
+                    _value_id = None
+
+                if _value_id is None:
                     if not isinstance(value_id, str):
                         raise Exception(
                             f"Can't retrieve value for '{value_id}': invalid type '{type(value_id)}'."
@@ -298,7 +302,7 @@ class DataRegistry(object):
         value: Union[Value, uuid.UUID],
         store_id: Optional[str] = None,
         skip_if_exists: bool = True,
-    ):
+    ) -> Optional[LoadConfig]:
 
         if store_id is None:
             store_id = self.default_data_store
@@ -328,9 +332,13 @@ class DataRegistry(object):
                 self.store_value(
                     value=property_value, store_id=store_id, skip_if_exists=True
                 )
+        else:
+            load_config = None
 
         store_event = ValueStoredEvent.construct(kiara_id=self._kiara.id, value=value)
         self._event_callback(store_event)
+
+        return load_config
 
     def find_values_for_hash(
         self, value_hash: int, data_type_name: Optional[str] = None
@@ -407,6 +415,9 @@ class DataRegistry(object):
             self._values_by_hash.setdefault(value.value_hash, set()).add(value.value_id)
             self._registered_values[value.value_id] = value
             self._cached_data[value.value_id] = data
+
+            event = ValueRegisteredEvent(kiara_id=self._kiara.id, value=value)
+            self._event_callback(event)
 
         return value
 

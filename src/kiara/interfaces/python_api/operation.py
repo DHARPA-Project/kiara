@@ -18,6 +18,7 @@ from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.values.value import ValueMap
+from kiara.utils import get_data_from_file
 from kiara.utils.output import create_value_map_status_renderable
 
 
@@ -48,6 +49,8 @@ class KiaraOperation(object):
         self._last_job: Optional[uuid.UUID] = None
         self._results: Dict[uuid.UUID, ValueMap] = {}
 
+        self._defaults: Optional[Dict[str, Any]] = None
+
     def validate(self):
 
         self.job_config  # noqa
@@ -55,6 +58,7 @@ class KiaraOperation(object):
     def _invalidate(self):
 
         self._job_config = None
+        # self._defaults = None
 
     @property
     def operation_inputs(self) -> ValueMap:
@@ -63,8 +67,14 @@ class KiaraOperation(object):
             return self._inputs
 
         self._invalidate()
+        if self._defaults is not None:
+            data = dict(self._defaults)
+        else:
+            data = {}
+        data.update(self._inputs_raw)
+
         self._inputs = self._kiara.data_registry.create_valueset(
-            self._inputs_raw, self.operation.inputs_schema
+            data, self.operation.inputs_schema
         )
         return self._inputs
 
@@ -153,6 +163,7 @@ class KiaraOperation(object):
             return self._operation
 
         self._invalidate()
+        self._defaults = None
 
         module_or_operation = self._operation_name
         operation: Optional[Operation] = None
@@ -176,14 +187,22 @@ class KiaraOperation(object):
             operation = Operation.create_from_module(module)
 
         elif os.path.isfile(module_or_operation):
-            pipeline_config = PipelineConfig.from_file(
-                module_or_operation, kiara=self._kiara
+            data = get_data_from_file(module_or_operation)
+            pipeline_name = data.pop("pipeline_name", None)
+            if pipeline_name is None:
+                pipeline_name = os.path.basename(module_or_operation)
+
+            self._defaults = data.pop("inputs", {})
+
+            pipeline_config = PipelineConfig.from_config(
+                pipeline_name=pipeline_name, data=data, kiara=self._kiara
             )
+
             manifest = self._kiara.create_manifest(
                 "pipeline", config=pipeline_config.dict()
             )
             module = self._kiara.create_module(manifest=manifest)
-            operation = Operation.create_from_module(module)
+            operation = Operation.create_from_module(module, doc=pipeline_config.doc)
 
         else:
             raise Exception(

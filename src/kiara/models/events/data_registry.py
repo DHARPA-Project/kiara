@@ -35,6 +35,12 @@ class ValueCreatedEvent(RegistryEvent):
     value: Value = Field(description="The value metadata.")
 
 
+class ValueRegisteredEvent(RegistryEvent):
+
+    event_type: Literal["value_registered"] = "value_registered"
+    value: Value = Field(description="The value metadata.")
+
+
 class ValuePreStoreEvent(RegistryEvent):
 
     event_type: Literal["value_pre_store"] = "value_pre_store"

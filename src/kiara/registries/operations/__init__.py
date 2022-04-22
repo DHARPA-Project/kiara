@@ -263,7 +263,9 @@ class OperationRegistry(object):
                                     module_config=module_config,
                                 )
                                 ops = self._create_operations(
-                                    manifest=manifest, doc=op_config.doc
+                                    manifest=manifest,
+                                    doc=op_config.doc,
+                                    metadata=op_config.metadata,
                                 )
 
                             else:
@@ -355,10 +357,15 @@ class OperationRegistry(object):
 
         return self._operations
 
-    def _create_operations(self, manifest: Manifest, doc: Any) -> Dict[str, Operation]:
+    def _create_operations(
+        self, manifest: Manifest, doc: Any, metadata: Optional[Mapping[str, Any]] = None
+    ) -> Dict[str, Operation]:
 
         module = self._kiara.create_module(manifest)
         op_types = {}
+
+        if metadata is None:
+            metadata = {}
 
         for op_name, op_type in self.operation_types.items():
 
@@ -372,6 +379,7 @@ class OperationRegistry(object):
                 operation_id=op_details.operation_id,
                 operation_details=op_details,
                 module_details=KiaraModuleClass.from_module(module),
+                metadata=metadata,
                 doc=doc,
             )
             operation._module = module

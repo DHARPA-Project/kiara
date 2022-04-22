@@ -35,6 +35,7 @@ def render_item_listing(item_type: str, items: InfoModelGroup, sub_path: str = "
 
     render_args = {"items": items.get_type_infos(), "item_type": item_type}
     rendered = list_template.render(**render_args)
+
     path = f"{sub_path}/{item_type}.md"
     with mkdocs_gen_files.open(path, "w") as f:
         f.write(rendered)

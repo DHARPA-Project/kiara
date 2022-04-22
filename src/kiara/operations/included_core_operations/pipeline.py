@@ -9,7 +9,7 @@ import os
 import structlog
 from pathlib import Path
 from pydantic import Field, PrivateAttr
-from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Union
 
 from kiara.defaults import DEFAULT_EXCLUDE_DIRS, VALID_PIPELINE_FILE_EXTENSIONS
 from kiara.models.module.operation import (
@@ -86,18 +86,14 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
             return self._pipelines
 
         ignore_errors = False
-        pipeline_paths: List[str] = find_all_kiara_pipeline_paths(
-            skip_errors=ignore_errors
-        )
+        pipeline_paths: Dict[
+            str, Optional[Mapping[str, Any]]
+        ] = find_all_kiara_pipeline_paths(skip_errors=ignore_errors)
 
         all_pipelines = []
 
-        for path in pipeline_paths:
-            if isinstance(path, str):
-                path = Path(os.path.expanduser(path))
-            elif isinstance(path, Iterable):
-                raise TypeError(f"Invalid type for path: {path}")
-
+        for _path in pipeline_paths.keys():
+            path = Path(_path)
             if not path.exists():
                 logger.warning(
                     "ignore.pipeline_path", path=path, reason="path does not exist"
@@ -124,6 +120,12 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
 
                             data = get_pipeline_details_from_path(path=full_path)
                             data = check_doc_sidecar(full_path, data)
+                            existing_metadata = data.pop("metadata", {})
+                            md = dict(pipeline_paths[_path])
+                            if md is None:
+                                md = {}
+                            md.update(existing_metadata)
+                            data["metadata"] = md
 
                             # rel_path = os.path.relpath(os.path.dirname(full_path), path)
                             # if not rel_path or rel_path == ".":
@@ -156,6 +158,12 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
             elif path.is_file():
                 data = get_pipeline_details_from_path(path=path)
                 data = check_doc_sidecar(path, data)
+                existing_metadata = data.pop("metadata", {})
+                md = dict(pipeline_paths[_path])
+                if md is None:
+                    md = {}
+                md.update(existing_metadata)
+                data["metadata"] = md
                 all_pipelines.append(data)
 
         pipelines = {}
@@ -178,9 +186,13 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
             pipeline_config = dict(pipeline_data["data"])
             pipeline_id = pipeline_config.pop("pipeline_name", None)
             doc = pipeline_config.pop("doc", None)
-            # pipeline_config = PipelineConfig.from_config(data=pipeline_config, kiara=self._kiara)
+            pipeline_metadata = pipeline_data["metadata"]
+
             op_details = PipelineOperationConfig(
-                pipeline_name=pipeline_id, pipeline_config=pipeline_config, doc=doc
+                pipeline_name=pipeline_id,
+                pipeline_config=pipeline_config,
+                doc=doc,
+                metadata=pipeline_metadata,
             )
             op_configs.append(op_details)
         return op_configs

@@ -54,6 +54,8 @@ class KiaraCollector(BaseCollector):
 
         item_type = tokens[1]
         item_id = ".".join(tokens[2:])
+        if not item_id:
+            raise CollectionError(f"Invalid id: {identifier}")
 
         ctx: KiaraContextInfo = builtins.plugin_package_context_info  # type: ignore
         try:

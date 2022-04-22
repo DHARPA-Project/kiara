@@ -13,10 +13,12 @@ from stevedore import ExtensionManager
 from types import ModuleType
 from typing import (
     TYPE_CHECKING,
+    Any,
     Callable,
     Dict,
     Iterable,
     List,
+    Mapping,
     Optional,
     Tuple,
     Type,
@@ -486,7 +488,7 @@ def find_pipeline_base_path_for_module(module: Union[str, ModuleType]) -> Option
 
 def find_all_kiara_pipeline_paths(
     skip_errors: bool = False,
-) -> List[str]:
+) -> Dict[str, Optional[Mapping[str, Any]]]:
 
     import logging
 
@@ -505,7 +507,7 @@ def find_all_kiara_pipeline_paths(
         namespace="kiara.pipelines", invoke_on_load=False, propagate_map_exceptions=True
     )
 
-    paths: List[str] = []
+    paths: Dict[str, Optional[Mapping[str, Any]]] = {}
     # TODO: make sure we load 'core' first?
     for plugin in mgr:
 
@@ -522,11 +524,32 @@ def find_all_kiara_pipeline_paths(
                 else:
                     func = plugin.plugin[0]
                     args = plugin.plugin[1:]
-                result = func(*args)
+
+                f_args = []
+                metadata: Optional[Mapping[str, Any]] = None
+                if len(args) >= 1:
+                    f_args.append(args[0])
+                if len(args) >= 2:
+                    metadata = args[1]
+                    assert isinstance(metadata, Mapping)
+                if len(args) > 3:
+                    logger.debug(
+                        "ignore.pipeline_lookup_arguments",
+                        reason="more than 2 arguments provided",
+                        surplus_args=args[2:],
+                        path=f_args[0],
+                    )
+
+                result = func(f_args[0])
+                if not result:
+                    continue
                 if isinstance(result, str):
-                    paths.append(result)
+                    paths[result] = metadata
                 else:
-                    paths.extend(result)
+                    for path in paths:
+                        assert path not in paths.keys()
+                        paths[path] = metadata
+
             except Exception as e:
                 if is_debug():
                     import traceback

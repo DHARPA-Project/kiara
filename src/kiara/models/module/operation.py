@@ -214,6 +214,9 @@ class PipelineOperationConfig(OperationConfig):
         description="A lookup map to resolves module names to operations.",
         default_factory=dict,
     )
+    metadata: Mapping[str, Any] = Field(
+        description="Additional metadata for the pipeline.", default_factory=dict
+    )
 
     @validator("pipeline_config")
     def validate_pipeline_config(cls, value):
@@ -285,6 +288,9 @@ class Operation(Manifest):
 
     module_details: KiaraModuleClass = Field(
         description="The class of the underlying module."
+    )
+    metadata: Mapping[str, Any] = Field(
+        description="Additional metadata for this operation.", default_factory=dict
     )
 
     _module: Optional["KiaraModule"] = PrivateAttr(default=None)

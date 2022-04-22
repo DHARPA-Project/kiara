@@ -158,6 +158,7 @@ class InfoModelGroup(KiaraModel, Mapping[str, KiaraInfoModel]):
         return table
 
     def __getitem__(self, item: str) -> KiaraInfoModel:
+
         return self.get_type_infos()[item]
 
     def __iter__(self):

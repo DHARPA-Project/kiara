@@ -11820,6 +11820,7 @@ InfoModelGroup            (<a class="autorefs autorefs-internal" title="kiara.mo
         <span class="k">return</span> <span class="n">table</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraInfoModel</span><span class="p">:</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_type_infos</span><span class="p">()[</span><span class="n">item</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -17020,6 +17021,9 @@ Operation            (<a class="autorefs autorefs-internal" title="kiara.models.
     <span class="n">module_details</span><span class="p">:</span> <span class="n">KiaraModuleClass</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The class of the underlying module.&quot;</span>
     <span class="p">)</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Additional metadata for this operation.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span>
+    <span class="p">)</span>
 
     <span class="n">_module</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;KiaraModule&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
@@ -17211,6 +17215,28 @@ Operation            (<a class="autorefs autorefs-internal" title="kiara.models.
 
     <div class="doc doc-contents ">
 
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.models.module.operation.Operation.metadata" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">metadata</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.module.operation.Operation.metadata" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>Additional metadata for this operation.</p>
     </div>
 
   </div>
@@ -19134,6 +19160,9 @@ PipelineOperationConfig            (<a class="autorefs autorefs-internal" title=
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A lookup map to resolves module names to operations.&quot;</span><span class="p">,</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span>
     <span class="p">)</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Additional metadata for the pipeline.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span>
+    <span class="p">)</span>
 
     <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;pipeline_config&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">validate_pipeline_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -19176,6 +19205,28 @@ PipelineOperationConfig            (<a class="autorefs autorefs-internal" title=
 
 
 <h8 id="kiara.models.module.operation.PipelineOperationConfig-attributes">Attributes<a href="#kiara.models.module.operation.PipelineOperationConfig-attributes" class="headerlink" title="Permanent link">&para;</a></h8>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.models.module.operation.PipelineOperationConfig.metadata" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">metadata</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.module.operation.PipelineOperationConfig.metadata" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>Additional metadata for the pipeline.</p>
+    </div>
+
+  </div>
+
+
 
   <div class="doc doc-object doc-attribute">
 

@@ -3519,6 +3519,7 @@
 
     <span class="n">render_args</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="n">items</span><span class="o">.</span><span class="n">get_type_infos</span><span class="p">(),</span> <span class="s2">&quot;item_type&quot;</span><span class="p">:</span> <span class="n">item_type</span><span class="p">}</span>
     <span class="n">rendered</span> <span class="o">=</span> <span class="n">list_template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="o">**</span><span class="n">render_args</span><span class="p">)</span>
+
     <span class="n">path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sub_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">item_type</span><span class="si">}</span><span class="s2">.md&quot;</span>
     <span class="k">with</span> <span class="n">mkdocs_gen_files</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">rendered</span><span class="p">)</span>

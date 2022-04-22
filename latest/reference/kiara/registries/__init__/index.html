@@ -15443,7 +15443,9 @@ OperationRegistry        </code>
                                     <span class="n">module_config</span><span class="o">=</span><span class="n">module_config</span><span class="p">,</span>
                                 <span class="p">)</span>
                                 <span class="n">ops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_operations</span><span class="p">(</span>
-                                    <span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">op_config</span><span class="o">.</span><span class="n">doc</span>
+                                    <span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">,</span>
+                                    <span class="n">doc</span><span class="o">=</span><span class="n">op_config</span><span class="o">.</span><span class="n">doc</span><span class="p">,</span>
+                                    <span class="n">metadata</span><span class="o">=</span><span class="n">op_config</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
                                 <span class="p">)</span>
 
                             <span class="k">else</span><span class="p">:</span>
@@ -15535,10 +15537,15 @@ OperationRegistry        </code>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operations</span>
 
-    <span class="k">def</span> <span class="nf">_create_operations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">doc</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">_create_operations</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">doc</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]:</span>
 
         <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="p">)</span>
         <span class="n">op_types</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">op_name</span><span class="p">,</span> <span class="n">op_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
@@ -15552,6 +15559,7 @@ OperationRegistry        </code>
                 <span class="n">operation_id</span><span class="o">=</span><span class="n">op_details</span><span class="o">.</span><span class="n">operation_id</span><span class="p">,</span>
                 <span class="n">operation_details</span><span class="o">=</span><span class="n">op_details</span><span class="p">,</span>
                 <span class="n">module_details</span><span class="o">=</span><span class="n">KiaraModuleClass</span><span class="o">.</span><span class="n">from_module</span><span class="p">(</span><span class="n">module</span><span class="p">),</span>
+                <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span>
                 <span class="n">doc</span><span class="o">=</span><span class="n">doc</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">operation</span><span class="o">.</span><span class="n">_module</span> <span class="o">=</span> <span class="n">module</span>

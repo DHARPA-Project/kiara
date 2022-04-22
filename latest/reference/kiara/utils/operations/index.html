@@ -3406,28 +3406,35 @@
 
     <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OperationInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="n">op_infos</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_context_metadata</span><span class="p">(</span><span class="n">only_for_package</span><span class="o">=</span><span class="n">pkg_name</span><span class="p">)</span>
+    <span class="c1"># op_infos = kiara.operation_registry.get_context_metadata(only_for_package=pkg_name)</span>
     <span class="n">modules</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">module_registry</span><span class="o">.</span><span class="n">get_context_metadata</span><span class="p">(</span><span class="n">only_for_package</span><span class="o">=</span><span class="n">pkg_name</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">op_id</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">operations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
-        <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">module</span> <span class="ow">in</span> <span class="n">modules</span><span class="p">:</span>
-            <span class="n">result</span><span class="p">[</span><span class="n">op_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">OperationInfo</span><span class="o">.</span><span class="n">create_from_operation</span><span class="p">(</span>
-                <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="n">op</span>
-            <span class="p">)</span>
-            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span> <span class="o">!=</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span> <span class="ow">in</span> <span class="n">modules</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">op_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">OperationInfo</span><span class="o">.</span><span class="n">create_from_operation</span><span class="p">(</span>
+                    <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="n">op</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">package</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;labels&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;package&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">package</span> <span class="ow">and</span> <span class="n">package</span> <span class="o">==</span> <span class="n">pkg_name</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">op_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">OperationInfo</span><span class="o">.</span><span class="n">create_from_operation</span><span class="p">(</span>
+                    <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="n">op</span>
+                <span class="p">)</span>
 
-        <span class="n">opt_types</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">find_all_operation_types</span><span class="p">(</span><span class="n">op_id</span><span class="p">)</span>
-        <span class="n">match</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">for</span> <span class="n">ot</span> <span class="ow">in</span> <span class="n">opt_types</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">ot</span> <span class="ow">in</span> <span class="n">op_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">match</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="k">break</span>
-
-        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
-            <span class="n">result</span><span class="p">[</span><span class="n">op_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">OperationInfo</span><span class="o">.</span><span class="n">create_from_operation</span><span class="p">(</span>
-                <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="n">op</span>
-            <span class="p">)</span>
+        <span class="c1"># opt_types = kiara.operation_registry.find_all_operation_types(op_id)</span>
+        <span class="c1"># match = False</span>
+        <span class="c1"># for ot in opt_types:</span>
+        <span class="c1">#     if ot in op_infos.keys():</span>
+        <span class="c1">#         match = True</span>
+        <span class="c1">#         break</span>
+        <span class="c1">#</span>
+        <span class="c1"># if match:</span>
+        <span class="c1">#     result[op_id] = OperationInfo.create_from_operation(</span>
+        <span class="c1">#         kiara=kiara, operation=op</span>
+        <span class="c1">#     )</span>
 
     <span class="k">return</span> <span class="n">OperationGroupInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">type_infos</span><span class="o">=</span><span class="n">result</span><span class="p">)</span>
 </code></pre></div>

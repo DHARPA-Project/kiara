@@ -3858,7 +3858,7 @@
 
 
 <h9 id="kiara.interfaces.cli.pipeline.commands.get_pipeline_config" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_pipeline_config</span><span class="p">(</span><span class="n">kiara_obj</span><span class="p">,</span> <span class="n">pipeline_id_or_path</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">get_pipeline_config</span><span class="p">(</span><span class="n">kiara_obj</span><span class="p">,</span> <span class="n">pipeline_name_or_path</span><span class="p">)</span></code>
 
 
 <a href="#kiara.interfaces.cli.pipeline.commands.get_pipeline_config" class="headerlink" title="Permanent link">&para;</a></h9>
@@ -3868,20 +3868,20 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/cli/pipeline/commands.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_pipeline_config</span><span class="p">(</span><span class="n">kiara_obj</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span> <span class="n">pipeline_id_or_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineConfig</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_pipeline_config</span><span class="p">(</span><span class="n">kiara_obj</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span> <span class="n">pipeline_name_or_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineConfig</span><span class="p">:</span>
 
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">pipeline_id_or_path</span><span class="p">):</span>
-        <span class="n">pc</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">pipeline_id_or_path</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara_obj</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">pipeline_name_or_path</span><span class="p">):</span>
+        <span class="n">pc</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">pipeline_name_or_path</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara_obj</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span> <span class="o">=</span> <span class="n">kiara_obj</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span>
-            <span class="n">pipeline_id_or_path</span>
+            <span class="n">pipeline_name_or_path</span>
         <span class="p">)</span>
         <span class="n">pipeline_module</span><span class="p">:</span> <span class="n">PipelineModule</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">module</span>  <span class="c1"># type: ignore</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">pipeline_module</span><span class="o">.</span><span class="n">is_pipeline</span><span class="p">():</span>
             <span class="nb">print</span><span class="p">()</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Specified operation id exists, but is not a pipeline: </span><span class="si">{</span><span class="n">pipeline_id_or_path</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Specified operation id exists, but is not a pipeline: </span><span class="si">{</span><span class="n">pipeline_name_or_path</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
@@ -4411,14 +4411,14 @@ BatchOperation            (<span title="pydantic.main.BaseModel">BaseModel</span
     <span class="p">):</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">get_data_from_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pipeline_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">pipeline_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span>
             <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.yaml&quot;</span><span class="p">):</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span>
-            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;pipeline_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
 
@@ -4432,7 +4432,7 @@ BatchOperation            (<span title="pydantic.main.BaseModel">BaseModel</span
         <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="n">inputs</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="n">save</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;save&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pipeline_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">pipeline_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">pipeline_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
 
@@ -4440,7 +4440,7 @@ BatchOperation            (<span title="pydantic.main.BaseModel">BaseModel</span
             <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
 
         <span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span>
-            <span class="n">pipeline_id</span><span class="o">=</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span>
+            <span class="n">pipeline_name</span><span class="o">=</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span>
         <span class="p">)</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">pipeline_config</span><span class="o">=</span><span class="n">pipeline_config</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="n">save</span><span class="p">)</span>
@@ -4470,9 +4470,9 @@ BatchOperation            (<span title="pydantic.main.BaseModel">BaseModel</span
             <span class="k">if</span> <span class="ow">not</span> <span class="n">pc</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No pipeline config provided.&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pc</span><span class="p">,</span> <span class="n">PipelineConfig</span><span class="p">):</span>
-                <span class="n">alias</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">pipeline_id</span>
+                <span class="n">alias</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">pipeline_name</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">alias</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">alias</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pipeline_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="n">values</span><span class="p">[</span><span class="s2">&quot;alias&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">alias</span>
 
         <span class="k">return</span> <span class="n">values</span>
@@ -4662,9 +4662,9 @@ BatchOperation            (<span title="pydantic.main.BaseModel">BaseModel</span
         <span class="k">if</span> <span class="ow">not</span> <span class="n">pc</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No pipeline config provided.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pc</span><span class="p">,</span> <span class="n">PipelineConfig</span><span class="p">):</span>
-            <span class="n">alias</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">pipeline_id</span>
+            <span class="n">alias</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">pipeline_name</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">alias</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">alias</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pipeline_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">values</span><span class="p">[</span><span class="s2">&quot;alias&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">alias</span>
 
     <span class="k">return</span> <span class="n">values</span>
@@ -4704,7 +4704,7 @@ BatchOperation            (<span title="pydantic.main.BaseModel">BaseModel</span
     <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="n">inputs</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="p">{})</span>
     <span class="n">save</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;save&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-    <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pipeline_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">pipeline_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">pipeline_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
 
@@ -4712,7 +4712,7 @@ BatchOperation            (<span title="pydantic.main.BaseModel">BaseModel</span
         <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
 
     <span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span>
-        <span class="n">pipeline_id</span><span class="o">=</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span>
+        <span class="n">pipeline_name</span><span class="o">=</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span>
     <span class="p">)</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">pipeline_config</span><span class="o">=</span><span class="n">pipeline_config</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="n">save</span><span class="p">)</span>
@@ -4752,14 +4752,14 @@ BatchOperation            (<span title="pydantic.main.BaseModel">BaseModel</span
 <span class="p">):</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="n">get_data_from_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-    <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pipeline_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">pipeline_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
             <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.yaml&quot;</span><span class="p">):</span>
             <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;pipeline_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
 
     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
 </code></pre></div>
@@ -4961,6 +4961,8 @@ KiaraOperation        </code>
         <span class="bp">self</span><span class="o">.</span><span class="n">_last_job</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">ValueMap</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_defaults</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+
     <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">job_config</span>  <span class="c1"># noqa</span>
@@ -4968,6 +4970,7 @@ KiaraOperation        </code>
     <span class="k">def</span> <span class="nf">_invalidate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_job_config</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># self._defaults = None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">operation_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
@@ -4976,8 +4979,14 @@ KiaraOperation        </code>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_invalidate</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defaults</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_defaults</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inputs_raw</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">create_valueset</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_raw</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">inputs_schema</span>
+            <span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">inputs_schema</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span>
 
@@ -5066,6 +5075,7 @@ KiaraOperation        </code>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operation</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_invalidate</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_defaults</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">module_or_operation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operation_name</span>
         <span class="n">operation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -5089,14 +5099,22 @@ KiaraOperation        </code>
             <span class="n">operation</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">create_from_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">module_or_operation</span><span class="p">):</span>
-            <span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span>
-                <span class="n">module_or_operation</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">get_data_from_file</span><span class="p">(</span><span class="n">module_or_operation</span><span class="p">)</span>
+            <span class="n">pipeline_name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pipeline_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pipeline_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">pipeline_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">module_or_operation</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_defaults</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="p">{})</span>
+
+            <span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span>
+                <span class="n">pipeline_name</span><span class="o">=</span><span class="n">pipeline_name</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span>
             <span class="p">)</span>
+
             <span class="n">manifest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
                 <span class="s2">&quot;pipeline&quot;</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
             <span class="p">)</span>
             <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
-            <span class="n">operation</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">create_from_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+            <span class="n">operation</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">create_from_module</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">doc</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>

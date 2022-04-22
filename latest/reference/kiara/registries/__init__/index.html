@@ -6344,6 +6344,9 @@ DataRegistry        </code>
                         <span class="n">value_id</span>  <span class="c1"># type: ignore</span>
                     <span class="p">)</span>  <span class="c1"># this should fail if not string or wrong string format</span>
                 <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="n">_value_id</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="k">if</span> <span class="n">_value_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                             <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve value for &#39;</span><span class="si">{</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&#39;: invalid type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value_id</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
@@ -6405,7 +6408,7 @@ DataRegistry        </code>
         <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Value</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span>
         <span class="n">store_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">skip_if_exists</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LoadConfig</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="n">store_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">store_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_data_store</span>
@@ -6435,9 +6438,13 @@ DataRegistry        </code>
                 <span class="bp">self</span><span class="o">.</span><span class="n">store_value</span><span class="p">(</span>
                     <span class="n">value</span><span class="o">=</span><span class="n">property_value</span><span class="p">,</span> <span class="n">store_id</span><span class="o">=</span><span class="n">store_id</span><span class="p">,</span> <span class="n">skip_if_exists</span><span class="o">=</span><span class="kc">True</span>
                 <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">load_config</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">store_event</span> <span class="o">=</span> <span class="n">ValueStoredEvent</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">kiara_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_event_callback</span><span class="p">(</span><span class="n">store_event</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">load_config</span>
 
     <span class="k">def</span> <span class="nf">find_values_for_hash</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">value_hash</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -6514,6 +6521,9 @@ DataRegistry        </code>
             <span class="bp">self</span><span class="o">.</span><span class="n">_values_by_hash</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">value_hash</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_registered_values</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_cached_data</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+
+            <span class="n">event</span> <span class="o">=</span> <span class="n">ValueRegisteredEvent</span><span class="p">(</span><span class="n">kiara_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_event_callback</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">value</span>
 
@@ -7400,6 +7410,9 @@ DataRegistry        </code>
                     <span class="n">value_id</span>  <span class="c1"># type: ignore</span>
                 <span class="p">)</span>  <span class="c1"># this should fail if not string or wrong string format</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">_value_id</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="n">_value_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve value for &#39;</span><span class="si">{</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&#39;: invalid type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value_id</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
@@ -7562,6 +7575,9 @@ DataRegistry        </code>
         <span class="bp">self</span><span class="o">.</span><span class="n">_values_by_hash</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">value_hash</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_registered_values</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_data</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+
+        <span class="n">event</span> <span class="o">=</span> <span class="n">ValueRegisteredEvent</span><span class="p">(</span><span class="n">kiara_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event_callback</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">value</span>
 </code></pre></div>
@@ -7804,7 +7820,7 @@ DataRegistry        </code>
     <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Value</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span>
     <span class="n">store_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">skip_if_exists</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">):</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LoadConfig</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="n">store_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">store_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_data_store</span>
@@ -7834,9 +7850,13 @@ DataRegistry        </code>
             <span class="bp">self</span><span class="o">.</span><span class="n">store_value</span><span class="p">(</span>
                 <span class="n">value</span><span class="o">=</span><span class="n">property_value</span><span class="p">,</span> <span class="n">store_id</span><span class="o">=</span><span class="n">store_id</span><span class="p">,</span> <span class="n">skip_if_exists</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">load_config</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="n">store_event</span> <span class="o">=</span> <span class="n">ValueStoredEvent</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">kiara_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_event_callback</span><span class="p">(</span><span class="n">store_event</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">load_config</span>
 </code></pre></div>
         </details>
     </div>
@@ -12187,7 +12207,7 @@ CreateMetadataDestinies        </code>
         <span class="bp">self</span><span class="o">.</span><span class="n">_skip_internal_types</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">supported_event_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;value_created&quot;</span><span class="p">,</span> <span class="s2">&quot;value_pre_store&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;value_created&quot;</span><span class="p">,</span> <span class="s2">&quot;value_registered&quot;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">handle_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">events</span><span class="p">:</span> <span class="n">KiaraEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 
@@ -12196,7 +12216,7 @@ CreateMetadataDestinies        </code>
                 <span class="bp">self</span><span class="o">.</span><span class="n">attach_metadata</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
         <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_type</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;value_pre_store&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_type</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;value_registered&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">resolve_all_metadata</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
     <span class="k">def</span> <span class="nf">attach_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">):</span>
@@ -12204,6 +12224,9 @@ CreateMetadataDestinies        </code>
         <span class="k">assert</span> <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">is_stored</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skip_internal_types</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
+                <span class="k">return</span>
             <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span>
                 <span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span>
             <span class="p">)</span>
@@ -12224,6 +12247,14 @@ CreateMetadataDestinies        </code>
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">resolve_all_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skip_internal_types</span><span class="p">:</span>
+
+            <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span>
+                <span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;any&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lineage</span><span class="p">:</span>
+                <span class="k">return</span>
 
         <span class="k">assert</span> <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">is_stored</span>
 
@@ -12272,6 +12303,9 @@ CreateMetadataDestinies        </code>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">is_stored</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skip_internal_types</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
+            <span class="k">return</span>
         <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span>
             <span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span>
         <span class="p">)</span>
@@ -12320,7 +12354,7 @@ CreateMetadataDestinies        </code>
             <span class="bp">self</span><span class="o">.</span><span class="n">attach_metadata</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
     <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_type</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;value_pre_store&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_type</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;value_registered&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">resolve_all_metadata</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 </code></pre></div>
         </details>
@@ -12346,6 +12380,14 @@ CreateMetadataDestinies        </code>
         <details class="quote">
           <summary>Source code in <code>kiara/registries/events/metadata.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">resolve_all_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skip_internal_types</span><span class="p">:</span>
+
+        <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;any&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lineage</span><span class="p">:</span>
+            <span class="k">return</span>
 
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">is_stored</span>
 
@@ -12383,7 +12425,7 @@ CreateMetadataDestinies        </code>
         <details class="quote">
           <summary>Source code in <code>kiara/registries/events/metadata.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">supported_event_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-    <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;value_created&quot;</span><span class="p">,</span> <span class="s2">&quot;value_pre_store&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;value_created&quot;</span><span class="p">,</span> <span class="s2">&quot;value_registered&quot;</span><span class="p">]</span>
 </code></pre></div>
         </details>
     </div>
@@ -15316,9 +15358,9 @@ OperationRegistry        </code>
                     <span class="k">for</span> <span class="n">mt</span> <span class="ow">in</span> <span class="n">op_config</span><span class="o">.</span><span class="n">required_module_types</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">mt</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">module_type_names</span><span class="p">:</span>
                             <span class="n">deferred_module_names</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">mt</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op_config</span><span class="p">)</span>
-                    <span class="n">deferred_module_names</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="n">op_config</span>
-                    <span class="p">)</span>
+                    <span class="n">deferred_module_names</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
+                        <span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_name</span><span class="p">,</span> <span class="p">[]</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op_config</span><span class="p">)</span>
                     <span class="k">continue</span>
 
                 <span class="n">module_type</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">retrieve_module_type</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)</span>
@@ -15347,7 +15389,7 @@ OperationRegistry        </code>
                 <span class="n">module_id</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">retrieve_module_type</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)</span>
                 <span class="n">details</span><span class="p">[</span><span class="s2">&quot;module_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">module_id</span>
                 <span class="k">if</span> <span class="n">module_id</span> <span class="o">==</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span>
-                    <span class="n">details</span><span class="p">[</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_id</span>  <span class="c1"># type: ignore</span>
+                    <span class="n">details</span><span class="p">[</span><span class="s2">&quot;pipeline_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_name</span>  <span class="c1"># type: ignore</span>
                 <span class="n">msg</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
                     <span class="n">msg</span> <span class="o">=</span> <span class="n">e</span>
@@ -15440,7 +15482,7 @@ OperationRegistry        </code>
                             <span class="n">operations_by_type</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">op_type_name</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                                 <span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span>
                             <span class="p">)</span>
-                            <span class="k">assert</span> <span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span> <span class="o">==</span> <span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_id</span>
+                            <span class="k">assert</span> <span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span> <span class="o">==</span> <span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_name</span>
 
                         <span class="k">for</span> <span class="n">_op_id</span> <span class="ow">in</span> <span class="n">deferred_module_names</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                             <span class="k">if</span> <span class="n">op_config</span> <span class="ow">in</span> <span class="n">deferred_module_names</span><span class="p">[</span><span class="n">_op_id</span><span class="p">]:</span>
@@ -15450,7 +15492,7 @@ OperationRegistry        </code>
                         <span class="n">module_id</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">retrieve_module_type</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)</span>
                         <span class="n">details</span><span class="p">[</span><span class="s2">&quot;module_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">module_id</span>
                         <span class="k">if</span> <span class="n">module_id</span> <span class="o">==</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span>
-                            <span class="n">details</span><span class="p">[</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_id</span>  <span class="c1"># type: ignore</span>
+                            <span class="n">details</span><span class="p">[</span><span class="s2">&quot;pipeline_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_name</span>  <span class="c1"># type: ignore</span>
                         <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                         <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
                             <span class="n">msg</span> <span class="o">=</span> <span class="n">e</span>

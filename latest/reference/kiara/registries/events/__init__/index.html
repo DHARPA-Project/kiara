@@ -3591,7 +3591,7 @@ CreateMetadataDestinies        </code>
         <span class="bp">self</span><span class="o">.</span><span class="n">_skip_internal_types</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">supported_event_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;value_created&quot;</span><span class="p">,</span> <span class="s2">&quot;value_pre_store&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;value_created&quot;</span><span class="p">,</span> <span class="s2">&quot;value_registered&quot;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">handle_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">events</span><span class="p">:</span> <span class="n">KiaraEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 
@@ -3600,7 +3600,7 @@ CreateMetadataDestinies        </code>
                 <span class="bp">self</span><span class="o">.</span><span class="n">attach_metadata</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
         <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_type</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;value_pre_store&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_type</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;value_registered&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">resolve_all_metadata</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
     <span class="k">def</span> <span class="nf">attach_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">):</span>
@@ -3608,6 +3608,9 @@ CreateMetadataDestinies        </code>
         <span class="k">assert</span> <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">is_stored</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skip_internal_types</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
+                <span class="k">return</span>
             <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span>
                 <span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span>
             <span class="p">)</span>
@@ -3628,6 +3631,14 @@ CreateMetadataDestinies        </code>
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">resolve_all_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skip_internal_types</span><span class="p">:</span>
+
+            <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span>
+                <span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;any&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lineage</span><span class="p">:</span>
+                <span class="k">return</span>
 
         <span class="k">assert</span> <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">is_stored</span>
 
@@ -3676,6 +3687,9 @@ CreateMetadataDestinies        </code>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">is_stored</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skip_internal_types</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
+            <span class="k">return</span>
         <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span>
             <span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span>
         <span class="p">)</span>
@@ -3724,7 +3738,7 @@ CreateMetadataDestinies        </code>
             <span class="bp">self</span><span class="o">.</span><span class="n">attach_metadata</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
     <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_type</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;value_pre_store&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_type</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;value_registered&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">resolve_all_metadata</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 </code></pre></div>
         </details>
@@ -3750,6 +3764,14 @@ CreateMetadataDestinies        </code>
         <details class="quote">
           <summary>Source code in <code>kiara/registries/events/metadata.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">resolve_all_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skip_internal_types</span><span class="p">:</span>
+
+        <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;any&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lineage</span><span class="p">:</span>
+            <span class="k">return</span>
 
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">is_stored</span>
 
@@ -3787,7 +3809,7 @@ CreateMetadataDestinies        </code>
         <details class="quote">
           <summary>Source code in <code>kiara/registries/events/metadata.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">supported_event_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-    <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;value_created&quot;</span><span class="p">,</span> <span class="s2">&quot;value_pre_store&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;value_created&quot;</span><span class="p">,</span> <span class="s2">&quot;value_registered&quot;</span><span class="p">]</span>
 </code></pre></div>
         </details>
     </div>

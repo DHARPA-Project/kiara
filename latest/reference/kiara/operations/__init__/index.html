@@ -6452,7 +6452,7 @@ PipelineOperationType            (<a class="autorefs autorefs-internal" title="k
 
         <span class="n">pipelines</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">pipeline</span> <span class="ow">in</span> <span class="n">all_pipelines</span><span class="p">:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pipeline_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">[</span><span class="n">pipeline</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">]]</span>
                 <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
@@ -6468,11 +6468,11 @@ PipelineOperationType            (<a class="autorefs autorefs-internal" title="k
         <span class="n">op_configs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">pipeline_name</span><span class="p">,</span> <span class="n">pipeline_data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">pipeline_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">pipeline_data</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">])</span>
-            <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">pipeline_config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="n">doc</span> <span class="o">=</span> <span class="n">pipeline_config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;documentation&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">pipeline_config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pipeline_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">pipeline_config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="c1"># pipeline_config = PipelineConfig.from_config(data=pipeline_config, kiara=self._kiara)</span>
             <span class="n">op_details</span> <span class="o">=</span> <span class="n">PipelineOperationConfig</span><span class="p">(</span>
-                <span class="n">pipeline_id</span><span class="o">=</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">pipeline_config</span><span class="o">=</span><span class="n">pipeline_config</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">doc</span>
+                <span class="n">pipeline_name</span><span class="o">=</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">pipeline_config</span><span class="o">=</span><span class="n">pipeline_config</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">doc</span>
             <span class="p">)</span>
             <span class="n">op_configs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op_details</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">op_configs</span>
@@ -6484,7 +6484,7 @@ PipelineOperationType            (<a class="autorefs autorefs-internal" title="k
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">PipelineModule</span><span class="p">):</span>
 
             <span class="n">op_details</span> <span class="o">=</span> <span class="n">PipelineOperationDetails</span><span class="o">.</span><span class="n">create_operation_details</span><span class="p">(</span>
-                <span class="n">operation_id</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">pipeline_id</span><span class="p">,</span>
+                <span class="n">operation_id</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">pipeline_name</span><span class="p">,</span>
                 <span class="n">pipeline_inputs_schema</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">,</span>
                 <span class="n">pipeline_outputs_schema</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">,</span>
             <span class="p">)</span>
@@ -6551,7 +6551,7 @@ PipelineOperationType            (<a class="autorefs autorefs-internal" title="k
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">PipelineModule</span><span class="p">):</span>
 
         <span class="n">op_details</span> <span class="o">=</span> <span class="n">PipelineOperationDetails</span><span class="o">.</span><span class="n">create_operation_details</span><span class="p">(</span>
-            <span class="n">operation_id</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">pipeline_id</span><span class="p">,</span>
+            <span class="n">operation_id</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">pipeline_name</span><span class="p">,</span>
             <span class="n">pipeline_inputs_schema</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">,</span>
             <span class="n">pipeline_outputs_schema</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">,</span>
         <span class="p">)</span>
@@ -6588,11 +6588,11 @@ PipelineOperationType            (<a class="autorefs autorefs-internal" title="k
     <span class="n">op_configs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">pipeline_name</span><span class="p">,</span> <span class="n">pipeline_data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">pipeline_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">pipeline_data</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">])</span>
-        <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">pipeline_config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">doc</span> <span class="o">=</span> <span class="n">pipeline_config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;documentation&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">pipeline_id</span> <span class="o">=</span> <span class="n">pipeline_config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pipeline_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">pipeline_config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="c1"># pipeline_config = PipelineConfig.from_config(data=pipeline_config, kiara=self._kiara)</span>
         <span class="n">op_details</span> <span class="o">=</span> <span class="n">PipelineOperationConfig</span><span class="p">(</span>
-            <span class="n">pipeline_id</span><span class="o">=</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">pipeline_config</span><span class="o">=</span><span class="n">pipeline_config</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">doc</span>
+            <span class="n">pipeline_name</span><span class="o">=</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="n">pipeline_config</span><span class="o">=</span><span class="n">pipeline_config</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">doc</span>
         <span class="p">)</span>
         <span class="n">op_configs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op_details</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">op_configs</span>

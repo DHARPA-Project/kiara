@@ -3379,7 +3379,7 @@
 
 
 <h5 id="kiara.interfaces.cli.pipeline.commands.get_pipeline_config" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_pipeline_config</span><span class="p">(</span><span class="n">kiara_obj</span><span class="p">,</span> <span class="n">pipeline_id_or_path</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">get_pipeline_config</span><span class="p">(</span><span class="n">kiara_obj</span><span class="p">,</span> <span class="n">pipeline_name_or_path</span><span class="p">)</span></code>
 
 
 <a href="#kiara.interfaces.cli.pipeline.commands.get_pipeline_config" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -3389,20 +3389,20 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/cli/pipeline/commands.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_pipeline_config</span><span class="p">(</span><span class="n">kiara_obj</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span> <span class="n">pipeline_id_or_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineConfig</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_pipeline_config</span><span class="p">(</span><span class="n">kiara_obj</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span> <span class="n">pipeline_name_or_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineConfig</span><span class="p">:</span>
 
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">pipeline_id_or_path</span><span class="p">):</span>
-        <span class="n">pc</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">pipeline_id_or_path</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara_obj</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">pipeline_name_or_path</span><span class="p">):</span>
+        <span class="n">pc</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">pipeline_name_or_path</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara_obj</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span> <span class="o">=</span> <span class="n">kiara_obj</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span>
-            <span class="n">pipeline_id_or_path</span>
+            <span class="n">pipeline_name_or_path</span>
         <span class="p">)</span>
         <span class="n">pipeline_module</span><span class="p">:</span> <span class="n">PipelineModule</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">module</span>  <span class="c1"># type: ignore</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">pipeline_module</span><span class="o">.</span><span class="n">is_pipeline</span><span class="p">():</span>
             <span class="nb">print</span><span class="p">()</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Specified operation id exists, but is not a pipeline: </span><span class="si">{</span><span class="n">pipeline_id_or_path</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Specified operation id exists, but is not a pipeline: </span><span class="si">{</span><span class="n">pipeline_name_or_path</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 

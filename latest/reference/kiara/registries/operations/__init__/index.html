@@ -3572,9 +3572,9 @@ OperationRegistry        </code>
                     <span class="k">for</span> <span class="n">mt</span> <span class="ow">in</span> <span class="n">op_config</span><span class="o">.</span><span class="n">required_module_types</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">mt</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">module_type_names</span><span class="p">:</span>
                             <span class="n">deferred_module_names</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">mt</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op_config</span><span class="p">)</span>
-                    <span class="n">deferred_module_names</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_id</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="n">op_config</span>
-                    <span class="p">)</span>
+                    <span class="n">deferred_module_names</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
+                        <span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_name</span><span class="p">,</span> <span class="p">[]</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op_config</span><span class="p">)</span>
                     <span class="k">continue</span>
 
                 <span class="n">module_type</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">retrieve_module_type</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)</span>
@@ -3603,7 +3603,7 @@ OperationRegistry        </code>
                 <span class="n">module_id</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">retrieve_module_type</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)</span>
                 <span class="n">details</span><span class="p">[</span><span class="s2">&quot;module_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">module_id</span>
                 <span class="k">if</span> <span class="n">module_id</span> <span class="o">==</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span>
-                    <span class="n">details</span><span class="p">[</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_id</span>  <span class="c1"># type: ignore</span>
+                    <span class="n">details</span><span class="p">[</span><span class="s2">&quot;pipeline_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_name</span>  <span class="c1"># type: ignore</span>
                 <span class="n">msg</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
                     <span class="n">msg</span> <span class="o">=</span> <span class="n">e</span>
@@ -3696,7 +3696,7 @@ OperationRegistry        </code>
                             <span class="n">operations_by_type</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">op_type_name</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                                 <span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span>
                             <span class="p">)</span>
-                            <span class="k">assert</span> <span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span> <span class="o">==</span> <span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_id</span>
+                            <span class="k">assert</span> <span class="n">_op</span><span class="o">.</span><span class="n">operation_id</span> <span class="o">==</span> <span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_name</span>
 
                         <span class="k">for</span> <span class="n">_op_id</span> <span class="ow">in</span> <span class="n">deferred_module_names</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                             <span class="k">if</span> <span class="n">op_config</span> <span class="ow">in</span> <span class="n">deferred_module_names</span><span class="p">[</span><span class="n">_op_id</span><span class="p">]:</span>
@@ -3706,7 +3706,7 @@ OperationRegistry        </code>
                         <span class="n">module_id</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">retrieve_module_type</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)</span>
                         <span class="n">details</span><span class="p">[</span><span class="s2">&quot;module_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">module_id</span>
                         <span class="k">if</span> <span class="n">module_id</span> <span class="o">==</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span>
-                            <span class="n">details</span><span class="p">[</span><span class="s2">&quot;pipeline_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_id</span>  <span class="c1"># type: ignore</span>
+                            <span class="n">details</span><span class="p">[</span><span class="s2">&quot;pipeline_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">op_config</span><span class="o">.</span><span class="n">pipeline_name</span>  <span class="c1"># type: ignore</span>
                         <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                         <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
                             <span class="n">msg</span> <span class="o">=</span> <span class="n">e</span>

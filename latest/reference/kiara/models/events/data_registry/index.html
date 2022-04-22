@@ -1597,6 +1597,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.models.events.data_registry.ValueRegisteredEvent" class="md-nav__link">
+    ValueRegisteredEvent
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.models.events.data_registry.ValueStoredEvent" class="md-nav__link">
     ValueStoredEvent
   </a>
@@ -3395,6 +3402,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.models.events.data_registry.ValueRegisteredEvent" class="md-nav__link">
+    ValueRegisteredEvent
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.models.events.data_registry.ValueStoredEvent" class="md-nav__link">
     ValueStoredEvent
   </a>
@@ -3781,6 +3795,100 @@ ValuePreStoreEvent            (<a class="autorefs autorefs-internal" title="kiar
   </span>
 
 <a href="#kiara.models.events.data_registry.ValuePreStoreEvent.value" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The value metadata.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="kiara.models.events.data_registry.ValueRegisteredEvent" class="doc doc-heading">
+        <code>
+ValueRegisteredEvent            (<a class="autorefs autorefs-internal" title="kiara.models.events.RegistryEvent" href="../__init__/#kiara.models.events.RegistryEvent">RegistryEvent</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.models.events.data_registry.ValueRegisteredEvent" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/events/data_registry.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueRegisteredEvent</span><span class="p">(</span><span class="n">RegistryEvent</span><span class="p">):</span>
+
+    <span class="n">event_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;value_registered&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;value_registered&quot;</span>
+    <span class="n">value</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value metadata.&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h4 id="kiara.models.events.data_registry.ValueRegisteredEvent-attributes">Attributes<a href="#kiara.models.events.data_registry.ValueRegisteredEvent-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.events.data_registry.ValueRegisteredEvent.event_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">event_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;value_registered&#39;</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.events.data_registry.ValueRegisteredEvent.event_type" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.events.data_registry.ValueRegisteredEvent.value" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">value</span><span class="p">:</span> <span class="n">Value</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.events.data_registry.ValueRegisteredEvent.value" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 

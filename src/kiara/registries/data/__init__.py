@@ -11,7 +11,6 @@ import tempfile
 import uuid
 from pathlib import Path
 from rich.console import RenderableType
-from sqlalchemy.engine import Engine
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -74,7 +73,6 @@ class DataRegistry(object):
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
-        self._engine: Engine = self._kiara._engine
 
         self._event_callback: Callable = self._kiara.event_registry.add_producer(self)
 

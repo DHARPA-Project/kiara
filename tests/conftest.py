@@ -114,19 +114,19 @@ def preseeded_data_store() -> Kiara:
     instance_path = os.path.join(TEMP_DIR, f"instance_{session_id}")
     kiara = Kiara.create_in_path(instance_path)
 
-    # pipeline = os.path.join(PIPELINES_FOLDER, "test_preseed_1.yaml")
-    # batch_op = BatchOperation.from_file(pipeline, kiara=kiara)
+    pipeline = os.path.join(PIPELINES_FOLDER, "test_preseed_1.yaml")
+    batch_op = BatchOperation.from_file(pipeline, kiara=kiara)
 
-    # inputs = {
-    #     "edges_file_path": os.path.join(DATA_FOLDER, "journals/JournalEdges1902.csv"),
-    #     "nodes_file_path": os.path.join(DATA_FOLDER, "journals/JournalNodes1902.csv"),
-    #     "journals_folder_path": os.path.join(DATA_FOLDER, "journals"),
-    #     "text_corpus_folder_path": os.path.join(DATA_FOLDER, "text_corpus"),
-    #     "city_column_name": "City",
-    #     "label_column_name": "Label",
-    # }
-    #
-    # results = batch_op.run(save="journals_data")
+    inputs = {
+        "edges_file_path": os.path.join(DATA_FOLDER, "journals/JournalEdges1902.csv"),
+        "nodes_file_path": os.path.join(DATA_FOLDER, "journals/JournalNodes1902.csv"),
+        "journals_folder_path": os.path.join(DATA_FOLDER, "journals"),
+        "text_corpus_folder_path": os.path.join(DATA_FOLDER, "text_corpus"),
+        "city_column_name": "City",
+        "label_column_name": "Label",
+    }
+
+    batch_op.run(inputs=inputs, save="journals_data")
 
     print(f"kiara data store: {kiara.data_registry.get_archive()}")
 

@@ -9,9 +9,7 @@ import os
 import structlog
 import uuid
 from alembic import command  # type: ignore
-from pathlib import Path
 from pydantic import Field
-from sqlalchemy.engine import Engine, create_engine
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -24,11 +22,7 @@ from typing import (
     Union,
 )
 
-from kiara.context.config import (
-    KiaraConfig,
-    KiaraContextConfig,
-    KiaraCurrentContextConfig,
-)
+from kiara.context.config import KiaraContextConfig
 from kiara.data_types import DataType
 from kiara.defaults import (
     CONTEXT_INFO_CATEGORY_ID,
@@ -58,9 +52,8 @@ from kiara.registries.jobs import JobRegistry
 from kiara.registries.modules import ModuleRegistry
 from kiara.registries.operations import OperationRegistry
 from kiara.registries.types import TypeRegistry
-from kiara.utils import get_data_from_file, is_debug, log_message
+from kiara.utils import is_debug, log_message
 from kiara.utils.class_loading import find_all_archive_types
-from kiara.utils.db import orm_json_deserialize, orm_json_serialize
 from kiara.utils.metadata import find_metadata_models
 from kiara.utils.operations import filter_operations
 
@@ -116,61 +109,60 @@ class Kiara(object):
             cls._instance = Kiara()
         return cls._instance
 
-    @classmethod
-    def create_in_path(cls, path: Union[str, Path]):
+    # @classmethod
+    # def create_in_path(cls, path: Union[str, Path], context_name: Optional[str]=None):
+    #
+    #     config = KiaraConfig(base_path=path)
+    #     return cls.create(config=config, context_name=context_name)
 
-        config = KiaraConfig(base_path=path)
-        return cls.create(config=config)
-
-    @classmethod
-    def create(
-        cls,
-        config: Union[None, str, Path, KiaraConfig] = None,
-        context_name: Optional[str] = None,
-        **extra_context_args: Any,
-    ):
-
-        if config is None:
-            config = KiaraConfig()
-        elif isinstance(config, str):
-            if os.path.isfile(config):
-                config_data = get_data_from_file(config)
-                if not isinstance(config_data, Mapping):
-                    raise ValueError(
-                        f"Invalid config file format, can't parse file: {config}"
-                    )
-                config = KiaraConfig(**config_data)
-            else:
-                raise Exception(
-                    f"Can't read kiara config from file, file does not exist: {config}"
-                )
-        elif isinstance(config, Path):
-            if config.is_file():
-                config_data = get_data_from_file(config)
-                if not isinstance(config_data, Mapping):
-                    raise ValueError(
-                        f"Invalid config file format, can't parse file: {config}"
-                    )
-                config = KiaraConfig(**config_data)
-            else:
-                raise Exception(
-                    f"Can't read kiara config from file, file does not exist: {config.as_posix()}"
-                )
-        elif isinstance(config, Mapping):
-            config = KiaraConfig(**config)
-        elif not isinstance(config, KiaraConfig):
-            raise Exception(
-                f"Can't create kiara context instance, invalid config type: {type(config)}"
-            )
-
-        context = config.create_context(context_name=context_name, **extra_context_args)
-        return context
+    # @classmethod
+    # def create(
+    #     cls,
+    #     config: Union[None, str, Path, KiaraConfig] = None,
+    #     context_name: Optional[str] = None,
+    #     **extra_context_args: Any,
+    # ) -> "Kiara":
+    #
+    #     if config is None:
+    #         config = KiaraConfig()
+    #     elif isinstance(config, str):
+    #         if os.path.isfile(config):
+    #             config_data = get_data_from_file(config)
+    #             if not isinstance(config_data, Mapping):
+    #                 raise ValueError(
+    #                     f"Invalid config file format, can't parse file: {config}"
+    #                 )
+    #             config = KiaraConfig(**config_data)
+    #         else:
+    #             raise Exception(
+    #                 f"Can't read kiara config from file, file does not exist: {config}"
+    #             )
+    #     elif isinstance(config, Path):
+    #         if config.is_file():
+    #             config_data = get_data_from_file(config)
+    #             if not isinstance(config_data, Mapping):
+    #                 raise ValueError(
+    #                     f"Invalid config file format, can't parse file: {config}"
+    #                 )
+    #             config = KiaraConfig(**config_data)
+    #         else:
+    #             raise Exception(
+    #                 f"Can't read kiara config from file, file does not exist: {config.as_posix()}"
+    #             )
+    #     elif isinstance(config, Mapping):
+    #         config = KiaraConfig(**config)
+    #     elif not isinstance(config, KiaraConfig):
+    #         raise Exception(
+    #             f"Can't create kiara context instance, invalid config type: {type(config)}"
+    #         )
+    #
+    #     context = config.create_context(context_name=context_name, **extra_context_args)
+    #     return context
 
     def __init__(self, config: Optional[KiaraContextConfig] = None):
 
         if not config:
-            kc = KiaraCurrentContextConfig()
-            config = kc.get_context()
+            raise NotImplementedError()
 
         self._id: uuid.UUID = ID_REGISTRY.generate(
             id=uuid.UUID(config.context_id), obj=self
@@ -178,17 +170,17 @@ class Kiara(object):
         ID_REGISTRY.update_metadata(self._id, kiara_id=self._id)
         self._config: KiaraContextConfig = config
 
-        if is_debug():
-            echo = True
-        else:
-            echo = False
-        self._engine: Engine = create_engine(
-            self._config.db_url,
-            echo=echo,
-            future=True,
-            json_serializer=orm_json_serialize,
-            json_deserializer=orm_json_deserialize,
-        )
+        # if is_debug():
+        #     echo = True
+        # else:
+        #     echo = False
+        # self._engine: Engine = create_engine(
+        #     self._config.db_url,
+        #     echo=echo,
+        #     future=True,
+        #     json_serializer=orm_json_serialize,
+        #     json_deserializer=orm_json_deserialize,
+        # )
 
         # self._run_alembic_migrations()
         # self._envs: Optional[Mapping[str, EnvironmentOrm]] = None

@@ -26,11 +26,12 @@ KIARA_RESOURCES_FOLDER = os.path.join(KIARA_MODULE_BASE_FOLDER, "resources")
 """Default resources folder for this package."""
 
 KIARA_MAIN_CONFIG_FILE = os.path.join(kiara_app_dirs.user_config_dir, "config.yaml")
+KIARA_MAIN_CONTEXTS_PATH = os.path.join(kiara_app_dirs.user_config_dir, "contexts")
 
 # KIARA_CONTEXTS_FOLDER = os.path.join(kiara_app_dirs.user_data_dir, "contexts")
 # KIARA_STORES_FOLDER = os.path.join(kiara_app_dirs.user_data_dir, "stores")
 
-KIARA_DB_FILE = os.path.join(kiara_app_dirs.user_data_dir, "kiara.db")
+# KIARA_DB_FILE = os.path.join(kiara_app_dirs.user_data_dir, "kiara.db")
 KIARA_DB_MIGRATIONS_CONFIG = os.path.join(
     KIARA_RESOURCES_FOLDER, "database", "alembic.ini"
 )
@@ -38,12 +39,6 @@ KIARA_DB_MIGRATIONS_FOLDER = os.path.join(KIARA_RESOURCES_FOLDER, "database", "k
 
 USER_PIPELINES_FOLDER = os.path.join(kiara_app_dirs.user_config_dir, "pipelines")
 
-KIARA_DATA_STORE_DIR = os.path.join(
-    kiara_app_dirs.user_data_dir, "data-store", "default"
-)
-KIARA_DATA_DIR = os.path.join(KIARA_DATA_STORE_DIR, "data")
-KIARA_METADATA_DIR = os.path.join(KIARA_DATA_STORE_DIR, "metadata")
-KIARA_ALIASES_DIR = os.path.join(KIARA_DATA_STORE_DIR, "aliases")
 
 MODULE_TYPE_KEY = "module_type"
 """The key to specify the type of a module."""
@@ -228,4 +223,4 @@ FILE_BUNDLE_MODEL_CATEOGORY_ID = "instance.model.file_bundle"
 
 ARRAY_MODEL_CATEOGORY_ID = "instance.model.array"
 TABLE_MODEL_CATEOGORY_ID = "instance.model.table"
-DEFAULT_CONTEXT_NAME = "default_context"
+DEFAULT_CONTEXT_NAME = "default"

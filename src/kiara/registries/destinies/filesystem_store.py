@@ -12,6 +12,7 @@ import uuid
 from pathlib import Path
 from typing import TYPE_CHECKING, Set, Tuple
 
+from kiara.defaults import kiara_app_dirs
 from kiara.models.module.destiniy import Destiny
 from kiara.registries.destinies import DestinyArchive, DestinyStore
 from kiara.registries.ids import ID_REGISTRY
@@ -26,7 +27,8 @@ class FileSystemDestinyArchive(DestinyArchive):
     @classmethod
     def create_from_kiara_context(cls, kiara: "Kiara"):
 
-        base_path = Path(kiara.context_config.data_directory) / "destiny_store"
+        TODO = kiara_app_dirs.user_data_dir
+        base_path = Path(TODO) / "destiny_store"
         base_path.mkdir(parents=True, exist_ok=True)
         result = cls(base_path=base_path, store_id=kiara.id)
         ID_REGISTRY.update_metadata(

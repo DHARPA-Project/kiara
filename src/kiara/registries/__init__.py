@@ -77,4 +77,6 @@ class BaseArchive(KiaraArchive, Generic[ARCHIVE_CONFIG_CLS]):
 
 class FileSystemArchiveConfig(ArchiveConfig):
 
-    base_path: str = Field(description="The base path for this archive.")
+    archive_path: str = Field(
+        description="The path where the data for this archive is stored."
+    )

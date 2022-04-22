@@ -14,6 +14,7 @@ import structlog
 from typing import Any, Dict, Optional, Tuple
 
 from kiara.context import Kiara
+from kiara.context.config import KiaraConfig
 from kiara.utils import is_debug, is_develop, log_message
 
 from .context.commands import context
@@ -49,7 +50,7 @@ else:
 
 
 @click.group()
-@click.option("--config", "-c", help="The config file.", required=False)
+@click.option("--config", "-c", help="A kiara config or context file.", required=False)
 @click.option(
     "--context-name", "-ctx", help="The kiara context to use.", required=False
 )
@@ -73,9 +74,18 @@ def cli(
 
     extra_context_config["create_context"] = False
 
-    kiara: Kiara = Kiara.create(
-        config=config, context_name=context_name, **extra_context_config
-    )
+    kiara: Optional[Kiara] = None
+    if config:
+        raise NotImplementedError()
+        # if config.endswith("kiara_context.yaml"):
+        #     kcc = KiaraCurrentContextConfig.load_context(config)
+        #     kiara = Kiara(config=kcc)
+
+    if kiara is None:
+        kiara_config = KiaraConfig()
+
+        kiara = kiara_config.create_context(context=context_name)
+
     ctx.obj["kiara"] = kiara
 
 

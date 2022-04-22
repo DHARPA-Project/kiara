@@ -8,6 +8,7 @@
 import pytest
 
 from kiara import Kiara
+from kiara.exceptions import InvalidValuesException
 
 
 def test_module_processing(kiara: Kiara):
@@ -16,11 +17,11 @@ def test_module_processing(kiara: Kiara):
 
     # boolean_schema = ValueSchema(type="boolean")
     inputs = {"a": None, "b": True}
-    with pytest.raises(Exception) as e:
+    with pytest.raises(InvalidValuesException) as e:
         kiara.process(manifest=and_mod, inputs=inputs)
 
-    assert "Invalid values:" in str(e.value)
-    assert "a: not set" in str(e.value)
+    assert "a" in e.value.invalid_inputs.keys()
+    assert "not set" in e.value.invalid_inputs["a"]
 
     inputs = {"a": True, "b": True}
     outputs = kiara.process(manifest=and_mod, inputs=inputs)

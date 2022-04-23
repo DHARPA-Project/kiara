@@ -31,8 +31,8 @@ def type_group(ctx):
     help="Display the full documentation for every data type (when using 'terminal' output format).",
 )
 @click.option(
-    "--include-internal-types",
-    "-i",
+    "--include-internal",
+    "-I",
     is_flag=True,
     help="Also list types that are only (or mostly) used internally.",
 )
@@ -40,13 +40,13 @@ def type_group(ctx):
 @output_format_option()
 @click.pass_context
 def list_types(
-    ctx, full_doc, include_internal_types: bool, filter: Iterable[str], format: str
+    ctx, full_doc, include_internal: bool, filter: Iterable[str], format: str
 ):
     """List available data_types (work in progress)."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    if not include_internal_types:
+    if not include_internal:
         type_classes: Dict[str, Type[DataType]] = {}
         for name, cls in kiara_obj.data_type_classes.items():
             lineage = kiara_obj.type_registry.get_type_lineage(name)

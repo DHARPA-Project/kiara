@@ -33,9 +33,9 @@ def data(ctx):
     default=False,
 )
 @click.option(
-    "--internal",
+    "--include-internal",
     "-I",
-    help="Also list values that are used mostly internally (e.g. metadata for other values, ...).",
+    help="Also list values that are used mostly internally (e.g. metadata for other values, ...). Implies 'all-ids' is 'True'.",
     is_flag=True,
 )
 @click.option(
@@ -75,7 +75,7 @@ def list_values(
     ctx,
     format,
     all_ids,
-    internal,
+    include_internal,
     show_value_id,
     show_pedigree,
     show_data,
@@ -85,6 +85,9 @@ def list_values(
     """List all data items that are stored in kiara."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
+
+    if include_internal:
+        all_ids = True
 
     if not all_ids:
         alias_registry = kiara_obj.alias_registry
@@ -117,7 +120,7 @@ def list_values(
     render_config = {
         "render_type": "terminal",
         "list_by_alias": list_by_alias,
-        "show_internal": internal,
+        "show_internal": include_internal,
         "render_fields": render_fields,
     }
 

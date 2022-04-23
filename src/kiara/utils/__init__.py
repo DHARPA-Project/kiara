@@ -203,9 +203,19 @@ def _import_modules_recursively(module: ModuleType):
 
     for submodule in iter_modules(module.__path__):  # type: ignore
 
-        submodule_mod = importlib.import_module(f"{module.__name__}.{submodule.name}")
-        if hasattr(submodule_mod, "__path__"):
-            _import_modules_recursively(submodule_mod)
+        try:
+            submodule_mod = importlib.import_module(
+                f"{module.__name__}.{submodule.name}"
+            )
+            if hasattr(submodule_mod, "__path__"):
+                _import_modules_recursively(submodule_mod)
+        except Exception as e:
+            logger.error(
+                "ignore.python_module",
+                module=f"{module.__name__}.{submodule.name}",
+                reason=str(e),
+                base_module=str(module),
+            )
 
 
 def check_valid_field_names(*field_names) -> List[str]:

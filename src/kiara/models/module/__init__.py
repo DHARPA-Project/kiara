@@ -333,8 +333,8 @@ class KiaraModuleClass(PythonClass):
             full_name = f"{item_cls.__module__}.{item_cls.__name__}"
 
         conf: Dict[str, Any] = {
-            "class_name": cls_name,
-            "module_name": module_name,
+            "python_class_name": cls_name,
+            "python_module_name": module_name,
             "full_name": full_name,
         }
 

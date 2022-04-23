@@ -32,8 +32,8 @@ class PythonClass(KiaraModel):
             full_name = f"{item_cls.__module__}.{item_cls.__name__}"
 
         conf: Dict[str, Any] = {
-            "class_name": cls_name,
-            "module_name": module_name,
+            "python_class_name": cls_name,
+            "python_module_name": module_name,
             "full_name": full_name,
         }
 
@@ -46,7 +46,7 @@ class PythonClass(KiaraModel):
         result._cls_cache = item_cls
         return result
 
-    class_name: str = Field(description="The name of the Python class.")
+    python_class_name: str = Field(description="The name of the Python class.")
     python_module_name: str = Field(
         description="The name of the Python module this class lives in."
     )
@@ -72,7 +72,7 @@ class PythonClass(KiaraModel):
 
         if self._cls_cache is None:
             m = self.get_python_module()
-            self._cls_cache = getattr(m, self.class_name)
+            self._cls_cache = getattr(m, self.python_class_name)
         return self._cls_cache
 
     def get_python_module(self) -> ModuleType:

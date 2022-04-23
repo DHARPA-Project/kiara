@@ -76,18 +76,15 @@ class CreateFromModule(KiaraModule):
             }
         }
 
-    def process(self, inputs: ValueMap, outputs: ValueMap):
+    def process(self, inputs: ValueMap, outputs: ValueMap) -> None:
 
         source_type = self.get_config_value("source_type")
         target_type = self.get_config_value("target_type")
 
-        value = inputs.get_value_obj(source_type)
-        render_config = inputs.get_value_data("render_config")
-
-        func_name = f"render__{source_type}__as__{target_type}"
-
+        func_name = f"create__{target_type}__from__{source_type}"
         func = getattr(self, func_name)
-        # TODO: check function signature is valid
-        result = func(value=value, render_config=render_config)
 
-        outputs.set_value("rendered_value", result)
+        source_value = inputs.get_value_obj(source_type)
+
+        result = func(source_value=source_value)
+        outputs.set_value(target_type, result)

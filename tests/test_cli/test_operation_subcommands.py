@@ -14,7 +14,7 @@ def test_operation_list_subcommand():
 
     result = runner.invoke(cli, "operation list")
 
-    assert "table.query.sql" in result.stdout
+    assert "logic.nand" in result.stdout
 
 
 def test_operation_list_by_group_subcommand():
@@ -28,10 +28,12 @@ def test_operation_list_by_group_subcommand():
 
 def test_operation_explain_subcommand():
 
-    runner = CliRunner()
+    os_env_vars = {"CONSOLE_WIDTH": "400"}
+    runner = CliRunner(env=os_env_vars)
 
     result = runner.invoke(cli, "operation explain logic.nand")
 
-    assert "A boolean describing this input state." in result.stdout
+    print(result.stdout)
+    assert "A boolean describing this input state" in result.stdout
     # assert "relation_name" in result.stdout
     # assert "Module metadata" in result.stdout

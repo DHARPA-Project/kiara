@@ -76,8 +76,8 @@ def list_types(ctx, full_doc, format: str, filter: typing.Iterable[str]):
     help="Display the full doc for all operations (when using 'terminal' as format).",
 )
 @click.option(
-    "--include-internal-operations",
-    "-i",
+    "--include-internal",
+    "-I",
     help="Whether to include operations that are mainly used internally.",
     is_flag=True,
 )
@@ -88,7 +88,7 @@ def list_operations(
     by_type: bool,
     filter: typing.Iterable[str],
     full_doc: bool,
-    include_internal_operations: bool,
+    include_internal: bool,
     format: str,
 ):
 
@@ -109,7 +109,7 @@ def list_operations(
                 temp[op_id] = op
         operations = temp
 
-    if not include_internal_operations:
+    if not include_internal:
         temp = {}
         for op_id, op in operations.items():
             if not op.operation_details.is_internal_operation:
@@ -125,7 +125,7 @@ def list_operations(
         ops_info,
         format=format,
         in_panel=title,
-        include_internal_operations=include_internal_operations,
+        include_internal_operations=include_internal,
         full_doc=full_doc,
         by_type=by_type,
     )

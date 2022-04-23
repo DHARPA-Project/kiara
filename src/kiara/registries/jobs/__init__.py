@@ -236,6 +236,7 @@ class JobRegistry(object):
 
         log = logger.bind(
             module_type=job_config.module_type,
+            module_config=job_config.module_config,
             inputs={k: str(v) for k, v in job_config.inputs.items()},
             job_hash=job_config.model_data_hash,
         )
@@ -244,7 +245,7 @@ class JobRegistry(object):
         if stored_job is not None:
             return stored_job
 
-        log.debug("job.execute", inputs=job_config.inputs)
+        log.debug("job.execute")
 
         job_id = self._processor.create_job(job_config=job_config)
         self._active_jobs[job_config.job_hash] = job_id

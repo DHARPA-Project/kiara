@@ -28,6 +28,16 @@ from kiara.utils import log_message
 
 logger = structlog.getLogger()
 
+FILE_BUNDLE_IMPORT_AVAILABLE_COLUMNS = [
+    "id",
+    "rel_path",
+    "import_time",
+    "mime_type",
+    "size",
+    "content",
+    "file_name",
+]
+
 
 class FileModel(KiaraModel):
     """Describes properties for the 'file' value type."""

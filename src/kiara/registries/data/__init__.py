@@ -816,10 +816,9 @@ class DataRegistry(object):
                 # )
                 values[input_name] = value
             except Exception as e:
-                if is_debug():
-                    import traceback
-
-                    traceback.print_exc()
+                log_message(
+                    "invalid.valueset", error_reason=str(e), input_name=input_name
+                )
                 failed[input_name] = e
 
         if failed:

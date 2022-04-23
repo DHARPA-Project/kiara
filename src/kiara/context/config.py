@@ -21,6 +21,7 @@ from kiara.defaults import (
     DEFAULT_CONTEXT_NAME,
     DEFAULT_DATA_STORE_MARKER,
     DEFAULT_JOB_STORE_MARKER,
+    KIARA_CONFIG_FILE_NAME,
     KIARA_MAIN_CONFIG_FILE,
     KIARA_MAIN_CONTEXTS_PATH,
     kiara_app_dirs,
@@ -32,13 +33,13 @@ from kiara.utils import get_data_from_file
 if TYPE_CHECKING:
     from kiara.context import Kiara
 
-yaml = r_yaml.YAML()
+yaml = r_yaml.YAML(typ="safe")
 yaml.default_flow_style = False
 
 
 def config_file_settings_source(settings: BaseSettings) -> Dict[str, Any]:
     if os.path.isfile(KIARA_MAIN_CONFIG_FILE):
-        config = get_data_from_file(KIARA_MAIN_CONFIG_FILE)
+        config = get_data_from_file(KIARA_MAIN_CONFIG_FILE, content_type="yaml")
         if not isinstance(config, Mapping):
             raise ValueError(
                 f"Invalid config file format, can't parse file: {KIARA_MAIN_CONFIG_FILE}"
@@ -155,20 +156,57 @@ class KiaraConfig(BaseSettings):
         env_prefix = "kiara_"
         extra = Extra.forbid
 
-        @classmethod
-        def customise_sources(
-            cls,
-            init_settings,
-            env_settings,
-            file_secret_settings,
-        ):
-            return (init_settings, env_settings, config_file_settings_source)
+        # @classmethod
+        # def customise_sources(
+        #     cls,
+        #     init_settings,
+        #     env_settings,
+        #     file_secret_settings,
+        # ):
+        #     return (init_settings, env_settings, config_file_settings_source)
+
+    @classmethod
+    def create_in_folder(cls, path: Path) -> "KiaraConfig":
+
+        if path.exists():
+            raise Exception(
+                f"Can't create new kiara config, path exists: {path.as_posix()}"
+            )
+
+        config = KiaraConfig(base_data_path=path)
+        config_file = path / KIARA_MAIN_CONFIG_FILE
+        config.save(config_file)
+
+        return config
+
+    @classmethod
+    def load_from_file(cls, path: Optional[Path] = None) -> "KiaraConfig":
+
+        if path is None:
+            path = Path(KIARA_MAIN_CONFIG_FILE)
+
+        if not path.exists():
+            raise Exception(
+                f"Can't load kiara config, path does not exist: {path.as_posix()}"
+            )
+
+        if path.is_dir():
+            path = path / KIARA_CONFIG_FILE_NAME
+            if not path.exists():
+                raise Exception(
+                    f"Can't load kiara config, path does not exist: {path.as_posix()}"
+                )
+
+        with path.open("rt") as f:
+            data = r_yaml.safe_load(f)
+
+        return KiaraConfig(**data)
 
     context_search_paths: List[str] = Field(
         description="The base path to look for contexts in.",
         default=[KIARA_MAIN_CONTEXTS_PATH],
     )
-    data_base_path: str = Field(
+    base_data_path: str = Field(
         description="The base path to use for all data (unless otherwise specified.",
         default=kiara_app_dirs.user_data_dir,
     )
@@ -186,6 +224,7 @@ class KiaraConfig(BaseSettings):
     _contexts: Dict[uuid.UUID, "Kiara"] = PrivateAttr(default_factory=dict)
     _available_context_files: Dict[str, Path] = PrivateAttr(default=None)
     _context_data: Dict[str, KiaraContextConfig] = PrivateAttr(default_factory=dict)
+    _config_path: Optional[Path] = PrivateAttr(default=None)
 
     @validator("context_search_paths")
     def validate_context_search_paths(cls, v):
@@ -198,10 +237,10 @@ class KiaraConfig(BaseSettings):
     @root_validator(pre=True)
     def _set_paths(cls, values: Any):
 
-        base_path = values.get("data_base_path", None)
+        base_path = values.get("base_data_path", None)
         if not base_path:
             base_path = kiara_app_dirs.user_data_dir
-            values["data_base_path"] = base_path
+            values["base_data_path"] = base_path
         elif isinstance(base_path, Path):
             base_path = base_path.as_posix()
 
@@ -318,6 +357,21 @@ class KiaraConfig(BaseSettings):
 
     def find_context_config(self, context_id: uuid.UUID) -> KiaraContextConfig:
         raise NotImplementedError()
+
+    def save(self, path: Optional[Path] = None):
+        if path is None:
+            path = Path(KIARA_MAIN_CONFIG_FILE)
+
+        if path.exists():
+            raise Exception(
+                f"Can't save config file, path already exists: {path.as_posix()}"
+            )
+
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("wt") as f:
+            r_yaml.dump(self.dict(), f)
+
+        self._config_path = path
 
 
 # class KiaraCurrentContextConfig(KiaraBaseConfig):

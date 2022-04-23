@@ -11,11 +11,14 @@
 import logging
 import rich_click as click
 import structlog
+import sys
+from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
-from kiara.context import Kiara
 from kiara.context.config import KiaraConfig
+from kiara.defaults import KIARA_CONFIG_FILE_NAME, KIARA_MAIN_CONFIG_FILE
 from kiara.utils import is_debug, is_develop, log_message
+from kiara.utils.cli import terminal_print
 
 from .context.commands import context
 from .data.commands import data
@@ -27,7 +30,7 @@ from .run import run
 from .service.commands import service
 from .type.commands import type_group
 
-click.rich_click.USE_MARKDOWN = True
+# click.rich_click.USE_MARKDOWN = True
 click.rich_click.USE_RICH_MARKUP = True
 
 # try:
@@ -50,22 +53,36 @@ else:
 
 
 @click.group()
-@click.option("--config", "-c", help="A kiara config or context file.", required=False)
 @click.option(
-    "--context-name", "-ctx", help="The kiara context to use.", required=False
+    "--config",
+    "-cnf",
+    help="A kiara config file (or folder containing one named 'kiara.config').",
+    required=False,
+)
+@click.option(
+    "--context",
+    "-ctx",
+    "-c",
+    help="The name of the kiara context to use (or the path to a context file).",
+    required=False,
 )
 @click.option(
     "--pipeline-folder",
     "-p",
-    help="Folder(s) that contain extra pipelines.",
+    help="Folder(s) that contain extra pipeline definitions.",
     multiple=True,
     required=False,
 )
 @click.pass_context
 def cli(
-    ctx, config: Optional[str], context_name: Optional[str], pipeline_folder: Tuple[str]
+    ctx, config: Optional[str], context: Optional[str], pipeline_folder: Tuple[str]
 ):
-    """Main cli entry-point, contains all the sub-commands."""
+    """[i b]kiara[/b i] ia a data-orchestration framework, this is the command-line frontend for it.
+
+
+
+    For more information, visit the [i][b]kiara[/b] homepage[/i]]: https://dharpa.org/kiara.documentation .
+    """
 
     ctx.obj = {}
     extra_context_config: Dict[str, Any] = {}
@@ -74,18 +91,48 @@ def cli(
 
     extra_context_config["create_context"] = False
 
-    kiara: Optional[Kiara] = None
+    kiara_config: Optional[KiaraConfig] = None
+    exists = False
+    create = False
     if config:
-        raise NotImplementedError()
-        # if config.endswith("kiara_context.yaml"):
-        #     kcc = KiaraCurrentContextConfig.load_context(config)
-        #     kiara = Kiara(config=kcc)
+        config_path = Path(config)
+        if config_path.exists():
+            if config_path.is_file():
+                config_file_path = config_path
+                exists = True
+            else:
+                config_file_path = config_path / KIARA_CONFIG_FILE_NAME
+                if config_file_path.exists():
+                    exists = True
 
-    if kiara is None:
+    else:
+        config_file_path = Path(KIARA_MAIN_CONFIG_FILE)
+        if not config_file_path.exists():
+            create = True
+            exists = False
+        else:
+            exists = True
+
+    if not exists:
+        if not create:
+            terminal_print()
+            terminal_print(
+                f"Can't create kiara context, specified config file does not exist: {config}."
+            )
+            sys.exit(1)
+
         kiara_config = KiaraConfig()
+        kiara_config.save(config_file_path)
 
-        kiara = kiara_config.create_context(context=context_name)
+    else:
+        kiara_config = KiaraConfig.load_from_file(config_file_path)
 
+    ctx.obj["kiara_config"] = kiara_config
+
+    if not context:
+        context = kiara_config.default_context
+
+    kiara = kiara_config.create_context(context=context)
     ctx.obj["kiara"] = kiara
 
 

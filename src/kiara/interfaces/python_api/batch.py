@@ -6,7 +6,7 @@
 import os
 import uuid
 from pydantic import BaseModel, Field, PrivateAttr, root_validator, validator
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
 
 from kiara import Kiara
 from kiara.interfaces.python_api.utils import create_save_config
@@ -21,6 +21,9 @@ if TYPE_CHECKING:
 
 
 class BatchOperation(BaseModel):
+    class Config:
+        validate_assignment = True
+
     @classmethod
     def from_file(
         cls,
@@ -73,7 +76,7 @@ class BatchOperation(BaseModel):
         description="The (base) inputs to use. Can be augmented before running the operation."
     )
 
-    save: Dict[str, List[str]] = Field(
+    save_defaults: Dict[str, List[str]] = Field(
         description="Configuration which values to save, under which alias(es).",
         default_factory=dict,
     )
@@ -95,15 +98,27 @@ class BatchOperation(BaseModel):
 
         return values
 
-    @validator("save", always=True, pre=True)
+    @validator("save_defaults", always=True, pre=True)
     def validate_save(cls, save, values):
 
         alias = values["alias"]
         pipeline_config = values["pipeline_config"]
+        return cls.create_save_aliases(
+            save=save, alias=alias, pipeline_config=pipeline_config
+        )
+
+    @classmethod
+    def create_save_aliases(
+        cls,
+        save: Union[bool, None, str, Mapping],
+        alias: str,
+        pipeline_config: PipelineConfig,
+    ) -> Mapping[str, Any]:
+
         assert isinstance(pipeline_config, PipelineConfig)
 
         if save in [False, None]:
-            save_new = {}
+            save_new: Dict[str, Any] = {}
         elif save is True:
             field_names = pipeline_config.structure.pipeline_outputs_schema.keys()
             save_new = create_save_config(field_names=field_names, aliases=alias)
@@ -111,9 +126,7 @@ class BatchOperation(BaseModel):
             field_names = pipeline_config.structure.pipeline_outputs_schema.keys()
             save_new = create_save_config(field_names=field_names, aliases=save)
         elif isinstance(save, Mapping):
-            save_new = save
-            field_names = pipeline_config.structure.pipeline_outputs_schema.keys()
-            save_new = create_save_config(field_names=field_names, aliases=save)
+            save_new = dict(save)
         else:
             raise ValueError(
                 f"Invalid type '{type(save)}' for 'save' attribute: must be None, bool, string or Mapping."
@@ -122,7 +135,9 @@ class BatchOperation(BaseModel):
         return save_new
 
     def run(
-        self, save: bool = False, inputs: Optional[Mapping[str, Any]] = None
+        self,
+        inputs: Optional[Mapping[str, Any]] = None,
+        save: Union[None, bool, str, Mapping[str, Any]] = None,
     ) -> ValueMap:
 
         pipeline = Pipeline(
@@ -144,7 +159,14 @@ class BatchOperation(BaseModel):
             pipeline.get_current_pipeline_outputs()
         )
 
-        if save:
-            self._kiara.save_values(values=result, alias_map=self.save)
+        if save is not None:
+            if save is True:
+                save = self.save_defaults
+            else:
+                save = self.__class__.create_save_aliases(
+                    save=save, alias=self.alias, pipeline_config=self.pipeline_config
+                )
+
+            self._kiara.save_values(values=result, alias_map=save)
 
         return result

@@ -21,6 +21,7 @@ import tempfile
 import uuid
 
 from kiara import Kiara
+from kiara.context.config import KiaraConfig
 from kiara.interfaces.python_api.batch import BatchOperation
 
 from .utils import INVALID_PIPELINES_FOLDER, MODULE_CONFIGS_FOLDER, PIPELINES_FOLDER
@@ -79,7 +80,8 @@ def kiara() -> Kiara:
     session_id = str(uuid.uuid4())
 
     instance_path = os.path.join(TEMP_DIR, f"instance_{session_id}")
-    kiara = Kiara.create_in_path(path=instance_path)
+    kc = KiaraConfig.create_in_folder(instance_path)
+    kiara = kc.create_context()
     return kiara
 
 
@@ -91,7 +93,9 @@ def presseeded_data_store_minimal() -> Kiara:
 
     pipeline_file = os.path.join(PIPELINES_FOLDER, "table_import.json")
 
-    kiara = Kiara.create_in_path(instance_path)
+    kc = KiaraConfig.create_in_folder(instance_path)
+
+    kiara = kc.create_context()
 
     batch_op = BatchOperation.from_file(pipeline_file, kiara=kiara)
 
@@ -101,7 +105,7 @@ def presseeded_data_store_minimal() -> Kiara:
         )
     }
 
-    batch_op.run(save="journal_nodes", inputs=inputs)
+    batch_op.run(inputs=inputs, save="preseed_minimal")
 
     return kiara
 
@@ -112,7 +116,8 @@ def preseeded_data_store() -> Kiara:
     session_id = str(uuid.uuid4())
 
     instance_path = os.path.join(TEMP_DIR, f"instance_{session_id}")
-    kiara = Kiara.create_in_path(instance_path)
+    kc = KiaraConfig.create_in_folder(instance_path)
+    kiara = kc.create_context()
 
     pipeline = os.path.join(PIPELINES_FOLDER, "test_preseed_1.yaml")
     batch_op = BatchOperation.from_file(pipeline, kiara=kiara)
@@ -126,7 +131,7 @@ def preseeded_data_store() -> Kiara:
         "label_column_name": "Label",
     }
 
-    batch_op.run(inputs=inputs, save="journals_data")
+    batch_op.run(inputs=inputs, save="preseed")
 
     print(f"kiara data store: {kiara.data_registry.get_archive()}")
 

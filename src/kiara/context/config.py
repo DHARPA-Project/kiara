@@ -33,7 +33,7 @@ from kiara.utils import get_data_from_file
 if TYPE_CHECKING:
     from kiara.context import Kiara
 
-yaml = r_yaml.YAML(typ="safe")
+yaml = r_yaml.YAML(typ="safe", pure=True)
 yaml.default_flow_style = False
 
 
@@ -136,6 +136,7 @@ class KiaraContextConfig(BaseSettings):
         description="Paths to local folders that contain kiara pipelines.",
         default_factory=list,
     )
+    _context_config_path: Optional[Path] = PrivateAttr(default=None)
 
     # ignore_errors: bool = Field(
     #     description="If set, kiara will try to ignore most errors (that can be ignored).",
@@ -166,15 +167,18 @@ class KiaraConfig(BaseSettings):
         #     return (init_settings, env_settings, config_file_settings_source)
 
     @classmethod
-    def create_in_folder(cls, path: Path) -> "KiaraConfig":
+    def create_in_folder(cls, path: Union[Path, str]) -> "KiaraConfig":
 
+        if isinstance(path, str):
+            path = Path(path)
         if path.exists():
             raise Exception(
                 f"Can't create new kiara config, path exists: {path.as_posix()}"
             )
 
         config = KiaraConfig(base_data_path=path)
-        config_file = path / KIARA_MAIN_CONFIG_FILE
+        config_file = path / KIARA_CONFIG_FILE_NAME
+
         config.save(config_file)
 
         return config
@@ -198,7 +202,7 @@ class KiaraConfig(BaseSettings):
                 )
 
         with path.open("rt") as f:
-            data = r_yaml.safe_load(f)
+            data = yaml.load(f)
 
         return KiaraConfig(**data)
 
@@ -243,11 +247,17 @@ class KiaraConfig(BaseSettings):
             values["base_data_path"] = base_path
         elif isinstance(base_path, Path):
             base_path = base_path.as_posix()
+            values["base_data_path"] = base_path
 
         stores_base_path = values.get("stores_base_path", None)
         if not stores_base_path:
             stores_base_path = os.path.join(base_path, "stores")
             values["stores_base_path"] = stores_base_path
+
+        context_search_paths = values.get("context_search_paths")
+        if not context_search_paths:
+            context_search_paths = [os.path.join(base_path, "contexts")]
+            values["context_search_paths"] = context_search_paths
 
         return values
 
@@ -290,6 +300,8 @@ class KiaraConfig(BaseSettings):
         context_data = get_data_from_file(context_file, content_type="yaml")
 
         context = KiaraContextConfig(**context_data)
+        context._context_config_path = context_file
+
         self._context_data[context_alias] = context
         return context
 
@@ -302,6 +314,11 @@ class KiaraConfig(BaseSettings):
         if context_alias in self.available_context_names:
             raise Exception(
                 f"Can't create kiara context '{context_alias}': context with that alias already registered."
+            )
+
+        if os.path.sep in context_alias:
+            raise Exception(
+                f"Can't create context with alias '{context_alias}': no special characters allowed."
             )
 
         context_file = (
@@ -321,12 +338,16 @@ class KiaraConfig(BaseSettings):
         with open(context_file, "wt") as f:
             yaml.dump(context_config.dict(), f)
 
+        context_config._context_config_path = context_file
+
         self._available_context_files[context_alias] = context_file
         self._context_data[context_alias] = context_config
 
         return context_config
 
-    def create_context(self, context: Union[None, str, uuid.UUID] = None) -> "Kiara":
+    def create_context(
+        self, context: Union[None, str, uuid.UUID, Path] = None
+    ) -> "Kiara":
 
         if not context:
             context = DEFAULT_CONTEXT_NAME
@@ -336,13 +357,20 @@ class KiaraConfig(BaseSettings):
             except Exception:
                 pass
 
-        if isinstance(context, uuid.UUID):
-            context_config = self.find_context_config(context_id=context)
+        if isinstance(context, str) and os.path.exists(context):
+            context = Path(context)
+
+        if isinstance(context, Path):
+            with context.open("rt") as f:
+                data = yaml.load(f)
+            context_config = KiaraContextConfig(**data)
         elif isinstance(context, str):
             context_config = self.get_context_config(context_alias=context)
+        elif isinstance(context, uuid.UUID):
+            context_config = self.find_context_config(context_id=context)
         else:
             raise Exception(
-                f"Can't retrieve context, invalid query type '{type(context)}'."
+                f"Can't retrieve context, invalid context config type '{type(context)}'."
             )
 
         assert context_config.context_id not in self._contexts.keys()
@@ -368,8 +396,9 @@ class KiaraConfig(BaseSettings):
             )
 
         path.parent.mkdir(parents=True, exist_ok=True)
+
         with path.open("wt") as f:
-            r_yaml.dump(self.dict(), f)
+            yaml.dump(self.dict(), f)
 
         self._config_path = path
 

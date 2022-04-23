@@ -19,70 +19,62 @@ def test_data_subcommand():
     assert "Print the metadata" in result.stdout
 
 
+def _run_command(kiara_ctx: Kiara, cmd):
+
+    config_path = kiara_ctx.context_config._context_config_path
+
+    cmd = f"--context {config_path} {cmd}"
+    print(f"Running command:\n\nkiara {cmd}")
+
+    runner = CliRunner()
+    result = runner.invoke(cli, cmd)
+    return result
+
+
 def test_data_list_subcommand(presseeded_data_store_minimal: Kiara):
 
-    # dbg(presseeded_data_store_minimal.context_config.dict())
-    runner = CliRunner()
-    result = runner.invoke(
-        cli,
-        "data list --all",
-        env={"KIARA_DATA_STORE": presseeded_data_store_minimal.config.data_store},
-    )
+    command = "data list --all-ids --format json"
+    result = _run_command(kiara_ctx=presseeded_data_store_minimal, cmd=command)
 
     assert result.exit_code == 0
-    # assert "journal_nodes_table" in result.stdout
-    assert "journal_nodes@1" in result.stdout
+    assert "preseed_minimal.create_table_from_files__table" in result.stdout
 
 
-#
-#
-# def test_data_load_subcommand(presseeded_data_store_minimal: Kiara):
-#
-#     runner = CliRunner()
-#     result = runner.invoke(
-#         cli,
-#         "data load journal_nodes",
-#         env={"KIARA_DATA_STORE": presseeded_data_store_minimal.config.data_store},
-#     )
-#
-#     # assert "Psychiatrische en neurologische bladen" in result.stdout
-#     assert "City" in result.stdout
-#
-#
-# def test_data_explain_subcommand(presseeded_data_store_minimal: Kiara):
-#
-#     runner = CliRunner()
-#     result = runner.invoke(
-#         cli,
-#         "data explain journal_nodes",
-#         env={"KIARA_DATA_STORE": presseeded_data_store_minimal.config.data_store},
-#     )
-#
-#     assert "Latitude" in result.stdout
-#     assert "type_name" in result.stdout
+def test_data_load_subcommand(presseeded_data_store_minimal: Kiara):
+
+    cmd = "data load alias:preseed_minimal.import_file__file"
+    result = _run_command(kiara_ctx=presseeded_data_store_minimal, cmd=cmd)
+
+    assert "Psychiatrische en neurologische bladen" in result.stdout
+    assert "City" in result.stdout
 
 
-# async def test_data_explain_subcommand(presseeded_data_store: Kiara):
-#
-#     runner = CliRunner()
-#     result = await runner.invoke(
-#         cli,
-#         "data explain journal_nodes",
-#         env={"KIARA_DATA_STORE": presseeded_data_store.config.data_store},
-#     )
-#     assert result.exit_code == 0
-#
-#     assert "table" in result.stdout
-#
-#
-# async def test_data_load_subcommand(presseeded_data_store: Kiara):
-#
-#     runner = CliRunner()
-#     result = await runner.invoke(
-#         cli,
-#         "data load journal_nodes",
-#         env={"KIARA_DATA_STORE": presseeded_data_store.config.data_store},
-#     )
-#     assert result.exit_code == 0
-#     assert "Id" in result.stdout
-#     assert "City" in result.stdout
+def test_data_explain_subcommand(presseeded_data_store_minimal: Kiara):
+
+    cmd = "data explain alias:preseed_minimal.create_table_from_files__table -p"
+
+    result = _run_command(kiara_ctx=presseeded_data_store_minimal, cmd=cmd)
+
+    assert "Latitude" in result.stdout
+    assert "type_name" in result.stdout
+
+
+def test_data_explain_subcommand_2(preseeded_data_store: Kiara):
+
+    cmd = "data explain alias:preseed.journal_nodes_table"
+
+    result = _run_command(kiara_ctx=preseeded_data_store, cmd=cmd)
+
+    assert result.exit_code == 0
+
+    assert "table" in result.stdout
+
+
+def test_data_load_subcommand_3(preseeded_data_store: Kiara):
+
+    cmd = "data load alias:preseed.journal_nodes_table"
+    result = _run_command(kiara_ctx=preseeded_data_store, cmd=cmd)
+
+    assert result.exit_code == 0
+    assert "Id" in result.stdout
+    assert "City" in result.stdout

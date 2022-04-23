@@ -186,6 +186,10 @@ class ValueInfo(Value):
 
 
 class ValuesInfo(BaseModel):
+    class Config:
+        json_loads = orjson.loads
+        json_dumps = orjson_dumps
+
     @classmethod
     def create_from_values(cls, kiara: "Kiara", *values: Union[Value, uuid.UUID]):
 

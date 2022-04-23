@@ -214,7 +214,7 @@ def calculate_class_source_url(
     m_file = m.__file__
     assert m_file is not None
 
-    base_url = f"{base_url}/blob/{branch}/src/{python_class_info.module_name.replace('.', '/')}"
+    base_url = f"{base_url}/blob/{branch}/src/{python_class_info.python_module_name.replace('.', '/')}"
 
     if m_file.endswith("__init__.py"):
         url = f"{base_url}/__init__.py"

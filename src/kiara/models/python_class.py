@@ -25,6 +25,7 @@ class PythonClass(KiaraModel):
 
         cls_name = item_cls.__name__
         module_name = item_cls.__module__
+
         if module_name == "builtins":
             full_name = cls_name
         else:
@@ -37,6 +38,7 @@ class PythonClass(KiaraModel):
         }
 
         if attach_context_metadata:
+            raise NotImplementedError()
             ctx_md = ContextMetadataModel.from_class(item_cls=item_cls)
             conf["items"] = ctx_md
 
@@ -45,7 +47,7 @@ class PythonClass(KiaraModel):
         return result
 
     class_name: str = Field(description="The name of the Python class.")
-    module_name: str = Field(
+    python_module_name: str = Field(
         description="The name of the Python module this class lives in."
     )
     full_name: str = Field(description="The full class namespace.")
@@ -75,5 +77,5 @@ class PythonClass(KiaraModel):
 
     def get_python_module(self) -> ModuleType:
         if self._module_cache is None:
-            self._module_cache = importlib.import_module(self.module_name)
+            self._module_cache = importlib.import_module(self.python_module_name)
         return self._module_cache

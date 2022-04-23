@@ -111,7 +111,7 @@ def output_format_option(*param_decls: str) -> Callable[[FC], FC]:
 def render_json_str(model: BaseModel):
 
     try:
-        json_str = model.json(option=orjson.OPT_INDENT_2)
+        json_str = model.json(option=orjson.OPT_INDENT_2 | orjson.OPT_NON_STR_KEYS)
     except TypeError:
         json_str = model.json(indent=2)
 

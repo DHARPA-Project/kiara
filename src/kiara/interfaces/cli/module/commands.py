@@ -23,7 +23,7 @@ from kiara.utils.cli import output_format_option, terminal_print_model
 @click.group()
 @click.pass_context
 def module(ctx):
-    """Module-related sub-commands.."""
+    """Module-related sub-commands."""
 
 
 @module.command(name="list")

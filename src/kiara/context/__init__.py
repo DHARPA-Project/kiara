@@ -22,7 +22,7 @@ from typing import (
     Union,
 )
 
-from kiara.context.config import KiaraContextConfig
+from kiara.context.config import KiaraConfig, KiaraContextConfig
 from kiara.data_types import DataType
 from kiara.defaults import (
     CONTEXT_INFO_CATEGORY_ID,
@@ -162,7 +162,8 @@ class Kiara(object):
     def __init__(self, config: Optional[KiaraContextConfig] = None):
 
         if not config:
-            raise NotImplementedError()
+            kc = KiaraConfig()
+            config = kc.get_context_config()
 
         self._id: uuid.UUID = ID_REGISTRY.generate(
             id=uuid.UUID(config.context_id), obj=self

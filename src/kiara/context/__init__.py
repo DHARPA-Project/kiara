@@ -109,56 +109,6 @@ class Kiara(object):
             cls._instance = Kiara()
         return cls._instance
 
-    # @classmethod
-    # def create_in_path(cls, path: Union[str, Path], context_name: Optional[str]=None):
-    #
-    #     config = KiaraConfig(base_path=path)
-    #     return cls.create(config=config, context_name=context_name)
-
-    # @classmethod
-    # def create(
-    #     cls,
-    #     config: Union[None, str, Path, KiaraConfig] = None,
-    #     context_name: Optional[str] = None,
-    #     **extra_context_args: Any,
-    # ) -> "Kiara":
-    #
-    #     if config is None:
-    #         config = KiaraConfig()
-    #     elif isinstance(config, str):
-    #         if os.path.isfile(config):
-    #             config_data = get_data_from_file(config)
-    #             if not isinstance(config_data, Mapping):
-    #                 raise ValueError(
-    #                     f"Invalid config file format, can't parse file: {config}"
-    #                 )
-    #             config = KiaraConfig(**config_data)
-    #         else:
-    #             raise Exception(
-    #                 f"Can't read kiara config from file, file does not exist: {config}"
-    #             )
-    #     elif isinstance(config, Path):
-    #         if config.is_file():
-    #             config_data = get_data_from_file(config)
-    #             if not isinstance(config_data, Mapping):
-    #                 raise ValueError(
-    #                     f"Invalid config file format, can't parse file: {config}"
-    #                 )
-    #             config = KiaraConfig(**config_data)
-    #         else:
-    #             raise Exception(
-    #                 f"Can't read kiara config from file, file does not exist: {config.as_posix()}"
-    #             )
-    #     elif isinstance(config, Mapping):
-    #         config = KiaraConfig(**config)
-    #     elif not isinstance(config, KiaraConfig):
-    #         raise Exception(
-    #             f"Can't create kiara context instance, invalid config type: {type(config)}"
-    #         )
-    #
-    #     context = config.create_context(context_name=context_name, **extra_context_args)
-    #     return context
-
     def __init__(self, config: Optional[KiaraContextConfig] = None):
 
         if not config:

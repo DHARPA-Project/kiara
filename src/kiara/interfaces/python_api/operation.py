@@ -116,6 +116,12 @@ class KiaraOperation(object):
 
         return
 
+    def run(self, **inputs: Any) -> ValueMap:
+
+        job_id = self.queue_job(**inputs)
+        results = self.retrieve_result(job_id=job_id)
+        return results
+
     @property
     def operation_name(self) -> str:
         return self._operation_name
@@ -239,18 +245,21 @@ class KiaraOperation(object):
         )
         return self._job_config
 
-    def queue_job(self) -> uuid.UUID:
+    def queue_job(self, **inputs) -> uuid.UUID:
+
+        if inputs:
+            self.set_inputs(**inputs)
 
         job_config = self.job_config
         operation = self.operation
-        inputs = self.operation_inputs
+        op_inputs = self.operation_inputs
 
         job_id = self._kiara.job_registry.execute_job(job_config=job_config, wait=False)
 
         self._queued_jobs[job_id] = {
             "job_config": job_config,
             "operation": operation,
-            "inputs": inputs,
+            "inputs": op_inputs,
         }
         self._last_job = job_id
         return job_id

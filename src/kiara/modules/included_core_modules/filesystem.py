@@ -6,19 +6,12 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import os
 from dateutil import parser
-from typing import Any, Dict, List, Mapping, Tuple, Union
 
 from kiara import KiaraModule
-from kiara.defaults import LOAD_CONFIG_PLACEHOLDER
 from kiara.models.filesystem import FileBundle, FileModel
-from kiara.models.module.persistence import (
-    ByteProvisioningStrategy,
-    BytesStructure,
-    LoadConfig,
-)
-from kiara.models.values.value import Value, ValueMap
+from kiara.models.module.persistence import BytesStructure
+from kiara.models.values.value import ValueMap
 from kiara.modules import ModuleCharacteristics, ValueSetSchema
-from kiara.modules.included_core_modules.persistence import PersistValueModule
 
 
 class ImportFileModule(KiaraModule):
@@ -97,43 +90,43 @@ class LoadFileFromStoreModule(KiaraModule):
         outputs.set_value("file", file)
 
 
-class SaveFileToStoreModule(PersistValueModule):
-
-    _module_type_name = "file.save_to_data_store"
-
-    def get_persistence_target_name(self) -> str:
-        return "data_store"
-
-    def get_persistence_format_name(self) -> str:
-        return "file"
-
-    def data_type__file(
-        self, value: Value, persistence_config: Mapping[str, Any]
-    ) -> Tuple[LoadConfig, BytesStructure]:
-        """Persist single files into a local kiara data store."""
-
-        file: FileModel = value.data
-
-        bytes_structure_data: Mapping[str, List[Union[str, bytes]]] = {
-            file.file_name: [file.path]
-        }
-        bytes_structure = BytesStructure.construct(
-            data_type="file", data_type_config={}, chunk_map=bytes_structure_data
-        )
-
-        load_config_data = {
-            "provisioning_strategy": ByteProvisioningStrategy.FILE_PATH_MAP,
-            "module_type": "load.file.from_data_store",
-            "inputs": {
-                "file_name": file.file_name,
-                "import_time": str(file.import_time),
-                "bytes_structure": LOAD_CONFIG_PLACEHOLDER,
-            },
-            "output_name": "file",
-        }
-
-        load_config = LoadConfig(**load_config_data)
-        return load_config, bytes_structure
+# class SaveFileToStoreModule(PersistValueModule):
+#
+#     _module_type_name = "file.save_to_data_store"
+#
+#     def get_persistence_target_name(self) -> str:
+#         return "data_store"
+#
+#     def get_persistence_format_name(self) -> str:
+#         return "file"
+#
+#     def data_type__file(
+#         self, value: Value, persistence_config: Mapping[str, Any]
+#     ) -> Tuple[LoadConfig, BytesStructure]:
+#         """Persist single files into a local kiara data store."""
+#
+#         file: FileModel = value.data
+#
+#         bytes_structure_data: Mapping[str, List[Union[str, bytes]]] = {
+#             file.file_name: [file.path]
+#         }
+#         bytes_structure = BytesStructure.construct(
+#             data_type="file", data_type_config={}, chunk_map=bytes_structure_data
+#         )
+#
+#         load_config_data = {
+#             "provisioning_strategy": ByteProvisioningStrategy.FILE_PATH_MAP,
+#             "module_type": "load.file.from_data_store",
+#             "inputs": {
+#                 "file_name": file.file_name,
+#                 "import_time": str(file.import_time),
+#                 "bytes_structure": LOAD_CONFIG_PLACEHOLDER,
+#             },
+#             "output_name": "file",
+#         }
+#
+#         load_config = LoadConfig(**load_config_data)
+#         return load_config, bytes_structure
 
 
 class ImportFileBundleModule(KiaraModule):
@@ -213,43 +206,43 @@ class LoadFileBundleFromStoreModule(KiaraModule):
         outputs.set_value("file_bundle", file_bundle)
 
 
-class SaveFileBundleToStoreModule(PersistValueModule):
-
-    _module_type_name = "file_bundle.save_to_data_store"
-
-    def get_persistence_target_name(self) -> str:
-        return "data_store"
-
-    def get_persistence_format_name(self) -> str:
-        return "file_bundle"
-
-    def data_type__file_bundle(
-        self, value: Value, persistence_config: Mapping[str, Any]
-    ) -> Tuple[LoadConfig, BytesStructure]:
-        """Persist single files into a local kiara data store."""
-
-        file_bundle: FileBundle = value.data
-
-        bytes_structure_data: Dict[str, List[Union[str, bytes]]] = {}
-
-        for rel_path, file_model in file_bundle.included_files.items():
-            bytes_structure_data[rel_path] = [file_model.path]
-
-        bytes_structure = BytesStructure.construct(
-            data_type="file_bundle", data_type_config={}, chunk_map=bytes_structure_data
-        )
-
-        load_config_data = {
-            "provisioning_strategy": ByteProvisioningStrategy.LINK_FOLDER,
-            "module_type": "load.file_bundle.from_data_store",
-            "inputs": {
-                "inline_data": LOAD_CONFIG_PLACEHOLDER,
-                "path": LOAD_CONFIG_PLACEHOLDER,
-                "bytes_structure": LOAD_CONFIG_PLACEHOLDER,
-            },
-            "inline_data": file_bundle.dict(),
-            "output_name": "file_bundle",
-        }
-
-        load_config = LoadConfig(**load_config_data)
-        return load_config, bytes_structure
+# class SaveFileBundleToStoreModule(PersistValueModule):
+#
+#     _module_type_name = "file_bundle.save_to_data_store"
+#
+#     def get_persistence_target_name(self) -> str:
+#         return "data_store"
+#
+#     def get_persistence_format_name(self) -> str:
+#         return "file_bundle"
+#
+#     def data_type__file_bundle(
+#         self, value: Value, persistence_config: Mapping[str, Any]
+#     ) -> Tuple[LoadConfig, BytesStructure]:
+#         """Persist single files into a local kiara data store."""
+#
+#         file_bundle: FileBundle = value.data
+#
+#         bytes_structure_data: Dict[str, List[Union[str, bytes]]] = {}
+#
+#         for rel_path, file_model in file_bundle.included_files.items():
+#             bytes_structure_data[rel_path] = [file_model.path]
+#
+#         bytes_structure = BytesStructure.construct(
+#             data_type="file_bundle", data_type_config={}, chunk_map=bytes_structure_data
+#         )
+#
+#         load_config_data = {
+#             "provisioning_strategy": ByteProvisioningStrategy.LINK_FOLDER,
+#             "module_type": "load.file_bundle.from_data_store",
+#             "inputs": {
+#                 "inline_data": LOAD_CONFIG_PLACEHOLDER,
+#                 "path": LOAD_CONFIG_PLACEHOLDER,
+#                 "bytes_structure": LOAD_CONFIG_PLACEHOLDER,
+#             },
+#             "inline_data": file_bundle.dict(),
+#             "output_name": "file_bundle",
+#         }
+#
+#         load_config = LoadConfig(**load_config_data)
+#         return load_config, bytes_structure

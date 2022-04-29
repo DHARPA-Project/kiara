@@ -270,7 +270,11 @@ class JobRegistry(object):
                 raise Exception(
                     f"Can't retrieve active job with id '{job_id}': job is archived."
                 )
+            elif job_id in self._processor._failed_jobs.keys():
+                job = self._processor.get_job(job_id)
+                raise Exception(f"Job failed: {job.error}")
             else:
+                dbg(self._processor.__dict__)
                 raise Exception(f"Can't retrieve job with id '{job_id}': no such job.")
 
     def get_job_status(self, job_id: uuid.UUID) -> JobStatus:
@@ -292,10 +296,15 @@ class JobRegistry(object):
         if job_id not in self._archived_records.keys():
             self._processor.wait_for(job_id)
 
-        job_record = self._archived_records[job_id]
-
-        results = self._kiara.data_registry.load_values(job_record.outputs)
-        return results
+        if job_id in self._archived_records.keys():
+            job_record = self._archived_records[job_id]
+            results = self._kiara.data_registry.load_values(job_record.outputs)
+            return results
+        elif job_id in self._failed_jobs.values():
+            j = self._processor.get_job(job_id=job_id)
+            raise Exception(f"Job failed: {j.error}")
+        else:
+            raise Exception(f"Could not find job with id: {job_id}")
 
     def execute_and_retrieve(
         self, manifest: Manifest, inputs: Mapping[str, Any]

@@ -69,6 +69,12 @@ def data(ctx):
 @click.option(
     "--show-load-config", "-l", help="Display this values' load config.", is_flag=True
 )
+@click.option(
+    "--show-serialize-details",
+    "-s",
+    help="Display serialization details for this value.",
+    is_flag=True,
+)
 @output_format_option()
 @click.pass_context
 def list_values(
@@ -81,6 +87,7 @@ def list_values(
     show_data,
     show_load_config,
     show_type_config,
+    show_serialize_details,
 ):
     """List all data items that are stored in kiara."""
 
@@ -114,6 +121,8 @@ def list_values(
         render_fields.append("pedigree")
     if show_load_config:
         render_fields.append("load_config")
+    if show_serialize_details:
+        render_fields.append("serialize_details")
 
     values_info_model = ValuesInfo.create_from_values(kiara_obj, *value_ids)
 

@@ -11,6 +11,7 @@ from kiara.models.module.operation import (
 )
 from kiara.models.values.value import Value, ValueMap
 from kiara.modules import ValueSetSchema
+from kiara.modules.included_core_modules.create_from import CreateFromModule
 from kiara.operations import OperationType
 from kiara.utils import is_debug
 
@@ -124,6 +125,9 @@ class CreateFromOperationType(OperationType[CreateValueFromDetails]):
     def check_matching_operation(
         self, module: "KiaraModule"
     ) -> Optional[CreateValueFromDetails]:
+
+        if not isinstance(module, CreateFromModule):
+            return None
 
         source_type = None
         for field_name, schema in module.inputs_schema.items():

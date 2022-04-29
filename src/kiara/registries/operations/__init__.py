@@ -197,6 +197,12 @@ class OperationRegistry(object):
 
                     for op_type_name, _op in ops.items():
                         if _op.operation_id in operations.keys():
+                            logger.debug(
+                                "duplicate_operation_id",
+                                op_id=_op.operation_id,
+                                left_module=operations[_op.operation_id].module_type,
+                                right_module=_op.module_type,
+                            )
                             raise Exception(
                                 f"Duplicate operation id: {_op.operation_id}"
                             )

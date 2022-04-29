@@ -12,7 +12,6 @@ from typing import Any, Mapping, Optional, Type
 
 from kiara.data_types import DataTypeConfig
 from kiara.data_types.included_core_types import AnyType, KiaraModelValueType
-from kiara.defaults import KIARA_HASH_FUNCTION
 from kiara.models.filesystem import FileBundle, FileModel
 from kiara.models.values.value import Value
 
@@ -48,16 +47,6 @@ class FileValueType(KiaraModelValueType[FileModel, FileTypeConfig]):
     @classmethod
     def data_type_config_class(cls) -> Type[FileTypeConfig]:
         return FileTypeConfig
-
-    @classmethod
-    def value_class(cls) -> Type[Value]:
-        return Value
-
-    def calculate_size(self, data: FileModel) -> int:
-        return data.size
-
-    def calculate_hash(self, data: FileModel) -> int:
-        return KIARA_HASH_FUNCTION(data.file_hash)
 
     def create_model_from_python_obj(self, data: Any) -> FileModel:
 
@@ -145,16 +134,6 @@ class FileBundleValueType(AnyType[FileBundle, FileTypeConfig]):
     @classmethod
     def data_type_config_class(cls) -> Type[FileTypeConfig]:
         return FileTypeConfig
-
-    @classmethod
-    def value_class(cls) -> Type[Value]:
-        return Value
-
-    def calculate_size(self, data: FileBundle) -> int:
-        return data.size
-
-    def calculate_hash(self, data: FileBundle) -> int:
-        return data.file_bundle_hash
 
     def create_model_from_python_obj(self, data: Any) -> FileBundle:
 

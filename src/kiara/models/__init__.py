@@ -234,7 +234,12 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
 
     def __repr__(self):
 
-        return f"{self.__class__.__name__}(model_id={self.model_id}, category={self.category_id}, fields=[{', '.join(self.__fields__.keys())}])"
+        try:
+            model_id = self.model_id
+        except Exception:
+            model_id = "-- n/a --"
+
+        return f"{self.__class__.__name__}(model_id={model_id}, category={self.category_id}, fields=[{', '.join(self.__fields__.keys())}])"
 
     def __str__(self):
         return self.__repr__()

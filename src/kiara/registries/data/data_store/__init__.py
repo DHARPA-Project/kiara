@@ -21,14 +21,9 @@ from typing import (
     Union,
 )
 
-from kiara.models.module.persistence import (
-    ByteProvisioningStrategy,
-    BytesAliasStructure,
-    BytesStructure,
-    LoadConfig,
-)
+from kiara.models.module.persistence import BytesStructure
 from kiara.models.runtime_environment import RuntimeEnvironment
-from kiara.models.values.value import Value, ValuePedigree
+from kiara.models.values.value import LoadConfig, PersistedValue, Value, ValuePedigree
 from kiara.models.values.value_schema import ValueSchema
 from kiara.registries import ARCHIVE_CONFIG_CLS, BaseArchive
 
@@ -50,10 +45,12 @@ class DataArchive(BaseArchive):
 
         self._env_cache: Dict[str, Dict[int, Mapping[str, Any]]] = {}
         self._value_cache: Dict[uuid.UUID, Value] = {}
-        self._load_config_cache: Dict[uuid.UUID, LoadConfig] = {}
+        self._persisted_value_cache: Dict[uuid.UUID, PersistedValue] = {}
         self._value_hash_index: Dict[int, Set[uuid.UUID]] = {}
 
-    def retrieve_load_config(self, value: Union[uuid.UUID, Value]) -> LoadConfig:
+    def retrieve_serialized_value(
+        self, value: Union[uuid.UUID, Value]
+    ) -> PersistedValue:
 
         if isinstance(value, Value):
             value_id: uuid.UUID = value.value_id
@@ -62,20 +59,20 @@ class DataArchive(BaseArchive):
             value_id = value
             _value = None
 
-        if value_id in self._load_config_cache.keys():
-            return self._load_config_cache[value_id]
+        if value_id in self._persisted_value_cache.keys():
+            return self._persisted_value_cache[value_id]
 
         if _value is None:
             _value = self.retrieve_value(value_id)
 
         assert _value is not None
 
-        load_config = self._retrieve_load_config(value=_value)
-        self._load_config_cache[_value.value_id] = load_config
-        return load_config
+        persisted_value = self._retrieve_serialized_value(value=_value)
+        self._persisted_value_cache[_value.value_id] = persisted_value
+        return persisted_value
 
     @abc.abstractmethod
-    def _retrieve_load_config(self, value: Value) -> LoadConfig:
+    def _retrieve_serialized_value(self, value: Value) -> PersistedValue:
         pass
 
     def retrieve_value(self, value_id: uuid.UUID) -> Value:
@@ -211,7 +208,12 @@ class DataArchive(BaseArchive):
         pass
 
     @abc.abstractmethod
-    def retrieve_bytes(self, chunk_id: str, as_bytes: bool = True) -> Union[bytes, str]:
+    def retrieve_chunk(
+        self,
+        chunk_id: str,
+        as_file: Union[bool, str, None] = None,
+        symlink_ok: bool = True,
+    ) -> Union[bytes, str]:
         pass
 
     # def retrieve_job_record(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
@@ -244,12 +246,12 @@ class DataStore(DataArchive):
 
 
 class BaseDataStore(DataStore):
-    @abc.abstractmethod
-    def _persist_bytes(self, bytes_structure: BytesStructure) -> BytesAliasStructure:
-        pass
+    # @abc.abstractmethod
+    # def _persist_bytes(self, bytes_structure: BytesStructure) -> BytesAliasStructure:
+    #     pass
 
     @abc.abstractmethod
-    def _persist_load_config(self, value: Value, load_config: LoadConfig):
+    def _persist_stored_value_info(self, value: Value, persisted_value: PersistedValue):
         pass
 
     @abc.abstractmethod
@@ -280,7 +282,7 @@ class BaseDataStore(DataStore):
     def _persist_destiny_backlinks(self, value: Value):
         pass
 
-    def store_value(self, value: Value) -> LoadConfig:
+    def store_value(self, value: Value) -> PersistedValue:
 
         logger.debug(
             "store.value",
@@ -301,8 +303,8 @@ class BaseDataStore(DataStore):
             self.persist_environment(env)
 
         # save the value data and metadata
-        load_config = self._persist_value(value)
-        self._load_config_cache[value.value_id] = load_config
+        persisted_value = self._persist_value(value)
+        self._persisted_value_cache[value.value_id] = persisted_value
         self._value_cache[value.value_id] = value
         self._value_hash_index.setdefault(value.value_hash, set()).add(value.value_id)
 
@@ -310,44 +312,30 @@ class BaseDataStore(DataStore):
         # then, make sure the manifest is persisted
         self._persist_value_pedigree(value=value)
 
-        return load_config
+        return persisted_value
 
-    def _persist_value(self, value: Value) -> LoadConfig:
+    def _persist_value(self, value: Value) -> PersistedValue:
 
         # TODO: check if value id is already persisted?
-        load_config, bytes_structure = self._persist_value_data(value=value)
+        persisted_value_info: PersistedValue = self._persist_value_data(value=value)
 
-        if not load_config:
+        if not persisted_value_info:
             raise Exception(
-                "Can't write load config, no load config returned when persisting value."
+                "Can't write persisted value info, no load config returned when persisting value."
             )
-        if not isinstance(load_config, LoadConfig):
+        if not isinstance(persisted_value_info, PersistedValue):
             raise Exception(
-                f"Can't write load config, invalid result type '{type(load_config)}' when persisting value."
-            )
-
-        if (
-            load_config.provisioning_strategy != ByteProvisioningStrategy.INLINE
-            and not bytes_structure
-        ):
-            raise Exception(
-                "Can't write load config, no bytes structure returned when persisting value."
+                f"Can't write persisted value info, invalid result type '{type(persisted_value_info)}' when persisting value."
             )
 
-        if bytes_structure and not isinstance(bytes_structure, BytesStructure):
-            raise Exception(
-                f"Can't write load config, invalid result bytes structure type '{type(bytes_structure)}' when persisting value."
-            )
-
-        if bytes_structure:
-            alias_structure = self._persist_bytes(bytes_structure=bytes_structure)
-            load_config.bytes_map = alias_structure
-        self._persist_load_config(value=value, load_config=load_config)
+        self._persist_stored_value_info(
+            value=value, persisted_value=persisted_value_info
+        )
         self._persist_value_details(value=value)
         if value.destiny_backlinks:
             self._persist_destiny_backlinks(value=value)
 
-        return load_config
+        return persisted_value_info
 
     def persist_environment(self, environment: RuntimeEnvironment):
         """Persist the specified environment.

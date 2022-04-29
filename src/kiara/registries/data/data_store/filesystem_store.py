@@ -5,43 +5,30 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import orjson
-import os
 import structlog
 import uuid
 from enum import Enum
-from hashfs import HashFS
 from io import BytesIO
+from multiformats import CID
 from pathlib import Path
-from stat import S_IREAD, S_IRGRP, S_IROTH
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    Iterable,
-    List,
-    Mapping,
-    Optional,
-    Set,
-    Tuple,
-    Union,
-)
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Set, Union
 
 from kiara.models.module.jobs import JobRecord
 from kiara.models.module.manifest import InputsManifest
-from kiara.models.module.persistence import (
-    BytesAliasStructure,
-    BytesStructure,
+from kiara.models.values.value import (
+    SERIALIZE_TYPES,
     LoadConfig,
-)
-from kiara.models.values.value import Value
-from kiara.operations.included_core_operations.persistence import (
-    PersistValueOperationType,
+    PersistedValue,
+    SerializedChunkIDs,
+    SerializedValue,
+    Value,
 )
 from kiara.registries import FileSystemArchiveConfig
 from kiara.registries.data.data_store import BaseDataStore, DataArchive
 from kiara.registries.ids import ID_REGISTRY
 from kiara.registries.jobs import JobArchive
-from kiara.utils import is_debug, log_message, orjson_dumps
+from kiara.utils import log_message, orjson_dumps
+from kiara.utils.hashfs import HashAddress, HashFS
 
 if TYPE_CHECKING:
     pass
@@ -112,7 +99,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
 
         if self._hashfs is None:
             self._hashfs = HashFS(
-                self.hash_fs_path,
+                self.hash_fs_path.as_posix(),
                 depth=DEFAULT_HASHFS_DEPTH,
                 width=DEFAULT_HASHFS_WIDTH,
                 algorithm=DEFAULT_HASH_FS_ALGORITHM,
@@ -308,23 +295,31 @@ class FileSystemDataArchive(DataArchive, JobArchive):
         value_data = orjson.loads(base_path.read_text())
         return value_data
 
-    def _retrieve_load_config(self, value: Value) -> LoadConfig:
+    def _retrieve_serialized_value(self, value: Value) -> PersistedValue:
 
         base_path = self.get_path(entity_type=EntityType.VALUE_DATA)
         data_dir = base_path / value.data_type_name / str(value.value_hash)
 
-        load_config_file = data_dir / ".load_config.json"
-        data = orjson.loads(load_config_file.read_text())
+        serialized_value_file = data_dir / ".serialized_value.json"
+        data = orjson.loads(serialized_value_file.read_text())
 
-        return LoadConfig(**data)
+        return PersistedValue(**data)
 
-    def retrieve_bytes(self, chunk_id: str, as_bytes: bool = True) -> Union[bytes, str]:
+    def retrieve_chunk(
+        self,
+        chunk_id: str,
+        as_file: Union[bool, str, None] = None,
+        symlink_ok: bool = True,
+    ) -> Union[bytes, str]:
 
         addr = self.hashfs.get(chunk_id)
-        if as_bytes:
+
+        if as_file in (None, True):
+            return addr.abspath
+        elif as_file is False:
             return Path(addr.abspath).read_bytes()
         else:
-            return addr.abspath
+            raise NotImplementedError()
 
 
 class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
@@ -342,13 +337,13 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
         if not env_details_file.exists():
             env_details_file.write_text(orjson_dumps(env_data))
 
-    def _persist_load_config(self, value: Value, load_config: LoadConfig):
+    def _persist_stored_value_info(self, value: Value, persisted_value: LoadConfig):
 
         working_dir = self.get_path(entity_type=EntityType.VALUE_DATA)
         data_dir = working_dir / value.data_type_name / str(value.value_hash)
-        load_config_file = data_dir / ".load_config.json"
+        sv_file = data_dir / ".serialized_value.json"
         data_dir.mkdir(exist_ok=True, parents=True)
-        load_config_file.write_text(load_config.json())
+        sv_file.write_text(persisted_value.json())
 
     def _persist_value_details(self, value: Value):
 
@@ -384,67 +379,58 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
 
             destiny_file.symlink_to(value_file)
 
-    def _persist_bytes(self, bytes_structure: BytesStructure) -> BytesAliasStructure:
+    def _persist_value_data(self, value: Value) -> PersistedValue:
 
-        bytes_alias_map: Dict[str, List[str]] = {}
+        serialized_value: SerializedValue = value.serialized
 
-        for key, bytes_list in bytes_structure.chunk_map.items():
+        chunk_id_map = {}
+        for key in serialized_value.get_keys():
 
-            if is_debug():
-                assert not isinstance(bytes_list, (bytes, str))
+            data_model = serialized_value.get_serialized_data(key)
 
-            for chunk in bytes_list:
-                if isinstance(chunk, str):
-                    addr = self.hashfs.put(chunk)
-                elif isinstance(chunk, bytes):
-                    _chunk = BytesIO(chunk)
-                    addr = self.hashfs.put(_chunk)
-                else:
-                    addr = self.hashfs.put(chunk)
-                    # raise Exception(
-                    #     f"Can't persist chunk: invalid type '{type(chunk)}'"
-                    # )
-                # we don't want anyone writing to a stored file
-                os.chmod(addr.abspath, S_IREAD | S_IRGRP | S_IROTH)
-                bytes_alias_map.setdefault(key, []).append(addr.id)
+            if data_model.type == "chunk":  # type: ignore
+                chunks: Iterable[Union[str, BytesIO]] = [BytesIO(data_model.chunk)]  # type: ignore
+            elif data_model.type == "chunks":  # type: ignore
+                chunks = (BytesIO(c) for c in data_model.chunks)  # type: ignore
+            elif data_model.type == "file":  # type: ignore
+                chunks = [data_model.file]  # type: ignore
+            elif data_model.type == "files":  # type: ignore
+                chunks = data_model.files  # type: ignore
+            elif data_model.type == "inline":  # type: ignore
+                chunks = []
+            else:
+                raise Exception(
+                    f"Invalid serialized data type: {type(data_model)}. Available types: {', '.join(SERIALIZE_TYPES)}"
+                )
 
-        alias_structure = BytesAliasStructure.construct(
-            data_type=bytes_structure.data_type,
-            data_type_config=bytes_structure.data_type_config,
-            chunk_id_map=bytes_alias_map,
-        )
-        return alias_structure
+            chunk_ids = []
+            for item in zip(serialized_value.get_hashes_for_key(key), chunks):
+                _hash = item[0]
+                _chunk = item[1]
+                cid = CID.decode(_hash)
+                addr: HashAddress = self.hashfs.put_with_precomputed_hash(
+                    _chunk, str(cid)
+                )
+                chunk_ids.append(addr.id)
 
-    def _persist_value_data(
-        self, value: Value
-    ) -> Tuple[LoadConfig, Optional[BytesStructure]]:
-
-        persist_op_type = self.kiara_context.operation_registry.operation_types.get(
-            "persist_value", None
-        )
-        if persist_op_type is None:
-            raise Exception(
-                "Can't persist value, 'persist_value' operation type not available."
+            scids = SerializedChunkIDs(
+                chunk_id_list=chunk_ids,
+                archive_id=self.archive_id,
+                size=data_model.get_size(),
             )
+            scids._data_registry = self.kiara_context.data_registry
+            chunk_id_map[key] = scids
 
-        op_type: PersistValueOperationType = self._kiara.operation_registry.get_operation_type("persist_value")  # type: ignore
-        op = op_type.get_operation_for_data_type(value.value_schema.type)
-
-        working_dir = self.get_path(entity_type=EntityType.VALUE_DATA)
-        data_dir = working_dir / value.data_type_name / str(value.value_hash)
-
-        result = op.run(
-            kiara=self.kiara_context,
-            inputs={
-                "value": value,
-                "persistence_config": {"temp_dir": data_dir.as_posix()},
-            },
+        pers_value = PersistedValue(
+            archive_id=self.archive_id,
+            chunk_id_map=chunk_id_map,
+            data_type=serialized_value.data_type,
+            data_type_config=serialized_value.data_type_config,
+            deserialization=serialized_value.deserialization,
+            serialization_metadata=serialized_value.serialization_metadata,
         )
 
-        load_config: LoadConfig = result.get_value_data("load_config")
-        bytes_structure: BytesStructure = result.get_value_data("bytes_structure")
-
-        return load_config, bytes_structure
+        return pers_value
 
     def _persist_value_pedigree(self, value: Value):
 

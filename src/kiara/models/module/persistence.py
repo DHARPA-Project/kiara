@@ -3,13 +3,10 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
 from enum import Enum
 from pathlib import Path
 from pydantic import BaseModel, Field
-from typing import Any, List, Mapping, Optional, Union
-
-from kiara.models.module.manifest import Manifest
+from typing import Any, List, Mapping, Union
 
 
 class ByteProvisioningStrategy(Enum):
@@ -43,31 +40,3 @@ class BytesAliasStructure(BaseModel):
         description="References to byte arrays, Keys are field names, values are a list of hash-ids that the data is composed of.",
         default_factory=dict,
     )
-
-
-class LoadConfig(Manifest):
-
-    provisioning_strategy: ByteProvisioningStrategy = Field(
-        description="In what form the  serialized bytes are returned.",
-        default=ByteProvisioningStrategy.INLINE,
-    )
-    inputs: Mapping[str, str] = Field(
-        description="A map translating from input field name to alias (key) in bytes_structure."
-    )
-    output_name: str = Field(
-        description="The name of the field that contains the persisted value details."
-    )
-    bytes_map: Optional[BytesAliasStructure] = Field(
-        description="References to the byte chunks for the inputs.", default=None
-    )
-    inline_data: Optional[Any] = Field(description="Inline values.", default=None)
-
-    def _retrieve_data_to_hash(self) -> Any:
-        return self.dict()
-
-    def __repr__(self):
-
-        return f"{self.__class__.__name__}(module_type={self.module_type}, output_name={self.output_name})"
-
-    def __str__(self):
-        return self.__repr__()

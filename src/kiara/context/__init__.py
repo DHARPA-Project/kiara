@@ -353,7 +353,7 @@ class Kiara(object):
         for field_name in values.field_names:
             value = values.get_value_obj(field_name)
             _values[field_name] = value
-            self.data_registry.store_value(value=value, skip_if_exists=True)
+            self.data_registry.store_value(value=value)
         stored = {}
         for field_name, field_aliases in alias_map.items():
 

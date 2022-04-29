@@ -5,15 +5,12 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import orjson
-import sys
 from rich.syntax import Syntax
 from typing import TYPE_CHECKING, Any, Generic, Mapping, Type
 
 from kiara.data_types import TYPE_CONFIG_CLS, TYPE_PYTHON_CLS, DataType, DataTypeConfig
-from kiara.defaults import INVALID_HASH_MARKER, INVALID_SIZE_MARKER
 from kiara.models import KiaraModel
 from kiara.models.documentation import DocumentationMetadataModel
-from kiara.utils.hashing import compute_hash
 
 if TYPE_CHECKING:
     from kiara.models.values.value import Value
@@ -31,21 +28,6 @@ class InternalType(
     def python_class(cls) -> Type:
         return object
 
-    # def is_immutable(self) -> bool:
-    #     return False
-
-    def calculate_hash(self, data: TYPE_PYTHON_CLS) -> int:
-        return INVALID_HASH_MARKER
-        # raise Exception(
-        #     f"Calculating the hash for type '{self.__class__._value_type_name}' is not supported. If your type inherits from 'any', make sure to implement the 'calculate_hash' method."
-        # )
-
-    def calculate_size(self, data: TYPE_PYTHON_CLS) -> int:
-        return INVALID_SIZE_MARKER
-        # raise Exception(
-        #     f"Calculating size for type '{self.__class__._value_type_name}' is not supported. If your type inherits from 'any', make sure to implement the 'calculate_hash' method."
-        # )
-
     def reender_as__string(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
@@ -60,17 +42,11 @@ class TerminalRenderable(InternalType[object, DataTypeConfig]):
     Internally, the result list items can be either a string, a 'rich.console.ConsoleRenderable', or a 'rich.console.RichCast'.
     """
 
-    _value_type_name = "terminal_renderable"
+    _data_type_name = "terminal_renderable"
 
     @classmethod
     def python_class(cls) -> Type:
         return object
-
-    def calculate_hash(self, data: TYPE_PYTHON_CLS) -> int:
-        return compute_hash(data)
-
-    def calculate_size(self, data: TYPE_PYTHON_CLS) -> int:
-        return sys.getsizeof(data)
 
 
 class InternalModelValueType(InternalType[KiaraModel, DataTypeConfig]):
@@ -88,12 +64,6 @@ class InternalModelValueType(InternalType[KiaraModel, DataTypeConfig]):
     @classmethod
     def data_type_config_class(cls) -> Type[DataTypeConfig]:
         return DataTypeConfig
-
-    def calculate_size(self, data: KiaraModel) -> int:
-        return data.model_size
-
-    def calculate_hash(self, data: KiaraModel) -> int:
-        return data.model_data_hash
 
     def _validate(self, value: KiaraModel) -> None:
 

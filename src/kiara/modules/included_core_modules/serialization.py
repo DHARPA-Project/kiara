@@ -7,53 +7,59 @@
 
 import abc
 from pydantic import Field, validator
-from typing import Any, Dict, Iterable, Mapping, Union
+from typing import Any, Mapping, Type, Union
 
-from kiara import KiaraModule
-from kiara.data_types.included_core_types.serialization import (
-    DeserializationConfig,
-    SerializedValueModel,
-)
-from kiara.defaults import ANY_TYPE_NAME, SERIALIZED_DATA_TYPE_NAME
 from kiara.models.module import KiaraModuleConfig
-from kiara.models.values.value import Value, ValueMap
+from kiara.models.python_class import PythonClass
+from kiara.models.values.value import SerializedValue, ValueMap
 from kiara.models.values.value_schema import ValueSchema
-from kiara.modules import ModuleCharacteristics
+from kiara.modules import KiaraModule
 
 
 class SerializeConfig(KiaraModuleConfig):
 
-    source_type: str = Field(description="The value type of the source.")
+    value_type: str = Field(
+        description="The value type of the actual (unserialized) value."
+    )
+    target_profile: str = Field(
+        description="The name of the de-serialization profile.."
+    )
+    target_class: PythonClass = Field(
+        description="The python class of the instance that will be creqated."
+    )
 
-    @validator("source_type")
+    @validator("value_type")
     def validate_source_type(cls, value):
         if value == "serialization_config":
             raise ValueError(f"Invalid source type: {value}.")
         return value
 
 
-class SerializeValueModule(KiaraModule):
+class DeSerializeValueModule(KiaraModule):
 
     _config_cls = SerializeConfig
 
     @classmethod
-    def retrieve_supported_source_types(cls) -> Iterable[str]:
+    @abc.abstractmethod
+    def retrieve_source_value_type(cls) -> str:
+        raise NotImplementedError()
 
-        result = []
-        for attr in dir(cls):
-            if attr.startswith("from__"):
-                result.append(attr[6:])
-        return result
+    @classmethod
+    @abc.abstractmethod
+    def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
+        raise NotImplementedError()
 
     def create_inputs_schema(
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
 
-        source_type = self.get_config_value("source_type")
-
+        value_type = self.get_config_value("value_type")
         return {
-            source_type: {"type": source_type, "doc": "The value to serialize."},
-            "serialization_config": {
+            value_type: {
+                "type": value_type,
+                "doc": "The value object.",
+            },
+            "deserialization_config": {
                 "type": "any",
                 "doc": "Serialization-format specific configuration.",
                 "optional": True,
@@ -65,23 +71,20 @@ class SerializeValueModule(KiaraModule):
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
 
         return {
-            "serialized_value": {
-                "type": SERIALIZED_DATA_TYPE_NAME,
-                "type_config": {"format_name": self.get_serialization_format_name()},
-                "doc": "The value in serialized form.",
-            }
+            "python_object": {
+                "type": "python_object",
+                "doc": "The deserialized python object instance.",
+            },
         }
-
-    @abc.abstractmethod
-    def get_serialization_format_name(self) -> str:
-        pass
 
     def process(self, inputs: ValueMap, outputs: ValueMap) -> None:
 
-        value = inputs.get_value_obj(self.get_config_value("source_type"))
-        config = inputs.get_value_obj("serialization_config")
+        value_type = self.get_config_value("value_type")
+        serialized_value = inputs.get_value_obj(value_type)
+        config = inputs.get_value_obj("deserialization_config")
 
-        func_name = f"from__{self.get_config_value('source_type')}"
+        target_profile = self.get_config_value("target_profile")
+        func_name = f"to__{target_profile}"
         func = getattr(self, func_name)
 
         if config.is_set:
@@ -89,87 +92,179 @@ class SerializeValueModule(KiaraModule):
         else:
             _config = {}
 
-        result: SerializedValueModel = func(value=value, config=_config)
-        outputs.set_value("serialized_value", result)
+        result: Any = func(data=serialized_value.serialized, **_config)
+        outputs.set_value("python_object", result)
 
 
-class PickleModule(SerializeValueModule):
-
-    _module_type_name = "value.serialize.pickle"
-
-    def get_serialization_format_name(self):
-        return "pickle"
-
-    def from__any(self, value: Value, config: Dict[str, Any]):
-        """Serialize any Python object into a bytes array using 'pickle'."""
-
-        import pickle5 as pickle
-
-        pickled = pickle.dumps(value.data, protocol=5)
-        data = {"value": pickled}
-
-        data_type_name = value.data_type_name
-
-        deserialization_config: Dict[str, Any] = {
-            "module_type": "value.serialize.pickle",
-            "module_config": {"target_type": data_type_name},
-            "output_name": data_type_name,
-        }
-        ser_val = SerializedValueModel(
-            data=data,
-            deserialization_config=DeserializationConfig.construct(
-                **deserialization_config
-            ),
-        )
-        return ser_val
-
-
-class UnpickleConfig(KiaraModuleConfig):
-
-    target_type: str = Field(
-        description="The type of the value to unpickle.", default=ANY_TYPE_NAME
-    )
-
-
-class UnpickleModule(KiaraModule):
+class UnpickleModule(DeSerializeValueModule):
 
     _module_type_name = "value.serialize.unpickle"
-    _config_cls = UnpickleConfig
 
-    def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
-        return ModuleCharacteristics(is_internal=True)
+    @classmethod
+    def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
 
-    def create_inputs_schema(
-        self,
-    ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
+        return {"object": object}
 
-        target_type = self.get_config_value("target_type")
-        return {
-            "bytes": {
-                "type": "bytes",
-                "doc": f"The serialized bytes of the '{target_type}' value.",
-            }
-        }
+    @classmethod
+    def retrieve_source_value_type(cls) -> str:
 
-    def create_outputs_schema(
-        self,
-    ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
+        return "any"
 
-        target_type = self.get_config_value("target_type")
-        return {
-            target_type: {
-                "type": target_type,
-                "doc": "The type of the value to unpickle.",
-            }
-        }
+    def to__object(self, data: SerializedValue, **config: Any):
 
-    def process(self, inputs: ValueMap, outputs: ValueMap):
+        try:
+            import pickle5 as pickle
+        except:
+            import pickle
 
-        import pickle5 as pickle
+        assert "python_object" in data.get_keys()
+        python_object_data = data.get_serialized_data("python_object")
+        assert python_object_data.get_number_of_chunks() == 1
 
-        target_type = self.get_config_value("target_type")
-        _bytes = inputs.get_value_data("bytes")
-
+        _bytes = list(python_object_data.get_chunks(as_files=False))[0]
         data = pickle.loads(_bytes)
 
-        outputs.set_value(target_type, data)
+        return data
+
+
+# class SerializeValueModule(KiaraModule):
+#
+#     _config_cls = SerializeConfig
+#
+#     @classmethod
+#     def retrieve_supported_source_types(cls) -> Iterable[str]:
+#
+#         result = []
+#         for attr in dir(cls):
+#             if attr.startswith("from__"):
+#                 result.append(attr[6:])
+#         return result
+#
+#     def create_inputs_schema(
+#         self,
+#     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
+#
+#         source_type = self.get_config_value("value_type")
+#
+#         return {
+#             source_type: {"type": source_type, "doc": "The value to serialize."},
+#             "serialization_config": {
+#                 "type": "any",
+#                 "doc": "Serialization-format specific configuration.",
+#                 "optional": True,
+#             },
+#         }
+#
+#     def create_outputs_schema(
+#         self,
+#     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
+#
+#         return {
+#             "serialized_value": {
+#                 "type": SERIALIZED_DATA_TYPE_NAME,
+#                 "type_config": {"serialization_profile": self.get_serialization_profile_name()},
+#                 "doc": "The value in serialized form.",
+#             }
+#         }
+#
+#     @abc.abstractmethod
+#     def get_serialization_profile_name(self) -> str:
+#         pass
+#
+#     def process(self, inputs: ValueMap, outputs: ValueMap) -> None:
+#
+#         source_type = self.get_config_value("value_type")
+#         value = inputs.get_value_obj(source_type)
+#         config = inputs.get_value_obj("serialization_config")
+#
+#         func_name = f"from__{source_type}"
+#         func = getattr(self, func_name)
+#
+#         if config.is_set:
+#             _config = config.data
+#         else:
+#             _config = {}
+#
+#         result: Union[Mapping, SerializedValue] = func(value=value, config=_config)
+#         outputs.set_value("serialized_value", result)
+#
+
+#
+#
+# class PickleModule(SerializeValueModule):
+#
+#     _module_type_name = "value.serialize.pickle"
+#
+#     def get_serialization_profile_name(self):
+#         return "pickle"
+#
+#     def from__any(self, value: Value, config: Dict[str, Any]) -> SerializedValue:
+#         """Serialize any Python object into bytes using 'pickle'."""
+#
+#         try:
+#             import pickle5 as pickle
+#         except:
+#             import pickle
+#
+#         pickled = pickle.dumps(value.data, protocol=5)
+#         data = {"python_object": {
+#             "type": "chunk",
+#             "chunk": pickled
+#         }}
+#
+#         serialized_data = {
+#             "data_type": value.value_schema.type,
+#             "data_type_config": value.value_schema.type_config,
+#             "serialization_profile": self.get_serialization_profile_name(),
+#             "environment": {},
+#             "data": data
+#         }
+#
+#         serialized = SerializedValue(**serialized_data)
+#
+#         return serialized
+#
+#
+# class SerializeInternalModelModule(SerializeValueModule):
+#     """Persist internally used model data."""
+#
+#     _module_type_name = "internal_model.serialize.as.json"
+#
+#     def get_serialization_profile_name(self) -> str:
+#         return "json"
+#
+#     def from__internal_model(
+#         self, value: Value, config: Mapping[str, Any]
+#     ) -> SerializedValue:
+#         """Persist internally used model data as a json file."""
+#
+#         try:
+#             value_metadata: KiaraModel = value.data
+#             python_class = PythonClass.from_class(value_metadata.__class__)
+#
+#             data = {
+#                 "internal_model": {
+#                     "type": "inline",
+#                     "inline_data": {
+#                         "data": value_metadata.dict(),
+#                         "python_class": python_class.dict()
+#                     }
+#                 }
+#             }
+#
+#             serialized_data = {
+#                 "data_type": value.data_type_name,
+#                 "data_type_config": value.data_type_config,
+#                 "serialization_profile": self.get_serialization_profile_name(),
+#                 "environment": {},
+#                 "data": data
+#             }
+#
+#             serialized = SerializedValue(**serialized_data)
+#             return serialized
+#         except Exception as e:
+#             raise KiaraProcessingException(
+#                 f"Can't serialize value of type '{value.value_schema.type}' to json: {e}."
+#             )
+#
+#

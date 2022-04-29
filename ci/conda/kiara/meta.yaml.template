@@ -35,8 +35,6 @@ requirements:
     - networkx>=2.5,<3.0
     - orjson>=3.6.0
     - pp-ez>=0.2.0
-    - py-multibase>=1.0.0,<2.0.0
-    - py-multihash>=2.0.0,<3.0.0
     - pydantic>=1.7.0,<2.0.0
     - python-dateutil>=2.8.0
     - python-slugify>=5.0.0

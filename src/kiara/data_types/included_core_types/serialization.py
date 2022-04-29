@@ -4,80 +4,67 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-from deepdiff import DeepHash
-from mmh3 import hash_from_buffer
-from pydantic import BaseModel, Field, PrivateAttr
-from typing import Dict, Optional, Type
+
+from typing import Any, Mapping, Type
 
 from kiara.data_types import DataTypeConfig
 from kiara.data_types.included_core_types.internal import InternalType
-from kiara.defaults import KIARA_HASH_FUNCTION
-from kiara.models.module.manifest import Manifest
+from kiara.defaults import INVALID_HASH_MARKER, INVALID_SIZE_MARKER
+from kiara.models.values.value import SerializedValue, Value
+
+# class SerializedValueTypeConfigSchema(DataTypeConfig):
+#
+#     serialization_profile: str = Field(description="The name of the serialization profile.")
+#
+#
+# class SerializedDataType(
+#     InternalType[SerializedValue, SerializedValueTypeConfigSchema]
+# ):
+#     """A data type that contains a serialized representation of a value.
+#
+#     This is used for transferring/streaming value over the wire, and works on a similar principle as the 'load_config'
+#     value type.
+#     """
+#
+#     @classmethod
+#     def python_class(cls) -> Type:
+#         return SerializedValue
+#
+#     @classmethod
+#     def data_type_config_class(cls) -> Type[SerializedValueTypeConfigSchema]:
+#         return SerializedValueTypeConfigSchema
+#
+#     def parse_python_obj(self, data: Any) -> SerializedData:
+#
+#         if isinstance(data, Mapping):
+#             data = SerializedValue(**data)
+#
+#         return data
+#
+#     def _validate(self, value: SerializedValue) -> None:
+#
+#         if not isinstance(value, SerializedValue):
+#             raise ValueError(f"Invalid value type: {type(value)}")
+#
+#     def calculate_hash(self, data: SerializedValue) -> int:
+#         """Calculate the hash of the value."""
+#
+#         return data.serialized_hash
+#
+#     def calculate_size(self, data: SerializedValue) -> int:
+#         return data.size
+#
+#     @property
+#     def serialization_profile(self) -> str:
+#         return self.type_config.serialization_profile
+#
+#     def render_as__terminal_renderable(self, value: Value, render_config: Mapping[str, Any]):
+#
+#         s_val: SerializedValue = value.data
+#         return s_val.create_renderable(**render_config)
 
 
-class SerializedValueTypeConfigSchema(DataTypeConfig):
-
-    format_name: str = Field(description="The name of the serialization format.")
-
-
-class DeserializationConfig(Manifest):
-
-    output_name: str = Field(
-        description="The name of the field that contains the deserialized value."
-    )
-
-
-class SerializedValueModel(BaseModel):
-
-    deserialization_config: DeserializationConfig = Field(
-        description="The configuration for a kiara module that deserializes this value."
-    )
-    data: Dict[str, bytes] = Field(
-        description="One or several byte arrays representing the serialized state of the value."
-    )
-
-    _cached_size: Optional[int] = PrivateAttr(default=None)
-    _cached_hash: Optional[int] = PrivateAttr(default=None)
-
-    @property
-    def serialized_size(self) -> int:
-
-        if self._cached_size is not None:
-            return self._cached_size
-
-        size = 0
-        for k, v in self.data.items():
-            size = size + len(k) + len(v)
-
-        self._cached_size = size
-        return self._cached_size
-
-    @property
-    def serialized_hash(self) -> int:
-
-        if self._cached_hash is not None:
-            return self._cached_hash
-
-        obj = {
-            "deserialization_config": self.deserialization_config.dict(),
-            "data": {k: hash_from_buffer(v) for k, v in self.data.items()},
-        }
-        h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
-
-        self._cached_hash = h[obj]
-        return self._cached_hash
-
-    def __repr__(self):
-
-        return f"{self.__class__.__name__}(deserialization_config={self.deserialization_config}, size={self.serialized_size}, hash={self.serialized_hash})"
-
-    def __str__(self):
-        return self.__repr__()
-
-
-class SerializedValueType(
-    InternalType[SerializedValueModel, SerializedValueTypeConfigSchema]
-):
+class PythonObjectType(InternalType[object, DataTypeConfig]):
     """A data type that contains a serialized representation of a value.
 
     This is used for transferring/streaming value over the wire, and works on a similar principle as the 'load_config'
@@ -86,23 +73,20 @@ class SerializedValueType(
 
     @classmethod
     def python_class(cls) -> Type:
-        return SerializedValueModel
+        return object
 
-    @classmethod
-    def data_type_config_class(cls) -> Type[SerializedValueTypeConfigSchema]:
-        return SerializedValueTypeConfigSchema
+    def parse_python_obj(self, data: Any) -> object:
+        return data
 
-    def is_immutable(self) -> bool:
-        return True
-
-    def calculate_hash(self, value: SerializedValueModel) -> int:
+    def calculate_hash(self, data: SerializedValue) -> int:
         """Calculate the hash of the value."""
+        return INVALID_HASH_MARKER
 
-        return value.serialized_hash
+    def calculate_size(self, data: SerializedValue) -> int:
+        return INVALID_SIZE_MARKER
 
-    def calculate_size(self, value: SerializedValueModel) -> int:
-        return value.serialized_size
+    def render_as__terminal_renderable(
+        self, value: Value, render_config: Mapping[str, Any]
+    ):
 
-    @property
-    def format_name(self) -> str:
-        return self.type_config.format_name
+        return str(value.data)

@@ -34,13 +34,22 @@ from rich.console import Console, ConsoleOptions, RenderResult
 from rich.rule import Rule
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import Any, Generic, Mapping, Optional, Tuple, Type, TypeVar, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Generic,
+    Mapping,
+    Optional,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
 
-from kiara.defaults import KIARA_HASH_FUNCTION, SpecialValue
+from kiara.defaults import INVALID_HASH_MARKER, KIARA_HASH_FUNCTION, SpecialValue
 from kiara.exceptions import KiaraValueException, ValueTypeConfigException
 from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
-from kiara.models.values.value import Value, ValuePedigree
 from kiara.models.values.value_schema import ValueSchema
 
 #
@@ -49,6 +58,10 @@ from kiara.models.values.value_schema import ValueSchema
 #     else:
 #         return f"{obj.__class__.__module__}.{obj.__class__.__name__}"
 from kiara.utils import orjson_dumps
+
+if TYPE_CHECKING:
+    from kiara.models.values.value import SerializedValue, Value, ValuePedigree
+
 
 # def get_type_name(obj: Any):
 #     """Utility function to get a pretty string from the class of an object."""
@@ -224,13 +237,43 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
     # def is_immutable(self) -> bool:
     #     pass
 
-    @abc.abstractmethod
-    def calculate_hash(self, data: TYPE_PYTHON_CLS) -> int:
+    def calculate_hash(self, data: "SerializedValue") -> str:
         """Calculate the hash of the value."""
 
-    @abc.abstractmethod
-    def calculate_size(self, data: TYPE_PYTHON_CLS) -> int:
-        pass
+        return data.serialized_hash
+
+    def calculate_size(self, data: "SerializedValue") -> int:
+        """Calculate the size of the value."""
+
+        return data.size
+
+    def serialize(self, data: TYPE_PYTHON_CLS) -> "SerializationResult":
+
+        try:
+            import pickle5 as pickle
+        except:
+            import pickle
+
+        pickled = pickle.dumps(data, protocol=5)
+        data = {"python_object": {"type": "chunk", "chunk": pickled}}
+
+        serialized_data = {
+            "data_type": self.data_type_name,
+            "data_type_config": self.type_config.dict(),
+            "data": data,
+            "deserialization": {
+                "module_type": "value.unpickle",
+                "module_config": {"value_type": self.data_type_name},
+            },
+            "serialization_metadata": {
+                "profile": "pickle",
+                "environment": {},
+            },
+        }
+        from kiara.models.values.value import SerializationResult
+
+        serialized = SerializationResult(**serialized_data)
+        return serialized
 
     @property
     def type_config(self) -> TYPE_CONFIG_CLS:
@@ -238,135 +281,85 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
 
     def _pre_examine_data(
         self, data: Any, schema: ValueSchema
-    ) -> Tuple[Any, ValueStatus, int]:
+    ) -> Tuple[Any, Optional["SerializedValue"], ValueStatus, str, int]:
 
         if data == SpecialValue.NOT_SET:
             status = ValueStatus.NOT_SET
+            data = None
         else:
             status = ValueStatus.SET
 
-            if data is None:
-                if schema.default in [None, SpecialValue.NO_VALUE]:
-                    data = SpecialValue.NO_VALUE
-                    status = ValueStatus.NONE
-                elif schema.default == SpecialValue.NOT_SET:
-                    data = SpecialValue.NOT_SET
-                    status = ValueStatus.NOT_SET
-                elif callable(schema.default):
-                    data = schema.default()
-                    status = ValueStatus.DEFAULT
-                else:
-                    data = copy.deepcopy(schema.default)
-                    status = ValueStatus.DEFAULT
+        if data is None and schema.default not in [
+            None,
+            SpecialValue.NO_VALUE,
+            SpecialValue.NOT_SET,
+        ]:
+
+            status = ValueStatus.DEFAULT
+            if callable(schema.default):
+                data = schema.default()
             else:
-                data = self.parse_python_obj(data)
-                if data is None:
-                    raise Exception(
-                        f"Invalid data, can't parse into a value of type '{schema.type}'."
-                    )
+                data = copy.deepcopy(schema.default)
 
-        if status in [ValueStatus.SET, ValueStatus.DEFAULT]:
-            value_hash = self.calculate_hash(data)
+        if data is None:
+            if schema.default in [None, SpecialValue.NO_VALUE]:
+                data = SpecialValue.NO_VALUE
+                status = ValueStatus.NONE
+            elif schema.default == SpecialValue.NOT_SET:
+                data = SpecialValue.NOT_SET
+                status = ValueStatus.NOT_SET
+
+            size = 0
+            value_hash = INVALID_HASH_MARKER
+            serialized = None
         else:
-            value_hash = 0
+            data = self.parse_python_obj(data)
+            if data is None:
+                raise Exception(
+                    f"Invalid data, can't parse into a value of type '{schema.type}'."
+                )
+            self._validate(data)
 
-        return (data, status, value_hash)
+            from kiara.models.values.value import SerializedValue
 
-    # def create_value(self, data: Any, schema: Optional[ValueSchema]=None, pedigree: Optional[ValuePedigree]=None) -> TYPE_VALUE_CLS:
-    #
-    #     if schema is None:
-    #         raise NotImplementedError()
-    #
-    #     if pedigree is None:
-    #         raise NotImplementedError()
-    #
-    #     data, status, value_hash = self._pre_examine_data(data=data, schema=schema)
-    #
-    #     v_id = uuid.uuid4()
-    #     value = self.assemble_value(value_id=v_id, data=data, schema=schema, status=status, value_hash=value_hash, pedigree=pedigree, kiara_id=kiara_id)
-    #     return value
+            if not isinstance(data, SerializedValue):
+                serialized = self.serialize(data)
+            else:
+                serialized = data
+            size = serialized.size
+            value_hash = serialized.serialized_hash
 
-    # def reassemble_value(self, value_id: uuid.UUID, load_config: "LoadConfig", schema: ValueSchema, status: Union[ValueStatus, str],
-    #                        value_hash: int, value_size: int, pedigree: ValuePedigree, kiara_id: uuid.UUID,
-    #                        pedigree_output_name: str) -> TYPE_VALUE_CLS:
-    #
-    #     if isinstance(status, str):
-    #         status = ValueStatus(status)
-    #
-    #     value_cls = self.value_class()
-    #     if status in [ValueStatus.SET, ValueStatus.DEFAULT]:
-    #
-    #         try:
-    #
-    #             value = value_cls(
-    #                 value_id=value_id,
-    #                 kiara_id=kiara_id,
-    #                 value_status=status,
-    #                 value_size=value_size,
-    #                 value_hash=value_hash,
-    #                 value_schema=schema,
-    #                 pedigree=pedigree,
-    #                 pedigree_output_name=pedigree_output_name
-    #             )
-    #
-    #         except Exception as e:
-    #             raise KiaraValueException(
-    #                 data_type=self.__class__, value_data=load_config, exception=e
-    #             )
-    #         retriever = LoadConfigRetriever(load_config=load_config)
-    #         value._data_retriever = retriever
-    #
-    #     else:
-    #         assert value_size == 0
-    #         value = value_cls(
-    #             value_id=value_id,
-    #             kiara_id=kiara_id,
-    #             value_status=status,
-    #             value_size=value_size,
-    #             value_hash=value_hash,
-    #             value_schema=schema,
-    #             pedigree=pedigree,
-    #             pedigree_output_name=pedigree_output_name
-    #         )
-    #
-    #         if status == ValueStatus.NONE:
-    #             data = SpecialValue.NO_VALUE
-    #         else:
-    #             data = SpecialValue.NOT_SET
-    #
-    #         retriever = StaticDataRetriever(data=data)
-    #         value._data_retriever = retriever
-    #
-    #     return value
+        result = (data, serialized, status, value_hash, size)
+        return result
 
     def assemble_value(
         self,
         value_id: uuid.UUID,
         data: Any,
         schema: ValueSchema,
+        serialized: Optional["SerializedValue"],
         status: Union[ValueStatus, str],
-        value_hash: int,
-        pedigree: ValuePedigree,
+        value_hash: str,
+        value_size: int,
+        pedigree: "ValuePedigree",
         kiara_id: uuid.UUID,
         pedigree_output_name: str,
-    ) -> Tuple[Value, Any]:
+    ) -> Tuple["Value", Any]:
+
+        from kiara.models.values.value import Value
 
         if isinstance(status, str):
             status = ValueStatus(status).name
 
         this_cls = PythonClass.from_class(self.__class__)
         if status in [ValueStatus.SET, ValueStatus.DEFAULT]:
-            size = self.calculate_size(data)
-
             try:
-
-                self._validate(data)
 
                 value = Value(
                     value_id=value_id,
                     kiara_id=kiara_id,
                     value_status=status,
-                    value_size=size,
+                    value_size=value_size,
                     value_hash=value_hash,
                     value_schema=schema,
                     pedigree=pedigree,
@@ -379,12 +372,11 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
                     data_type=self.__class__, value_data=data, exception=e
                 )
         else:
-            size = 0
             value = Value(
                 value_id=value_id,
                 kiara_id=kiara_id,
                 value_status=status,
-                value_size=size,
+                value_size=value_size,
                 value_hash=value_hash,
                 value_schema=schema,
                 pedigree=pedigree,
@@ -394,6 +386,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
 
         value._value_data = data
         value._data_type = self
+        value._serialized_value = serialized
         return value, data
 
     def parse_python_obj(self, data: Any) -> TYPE_PYTHON_CLS:

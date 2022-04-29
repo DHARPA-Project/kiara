@@ -13,8 +13,7 @@ from rich.syntax import Syntax
 from rich.table import Table
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
 
-from kiara.models.module.persistence import LoadConfig
-from kiara.models.values.value import ORPHAN, Value
+from kiara.models.values.value import ORPHAN, LoadConfig, PersistedValue, Value
 from kiara.models.values.value_schema import ValueSchema
 from kiara.registries.aliases import AliasRegistry
 from kiara.utils import is_debug, log_message, orjson_dumps
@@ -69,6 +68,7 @@ RENDER_FIELDS: Dict[str, Dict[str, Any]] = {
             )
         },
     },
+    "serialize_details": {"show_default": False},
 }
 
 
@@ -90,10 +90,12 @@ class ValueInfo(Value):
             aliases = None
 
         if value.is_stored:
-            load_config = kiara.data_registry.retrieve_load_config(
+            persisted_details = kiara.data_registry.retrieve_persisted_value_details(
                 value_id=value.value_id
             )
+            load_config = None
         else:
+            persisted_details = None
             load_config = None
 
         is_internal = "internal" in kiara.type_registry.get_type_lineage(
@@ -130,6 +132,7 @@ class ValueInfo(Value):
             destiny_backlinks=value.destiny_backlinks,
             aliases=aliases,
             load_config=load_config,
+            serialize_details=persisted_details,
         )
         model._set_registry(value._data_registry)
         model._alias_registry = kiara.alias_registry  # type: ignore
@@ -144,6 +147,9 @@ class ValueInfo(Value):
     value_schema: ValueSchema = Field(description="The data schema of this value.")
     aliases: Optional[List[str]] = Field(
         description="The aliases that are registered for this value."
+    )
+    serialize_details: Optional[PersistedValue] = Field(
+        description="Details for the serialization process that was used for this value."
     )
     load_config: Optional[LoadConfig] = Field(
         description="The load config associated with this value."

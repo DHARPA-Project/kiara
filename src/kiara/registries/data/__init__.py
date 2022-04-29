@@ -4,12 +4,8 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-import atexit
-import shutil
 import structlog
-import tempfile
 import uuid
-from pathlib import Path
 from rich.console import RenderableType
 from typing import (
     TYPE_CHECKING,
@@ -27,14 +23,13 @@ from typing import (
 from kiara.data_types import DataType
 from kiara.defaults import (
     INVALID_HASH_MARKER,
-    LOAD_CONFIG_PLACEHOLDER,
     NONE_VALUE_ID,
     NOT_SET_VALUE_ID,
     ORPHAN_PEDIGREE_OUTPUT_NAME,
     STRICT_CHECKS,
     SpecialValue,
 )
-from kiara.exceptions import InvalidValuesException, JobConfigException
+from kiara.exceptions import InvalidValuesException
 from kiara.models.events.data_registry import (
     DataArchiveAddedEvent,
     ValueCreatedEvent,
@@ -42,25 +37,22 @@ from kiara.models.events.data_registry import (
     ValueRegisteredEvent,
     ValueStoredEvent,
 )
-from kiara.models.module.persistence import (
-    ByteProvisioningStrategy,
-    BytesStructure,
-    LoadConfig,
-)
 from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
 from kiara.models.values.value import (
     ORPHAN,
-    UnloadableData,
+    PersistedValue,
+    SerializedValue,
     Value,
     ValueMap,
     ValueMapReadOnly,
     ValuePedigree,
 )
 from kiara.models.values.value_schema import ValueSchema
+from kiara.operations.included_core_operations.serialize import DeSerializeOperationType
 from kiara.registries.data.data_store import DataArchive, DataStore
 from kiara.registries.ids import ID_REGISTRY
-from kiara.utils import is_debug, log_message
+from kiara.utils import log_message
 from kiara.utils.data import render_data
 
 if TYPE_CHECKING:
@@ -86,7 +78,7 @@ class DataRegistry(object):
         self._values_by_hash: Dict[int, Set[uuid.UUID]] = {}
 
         self._cached_data: Dict[uuid.UUID, Any] = {}
-        self._load_configs: Dict[uuid.UUID, Optional[LoadConfig]] = {}
+        self._persisted_value_descs: Dict[uuid.UUID, Optional[PersistedValue]] = {}
 
         # initialize special values
         special_value_cls = PythonClass.from_class(SpecialValue)
@@ -194,13 +186,41 @@ class DataRegistry(object):
     def data_archives(self) -> Mapping[str, DataArchive]:
         return self._data_archives
 
-    def get_archive(self, store_id: Optional[str] = None) -> DataArchive:
-        if store_id is None:
-            store_id = self.default_data_store
-            if store_id is None:
+    def get_archive(
+        self, archive_id: Union[None, uuid.UUID, str] = None
+    ) -> DataArchive:
+
+        if archive_id is None:
+            archive_id = self.default_data_store
+            if archive_id is None:
                 raise Exception("Can't retrieve default data archive, none set (yet).")
 
-        return self._data_archives[store_id]
+        if isinstance(archive_id, uuid.UUID):
+            for archive in self._data_archives.values():
+                if archive.archive_id == archive_id:
+                    return archive
+
+            raise Exception(
+                f"Can't retrieve archive with id '{archive_id}': no archive with that id registered."
+            )
+
+        if archive_id in self._data_archives.keys():
+            return self._data_archives[archive_id]
+        else:
+            try:
+                _archive_id = uuid.UUID(archive_id)
+                for archive in self._data_archives.values():
+                    if archive.archive_id == _archive_id:
+                        return archive
+                    raise Exception(
+                        f"Can't retrieve archive with id '{archive_id}': no archive with that id registered."
+                    )
+            except Exception:
+                pass
+
+        raise Exception(
+            f"Can't retrieve archive with id '{archive_id}': no archive with that id registered."
+        )
 
     def find_store_id_for_value(self, value_id: uuid.UUID) -> Optional[str]:
 
@@ -239,6 +259,7 @@ class DataRegistry(object):
                     _value_id = None
 
                 if _value_id is None:
+
                     if not isinstance(value_id, str):
                         raise Exception(
                             f"Can't retrieve value for '{value_id}': invalid type '{type(value_id)}'."
@@ -299,8 +320,7 @@ class DataRegistry(object):
         self,
         value: Union[Value, uuid.UUID],
         store_id: Optional[str] = None,
-        skip_if_exists: bool = True,
-    ) -> Optional[LoadConfig]:
+    ) -> Optional[PersistedValue]:
 
         if store_id is None:
             store_id = self.default_data_store
@@ -308,38 +328,36 @@ class DataRegistry(object):
         if isinstance(value, uuid.UUID):
             value = self.get_value(value)
 
-        store: DataStore = self.get_archive(store_id=store_id)  # type: ignore
+        store: DataStore = self.get_archive(archive_id=store_id)  # type: ignore
         if not isinstance(store, DataStore):
             raise Exception(f"Can't store value into store '{store_id}': not writable.")
 
         # make sure all property values are available
         if value.pedigree != ORPHAN:
             for value_id in value.pedigree.inputs.values():
-                self.store_value(value=value_id, store_id=store_id, skip_if_exists=True)
+                self.store_value(value=value_id, store_id=store_id)
 
-        if not store.has_value(value.value_id) or not skip_if_exists:
+        if not store.has_value(value.value_id):
             event = ValuePreStoreEvent.construct(kiara_id=self._kiara.id, value=value)
             self._event_callback(event)
-            load_config = store.store_value(value)
+            persisted_value = store.store_value(value)
             value._is_stored = True
             self._value_archive_lookup_map[value.value_id] = store_id
-            self._load_configs[value.value_id] = load_config
+            self._persisted_value_descs[value.value_id] = persisted_value
             property_values = value.property_values
 
             for property, property_value in property_values.items():
-                self.store_value(
-                    value=property_value, store_id=store_id, skip_if_exists=True
-                )
+                self.store_value(value=property_value, store_id=store_id)
         else:
-            load_config = None
+            persisted_value = None
 
         store_event = ValueStoredEvent.construct(kiara_id=self._kiara.id, value=value)
         self._event_callback(store_event)
 
-        return load_config
+        return persisted_value
 
     def find_values_for_hash(
-        self, value_hash: int, data_type_name: Optional[str] = None
+        self, value_hash: str, data_type_name: Optional[str] = None
     ) -> Set[Value]:
 
         if data_type_name:
@@ -422,7 +440,13 @@ class DataRegistry(object):
     def _find_existing_value(
         self, data: Any, schema: Optional[ValueSchema]
     ) -> Tuple[
-        Optional[Value], Optional[DataType], Optional[ValueStatus], Optional[int]
+        Optional[Value],
+        DataType,
+        Optional[Any],
+        Optional[SerializedValue],
+        ValueStatus,
+        str,
+        int,
     ]:
 
         if schema is None:
@@ -431,7 +455,16 @@ class DataRegistry(object):
         if isinstance(data, Value):
 
             if data.value_id in self._registered_values.keys():
-                return (data, None, None, None)
+
+                return (
+                    data,
+                    data.data_type,
+                    None,
+                    data.serialized,
+                    data.value_status,
+                    data.value_hash,
+                    data.value_size,
+                )
 
             raise NotImplementedError("Importing values not supported (yet).")
             # self._registered_values[data.value_id] = data
@@ -439,7 +472,15 @@ class DataRegistry(object):
 
         try:
             value = self.get_value(value_id=data)
-            return (value, None, None, None)
+            return (
+                value,
+                value.data_type,
+                None,
+                value.serialized,
+                value.value_status,
+                value.value_hash,
+                value.value_size,
+            )
         except Exception:
             # TODO: differentiate between 'value not found' and other type of errors
             pass
@@ -449,16 +490,9 @@ class DataRegistry(object):
             data_type_name=schema.type, data_type_config=schema.type_config
         )
 
-        if data == SpecialValue.NOT_SET:
-            status = ValueStatus.NOT_SET
-            value_hash = INVALID_HASH_MARKER
-        elif data == SpecialValue.NO_VALUE:
-            status = ValueStatus.NONE
-            value_hash = INVALID_HASH_MARKER
-        else:
-            data, status, value_hash = data_type._pre_examine_data(
-                data=data, schema=schema
-            )
+        data, serialized, status, value_hash, value_size = data_type._pre_examine_data(
+            data=data, schema=schema
+        )
 
         existing_value: Optional[Value] = None
         if value_hash != INVALID_HASH_MARKER:
@@ -484,10 +518,18 @@ class DataRegistry(object):
                             existing_value = orphans[0]
 
         if existing_value is not None:
-            self._load_configs[existing_value.value_id] = None
-            return (existing_value, data_type, status, value_hash)
+            self._persisted_value_descs[existing_value.value_id] = None
+            return (
+                existing_value,
+                data_type,
+                data,
+                serialized,
+                status,
+                value_hash,
+                value_size,
+            )
 
-        return (None, data_type, status, value_hash)
+        return (None, data_type, data, serialized, status, value_hash, value_size)
 
     def _create_value(
         self,
@@ -496,7 +538,6 @@ class DataRegistry(object):
         pedigree: Optional[ValuePedigree] = None,
         pedigree_output_name: str = None,
         reuse_existing: bool = True,
-        data_is_value_reference: Optional[bool] = None,
     ) -> Tuple[Value, bool]:
         """Create a new value, or return an existing one that matches the incoming data or reference.
 
@@ -518,17 +559,36 @@ class DataRegistry(object):
                 f"Can't register data of type '{schema.type}': type not registered. Available types: {', '.join(self._kiara.data_type_names)}"
             )
 
-        data_type: Optional[DataType] = None
-        status: Optional[ValueStatus] = None
-        value_hash: Optional[int] = None
+        # data_type: Optional[DataType] = None
+        # status: Optional[ValueStatus] = None
+        # value_hash: Optional[str] = None
 
         if reuse_existing:
-            existing, data_type, status, value_hash = self._find_existing_value(
-                data=data, schema=schema
-            )
-            if existing is not None:
+            (
+                _existing,
+                data_type,
+                data,
+                serialized,
+                status,
+                value_hash,
+                value_size,
+            ) = self._find_existing_value(data=data, schema=schema)
+            if _existing is not None:
                 # TODO: check pedigree
-                return (existing, False)
+                return (_existing, False)
+        else:
+
+            data_type = self._kiara.type_registry.retrieve_data_type(
+                data_type_name=schema.type, data_type_config=schema.type_config
+            )
+
+            (
+                data,
+                serialized,
+                status,
+                value_hash,
+                value_size,
+            ) = data_type._pre_examine_data(data=data, schema=schema)
 
         if pedigree is None:
             pedigree = ORPHAN
@@ -543,28 +603,14 @@ class DataRegistry(object):
             type="value", kiara_id=self._kiara.id, pre_registered=False
         )
 
-        if data_type is None or status is None or value_hash is None:
-            data_type = self._kiara.type_registry.retrieve_data_type(
-                data_type_name=schema.type, data_type_config=schema.type_config
-            )
-
-            if data == SpecialValue.NOT_SET:
-                status = ValueStatus.NOT_SET
-                value_hash = INVALID_HASH_MARKER
-            elif data == SpecialValue.NO_VALUE:
-                status = ValueStatus.NONE
-                value_hash = INVALID_HASH_MARKER
-            else:
-                data, status, value_hash = data_type._pre_examine_data(
-                    data=data, schema=schema
-                )
-
         value, data = data_type.assemble_value(
             value_id=v_id,
             data=data,
             schema=schema,
+            serialized=serialized,
             status=status,
             value_hash=value_hash,
+            value_size=value_size,
             pedigree=pedigree,
             kiara_id=self._kiara.id,
             pedigree_output_name=pedigree_output_name,
@@ -577,13 +623,15 @@ class DataRegistry(object):
 
         return (value, True)
 
-    def retrieve_load_config(self, value_id: uuid.UUID) -> Optional[LoadConfig]:
+    def retrieve_persisted_value_details(
+        self, value_id: uuid.UUID
+    ) -> Optional[PersistedValue]:
 
         if (
-            value_id in self._load_configs.keys()
-            and self._load_configs[value_id] is not None
+            value_id in self._persisted_value_descs.keys()
+            and self._persisted_value_descs[value_id] is not None
         ):
-            load_config = self._load_configs[value_id]
+            persisted_details = self._persisted_value_descs[value_id]
         else:
             # now, the value_store map should contain this value_id
             store_id = self.find_store_id_for_value(value_id=value_id)
@@ -593,170 +641,84 @@ class DataRegistry(object):
             store = self.get_archive(store_id)
             assert value_id in self._registered_values.keys()
             # self.get_value(value_id=value_id)
-            load_config = store.retrieve_load_config(value=value_id)
-            self._load_configs[value_id] = load_config
+            persisted_details = store.retrieve_serialized_value(value=value_id)
+            for c in persisted_details.chunk_id_map.values():
+                c._data_registry = self._kiara.data_registry
+            self._persisted_value_descs[value_id] = persisted_details
 
-        return load_config
+        return persisted_details
 
-    def _retrieve_bytes(
-        self, chunk_id: str, as_bytes: bool = True
+    # def _retrieve_bytes(
+    #     self, chunk_id: str, as_link: bool = True
+    # ) -> Union[str, bytes]:
+    #
+    #     # TODO: support multiple stores
+    #     return self.get_archive().retrieve_chunk(chunk_id=chunk_id, as_link=as_link)
+
+    def retrieve_serialized_value(
+        self, value_id: uuid.UUID
+    ) -> Optional[SerializedValue]:
+        """Create a LoadConfig object from the details of the persisted version of this value."""
+
+        pv = self.retrieve_persisted_value_details(value_id=value_id)
+        if pv is None:
+            return None
+
+        return pv
+
+    def retrieve_chunk(
+        self,
+        chunk_id: str,
+        archive_id: Optional[uuid.UUID] = None,
+        as_file: Union[None, bool, str] = None,
+        symlink_ok: bool = True,
     ) -> Union[str, bytes]:
 
-        # TODO: support multiple stores
-        return self.get_archive().retrieve_bytes(chunk_id=chunk_id, as_bytes=as_bytes)
-
-    def retrieve_value_data(self, value_id: uuid.UUID) -> Any:
-
-        if value_id in self._cached_data.keys():
-            return self._cached_data[value_id]
-
-        load_config = self.retrieve_load_config(value_id=value_id)
-
-        if load_config is None:
-            raise Exception(
-                f"Load config for value '{value_id}' is 'None', this is most likely a bug."
-            )
-
-        data = self._load_data_from_load_config(
-            load_config=load_config, value_id=value_id
-        )
-        self._cached_data[value_id] = data
-
-        return data
-
-    def _provision_bytes(
-        self, load_config: LoadConfig
-    ) -> Tuple[Optional[BytesStructure], Optional[Path]]:
-
-        provisioning_strategy = load_config.provisioning_strategy
-        if provisioning_strategy == ByteProvisioningStrategy.INLINE:
-            return None, None
-
-        assert load_config.bytes_map is not None
-
-        bytes_structure_map: Dict[str, List[Union[str, bytes]]] = {}
-        path: Optional[Path] = None
-        if provisioning_strategy == ByteProvisioningStrategy.BYTES:
-
-            for field, chunk_ids in load_config.bytes_map.chunk_id_map.items():
-                for chunk_id in chunk_ids:
-                    bytes_structure_map.setdefault(field, []).append(
-                        self._retrieve_bytes(chunk_id=chunk_id, as_bytes=True)
-                    )
-
-        elif provisioning_strategy == ByteProvisioningStrategy.FILE_PATH_MAP:
-
-            for field, chunk_ids in load_config.bytes_map.chunk_id_map.items():
-                for chunk_id in chunk_ids:
-                    bytes_structure_map.setdefault(field, []).append(
-                        self._retrieve_bytes(chunk_id=chunk_id, as_bytes=False)
-                    )
-
-        elif provisioning_strategy == ByteProvisioningStrategy.LINK_FOLDER:
-
-            temp_f = tempfile.mkdtemp()
-
-            def cleanup():
-                logger.debug("deleting.temp_provisioning_folder", path=temp_f)
-                shutil.rmtree(temp_f, ignore_errors=True)
-
-            atexit.register(cleanup)
-
-            root_dir = Path(temp_f)
-
-            for rel_path, chunk_ids in load_config.bytes_map.chunk_id_map.items():
-                if len(chunk_ids) != 1:
-                    raise Exception(
-                        f"Multiple chunks for file '{rel_path}' provided, this is currently not supported when using the 'LINK_FOLDER' provisioning strategy."
-                    )
-
-                chunk_id = chunk_ids[0]
-                byte_ref: str = self._retrieve_bytes(chunk_id=chunk_id, as_bytes=False)  # type: ignore
-                path = Path(byte_ref)
-
-                link = root_dir / rel_path
-                link.parent.mkdir(parents=True, exist_ok=True)
-                link.symlink_to(path)
-                bytes_structure_map[rel_path] = [link.as_posix()]
-
-            path = root_dir
-
-        elif provisioning_strategy == ByteProvisioningStrategy.COPIED_FOLDER:
-
-            raise NotImplementedError("xxxxxxxx")
-
-        bytes_structure = BytesStructure.construct(
-            data_type=load_config.bytes_map.data_type,
-            data_type_config=load_config.bytes_map.data_type_config,
-            chunk_map=bytes_structure_map,
-        )
-
-        return bytes_structure, path
-
-    def _load_data_from_load_config(
-        self, load_config: LoadConfig, value_id: uuid.UUID
-    ) -> Any:
-
-        logger.debug("value.load", module=load_config.module_type)
-
-        # TODO: check whether modules and value types are available
-        inputs: Dict[str, Any] = dict(load_config.inputs)
-
-        bytes_structure, path = self._provision_bytes(load_config=load_config)
-        if load_config.provisioning_strategy == ByteProvisioningStrategy.INLINE:
-            if "inline_data" in load_config.inputs.keys():
-                assert load_config.inputs["inline_data"] == LOAD_CONFIG_PLACEHOLDER
-                inputs["inline_data"] = load_config.inline_data
-        elif load_config.provisioning_strategy == ByteProvisioningStrategy.BYTES:
-            if "inline_data" in load_config.inputs.keys():
-                assert load_config.inputs["inline_data"] == LOAD_CONFIG_PLACEHOLDER
-                inputs["inline_data"] = load_config.inline_data
-            if "bytes_structure" in load_config.inputs.keys():
-                assert load_config.inputs["bytes_structure"] == LOAD_CONFIG_PLACEHOLDER
-                inputs["bytes_structure"] = bytes_structure
-        elif (
-            load_config.provisioning_strategy == ByteProvisioningStrategy.FILE_PATH_MAP
-        ):
-            if "inline_data" in load_config.inputs.keys():
-                assert load_config.inputs["inline_data"] == LOAD_CONFIG_PLACEHOLDER
-                inputs["inline_data"] = load_config.inline_data
-            if "bytes_structure" in load_config.inputs.keys():
-                assert load_config.inputs["bytes_structure"] == LOAD_CONFIG_PLACEHOLDER
-                inputs["bytes_structure"] = bytes_structure
-        elif load_config.provisioning_strategy == ByteProvisioningStrategy.LINK_FOLDER:
-            if "inline_data" in load_config.inputs.keys():
-                assert load_config.inputs["inline_data"] == LOAD_CONFIG_PLACEHOLDER
-                inputs["inline_data"] = load_config.inline_data
-            if "bytes_structure" in load_config.inputs.keys():
-                assert load_config.inputs["bytes_structure"] == LOAD_CONFIG_PLACEHOLDER
-                inputs["bytes_structure"] = bytes_structure
-            if "path" in load_config.inputs.keys():
-                assert path is not None
-                assert load_config.inputs["path"] == LOAD_CONFIG_PLACEHOLDER
-                inputs["path"] = path.as_posix()
-        elif (
-            load_config.provisioning_strategy == ByteProvisioningStrategy.COPIED_FOLDER
-        ):
+        if archive_id is None:
             raise NotImplementedError()
 
-        try:
-            job_config = self._kiara.job_registry.prepare_job_config(
-                manifest=load_config, inputs=inputs
+        archive = self.get_archive(archive_id)
+        chunk = archive.retrieve_chunk(chunk_id, as_file=as_file, symlink_ok=symlink_ok)
+
+        return chunk
+
+    def retrieve_value_data(
+        self, value: Union[uuid.UUID, Value], target_profile: Optional[str] = None
+    ) -> Any:
+
+        if isinstance(value, uuid.UUID):
+            value = self.get_value(value_id=value)
+
+        if value.value_id in self._cached_data.keys():
+            return self._cached_data[value.value_id]
+
+        if value._serialized_value is None:
+            serialized_value = self.retrieve_persisted_value_details(
+                value_id=value.value_id
             )
-        except JobConfigException:
-            if is_debug():
-                import traceback
+            value._serialized_value = serialized_value
+        else:
+            serialized_value = value._serialized_value
 
-                traceback.print_exc()
-            value = self.get_value(value_id=value_id)
-            return UnloadableData(value=value, load_config=load_config)
+        if serialized_value is None:
+            raise Exception(
+                f"Can't retrieve serialized version of value '{value.value_id}', this is most likely a bug."
+            )
 
-        job_id = self._kiara.job_registry.execute_job(job_config=job_config)
-        result = self._kiara.job_registry.retrieve_result(job_id=job_id)
-        # data = result.get_value_data(load_config.output_name)
-        result_value = result.get_value_obj(field_name=load_config.output_name)
+        op_type: DeSerializeOperationType = self._kiara.operation_registry.get_operation_type("deserialize")  # type: ignore
+        ops = op_type.find_deserialization_operations_for_type(
+            serialized_value.data_type
+        )
 
-        return result_value.data
+        op = ops[0]
+        inputs = {"value": serialized_value}
+
+        result = op.run(kiara=self._kiara, inputs=inputs)
+
+        python_object = result.get_value_data("python_object")
+        self._cached_data[value.value_id] = python_object
+
+        return python_object
 
     def load_values(self, values: Mapping[str, Optional[uuid.UUID]]) -> ValueMap:
 
@@ -818,9 +780,13 @@ class DataRegistry(object):
                 # )
                 values[input_name] = value
             except Exception as e:
-                log_message(
-                    "invalid.valueset", error_reason=str(e), input_name=input_name
-                )
+                import traceback
+
+                traceback.print_exc()
+                msg = str(e)
+                if not msg:
+                    msg = e
+                log_message("invalid.valueset", error_reason=msg, input_name=input_name)
                 failed[input_name] = e
 
         if failed:

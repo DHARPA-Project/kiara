@@ -6,23 +6,38 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
+import atexit
+import dag_cbor
+import hashlib
 import logging
+import orjson
+import os
+import tempfile
 import uuid
-from pydantic import PrivateAttr
+from multiformats import CID, multicodec, multihash
+from multiformats.multicodec import Multicodec
+from multiformats.multihash import Multihash
+from multiformats.varint import BytesLike
+from pydantic import BaseModel, Field, PrivateAttr, root_validator
 from pydantic.fields import Field
 from rich import box
 from rich.console import Group, RenderableType
 from rich.rule import Rule
+from rich.syntax import Syntax
 from rich.table import Table
 from typing import (
     TYPE_CHECKING,
     Any,
+    Callable,
     Dict,
     Iterable,
     List,
+    Literal,
     Mapping,
     MutableMapping,
     Optional,
+    Sequence,
+    Tuple,
     Union,
 )
 
@@ -37,12 +52,11 @@ from kiara.defaults import (
 )
 from kiara.exceptions import InvalidValuesException
 from kiara.models import KiaraModel
-from kiara.models.module.manifest import InputsManifest
-from kiara.models.module.persistence import LoadConfig
+from kiara.models.module.manifest import InputsManifest, Manifest
 from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
 from kiara.models.values.value_schema import ValueSchema
-from kiara.utils import StringYAML, is_debug
+from kiara.utils import StringYAML, is_debug, orjson_dumps
 
 log = logging.getLogger("kiara")
 yaml = StringYAML()
@@ -51,6 +65,610 @@ if TYPE_CHECKING:
     from kiara.context import Kiara
     from kiara.data_types import DataType
     from kiara.registries.data import DataRegistry
+
+
+def create_cid_digest(
+    codec: Union[str, int, Multicodec],
+    digest: Union[
+        str, BytesLike, Tuple[Union[str, int, Multihash], Union[str, BytesLike]]
+    ],
+):
+
+    cid = CID("base58btc", 1, codec, digest)
+    return bytes(cid)
+
+
+class SerializedData(BaseModel, abc.ABC):
+
+    _size_cache: Optional[int] = PrivateAttr(default=None)
+    _hashes_cache: Dict[str, Sequence[bytes]] = PrivateAttr(default_factory=dict)
+
+    @abc.abstractmethod
+    def get_chunks(
+        self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
+    ) -> Iterable[Union[str, BytesLike]]:
+        """Retrieve the chunks belonging to this data instance.
+
+        If 'as_file' is False, return the data as bytes. If set to 'True' store it to an arbitrary location (or use
+        an existing one), and return the path to that file. If 'as_file' is a string, write the data (bytes) into
+        a new file using the string as path. If 'symlink_ok' is set to True, symlinking an existing file to the value of
+        'as_file' is also ok, otherwise copy the content.
+        """
+
+    @abc.abstractmethod
+    def get_number_of_chunks(self) -> int:
+        pass
+
+    @abc.abstractmethod
+    def _get_size(self) -> int:
+        pass
+
+    @abc.abstractmethod
+    def _create_hashes(self, hash_codec: str) -> Sequence[bytes]:
+        pass
+
+    def get_size(self) -> int:
+
+        if self._size_cache is None:
+            self._size_cache = self._get_size()
+        return self._size_cache
+
+    def get_hashes(self, hash_codec: str) -> Sequence[bytes]:
+
+        if self._hashes_cache.get(hash_codec, None) is None:
+            self._hashes_cache[hash_codec] = self._create_hashes(hash_codec=hash_codec)
+        return self._hashes_cache[hash_codec]
+
+    def _create_hash_from_chunk(self, chunk: bytes, hash_codec: str) -> bytes:
+
+        multihash = Multihash(codec=hash_codec)
+        hash = multihash.digest(chunk)
+        return create_cid_digest("raw", hash)
+
+    def _create_hash_from_file(self, file: str, hash_codec: str) -> bytes:
+
+        assert hash_codec == "sha2-256"
+
+        hash_func = hashlib.sha256
+        file_hash = hash_func()
+
+        CHUNK_SIZE = 65536
+        with open(file, "rb") as f:
+            fb = f.read(CHUNK_SIZE)
+            while len(fb) > 0:
+                file_hash.update(fb)
+                fb = f.read(CHUNK_SIZE)
+
+        wrapped = multihash.wrap(file_hash.digest(), "sha2-256")
+        return create_cid_digest("raw", wrapped)
+
+    def _store_bytes_to_file(self, chunks: Iterable[bytes], file: Optional[str] = None):
+        "Utility method to store bytes to a file."
+
+        if file is None:
+            file_desc, file = tempfile.mkstemp()
+
+            def del_temp_file():
+                os.remove(file)
+
+            atexit.register(del_temp_file)
+
+        else:
+            if os.path.exists(file):
+                raise Exception(f"Can't write to file, file exists: {file}")
+            file_desc = os.open(file, 0o600)
+
+        with os.fdopen(file_desc, "wb") as tmp:
+            for chunk in chunks:
+                tmp.write(chunk)
+
+    def _read_bytes_from_file(self, file: str) -> bytes:
+
+        with open(file, "rb") as f:
+            content = f.read()
+
+        return content
+
+    # @property
+    # def data_hashes(self) -> Iterable[bytes]:
+    #
+    #     if self._hash_cache is not None:
+    #         return self._hash_cache
+    #
+    #     result = []
+    #     size = 0
+    #     for chunk in self.get_chunks():
+    #         _hash = multihash.digest(chunk, self.codec)
+    #         size = size + len(chunk)
+    #         result.append(_hash)
+    #
+    #     if self._size_cache is None:
+    #         self._size_cache = size
+    #     else:
+    #         assert self._size_cache == size
+    #
+    #     self._hash_cache = result
+    #     return self._hash_cache
+
+    # @property
+    # def data_size(self) -> int:
+    #
+    #     if self._size_cache is not None:
+    #         return self._size_cache
+    #
+    #     size = 0
+    #     for chunk in self.get_chunks():
+    #         size = size + len(chunk)
+    #
+    #     self._size_cache = size
+    #     return self._size_cache
+
+
+class SerializedChunk(SerializedData):
+
+    type: Literal["chunk"] = "chunk"
+    chunk: bytes = Field(description="A byte-array")
+
+    def get_chunks(
+        self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
+    ) -> Iterable[Union[str, BytesLike]]:
+
+        if as_files is False:
+            return [self.chunk]
+        else:
+            assert len(as_files) == 1
+            file = None if as_files is True else as_files[0]
+            path = self._store_bytes_to_file([self.chunk], file=file)
+            return path
+
+    def get_number_of_chunks(self) -> int:
+        return 1
+
+    def _get_size(self) -> int:
+        return len(self.chunk)
+
+    def _create_hashes(self, hash_codec: str) -> Sequence[bytes]:
+        return [self._create_hash_from_chunk(self.chunk, hash_codec=hash_codec)]
+
+
+class SerializedChunks(SerializedData):
+
+    type: Literal["chunks"] = "chunks"
+    chunks: List[bytes] = Field(description="A list of byte arrays.")
+
+    def get_chunks(
+        self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
+    ) -> Iterable[Union[str, BytesLike]]:
+        if as_files is False:
+            return self.chunks
+        else:
+            if as_files is None or isinstance(as_files, str):
+                # means we write all the chunks into one file
+                file = None if as_files is True else as_files
+                self._store_bytes_to_file(self.chunks, file=file)
+                return file
+            else:
+                assert len(as_files) == self.get_number_of_chunks()
+                result = []
+                for idx, chunk in enumerate(self.chunks):
+                    file = as_files[idx]
+                    self._store_bytes_to_file(chunk, file=file)
+                    result.append(file)
+                return result
+
+    def get_number_of_chunks(self) -> int:
+        return len(self.chunks)
+
+    def _get_size(self) -> int:
+        size = 0
+        for chunk in self.chunks:
+            size = size + len(chunk)
+        return size
+
+    def _create_hashes(self, hash_codec: str) -> Sequence[bytes]:
+        return [
+            self._create_hash_from_chunk(chunk, hash_codec=hash_codec)
+            for chunk in self.chunks
+        ]
+
+
+class SerializedFile(SerializedData):
+
+    type: Literal["file"] = "file"
+    file: str = Field(description="A path to a file containing the serialized data.")
+
+    def get_chunks(
+        self, as_files: Union[bool, Sequence[str]] = True, symlink_ok: bool = True
+    ) -> Iterable[Union[str, BytesLike]]:
+
+        if as_files is False:
+            chunk = self._read_bytes_from_file(self.file)
+            return [chunk]
+        else:
+            if as_files is True:
+                return [self.file]
+            else:
+                if isinstance(as_files, str):
+                    file = as_files
+                else:
+                    assert len(as_files) == 1
+                    file = as_files[0]
+                if os.path.exists(file):
+                    raise Exception(f"Can't write to file '{file}': file exists.")
+                if symlink_ok:
+                    os.symlink(self.file, file)
+                    return [file]
+
+    def get_number_of_chunks(self) -> int:
+        return 1
+
+    def _get_size(self) -> int:
+        return os.path.getsize(os.path.realpath(self.file))
+
+    def _create_hashes(self, hash_codec: str) -> Sequence[bytes]:
+        return [self._create_hash_from_file(self.file, hash_codec=hash_codec)]
+
+
+class SerializedFiles(SerializedData):
+
+    type: Literal["files"] = "files"
+    files: List[str] = Field(
+        description="A list of strings, pointing to files containing parts of the serialized data."
+    )
+
+    def get_chunks(self) -> Iterable[BytesLike]:
+        raise NotImplementedError()
+
+    def get_number_of_chunks(self) -> int:
+        return len(self.files)
+
+    def _get_size(self) -> int:
+
+        size = 0
+        for file in self.files:
+            size = size + os.path.getsize(os.path.realpath(file))
+        return size
+
+    def _create_hashes(self, hash_codec: str) -> Sequence[bytes]:
+        return [
+            self._create_hash_from_file(file, hash_codec=hash_codec)
+            for file in self.files
+        ]
+
+
+class SerializedInlineJson(SerializedData):
+
+    type: Literal["inline"] = "inline"
+    inline_data: Any = Field(
+        description="Data that will not be stored externally, but inline in the containing model. This should only contain data types that can be serialized via any means (scalars, etc.)."
+    )
+    _json_cache: Optional[bytes] = PrivateAttr(default=None)
+
+    def as_json(self) -> bytes:
+        if self._json_cache is None:
+            self._json_cache = orjson.dumps(self.inline_data)
+        return self._json_cache
+
+    def get_chunks(
+        self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
+    ) -> Iterable[Union[str, BytesLike]]:
+
+        if as_files is False:
+            return [self.as_json()]
+        else:
+            raise NotImplementedError()
+
+    def get_number_of_chunks(self) -> int:
+        return 1
+
+    def _get_size(self) -> int:
+        return len(self.as_json())
+
+    def _create_hashes(self, hash_codec: str) -> Sequence[bytes]:
+        return [self._create_hash_from_chunk(self.as_json(), hash_codec=hash_codec)]
+
+
+class SerializedChunkIDs(SerializedData):
+
+    type: Literal["chunk-ids"] = "chunk-ids"
+    chunk_id_list: List[str] = Field(
+        description="A list of chunk ids, which will be resolved via the attached data registry."
+    )
+    archive_id: Optional[uuid.UUID] = Field(
+        description="The preferred data archive to get the chunks from."
+    )
+    size: int = Field(description="The size of all chunks combined.")
+    _data_registry: "DataRegistry" = PrivateAttr(default=None)
+
+    def get_chunks(
+        self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
+    ) -> Iterable[Union[str, BytesLike]]:
+
+        if isinstance(as_files, (bool, str)):
+            return (
+                self._data_registry.retrieve_chunk(
+                    chunk_id=chunk,
+                    archive_id=self.archive_id,
+                    as_file=as_files,
+                    symlink_ok=symlink_ok,
+                )
+                for chunk in self.chunk_id_list
+            )
+        else:
+            result = []
+            for idx, chunk_id in enumerate(self.chunk_id_list):
+                file = as_files[idx]
+                self._data_registry.retrieve_chunk(
+                    chunk_id=chunk_id,
+                    archive_id=self.archive_id,
+                    as_file=file,
+                    symlink_ok=symlink_ok,
+                )
+                result.append(file)
+            return result
+
+    def get_number_of_chunks(self) -> int:
+        return len(self.chunk_id_list)
+
+    def _get_size(self) -> int:
+        return self.size
+
+    def _create_hashes(self, hash_codec: Callable) -> Sequence[bytes]:
+
+        result = []
+        for chunk_id in self.chunk_id_list:
+            cid = CID.decode(chunk_id)
+            result.append(bytes(cid))
+
+        return result
+
+
+SERIALIZE_TYPES = {
+    "chunk": SerializedChunk,
+    "chunks": SerializedChunks,
+    "file": SerializedFile,
+    "files": SerializedFiles,
+    "inline": SerializedInlineJson,
+    "chunk-ids": SerializedChunkIDs,
+}
+
+
+class SerializedValue(KiaraModel):
+
+    data_type: str = Field(
+        description="The name of the data type for this serialized value."
+    )
+    data_type_config: Mapping[str, Any] = Field(
+        description="The (optional) config for the data type for this serialized value.",
+        default=dict,
+    )
+    deserialization: Manifest = Field(
+        description="The manifest to use to deserialize this value."
+    )
+    serialization_metadata: Mapping[str, Any] = Field(
+        description="Optional metadata describing aspects of the serialization used.",
+        default_factory=dict,
+    )
+
+    hash_codec: str = Field(
+        description="The codec used to hash the value.", default="sha2-256"
+    )
+    hashes: Dict[str, Sequence[bytes]] = Field(
+        description="The hashes for all parts of this serialized value.",
+        default_factory=dict,
+    )
+
+    _cached_hash_func: Optional[
+        Callable[[Union[str, int, Multicodec], bytes], bytes]
+    ] = PrivateAttr(default=None)
+    _cached_size: Optional[int] = PrivateAttr(default=None)
+    _cached_dag: Optional[bytes] = PrivateAttr(default=None)
+    _cached_cid: Optional[bytes] = PrivateAttr(default=None)
+
+    def _retrieve_id(self) -> str:
+        raise NotImplementedError()
+
+    def _retrieve_category_id(self) -> str:
+        return "instance.serialized_value"
+
+    def _retrieve_data_to_hash(self) -> Any:
+        raise NotImplementedError()
+        # return {
+        #     "serialized_hash": self.serialized_hash,
+        #     "data_type": self.data_type,
+        #     "data_type_config": self.data_type_config
+        # }
+
+    @property
+    def size(self) -> int:
+        if self._cached_size is not None:
+            return self._cached_size
+
+        size = 0
+        for k in self.get_keys():
+            model = self.get_serialized_data(k)
+            size = size + model.get_size()
+        self._cached_size = size
+        return self._cached_size
+
+    @property
+    def serialized_hash(self) -> str:
+        return self.cid.hex()
+
+    @abc.abstractmethod
+    def get_keys(self) -> Iterable[str]:
+        pass
+
+    @abc.abstractmethod
+    def get_serialized_data(self, key: str) -> SerializedData:
+        pass
+
+    @property
+    def cid(self) -> bytes:
+
+        if self._cached_cid is not None:
+            return self._cached_cid
+
+        # TODO: check whether that is correect, or whether it needs another wrapping in an 'identity' type
+        codec = multicodec.get("dag-cbor")
+
+        hash_func = Multihash(codec=self.hash_codec).digest
+        hash = hash_func(self.dag)
+        cid = create_cid_digest(codec, hash)
+        self._cached_cid = cid
+
+        return self._cached_cid
+
+    def get_hashes_for_key(self, key) -> Sequence[bytes]:
+
+        if key in self.hashes.keys():
+            return self.hashes[key]
+
+        model = self.get_serialized_data(key)
+        hashes = model.get_hashes(hash_codec=self.hash_codec)
+        self.hashes[key] = hashes
+        return self.hashes[key]
+
+    @property
+    def dag(self) -> bytes:
+
+        if self._cached_dag is not None:
+            return self._cached_dag
+
+        dag: Dict[str, Sequence[bytes]] = {}
+        for key in self.get_keys():
+            dag[key] = self.get_hashes_for_key(key)
+
+        encoded = dag_cbor.encode(dag)
+        self._cached_dag = encoded
+        return self._cached_dag
+
+
+class SerializationResult(SerializedValue):
+
+    data: Dict[
+        str,
+        Union[
+            SerializedChunk,
+            SerializedChunks,
+            SerializedFile,
+            SerializedFiles,
+            SerializedInlineJson,
+        ],
+    ] = Field(
+        description="One or several byte arrays representing the serialized state of the value."
+    )
+
+    def get_keys(self) -> Iterable[str]:
+        return self.data.keys()
+
+    def get_serialized_data(self, key: str) -> SerializedData:
+        return self.data[key]
+
+    @root_validator(pre=True)
+    def validate_data(cls, values):
+
+        codec = values.get("codec", None)
+        if codec is None:
+            codec = "sha2-256"
+            values["codec"] = codec
+
+        v = values.get("data")
+        assert isinstance(v, Mapping)
+
+        result = {}
+        for field_name, data in v.items():
+            if isinstance(data, SerializedData):
+                assert data.codec == codec
+                result[field_name] = data
+            elif isinstance(data, Mapping):
+                s_type = data.get("type", None)
+                if not s_type:
+                    raise ValueError(
+                        f"Invalid serialized data config, missing 'type' key: {data}"
+                    )
+
+                if s_type not in SERIALIZE_TYPES.keys():
+                    raise ValueError(
+                        f"Invalid serialized data type '{s_type}'. Allowed types: {', '.join(SERIALIZE_TYPES.keys())}"
+                    )
+
+                cls = SERIALIZE_TYPES[s_type]
+
+                data["codec"] = codec
+                result[field_name] = cls(**data)
+
+        values["data"] = result
+        return values
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("key")
+        table.add_column("value")
+        table.add_row("data_type", self.data_type)
+        config = Syntax(
+            orjson_dumps(self.data_type_config), "json", background_color="default"
+        )
+        table.add_row("data_type_config", config)
+
+        data_fields = {}
+        for field, model in self.data.items():
+            data_fields[field] = {"type": model.type}
+        data_json = Syntax(
+            orjson_dumps(data_fields), "json", background_color="default"
+        )
+        table.add_row("data", data_json)
+        table.add_row("size", str(self.size))
+        table.add_row("hash", str(self.serialized_hash))
+
+        return table
+
+    def __repr__(self):
+
+        return f"{self.__class__.__name__}(type={self.data_type} size={self.size}"
+
+    def __str__(self):
+        return self.__repr__()
+
+
+class PersistedValue(SerializedValue):
+
+    archive_id: uuid.UUID = Field(
+        description="The id of the store that persisted the data."
+    )
+    chunk_id_map: Mapping[str, SerializedChunkIDs] = Field(
+        description="Reference-ids that resolve to the values' serialized chunks."
+    )
+
+    def _retrieve_category_id(self) -> str:
+        return "instance.persisted_value_info"
+
+    def get_keys(self) -> Iterable[str]:
+        return self.chunk_id_map.keys()
+
+    def get_serialized_data(self, key: str) -> SerializedData:
+        return self.chunk_id_map[key]
+
+
+class LoadConfig(Manifest):
+
+    inputs: Mapping[str, PersistedValue] = Field(
+        description="A map translating from input field name to alias (key) in bytes_structure."
+    )
+    output_name: str = Field(
+        description="The name of the field that contains the persisted value details."
+    )
+
+    def _retrieve_data_to_hash(self) -> Any:
+        return self.dict()
+
+    def __repr__(self):
+
+        return f"{self.__class__.__name__}(module_type={self.module_type}, output_name={self.output_name})"
+
+    def __str__(self):
+        return self.__repr__()
 
 
 class ValuePedigree(InputsManifest):
@@ -97,7 +715,7 @@ class ValueDetails(KiaraModel):
 
     value_status: ValueStatus = Field(description="The set/unset status of this value.")
     value_size: int = Field(description="The size of this value, in bytes.")
-    value_hash: int = Field(description="The hash of this value.")
+    value_hash: str = Field(description="The hash of this value.")
     pedigree: ValuePedigree = Field(
         description="Information about the module and inputs that went into creating this value."
     )
@@ -179,6 +797,7 @@ class ValueDetails(KiaraModel):
 class Value(ValueDetails):
 
     _value_data: Any = PrivateAttr(default=SpecialValue.NOT_SET)
+    _serialized_value: Optional[SerializedValue] = PrivateAttr(default=None)
     _data_retrieved: bool = PrivateAttr(default=False)
     _data_registry: "DataRegistry" = PrivateAttr(default=None)
     _data_type: "DataType" = PrivateAttr(default=None)
@@ -252,6 +871,17 @@ class Value(ValueDetails):
         self.destiny_backlinks[value_id] = destiny_alias  # type: ignore
 
     @property
+    def serialized(self) -> SerializedValue:
+
+        if self._serialized_value is not None:
+            return self._serialized_value
+
+        self._serialized_value = self._data_registry.retrieve_persisted_value_details(
+            self.value_id
+        )
+        return self._serialized_value
+
+    @property
     def data(self) -> Any:
         if not self.is_initialized:
             raise Exception(
@@ -270,7 +900,7 @@ class Value(ValueDetails):
         elif self.value_status not in [ValueStatus.SET, ValueStatus.DEFAULT]:
             raise Exception(f"Invalid internal state of value '{self.value_id}'.")
 
-        retrieved = self._data_registry.retrieve_value_data(value_id=self.value_id)
+        retrieved = self._data_registry.retrieve_value_data(value=self)
 
         if retrieved is None or isinstance(retrieved, SpecialValue):
             raise Exception(
@@ -282,7 +912,9 @@ class Value(ValueDetails):
         return self._value_data
 
     def retrieve_load_config(self) -> Optional[LoadConfig]:
-        return self._data_registry.retrieve_load_config(value_id=self.value_id)
+        return self._data_registry.retrieve_persisted_value_details(
+            value_id=self.value_id
+        )
 
     def __repr__(self):
 
@@ -405,7 +1037,9 @@ class Value(ValueDetails):
                 table.add_row(*row)
 
         if show_load_config:
-            load_config = self._data_registry.retrieve_load_config(self.value_id)
+            load_config = self._data_registry.retrieve_persisted_value_details(
+                self.value_id
+            )
             if load_config is None:
                 table.add_row("load_config", "-- no load config (yet?) --")
             else:

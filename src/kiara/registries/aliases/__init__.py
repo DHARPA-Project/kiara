@@ -136,15 +136,13 @@ class AliasRegistry(object):
             raise Exception("No default alias store set (yet).")
         return self._default_alias_store
 
-    def get_archive(self, archive_id: Optional[str] = None) -> AliasArchive:
+    def get_archive(self, archive_id: Optional[str] = None) -> Optional[AliasArchive]:
         if archive_id is None:
             archive_id = self.default_alias_store
             if archive_id is None:
                 raise Exception("Can't retrieve default alias archive, none set (yet).")
 
         archive = self._alias_archives.get(archive_id, None)
-        if archive is None:
-            raise Exception(f"No archive registered for base alias '{archive_id}'.")
         return archive
 
     @property
@@ -209,7 +207,11 @@ class AliasRegistry(object):
         archive_id, rest = alias.split(".", maxsplit=2)
         archive = self.get_archive(archive_id=archive_id)
 
-        v_id = archive.find_value_id_for_alias(alias=rest)
+        if archive is None:
+            v_id = self.get_archive().find_value_id_for_alias(alias)
+        else:
+            v_id = archive.find_value_id_for_alias(alias=rest)
+
         # TODO: cache this?
         return v_id
 

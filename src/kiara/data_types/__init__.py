@@ -60,7 +60,7 @@ from kiara.models.values.value_schema import ValueSchema
 from kiara.utils import orjson_dumps
 
 if TYPE_CHECKING:
-    from kiara.models.values.value import SerializedValue, Value, ValuePedigree
+    from kiara.models.values.value import SerializedData, Value, ValuePedigree
 
 
 # def get_type_name(obj: Any):
@@ -237,17 +237,17 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
     # def is_immutable(self) -> bool:
     #     pass
 
-    def calculate_hash(self, data: "SerializedValue") -> str:
+    def calculate_hash(self, data: "SerializedData") -> str:
         """Calculate the hash of the value."""
 
         return data.serialized_hash
 
-    def calculate_size(self, data: "SerializedValue") -> int:
+    def calculate_size(self, data: "SerializedData") -> int:
         """Calculate the size of the value."""
 
         return data.size
 
-    def serialize(self, data: TYPE_PYTHON_CLS) -> "SerializationResult":
+    def serialize(self, data: TYPE_PYTHON_CLS) -> "SerializationValue":
 
         try:
             import pickle5 as pickle
@@ -255,19 +255,26 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
             import pickle
 
         pickled = pickle.dumps(data, protocol=5)
-        data = {"python_object": {"type": "chunk", "chunk": pickled}}
+        data = {"python_object": {"type": "chunk", "chunk": pickled, "codec": "raw"}}
 
         serialized_data = {
             "data_type": self.data_type_name,
             "data_type_config": self.type_config.dict(),
             "data": data,
-            "deserialization": {
-                "module_type": "value.unpickle",
-                "module_config": {"value_type": self.data_type_name},
-            },
+            "serialization_profile": "pickle",
             "serialization_metadata": {
                 "profile": "pickle",
                 "environment": {},
+                "deserialize": {
+                    "object": {
+                        "module_name": "value.unpickle",
+                        "module_config": {
+                            "value_type": "any",
+                            "target_profile": "object",
+                            "serialization_profile": "pickle",
+                        },
+                    }
+                },
             },
         }
         from kiara.models.values.value import SerializationResult
@@ -281,7 +288,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
 
     def _pre_examine_data(
         self, data: Any, schema: ValueSchema
-    ) -> Tuple[Any, Optional["SerializedValue"], ValueStatus, str, int]:
+    ) -> Tuple[Any, Optional["SerializedData"], ValueStatus, str, int]:
 
         if data == SpecialValue.NOT_SET:
             status = ValueStatus.NOT_SET
@@ -313,19 +320,24 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
             value_hash = INVALID_HASH_MARKER
             serialized = None
         else:
-            data = self.parse_python_obj(data)
-            if data is None:
-                raise Exception(
-                    f"Invalid data, can't parse into a value of type '{schema.type}'."
-                )
-            self._validate(data)
 
-            from kiara.models.values.value import SerializedValue
+            from kiara.models.values.value import SerializedData
 
-            if not isinstance(data, SerializedValue):
-                serialized = self.serialize(data)
-            else:
+            if isinstance(data, SerializedData):
+                # TODO: assert value is in schema lineage
+                # assert data.data_type == schema.type
+                # assert data.data_type_config == schema.type_config
                 serialized = data
+            else:
+                data = self.parse_python_obj(data)
+                if data is None:
+                    raise Exception(
+                        f"Invalid data, can't parse into a value of type '{schema.type}'."
+                    )
+                self._validate(data)
+
+                serialized = self.serialize(data)
+
             size = serialized.size
             value_hash = serialized.serialized_hash
 
@@ -337,7 +349,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
         value_id: uuid.UUID,
         data: Any,
         schema: ValueSchema,
-        serialized: Optional["SerializedValue"],
+        serialized: Optional["SerializedData"],
         status: Union[ValueStatus, str],
         value_hash: str,
         value_size: int,

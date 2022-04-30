@@ -41,8 +41,8 @@ from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
 from kiara.models.values.value import (
     ORPHAN,
-    PersistedValue,
-    SerializedValue,
+    PersistedData,
+    SerializedData,
     Value,
     ValueMap,
     ValueMapReadOnly,
@@ -78,7 +78,7 @@ class DataRegistry(object):
         self._values_by_hash: Dict[int, Set[uuid.UUID]] = {}
 
         self._cached_data: Dict[uuid.UUID, Any] = {}
-        self._persisted_value_descs: Dict[uuid.UUID, Optional[PersistedValue]] = {}
+        self._persisted_value_descs: Dict[uuid.UUID, Optional[PersistedData]] = {}
 
         # initialize special values
         special_value_cls = PythonClass.from_class(SpecialValue)
@@ -320,7 +320,7 @@ class DataRegistry(object):
         self,
         value: Union[Value, uuid.UUID],
         store_id: Optional[str] = None,
-    ) -> Optional[PersistedValue]:
+    ) -> Optional[PersistedData]:
 
         if store_id is None:
             store_id = self.default_data_store
@@ -443,7 +443,7 @@ class DataRegistry(object):
         Optional[Value],
         DataType,
         Optional[Any],
-        Optional[SerializedValue],
+        Optional[SerializedData],
         ValueStatus,
         str,
         int,
@@ -460,7 +460,7 @@ class DataRegistry(object):
                     data,
                     data.data_type,
                     None,
-                    data.serialized,
+                    data.serialized_data,
                     data.value_status,
                     data.value_hash,
                     data.value_size,
@@ -476,7 +476,7 @@ class DataRegistry(object):
                 value,
                 value.data_type,
                 None,
-                value.serialized,
+                value.serialized_data,
                 value.value_status,
                 value.value_hash,
                 value.value_size,
@@ -625,7 +625,7 @@ class DataRegistry(object):
 
     def retrieve_persisted_value_details(
         self, value_id: uuid.UUID
-    ) -> Optional[PersistedValue]:
+    ) -> Optional[PersistedData]:
 
         if (
             value_id in self._persisted_value_descs.keys()
@@ -657,7 +657,7 @@ class DataRegistry(object):
 
     def retrieve_serialized_value(
         self, value_id: uuid.UUID
-    ) -> Optional[SerializedValue]:
+    ) -> Optional[SerializedData]:
         """Create a LoadConfig object from the details of the persisted version of this value."""
 
         pv = self.retrieve_persisted_value_details(value_id=value_id)
@@ -706,9 +706,12 @@ class DataRegistry(object):
             )
 
         op_type: DeSerializeOperationType = self._kiara.operation_registry.get_operation_type("deserialize")  # type: ignore
-        ops = op_type.find_deserialization_operations_for_type(
-            serialized_value.data_type
+        ops = op_type.find_deserialzation_operation_for_type_and_profile(
+            serialized_value.data_type, serialized_value.serialization_profile
         )
+
+        if len(ops) > 1:
+            raise Exception("No unique op.")
 
         op = ops[0]
         inputs = {"value": serialized_value}

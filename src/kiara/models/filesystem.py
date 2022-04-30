@@ -356,7 +356,10 @@ class FileBundle(KiaraModel):
     @property
     def path(self) -> str:
         if self._path is None:
-            raise Exception("File bundle path not set.")
+            # TODO: better explanation, offer remedy like copying into temp folder
+            raise Exception(
+                "File bundle path not set, it appears this bundle is comprised of symlinks only."
+            )
         return self._path
 
     def _retrieve_id(self) -> str:
@@ -379,22 +382,25 @@ class FileBundle(KiaraModel):
 
         content_dict: Dict[str, str] = {}
 
-        def read_file(rel_path: str, fm: FileModel):
-            with open(fm.path, encoding="utf-8") as f:
+        def read_file(rel_path: str, full_path: str):
+            with open(full_path, encoding="utf-8") as f:
                 try:
                     content = f.read()
                     content_dict[rel_path] = content  # type: ignore
                 except Exception as e:
                     if ignore_errors:
                         log_message(f"Can't read file: {e}")
-                        logger.warning("ignore.file", path=fm.path, reason=str(e))
+                        logger.warning("ignore.file", path=full_path, reason=str(e))
                     else:
-                        raise Exception(f"Can't read file (as text) '{fm.path}: {e}")
+                        raise Exception(f"Can't read file (as text) '{full_path}: {e}")
 
         # TODO: common ignore files and folders
-        for f in self.included_files.values():
-            rel_path = self.get_relative_path(f)
-            read_file(rel_path=rel_path, fm=f)
+        for rel_path, f in self.included_files.items():
+            if f._path:
+                path = f._path
+            else:
+                path = self.get_relative_path(f)
+            read_file(rel_path=rel_path, full_path=path)
 
         return content_dict
 

@@ -13,7 +13,7 @@ from rich.syntax import Syntax
 from rich.table import Table
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
 
-from kiara.models.values.value import ORPHAN, LoadConfig, PersistedValue, Value
+from kiara.models.values.value import ORPHAN, LoadConfig, PersistedData, Value
 from kiara.models.values.value_schema import ValueSchema
 from kiara.registries.aliases import AliasRegistry
 from kiara.utils import is_debug, log_message, orjson_dumps
@@ -132,7 +132,7 @@ class ValueInfo(Value):
             destiny_backlinks=value.destiny_backlinks,
             aliases=aliases,
             load_config=load_config,
-            serialize_details=persisted_details,
+            serialized=persisted_details,
         )
         model._set_registry(value._data_registry)
         model._alias_registry = kiara.alias_registry  # type: ignore
@@ -148,7 +148,7 @@ class ValueInfo(Value):
     aliases: Optional[List[str]] = Field(
         description="The aliases that are registered for this value."
     )
-    serialize_details: Optional[PersistedValue] = Field(
+    serialized: Optional[PersistedData] = Field(
         description="Details for the serialization process that was used for this value."
     )
     load_config: Optional[LoadConfig] = Field(

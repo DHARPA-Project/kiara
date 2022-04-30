@@ -272,9 +272,13 @@ class JobRegistry(object):
                 )
             elif job_id in self._processor._failed_jobs.keys():
                 job = self._processor.get_job(job_id)
-                raise Exception(f"Job failed: {job.error}")
+                msg = job.error
+                if not msg and job._exception:
+                    msg = str(job._exception)
+                    if not msg:
+                        msg = repr(job._exception)
+                raise Exception(f"Job failed: {msg}")
             else:
-                dbg(self._processor.__dict__)
                 raise Exception(f"Can't retrieve job with id '{job_id}': no such job.")
 
     def get_job_status(self, job_id: uuid.UUID) -> JobStatus:

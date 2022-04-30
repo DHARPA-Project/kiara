@@ -170,7 +170,10 @@ class ModuleProcessor(abc.ABC):
             return job
 
         except Exception as e:
-            job.error = str(e)
+            msg = str(e)
+            if not msg:
+                msg = repr(e)
+            job.error = msg
             if is_debug():
                 try:
                     import traceback
@@ -229,7 +232,8 @@ class ModuleProcessor(abc.ABC):
             if isinstance(status, str):
                 job.error = status
             elif isinstance(status, Exception):
-                job.error = str(status)
+                msg = str(status)
+                job.error = msg
                 job._exception = status
             self._failed_jobs[job_id] = job
         elif status == JobStatus.STARTED:

@@ -23,7 +23,7 @@ from typing import (
 
 from kiara.models.module.persistence import BytesStructure
 from kiara.models.runtime_environment import RuntimeEnvironment
-from kiara.models.values.value import LoadConfig, PersistedValue, Value, ValuePedigree
+from kiara.models.values.value import LoadConfig, PersistedData, Value, ValuePedigree
 from kiara.models.values.value_schema import ValueSchema
 from kiara.registries import ARCHIVE_CONFIG_CLS, BaseArchive
 
@@ -45,12 +45,12 @@ class DataArchive(BaseArchive):
 
         self._env_cache: Dict[str, Dict[int, Mapping[str, Any]]] = {}
         self._value_cache: Dict[uuid.UUID, Value] = {}
-        self._persisted_value_cache: Dict[uuid.UUID, PersistedValue] = {}
+        self._persisted_value_cache: Dict[uuid.UUID, PersistedData] = {}
         self._value_hash_index: Dict[int, Set[uuid.UUID]] = {}
 
     def retrieve_serialized_value(
         self, value: Union[uuid.UUID, Value]
-    ) -> PersistedValue:
+    ) -> PersistedData:
 
         if isinstance(value, Value):
             value_id: uuid.UUID = value.value_id
@@ -72,7 +72,7 @@ class DataArchive(BaseArchive):
         return persisted_value
 
     @abc.abstractmethod
-    def _retrieve_serialized_value(self, value: Value) -> PersistedValue:
+    def _retrieve_serialized_value(self, value: Value) -> PersistedData:
         pass
 
     def retrieve_value(self, value_id: uuid.UUID) -> Value:
@@ -251,7 +251,7 @@ class BaseDataStore(DataStore):
     #     pass
 
     @abc.abstractmethod
-    def _persist_stored_value_info(self, value: Value, persisted_value: PersistedValue):
+    def _persist_stored_value_info(self, value: Value, persisted_value: PersistedData):
         pass
 
     @abc.abstractmethod
@@ -282,7 +282,7 @@ class BaseDataStore(DataStore):
     def _persist_destiny_backlinks(self, value: Value):
         pass
 
-    def store_value(self, value: Value) -> PersistedValue:
+    def store_value(self, value: Value) -> PersistedData:
 
         logger.debug(
             "store.value",
@@ -314,16 +314,16 @@ class BaseDataStore(DataStore):
 
         return persisted_value
 
-    def _persist_value(self, value: Value) -> PersistedValue:
+    def _persist_value(self, value: Value) -> PersistedData:
 
         # TODO: check if value id is already persisted?
-        persisted_value_info: PersistedValue = self._persist_value_data(value=value)
+        persisted_value_info: PersistedData = self._persist_value_data(value=value)
 
         if not persisted_value_info:
             raise Exception(
                 "Can't write persisted value info, no load config returned when persisting value."
             )
-        if not isinstance(persisted_value_info, PersistedValue):
+        if not isinstance(persisted_value_info, PersistedData):
             raise Exception(
                 f"Can't write persisted value info, invalid result type '{type(persisted_value_info)}' when persisting value."
             )

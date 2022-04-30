@@ -10,8 +10,7 @@ from pydantic import Field, validator
 from typing import Any, Mapping, Type, Union
 
 from kiara.models.module import KiaraModuleConfig
-from kiara.models.python_class import PythonClass
-from kiara.models.values.value import SerializedValue, ValueMap
+from kiara.models.values.value import SerializedData, ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule
 
@@ -22,10 +21,10 @@ class SerializeConfig(KiaraModuleConfig):
         description="The value type of the actual (unserialized) value."
     )
     target_profile: str = Field(
-        description="The name of the de-serialization profile.."
+        description="The profile name of the de-serialization result data."
     )
-    target_class: PythonClass = Field(
-        description="The python class of the instance that will be creqated."
+    serialization_profile: str = Field(
+        description="The name of the serialization profile used to serialize the source value."
     )
 
     @validator("value_type")
@@ -35,7 +34,7 @@ class SerializeConfig(KiaraModuleConfig):
         return value
 
 
-class DeSerializeValueModule(KiaraModule):
+class DeserializeValueModule(KiaraModule):
 
     _config_cls = SerializeConfig
 
@@ -47,6 +46,11 @@ class DeSerializeValueModule(KiaraModule):
     @classmethod
     @abc.abstractmethod
     def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
+        raise NotImplementedError()
+
+    @classmethod
+    @abc.abstractmethod
+    def retrieve_supported_serialization_profile(cls) -> str:
         raise NotImplementedError()
 
     def create_inputs_schema(
@@ -92,13 +96,13 @@ class DeSerializeValueModule(KiaraModule):
         else:
             _config = {}
 
-        result: Any = func(data=serialized_value.serialized, **_config)
+        result: Any = func(data=serialized_value.serialized_data, **_config)
         outputs.set_value("python_object", result)
 
 
-class UnpickleModule(DeSerializeValueModule):
+class UnpickleModule(DeserializeValueModule):
 
-    _module_type_name = "value.serialize.unpickle"
+    _module_type_name = "value.unpickle"
 
     @classmethod
     def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
@@ -106,11 +110,15 @@ class UnpickleModule(DeSerializeValueModule):
         return {"object": object}
 
     @classmethod
+    def retrieve_supported_serialization_profile(cls) -> str:
+        return "pickle"
+
+    @classmethod
     def retrieve_source_value_type(cls) -> str:
 
         return "any"
 
-    def to__object(self, data: SerializedValue, **config: Any):
+    def to__object(self, data: SerializedData, **config: Any):
 
         try:
             import pickle5 as pickle

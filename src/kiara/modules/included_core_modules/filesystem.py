@@ -4,14 +4,14 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-import os
-from dateutil import parser
+import orjson
+from typing import Any, Mapping, Type
 
 from kiara import KiaraModule
 from kiara.models.filesystem import FileBundle, FileModel
-from kiara.models.module.persistence import BytesStructure
-from kiara.models.values.value import ValueMap
-from kiara.modules import ModuleCharacteristics, ValueSetSchema
+from kiara.models.values.value import SerializedData, ValueMap
+from kiara.modules import ValueSetSchema
+from kiara.modules.included_core_modules.serialization import DeserializeValueModule
 
 
 class ImportFileModule(KiaraModule):
@@ -39,94 +39,49 @@ class ImportFileModule(KiaraModule):
         outputs.set_value("file", file)
 
 
-class LoadFileFromStoreModule(KiaraModule):
+class DeserializeFileModule(DeserializeValueModule):
+    """Deserialize data to a 'file' value instance."""
 
-    _module_type_name = "load.file.from_data_store"
+    _module_type_name = "deserialize.file"
 
-    def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
-        return ModuleCharacteristics(is_internal=True)
+    @classmethod
+    def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
+        return {"file_model": FileModel}
 
-    def create_inputs_schema(
-        self,
-    ) -> ValueSetSchema:
+    @classmethod
+    def retrieve_source_value_type(cls) -> str:
+        return "file"
 
-        return {
-            "file_name": {"type": "string", "doc": "The name of the file."},
-            "import_time": {
-                "type": "string",
-                "doc": "The (original) import time of the file.",
-            },
-            "bytes_structure": {
-                "type": "any",
-                "doc": "The bytes that make up the file.",
-            },
-        }
+    @classmethod
+    def retrieve_supported_serialization_profile(cls) -> str:
+        return "copy"
 
-    def create_outputs_schema(
-        self,
-    ) -> ValueSetSchema:
+    def to__file_model(self, data: SerializedData, **config: Any):
 
-        return {"file": {"type": "file", "doc": "The loaded files."}}
+        keys = list(data.get_keys())
+        keys.remove("__file_metadata__")
+        assert len(keys) == 1
 
-    def process(self, inputs: ValueMap, outputs: ValueMap):
+        file_metadata_chunks = data.get_serialized_data("__file_metadata__")
+        assert file_metadata_chunks.get_number_of_chunks() == 1
+        file_metadata_json = list(file_metadata_chunks.get_chunks(as_files=False))
+        assert len(file_metadata_json) == 1
+        file_metadata = orjson.loads(file_metadata_json[0])
 
-        file_name = inputs.get_value_data("file_name")
-        import_time_str = inputs.get_value_data("import_time")
+        chunks = data.get_serialized_data(keys[0])
+        assert chunks.get_number_of_chunks() == 1
 
-        bytes_structure: BytesStructure = inputs.get_value_data("bytes_structure")
-        assert len(bytes_structure.chunk_map) == 1
+        files = list(chunks.get_chunks(as_files=True, symlink_ok=True))
+        assert len(files) == 1
 
-        import_time = parser.parse(import_time_str)
+        file = files[0]
 
-        file_chunks = bytes_structure.chunk_map[file_name]
-        assert len(file_chunks) == 1
-        chunk = file_chunks[0]
-        assert isinstance(chunk, str)
-        file = FileModel.load_file(
-            source=chunk,
-            file_name=file_name,
-            import_time=import_time,
+        fm = FileModel.load_file(
+            source=file,
+            file_name=file_metadata["file_name"],
+            import_time=file_metadata["import_time"],
         )
-        outputs.set_value("file", file)
-
-
-# class SaveFileToStoreModule(PersistValueModule):
-#
-#     _module_type_name = "file.save_to_data_store"
-#
-#     def get_persistence_target_name(self) -> str:
-#         return "data_store"
-#
-#     def get_persistence_format_name(self) -> str:
-#         return "file"
-#
-#     def data_type__file(
-#         self, value: Value, persistence_config: Mapping[str, Any]
-#     ) -> Tuple[LoadConfig, BytesStructure]:
-#         """Persist single files into a local kiara data store."""
-#
-#         file: FileModel = value.data
-#
-#         bytes_structure_data: Mapping[str, List[Union[str, bytes]]] = {
-#             file.file_name: [file.path]
-#         }
-#         bytes_structure = BytesStructure.construct(
-#             data_type="file", data_type_config={}, chunk_map=bytes_structure_data
-#         )
-#
-#         load_config_data = {
-#             "provisioning_strategy": ByteProvisioningStrategy.FILE_PATH_MAP,
-#             "module_type": "load.file.from_data_store",
-#             "inputs": {
-#                 "file_name": file.file_name,
-#                 "import_time": str(file.import_time),
-#                 "bytes_structure": LOAD_CONFIG_PLACEHOLDER,
-#             },
-#             "output_name": "file",
-#         }
-#
-#         load_config = LoadConfig(**load_config_data)
-#         return load_config, bytes_structure
+        return fm
 
 
 class ImportFileBundleModule(KiaraModule):
@@ -158,52 +113,112 @@ class ImportFileBundleModule(KiaraModule):
         outputs.set_value("file_bundle", file_bundle)
 
 
-class LoadFileBundleFromStoreModule(KiaraModule):
+class DeserializeFileBundleModule(DeserializeValueModule):
+    """Deserialize data to a 'file' value instance."""
 
-    _module_type_name = "load.file_bundle.from_data_store"
+    _module_type_name = "deserialize.file_bundle"
 
-    def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
-        return ModuleCharacteristics(is_internal=True)
+    @classmethod
+    def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
+        return {"file_bundle": FileBundle}
 
-    def create_inputs_schema(
-        self,
-    ) -> ValueSetSchema:
+    @classmethod
+    def retrieve_source_value_type(cls) -> str:
+        return "file_bundle"
 
-        return {
-            "inline_data": {"type": "any", "doc": "The file bundle metadata."},
-            "path": {
-                "type": "string",
-                "doc": "The path to the provisioned file bundle.",
-            },
-        }
+    @classmethod
+    def retrieve_supported_serialization_profile(cls) -> str:
+        return "copy"
 
-    def create_outputs_schema(
-        self,
-    ) -> ValueSetSchema:
+    def to__file_bundle(self, data: SerializedData, **config: Any):
 
-        return {
-            "file_bundle": {
-                "type": "file_bundle",
-                "doc": "The loaded file_bundle value.",
-            }
-        }
+        keys = list(data.get_keys())
+        keys.remove("__file_metadata__")
 
-    def process(self, inputs: ValueMap, outputs: ValueMap):
+        file_metadata_chunks = data.get_serialized_data("__file_metadata__")
+        assert file_metadata_chunks.get_number_of_chunks() == 1
+        file_metadata_json = list(file_metadata_chunks.get_chunks(as_files=False))
+        assert len(file_metadata_json) == 1
+        metadata = orjson.loads(file_metadata_json[0])
+        file_metadata = metadata["included_files"]
+        bundle_name = metadata["bundle_name"]
+        bundle_import_time = metadata["import_time"]
+        sum_size = metadata["size"]
+        number_of_files = metadata["number_of_files"]
 
-        path = inputs.get_value_data("path")
+        included_files = {}
+        for rel_path in keys:
 
-        # bundle_name = inputs.get_value_data("bundle_name")
-        # import_time_str = inputs.get_value_data("import_time")
-        # import_time = parser.parse(import_time_str)
-        bundle_data = inputs.get_value_data("inline_data")
+            chunks = data.get_serialized_data(rel_path)
+            assert chunks.get_number_of_chunks() == 1
 
-        file_bundle = FileBundle(**bundle_data)
+            files = list(chunks.get_chunks(as_files=True, symlink_ok=True))
+            assert len(files) == 1
 
-        file_bundle._path = path
-        for rel_path, model in file_bundle.included_files.items():
-            model._path = os.path.join(path, rel_path)
+            file = files[0]
+            file_name = file_metadata[rel_path]["file_name"]
+            import_time = file_metadata[rel_path]["import_time"]
+            fm = FileModel.load_file(
+                source=file, file_name=file_name, import_time=import_time
+            )
+            included_files[rel_path] = fm
 
-        outputs.set_value("file_bundle", file_bundle)
+        fb = FileBundle(
+            included_files=included_files,
+            bundle_name=bundle_name,
+            import_time=bundle_import_time,
+            number_of_files=number_of_files,
+            size=sum_size,
+        )
+        return fb
+
+
+# class LoadFileBundleFromStoreModule(KiaraModule):
+#
+#     _module_type_name = "load.file_bundle.from_data_store"
+#
+#     def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
+#         return ModuleCharacteristics(is_internal=True)
+#
+#     def create_inputs_schema(
+#         self,
+#     ) -> ValueSetSchema:
+#
+#         return {
+#             "inline_data": {"type": "any", "doc": "The file bundle metadata."},
+#             "path": {
+#                 "type": "string",
+#                 "doc": "The path to the provisioned file bundle.",
+#             },
+#         }
+#
+#     def create_outputs_schema(
+#         self,
+#     ) -> ValueSetSchema:
+#
+#         return {
+#             "file_bundle": {
+#                 "type": "file_bundle",
+#                 "doc": "The loaded file_bundle value.",
+#             }
+#         }
+#
+#     def process(self, inputs: ValueMap, outputs: ValueMap):
+#
+#         path = inputs.get_value_data("path")
+#
+#         # bundle_name = inputs.get_value_data("bundle_name")
+#         # import_time_str = inputs.get_value_data("import_time")
+#         # import_time = parser.parse(import_time_str)
+#         bundle_data = inputs.get_value_data("inline_data")
+#
+#         file_bundle = FileBundle(**bundle_data)
+#
+#         file_bundle._path = path
+#         for rel_path, model in file_bundle.included_files.items():
+#             model._path = os.path.join(path, rel_path)
+#
+#         outputs.set_value("file_bundle", file_bundle)
 
 
 # class SaveFileBundleToStoreModule(PersistValueModule):

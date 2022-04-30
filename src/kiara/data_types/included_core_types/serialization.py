@@ -10,7 +10,7 @@ from typing import Any, Mapping, Type
 from kiara.data_types import DataTypeConfig
 from kiara.data_types.included_core_types.internal import InternalType
 from kiara.defaults import INVALID_HASH_MARKER, INVALID_SIZE_MARKER
-from kiara.models.values.value import SerializedValue, Value
+from kiara.models.values.value import SerializedData, Value
 
 # class SerializedValueTypeConfigSchema(DataTypeConfig):
 #
@@ -78,11 +78,11 @@ class PythonObjectType(InternalType[object, DataTypeConfig]):
     def parse_python_obj(self, data: Any) -> object:
         return data
 
-    def calculate_hash(self, data: SerializedValue) -> int:
+    def calculate_hash(self, data: SerializedData) -> int:
         """Calculate the hash of the value."""
         return INVALID_HASH_MARKER
 
-    def calculate_size(self, data: SerializedValue) -> int:
+    def calculate_size(self, data: SerializedData) -> int:
         return INVALID_SIZE_MARKER
 
     def render_as__terminal_renderable(

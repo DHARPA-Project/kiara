@@ -9,7 +9,6 @@ import structlog
 import uuid
 from enum import Enum
 from io import BytesIO
-from multiformats import CID
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Set, Union
 
@@ -18,9 +17,9 @@ from kiara.models.module.manifest import InputsManifest
 from kiara.models.values.value import (
     SERIALIZE_TYPES,
     LoadConfig,
-    PersistedValue,
+    PersistedData,
     SerializedChunkIDs,
-    SerializedValue,
+    SerializedData,
     Value,
 )
 from kiara.registries import FileSystemArchiveConfig
@@ -295,7 +294,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
         value_data = orjson.loads(base_path.read_text())
         return value_data
 
-    def _retrieve_serialized_value(self, value: Value) -> PersistedValue:
+    def _retrieve_serialized_value(self, value: Value) -> PersistedData:
 
         base_path = self.get_path(entity_type=EntityType.VALUE_DATA)
         data_dir = base_path / value.data_type_name / str(value.value_hash)
@@ -303,7 +302,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
         serialized_value_file = data_dir / ".serialized_value.json"
         data = orjson.loads(serialized_value_file.read_text())
 
-        return PersistedValue(**data)
+        return PersistedData(**data)
 
     def retrieve_chunk(
         self,
@@ -379,9 +378,9 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
 
             destiny_file.symlink_to(value_file)
 
-    def _persist_value_data(self, value: Value) -> PersistedValue:
+    def _persist_value_data(self, value: Value) -> PersistedData:
 
-        serialized_value: SerializedValue = value.serialized
+        serialized_value: SerializedData = value.serialized_data
 
         chunk_id_map = {}
         for key in serialized_value.get_keys():
@@ -396,18 +395,17 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
                 chunks = [data_model.file]  # type: ignore
             elif data_model.type == "files":  # type: ignore
                 chunks = data_model.files  # type: ignore
-            elif data_model.type == "inline":  # type: ignore
-                chunks = []
+            elif data_model.type == "inline-json":  # type: ignore
+                chunks = [BytesIO(data_model.as_json())]  # type: ignore
             else:
                 raise Exception(
                     f"Invalid serialized data type: {type(data_model)}. Available types: {', '.join(SERIALIZE_TYPES)}"
                 )
 
             chunk_ids = []
-            for item in zip(serialized_value.get_hashes_for_key(key), chunks):
-                _hash = item[0]
+            for item in zip(serialized_value.get_cids_for_key(key), chunks):
+                cid = item[0]
                 _chunk = item[1]
-                cid = CID.decode(_hash)
                 addr: HashAddress = self.hashfs.put_with_precomputed_hash(
                     _chunk, str(cid)
                 )
@@ -421,12 +419,12 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
             scids._data_registry = self.kiara_context.data_registry
             chunk_id_map[key] = scids
 
-        pers_value = PersistedValue(
+        pers_value = PersistedData(
             archive_id=self.archive_id,
             chunk_id_map=chunk_id_map,
             data_type=serialized_value.data_type,
             data_type_config=serialized_value.data_type_config,
-            deserialization=serialized_value.deserialization,
+            serialization_profile=serialized_value.serialization_profile,
             serialization_metadata=serialized_value.serialization_metadata,
         )
 

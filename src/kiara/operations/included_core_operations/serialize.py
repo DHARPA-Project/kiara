@@ -15,7 +15,6 @@ from kiara.models.module.operation import (
     Operation,
     OperationConfig,
 )
-from kiara.models.python_class import PythonClass
 from kiara.models.values.value import Value, ValueMap
 from kiara.modules import ValueSetSchema
 from kiara.operations import OperationType
@@ -231,10 +230,13 @@ class DeSerializeDetails(BaseOperationDetails):
     object_output_field: str = Field(
         description="The (output) field name containing the deserialized python class."
     )
-    target_profile: str = Field(description="The target profile name.")
-    target_class: PythonClass = Field(
-        description="The python class of the result object."
+    serialization_profile: str = Field(
+        description="The name for the serialization profile used on the source value."
     )
+    target_profile: str = Field(description="The target profile name.")
+    # target_class: PythonClass = Field(
+    #     description="The python class of the result object."
+    # )
 
     def retrieve_inputs_schema(self) -> ValueSetSchema:
 
@@ -282,8 +284,11 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
                 continue
             if not hasattr(module_cls, "retrieve_supported_target_profiles"):
                 continue
+            if not hasattr(module_cls, "retrieve_supported_serialization_profile"):
+                continue
 
             value_type = module_cls.retrieve_source_value_type()  # type: ignore
+            serialization_profile = module_cls.retrieve_supported_serialization_profile()  # type: ignore
             for _profile_name, cls in module_cls.retrieve_supported_target_profiles().items():  # type: ignore
                 func_name = f"to__{_profile_name}"
                 attr = getattr(module_cls, func_name)
@@ -291,7 +296,8 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
                 mc = {
                     "value_type": value_type,
                     "target_profile": _profile_name,
-                    "target_class": PythonClass.from_class(cls),
+                    "serialization_profile": serialization_profile
+                    # "target_class": PythonClass.from_class(cls),
                 }
                 oc = ManifestOperationConfig(
                     module_type=name, module_config=mc, doc=doc
@@ -351,7 +357,8 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
         try:
             value_type = module.config.get("value_type")
             target_profile = module.config.get("target_profile")
-            target_class = module.config.get("target_class")
+            serialization_profile = module.config.get("serialization_profile")
+            # target_class = module.config.get("target_class")
         except Exception as e:
             log_message(
                 "ignore.operation",
@@ -379,7 +386,8 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
             "value_input_field": input_field_name,
             "object_output_field": result_field_name,
             "target_profile": target_profile,
-            "target_class": target_class,
+            "serialization_profile": serialization_profile,
+            # "target_class": target_class,
             "is_internal_operation": True,
         }
 
@@ -405,10 +413,10 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
 
     def find_deserialzation_operation_for_type_and_profile(
         self, type_name: str, serialization_profile: str
-    ) -> Operation:
+    ) -> List[Operation]:
 
         lineage = self._kiara.type_registry.get_type_lineage(type_name)
-        serialize_op: Optional[Operation] = None
+        serialize_ops: List[Operation] = []
         for data_type in lineage:
             match = []
             op = None
@@ -416,7 +424,7 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
                 details = self.retrieve_operation_details(op)
                 if (
                     details.value_type == data_type
-                    and details.target_profile == serialization_profile
+                    and details.serialization_profile == serialization_profile
                 ):
                     match.append(op)
 
@@ -424,13 +432,8 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
                 if len(match) > 1:
                     assert op is not None
                     raise Exception(
-                        f"Multiple serialization operations found for type of '{op.operation_id}'. This is not supported (yet)."
+                        f"Multiple deserialization operations found for data type '{type_name}' and serialization profile '{serialization_profile}'. This is not supported (yet)."
                     )
-                serialize_op = match[0]
+                serialize_ops.append(match[0])
 
-        if serialize_op is None:
-            raise Exception(
-                f"Can't find serialization operation for type '{type_name}'."
-            )
-
-        return serialize_op
+        return serialize_ops

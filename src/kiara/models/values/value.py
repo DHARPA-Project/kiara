@@ -18,7 +18,7 @@ from multiformats import CID, multicodec, multihash
 from multiformats.multicodec import Multicodec
 from multiformats.multihash import Multihash
 from multiformats.varint import BytesLike
-from pydantic import BaseModel, Field, PrivateAttr, root_validator
+from pydantic import BaseModel, Extra, Field, PrivateAttr, root_validator
 from pydantic.fields import Field
 from rich import box
 from rich.console import Group, RenderableType
@@ -72,16 +72,20 @@ def create_cid_digest(
     digest: Union[
         str, BytesLike, Tuple[Union[str, int, Multihash], Union[str, BytesLike]]
     ],
-):
+) -> CID:
 
     cid = CID("base58btc", 1, codec, digest)
-    return bytes(cid)
+    return cid
 
 
-class SerializedData(BaseModel, abc.ABC):
+class SerializedChunks(BaseModel, abc.ABC):
+    class Config:
+        json_loads = orjson.loads
+        json_dumps = orjson_dumps
+        extra = Extra.forbid
 
     _size_cache: Optional[int] = PrivateAttr(default=None)
-    _hashes_cache: Dict[str, Sequence[bytes]] = PrivateAttr(default_factory=dict)
+    _hashes_cache: Dict[str, Sequence[CID]] = PrivateAttr(default_factory=dict)
 
     @abc.abstractmethod
     def get_chunks(
@@ -104,7 +108,7 @@ class SerializedData(BaseModel, abc.ABC):
         pass
 
     @abc.abstractmethod
-    def _create_hashes(self, hash_codec: str) -> Sequence[bytes]:
+    def _create_cids(self, hash_codec: str) -> Sequence[CID]:
         pass
 
     def get_size(self) -> int:
@@ -113,34 +117,11 @@ class SerializedData(BaseModel, abc.ABC):
             self._size_cache = self._get_size()
         return self._size_cache
 
-    def get_hashes(self, hash_codec: str) -> Sequence[bytes]:
+    def get_cids(self, hash_codec: str) -> Sequence[CID]:
 
         if self._hashes_cache.get(hash_codec, None) is None:
-            self._hashes_cache[hash_codec] = self._create_hashes(hash_codec=hash_codec)
+            self._hashes_cache[hash_codec] = self._create_cids(hash_codec=hash_codec)
         return self._hashes_cache[hash_codec]
-
-    def _create_hash_from_chunk(self, chunk: bytes, hash_codec: str) -> bytes:
-
-        multihash = Multihash(codec=hash_codec)
-        hash = multihash.digest(chunk)
-        return create_cid_digest("raw", hash)
-
-    def _create_hash_from_file(self, file: str, hash_codec: str) -> bytes:
-
-        assert hash_codec == "sha2-256"
-
-        hash_func = hashlib.sha256
-        file_hash = hash_func()
-
-        CHUNK_SIZE = 65536
-        with open(file, "rb") as f:
-            fb = f.read(CHUNK_SIZE)
-            while len(fb) > 0:
-                file_hash.update(fb)
-                fb = f.read(CHUNK_SIZE)
-
-        wrapped = multihash.wrap(file_hash.digest(), "sha2-256")
-        return create_cid_digest("raw", wrapped)
 
     def _store_bytes_to_file(self, chunks: Iterable[bytes], file: Optional[str] = None):
         "Utility method to store bytes to a file."
@@ -204,7 +185,37 @@ class SerializedData(BaseModel, abc.ABC):
     #     return self._size_cache
 
 
-class SerializedChunk(SerializedData):
+class SerializedPreStoreChunks(SerializedChunks):
+
+    codec: str = Field(
+        description="The codec used to encode the chunks in this model. Using the [multicodecs](https://github.com/multiformats/multicodec) codec table."
+    )
+
+    def _create_cid_from_chunk(self, chunk: bytes, hash_codec: str) -> CID:
+
+        multihash = Multihash(codec=hash_codec)
+        hash = multihash.digest(chunk)
+        return create_cid_digest(self.codec, hash)
+
+    def _create_cid_from_file(self, file: str, hash_codec: str) -> CID:
+
+        assert hash_codec == "sha2-256"
+
+        hash_func = hashlib.sha256
+        file_hash = hash_func()
+
+        CHUNK_SIZE = 65536
+        with open(file, "rb") as f:
+            fb = f.read(CHUNK_SIZE)
+            while len(fb) > 0:
+                file_hash.update(fb)
+                fb = f.read(CHUNK_SIZE)
+
+        wrapped = multihash.wrap(file_hash.digest(), "sha2-256")
+        return create_cid_digest(self.codec, wrapped)
+
+
+class SerializedBytes(SerializedPreStoreChunks):
 
     type: Literal["chunk"] = "chunk"
     chunk: bytes = Field(description="A byte-array")
@@ -227,11 +238,11 @@ class SerializedChunk(SerializedData):
     def _get_size(self) -> int:
         return len(self.chunk)
 
-    def _create_hashes(self, hash_codec: str) -> Sequence[bytes]:
-        return [self._create_hash_from_chunk(self.chunk, hash_codec=hash_codec)]
+    def _create_cids(self, hash_codec: str) -> Sequence[CID]:
+        return [self._create_cid_from_chunk(self.chunk, hash_codec=hash_codec)]
 
 
-class SerializedChunks(SerializedData):
+class SerializedListOfBytes(SerializedPreStoreChunks):
 
     type: Literal["chunks"] = "chunks"
     chunks: List[bytes] = Field(description="A list of byte arrays.")
@@ -265,14 +276,14 @@ class SerializedChunks(SerializedData):
             size = size + len(chunk)
         return size
 
-    def _create_hashes(self, hash_codec: str) -> Sequence[bytes]:
+    def _create_cids(self, hash_codec: str) -> Sequence[CID]:
         return [
-            self._create_hash_from_chunk(chunk, hash_codec=hash_codec)
+            self._create_cid_from_chunk(chunk, hash_codec=hash_codec)
             for chunk in self.chunks
         ]
 
 
-class SerializedFile(SerializedData):
+class SerializedFile(SerializedPreStoreChunks):
 
     type: Literal["file"] = "file"
     file: str = Field(description="A path to a file containing the serialized data.")
@@ -305,11 +316,11 @@ class SerializedFile(SerializedData):
     def _get_size(self) -> int:
         return os.path.getsize(os.path.realpath(self.file))
 
-    def _create_hashes(self, hash_codec: str) -> Sequence[bytes]:
-        return [self._create_hash_from_file(self.file, hash_codec=hash_codec)]
+    def _create_cids(self, hash_codec: str) -> Sequence[CID]:
+        return [self._create_cid_from_file(self.file, hash_codec=hash_codec)]
 
 
-class SerializedFiles(SerializedData):
+class SerializedFiles(SerializedPreStoreChunks):
 
     type: Literal["files"] = "files"
     files: List[str] = Field(
@@ -329,22 +340,23 @@ class SerializedFiles(SerializedData):
             size = size + os.path.getsize(os.path.realpath(file))
         return size
 
-    def _create_hashes(self, hash_codec: str) -> Sequence[bytes]:
+    def _create_cids(self, hash_codec: str) -> Sequence[CID]:
         return [
-            self._create_hash_from_file(file, hash_codec=hash_codec)
+            self._create_cid_from_file(file, hash_codec=hash_codec)
             for file in self.files
         ]
 
 
-class SerializedInlineJson(SerializedData):
+class SerializedInlineJson(SerializedPreStoreChunks):
 
-    type: Literal["inline"] = "inline"
+    type: Literal["inline-json"] = "inline-json"
     inline_data: Any = Field(
-        description="Data that will not be stored externally, but inline in the containing model. This should only contain data types that can be serialized via any means (scalars, etc.)."
+        description="Data that will not be stored externally, but inline in the containing model. This should only contain data types that can be serialized reliably using json (scalars, etc.)."
     )
     _json_cache: Optional[bytes] = PrivateAttr(default=None)
 
     def as_json(self) -> bytes:
+        assert self.inline_data is not None
         if self._json_cache is None:
             self._json_cache = orjson.dumps(self.inline_data)
         return self._json_cache
@@ -364,11 +376,11 @@ class SerializedInlineJson(SerializedData):
     def _get_size(self) -> int:
         return len(self.as_json())
 
-    def _create_hashes(self, hash_codec: str) -> Sequence[bytes]:
-        return [self._create_hash_from_chunk(self.as_json(), hash_codec=hash_codec)]
+    def _create_cids(self, hash_codec: str) -> Sequence[CID]:
+        return [self._create_cid_from_chunk(self.as_json(), hash_codec=hash_codec)]
 
 
-class SerializedChunkIDs(SerializedData):
+class SerializedChunkIDs(SerializedChunks):
 
     type: Literal["chunk-ids"] = "chunk-ids"
     chunk_id_list: List[str] = Field(
@@ -413,27 +425,27 @@ class SerializedChunkIDs(SerializedData):
     def _get_size(self) -> int:
         return self.size
 
-    def _create_hashes(self, hash_codec: Callable) -> Sequence[bytes]:
+    def _create_cids(self, hash_codec: Callable) -> Sequence[CID]:
 
         result = []
         for chunk_id in self.chunk_id_list:
             cid = CID.decode(chunk_id)
-            result.append(bytes(cid))
+            result.append(cid)
 
         return result
 
 
 SERIALIZE_TYPES = {
-    "chunk": SerializedChunk,
-    "chunks": SerializedChunks,
+    "chunk": SerializedBytes,
+    "chunks": SerializedListOfBytes,
     "file": SerializedFile,
     "files": SerializedFiles,
-    "inline": SerializedInlineJson,
+    "inline-json": SerializedInlineJson,
     "chunk-ids": SerializedChunkIDs,
 }
 
 
-class SerializedValue(KiaraModel):
+class SerializedData(KiaraModel):
 
     data_type: str = Field(
         description="The name of the data type for this serialized value."
@@ -442,8 +454,8 @@ class SerializedValue(KiaraModel):
         description="The (optional) config for the data type for this serialized value.",
         default=dict,
     )
-    deserialization: Manifest = Field(
-        description="The manifest to use to deserialize this value."
+    serialization_profile: str = Field(
+        description="An identifying name for the serialization method used."
     )
     serialization_metadata: Mapping[str, Any] = Field(
         description="Optional metadata describing aspects of the serialization used.",
@@ -453,17 +465,14 @@ class SerializedValue(KiaraModel):
     hash_codec: str = Field(
         description="The codec used to hash the value.", default="sha2-256"
     )
-    hashes: Dict[str, Sequence[bytes]] = Field(
-        description="The hashes for all parts of this serialized value.",
-        default_factory=dict,
-    )
+    _cids_cache: Dict[str, Sequence[CID]] = PrivateAttr(default_factory=dict)
 
     _cached_hash_func: Optional[
         Callable[[Union[str, int, Multicodec], bytes], bytes]
     ] = PrivateAttr(default=None)
     _cached_size: Optional[int] = PrivateAttr(default=None)
     _cached_dag: Optional[bytes] = PrivateAttr(default=None)
-    _cached_cid: Optional[bytes] = PrivateAttr(default=None)
+    _cached_cid: Optional[CID] = PrivateAttr(default=None)
 
     def _retrieve_id(self) -> str:
         raise NotImplementedError()
@@ -493,18 +502,18 @@ class SerializedValue(KiaraModel):
 
     @property
     def serialized_hash(self) -> str:
-        return self.cid.hex()
+        return str(self.cid)
 
     @abc.abstractmethod
     def get_keys(self) -> Iterable[str]:
         pass
 
     @abc.abstractmethod
-    def get_serialized_data(self, key: str) -> SerializedData:
+    def get_serialized_data(self, key: str) -> SerializedChunks:
         pass
 
     @property
-    def cid(self) -> bytes:
+    def cid(self) -> CID:
 
         if self._cached_cid is not None:
             return self._cached_cid
@@ -519,15 +528,14 @@ class SerializedValue(KiaraModel):
 
         return self._cached_cid
 
-    def get_hashes_for_key(self, key) -> Sequence[bytes]:
+    def get_cids_for_key(self, key) -> Sequence[CID]:
 
-        if key in self.hashes.keys():
-            return self.hashes[key]
+        if key in self._cids_cache.keys():
+            return self._cids_cache[key]
 
         model = self.get_serialized_data(key)
-        hashes = model.get_hashes(hash_codec=self.hash_codec)
-        self.hashes[key] = hashes
-        return self.hashes[key]
+        self._cids_cache[key] = model.get_cids(hash_codec=self.hash_codec)
+        return self._cids_cache[key]
 
     @property
     def dag(self) -> bytes:
@@ -535,22 +543,22 @@ class SerializedValue(KiaraModel):
         if self._cached_dag is not None:
             return self._cached_dag
 
-        dag: Dict[str, Sequence[bytes]] = {}
+        dag: Dict[str, Sequence[CID]] = {}
         for key in self.get_keys():
-            dag[key] = self.get_hashes_for_key(key)
+            dag[key] = self.get_cids_for_key(key)
 
         encoded = dag_cbor.encode(dag)
         self._cached_dag = encoded
         return self._cached_dag
 
 
-class SerializationResult(SerializedValue):
+class SerializationResult(SerializedData):
 
     data: Dict[
         str,
         Union[
-            SerializedChunk,
-            SerializedChunks,
+            SerializedBytes,
+            SerializedListOfBytes,
             SerializedFile,
             SerializedFiles,
             SerializedInlineJson,
@@ -562,7 +570,7 @@ class SerializationResult(SerializedValue):
     def get_keys(self) -> Iterable[str]:
         return self.data.keys()
 
-    def get_serialized_data(self, key: str) -> SerializedData:
+    def get_serialized_data(self, key: str) -> SerializedChunks:
         return self.data[key]
 
     @root_validator(pre=True)
@@ -571,15 +579,14 @@ class SerializationResult(SerializedValue):
         codec = values.get("codec", None)
         if codec is None:
             codec = "sha2-256"
-            values["codec"] = codec
+            values["hash_codec"] = codec
 
         v = values.get("data")
         assert isinstance(v, Mapping)
 
         result = {}
         for field_name, data in v.items():
-            if isinstance(data, SerializedData):
-                assert data.codec == codec
+            if isinstance(data, SerializedChunks):
                 result[field_name] = data
             elif isinstance(data, Mapping):
                 s_type = data.get("type", None)
@@ -593,9 +600,8 @@ class SerializationResult(SerializedValue):
                         f"Invalid serialized data type '{s_type}'. Allowed types: {', '.join(SERIALIZE_TYPES.keys())}"
                     )
 
+                assert s_type != "chunk-ids"
                 cls = SERIALIZE_TYPES[s_type]
-
-                data["codec"] = codec
                 result[field_name] = cls(**data)
 
         values["data"] = result
@@ -632,7 +638,7 @@ class SerializationResult(SerializedValue):
         return self.__repr__()
 
 
-class PersistedValue(SerializedValue):
+class PersistedData(SerializedData):
 
     archive_id: uuid.UUID = Field(
         description="The id of the store that persisted the data."
@@ -647,13 +653,13 @@ class PersistedValue(SerializedValue):
     def get_keys(self) -> Iterable[str]:
         return self.chunk_id_map.keys()
 
-    def get_serialized_data(self, key: str) -> SerializedData:
+    def get_serialized_data(self, key: str) -> SerializedChunks:
         return self.chunk_id_map[key]
 
 
 class LoadConfig(Manifest):
 
-    inputs: Mapping[str, PersistedValue] = Field(
+    inputs: Mapping[str, PersistedData] = Field(
         description="A map translating from input field name to alias (key) in bytes_structure."
     )
     output_name: str = Field(
@@ -797,7 +803,7 @@ class ValueDetails(KiaraModel):
 class Value(ValueDetails):
 
     _value_data: Any = PrivateAttr(default=SpecialValue.NOT_SET)
-    _serialized_value: Optional[SerializedValue] = PrivateAttr(default=None)
+    _serialized_value: Optional[SerializedData] = PrivateAttr(default=None)
     _data_retrieved: bool = PrivateAttr(default=False)
     _data_registry: "DataRegistry" = PrivateAttr(default=None)
     _data_type: "DataType" = PrivateAttr(default=None)
@@ -871,7 +877,7 @@ class Value(ValueDetails):
         self.destiny_backlinks[value_id] = destiny_alias  # type: ignore
 
     @property
-    def serialized(self) -> SerializedValue:
+    def serialized_data(self) -> SerializedData:
 
         if self._serialized_value is not None:
             return self._serialized_value

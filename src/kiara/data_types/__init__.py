@@ -247,20 +247,20 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
 
         return data.size
 
-    def serialize(self, data: TYPE_PYTHON_CLS) -> "SerializationValue":
+    def serialize(self, data: TYPE_PYTHON_CLS) -> "SerializedData":
 
         try:
             import pickle5 as pickle
-        except:
-            import pickle
+        except Exception:
+            import pickle  # type: ignore
 
         pickled = pickle.dumps(data, protocol=5)
-        data = {"python_object": {"type": "chunk", "chunk": pickled, "codec": "raw"}}
+        _data = {"python_object": {"type": "chunk", "chunk": pickled, "codec": "raw"}}
 
         serialized_data = {
             "data_type": self.data_type_name,
             "data_type_config": self.type_config.dict(),
-            "data": data,
+            "data": _data,
             "serialization_profile": "pickle",
             "serialization_metadata": {
                 "profile": "pickle",

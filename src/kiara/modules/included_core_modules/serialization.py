@@ -122,8 +122,8 @@ class UnpickleModule(DeserializeValueModule):
 
         try:
             import pickle5 as pickle
-        except:
-            import pickle
+        except Exception:
+            import pickle  # type: ignore
 
         assert "python_object" in data.get_keys()
         python_object_data = data.get_serialized_data("python_object")

@@ -75,7 +75,7 @@ class DataRegistry(object):
 
         self._value_archive_lookup_map: Dict[uuid.UUID, str] = {}
 
-        self._values_by_hash: Dict[int, Set[uuid.UUID]] = {}
+        self._values_by_hash: Dict[str, Set[uuid.UUID]] = {}
 
         self._cached_data: Dict[uuid.UUID, Any] = {}
         self._persisted_value_descs: Dict[uuid.UUID, Optional[PersistedData]] = {}
@@ -623,20 +623,21 @@ class DataRegistry(object):
 
         return (value, True)
 
-    def retrieve_persisted_value_details(
-        self, value_id: uuid.UUID
-    ) -> Optional[PersistedData]:
+    def retrieve_persisted_value_details(self, value_id: uuid.UUID) -> PersistedData:
 
         if (
             value_id in self._persisted_value_descs.keys()
             and self._persisted_value_descs[value_id] is not None
         ):
             persisted_details = self._persisted_value_descs[value_id]
+            assert persisted_details is not None
         else:
             # now, the value_store map should contain this value_id
             store_id = self.find_store_id_for_value(value_id=value_id)
             if store_id is None:
-                return None
+                raise Exception(
+                    f"Can't find store for persisted data of value: {value_id}"
+                )
 
             store = self.get_archive(store_id)
             assert value_id in self._registered_values.keys()
@@ -693,7 +694,7 @@ class DataRegistry(object):
             return self._cached_data[value.value_id]
 
         if value._serialized_value is None:
-            serialized_value = self.retrieve_persisted_value_details(
+            serialized_value: SerializedData = self.retrieve_persisted_value_details(
                 value_id=value.value_id
             )
             value._serialized_value = serialized_value
@@ -786,7 +787,7 @@ class DataRegistry(object):
                 import traceback
 
                 traceback.print_exc()
-                msg = str(e)
+                msg: Any = str(e)
                 if not msg:
                     msg = e
                 log_message("invalid.valueset", error_reason=msg, input_name=input_name)

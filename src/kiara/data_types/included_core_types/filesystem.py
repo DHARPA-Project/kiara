@@ -8,7 +8,7 @@ import orjson.orjson
 import structlog
 from pydantic import Field
 from rich.console import Group
-from typing import TYPE_CHECKING, Any, Mapping, Optional, Type
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Type
 
 from kiara.data_types import DataTypeConfig
 from kiara.data_types.included_core_types import AnyType, KiaraModelValueType
@@ -53,7 +53,7 @@ class FileValueType(KiaraModelValueType[FileModel, FileTypeConfig]):
 
     def serialize(self, data: FileModel) -> "SerializedData":
 
-        data = {
+        _data = {
             data.file_name: {
                 "type": "file",
                 "codec": "raw",
@@ -72,7 +72,7 @@ class FileValueType(KiaraModelValueType[FileModel, FileTypeConfig]):
         serialized_data = {
             "data_type": self.data_type_name,
             "data_type_config": self.type_config.dict(),
-            "data": data,
+            "data": _data,
             "serialization_profile": "copy",
             "serialization_metadata": {
                 # "profile": "",
@@ -182,7 +182,7 @@ class FileBundleValueType(AnyType[FileBundle, FileTypeConfig]):
 
     def serialize(self, data: FileBundle) -> "SerializedData":
 
-        file_data = {}
+        file_data: Dict[str, Any] = {}
         file_metadata = {}
         for rel_path, file in data.included_files.items():
             file_data[rel_path] = {"type": "file", "codec": "raw", "file": file.path}
@@ -191,7 +191,7 @@ class FileBundleValueType(AnyType[FileBundle, FileTypeConfig]):
                 "import_time": file.import_time,
             }
 
-        metadata = {
+        metadata: Dict[str, Any] = {
             "included_files": file_metadata,
             "bundle_name": data.bundle_name,
             "import_time": data.import_time,

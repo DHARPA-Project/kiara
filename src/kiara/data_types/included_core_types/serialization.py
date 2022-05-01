@@ -78,7 +78,7 @@ class PythonObjectType(InternalType[object, DataTypeConfig]):
     def parse_python_obj(self, data: Any) -> object:
         return data
 
-    def calculate_hash(self, data: SerializedData) -> int:
+    def calculate_hash(self, data: SerializedData) -> str:
         """Calculate the hash of the value."""
         return INVALID_HASH_MARKER
 

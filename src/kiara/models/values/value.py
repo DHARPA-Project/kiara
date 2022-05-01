@@ -18,7 +18,7 @@ from multiformats import CID, multicodec, multihash
 from multiformats.multicodec import Multicodec
 from multiformats.multihash import Multihash
 from multiformats.varint import BytesLike
-from pydantic import BaseModel, Extra, Field, PrivateAttr, root_validator
+from pydantic import BaseModel, Extra, PrivateAttr, root_validator
 from pydantic.fields import Field
 from rich import box
 from rich.console import Group, RenderableType
@@ -123,7 +123,9 @@ class SerializedChunks(BaseModel, abc.ABC):
             self._hashes_cache[hash_codec] = self._create_cids(hash_codec=hash_codec)
         return self._hashes_cache[hash_codec]
 
-    def _store_bytes_to_file(self, chunks: Iterable[bytes], file: Optional[str] = None):
+    def _store_bytes_to_file(
+        self, chunks: Iterable[bytes], file: Optional[str] = None
+    ) -> str:
         "Utility method to store bytes to a file."
 
         if file is None:
@@ -142,6 +144,8 @@ class SerializedChunks(BaseModel, abc.ABC):
         with os.fdopen(file_desc, "wb") as tmp:
             for chunk in chunks:
                 tmp.write(chunk)
+
+        return file
 
     def _read_bytes_from_file(self, file: str) -> bytes:
 
@@ -227,8 +231,13 @@ class SerializedBytes(SerializedPreStoreChunks):
         if as_files is False:
             return [self.chunk]
         else:
-            assert len(as_files) == 1
-            file = None if as_files is True else as_files[0]
+            if as_files is True:
+                file = None
+            elif isinstance(as_files, str):
+                file = as_files
+            else:
+                assert len(as_files) == 1
+                file = as_files[0]
             path = self._store_bytes_to_file([self.chunk], file=file)
             return path
 
@@ -253,18 +262,18 @@ class SerializedListOfBytes(SerializedPreStoreChunks):
         if as_files is False:
             return self.chunks
         else:
-            if as_files is None or isinstance(as_files, str):
+            if as_files is None or as_files is True or isinstance(as_files, str):
                 # means we write all the chunks into one file
                 file = None if as_files is True else as_files
-                self._store_bytes_to_file(self.chunks, file=file)
-                return file
+                path = self._store_bytes_to_file(self.chunks, file=file)
+                return [path]
             else:
                 assert len(as_files) == self.get_number_of_chunks()
                 result = []
                 for idx, chunk in enumerate(self.chunks):
-                    file = as_files[idx]
-                    self._store_bytes_to_file(chunk, file=file)
-                    result.append(file)
+                    _file = as_files[idx]
+                    path = self._store_bytes_to_file([chunk], file=_file)
+                    result.append(path)
                 return result
 
     def get_number_of_chunks(self) -> int:
@@ -289,7 +298,7 @@ class SerializedFile(SerializedPreStoreChunks):
     file: str = Field(description="A path to a file containing the serialized data.")
 
     def get_chunks(
-        self, as_files: Union[bool, Sequence[str]] = True, symlink_ok: bool = True
+        self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
     ) -> Iterable[Union[str, BytesLike]]:
 
         if as_files is False:
@@ -309,6 +318,8 @@ class SerializedFile(SerializedPreStoreChunks):
                 if symlink_ok:
                     os.symlink(self.file, file)
                     return [file]
+                else:
+                    raise NotImplementedError()
 
     def get_number_of_chunks(self) -> int:
         return 1
@@ -327,7 +338,9 @@ class SerializedFiles(SerializedPreStoreChunks):
         description="A list of strings, pointing to files containing parts of the serialized data."
     )
 
-    def get_chunks(self) -> Iterable[BytesLike]:
+    def get_chunks(
+        self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
+    ) -> Iterable[Union[str, BytesLike]]:
         raise NotImplementedError()
 
     def get_number_of_chunks(self) -> int:
@@ -425,7 +438,7 @@ class SerializedChunkIDs(SerializedChunks):
     def _get_size(self) -> int:
         return self.size
 
-    def _create_cids(self, hash_codec: Callable) -> Sequence[CID]:
+    def _create_cids(self, hash_codec: str) -> Sequence[CID]:
 
         result = []
         for chunk_id in self.chunk_id_list:
@@ -613,10 +626,10 @@ class SerializationResult(SerializedData):
         table.add_column("key")
         table.add_column("value")
         table.add_row("data_type", self.data_type)
-        config = Syntax(
+        _config = Syntax(
             orjson_dumps(self.data_type_config), "json", background_color="default"
         )
-        table.add_row("data_type_config", config)
+        table.add_row("data_type_config", _config)
 
         data_fields = {}
         for field, model in self.data.items():
@@ -917,10 +930,10 @@ class Value(ValueDetails):
         self._data_retrieved = True
         return self._value_data
 
-    def retrieve_load_config(self) -> Optional[LoadConfig]:
-        return self._data_registry.retrieve_persisted_value_details(
-            value_id=self.value_id
-        )
+    # def retrieve_load_config(self) -> Optional[LoadConfig]:
+    #     return self._data_registry.retrieve_persisted_value_details(
+    #         value_id=self.value_id
+    #     )
 
     def __repr__(self):
 

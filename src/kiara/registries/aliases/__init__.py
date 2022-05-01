@@ -208,7 +208,10 @@ class AliasRegistry(object):
         archive = self.get_archive(archive_id=archive_id)
 
         if archive is None:
-            v_id = self.get_archive().find_value_id_for_alias(alias)
+            # means no registered prefix
+            archive = self.get_archive()
+            assert archive is not None
+            v_id = archive.find_value_id_for_alias(alias)
         else:
             v_id = archive.find_value_id_for_alias(alias=rest)
 

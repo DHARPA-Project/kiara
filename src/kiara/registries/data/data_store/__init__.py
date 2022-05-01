@@ -9,21 +9,10 @@ import abc
 import structlog
 import uuid
 from rich.console import RenderableType
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    Iterable,
-    Mapping,
-    Optional,
-    Set,
-    Tuple,
-    Union,
-)
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Set, Union
 
-from kiara.models.module.persistence import BytesStructure
 from kiara.models.runtime_environment import RuntimeEnvironment
-from kiara.models.values.value import LoadConfig, PersistedData, Value, ValuePedigree
+from kiara.models.values.value import PersistedData, Value, ValuePedigree
 from kiara.models.values.value_schema import ValueSchema
 from kiara.registries import ARCHIVE_CONFIG_CLS, BaseArchive
 
@@ -46,7 +35,7 @@ class DataArchive(BaseArchive):
         self._env_cache: Dict[str, Dict[int, Mapping[str, Any]]] = {}
         self._value_cache: Dict[uuid.UUID, Value] = {}
         self._persisted_value_cache: Dict[uuid.UUID, PersistedData] = {}
-        self._value_hash_index: Dict[int, Set[uuid.UUID]] = {}
+        self._value_hash_index: Dict[str, Set[uuid.UUID]] = {}
 
     def retrieve_serialized_value(
         self, value: Union[uuid.UUID, Value]
@@ -160,7 +149,7 @@ class DataArchive(BaseArchive):
 
     def find_values_with_hash(
         self,
-        value_hash: int,
+        value_hash: str,
         value_size: Optional[int] = None,
         data_type_name: Optional[str] = None,
     ) -> Set[uuid.UUID]:
@@ -187,7 +176,7 @@ class DataArchive(BaseArchive):
     @abc.abstractmethod
     def _find_values_with_hash(
         self,
-        value_hash: int,
+        value_hash: str,
         value_size: Optional[int] = None,
         data_type_name: Optional[str] = None,
     ) -> Optional[Set[uuid.UUID]]:
@@ -234,7 +223,7 @@ class DataStore(DataArchive):
         return True
 
     @abc.abstractmethod
-    def store_value(self, value: Value) -> LoadConfig:
+    def store_value(self, value: Value) -> PersistedData:
         """ "Store the value, its data and metadata into the store.
 
         Arguments:
@@ -259,9 +248,7 @@ class BaseDataStore(DataStore):
         pass
 
     @abc.abstractmethod
-    def _persist_value_data(
-        self, value: Value
-    ) -> Tuple[LoadConfig, Optional[BytesStructure]]:
+    def _persist_value_data(self, value: Value) -> PersistedData:
         pass
 
     @abc.abstractmethod

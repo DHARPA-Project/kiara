@@ -16,7 +16,7 @@ config = context.config
 
 kiara = Kiara.instance()
 script_location = os.path.abspath(KIARA_DB_MIGRATIONS_FOLDER)
-config.set_main_option("sqlalchemy.url", kiara._config.db_url)
+# config.set_main_option("sqlalchemy.url", kiara._config.db_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

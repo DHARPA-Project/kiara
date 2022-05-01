@@ -9,12 +9,7 @@ Typical use cases for this kind of system are ones where:
 - Files are written once and never change (e.g. image storage).
 - It's desirable to have no duplicate files (e.g. user uploads).
 - File metadata is stored elsewhere (e.g. in a database).
-"""
-from multiformats.varint import BytesLike
-from pathlib import Path
-from typing import Any, BinaryIO, List, Union
 
-"""
 Adapted from: https://github.com/dgilland/hashfs
 
 License
@@ -51,10 +46,9 @@ import shutil
 from collections import namedtuple
 from contextlib import closing
 from os import walk
+from pathlib import Path
 from tempfile import NamedTemporaryFile
-
-# text_type = str
-# string_types = (str,)
+from typing import Any, BinaryIO, List, Union
 
 
 def to_bytes(text: Union[str, bytes]):
@@ -80,8 +74,8 @@ def shard(digest, depth, width):
     # This creates a list of `depth` number of tokens with width
     # `width` from the first part of the id plus the remainder.
     return compact(
-        [digest[i * width : width * (i + 1)] for i in range(depth)]
-        + [digest[depth * width :]]
+        [digest[i * width : width * (i + 1)] for i in range(depth)]  # noqa
+        + [digest[depth * width :]]  # noqa
     )
 
 
@@ -140,7 +134,7 @@ class HashFS(object):
         return HashAddress(id, self.relpath(filepath), filepath, is_duplicate)
 
     def put_with_precomputed_hash(
-        self, file: Union[str, BytesLike], hash_id: str
+        self, file: Union[str, Path, BinaryIO], hash_id: str
     ) -> "HashAddress":
 
         stream = Stream(file)

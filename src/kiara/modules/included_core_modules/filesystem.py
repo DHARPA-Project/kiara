@@ -74,7 +74,7 @@ class DeserializeFileModule(DeserializeValueModule):
         files = list(chunks.get_chunks(as_files=True, symlink_ok=True))
         assert len(files) == 1
 
-        file = files[0]
+        file: str = files[0]  # type: ignore
 
         fm = FileModel.load_file(
             source=file,
@@ -155,7 +155,7 @@ class DeserializeFileBundleModule(DeserializeValueModule):
             files = list(chunks.get_chunks(as_files=True, symlink_ok=True))
             assert len(files) == 1
 
-            file = files[0]
+            file: str = files[0]  # type: ignore
             file_name = file_metadata[rel_path]["file_name"]
             import_time = file_metadata[rel_path]["import_time"]
             fm = FileModel.load_file(

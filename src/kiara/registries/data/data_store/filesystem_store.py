@@ -16,7 +16,6 @@ from kiara.models.module.jobs import JobRecord
 from kiara.models.module.manifest import InputsManifest
 from kiara.models.values.value import (
     SERIALIZE_TYPES,
-    LoadConfig,
     PersistedData,
     SerializedChunkIDs,
     SerializedData,
@@ -203,7 +202,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
 
     def _find_values_with_hash(
         self,
-        value_hash: int,
+        value_hash: str,
         value_size: Optional[int] = None,
         data_type_name: Optional[str] = None,
     ) -> Set[uuid.UUID]:
@@ -336,7 +335,7 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
         if not env_details_file.exists():
             env_details_file.write_text(orjson_dumps(env_data))
 
-    def _persist_stored_value_info(self, value: Value, persisted_value: LoadConfig):
+    def _persist_stored_value_info(self, value: Value, persisted_value: PersistedData):
 
         working_dir = self.get_path(entity_type=EntityType.VALUE_DATA)
         data_dir = working_dir / value.data_type_name / str(value.value_hash)

@@ -764,7 +764,7 @@ def create_renderable_from_values(
     show_pedigree = config.get("show_pedigree", False)
     show_data = config.get("show_data", False)
     show_hash = config.get("show_hash", True)
-    show_load_config = config.get("show_load_config", False)
+    # show_load_config = config.get("show_load_config", False)
 
     table = RichTable(show_lines=True, box=box.MINIMAL_DOUBLE_HEAD)
     table.add_column("value_id", "i")
@@ -776,8 +776,6 @@ def create_renderable_from_values(
         table.add_column("pedigree")
     if show_data:
         table.add_column("data")
-    if show_load_config:
-        table.add_column("load_config")
 
     for id, value in sorted(values.items(), key=lambda item: item[1].value_schema.type):
         row: List[RenderableType] = [id, value.value_schema.type, str(value.value_size)]
@@ -794,13 +792,13 @@ def create_renderable_from_values(
                 value_id=value.value_id, target_type="terminal_renderable", **config
             )
             row.append(data)
-        if show_load_config:
-            load_config = value.retrieve_load_config()
-            if load_config is None:
-                load_config_str: RenderableType = "-- not stored (yet) --"
-            else:
-                load_config_str = load_config.create_renderable()
-            row.append(load_config_str)
+        # if show_load_config:
+        #     load_config = value.retrieve_load_config()
+        #     if load_config is None:
+        #         load_config_str: RenderableType = "-- not stored (yet) --"
+        #     else:
+        #         load_config_str = load_config.create_renderable()
+        #     row.append(load_config_str)
         table.add_row(*row)
 
     return table

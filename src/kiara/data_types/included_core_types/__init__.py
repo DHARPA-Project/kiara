@@ -38,7 +38,7 @@ class NoneType(DataType[SpecialValue, DataTypeConfig]):
     # def is_immutable(self) -> bool:
     #     return False
 
-    def calculate_hash(self, data: Any) -> int:
+    def calculate_hash(self, data: Any) -> str:
         return INVALID_HASH_MARKER
 
     def calculate_size(self, data: Any) -> int:

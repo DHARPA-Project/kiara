@@ -10,6 +10,7 @@ import orjson
 import sys
 from abc import ABC, abstractmethod
 from deepdiff import DeepHash
+from pydantic import Extra
 from pydantic.fields import PrivateAttr
 from pydantic.main import BaseModel
 from rich import box
@@ -40,6 +41,8 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
     class Config:
         json_loads = orjson.loads
         json_dumps = orjson_dumps
+        extra = Extra.forbid
+
         # allow_mutation = False
 
     @classmethod

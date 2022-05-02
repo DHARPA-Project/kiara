@@ -7,6 +7,7 @@
 
 import inspect
 import uuid
+from pydantic import Extra
 from pydantic.fields import Field
 from pydantic.main import BaseModel
 from pydantic.networks import AnyUrl, EmailStr
@@ -45,6 +46,8 @@ class LinkModel(BaseModel):
 
 
 class AuthorsMetadataModel(KiaraModel):
+    class Config:
+        extra = Extra.ignore
 
     _metadata_key = "origin"
 
@@ -85,6 +88,9 @@ class AuthorsMetadataModel(KiaraModel):
 
 
 class ContextMetadataModel(KiaraModel):
+    class Config:
+        extra = Extra.ignore
+
     @classmethod
     def from_class(cls, item_cls: Type):
 

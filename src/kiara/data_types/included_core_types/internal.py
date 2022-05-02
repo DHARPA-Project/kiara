@@ -96,11 +96,11 @@ class InternalModelValueType(InternalType[KiaraModel, InternalModelTypeConfig]):
             "data_type_config": self.type_config.dict(),
             "data": _data,
             "serialization_profile": "json",
-            "serialization_metadata": {
+            "metadata": {
                 "environment": {},
                 "deserialize": {
                     "python_object": {
-                        "module_name": "load.internal_model",
+                        "module_type": "load.internal_model",
                         "module_config": {
                             "value_type": "internal_model",
                             "target_profile": "python_object",

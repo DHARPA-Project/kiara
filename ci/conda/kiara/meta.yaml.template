@@ -26,7 +26,7 @@ requirements:
     - appdirs>=1.4.4,<2.0.0
     - bidict>=0.21.0
     - click>=7.0.0
-    - dag-cbor>=0.21.0
+    - dag-cbor>=0.2.2
     - deepdiff>=5.2.0,<6.0.0
     - distro>=1.6.0
     - dpath>=2.0.0

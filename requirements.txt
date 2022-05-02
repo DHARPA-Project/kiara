@@ -126,7 +126,7 @@ pyyaml-env-tag==0.1
     # via mkdocs
 pyzmq==22.3.0
     # via kiara (setup.py)
-rich==10.16.2
+rich==12.3.0
     # via
     #   kiara (setup.py)
     #   rich-click

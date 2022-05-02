@@ -37,6 +37,7 @@ from kiara.models.events.data_registry import (
     ValueRegisteredEvent,
     ValueStoredEvent,
 )
+from kiara.models.module.operation import Operation
 from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
 from kiara.models.values.value import (
@@ -49,10 +50,9 @@ from kiara.models.values.value import (
     ValuePedigree,
 )
 from kiara.models.values.value_schema import ValueSchema
-from kiara.operations.included_core_operations.serialize import DeSerializeOperationType
 from kiara.registries.data.data_store import DataArchive, DataStore
 from kiara.registries.ids import ID_REGISTRY
-from kiara.utils import log_message
+from kiara.utils import log_exception, log_message
 from kiara.utils.data import render_data
 
 if TYPE_CHECKING:
@@ -443,7 +443,7 @@ class DataRegistry(object):
         Optional[Value],
         DataType,
         Optional[Any],
-        Optional[SerializedData],
+        Union[str, SerializedData],
         ValueStatus,
         str,
         int,
@@ -693,41 +693,86 @@ class DataRegistry(object):
         if value.value_id in self._cached_data.keys():
             return self._cached_data[value.value_id]
 
-        if value._serialized_value is None:
-            serialized_value: SerializedData = self.retrieve_persisted_value_details(
-                value_id=value.value_id
-            )
-            value._serialized_value = serialized_value
+        if value._serialized_data is None:
+            serialized_data: Union[
+                str, SerializedData
+            ] = self.retrieve_persisted_value_details(value_id=value.value_id)
+            value._serialized_data = serialized_data
         else:
-            serialized_value = value._serialized_value
+            serialized_data = value._serialized_data
 
-        if serialized_value is None:
+        if isinstance(serialized_data, str):
             raise Exception(
                 f"Can't retrieve serialized version of value '{value.value_id}', this is most likely a bug."
             )
 
-        op_type: DeSerializeOperationType = self._kiara.operation_registry.get_operation_type("deserialize")  # type: ignore
-        ops = op_type.find_deserialzation_operation_for_type_and_profile(
-            serialized_value.data_type, serialized_value.serialization_profile
-        )
-
-        if len(ops) > 1:
-            raise Exception("No unique op.")
-
-        if not ops:
+        manifest = serialized_data.metadata.deserialize.get("python_object", None)
+        if manifest is None:
             raise Exception(
                 f"No deserialize operation found for data type: {value.data_type_name}"
             )
 
-        op = ops[0]
-        inputs = {"value": serialized_value}
+        module = self._kiara.create_module(manifest=manifest)
+        op = Operation.create_from_module(module=module)
+
+        input_field_match: Optional[str] = None
+        for input_field, schema in op.inputs_schema.items():
+            if schema.type == value.data_type_name:
+                if input_field_match is not None:
+                    raise Exception(
+                        f"Can't determine input field for deserialization operation '{module.module_type_name}': multiple input fields with type '{input_field_match}'."
+                    )
+                else:
+                    input_field_match = input_field
+        if input_field_match is None:
+            raise Exception(
+                f"Can't determine input field for deserialization operation '{module.module_type_name}'."
+            )
+
+        result_field_match: Optional[str] = None
+        for result_field, schema in op.outputs_schema.items():
+            if schema.type == "python_object":
+                if result_field_match is not None:
+                    raise Exception(
+                        f"Can't determine result field for deserialization operation '{module.module_type_name}': multiple result fields with type 'python_object'."
+                    )
+                else:
+                    result_field_match = result_field
+        if result_field_match is None:
+            raise Exception(
+                f"Can't determine result field for deserialization operation '{module.module_type_name}'."
+            )
+
+        inputs = {input_field_match: value}
 
         result = op.run(kiara=self._kiara, inputs=inputs)
-
-        python_object = result.get_value_data("python_object")
+        python_object = result.get_value_data(result_field_match)
         self._cached_data[value.value_id] = python_object
 
         return python_object
+
+        # op_type: DeSerializeOperationType = self._kiara.operation_registry.get_operation_type("deserialize")  # type: ignore
+        # ops = op_type.find_deserialzation_operation_for_type_and_profile(
+        #     serialized_data.data_type, serialized_data.serialization_profile
+        # )
+        #
+        # if len(ops) > 1:
+        #     raise Exception("No unique op.")
+        #
+        # if not ops:
+        #     raise Exception(
+        #         f"No deserialize operation found for data type: {value.data_type_name}"
+        #     )
+        #
+        # op = ops[0]
+        # inputs = {"value": serialized_data}
+        #
+        # result = op.run(kiara=self._kiara, inputs=inputs)
+        #
+        # python_object = result.get_value_data("python_object")
+        # self._cached_data[value.value_id] = python_object
+        #
+        # return python_object
 
     def load_values(self, values: Mapping[str, Optional[uuid.UUID]]) -> ValueMap:
 
@@ -789,9 +834,9 @@ class DataRegistry(object):
                 # )
                 values[input_name] = value
             except Exception as e:
-                import traceback
 
-                traceback.print_exc()
+                log_exception(e)
+
                 msg: Any = str(e)
                 if not msg:
                     msg = e

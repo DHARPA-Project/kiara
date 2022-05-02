@@ -51,6 +51,7 @@ from kiara.defaults import (
     INVALID_HASH_MARKER,
     INVALID_SIZE_MARKER,
     KIARA_HASH_FUNCTION,
+    NO_SERIALIZATION_MARKER,
     SpecialValue,
 )
 from kiara.exceptions import KiaraValueException, ValueTypeConfigException
@@ -255,14 +256,38 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
 
         return data.size
 
-    def serialize(self, data: TYPE_PYTHON_CLS) -> Optional["SerializedData"]:
+    def serialize_as_json(self, data: Any) -> "SerializedData":
+
+        _data = {"data": {"type": "inline-json", "inline_data": data, "codec": "json"}}
+
+        serialized_data = {
+            "data_type": self.data_type_name,
+            "data_type_config": self.type_config.dict(),
+            "data": _data,
+            "serialization_profile": "json",
+            "metadata": {
+                "environment": {},
+                "deserialize": {
+                    "python_object": {
+                        "module_type": "deserialize.from_json",
+                        "module_config": {"result_path": "data"},
+                    }
+                },
+            },
+        }
+        from kiara.models.values.value import SerializationResult
+
+        serialized = SerializationResult(**serialized_data)
+        return serialized
+
+    def serialize(self, data: TYPE_PYTHON_CLS) -> Union[None, str, "SerializedData"]:
 
         logger.debug(
             "ignore.serialize_request",
             data_type=self.data_type_name,
             reason="no 'serialize' method imnplemented",
         )
-        return None
+        return NO_SERIALIZATION_MARKER
         # raise NotImplementedError(f"Data type '{self.data_type_name}' does not support serialization.")
         #
         # try:
@@ -304,7 +329,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
 
     def _pre_examine_data(
         self, data: Any, schema: ValueSchema
-    ) -> Tuple[Any, Optional["SerializedData"], ValueStatus, str, int]:
+    ) -> Tuple[Any, Union[str, "SerializedData"], ValueStatus, str, int]:
 
         if data == SpecialValue.NOT_SET:
             status = ValueStatus.NOT_SET
@@ -324,7 +349,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
             else:
                 data = copy.deepcopy(schema.default)
 
-        if data is None:
+        if data in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
             if schema.default in [None, SpecialValue.NO_VALUE]:
                 data = SpecialValue.NO_VALUE
                 status = ValueStatus.NONE
@@ -334,7 +359,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
 
             size = 0
             value_hash = INVALID_HASH_MARKER
-            serialized: Optional["SerializedData"] = None
+            serialized: Union[None, str, "SerializedData"] = NO_SERIALIZATION_MARKER
         else:
 
             from kiara.models.values.value import SerializedData
@@ -344,6 +369,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
                 # assert data.data_type == schema.type
                 # assert data.data_type_config == schema.type_config
                 serialized = data
+                not_serialized: bool = False
             else:
                 data = self.parse_python_obj(data)
                 if data is None:
@@ -353,14 +379,22 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
                 self._validate(data)
 
                 serialized = self.serialize(data)
+                if serialized is None:
+                    serialized = NO_SERIALIZATION_MARKER
 
-            if serialized is None:
+                if isinstance(serialized, str):
+                    not_serialized = True
+                else:
+                    not_serialized = False
+
+            if not_serialized:
                 size = INVALID_SIZE_MARKER
                 value_hash = INVALID_HASH_MARKER
             else:
-                size = serialized.size
-                value_hash = serialized.serialized_hash
+                size = serialized.size  # type: ignore
+                value_hash = serialized.serialized_hash  # type: ignore
 
+        assert serialized is not None
         result = (data, serialized, status, value_hash, size)
         return result
 
@@ -369,7 +403,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
         value_id: uuid.UUID,
         data: Any,
         schema: ValueSchema,
-        serialized: Optional["SerializedData"],
+        serialized: Union[str, "SerializedData"],
         status: Union[ValueStatus, str],
         value_hash: str,
         value_size: int,
@@ -418,7 +452,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
 
         value._value_data = data
         value._data_type = self
-        value._serialized_value = serialized
+        value._serialized_data = serialized
         return value, data
 
     def parse_python_obj(self, data: Any) -> TYPE_PYTHON_CLS:

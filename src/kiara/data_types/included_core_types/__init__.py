@@ -99,10 +99,10 @@ class BytesType(AnyType[bytes, DataTypeConfig]):
             "data_type_config": self.type_config.dict(),
             "data": _data,
             "serialization_profile": "raw",
-            "serialization_metadata": {
+            "metadata": {
                 "environment": {},
                 "deserialize": {
-                    "object": {
+                    "python_object": {
                         "module_name": "load.bytes",
                         "module_config": {
                             "value_type": "bytes",
@@ -146,11 +146,11 @@ class StringType(AnyType[str, DataTypeConfig]):
             "data_type_config": self.type_config.dict(),
             "data": _data,
             "serialization_profile": "raw",
-            "serialization_metadata": {
+            "metadata": {
                 "environment": {},
                 "deserialize": {
-                    "object": {
-                        "module_name": "load.string",
+                    "python_object": {
+                        "module_type": "load.string",
                         "module_config": {
                             "value_type": "bytes",
                             "target_profile": "bytes",

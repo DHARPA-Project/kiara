@@ -5,12 +5,12 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import rich_click as click
 
-# from alembic import command  # type: ignore
-# from alembic.config import Config  # type: ignore
-
-
 # noqa
 # type: ignore
+from kiara import Kiara
+
+# from alembic import command  # type: ignore
+# from alembic.config import Config  # type: ignore
 
 
 @click.group("dev")
@@ -23,7 +23,11 @@ def dev_group(ctx):
 @click.pass_context
 def test(ctx):
 
-    pass
+    kiara: Kiara = ctx.obj["kiara"]
+    # value = kiara.data_registry.register_data(100, schema="integer")
+    value = kiara.data_registry.register_data("100", schema="string")
+    pp_result = kiara.data_registry.render_data(value_id=value.value_id)
+    print(pp_result)
 
     # DATA_FOLDER = "/home/markus/projects/kiara_new/kiara/examples/data"
     # PIPELINES_FOLDER = "/home/markus/projects/kiara_new/kiara/tests/resources/pipelines"

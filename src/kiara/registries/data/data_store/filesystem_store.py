@@ -424,7 +424,7 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
             data_type=serialized_value.data_type,
             data_type_config=serialized_value.data_type_config,
             serialization_profile=serialized_value.serialization_profile,
-            serialization_metadata=serialized_value.serialization_metadata,
+            metadata=serialized_value.metadata,
         )
 
         return pers_value

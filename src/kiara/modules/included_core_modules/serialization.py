@@ -9,13 +9,13 @@ import abc
 import importlib
 import orjson
 from pydantic import Field, validator
-from typing import Any, Mapping, Type, Union
+from typing import Any, Mapping, Optional, Type, Union
 
 from kiara.models import KiaraModel
 from kiara.models.module import KiaraModuleConfig
-from kiara.models.values.value import SerializedData, ValueMap
+from kiara.models.values.value import SerializedData, Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
-from kiara.modules import KiaraModule
+from kiara.modules import KiaraModule, ValueSetSchema
 
 
 class SerializeConfig(KiaraModuleConfig):
@@ -43,7 +43,7 @@ class DeserializeValueModule(KiaraModule):
 
     @classmethod
     @abc.abstractmethod
-    def retrieve_source_value_type(cls) -> str:
+    def retrieve_serialized_value_type(cls) -> str:
         raise NotImplementedError()
 
     @classmethod
@@ -110,18 +110,18 @@ class UnpickleModule(DeserializeValueModule):
     @classmethod
     def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
 
-        return {"object": object}
+        return {"python_object": object}
 
     @classmethod
     def retrieve_supported_serialization_profile(cls) -> str:
         return "pickle"
 
     @classmethod
-    def retrieve_source_value_type(cls) -> str:
+    def retrieve_serialized_value_type(cls) -> str:
 
         return "any"
 
-    def to__object(self, data: SerializedData, **config: Any):
+    def to__python_object(self, data: SerializedData, **config: Any):
 
         try:
             import pickle5 as pickle
@@ -144,17 +144,17 @@ class LoadBytesModule(DeserializeValueModule):
 
     @classmethod
     def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
-        return {"bytes": bytes}
+        return {"python_object": bytes}
 
     @classmethod
     def retrieve_supported_serialization_profile(cls) -> str:
         return "raw"
 
     @classmethod
-    def retrieve_source_value_type(cls) -> str:
+    def retrieve_serialized_value_type(cls) -> str:
         return "bytes"
 
-    def to__bytes(self, data: SerializedData, **config: Any) -> bytes:
+    def to__python_object(self, data: SerializedData, **config: Any) -> bytes:
 
         chunks = data.get_serialized_data("bytes")
         assert chunks.get_number_of_chunks() == 1
@@ -170,17 +170,17 @@ class LoadStringModule(DeserializeValueModule):
 
     @classmethod
     def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
-        return {"string": str}
+        return {"python_object": str}
 
     @classmethod
     def retrieve_supported_serialization_profile(cls) -> str:
         return "raw"
 
     @classmethod
-    def retrieve_source_value_type(cls) -> str:
+    def retrieve_serialized_value_type(cls) -> str:
         return "string"
 
-    def to__string(self, data: SerializedData, **config: Any) -> str:
+    def to__python_object(self, data: SerializedData, **config: Any) -> str:
 
         chunks = data.get_serialized_data("string")
         assert chunks.get_number_of_chunks() == 1
@@ -197,17 +197,17 @@ class LoadInternalModel(DeserializeValueModule):
 
     @classmethod
     def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
-        return {"model_obj": KiaraModel}
+        return {"python_object": KiaraModel}
 
     @classmethod
     def retrieve_supported_serialization_profile(cls) -> str:
         return "json"
 
     @classmethod
-    def retrieve_source_value_type(cls) -> str:
+    def retrieve_serialized_value_type(cls) -> str:
         return "internal_model"
 
-    def to__model_obj(self, data: SerializedData, **config: Any) -> KiaraModel:
+    def to__python_object(self, data: SerializedData, **config: Any) -> KiaraModel:
 
         chunks = data.get_serialized_data("data")
         assert chunks.get_number_of_chunks() == 1
@@ -223,6 +223,56 @@ class LoadInternalModel(DeserializeValueModule):
         cls = getattr(m, cls_name)
         obj = cls(**model_data)
         return obj
+
+
+class DeserializeJsonConfig(KiaraModuleConfig):
+
+    result_path: Optional[str] = Field(
+        description="The path of the result dictionary to return.", default="data"
+    )
+
+
+class DeserializeFromJsonModule(KiaraModule):
+
+    _module_type_name: str = "deserialize.from_json"
+    _config_cls = DeserializeJsonConfig
+
+    def create_inputs_schema(
+        self,
+    ) -> ValueSetSchema:
+
+        return {
+            "value": {
+                "type": "any",
+                "doc": "The value object to deserialize the data for.",
+            }
+        }
+
+    def create_outputs_schema(
+        self,
+    ) -> ValueSetSchema:
+
+        return {
+            "python_object": {
+                "type": "python_object",
+                "doc": "The deserialized python object.",
+            }
+        }
+
+    def process(self, inputs: ValueMap, outputs: ValueMap):
+
+        value: Value = inputs.get_value_obj("value")
+        serialized: SerializedData = value.serialized_data
+
+        chunks = serialized.get_serialized_data(self.get_config_value("result_path"))
+        assert chunks.get_number_of_chunks() == 1
+        _data = list(chunks.get_chunks(as_files=False))
+        assert len(_data) == 1
+        _chunk: bytes = _data[0]  # type: ignore
+
+        deserialized = orjson.loads(_chunk)
+
+        outputs.set_value("python_object", deserialized)
 
 
 # class SerializeValueModule(KiaraModule):

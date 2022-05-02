@@ -85,7 +85,7 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
         result = []
         for name, module_cls in self._kiara.module_type_classes.items():
 
-            if not hasattr(module_cls, "retrieve_source_value_type"):
+            if not hasattr(module_cls, "retrieve_serialized_value_type"):
                 continue
             if not hasattr(module_cls, "retrieve_supported_target_profiles"):
                 continue
@@ -93,7 +93,7 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
                 continue
 
             try:
-                value_type = module_cls.retrieve_source_value_type()  # type: ignore
+                value_type = module_cls.retrieve_serialized_value_type()  # type: ignore
             except TypeError:
                 raise Exception(
                     f"Can't retrieve source value type for deserialization module '{module_cls.__name__}'. This is most likely a bug, maybe you are missing a '@classmethod' annotation on the 'retrieve_source_value_type' method?"

@@ -46,17 +46,17 @@ class DeserializeFileModule(DeserializeValueModule):
 
     @classmethod
     def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
-        return {"file_model": FileModel}
+        return {"python_object": FileModel}
 
     @classmethod
-    def retrieve_source_value_type(cls) -> str:
+    def retrieve_serialized_value_type(cls) -> str:
         return "file"
 
     @classmethod
     def retrieve_supported_serialization_profile(cls) -> str:
         return "copy"
 
-    def to__file_model(self, data: SerializedData, **config: Any):
+    def to__python_object(self, data: SerializedData, **config: Any):
 
         keys = list(data.get_keys())
         keys.remove("__file_metadata__")
@@ -120,17 +120,17 @@ class DeserializeFileBundleModule(DeserializeValueModule):
 
     @classmethod
     def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
-        return {"file_bundle": FileBundle}
+        return {"python_object": FileBundle}
 
     @classmethod
-    def retrieve_source_value_type(cls) -> str:
+    def retrieve_serialized_value_type(cls) -> str:
         return "file_bundle"
 
     @classmethod
     def retrieve_supported_serialization_profile(cls) -> str:
         return "copy"
 
-    def to__file_bundle(self, data: SerializedData, **config: Any):
+    def to__python_object(self, data: SerializedData, **config: Any):
 
         keys = list(data.get_keys())
         keys.remove("__file_metadata__")

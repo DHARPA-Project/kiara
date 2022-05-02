@@ -305,7 +305,6 @@ class BaseDataStore(DataStore):
 
         # TODO: check if value id is already persisted?
         persisted_value_info: PersistedData = self._persist_value_data(value=value)
-
         if not persisted_value_info:
             raise Exception(
                 "Can't write persisted value info, no load config returned when persisting value."

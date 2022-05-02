@@ -24,10 +24,9 @@ def test_save_file_data(kiara: Kiara):
 
     file_value: Value = results.get_value_obj("file")
 
-    load_config = kiara.data_registry.store_value(value=file_value)
+    persisted_value = kiara.data_registry.store_value(value=file_value)
 
-    assert load_config is not None
-    assert load_config.module_type == "load.file.from_data_store"
+    assert persisted_value is not None
 
     loaded = kiara.data_registry.get_value(file_value.value_id)
     assert loaded.value_id == file_value.value_id
@@ -44,10 +43,9 @@ def test_save_file_bundle(kiara: Kiara):
 
     bundle_value: Value = results.get_value_obj("file_bundle")
 
-    load_config = kiara.data_registry.store_value(value=bundle_value)
+    persisted_value = kiara.data_registry.store_value(value=bundle_value)
 
-    assert load_config is not None
-    assert load_config.module_type == "load.file_bundle.from_data_store"
+    assert persisted_value is not None
 
     loaded = kiara.data_registry.get_value(bundle_value.value_id)
     assert loaded.value_id == bundle_value.value_id

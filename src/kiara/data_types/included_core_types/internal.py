@@ -8,9 +8,10 @@ import orjson
 import structlog
 from pydantic import Field, PrivateAttr
 from rich.syntax import Syntax
-from typing import Any, Generic, Mapping, Optional, Type
+from typing import Any, Generic, Mapping, Optional, Type, Union
 
 from kiara.data_types import TYPE_CONFIG_CLS, TYPE_PYTHON_CLS, DataType, DataTypeConfig
+from kiara.defaults import NO_SERIALIZATION_MARKER
 from kiara.models import KiaraModel
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.values.value import SerializedData, Value
@@ -71,7 +72,7 @@ class InternalModelValueType(InternalType[KiaraModel, InternalModelTypeConfig]):
     def data_type_config_class(cls) -> Type[InternalModelTypeConfig]:
         return InternalModelTypeConfig  # type: ignore
 
-    def serialize(self, data: KiaraModel) -> Optional[SerializedData]:
+    def serialize(self, data: KiaraModel) -> Union[str, SerializedData]:
 
         if self.type_config.model_cls is None:
             logger.debug(
@@ -80,7 +81,7 @@ class InternalModelValueType(InternalType[KiaraModel, InternalModelTypeConfig]):
                 cls=data.__class__.__name__,
                 reason="no python type specified in module config",
             )
-            return None
+            return NO_SERIALIZATION_MARKER
 
         _data = {
             "data": {

@@ -459,6 +459,27 @@ SERIALIZE_TYPES = {
 }
 
 
+class SerializationMetadata(KiaraModel):
+
+    environment: Mapping[str, int] = Field(
+        description="Hash(es) for the environments the value was created/serialized.",
+        default_factory=dict,
+    )
+    deserialize: Mapping[str, Manifest] = Field(
+        description="Suggested manifest configs to use to de-serialize the data.",
+        default_factory=dict,
+    )
+
+    def _retrieve_id(self) -> str:
+        raise NotImplementedError()
+
+    def _retrieve_category_id(self) -> str:
+        return "instance.serialization_metadata"
+
+    def _retrieve_data_to_hash(self) -> Any:
+        raise NotImplementedError()
+
+
 class SerializedData(KiaraModel):
 
     data_type: str = Field(
@@ -471,7 +492,7 @@ class SerializedData(KiaraModel):
     serialization_profile: str = Field(
         description="An identifying name for the serialization method used."
     )
-    serialization_metadata: Mapping[str, Any] = Field(
+    metadata: SerializationMetadata = Field(
         description="Optional metadata describing aspects of the serialization used.",
         default_factory=dict,
     )
@@ -646,7 +667,7 @@ class SerializationResult(SerializedData):
 
     def __repr__(self):
 
-        return f"{self.__class__.__name__}(type={self.data_type} size={self.size}"
+        return f"{self.__class__.__name__}(type={self.data_type} size={self.size})"
 
     def __str__(self):
         return self.__repr__()
@@ -817,7 +838,7 @@ class ValueDetails(KiaraModel):
 class Value(ValueDetails):
 
     _value_data: Any = PrivateAttr(default=SpecialValue.NOT_SET)
-    _serialized_value: Optional[SerializedData] = PrivateAttr(default=None)
+    _serialized_data: Union[None, str, SerializedData] = PrivateAttr(default=None)
     _data_retrieved: bool = PrivateAttr(default=False)
     _data_registry: "DataRegistry" = PrivateAttr(default=None)
     _data_type: "DataType" = PrivateAttr(default=None)
@@ -893,13 +914,18 @@ class Value(ValueDetails):
     @property
     def serialized_data(self) -> SerializedData:
 
-        if self._serialized_value is not None:
-            return self._serialized_value
+        if self._serialized_data is not None:
+            if isinstance(self._serialized_data, str):
+                raise Exception(
+                    f"Data type '{self.data_type_name}' does not support serializing: {self._serialized_data}"
+                )
 
-        self._serialized_value = self._data_registry.retrieve_persisted_value_details(
+            return self._serialized_data
+
+        self._serialized_data = self._data_registry.retrieve_persisted_value_details(
             self.value_id
         )
-        return self._serialized_value
+        return self._serialized_data
 
     @property
     def data(self) -> Any:

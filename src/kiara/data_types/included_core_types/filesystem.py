@@ -74,15 +74,16 @@ class FileValueType(KiaraModelValueType[FileModel, FileTypeConfig]):
             "data_type_config": self.type_config.dict(),
             "data": _data,
             "serialization_profile": "copy",
-            "serialization_metadata": {
+            "metadata": {
                 # "profile": "",
                 "environment": {},
                 "deserialize": {
-                    "file_model": {
+                    "python_object": {
                         "module_type": "deserialize.file",
                         "module_config": {
                             "value_type": "file",
-                            "target_profile": "file_model",
+                            "target_profile": "python_object",
+                            "serialization_profile": "copy",
                         },
                     }
                 },
@@ -211,14 +212,15 @@ class FileBundleValueType(AnyType[FileBundle, FileTypeConfig]):
             "data_type_config": self.type_config.dict(),
             "data": file_data,
             "serialization_profile": "copy",
-            "serialization_metadata": {
+            "metadata": {
                 "environment": {},
                 "deserialize": {
-                    "file_model": {
+                    "python_object": {
                         "module_type": "deserialize.file_bundle",
                         "module_config": {
                             "value_type": "file_bundle",
-                            "target_profile": "file_bundle",
+                            "target_profile": "python_object",
+                            "serialization_profile": "copy",
                         },
                     }
                 },
@@ -229,9 +231,11 @@ class FileBundleValueType(AnyType[FileBundle, FileTypeConfig]):
         serialized = SerializationResult(**serialized_data)
         return serialized
 
-    def create_model_from_python_obj(self, data: Any) -> FileBundle:
+    def parse_python_obj(self, data: Any) -> FileBundle:
 
-        if isinstance(data, str):
+        if isinstance(data, FileBundle):
+            return data
+        elif isinstance(data, str):
             return FileBundle.import_folder(source=data)
         else:
             raise Exception(

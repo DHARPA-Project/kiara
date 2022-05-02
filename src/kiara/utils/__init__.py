@@ -14,6 +14,7 @@ import orjson
 import os
 import re
 import structlog
+import traceback
 from io import StringIO
 from pathlib import Path
 from pkgutil import iter_modules
@@ -50,6 +51,12 @@ def is_develop() -> bool:
         return True
     else:
         return False
+
+
+def log_exception(exc: Exception):
+
+    if is_debug():
+        traceback.print_exc()
 
 
 def log_message(msg: str, **data):

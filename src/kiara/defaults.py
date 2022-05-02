@@ -152,6 +152,7 @@ NO_MODULE_TYPE = "EXTERNAL_DATA"
 
 INVALID_HASH_MARKER = ""
 INVALID_SIZE_MARKER = -1
+NO_SERIALIZATION_MARKER = "-- serialization not supported --"
 KIARA_ROOT_TYPE_NAME = "__kiara__"
 
 SERIALIZED_DATA_TYPE_NAME = "serialized_data"

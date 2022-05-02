@@ -4184,6 +4184,8 @@ a tree hierarchy of the overall kiara context, hashing, etc.</p>
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
         <span class="n">json_loads</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span>
         <span class="n">json_dumps</span> <span class="o">=</span> <span class="n">orjson_dumps</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
+
         <span class="c1"># allow_mutation = False</span>
 
     <span class="nd">@classmethod</span>
@@ -4563,6 +4565,8 @@ Config        </code>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
     <span class="n">json_loads</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span>
     <span class="n">json_dumps</span> <span class="o">=</span> <span class="n">orjson_dumps</span>
+    <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
+
     <span class="c1"># allow_mutation = False</span>
 </code></pre></div>
         </details>
@@ -4573,6 +4577,24 @@ Config        </code>
 
 
 
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.KiaraModel.Config.extra" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">extra</span></code>
+
+
+<a href="#kiara.models.KiaraModel.Config.extra" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
 
 
 
@@ -6175,6 +6197,8 @@ AuthorsMetadataModel            (<a class="autorefs autorefs-internal" title="ki
         <details class="quote">
           <summary>Source code in <code>kiara/models/documentation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">AuthorsMetadataModel</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">ignore</span>
 
     <span class="n">_metadata_key</span> <span class="o">=</span> <span class="s2">&quot;origin&quot;</span>
 
@@ -6244,6 +6268,35 @@ AuthorsMetadataModel            (<a class="autorefs autorefs-internal" title="ki
 
   </div>
 
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h7 id="kiara.models.documentation.AuthorsMetadataModel.Config" class="doc doc-heading">
+        <code>
+Config        </code>
+
+
+
+<a href="#kiara.models.documentation.AuthorsMetadataModel.Config" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/documentation.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+    <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">ignore</span>
+</code></pre></div>
+        </details>
+
+
+    </div>
+
+  </div>
 
 
 
@@ -6350,6 +6403,9 @@ ContextMetadataModel            (<a class="autorefs autorefs-internal" title="ki
         <details class="quote">
           <summary>Source code in <code>kiara/models/documentation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ContextMetadataModel</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">ignore</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">):</span>
 
@@ -6497,6 +6553,35 @@ ContextMetadataModel            (<a class="autorefs autorefs-internal" title="ki
 
   </div>
 
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h7 id="kiara.models.documentation.ContextMetadataModel.Config" class="doc doc-heading">
+        <code>
+Config        </code>
+
+
+
+<a href="#kiara.models.documentation.ContextMetadataModel.Config" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/documentation.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+    <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">ignore</span>
+</code></pre></div>
+        </details>
+
+
+    </div>
+
+  </div>
 
 
 

@@ -23,6 +23,7 @@ from typing import (
 from kiara.data_types import DataType
 from kiara.defaults import (
     INVALID_HASH_MARKER,
+    NO_SERIALIZATION_MARKER,
     NONE_VALUE_ID,
     NOT_SET_VALUE_ID,
     ORPHAN_PEDIGREE_OUTPUT_NAME,
@@ -455,12 +456,15 @@ class DataRegistry(object):
         if isinstance(data, Value):
 
             if data.value_id in self._registered_values.keys():
-
+                if data.is_serializable:
+                    serialized: Union[str, SerializedData] = data.serialized_data
+                else:
+                    serialized = NO_SERIALIZATION_MARKER
                 return (
                     data,
                     data.data_type,
                     None,
-                    data.serialized_data,
+                    serialized,
                     data.value_status,
                     data.value_hash,
                     data.value_size,
@@ -472,11 +476,16 @@ class DataRegistry(object):
 
         try:
             value = self.get_value(value_id=data)
+            if value.is_serializable:
+                serialized = value.serialized_data
+            else:
+                serialized = NO_SERIALIZATION_MARKER
+
             return (
                 value,
                 value.data_type,
                 None,
-                value.serialized_data,
+                serialized,
                 value.value_status,
                 value.value_hash,
                 value.value_size,

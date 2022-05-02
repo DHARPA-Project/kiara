@@ -911,6 +911,16 @@ class Value(ValueDetails):
 
         self.destiny_backlinks[value_id] = destiny_alias  # type: ignore
 
+    def is_serializable(self) -> bool:
+
+        try:
+            self.serialized_data
+            return True
+        except Exception:
+            pass
+
+        return False
+
     @property
     def serialized_data(self) -> SerializedData:
 

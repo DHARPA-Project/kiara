@@ -3796,12 +3796,15 @@ DataRegistry        </code>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Value</span><span class="p">):</span>
 
             <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">value_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_registered_values</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-
+                <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">is_serializable</span><span class="p">:</span>
+                    <span class="n">serialized</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SerializedData</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">serialized_data</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">serialized</span> <span class="o">=</span> <span class="n">NO_SERIALIZATION_MARKER</span>
                 <span class="k">return</span> <span class="p">(</span>
                     <span class="n">data</span><span class="p">,</span>
                     <span class="n">data</span><span class="o">.</span><span class="n">data_type</span><span class="p">,</span>
                     <span class="kc">None</span><span class="p">,</span>
-                    <span class="n">data</span><span class="o">.</span><span class="n">serialized_data</span><span class="p">,</span>
+                    <span class="n">serialized</span><span class="p">,</span>
                     <span class="n">data</span><span class="o">.</span><span class="n">value_status</span><span class="p">,</span>
                     <span class="n">data</span><span class="o">.</span><span class="n">value_hash</span><span class="p">,</span>
                     <span class="n">data</span><span class="o">.</span><span class="n">value_size</span><span class="p">,</span>
@@ -3813,11 +3816,16 @@ DataRegistry        </code>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value_id</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">is_serializable</span><span class="p">:</span>
+                <span class="n">serialized</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">serialized_data</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">serialized</span> <span class="o">=</span> <span class="n">NO_SERIALIZATION_MARKER</span>
+
             <span class="k">return</span> <span class="p">(</span>
                 <span class="n">value</span><span class="p">,</span>
                 <span class="n">value</span><span class="o">.</span><span class="n">data_type</span><span class="p">,</span>
                 <span class="kc">None</span><span class="p">,</span>
-                <span class="n">value</span><span class="o">.</span><span class="n">serialized_data</span><span class="p">,</span>
+                <span class="n">serialized</span><span class="p">,</span>
                 <span class="n">value</span><span class="o">.</span><span class="n">value_status</span><span class="p">,</span>
                 <span class="n">value</span><span class="o">.</span><span class="n">value_hash</span><span class="p">,</span>
                 <span class="n">value</span><span class="o">.</span><span class="n">value_size</span><span class="p">,</span>

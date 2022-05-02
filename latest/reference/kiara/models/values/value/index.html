@@ -6866,6 +6866,16 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
 
         <span class="bp">self</span><span class="o">.</span><span class="n">destiny_backlinks</span><span class="p">[</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">destiny_alias</span>  <span class="c1"># type: ignore</span>
 
+    <span class="k">def</span> <span class="nf">is_serializable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">serialized_data</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="kc">False</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">serialized_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SerializedData</span><span class="p">:</span>
 
@@ -7590,6 +7600,38 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">property_links</span><span class="p">[</span><span class="n">property_key</span><span class="p">])</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.models.values.value.Value.is_serializable" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">is_serializable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.models.values.value.Value.is_serializable" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/values/value.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">is_serializable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">serialized_data</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="kc">False</span>
 </code></pre></div>
         </details>
     </div>

@@ -6558,7 +6558,7 @@ DataRegistry        </code>
         <span class="n">Optional</span><span class="p">[</span><span class="n">Value</span><span class="p">],</span>
         <span class="n">DataType</span><span class="p">,</span>
         <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
-        <span class="n">Optional</span><span class="p">[</span><span class="n">SerializedData</span><span class="p">],</span>
+        <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SerializedData</span><span class="p">],</span>
         <span class="n">ValueStatus</span><span class="p">,</span>
         <span class="nb">str</span><span class="p">,</span>
         <span class="nb">int</span><span class="p">,</span>
@@ -6808,41 +6808,86 @@ DataRegistry        </code>
         <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">value_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_data</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">_serialized_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">serialized_value</span><span class="p">:</span> <span class="n">SerializedData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_persisted_value_details</span><span class="p">(</span>
-                <span class="n">value_id</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span>
-            <span class="p">)</span>
-            <span class="n">value</span><span class="o">.</span><span class="n">_serialized_value</span> <span class="o">=</span> <span class="n">serialized_value</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">_serialized_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">serialized_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+                <span class="nb">str</span><span class="p">,</span> <span class="n">SerializedData</span>
+            <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_persisted_value_details</span><span class="p">(</span><span class="n">value_id</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">)</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">_serialized_data</span> <span class="o">=</span> <span class="n">serialized_data</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">serialized_value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">_serialized_value</span>
+            <span class="n">serialized_data</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">_serialized_data</span>
 
-        <span class="k">if</span> <span class="n">serialized_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">serialized_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve serialized version of value &#39;</span><span class="si">{</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&#39;, this is most likely a bug.&quot;</span>
             <span class="p">)</span>
 
-        <span class="n">op_type</span><span class="p">:</span> <span class="n">DeSerializeOperationType</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation_type</span><span class="p">(</span><span class="s2">&quot;deserialize&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-        <span class="n">ops</span> <span class="o">=</span> <span class="n">op_type</span><span class="o">.</span><span class="n">find_deserialzation_operation_for_type_and_profile</span><span class="p">(</span>
-            <span class="n">serialized_value</span><span class="o">.</span><span class="n">data_type</span><span class="p">,</span> <span class="n">serialized_value</span><span class="o">.</span><span class="n">serialization_profile</span>
-        <span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ops</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No unique op.&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">ops</span><span class="p">:</span>
+        <span class="n">manifest</span> <span class="o">=</span> <span class="n">serialized_data</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">deserialize</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;python_object&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">manifest</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;No deserialize operation found for data type: </span><span class="si">{</span><span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
-        <span class="n">op</span> <span class="o">=</span> <span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">inputs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">serialized_value</span><span class="p">}</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">create_from_module</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">)</span>
+
+        <span class="n">input_field_match</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">input_field</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine input field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;: multiple input fields with type &#39;</span><span class="si">{</span><span class="n">input_field_match</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">input_field_match</span> <span class="o">=</span> <span class="n">input_field</span>
+        <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine input field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">result_field_match</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">result_field</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;python_object&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">result_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine result field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;: multiple result fields with type &#39;python_object&#39;.&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result_field_match</span> <span class="o">=</span> <span class="n">result_field</span>
+        <span class="k">if</span> <span class="n">result_field_match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine result field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">inputs</span> <span class="o">=</span> <span class="p">{</span><span class="n">input_field_match</span><span class="p">:</span> <span class="n">value</span><span class="p">}</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">)</span>
-
-        <span class="n">python_object</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;python_object&quot;</span><span class="p">)</span>
+        <span class="n">python_object</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="n">result_field_match</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_data</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">python_object</span>
 
         <span class="k">return</span> <span class="n">python_object</span>
+
+        <span class="c1"># op_type: DeSerializeOperationType = self._kiara.operation_registry.get_operation_type(&quot;deserialize&quot;)  # type: ignore</span>
+        <span class="c1"># ops = op_type.find_deserialzation_operation_for_type_and_profile(</span>
+        <span class="c1">#     serialized_data.data_type, serialized_data.serialization_profile</span>
+        <span class="c1"># )</span>
+        <span class="c1">#</span>
+        <span class="c1"># if len(ops) &gt; 1:</span>
+        <span class="c1">#     raise Exception(&quot;No unique op.&quot;)</span>
+        <span class="c1">#</span>
+        <span class="c1"># if not ops:</span>
+        <span class="c1">#     raise Exception(</span>
+        <span class="c1">#         f&quot;No deserialize operation found for data type: {value.data_type_name}&quot;</span>
+        <span class="c1">#     )</span>
+        <span class="c1">#</span>
+        <span class="c1"># op = ops[0]</span>
+        <span class="c1"># inputs = {&quot;value&quot;: serialized_data}</span>
+        <span class="c1">#</span>
+        <span class="c1"># result = op.run(kiara=self._kiara, inputs=inputs)</span>
+        <span class="c1">#</span>
+        <span class="c1"># python_object = result.get_value_data(&quot;python_object&quot;)</span>
+        <span class="c1"># self._cached_data[value.value_id] = python_object</span>
+        <span class="c1">#</span>
+        <span class="c1"># return python_object</span>
 
     <span class="k">def</span> <span class="nf">load_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
 
@@ -6904,9 +6949,9 @@ DataRegistry        </code>
                 <span class="c1"># )</span>
                 <span class="n">values</span><span class="p">[</span><span class="n">input_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="kn">import</span> <span class="nn">traceback</span>
 
-                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
                 <span class="n">msg</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
                     <span class="n">msg</span> <span class="o">=</span> <span class="n">e</span>
@@ -7167,9 +7212,9 @@ DataRegistry        </code>
             <span class="c1"># )</span>
             <span class="n">values</span><span class="p">[</span><span class="n">input_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">traceback</span>
 
-            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+            <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
             <span class="n">msg</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="n">e</span>
@@ -7876,41 +7921,86 @@ DataRegistry        </code>
     <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">value_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_data</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span>
 
-    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">_serialized_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">serialized_value</span><span class="p">:</span> <span class="n">SerializedData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_persisted_value_details</span><span class="p">(</span>
-            <span class="n">value_id</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span>
-        <span class="p">)</span>
-        <span class="n">value</span><span class="o">.</span><span class="n">_serialized_value</span> <span class="o">=</span> <span class="n">serialized_value</span>
+    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">_serialized_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">serialized_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+            <span class="nb">str</span><span class="p">,</span> <span class="n">SerializedData</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_persisted_value_details</span><span class="p">(</span><span class="n">value_id</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">)</span>
+        <span class="n">value</span><span class="o">.</span><span class="n">_serialized_data</span> <span class="o">=</span> <span class="n">serialized_data</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">serialized_value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">_serialized_value</span>
+        <span class="n">serialized_data</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">_serialized_data</span>
 
-    <span class="k">if</span> <span class="n">serialized_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">serialized_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve serialized version of value &#39;</span><span class="si">{</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&#39;, this is most likely a bug.&quot;</span>
         <span class="p">)</span>
 
-    <span class="n">op_type</span><span class="p">:</span> <span class="n">DeSerializeOperationType</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation_type</span><span class="p">(</span><span class="s2">&quot;deserialize&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-    <span class="n">ops</span> <span class="o">=</span> <span class="n">op_type</span><span class="o">.</span><span class="n">find_deserialzation_operation_for_type_and_profile</span><span class="p">(</span>
-        <span class="n">serialized_value</span><span class="o">.</span><span class="n">data_type</span><span class="p">,</span> <span class="n">serialized_value</span><span class="o">.</span><span class="n">serialization_profile</span>
-    <span class="p">)</span>
-
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ops</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No unique op.&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">ops</span><span class="p">:</span>
+    <span class="n">manifest</span> <span class="o">=</span> <span class="n">serialized_data</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">deserialize</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;python_object&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">manifest</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;No deserialize operation found for data type: </span><span class="si">{</span><span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
-    <span class="n">op</span> <span class="o">=</span> <span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">inputs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">serialized_value</span><span class="p">}</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">create_from_module</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">)</span>
+
+    <span class="n">input_field_match</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">input_field</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine input field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;: multiple input fields with type &#39;</span><span class="si">{</span><span class="n">input_field_match</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">input_field_match</span> <span class="o">=</span> <span class="n">input_field</span>
+    <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine input field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">result_field_match</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">result_field</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;python_object&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">result_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine result field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;: multiple result fields with type &#39;python_object&#39;.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result_field_match</span> <span class="o">=</span> <span class="n">result_field</span>
+    <span class="k">if</span> <span class="n">result_field_match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine result field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">{</span><span class="n">input_field_match</span><span class="p">:</span> <span class="n">value</span><span class="p">}</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">)</span>
-
-    <span class="n">python_object</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;python_object&quot;</span><span class="p">)</span>
+    <span class="n">python_object</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="n">result_field_match</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_cached_data</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">python_object</span>
 
     <span class="k">return</span> <span class="n">python_object</span>
+
+    <span class="c1"># op_type: DeSerializeOperationType = self._kiara.operation_registry.get_operation_type(&quot;deserialize&quot;)  # type: ignore</span>
+    <span class="c1"># ops = op_type.find_deserialzation_operation_for_type_and_profile(</span>
+    <span class="c1">#     serialized_data.data_type, serialized_data.serialization_profile</span>
+    <span class="c1"># )</span>
+    <span class="c1">#</span>
+    <span class="c1"># if len(ops) &gt; 1:</span>
+    <span class="c1">#     raise Exception(&quot;No unique op.&quot;)</span>
+    <span class="c1">#</span>
+    <span class="c1"># if not ops:</span>
+    <span class="c1">#     raise Exception(</span>
+    <span class="c1">#         f&quot;No deserialize operation found for data type: {value.data_type_name}&quot;</span>
+    <span class="c1">#     )</span>
+    <span class="c1">#</span>
+    <span class="c1"># op = ops[0]</span>
+    <span class="c1"># inputs = {&quot;value&quot;: serialized_data}</span>
+    <span class="c1">#</span>
+    <span class="c1"># result = op.run(kiara=self._kiara, inputs=inputs)</span>
+    <span class="c1">#</span>
+    <span class="c1"># python_object = result.get_value_data(&quot;python_object&quot;)</span>
+    <span class="c1"># self._cached_data[value.value_id] = python_object</span>
+    <span class="c1">#</span>
+    <span class="c1"># return python_object</span>
 </code></pre></div>
         </details>
     </div>
@@ -8128,7 +8218,6 @@ BaseDataStore            (<a class="autorefs autorefs-internal" title="kiara.reg
 
         <span class="c1"># TODO: check if value id is already persisted?</span>
         <span class="n">persisted_value_info</span><span class="p">:</span> <span class="n">PersistedData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_persist_value_data</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="ow">not</span> <span class="n">persisted_value_info</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                 <span class="s2">&quot;Can&#39;t write persisted value info, no load config returned when persisting value.&quot;</span>
@@ -10188,7 +10277,7 @@ FilesystemDataStore            (<a class="autorefs autorefs-internal" title="kia
             <span class="n">data_type</span><span class="o">=</span><span class="n">serialized_value</span><span class="o">.</span><span class="n">data_type</span><span class="p">,</span>
             <span class="n">data_type_config</span><span class="o">=</span><span class="n">serialized_value</span><span class="o">.</span><span class="n">data_type_config</span><span class="p">,</span>
             <span class="n">serialization_profile</span><span class="o">=</span><span class="n">serialized_value</span><span class="o">.</span><span class="n">serialization_profile</span><span class="p">,</span>
-            <span class="n">serialization_metadata</span><span class="o">=</span><span class="n">serialized_value</span><span class="o">.</span><span class="n">serialization_metadata</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="n">serialized_value</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">pers_value</span>

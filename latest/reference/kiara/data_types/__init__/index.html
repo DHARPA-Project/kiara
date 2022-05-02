@@ -3585,14 +3585,38 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
 
         <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span>
 
-    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">TYPE_PYTHON_CLS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;SerializedData&quot;</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">serialize_as_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">:</span>
+
+        <span class="n">_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;inline-json&quot;</span><span class="p">,</span> <span class="s2">&quot;inline_data&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;codec&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">}}</span>
+
+        <span class="n">serialized_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;data_type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type_name</span><span class="p">,</span>
+            <span class="s2">&quot;data_type_config&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
+            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">_data</span><span class="p">,</span>
+            <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="s2">&quot;deserialize&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="s2">&quot;deserialize.from_json&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;result_path&quot;</span><span class="p">:</span> <span class="s2">&quot;data&quot;</span><span class="p">},</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+        <span class="kn">from</span> <span class="nn">kiara.models.values.value</span> <span class="kn">import</span> <span class="n">SerializationResult</span>
+
+        <span class="n">serialized</span> <span class="o">=</span> <span class="n">SerializationResult</span><span class="p">(</span><span class="o">**</span><span class="n">serialized_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">serialized</span>
+
+    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">TYPE_PYTHON_CLS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">]:</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="s2">&quot;ignore.serialize_request&quot;</span><span class="p">,</span>
             <span class="n">data_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_type_name</span><span class="p">,</span>
             <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;no &#39;serialize&#39; method imnplemented&quot;</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">NO_SERIALIZATION_MARKER</span>
         <span class="c1"># raise NotImplementedError(f&quot;Data type &#39;{self.data_type_name}&#39; does not support serialization.&quot;)</span>
         <span class="c1">#</span>
         <span class="c1"># try:</span>
@@ -3634,7 +3658,7 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
 
     <span class="k">def</span> <span class="nf">_pre_examine_data</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">schema</span><span class="p">:</span> <span class="n">ValueSchema</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;SerializedData&quot;</span><span class="p">],</span> <span class="n">ValueStatus</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">],</span> <span class="n">ValueStatus</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="n">data</span> <span class="o">==</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NOT_SET</span><span class="p">:</span>
             <span class="n">status</span> <span class="o">=</span> <span class="n">ValueStatus</span><span class="o">.</span><span class="n">NOT_SET</span>
@@ -3654,7 +3678,7 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">schema</span><span class="o">.</span><span class="n">default</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NO_VALUE</span><span class="p">,</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NOT_SET</span><span class="p">]:</span>
             <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">default</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NO_VALUE</span><span class="p">]:</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NO_VALUE</span>
                 <span class="n">status</span> <span class="o">=</span> <span class="n">ValueStatus</span><span class="o">.</span><span class="n">NONE</span>
@@ -3664,7 +3688,7 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
 
             <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">value_hash</span> <span class="o">=</span> <span class="n">INVALID_HASH_MARKER</span>
-            <span class="n">serialized</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;SerializedData&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">serialized</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">NO_SERIALIZATION_MARKER</span>
         <span class="k">else</span><span class="p">:</span>
 
             <span class="kn">from</span> <span class="nn">kiara.models.values.value</span> <span class="kn">import</span> <span class="n">SerializedData</span>
@@ -3674,6 +3698,7 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
                 <span class="c1"># assert data.data_type == schema.type</span>
                 <span class="c1"># assert data.data_type_config == schema.type_config</span>
                 <span class="n">serialized</span> <span class="o">=</span> <span class="n">data</span>
+                <span class="n">not_serialized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_python_obj</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -3683,14 +3708,22 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
                 <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
                 <span class="n">serialized</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">serialized</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">serialized</span> <span class="o">=</span> <span class="n">NO_SERIALIZATION_MARKER</span>
 
-            <span class="k">if</span> <span class="n">serialized</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">serialized</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">not_serialized</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">not_serialized</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="k">if</span> <span class="n">not_serialized</span><span class="p">:</span>
                 <span class="n">size</span> <span class="o">=</span> <span class="n">INVALID_SIZE_MARKER</span>
                 <span class="n">value_hash</span> <span class="o">=</span> <span class="n">INVALID_HASH_MARKER</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">size</span> <span class="o">=</span> <span class="n">serialized</span><span class="o">.</span><span class="n">size</span>
-                <span class="n">value_hash</span> <span class="o">=</span> <span class="n">serialized</span><span class="o">.</span><span class="n">serialized_hash</span>
+                <span class="n">size</span> <span class="o">=</span> <span class="n">serialized</span><span class="o">.</span><span class="n">size</span>  <span class="c1"># type: ignore</span>
+                <span class="n">value_hash</span> <span class="o">=</span> <span class="n">serialized</span><span class="o">.</span><span class="n">serialized_hash</span>  <span class="c1"># type: ignore</span>
 
+        <span class="k">assert</span> <span class="n">serialized</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">serialized</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">value_hash</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
@@ -3699,7 +3732,7 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
         <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
         <span class="n">schema</span><span class="p">:</span> <span class="n">ValueSchema</span><span class="p">,</span>
-        <span class="n">serialized</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;SerializedData&quot;</span><span class="p">],</span>
+        <span class="n">serialized</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">],</span>
         <span class="n">status</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueStatus</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
         <span class="n">value_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">value_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -3748,7 +3781,7 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
 
         <span class="n">value</span><span class="o">.</span><span class="n">_value_data</span> <span class="o">=</span> <span class="n">data</span>
         <span class="n">value</span><span class="o">.</span><span class="n">_data_type</span> <span class="o">=</span> <span class="bp">self</span>
-        <span class="n">value</span><span class="o">.</span><span class="n">_serialized_value</span> <span class="o">=</span> <span class="n">serialized</span>
+        <span class="n">value</span><span class="o">.</span><span class="n">_serialized_data</span> <span class="o">=</span> <span class="n">serialized</span>
         <span class="k">return</span> <span class="n">value</span><span class="p">,</span> <span class="n">data</span>
 
     <span class="k">def</span> <span class="nf">parse_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TYPE_PYTHON_CLS</span><span class="p">:</span>
@@ -3921,7 +3954,7 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
     <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="n">schema</span><span class="p">:</span> <span class="n">ValueSchema</span><span class="p">,</span>
-    <span class="n">serialized</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;SerializedData&quot;</span><span class="p">],</span>
+    <span class="n">serialized</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">],</span>
     <span class="n">status</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueStatus</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
     <span class="n">value_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">value_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -3970,7 +4003,7 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
 
     <span class="n">value</span><span class="o">.</span><span class="n">_value_data</span> <span class="o">=</span> <span class="n">data</span>
     <span class="n">value</span><span class="o">.</span><span class="n">_data_type</span> <span class="o">=</span> <span class="bp">self</span>
-    <span class="n">value</span><span class="o">.</span><span class="n">_serialized_value</span> <span class="o">=</span> <span class="n">serialized</span>
+    <span class="n">value</span><span class="o">.</span><span class="n">_serialized_data</span> <span class="o">=</span> <span class="n">serialized</span>
     <span class="k">return</span> <span class="n">value</span><span class="p">,</span> <span class="n">data</span>
 </code></pre></div>
         </details>
@@ -4261,14 +4294,14 @@ avoid adding or removing information from the data (e.g. by changing the resolut
 
         <details class="quote">
           <summary>Source code in <code>kiara/data_types/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">TYPE_PYTHON_CLS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;SerializedData&quot;</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">TYPE_PYTHON_CLS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">]:</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
         <span class="s2">&quot;ignore.serialize_request&quot;</span><span class="p">,</span>
         <span class="n">data_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_type_name</span><span class="p">,</span>
         <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;no &#39;serialize&#39; method imnplemented&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">NO_SERIALIZATION_MARKER</span>
     <span class="c1"># raise NotImplementedError(f&quot;Data type &#39;{self.data_type_name}&#39; does not support serialization.&quot;)</span>
     <span class="c1">#</span>
     <span class="c1"># try:</span>
@@ -4303,6 +4336,52 @@ avoid adding or removing information from the data (e.g. by changing the resolut
     <span class="c1">#</span>
     <span class="c1"># serialized = SerializationResult(**serialized_data)</span>
     <span class="c1"># return serialized</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.data_types.DataType.serialize_as_json" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">serialize_as_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></code>
+
+
+<a href="#kiara.data_types.DataType.serialize_as_json" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data_types/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">serialize_as_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">:</span>
+
+    <span class="n">_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;inline-json&quot;</span><span class="p">,</span> <span class="s2">&quot;inline_data&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;codec&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">}}</span>
+
+    <span class="n">serialized_data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;data_type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type_name</span><span class="p">,</span>
+        <span class="s2">&quot;data_type_config&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">_data</span><span class="p">,</span>
+        <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s2">&quot;deserialize&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="s2">&quot;deserialize.from_json&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;result_path&quot;</span><span class="p">:</span> <span class="s2">&quot;data&quot;</span><span class="p">},</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+    <span class="kn">from</span> <span class="nn">kiara.models.values.value</span> <span class="kn">import</span> <span class="n">SerializationResult</span>
+
+    <span class="n">serialized</span> <span class="o">=</span> <span class="n">SerializationResult</span><span class="p">(</span><span class="o">**</span><span class="n">serialized_data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">serialized</span>
 </code></pre></div>
         </details>
     </div>
@@ -4976,10 +5055,10 @@ BytesType            (<a class="autorefs autorefs-internal" title="kiara.data_ty
             <span class="s2">&quot;data_type_config&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
             <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">_data</span><span class="p">,</span>
             <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;raw&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;serialization_metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="p">{},</span>
                 <span class="s2">&quot;deserialize&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="s2">&quot;module_name&quot;</span><span class="p">:</span> <span class="s2">&quot;load.bytes&quot;</span><span class="p">,</span>
                         <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span>
                             <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="s2">&quot;bytes&quot;</span><span class="p">,</span>
@@ -5098,10 +5177,10 @@ BytesType            (<a class="autorefs autorefs-internal" title="kiara.data_ty
         <span class="s2">&quot;data_type_config&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
         <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">_data</span><span class="p">,</span>
         <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;raw&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;serialization_metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="p">{},</span>
             <span class="s2">&quot;deserialize&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="s2">&quot;module_name&quot;</span><span class="p">:</span> <span class="s2">&quot;load.bytes&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="s2">&quot;bytes&quot;</span><span class="p">,</span>
@@ -5617,11 +5696,11 @@ StringType            (<a class="autorefs autorefs-internal" title="kiara.data_t
             <span class="s2">&quot;data_type_config&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
             <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">_data</span><span class="p">,</span>
             <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;raw&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;serialization_metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="p">{},</span>
                 <span class="s2">&quot;deserialize&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;module_name&quot;</span><span class="p">:</span> <span class="s2">&quot;load.string&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="s2">&quot;load.string&quot;</span><span class="p">,</span>
                         <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span>
                             <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="s2">&quot;bytes&quot;</span><span class="p">,</span>
                             <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;bytes&quot;</span><span class="p">,</span>
@@ -5743,11 +5822,11 @@ StringType            (<a class="autorefs autorefs-internal" title="kiara.data_t
         <span class="s2">&quot;data_type_config&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
         <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">_data</span><span class="p">,</span>
         <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;raw&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;serialization_metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="p">{},</span>
             <span class="s2">&quot;deserialize&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;module_name&quot;</span><span class="p">:</span> <span class="s2">&quot;load.string&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="s2">&quot;load.string&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="s2">&quot;bytes&quot;</span><span class="p">,</span>
                         <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;bytes&quot;</span><span class="p">,</span>
@@ -5912,14 +5991,15 @@ FileBundleValueType            (<a class="autorefs autorefs-internal" title="kia
             <span class="s2">&quot;data_type_config&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
             <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">file_data</span><span class="p">,</span>
             <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;copy&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;serialization_metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="p">{},</span>
                 <span class="s2">&quot;deserialize&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;file_model&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="s2">&quot;deserialize.file_bundle&quot;</span><span class="p">,</span>
                         <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span>
                             <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span>
-                            <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;python_object&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;copy&quot;</span><span class="p">,</span>
                         <span class="p">},</span>
                     <span class="p">}</span>
                 <span class="p">},</span>
@@ -5930,9 +6010,11 @@ FileBundleValueType            (<a class="autorefs autorefs-internal" title="kia
         <span class="n">serialized</span> <span class="o">=</span> <span class="n">SerializationResult</span><span class="p">(</span><span class="o">**</span><span class="n">serialized_data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">serialized</span>
 
-    <span class="k">def</span> <span class="nf">create_model_from_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileBundle</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">parse_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileBundle</span><span class="p">:</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">FileBundle</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">data</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">FileBundle</span><span class="o">.</span><span class="n">import_folder</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
@@ -5959,38 +6041,7 @@ FileBundleValueType            (<a class="autorefs autorefs-internal" title="kia
 
 
 
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h9 id="kiara.data_types.included_core_types.filesystem.FileBundleValueType.create_model_from_python_obj" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_model_from_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></code>
-
-
-<a href="#kiara.data_types.included_core_types.filesystem.FileBundleValueType.create_model_from_python_obj" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/data_types/included_core_types/filesystem.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_model_from_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileBundle</span><span class="p">:</span>
-
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">FileBundle</span><span class="o">.</span><span class="n">import_folder</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Can&#39;t create FileBundle from data of type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
-        <span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
+<h8 id="kiara.data_types.included_core_types.filesystem.FileBundleValueType-methods">Methods<a href="#kiara.data_types.included_core_types.filesystem.FileBundleValueType-methods" class="headerlink" title="Permanent link">&para;</a></h8>
 
   <div class="doc doc-object doc-method">
 
@@ -6013,6 +6064,77 @@ FileBundleValueType            (<a class="autorefs autorefs-internal" title="kia
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">data_type_config_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">FileTypeConfig</span><span class="p">]:</span>
     <span class="k">return</span> <span class="n">FileTypeConfig</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.data_types.included_core_types.filesystem.FileBundleValueType.parse_python_obj" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">parse_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></code>
+
+
+<a href="#kiara.data_types.included_core_types.filesystem.FileBundleValueType.parse_python_obj" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>Parse a value into a supported python type.</p>
+<p>This exists to make it easier to do trivial conversions (e.g. from a date string to a datetime object).
+If you choose to overwrite this method, make 100% sure that you don't change the meaning of the value, and try to
+avoid adding or removing information from the data (e.g. by changing the resolution of a date).</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>v</code></td>
+        <td></td>
+        <td><p>the value</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>FileBundle</code></td>
+      <td><p>'None', if no parsing was done and the original value should be used, otherwise return the parsed Python object</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kiara/data_types/included_core_types/filesystem.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">parse_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileBundle</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">FileBundle</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">data</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FileBundle</span><span class="o">.</span><span class="n">import_folder</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t create FileBundle from data of type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -6158,14 +6280,15 @@ FileBundleValueType            (<a class="autorefs autorefs-internal" title="kia
         <span class="s2">&quot;data_type_config&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
         <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">file_data</span><span class="p">,</span>
         <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;copy&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;serialization_metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="p">{},</span>
             <span class="s2">&quot;deserialize&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;file_model&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="s2">&quot;deserialize.file_bundle&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;python_object&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;copy&quot;</span><span class="p">,</span>
                     <span class="p">},</span>
                 <span class="p">}</span>
             <span class="p">},</span>
@@ -6328,15 +6451,16 @@ FileValueType            (<a class="autorefs autorefs-internal" title="kiara.dat
             <span class="s2">&quot;data_type_config&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
             <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">_data</span><span class="p">,</span>
             <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;copy&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;serialization_metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="c1"># &quot;profile&quot;: &quot;&quot;,</span>
                 <span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="p">{},</span>
                 <span class="s2">&quot;deserialize&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;file_model&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="s2">&quot;deserialize.file&quot;</span><span class="p">,</span>
                         <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span>
                             <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="s2">&quot;file&quot;</span><span class="p">,</span>
-                            <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;file_model&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;python_object&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;copy&quot;</span><span class="p">,</span>
                         <span class="p">},</span>
                     <span class="p">}</span>
                 <span class="p">},</span>
@@ -6687,15 +6811,16 @@ FileValueType            (<a class="autorefs autorefs-internal" title="kiara.dat
         <span class="s2">&quot;data_type_config&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
         <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">_data</span><span class="p">,</span>
         <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;copy&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;serialization_metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="c1"># &quot;profile&quot;: &quot;&quot;,</span>
             <span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="p">{},</span>
             <span class="s2">&quot;deserialize&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;file_model&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="s2">&quot;deserialize.file&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="s2">&quot;file&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;file_model&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;python_object&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;copy&quot;</span><span class="p">,</span>
                     <span class="p">},</span>
                 <span class="p">}</span>
             <span class="p">},</span>
@@ -7066,7 +7191,7 @@ InternalModelValueType            (<a class="autorefs autorefs-internal" title="
     <span class="k">def</span> <span class="nf">data_type_config_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">InternalModelTypeConfig</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">InternalModelTypeConfig</span>  <span class="c1"># type: ignore</span>
 
-    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">KiaraModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SerializedData</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">KiaraModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SerializedData</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">model_cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
@@ -7075,7 +7200,7 @@ InternalModelValueType            (<a class="autorefs autorefs-internal" title="
                 <span class="bp">cls</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
                 <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;no python type specified in module config&quot;</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="n">NO_SERIALIZATION_MARKER</span>
 
         <span class="n">_data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -7093,11 +7218,11 @@ InternalModelValueType            (<a class="autorefs autorefs-internal" title="
             <span class="s2">&quot;serialization_metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="p">{},</span>
                 <span class="s2">&quot;deserialize&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="s2">&quot;module_name&quot;</span><span class="p">:</span> <span class="s2">&quot;load.internal_model&quot;</span><span class="p">,</span>
                         <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span>
                             <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="s2">&quot;internal_model&quot;</span><span class="p">,</span>
-                            <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;model_obj&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;python_object&quot;</span><span class="p">,</span>
                             <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
                         <span class="p">},</span>
                     <span class="p">}</span>
@@ -7359,7 +7484,7 @@ avoid adding or removing information from the data (e.g. by changing the resolut
 
         <details class="quote">
           <summary>Source code in <code>kiara/data_types/included_core_types/internal.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">KiaraModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SerializedData</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">KiaraModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SerializedData</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">model_cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
@@ -7368,7 +7493,7 @@ avoid adding or removing information from the data (e.g. by changing the resolut
             <span class="bp">cls</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
             <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;no python type specified in module config&quot;</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">NO_SERIALIZATION_MARKER</span>
 
     <span class="n">_data</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -7386,11 +7511,11 @@ avoid adding or removing information from the data (e.g. by changing the resolut
         <span class="s2">&quot;serialization_metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="p">{},</span>
             <span class="s2">&quot;deserialize&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="s2">&quot;module_name&quot;</span><span class="p">:</span> <span class="s2">&quot;load.internal_model&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="s2">&quot;internal_model&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;model_obj&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;python_object&quot;</span><span class="p">,</span>
                         <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
                     <span class="p">},</span>
                 <span class="p">}</span>

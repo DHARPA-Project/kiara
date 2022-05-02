@@ -3775,7 +3775,7 @@ InternalModelValueType            (<a class="autorefs autorefs-internal" title="
     <span class="k">def</span> <span class="nf">data_type_config_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">InternalModelTypeConfig</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">InternalModelTypeConfig</span>  <span class="c1"># type: ignore</span>
 
-    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">KiaraModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SerializedData</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">KiaraModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SerializedData</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">model_cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
@@ -3784,7 +3784,7 @@ InternalModelValueType            (<a class="autorefs autorefs-internal" title="
                 <span class="bp">cls</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
                 <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;no python type specified in module config&quot;</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="n">NO_SERIALIZATION_MARKER</span>
 
         <span class="n">_data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -3802,11 +3802,11 @@ InternalModelValueType            (<a class="autorefs autorefs-internal" title="
             <span class="s2">&quot;serialization_metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="p">{},</span>
                 <span class="s2">&quot;deserialize&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="s2">&quot;module_name&quot;</span><span class="p">:</span> <span class="s2">&quot;load.internal_model&quot;</span><span class="p">,</span>
                         <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span>
                             <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="s2">&quot;internal_model&quot;</span><span class="p">,</span>
-                            <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;model_obj&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;python_object&quot;</span><span class="p">,</span>
                             <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
                         <span class="p">},</span>
                     <span class="p">}</span>
@@ -4068,7 +4068,7 @@ avoid adding or removing information from the data (e.g. by changing the resolut
 
         <details class="quote">
           <summary>Source code in <code>kiara/data_types/included_core_types/internal.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">KiaraModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SerializedData</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">KiaraModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SerializedData</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">model_cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
@@ -4077,7 +4077,7 @@ avoid adding or removing information from the data (e.g. by changing the resolut
             <span class="bp">cls</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
             <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;no python type specified in module config&quot;</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">NO_SERIALIZATION_MARKER</span>
 
     <span class="n">_data</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -4095,11 +4095,11 @@ avoid adding or removing information from the data (e.g. by changing the resolut
         <span class="s2">&quot;serialization_metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="p">{},</span>
             <span class="s2">&quot;deserialize&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="s2">&quot;module_name&quot;</span><span class="p">:</span> <span class="s2">&quot;load.internal_model&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="s2">&quot;internal_model&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;model_obj&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;python_object&quot;</span><span class="p">,</span>
                         <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
                     <span class="p">},</span>
                 <span class="p">}</span>

@@ -339,6 +339,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kiara_info.module_types.deserialize.from_json" class="md-nav__link">
+    deserialize.from_json
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kiara_info.module_types.import.file" class="md-nav__link">
     import.file
   </a>
@@ -3389,6 +3396,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kiara_info.module_types.deserialize.from_json" class="md-nav__link">
+    deserialize.from_json
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kiara_info.module_types.import.file" class="md-nav__link">
     import.file
   </a>
@@ -3630,6 +3644,65 @@
                                                                                 
                           <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    result: Any </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> func(data</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">serialized_value</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">seria…</span>   
                           <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    outputs</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">set_value(</span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #ffffff">"python_object"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">, result)</span>        
+                                                                                
+                         ─────────────────────────────────────────────────────  
+                                                                                
+</pre>
+<h3 id="kiara_info.module_types.deserialize.from_json"><code>deserialize.from_json</code><a class="headerlink" href="#kiara_info.module_types.deserialize.from_json" title="Permanent link">&para;</a></h3>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">                                                                                
+ <span style="font-style: italic">Documentation         </span>                                                         
+                          -- n/a --                                             
+                                                                                
+ <span style="font-style: italic">Author(s)             </span>                                                         
+                          Markus Binsteiner  <span style="font-style: italic"> markus@frkl.io </span>                   
+                                                                                
+ <span style="font-style: italic">Context               </span>                                                         
+                         <span style="font-style: italic"> Labels     </span>  <span style="font-style: italic">package</span>: kiara                           
+                         <span style="font-style: italic"> References </span>  <span style="font-style: italic">source_repo</span>:                             
+                                       <a href="https://github.com/DHARPA-Project/kiara">https://github.com/DHARPA-Project/kia…</a>   
+                                       <span style="font-style: italic">documentation</span>:                           
+                                       <a href="https://dharpa.org/kiara_documentation/">https://dharpa.org/kiara_documentatio…</a>   
+                                                                                
+ <span style="font-style: italic">Module config schema  </span>                                                         
+                         <span style="font-weight: bold"> Field     </span> <span style="font-weight: bold"> Type   </span> <span style="font-weight: bold"> Descript… </span> <span style="font-weight: bold"> Required </span> <span style="font-weight: bold"> Default </span>  
+                         ─────────────────────────────────────────────────────  
+                          constants   object   Value       no                   
+                                               constants                        
+                                               for this                         
+                                               module.                          
+                                                                                
+                          defaults    object   Value       no                   
+                                               defaults                         
+                                               for this                         
+                                               module.                          
+                                                                                
+                          result_p…   string   The path    no         "data"    
+                                               of the                           
+                                               result                           
+                                               dictiona…                        
+                                               to                               
+                                               return.                          
+                                                                                
+ <span style="font-style: italic">Python class          </span>                                                         
+                         <span style="font-style: italic"> python_class_name  </span>  DeserializeFromJsonModule        
+                         <span style="font-style: italic"> python_module_name </span>  kiara.modules.included_core_m…   
+                         <span style="font-style: italic"> full_name          </span>  kiara.modules.included_core_m…   
+                                                                                
+ <span style="font-style: italic">Processing source code</span>  ─────────────────────────────────────────────────────  
+                          <span style="color: #66d9ef; text-decoration-color: #66d9ef; background-color: #ffffff">def</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> </span><span style="color: #a6e22e; text-decoration-color: #a6e22e; background-color: #ffffff">process</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">(self, inputs: ValueMap, outputs: Value…</span>   
+                                                                                
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    value: Value </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> inputs</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">get_value_obj(</span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #ffffff">"value"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">)</span>      
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    serialized: SerializedData </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> value</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">serialized_…</span>   
+                                                                                
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    chunks </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> serialized</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">get_serialized_data(self</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">g…</span>   
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    </span><span style="color: #66d9ef; text-decoration-color: #66d9ef; background-color: #ffffff">assert</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> chunks</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">get_number_of_chunks() </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">==</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> </span><span style="color: #ae81ff; text-decoration-color: #ae81ff; background-color: #ffffff">1</span>         
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    _data </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> list(chunks</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">get_chunks(as_files</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #66d9ef; text-decoration-color: #66d9ef; background-color: #ffffff">False</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">))</span>   
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    </span><span style="color: #66d9ef; text-decoration-color: #66d9ef; background-color: #ffffff">assert</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> len(_data) </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">==</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> </span><span style="color: #ae81ff; text-decoration-color: #ae81ff; background-color: #ffffff">1</span>                            
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    _chunk: bytes </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> _data[</span><span style="color: #ae81ff; text-decoration-color: #ae81ff; background-color: #ffffff">0</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">]  </span><span style="color: #75715e; text-decoration-color: #75715e; background-color: #ffffff"># type: ignore</span>          
+                                                                                
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    deserialized </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> orjson</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">loads(_chunk)</span>               
+                                                                                
+                          <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    outputs</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">set_value(</span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #ffffff">"python_object"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">, deserialize…</span>   
                                                                                 
                          ─────────────────────────────────────────────────────  
                                                                                 

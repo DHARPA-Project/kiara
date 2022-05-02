@@ -3454,17 +3454,17 @@ DeserializeFileBundleModule            (<a class="autorefs autorefs-internal" ti
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">retrieve_supported_target_profiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;file_bundle&quot;</span><span class="p">:</span> <span class="n">FileBundle</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="n">FileBundle</span><span class="p">}</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">retrieve_source_value_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">retrieve_serialized_value_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;file_bundle&quot;</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">retrieve_supported_serialization_profile</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;copy&quot;</span>
 
-    <span class="k">def</span> <span class="nf">to__file_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">SerializedData</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">to__python_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">SerializedData</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 
         <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get_keys</span><span class="p">())</span>
         <span class="n">keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;__file_metadata__&quot;</span><span class="p">)</span>
@@ -3524,14 +3524,14 @@ DeserializeFileBundleModule            (<a class="autorefs autorefs-internal" ti
 
 
 
-<h5 id="kiara.modules.included_core_modules.filesystem.DeserializeFileBundleModule.retrieve_source_value_type" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">retrieve_source_value_type</span><span class="p">()</span></code>
+<h5 id="kiara.modules.included_core_modules.filesystem.DeserializeFileBundleModule.retrieve_serialized_value_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_serialized_value_type</span><span class="p">()</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#kiara.modules.included_core_modules.filesystem.DeserializeFileBundleModule.retrieve_source_value_type" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.filesystem.DeserializeFileBundleModule.retrieve_serialized_value_type" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -3539,7 +3539,7 @@ DeserializeFileBundleModule            (<a class="autorefs autorefs-internal" ti
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">retrieve_source_value_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">retrieve_serialized_value_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="s2">&quot;file_bundle&quot;</span>
 </code></pre></div>
         </details>
@@ -3598,7 +3598,7 @@ DeserializeFileBundleModule            (<a class="autorefs autorefs-internal" ti
           <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">retrieve_supported_target_profiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">]:</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;file_bundle&quot;</span><span class="p">:</span> <span class="n">FileBundle</span><span class="p">}</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="n">FileBundle</span><span class="p">}</span>
 </code></pre></div>
         </details>
     </div>
@@ -3611,18 +3611,18 @@ DeserializeFileBundleModule            (<a class="autorefs autorefs-internal" ti
 
 
 
-<h5 id="kiara.modules.included_core_modules.filesystem.DeserializeFileBundleModule.to__file_bundle" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">to__file_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
+<h5 id="kiara.modules.included_core_modules.filesystem.DeserializeFileBundleModule.to__python_object" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">to__python_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.filesystem.DeserializeFileBundleModule.to__file_bundle" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.filesystem.DeserializeFileBundleModule.to__python_object" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">to__file_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">SerializedData</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">to__python_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">SerializedData</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 
     <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get_keys</span><span class="p">())</span>
     <span class="n">keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;__file_metadata__&quot;</span><span class="p">)</span>
@@ -3707,17 +3707,17 @@ DeserializeFileModule            (<a class="autorefs autorefs-internal" title="k
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">retrieve_supported_target_profiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;file_model&quot;</span><span class="p">:</span> <span class="n">FileModel</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="n">FileModel</span><span class="p">}</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">retrieve_source_value_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">retrieve_serialized_value_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;file&quot;</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">retrieve_supported_serialization_profile</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;copy&quot;</span>
 
-    <span class="k">def</span> <span class="nf">to__file_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">SerializedData</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">to__python_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">SerializedData</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 
         <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get_keys</span><span class="p">())</span>
         <span class="n">keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;__file_metadata__&quot;</span><span class="p">)</span>
@@ -3762,14 +3762,14 @@ DeserializeFileModule            (<a class="autorefs autorefs-internal" title="k
 
 
 
-<h5 id="kiara.modules.included_core_modules.filesystem.DeserializeFileModule.retrieve_source_value_type" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">retrieve_source_value_type</span><span class="p">()</span></code>
+<h5 id="kiara.modules.included_core_modules.filesystem.DeserializeFileModule.retrieve_serialized_value_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_serialized_value_type</span><span class="p">()</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#kiara.modules.included_core_modules.filesystem.DeserializeFileModule.retrieve_source_value_type" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.filesystem.DeserializeFileModule.retrieve_serialized_value_type" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -3777,7 +3777,7 @@ DeserializeFileModule            (<a class="autorefs autorefs-internal" title="k
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">retrieve_source_value_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">retrieve_serialized_value_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="s2">&quot;file&quot;</span>
 </code></pre></div>
         </details>
@@ -3836,7 +3836,7 @@ DeserializeFileModule            (<a class="autorefs autorefs-internal" title="k
           <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">retrieve_supported_target_profiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">]:</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;file_model&quot;</span><span class="p">:</span> <span class="n">FileModel</span><span class="p">}</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="n">FileModel</span><span class="p">}</span>
 </code></pre></div>
         </details>
     </div>
@@ -3849,18 +3849,18 @@ DeserializeFileModule            (<a class="autorefs autorefs-internal" title="k
 
 
 
-<h5 id="kiara.modules.included_core_modules.filesystem.DeserializeFileModule.to__file_model" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">to__file_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
+<h5 id="kiara.modules.included_core_modules.filesystem.DeserializeFileModule.to__python_object" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">to__python_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.filesystem.DeserializeFileModule.to__file_model" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.filesystem.DeserializeFileModule.to__python_object" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">to__file_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">SerializedData</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">to__python_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">SerializedData</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 
     <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get_keys</span><span class="p">())</span>
     <span class="n">keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;__file_metadata__&quot;</span><span class="p">)</span>

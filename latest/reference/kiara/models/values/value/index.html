@@ -2060,6 +2060,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.models.values.value.SerializationMetadata" class="md-nav__link">
+    SerializationMetadata
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.models.values.value.SerializationResult" class="md-nav__link">
     SerializationResult
   </a>
@@ -3554,6 +3561,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.models.values.value.SerializationMetadata" class="md-nav__link">
+    SerializationMetadata
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.models.values.value.SerializationResult" class="md-nav__link">
     SerializationResult
   </a>
@@ -4065,6 +4079,115 @@ PersistedData            (<a class="autorefs autorefs-internal" title="kiara.mod
 
 
 
+<h3 id="kiara.models.values.value.SerializationMetadata" class="doc doc-heading">
+        <code>
+SerializationMetadata            (<a class="autorefs autorefs-internal" title="kiara.models.KiaraModel" href="../../__init__/#kiara.models.KiaraModel">KiaraModel</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.models.values.value.SerializationMetadata" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/values/value.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SerializationMetadata</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+
+    <span class="n">environment</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Hash(es) for the environments the value was created/serialized.&quot;</span><span class="p">,</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">deserialize</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Manifest</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Suggested manifest configs to use to de-serialize the data.&quot;</span><span class="p">,</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;instance.serialization_metadata&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h4 id="kiara.models.values.value.SerializationMetadata-attributes">Attributes<a href="#kiara.models.values.value.SerializationMetadata-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.values.value.SerializationMetadata.deserialize" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">deserialize</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">manifest</span><span class="o">.</span><span class="n">Manifest</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.values.value.SerializationMetadata.deserialize" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Suggested manifest configs to use to de-serialize the data.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.values.value.SerializationMetadata.environment" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">environment</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.values.value.SerializationMetadata.environment" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Hash(es) for the environments the value was created/serialized.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
 <h3 id="kiara.models.values.value.SerializationResult" class="doc doc-heading">
         <code>
 SerializationResult            (<a class="autorefs autorefs-internal" title="kiara.models.values.value.SerializedData" href="#kiara.models.values.value.SerializedData">SerializedData</a>)
@@ -4162,7 +4285,7 @@ SerializationResult            (<a class="autorefs autorefs-internal" title="kia
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(type=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_type</span><span class="si">}</span><span class="s2"> size=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(type=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_type</span><span class="si">}</span><span class="s2"> size=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2">)&quot;</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
@@ -5251,7 +5374,7 @@ SerializedData            (<a class="autorefs autorefs-internal" title="kiara.mo
     <span class="n">serialization_profile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;An identifying name for the serialization method used.&quot;</span>
     <span class="p">)</span>
-    <span class="n">serialization_metadata</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">SerializationMetadata</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional metadata describing aspects of the serialization used.&quot;</span><span class="p">,</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span>
     <span class="p">)</span>
@@ -5471,14 +5594,14 @@ SerializedData            (<a class="autorefs autorefs-internal" title="kiara.mo
 
 
 
-<h5 id="kiara.models.values.value.SerializedData.serialization_metadata" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">serialization_metadata</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
+<h5 id="kiara.models.values.value.SerializedData.metadata" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">metadata</span><span class="p">:</span> <span class="n">SerializationMetadata</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
   </span>
 
-<a href="#kiara.models.values.value.SerializedData.serialization_metadata" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.values.value.SerializedData.metadata" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -6670,7 +6793,7 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Value</span><span class="p">(</span><span class="n">ValueDetails</span><span class="p">):</span>
 
     <span class="n">_value_data</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">SpecialValue</span><span class="o">.</span><span class="n">NOT_SET</span><span class="p">)</span>
-    <span class="n">_serialized_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SerializedData</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_serialized_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">SerializedData</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">_data_retrieved</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">_data_registry</span><span class="p">:</span> <span class="s2">&quot;DataRegistry&quot;</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">_data_type</span><span class="p">:</span> <span class="s2">&quot;DataType&quot;</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -6746,13 +6869,18 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">serialized_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SerializedData</span><span class="p">:</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialized_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialized_value</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialized_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_serialized_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Data type &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_type_name</span><span class="si">}</span><span class="s2">&#39; does not support serializing: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_serialized_data</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_serialized_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">retrieve_persisted_value_details</span><span class="p">(</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialized_data</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_serialized_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">retrieve_persisted_value_details</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value_id</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialized_value</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialized_data</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>

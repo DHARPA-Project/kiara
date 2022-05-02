@@ -3412,6 +3412,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.utils.log_exception" class="md-nav__link">
+    log_exception()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.utils.log_message" class="md-nav__link">
     log_message()
   </a>
@@ -4311,6 +4318,33 @@ StringYAML            (<span title="ruamel.yaml.main.YAML">YAML</span>)
           <summary>Source code in <code>kiara/utils/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">is_rich_renderable</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="n">ConsoleRenderable</span><span class="p">,</span> <span class="n">RichCast</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="kiara.utils.log_exception" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">log_exception</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.log_exception" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">log_exception</span><span class="p">(</span><span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
 </code></pre></div>
         </details>
     </div>

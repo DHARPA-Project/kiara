@@ -19,7 +19,7 @@ from kiara.defaults import INVALID_HASH_MARKER, SpecialValue
 from kiara.models import KiaraModel
 
 if TYPE_CHECKING:
-    from kiara.models.values.value import Value
+    from kiara.models.values.value import SerializedData, Value
 
 SCALAR_CHARACTERISTICS = DataTypeCharacteristics(
     is_scalar=True, is_json_serializable=True
@@ -90,6 +90,34 @@ class BytesType(AnyType[bytes, DataTypeConfig]):
     def python_class(cls) -> Type:
         return bytes
 
+    def serialize(self, data: bytes) -> "SerializedData":
+
+        _data = {"bytes": {"type": "chunk", "chunk": data, "codec": "raw"}}
+
+        serialized_data = {
+            "data_type": self.data_type_name,
+            "data_type_config": self.type_config.dict(),
+            "data": _data,
+            "serialization_profile": "raw",
+            "serialization_metadata": {
+                "environment": {},
+                "deserialize": {
+                    "object": {
+                        "module_name": "load.bytes",
+                        "module_config": {
+                            "value_type": "bytes",
+                            "target_profile": "bytes",
+                            "serialization_profile": "raw",
+                        },
+                    }
+                },
+            },
+        }
+        from kiara.models.values.value import SerializationResult
+
+        serialized = SerializationResult(**serialized_data)
+        return serialized
+
     def render_as__string(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
@@ -106,6 +134,36 @@ class StringType(AnyType[str, DataTypeConfig]):
     @classmethod
     def python_class(cls) -> Type:
         return str
+
+    def serialize(self, data: str) -> "SerializedData":
+
+        _data = {
+            "string": {"type": "chunk", "chunk": data.encode("utf-8"), "codec": "raw"}
+        }
+
+        serialized_data = {
+            "data_type": self.data_type_name,
+            "data_type_config": self.type_config.dict(),
+            "data": _data,
+            "serialization_profile": "raw",
+            "serialization_metadata": {
+                "environment": {},
+                "deserialize": {
+                    "object": {
+                        "module_name": "load.string",
+                        "module_config": {
+                            "value_type": "bytes",
+                            "target_profile": "bytes",
+                            "serialization_profile": "raw",
+                        },
+                    }
+                },
+            },
+        }
+        from kiara.models.values.value import SerializationResult
+
+        serialized = SerializationResult(**serialized_data)
+        return serialized
 
     def _retrieve_characteristics(self) -> DataTypeCharacteristics:
         return SCALAR_CHARACTERISTICS

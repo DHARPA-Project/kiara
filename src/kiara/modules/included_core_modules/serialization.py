@@ -6,9 +6,12 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
+import importlib
+import orjson
 from pydantic import Field, validator
 from typing import Any, Mapping, Type, Union
 
+from kiara.models import KiaraModel
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.values.value import SerializedData, ValueMap
 from kiara.models.values.value_schema import ValueSchema
@@ -102,7 +105,7 @@ class DeserializeValueModule(KiaraModule):
 
 class UnpickleModule(DeserializeValueModule):
 
-    _module_type_name = "value.unpickle"
+    _module_type_name = "unpickle.value"
 
     @classmethod
     def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
@@ -133,6 +136,93 @@ class UnpickleModule(DeserializeValueModule):
         data = pickle.loads(_bytes)
 
         return data
+
+
+class LoadBytesModule(DeserializeValueModule):
+
+    _module_type_name = "load.bytes"
+
+    @classmethod
+    def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
+        return {"bytes": bytes}
+
+    @classmethod
+    def retrieve_supported_serialization_profile(cls) -> str:
+        return "raw"
+
+    @classmethod
+    def retrieve_source_value_type(cls) -> str:
+        return "bytes"
+
+    def to__bytes(self, data: SerializedData, **config: Any) -> bytes:
+
+        chunks = data.get_serialized_data("bytes")
+        assert chunks.get_number_of_chunks() == 1
+        _chunks = list(chunks.get_chunks(as_files=False))
+        assert len(_chunks) == 1
+        _chunk: bytes = _chunks[0]  # type: ignore
+        return _chunk
+
+
+class LoadStringModule(DeserializeValueModule):
+
+    _module_type_name = "load.string"
+
+    @classmethod
+    def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
+        return {"string": str}
+
+    @classmethod
+    def retrieve_supported_serialization_profile(cls) -> str:
+        return "raw"
+
+    @classmethod
+    def retrieve_source_value_type(cls) -> str:
+        return "string"
+
+    def to__string(self, data: SerializedData, **config: Any) -> str:
+
+        chunks = data.get_serialized_data("string")
+        assert chunks.get_number_of_chunks() == 1
+        _chunks = list(chunks.get_chunks(as_files=False))
+        assert len(_chunks) == 1
+
+        bytes_string: bytes = _chunks[0]  # type: ignore
+        return bytes_string.decode("utf-8")
+
+
+class LoadInternalModel(DeserializeValueModule):
+
+    _module_type_name = "load.internal_model"
+
+    @classmethod
+    def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
+        return {"model_obj": KiaraModel}
+
+    @classmethod
+    def retrieve_supported_serialization_profile(cls) -> str:
+        return "json"
+
+    @classmethod
+    def retrieve_source_value_type(cls) -> str:
+        return "internal_model"
+
+    def to__model_obj(self, data: SerializedData, **config: Any) -> KiaraModel:
+
+        chunks = data.get_serialized_data("data")
+        assert chunks.get_number_of_chunks() == 1
+        _chunks = list(chunks.get_chunks(as_files=False))
+        assert len(_chunks) == 1
+
+        bytes_string: bytes = _chunks[0]  # type: ignore
+        model_data = orjson.loads(bytes_string)
+
+        m_cls_path: str = data.data_type_config["model_cls"]
+        python_module, cls_name = m_cls_path.rsplit(".", maxsplit=1)
+        m = importlib.import_module(python_module)
+        cls = getattr(m, cls_name)
+        obj = cls(**model_data)
+        return obj
 
 
 # class SerializeValueModule(KiaraModule):
@@ -274,5 +364,3 @@ class UnpickleModule(DeserializeValueModule):
 #             raise KiaraProcessingException(
 #                 f"Can't serialize value of type '{value.value_schema.type}' to json: {e}."
 #             )
-#
-#

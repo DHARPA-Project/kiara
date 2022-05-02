@@ -39,42 +39,40 @@ def data(ctx):
     is_flag=True,
 )
 @click.option(
-    "--show-value_id",
+    "--value_id",
     "-i",
     help="Display value id information for each value.",
     default=False,
     is_flag=True,
 )
 @click.option(
-    "--show-type-config",
+    "--type-config",
     "-c",
     help="Display type details for each value.",
     default=False,
     is_flag=True,
 )
 @click.option(
-    "--show-pedigree",
-    "-p",
+    "--pedigree",
+    "-P",
     help="Display pedigree information for each value.",
     default=False,
     is_flag=True,
 )
 @click.option(
-    "--show-data",
+    "--data",
     "-d",
     help="Show a preview of the data associated with this value.",
     default=False,
     is_flag=True,
 )
 @click.option(
-    "--show-load-config", "-l", help="Display this values' load config.", is_flag=True
-)
-@click.option(
-    "--show-serialize-details",
+    "--serialized",
     "-s",
     help="Display serialization details for this value.",
     is_flag=True,
 )
+@click.option("--properties", "-p", help="Display the value properties.", is_flag=True)
 @output_format_option()
 @click.pass_context
 def list_values(
@@ -82,12 +80,12 @@ def list_values(
     format,
     all_ids,
     include_internal,
-    show_value_id,
-    show_pedigree,
-    show_data,
-    show_load_config,
-    show_type_config,
-    show_serialize_details,
+    value_id,
+    pedigree,
+    data,
+    type_config,
+    serialized,
+    properties,
 ):
     """List all data items that are stored in kiara."""
 
@@ -111,17 +109,17 @@ def list_values(
         render_fields[0] = "aliases"
         render_fields[1] = "value_id"
 
-    if not show_value_id and not all_ids:
+    if not value_id and not all_ids:
         render_fields.remove("value_id")
-    if show_type_config:
+    if type_config:
         render_fields.append("data_type_config")
-    if show_data:
+    if data:
         render_fields.append("data")
-    if show_pedigree:
+    if properties:
+        render_fields.append("properties")
+    if pedigree:
         render_fields.append("pedigree")
-    if show_load_config:
-        render_fields.append("load_config")
-    if show_serialize_details:
+    if serialized:
         render_fields.append("serialize_details")
 
     values_info_model = ValuesInfo.create_from_values(kiara_obj, *value_ids)
@@ -156,7 +154,10 @@ def list_values(
     "--pedigree", "-P", help="Display pedigree information for the value.", is_flag=True
 )
 @click.option(
-    "--load-config", "-l", help="Display this values' load config.", is_flag=True
+    "--serialized",
+    "-s",
+    help="Display this values' serialization information.",
+    is_flag=True,
 )
 @click.option("--preview-data", "-d", help="Display a data preview.", is_flag=True)
 @click.option(
@@ -184,7 +185,7 @@ def explain_value(
     value_id: str,
     metadata: bool,
     pedigree: bool,
-    load_config: bool,
+    serialized: bool,
     format: str,
     preview_data: bool,
     properties: bool,
@@ -201,7 +202,7 @@ def explain_value(
     render_config = {
         "show_metadata": metadata,
         "show_pedigree": pedigree,
-        "show_load_config": load_config,
+        "show_serialized": serialized,
         "show_data_preview": preview_data,
         "show_properties": properties,
         "show_destinies": destinies,

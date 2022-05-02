@@ -50,9 +50,13 @@ class ExtractMetadataModule(KiaraModule):
     def create_outputs_schema(
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
+
+        result_model_cls: PythonClass = self.get_config_value("metadata_model")
+
         outputs = {
             "value_metadata": {
                 "type": "internal_model",
+                "type_config": {"model_cls": result_model_cls.full_name},
                 "doc": "The metadata for the provided value.",
             }
         }

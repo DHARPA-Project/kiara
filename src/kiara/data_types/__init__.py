@@ -26,6 +26,7 @@ be discouraged, since this might not be trivial and there are quite a few things
 import abc
 import copy
 import orjson
+import structlog
 import uuid
 from deepdiff import DeepHash
 from pydantic import BaseModel, Extra, Field, PrivateAttr, ValidationError
@@ -46,7 +47,12 @@ from typing import (
     Union,
 )
 
-from kiara.defaults import INVALID_HASH_MARKER, KIARA_HASH_FUNCTION, SpecialValue
+from kiara.defaults import (
+    INVALID_HASH_MARKER,
+    INVALID_SIZE_MARKER,
+    KIARA_HASH_FUNCTION,
+    SpecialValue,
+)
 from kiara.exceptions import KiaraValueException, ValueTypeConfigException
 from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
@@ -62,6 +68,8 @@ from kiara.utils import orjson_dumps
 if TYPE_CHECKING:
     from kiara.models.values.value import SerializedData, Value, ValuePedigree
 
+
+logger = structlog.getLogger()
 
 # def get_type_name(obj: Any):
 #     """Utility function to get a pretty string from the class of an object."""
@@ -247,40 +255,48 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
 
         return data.size
 
-    def serialize(self, data: TYPE_PYTHON_CLS) -> "SerializedData":
+    def serialize(self, data: TYPE_PYTHON_CLS) -> Optional["SerializedData"]:
 
-        try:
-            import pickle5 as pickle
-        except Exception:
-            import pickle  # type: ignore
-
-        pickled = pickle.dumps(data, protocol=5)
-        _data = {"python_object": {"type": "chunk", "chunk": pickled, "codec": "raw"}}
-
-        serialized_data = {
-            "data_type": self.data_type_name,
-            "data_type_config": self.type_config.dict(),
-            "data": _data,
-            "serialization_profile": "pickle",
-            "serialization_metadata": {
-                "profile": "pickle",
-                "environment": {},
-                "deserialize": {
-                    "object": {
-                        "module_name": "value.unpickle",
-                        "module_config": {
-                            "value_type": "any",
-                            "target_profile": "object",
-                            "serialization_profile": "pickle",
-                        },
-                    }
-                },
-            },
-        }
-        from kiara.models.values.value import SerializationResult
-
-        serialized = SerializationResult(**serialized_data)
-        return serialized
+        logger.debug(
+            "ignore.serialize_request",
+            data_type=self.data_type_name,
+            reason="no 'serialize' method imnplemented",
+        )
+        return None
+        # raise NotImplementedError(f"Data type '{self.data_type_name}' does not support serialization.")
+        #
+        # try:
+        #     import pickle5 as pickle
+        # except Exception:
+        #     import pickle  # type: ignore
+        #
+        # pickled = pickle.dumps(data, protocol=5)
+        # _data = {"python_object": {"type": "chunk", "chunk": pickled, "codec": "raw"}}
+        #
+        # serialized_data = {
+        #     "data_type": self.data_type_name,
+        #     "data_type_config": self.type_config.dict(),
+        #     "data": _data,
+        #     "serialization_profile": "pickle",
+        #     "serialization_metadata": {
+        #         "profile": "pickle",
+        #         "environment": {},
+        #         "deserialize": {
+        #             "object": {
+        #                 "module_name": "value.unpickle",
+        #                 "module_config": {
+        #                     "value_type": "any",
+        #                     "target_profile": "object",
+        #                     "serialization_profile": "pickle",
+        #                 },
+        #             }
+        #         },
+        #     },
+        # }
+        # from kiara.models.values.value import SerializationResult
+        #
+        # serialized = SerializationResult(**serialized_data)
+        # return serialized
 
     @property
     def type_config(self) -> TYPE_CONFIG_CLS:
@@ -318,7 +334,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
 
             size = 0
             value_hash = INVALID_HASH_MARKER
-            serialized = None
+            serialized: Optional["SerializedData"] = None
         else:
 
             from kiara.models.values.value import SerializedData
@@ -338,8 +354,12 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
 
                 serialized = self.serialize(data)
 
-            size = serialized.size
-            value_hash = serialized.serialized_hash
+            if serialized is None:
+                size = INVALID_SIZE_MARKER
+                value_hash = INVALID_HASH_MARKER
+            else:
+                size = serialized.size
+                value_hash = serialized.serialized_hash
 
         result = (data, serialized, status, value_hash, size)
         return result

@@ -14,6 +14,7 @@ import orjson
 import os
 import tempfile
 import uuid
+from humanfriendly import format_size
 from multiformats import CID, multicodec, multihash
 from multiformats.multicodec import Multicodec
 from multiformats.multihash import Multihash
@@ -993,11 +994,11 @@ class Value(ValueDetails):
         from kiara.utils.output import extract_renderable
 
         show_pedigree = render_config.get("show_pedigree", False)
-        show_load_config = render_config.get("show_load_config", False)
         show_properties = render_config.get("show_properties", False)
         show_destinies = render_config.get("show_destinies", False)
         show_destiny_backlinks = render_config.get("show_destiny_backlinks", False)
         show_data = render_config.get("show_data_preview", False)
+        show_serialized = render_config.get("show_serialized", False)
 
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("Key", style="i")
@@ -1015,7 +1016,7 @@ class Value(ValueDetails):
         table.add_row("", Rule())
         for k in sorted(self.__fields__.keys()):
 
-            if k in ["load_config", "value_id", "aliases", "kiara_id"]:
+            if k in ["serialized", "value_id", "aliases", "kiara_id"]:
                 continue
 
             attr = getattr(self, k)
@@ -1024,13 +1025,16 @@ class Value(ValueDetails):
 
             elif k == "value_status":
                 v = f"[i]-- {attr.value} --[/i]"
+            elif k == "value_size":
+                v = format_size(attr)
             else:
                 v = extract_renderable(attr)
+
             table.add_row(k, v)
 
         if (
             show_pedigree
-            or show_load_config
+            or show_serialized
             or show_properties
             or show_destinies
             or show_destiny_backlinks
@@ -1055,14 +1059,11 @@ class Value(ValueDetails):
                 row = ["pedigree_output_name", pedigree_output_name]
                 table.add_row(*row)
 
-        if show_load_config:
-            load_config = self._data_registry.retrieve_persisted_value_details(
+        if show_serialized:
+            serialized = self._data_registry.retrieve_persisted_value_details(
                 self.value_id
             )
-            if load_config is None:
-                table.add_row("load_config", "-- no load config (yet?) --")
-            else:
-                table.add_row("load_config", load_config.create_renderable())
+            table.add_row("serialized", serialized.create_renderable())
 
         if show_properties:
             if not self.property_links:

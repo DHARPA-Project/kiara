@@ -40,6 +40,7 @@ if TYPE_CHECKING:
     from kiara.models.values.value_metadata import ValueMetadata
     from kiara.data_types import DataType
     from kiara.registries import KiaraArchive
+    from kiara.models import KiaraModel
 
 import logging
 import structlog
@@ -352,6 +353,23 @@ def find_all_kiara_modules() -> Dict[str, Type["KiaraModule"]]:
     return result
 
 
+def find_all_kiara_model_classes() -> Dict[str, Type["KiaraModel"]]:
+    """Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.
+
+    TODO
+    """
+
+    from kiara.models import KiaraModel
+
+    return load_all_subclasses_for_entry_point(
+        entry_point_name="kiara.model_classes",
+        base_class=KiaraModel,  # type: ignore
+        type_id_key="_kiara_model_id",
+        type_id_func=_cls_name_id_func,
+        attach_python_metadata=False,
+    )
+
+
 def find_all_value_metadata_models() -> Dict[str, Type["ValueMetadata"]]:
     """Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.
 
@@ -429,6 +447,20 @@ def find_kiara_modules_under(
         base_class=KiaraModule,  # type: ignore
         python_module=module,
     )
+
+
+def find_kiara_model_classes_under(
+    module: Union[str, ModuleType]
+) -> List[Type["KiaraModel"]]:
+
+    from kiara.models import KiaraModel
+
+    result = find_subclasses_under(
+        base_class=KiaraModel,  # type: ignore
+        python_module=module,
+    )
+
+    return result
 
 
 def find_value_metadata_models_under(

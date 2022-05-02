@@ -714,6 +714,11 @@ class DataRegistry(object):
         if len(ops) > 1:
             raise Exception("No unique op.")
 
+        if not ops:
+            raise Exception(
+                f"No deserialize operation found for data type: {value.data_type_name}"
+            )
+
         op = ops[0]
         inputs = {"value": serialized_value}
 

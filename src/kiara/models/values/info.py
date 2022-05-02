@@ -68,7 +68,16 @@ RENDER_FIELDS: Dict[str, Dict[str, Any]] = {
             )
         },
     },
-    "serialize_details": {"show_default": False},
+    "serialize_details": {
+        "show_default": False,
+        "render": {"terminal": lambda p: p.serialized.create_renderable()},
+    },
+    "properties": {
+        "show_default": False,
+        "render": {
+            "terminal": lambda p: p.property_values.create_renderable(show_header=False)
+        },
+    },
 }
 
 

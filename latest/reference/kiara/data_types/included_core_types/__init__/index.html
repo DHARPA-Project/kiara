@@ -6388,17 +6388,15 @@ PythonObjectType            (<a class="autorefs autorefs-internal" title="kiara.
 
     <div class="doc doc-contents ">
 
-      <p>A data type that contains a serialized representation of a value.</p>
-<p>This is used for transferring/streaming value over the wire, and works on a similar principle as the 'load_config'
-value type.</p>
+      <p>A 'plain' Python object.</p>
+<p>This data type is mostly used internally, for hading over data in (de-)serialization operations.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/data_types/included_core_types/serialization.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PythonObjectType</span><span class="p">(</span><span class="n">InternalType</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span> <span class="n">DataTypeConfig</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;A data type that contains a serialized representation of a value.</span>
+    <span class="sd">&quot;&quot;&quot;A &#39;plain&#39; Python object.</span>
 
-<span class="sd">    This is used for transferring/streaming value over the wire, and works on a similar principle as the &#39;load_config&#39;</span>
-<span class="sd">    value type.</span>
+<span class="sd">    This data type is mostly used internally, for hading over data in (de-)serialization operations.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>

@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/included_components/">
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.9">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
     
     
       
@@ -23,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.120efc48.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.e411adfe.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.9647289d.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.cc9b2e1e.min.css">
         
       
     
@@ -2240,20 +2240,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/kiara/modules/included_core_modules/persistence/" class="md-nav__link">
-        persistence
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../reference/kiara/modules/included_core_modules/pipeline/" class="md-nav__link">
         pipeline
       </a>
@@ -2390,20 +2376,6 @@
     <li class="md-nav__item">
       <a href="../reference/kiara/operations/included_core_operations/metadata/" class="md-nav__link">
         metadata
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reference/kiara/operations/included_core_operations/persistence/" class="md-nav__link">
-        persistence
       </a>
     </li>
   
@@ -3202,6 +3174,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../reference/kiara/utils/hashfs/__init__/" class="md-nav__link">
+        hashfs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../reference/kiara/utils/hashing/" class="md-nav__link">
         hashing
       </a>
@@ -3445,28 +3431,25 @@
 <p><a class="autorefs autorefs-internal" href="data_types/#kiara_info.data_types.internal_model"><code>internal_model</code></a>: A value type that is used internally.</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="data_types/#kiara_info.data_types.load_config"><code>load_config</code></a>: A value type that contains data that describes how to (re-)load a value from disk.</p>
-</li>
-<li>
 <p><a class="autorefs autorefs-internal" href="data_types/#kiara_info.data_types.none"><code>none</code></a>: Type indicating a 'None' value</p>
 </li>
 <li>
-<p>[<code>serialized_value</code>][kiara_info.data_types.serialized_value]: A data type that contains a serialized representation of a value.</p>
+<p>[<code>python_object</code>][kiara_info.data_types.python_object]: A data type that contains a serialized representation of a value.</p>
 </li>
 <li>
 <p><a class="autorefs autorefs-internal" href="data_types/#kiara_info.data_types.string"><code>string</code></a>: A string.</p>
 </li>
 <li>
-<p>[<code>terminal_renderable</code>][kiara_info.data_types.terminal_renderable]: A list of renderable objects, used in the 'rich' Python library, to print to the terminal or in Jupyter.</p>
+<p><a class="autorefs autorefs-internal" href="data_types/#kiara_info.data_types.terminal_renderable"><code>terminal_renderable</code></a>: A list of renderable objects, used in the 'rich' Python library, to print to the terminal or in Jupyter.</p>
 </li>
 </ul>
 <h3 id="module_types">module_types<a class="headerlink" href="#module_types" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
-<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.file.save_to_data_store"><code>file.save_to_data_store</code></a>: -- n/a --</p>
+<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.deserialize.file"><code>deserialize.file</code></a>: Deserialize data to a 'file' value instance.</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.file_bundle.save_to_data_store"><code>file_bundle.save_to_data_store</code></a>: -- n/a --</p>
+<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.deserialize.file_bundle"><code>deserialize.file_bundle</code></a>: Deserialize data to a 'file' value instance.</p>
 </li>
 <li>
 <p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.import.file"><code>import.file</code></a>: Import a file from the local filesystem.</p>
@@ -3475,46 +3458,28 @@
 <p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.import.file_bundle"><code>import.file_bundle</code></a>: Import a folder (file_bundle) from the local filesystem.</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.internal_model.load_from_store"><code>internal_model.load_from_store</code></a>: Load a json file from disk and create a kiara value from it.</p>
+<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.load.bytes"><code>load.bytes</code></a>: -- n/a --</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.internal_model.save_to.disk.as.json_file"><code>internal_model.save_to.disk.as.json_file</code></a>: Persist internally used model data.</p>
+<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.load.internal_model"><code>load.internal_model</code></a>: -- n/a --</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.load.file.from_data_store"><code>load.file.from_data_store</code></a>: -- n/a --</p>
-</li>
-<li>
-<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.load.file_bundle.from_data_store"><code>load.file_bundle.from_data_store</code></a>: -- n/a --</p>
+<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.load.string"><code>load.string</code></a>: -- n/a --</p>
 </li>
 <li>
 <p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.pipeline"><code>pipeline</code></a>: -- n/a --</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.string.save_inline"><code>string.save_inline</code></a>: -- n/a --</p>
+<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.unpickle.value"><code>unpickle.value</code></a>: -- n/a --</p>
 </li>
 <li>
 <p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.value.extract_metadata"><code>value.extract_metadata</code></a>: Base class to use when writing a module to extract metadata from a file.</p>
-</li>
-<li>
-<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.value.load_inline"><code>value.load_inline</code></a>: -- n/a --</p>
-</li>
-<li>
-<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.value.load_pickled_data"><code>value.load_pickled_data</code></a>: -- n/a --</p>
 </li>
 <li>
 <p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.value.render"><code>value.render</code></a>: -- n/a --</p>
 </li>
 <li>
 <p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.value.render.any"><code>value.render.any</code></a>: -- n/a --</p>
-</li>
-<li>
-<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.value.save_to.disk.as.pickle"><code>value.save_to.disk.as.pickle</code></a>: -- n/a --</p>
-</li>
-<li>
-<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.value.serialize.pickle"><code>value.serialize.pickle</code></a>: -- n/a --</p>
-</li>
-<li>
-<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.value.serialize.unpickle"><code>value.serialize.unpickle</code></a>: -- n/a --</p>
 </li>
 </ul>
 <h3 id="metadata_types">metadata_types<a class="headerlink" href="#metadata_types" title="Permanent link">&para;</a></h3>
@@ -3538,10 +3503,10 @@
 <p><a class="autorefs autorefs-internal" href="operation_types/#kiara_info.operation_types.custom_module"><code>custom_module</code></a>: -- n/a --</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="operation_types/#kiara_info.operation_types.extract_metadata"><code>extract_metadata</code></a>: An operation that extracts metadata of a specific type from value data.</p>
+<p><a class="autorefs autorefs-internal" href="operation_types/#kiara_info.operation_types.deserialize"><code>deserialize</code></a>: An operation that takes a value, and serializes it into the format suitable to the [<code>serialized_value</code>][kiara.data_types.included_core_types.SeriailzedValue] value type.</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="operation_types/#kiara_info.operation_types.persist_value"><code>persist_value</code></a>: An operation that takes a value, and saves it to disk and returns details about how to re-assemble the value (via a [kiara.data_types.included_core_types.persistence.LoadConfigValueType] object).</p>
+<p><a class="autorefs autorefs-internal" href="operation_types/#kiara_info.operation_types.extract_metadata"><code>extract_metadata</code></a>: An operation that extracts metadata of a specific type from value data.</p>
 </li>
 <li>
 <p><a class="autorefs autorefs-internal" href="operation_types/#kiara_info.operation_types.pipeline"><code>pipeline</code></a>: -- n/a --</p>
@@ -3549,32 +3514,26 @@
 <li>
 <p><a class="autorefs autorefs-internal" href="operation_types/#kiara_info.operation_types.render_value"><code>render_value</code></a>: An operation that takes a value, and renders into a format that can be printed for output..</p>
 </li>
-<li>
-<p><a class="autorefs autorefs-internal" href="operation_types/#kiara_info.operation_types.serialize"><code>serialize</code></a>: An operation that takes a value, and serializes it into the format suitable to the [<code>serialized_value</code>][kiara.data_types.included_core_types.SeriailzedValue] value type.</p>
-</li>
 </ul>
 <h3 id="operations">operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.create.any.from.bytes"><code>create.any.from.bytes</code></a>: -- n/a --</p>
+<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.deserialize.bytes.as.bytes"><code>deserialize.bytes.as.bytes</code></a>: -- n/a --</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.create.load_config"><code>create.load_config</code></a>: Persist any Python object using 'pickle'.</p>
+<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.deserialize.file.as.file_model"><code>deserialize.file.as.file_model</code></a>: -- n/a --</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.create.load_config.from.file"><code>create.load_config.from.file</code></a>: Persist single files into a local kiara data store.</p>
+<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.deserialize.file_bundle.as.file_bundle"><code>deserialize.file_bundle.as.file_bundle</code></a>: -- n/a --</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.create.load_config.from.file_bundle"><code>create.load_config.from.file_bundle</code></a>: Persist single files into a local kiara data store.</p>
+<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.deserialize.internal_model.as.model_obj"><code>deserialize.internal_model.as.model_obj</code></a>: -- n/a --</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.create.load_config.from.internal_model"><code>create.load_config.from.internal_model</code></a>: Persist internally used model data as a json file.</p>
+<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.deserialize.string.as.string"><code>deserialize.string.as.string</code></a>: -- n/a --</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.create.load_config.from.string"><code>create.load_config.from.string</code></a>: -- n/a --</p>
-</li>
-<li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.create.serialized_value"><code>create.serialized_value</code></a>: Serialize any Python object into a bytes array using 'pickle'.</p>
+<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.deserialize.value"><code>deserialize.value</code></a>: -- n/a --</p>
 </li>
 <li>
 <p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.extract.file.metadata.from.file"><code>extract.file.metadata.from.file</code></a>: Extract 'file' metadata for value type 'file'.</p>
@@ -3590,15 +3549,6 @@
 </li>
 <li>
 <p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.import.file_bundle"><code>import.file_bundle</code></a>: Import a folder (file_bundle) from the local filesystem.</p>
-</li>
-<li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.internal_model.load_from_store"><code>internal_model.load_from_store</code></a>: Load a json file from disk and create a kiara value from it.</p>
-</li>
-<li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.load.file.from_data_store"><code>load.file.from_data_store</code></a>: -- n/a --</p>
-</li>
-<li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.load.file_bundle.from_data_store"><code>load.file_bundle.from_data_store</code></a>: -- n/a --</p>
 </li>
 <li>
 <p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.render.as.string"><code>render.as.string</code></a>: -- n/a --</p>
@@ -3622,28 +3572,10 @@
 <p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.render.internal_model.as.terminal_renderable"><code>render.internal_model.as.terminal_renderable</code></a>: Render a internal_model value as terminal_renderable.</p>
 </li>
 <li>
+<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.render.python_object.as.terminal_renderable"><code>render.python_object.as.terminal_renderable</code></a>: Render a python_object value as terminal_renderable.</p>
+</li>
+<li>
 <p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.render.string.as.bytes"><code>render.string.as.bytes</code></a>: Render a string value as bytes.</p>
-</li>
-<li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.save.file.to.data_store.as.file"><code>save.file.to.data_store.as.file</code></a>: Persist single files into a local kiara data store.</p>
-</li>
-<li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.save.file_bundle.to.data_store.as.file_bundle"><code>save.file_bundle.to.data_store.as.file_bundle</code></a>: Persist single files into a local kiara data store.</p>
-</li>
-<li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.save.internal_model.to.disk.as.json_file"><code>save.internal_model.to.disk.as.json_file</code></a>: Persist internally used model data as a json file.</p>
-</li>
-<li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.save.string.to.inline.as.json_string"><code>save.string.to.inline.as.json_string</code></a>: -- n/a --</p>
-</li>
-<li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.save.to.disk.as.pickle_file"><code>save.to.disk.as.pickle_file</code></a>: Persist any Python object using 'pickle'.</p>
-</li>
-<li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.serialize.as.pickle"><code>serialize.as.pickle</code></a>: Serialize any Python object into a bytes array using 'pickle'.</p>
-</li>
-<li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.value.serialize.unpickle"><code>value.serialize.unpickle</code></a>: -- n/a --</p>
 </li>
 </ul>
 
@@ -3718,7 +3650,7 @@
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking"], "search": "../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.6e54b5cd.min.js"></script>
+      <script src="../assets/javascripts/bundle.ed9748b7.min.js"></script>
       
     
   </body>

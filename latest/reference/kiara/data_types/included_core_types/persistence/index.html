@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/data_types/included_core_types/persistence/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.9">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
     
     
       
@@ -23,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.120efc48.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.e411adfe.min.css">
       
         
-        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.9647289d.min.css">
+        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.cc9b2e1e.min.css">
         
       
     
@@ -615,33 +615,6 @@
   <a href="#kiara.data_types.included_core_types.persistence" class="md-nav__link">
     kiara.data_types.included_core_types.persistence
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#kiara.data_types.included_core_types.persistence-classes" class="md-nav__link">
-    Classes
-  </a>
-  
-    <nav class="md-nav" aria-label="Classes">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kiara.data_types.included_core_types.persistence.LoadConfigSchema" class="md-nav__link">
-    LoadConfigSchema
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.data_types.included_core_types.persistence.LoadConfigValueType" class="md-nav__link">
-    LoadConfigValueType
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2232,20 +2205,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../modules/included_core_modules/persistence/" class="md-nav__link">
-        persistence
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../../modules/included_core_modules/pipeline/" class="md-nav__link">
         pipeline
       </a>
@@ -2382,20 +2341,6 @@
     <li class="md-nav__item">
       <a href="../../../operations/included_core_operations/metadata/" class="md-nav__link">
         metadata
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../operations/included_core_operations/persistence/" class="md-nav__link">
-        persistence
       </a>
     </li>
   
@@ -3194,6 +3139,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../utils/hashfs/__init__/" class="md-nav__link">
+        hashfs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../utils/hashing/" class="md-nav__link">
         hashing
       </a>
@@ -3351,33 +3310,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#kiara.data_types.included_core_types.persistence-classes" class="md-nav__link">
-    Classes
-  </a>
-  
-    <nav class="md-nav" aria-label="Classes">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kiara.data_types.included_core_types.persistence.LoadConfigSchema" class="md-nav__link">
-    LoadConfigSchema
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.data_types.included_core_types.persistence.LoadConfigValueType" class="md-nav__link">
-    LoadConfigValueType
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -3404,382 +3336,6 @@
     <div class="doc doc-contents first">
 
 
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-<h2 id="kiara.data_types.included_core_types.persistence-classes">Classes<a href="#kiara.data_types.included_core_types.persistence-classes" class="headerlink" title="Permanent link">&para;</a></h2>
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h3 id="kiara.data_types.included_core_types.persistence.LoadConfigSchema" class="doc doc-heading">
-        <code>
-LoadConfigSchema            (<a class="autorefs autorefs-internal" title="kiara.data_types.DataTypeConfig" href="../../__init__/#kiara.data_types.DataTypeConfig">DataTypeConfig</a>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.data_types.included_core_types.persistence.LoadConfigSchema" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/data_types/included_core_types/persistence.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">LoadConfigSchema</span><span class="p">(</span><span class="n">DataTypeConfig</span><span class="p">):</span>
-
-    <span class="n">persistence_target</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A hint as to the persistence target (e.g. disk).&quot;</span>
-    <span class="p">)</span>
-    <span class="n">persistence_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A hint as to the persistence format (e.g. pickle).&quot;</span>
-    <span class="p">)</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-<h4 id="kiara.data_types.included_core_types.persistence.LoadConfigSchema-attributes">Attributes<a href="#kiara.data_types.included_core_types.persistence.LoadConfigSchema-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.data_types.included_core_types.persistence.LoadConfigSchema.persistence_format" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">persistence_format</span><span class="p">:</span> <span class="nb">str</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.data_types.included_core_types.persistence.LoadConfigSchema.persistence_format" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>A hint as to the persistence format (e.g. pickle).</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.data_types.included_core_types.persistence.LoadConfigSchema.persistence_target" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">persistence_target</span><span class="p">:</span> <span class="nb">str</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.data_types.included_core_types.persistence.LoadConfigSchema.persistence_target" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>A hint as to the persistence target (e.g. disk).</p>
-    </div>
-
-  </div>
-
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h3 id="kiara.data_types.included_core_types.persistence.LoadConfigValueType" class="doc doc-heading">
-        <code>
-LoadConfigValueType            (<a class="autorefs autorefs-internal" title="kiara.data_types.included_core_types.internal.InternalType" href="../internal/#kiara.data_types.included_core_types.internal.InternalType">InternalType</a>)
-        </code>
-
-
-
-<a href="#kiara.data_types.included_core_types.persistence.LoadConfigValueType" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-      <p>A value type that contains data that describes how to (re-)load a value from disk.</p>
-<p>This is mostly used internally in kiara, but might be exposed to users in certain cases (for example when exporting
-a value in the native kiara file format).</p>
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/data_types/included_core_types/persistence.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">LoadConfigValueType</span><span class="p">(</span><span class="n">InternalType</span><span class="p">[</span><span class="n">LoadConfig</span><span class="p">,</span> <span class="n">LoadConfigSchema</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;A value type that contains data that describes how to (re-)load a value from disk.</span>
-
-<span class="sd">    This is mostly used internally in kiara, but might be exposed to users in certain cases (for example when exporting</span>
-<span class="sd">    a value in the native kiara file format).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">_data_type_name</span> <span class="o">=</span> <span class="s2">&quot;load_config&quot;</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">python_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">LoadConfig</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">data_type_config_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">LoadConfigSchema</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="n">LoadConfigSchema</span>
-
-    <span class="k">def</span> <span class="nf">is_immutable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">True</span>
-
-    <span class="k">def</span> <span class="nf">calculate_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">LoadConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Calculate the hash of the value.&quot;&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">model_data_hash</span>
-
-    <span class="k">def</span> <span class="nf">calculate_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">LoadConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">model_size</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">persistence_target</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">persistence_target</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">persistence_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">persistence_format</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.data_types.included_core_types.persistence.LoadConfigValueType.persistence_format" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">persistence_format</span><span class="p">:</span> <span class="nb">str</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-property"><code>property</code></small>
-      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
-  </span>
-
-<a href="#kiara.data_types.included_core_types.persistence.LoadConfigValueType.persistence_format" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.data_types.included_core_types.persistence.LoadConfigValueType.persistence_target" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">persistence_target</span><span class="p">:</span> <span class="nb">str</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-property"><code>property</code></small>
-      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
-  </span>
-
-<a href="#kiara.data_types.included_core_types.persistence.LoadConfigValueType.persistence_target" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-    </div>
-
-  </div>
-
-
-
-
-<h4 id="kiara.data_types.included_core_types.persistence.LoadConfigValueType-methods">Methods<a href="#kiara.data_types.included_core_types.persistence.LoadConfigValueType-methods" class="headerlink" title="Permanent link">&para;</a></h4>
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.data_types.included_core_types.persistence.LoadConfigValueType.calculate_hash" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">calculate_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></code>
-
-
-<a href="#kiara.data_types.included_core_types.persistence.LoadConfigValueType.calculate_hash" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>Calculate the hash of the value.</p>
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/data_types/included_core_types/persistence.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">calculate_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">LoadConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Calculate the hash of the value.&quot;&quot;&quot;</span>
-
-    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">model_data_hash</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.data_types.included_core_types.persistence.LoadConfigValueType.calculate_size" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">calculate_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></code>
-
-
-<a href="#kiara.data_types.included_core_types.persistence.LoadConfigValueType.calculate_size" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/data_types/included_core_types/persistence.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">calculate_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">LoadConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">model_size</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.data_types.included_core_types.persistence.LoadConfigValueType.data_type_config_class" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">data_type_config_class</span><span class="p">()</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.data_types.included_core_types.persistence.LoadConfigValueType.data_type_config_class" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/data_types/included_core_types/persistence.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">data_type_config_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">LoadConfigSchema</span><span class="p">]:</span>
-    <span class="k">return</span> <span class="n">LoadConfigSchema</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.data_types.included_core_types.persistence.LoadConfigValueType.is_immutable" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">is_immutable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
-
-
-<a href="#kiara.data_types.included_core_types.persistence.LoadConfigValueType.is_immutable" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/data_types/included_core_types/persistence.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">is_immutable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="k">return</span> <span class="kc">True</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.data_types.included_core_types.persistence.LoadConfigValueType.python_class" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">python_class</span><span class="p">()</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.data_types.included_core_types.persistence.LoadConfigValueType.python_class" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/data_types/included_core_types/persistence.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">python_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">LoadConfig</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-
-
-
-
-  </div>
 
     </div>
 
@@ -3856,7 +3412,7 @@ a value in the native kiara file format).</p>
     <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.6e54b5cd.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.ed9748b7.min.js"></script>
       
     
   </body>

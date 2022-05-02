@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/models/module/__init__/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.9">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
     
     
       
@@ -23,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.120efc48.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.e411adfe.min.css">
       
         
-        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.9647289d.min.css">
+        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.cc9b2e1e.min.css">
         
       
     
@@ -2168,20 +2168,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../modules/included_core_modules/persistence/" class="md-nav__link">
-        persistence
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../../modules/included_core_modules/pipeline/" class="md-nav__link">
         pipeline
       </a>
@@ -2318,20 +2304,6 @@
     <li class="md-nav__item">
       <a href="../../../operations/included_core_operations/metadata/" class="md-nav__link">
         metadata
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../operations/included_core_operations/persistence/" class="md-nav__link">
-        persistence
       </a>
     </li>
   
@@ -3130,6 +3102,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../utils/hashfs/__init__/" class="md-nav__link">
+        hashfs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../utils/hashing/" class="md-nav__link">
         hashing
       </a>
@@ -3494,8 +3480,8 @@ KiaraModuleClass            (<a class="autorefs autorefs-internal" title="kiara.
             <span class="n">full_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">item_cls</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">item_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="n">conf</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;class_name&quot;</span><span class="p">:</span> <span class="n">cls_name</span><span class="p">,</span>
-            <span class="s2">&quot;module_name&quot;</span><span class="p">:</span> <span class="n">module_name</span><span class="p">,</span>
+            <span class="s2">&quot;python_class_name&quot;</span><span class="p">:</span> <span class="n">cls_name</span><span class="p">,</span>
+            <span class="s2">&quot;python_module_name&quot;</span><span class="p">:</span> <span class="n">module_name</span><span class="p">,</span>
             <span class="s2">&quot;full_name&quot;</span><span class="p">:</span> <span class="n">full_name</span><span class="p">,</span>
         <span class="p">}</span>
 
@@ -3641,8 +3627,8 @@ KiaraModuleClass            (<a class="autorefs autorefs-internal" title="kiara.
         <span class="n">full_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">item_cls</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">item_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="n">conf</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;class_name&quot;</span><span class="p">:</span> <span class="n">cls_name</span><span class="p">,</span>
-        <span class="s2">&quot;module_name&quot;</span><span class="p">:</span> <span class="n">module_name</span><span class="p">,</span>
+        <span class="s2">&quot;python_class_name&quot;</span><span class="p">:</span> <span class="n">cls_name</span><span class="p">,</span>
+        <span class="s2">&quot;python_module_name&quot;</span><span class="p">:</span> <span class="n">module_name</span><span class="p">,</span>
         <span class="s2">&quot;full_name&quot;</span><span class="p">:</span> <span class="n">full_name</span><span class="p">,</span>
     <span class="p">}</span>
 
@@ -4968,7 +4954,7 @@ ValueTypeAndDescription            (<span title="pydantic.main.BaseModel">BaseMo
     <span class="n">m_file</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="vm">__file__</span>
     <span class="k">assert</span> <span class="n">m_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
-    <span class="n">base_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">/blob/</span><span class="si">{</span><span class="n">branch</span><span class="si">}</span><span class="s2">/src/</span><span class="si">{</span><span class="n">python_class_info</span><span class="o">.</span><span class="n">module_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">base_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">/blob/</span><span class="si">{</span><span class="n">branch</span><span class="si">}</span><span class="s2">/src/</span><span class="si">{</span><span class="n">python_class_info</span><span class="o">.</span><span class="n">python_module_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="k">if</span> <span class="n">m_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;__init__.py&quot;</span><span class="p">):</span>
         <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">/__init__.py&quot;</span>
@@ -10683,190 +10669,6 @@ BytesStructure            (<span title="pydantic.main.BaseModel">BaseModel</span
     </div>
 
   </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h5 id="kiara.models.module.persistence.LoadConfig" class="doc doc-heading">
-        <code>
-LoadConfig            (<a class="autorefs autorefs-internal" title="kiara.models.module.manifest.Manifest" href="../manifest/#kiara.models.module.manifest.Manifest">Manifest</a>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.models.module.persistence.LoadConfig" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/persistence.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">LoadConfig</span><span class="p">(</span><span class="n">Manifest</span><span class="p">):</span>
-
-    <span class="n">provisioning_strategy</span><span class="p">:</span> <span class="n">ByteProvisioningStrategy</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;In what form the  serialized bytes are returned.&quot;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="n">ByteProvisioningStrategy</span><span class="o">.</span><span class="n">INLINE</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A map translating from input field name to alias (key) in bytes_structure.&quot;</span>
-    <span class="p">)</span>
-    <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The name of the field that contains the persisted value details.&quot;</span>
-    <span class="p">)</span>
-    <span class="n">bytes_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BytesAliasStructure</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;References to the byte chunks for the inputs.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
-    <span class="p">)</span>
-    <span class="n">inline_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Inline values.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(module_type=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">module_type</span><span class="si">}</span><span class="s2">, output_name=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_name</span><span class="si">}</span><span class="s2">)&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-<h6 id="kiara.models.module.persistence.LoadConfig-attributes">Attributes<a href="#kiara.models.module.persistence.LoadConfig-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.models.module.persistence.LoadConfig.bytes_map" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">bytes_map</span><span class="p">:</span> <span class="n">BytesAliasStructure</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-  </span>
-
-<a href="#kiara.models.module.persistence.LoadConfig.bytes_map" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>References to the byte chunks for the inputs.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.models.module.persistence.LoadConfig.inline_data" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">inline_data</span><span class="p">:</span> <span class="n">Any</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-  </span>
-
-<a href="#kiara.models.module.persistence.LoadConfig.inline_data" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>Inline values.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.models.module.persistence.LoadConfig.inputs" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.module.persistence.LoadConfig.inputs" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>A map translating from input field name to alias (key) in bytes_structure.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.models.module.persistence.LoadConfig.output_name" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.module.persistence.LoadConfig.output_name" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>The name of the field that contains the persisted value details.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.models.module.persistence.LoadConfig.provisioning_strategy" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">provisioning_strategy</span><span class="p">:</span> <span class="n">ByteProvisioningStrategy</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-  </span>
-
-<a href="#kiara.models.module.persistence.LoadConfig.provisioning_strategy" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>In what form the  serialized bytes are returned.</p>
-    </div>
-
-  </div>
-
-
-
 
 
 
@@ -17110,7 +16912,7 @@ Config        </code>
     <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.6e54b5cd.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.ed9748b7.min.js"></script>
       
     
   </body>

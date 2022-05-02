@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/operations/__init__/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.9">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
     
     
       
@@ -23,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.120efc48.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.e411adfe.min.css">
       
         
-        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.9647289d.min.css">
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.cc9b2e1e.min.css">
         
       
     
@@ -2164,20 +2164,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../modules/included_core_modules/persistence/" class="md-nav__link">
-        persistence
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../modules/included_core_modules/pipeline/" class="md-nav__link">
         pipeline
       </a>
@@ -2316,20 +2302,6 @@
     <li class="md-nav__item">
       <a href="../included_core_operations/metadata/" class="md-nav__link">
         metadata
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../included_core_operations/persistence/" class="md-nav__link">
-        persistence
       </a>
     </li>
   
@@ -3116,6 +3088,20 @@
     <li class="md-nav__item">
       <a href="../../utils/graphs/" class="md-nav__link">
         graphs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../utils/hashfs/__init__/" class="md-nav__link">
+        hashfs
       </a>
     </li>
   
@@ -4185,6 +4171,9 @@ CreateFromOperationType            (<a class="autorefs autorefs-internal" title=
         <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CreateValueFromDetails</span><span class="p">]:</span>
 
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">CreateFromModule</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
         <span class="n">source_type</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">field_name</span> <span class="o">==</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span><span class="p">:</span>
@@ -4268,6 +4257,9 @@ CreateFromOperationType            (<a class="autorefs autorefs-internal" title=
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CreateValueFromDetails</span><span class="p">]:</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">CreateFromModule</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
 
     <span class="n">source_type</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -5288,777 +5280,6 @@ ExtractMetadataOperationType            (<a class="autorefs autorefs-internal" t
                 <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Extract &#39;</span><span class="si">{</span><span class="n">metadata_key</span><span class="si">}</span><span class="s2">&#39; metadata for value type &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span>
             <span class="p">}</span>
             <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">result</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-module">
-
-
-
-<h5 id="kiara.operations.included_core_operations.persistence" class="doc doc-heading">
-        <code>persistence</code>
-
-
-
-<a href="#kiara.operations.included_core_operations.persistence" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-<h6 id="kiara.operations.included_core_operations.persistence-classes">Classes<a href="#kiara.operations.included_core_operations.persistence-classes" class="headerlink" title="Permanent link">&para;</a></h6>
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h7 id="kiara.operations.included_core_operations.persistence.PersistValueDetails" class="doc doc-heading">
-        <code>
-PersistValueDetails            (<a class="autorefs autorefs-internal" title="kiara.models.module.operation.BaseOperationDetails" href="../../models/module/operation/#kiara.models.module.operation.BaseOperationDetails">BaseOperationDetails</a>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.operations.included_core_operations.persistence.PersistValueDetails" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/operations/included_core_operations/persistence.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PersistValueDetails</span><span class="p">(</span><span class="n">BaseOperationDetails</span><span class="p">):</span>
-
-    <span class="n">value_input_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The (input) field name containing the value to be persisted.&quot;</span>
-    <span class="p">)</span>
-    <span class="n">value_input_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The type of the value to be persisted.&quot;</span><span class="p">)</span>
-    <span class="n">load_config_output_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The (output) field name containing the details of the persisted value.&quot;</span>
-    <span class="p">)</span>
-    <span class="n">persistence_target</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The name of the persistence target.&quot;</span><span class="p">)</span>
-    <span class="n">persistence_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The persistence format.&quot;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">retrieve_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
-
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to persist.&quot;</span><span class="p">},</span>
-            <span class="s2">&quot;persitence_config&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;(Optional) configuration for the persistance process.&quot;</span><span class="p">,</span>
-            <span class="p">},</span>
-        <span class="p">}</span>
-
-    <span class="k">def</span> <span class="nf">retrieve_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
-
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;load_config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;load_config&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The saved value details.&quot;</span><span class="p">},</span>
-            <span class="s2">&quot;bytes_structure&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;A structure of serialized bytes.&quot;</span><span class="p">,</span>
-            <span class="p">},</span>
-        <span class="p">}</span>
-
-    <span class="k">def</span> <span class="nf">create_module_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">value_input_field</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">],</span>
-            <span class="s2">&quot;persistence_config&quot;</span><span class="p">:</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;persistence_config&quot;</span><span class="p">,</span> <span class="p">{}),</span>
-        <span class="p">}</span>
-
-    <span class="k">def</span> <span class="nf">create_operation_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]:</span>
-
-        <span class="k">return</span> <span class="n">outputs</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-<h8 id="kiara.operations.included_core_operations.persistence.PersistValueDetails-attributes">Attributes<a href="#kiara.operations.included_core_operations.persistence.PersistValueDetails-attributes" class="headerlink" title="Permanent link">&para;</a></h8>
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h9 id="kiara.operations.included_core_operations.persistence.PersistValueDetails.load_config_output_field" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">load_config_output_field</span><span class="p">:</span> <span class="nb">str</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.operations.included_core_operations.persistence.PersistValueDetails.load_config_output_field" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-      <p>The (output) field name containing the details of the persisted value.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h9 id="kiara.operations.included_core_operations.persistence.PersistValueDetails.persistence_format" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">persistence_format</span><span class="p">:</span> <span class="nb">str</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.operations.included_core_operations.persistence.PersistValueDetails.persistence_format" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-      <p>The persistence format.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h9 id="kiara.operations.included_core_operations.persistence.PersistValueDetails.persistence_target" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">persistence_target</span><span class="p">:</span> <span class="nb">str</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.operations.included_core_operations.persistence.PersistValueDetails.persistence_target" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-      <p>The name of the persistence target.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h9 id="kiara.operations.included_core_operations.persistence.PersistValueDetails.value_input_field" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">value_input_field</span><span class="p">:</span> <span class="nb">str</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.operations.included_core_operations.persistence.PersistValueDetails.value_input_field" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-      <p>The (input) field name containing the value to be persisted.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h9 id="kiara.operations.included_core_operations.persistence.PersistValueDetails.value_input_type" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">value_input_type</span><span class="p">:</span> <span class="nb">str</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.operations.included_core_operations.persistence.PersistValueDetails.value_input_type" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-      <p>The type of the value to be persisted.</p>
-    </div>
-
-  </div>
-
-
-
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h9 id="kiara.operations.included_core_operations.persistence.PersistValueDetails.create_module_inputs" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_module_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span></code>
-
-
-<a href="#kiara.operations.included_core_operations.persistence.PersistValueDetails.create_module_inputs" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/operations/included_core_operations/persistence.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_module_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">value_input_field</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;persistence_config&quot;</span><span class="p">:</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;persistence_config&quot;</span><span class="p">,</span> <span class="p">{}),</span>
-    <span class="p">}</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h9 id="kiara.operations.included_core_operations.persistence.PersistValueDetails.create_operation_outputs" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_operation_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span></code>
-
-
-<a href="#kiara.operations.included_core_operations.persistence.PersistValueDetails.create_operation_outputs" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/operations/included_core_operations/persistence.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_operation_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]:</span>
-
-    <span class="k">return</span> <span class="n">outputs</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h9 id="kiara.operations.included_core_operations.persistence.PersistValueDetails.retrieve_inputs_schema" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">retrieve_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
-
-
-<a href="#kiara.operations.included_core_operations.persistence.PersistValueDetails.retrieve_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/operations/included_core_operations/persistence.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
-
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to persist.&quot;</span><span class="p">},</span>
-        <span class="s2">&quot;persitence_config&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;(Optional) configuration for the persistance process.&quot;</span><span class="p">,</span>
-        <span class="p">},</span>
-    <span class="p">}</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h9 id="kiara.operations.included_core_operations.persistence.PersistValueDetails.retrieve_outputs_schema" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">retrieve_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
-
-
-<a href="#kiara.operations.included_core_operations.persistence.PersistValueDetails.retrieve_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/operations/included_core_operations/persistence.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
-
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;load_config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;load_config&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The saved value details.&quot;</span><span class="p">},</span>
-        <span class="s2">&quot;bytes_structure&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;A structure of serialized bytes.&quot;</span><span class="p">,</span>
-        <span class="p">},</span>
-    <span class="p">}</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h7 id="kiara.operations.included_core_operations.persistence.PersistValueOperationType" class="doc doc-heading">
-        <code>
-PersistValueOperationType            (<a class="autorefs autorefs-internal" title="kiara.operations.OperationType" href="#kiara.operations.OperationType">OperationType</a>)
-        </code>
-
-
-
-<a href="#kiara.operations.included_core_operations.persistence.PersistValueOperationType" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>An operation that takes a value, and saves it to disk and returns details about how to re-assemble the value (via a [kiara.data_types.included_core_types.persistence.LoadConfigValueType] object).</p>
-<p>For a module profile to be picked up by this operation type, it needs to:
-- exactly one output field of type <code>load_config</code>
-- either one of (in this order):
-  - exactly one input field
-  - one input field where the field name equals the type name
-  - an input field called 'value'</p>
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/operations/included_core_operations/persistence.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PersistValueOperationType</span><span class="p">(</span><span class="n">OperationType</span><span class="p">[</span><span class="n">PersistValueDetails</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;An operation that takes a value, and saves it to disk and returns details about how to re-assemble the value (via a [kiara.data_types.included_core_types.persistence.LoadConfigValueType] object).</span>
-
-<span class="sd">    For a module profile to be picked up by this operation type, it needs to:</span>
-<span class="sd">    - exactly one output field of type `load_config`</span>
-<span class="sd">    - either one of (in this order):</span>
-<span class="sd">      - exactly one input field</span>
-<span class="sd">      - one input field where the field name equals the type name</span>
-<span class="sd">      - an input field called &#39;value&#39;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">_operation_type_name</span> <span class="o">=</span> <span class="s2">&quot;persist_value&quot;</span>
-
-    <span class="k">def</span> <span class="nf">retrieve_included_operation_configs</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">OperationConfig</span><span class="p">]]:</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">module_cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">module_type_classes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">module_cls</span><span class="p">,</span> <span class="n">PersistValueModule</span><span class="p">):</span>
-                <span class="k">continue</span>
-
-            <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">module_cls</span><span class="o">.</span><span class="n">retrieve_supported_source_types</span><span class="p">():</span>
-                <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;data_type__</span><span class="si">{</span><span class="n">st</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module_cls</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
-                <span class="n">doc</span> <span class="o">=</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-                <span class="n">mc</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;source_type&quot;</span><span class="p">:</span> <span class="n">st</span><span class="p">}</span>
-                <span class="n">oc</span> <span class="o">=</span> <span class="n">ManifestOperationConfig</span><span class="p">(</span>
-                    <span class="n">module_type</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">mc</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">doc</span>
-                <span class="p">)</span>
-                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oc</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">result</span>
-
-    <span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PersistValueDetails</span><span class="p">]:</span>
-
-        <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_details</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">details</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">details</span>
-
-    <span class="k">def</span> <span class="nf">extract_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PersistValueDetails</span><span class="p">]:</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-        <span class="c1"># if &quot;save&quot; not in module.module_type_name:</span>
-        <span class="c1">#     return None</span>
-        <span class="n">match</span> <span class="o">=</span> <span class="kc">None</span>
-
-        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">LOAD_CONFIG_DATA_TYPE_NAME</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">log_message</span><span class="p">(</span>
-                        <span class="s2">&quot;ignore.operation&quot;</span><span class="p">,</span>
-                        <span class="n">reason</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;More than one field of type &#39;</span><span class="si">{</span><span class="n">LOAD_CONFIG_DATA_TYPE_NAME</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
-                        <span class="n">module_type</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="p">,</span>
-                    <span class="p">)</span>
-                    <span class="k">continue</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">match</span> <span class="o">=</span> <span class="n">field_name</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-        <span class="n">input_field_match</span> <span class="o">=</span> <span class="kc">None</span>
-
-        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">field_name</span> <span class="o">==</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="c1"># we can&#39;t deal (yet) with multiple fields</span>
-                    <span class="n">log_message</span><span class="p">(</span>
-                        <span class="s2">&quot;operation.ignore&quot;</span><span class="p">,</span>
-                        <span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="p">,</span>
-                        <span class="n">reason</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;more than one input fields of type &#39;</span><span class="si">{</span><span class="n">schema</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
-                    <span class="p">)</span>
-                    <span class="n">input_field_match</span> <span class="o">=</span> <span class="kc">None</span>
-                    <span class="k">break</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">input_field_match</span> <span class="o">=</span> <span class="n">field_name</span>
-
-        <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">input_field</span> <span class="o">=</span> <span class="n">input_field_match</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-        <span class="n">input_field_type</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">[</span><span class="n">input_field</span><span class="p">]</span><span class="o">.</span><span class="n">type</span>
-        <span class="n">value_schema</span><span class="p">:</span> <span class="n">ValueSchema</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">[</span><span class="n">match</span><span class="p">]</span>
-        <span class="n">load_config_type</span><span class="p">:</span> <span class="n">LoadConfigValueType</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">retrieve_data_type</span><span class="p">(</span>  <span class="c1"># type: ignore  # type: ignore</span>
-            <span class="n">data_type_name</span><span class="o">=</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
-            <span class="n">data_type_config</span><span class="o">=</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type_config</span><span class="p">,</span>
-        <span class="p">)</span>  <span class="c1"># type: ignore</span>
-
-        <span class="n">persistence_target</span> <span class="o">=</span> <span class="n">load_config_type</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">persistence_target</span>  <span class="c1"># type: ignore</span>
-        <span class="n">persistence_format</span> <span class="o">=</span> <span class="n">load_config_type</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">persistence_format</span>  <span class="c1"># type: ignore</span>
-
-        <span class="k">if</span> <span class="n">input_field_type</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
-            <span class="n">operation_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;save.to.</span><span class="si">{</span><span class="n">persistence_target</span><span class="si">}</span><span class="s2">.as.</span><span class="si">{</span><span class="n">persistence_format</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">operation_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;save.</span><span class="si">{</span><span class="n">input_field_type</span><span class="si">}</span><span class="s2">.to.</span><span class="si">{</span><span class="n">persistence_target</span><span class="si">}</span><span class="s2">.as.</span><span class="si">{</span><span class="n">persistence_format</span><span class="si">}</span><span class="s2">&quot;</span>
-
-        <span class="n">details</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;operation_id&quot;</span><span class="p">:</span> <span class="n">operation_id</span><span class="p">,</span>
-            <span class="s2">&quot;value_input_field&quot;</span><span class="p">:</span> <span class="n">input_field</span><span class="p">,</span>
-            <span class="s2">&quot;value_input_type&quot;</span><span class="p">:</span> <span class="n">input_field_type</span><span class="p">,</span>
-            <span class="s2">&quot;load_config_output_field&quot;</span><span class="p">:</span> <span class="n">match</span><span class="p">,</span>
-            <span class="s2">&quot;persistence_target&quot;</span><span class="p">:</span> <span class="n">persistence_target</span><span class="p">,</span>
-            <span class="s2">&quot;persistence_format&quot;</span><span class="p">:</span> <span class="n">persistence_format</span><span class="p">,</span>
-            <span class="s2">&quot;is_internal_operation&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="p">}</span>
-
-        <span class="n">result</span> <span class="o">=</span> <span class="n">PersistValueDetails</span><span class="o">.</span><span class="n">create_operation_details</span><span class="p">(</span><span class="o">**</span><span class="n">details</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">result</span>
-
-    <span class="k">def</span> <span class="nf">get_operation_for_data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
-
-        <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span><span class="n">type_name</span><span class="p">)</span>
-        <span class="n">persist_op</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">for</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="n">lineage</span><span class="p">:</span>
-            <span class="n">match</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-                <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_operation_details</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">details</span><span class="o">.</span><span class="n">value_input_type</span> <span class="o">==</span> <span class="n">data_type</span><span class="p">:</span>
-                    <span class="k">match</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Multiple serialization operations found for value type &#39;</span><span class="si">{</span><span class="n">type_name</span><span class="si">}</span><span class="s2">&#39;. This is not supported (yet).&quot;</span>
-                    <span class="p">)</span>
-                <span class="n">persist_op</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="k">break</span>
-
-        <span class="k">if</span> <span class="n">persist_op</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t find persist operation for type &#39;</span><span class="si">{</span><span class="n">type_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">persist_op</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-<h8 id="kiara.operations.included_core_operations.persistence.PersistValueOperationType-methods">Methods<a href="#kiara.operations.included_core_operations.persistence.PersistValueOperationType-methods" class="headerlink" title="Permanent link">&para;</a></h8>
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h9 id="kiara.operations.included_core_operations.persistence.PersistValueOperationType.check_matching_operation" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">check_matching_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span></code>
-
-
-<a href="#kiara.operations.included_core_operations.persistence.PersistValueOperationType.check_matching_operation" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-      <p>Check whether the provided module is a valid operation for this type.</p>
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/operations/included_core_operations/persistence.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PersistValueDetails</span><span class="p">]:</span>
-
-    <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_details</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">details</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">None</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">details</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h9 id="kiara.operations.included_core_operations.persistence.PersistValueOperationType.extract_details" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">extract_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span></code>
-
-
-<a href="#kiara.operations.included_core_operations.persistence.PersistValueOperationType.extract_details" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/operations/included_core_operations/persistence.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">extract_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PersistValueDetails</span><span class="p">]:</span>
-
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="c1"># if &quot;save&quot; not in module.module_type_name:</span>
-    <span class="c1">#     return None</span>
-    <span class="n">match</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">LOAD_CONFIG_DATA_TYPE_NAME</span><span class="p">:</span>
-            <span class="k">continue</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">log_message</span><span class="p">(</span>
-                    <span class="s2">&quot;ignore.operation&quot;</span><span class="p">,</span>
-                    <span class="n">reason</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;More than one field of type &#39;</span><span class="si">{</span><span class="n">LOAD_CONFIG_DATA_TYPE_NAME</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
-                    <span class="n">module_type</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="k">continue</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">match</span> <span class="o">=</span> <span class="n">field_name</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="n">input_field_match</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">field_name</span> <span class="o">==</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="c1"># we can&#39;t deal (yet) with multiple fields</span>
-                <span class="n">log_message</span><span class="p">(</span>
-                    <span class="s2">&quot;operation.ignore&quot;</span><span class="p">,</span>
-                    <span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="p">,</span>
-                    <span class="n">reason</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;more than one input fields of type &#39;</span><span class="si">{</span><span class="n">schema</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="n">input_field_match</span> <span class="o">=</span> <span class="kc">None</span>
-                <span class="k">break</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">input_field_match</span> <span class="o">=</span> <span class="n">field_name</span>
-
-    <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">input_field</span> <span class="o">=</span> <span class="n">input_field_match</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="n">input_field_type</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">[</span><span class="n">input_field</span><span class="p">]</span><span class="o">.</span><span class="n">type</span>
-    <span class="n">value_schema</span><span class="p">:</span> <span class="n">ValueSchema</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">[</span><span class="n">match</span><span class="p">]</span>
-    <span class="n">load_config_type</span><span class="p">:</span> <span class="n">LoadConfigValueType</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">retrieve_data_type</span><span class="p">(</span>  <span class="c1"># type: ignore  # type: ignore</span>
-        <span class="n">data_type_name</span><span class="o">=</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
-        <span class="n">data_type_config</span><span class="o">=</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type_config</span><span class="p">,</span>
-    <span class="p">)</span>  <span class="c1"># type: ignore</span>
-
-    <span class="n">persistence_target</span> <span class="o">=</span> <span class="n">load_config_type</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">persistence_target</span>  <span class="c1"># type: ignore</span>
-    <span class="n">persistence_format</span> <span class="o">=</span> <span class="n">load_config_type</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">persistence_format</span>  <span class="c1"># type: ignore</span>
-
-    <span class="k">if</span> <span class="n">input_field_type</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
-        <span class="n">operation_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;save.to.</span><span class="si">{</span><span class="n">persistence_target</span><span class="si">}</span><span class="s2">.as.</span><span class="si">{</span><span class="n">persistence_format</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">operation_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;save.</span><span class="si">{</span><span class="n">input_field_type</span><span class="si">}</span><span class="s2">.to.</span><span class="si">{</span><span class="n">persistence_target</span><span class="si">}</span><span class="s2">.as.</span><span class="si">{</span><span class="n">persistence_format</span><span class="si">}</span><span class="s2">&quot;</span>
-
-    <span class="n">details</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;operation_id&quot;</span><span class="p">:</span> <span class="n">operation_id</span><span class="p">,</span>
-        <span class="s2">&quot;value_input_field&quot;</span><span class="p">:</span> <span class="n">input_field</span><span class="p">,</span>
-        <span class="s2">&quot;value_input_type&quot;</span><span class="p">:</span> <span class="n">input_field_type</span><span class="p">,</span>
-        <span class="s2">&quot;load_config_output_field&quot;</span><span class="p">:</span> <span class="n">match</span><span class="p">,</span>
-        <span class="s2">&quot;persistence_target&quot;</span><span class="p">:</span> <span class="n">persistence_target</span><span class="p">,</span>
-        <span class="s2">&quot;persistence_format&quot;</span><span class="p">:</span> <span class="n">persistence_format</span><span class="p">,</span>
-        <span class="s2">&quot;is_internal_operation&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="p">}</span>
-
-    <span class="n">result</span> <span class="o">=</span> <span class="n">PersistValueDetails</span><span class="o">.</span><span class="n">create_operation_details</span><span class="p">(</span><span class="o">**</span><span class="n">details</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">result</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h9 id="kiara.operations.included_core_operations.persistence.PersistValueOperationType.get_operation_for_data_type" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_operation_for_data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">)</span></code>
-
-
-<a href="#kiara.operations.included_core_operations.persistence.PersistValueOperationType.get_operation_for_data_type" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/operations/included_core_operations/persistence.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_operation_for_data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
-
-    <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span><span class="n">type_name</span><span class="p">)</span>
-    <span class="n">persist_op</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">for</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="n">lineage</span><span class="p">:</span>
-        <span class="n">match</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_operation_details</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">details</span><span class="o">.</span><span class="n">value_input_type</span> <span class="o">==</span> <span class="n">data_type</span><span class="p">:</span>
-                <span class="k">match</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Multiple serialization operations found for value type &#39;</span><span class="si">{</span><span class="n">type_name</span><span class="si">}</span><span class="s2">&#39;. This is not supported (yet).&quot;</span>
-                <span class="p">)</span>
-            <span class="n">persist_op</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">break</span>
-
-    <span class="k">if</span> <span class="n">persist_op</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t find persist operation for type &#39;</span><span class="si">{</span><span class="n">type_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">persist_op</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h9 id="kiara.operations.included_core_operations.persistence.PersistValueOperationType.retrieve_included_operation_configs" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">retrieve_included_operation_configs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
-
-
-<a href="#kiara.operations.included_core_operations.persistence.PersistValueOperationType.retrieve_included_operation_configs" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/operations/included_core_operations/persistence.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_included_operation_configs</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">OperationConfig</span><span class="p">]]:</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">module_cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">module_type_classes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">module_cls</span><span class="p">,</span> <span class="n">PersistValueModule</span><span class="p">):</span>
-            <span class="k">continue</span>
-
-        <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">module_cls</span><span class="o">.</span><span class="n">retrieve_supported_source_types</span><span class="p">():</span>
-            <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;data_type__</span><span class="si">{</span><span class="n">st</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module_cls</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
-            <span class="n">doc</span> <span class="o">=</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-            <span class="n">mc</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;source_type&quot;</span><span class="p">:</span> <span class="n">st</span><span class="p">}</span>
-            <span class="n">oc</span> <span class="o">=</span> <span class="n">ManifestOperationConfig</span><span class="p">(</span>
-                <span class="n">module_type</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">mc</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">doc</span>
-            <span class="p">)</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oc</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
@@ -7474,9 +6695,9 @@ RenderValueOperationType            (<a class="autorefs autorefs-internal" title
 
 
 
-<h7 id="kiara.operations.included_core_operations.serialize.SerializeDetails" class="doc doc-heading">
+<h7 id="kiara.operations.included_core_operations.serialize.DeSerializeDetails" class="doc doc-heading">
         <code>
-SerializeDetails            (<a class="autorefs autorefs-internal" title="kiara.models.module.operation.BaseOperationDetails" href="../../models/module/operation/#kiara.models.module.operation.BaseOperationDetails">BaseOperationDetails</a>)
+DeSerializeDetails            (<a class="autorefs autorefs-internal" title="kiara.models.module.operation.BaseOperationDetails" href="../../models/module/operation/#kiara.models.module.operation.BaseOperationDetails">BaseOperationDetails</a>)
         </code>
 
 
@@ -7484,44 +6705,53 @@ SerializeDetails            (<a class="autorefs autorefs-internal" title="kiara.
       <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
   </span>
 
-<a href="#kiara.operations.included_core_operations.serialize.SerializeDetails" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.operations.included_core_operations.serialize.DeSerializeDetails" class="headerlink" title="Permanent link">&para;</a></h7>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/operations/included_core_operations/serialize.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SerializeDetails</span><span class="p">(</span><span class="n">BaseOperationDetails</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">DeSerializeDetails</span><span class="p">(</span><span class="n">BaseOperationDetails</span><span class="p">):</span>
 
+    <span class="n">value_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="s2">&quot;The name of the input field for the serialized version of the value.&quot;</span>
+    <span class="p">)</span>
     <span class="n">value_input_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The (input) field name containing the value to be serialized.&quot;</span>
+        <span class="s2">&quot;The name of the input field for the serialized version of the value.&quot;</span>
     <span class="p">)</span>
-    <span class="n">value_input_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The type of the value to be serialized.&quot;</span><span class="p">)</span>
-    <span class="n">serialized_value_output_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The (output) field name containing the serialzied form of the value.&quot;</span>
+    <span class="n">object_output_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The (output) field name containing the deserialized python class.&quot;</span>
     <span class="p">)</span>
-    <span class="n">serialization_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The name of the serialization format.&quot;</span>
+    <span class="n">serialization_profile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The name for the serialization profile used on the source value.&quot;</span>
     <span class="p">)</span>
+    <span class="n">target_profile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The target profile name.&quot;</span><span class="p">)</span>
+    <span class="c1"># target_class: PythonClass = Field(</span>
+    <span class="c1">#     description=&quot;The python class of the result object.&quot;</span>
+    <span class="c1"># )</span>
 
     <span class="k">def</span> <span class="nf">retrieve_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
 
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to serialzie.&quot;</span><span class="p">}}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to de-serialize.&quot;</span><span class="p">}}</span>
 
     <span class="k">def</span> <span class="nf">retrieve_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;serialized_value&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;serialized_value&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The serialized value details (and data).&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;python_object&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The de-serialized python object instance.&quot;</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">create_module_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_input_field</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]}</span>
+        <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="nf">create_operation_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">outputs</span>
 </code></pre></div>
         </details>
 
@@ -7532,25 +6762,25 @@ SerializeDetails            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 
-<h8 id="kiara.operations.included_core_operations.serialize.SerializeDetails-attributes">Attributes<a href="#kiara.operations.included_core_operations.serialize.SerializeDetails-attributes" class="headerlink" title="Permanent link">&para;</a></h8>
+<h8 id="kiara.operations.included_core_operations.serialize.DeSerializeDetails-attributes">Attributes<a href="#kiara.operations.included_core_operations.serialize.DeSerializeDetails-attributes" class="headerlink" title="Permanent link">&para;</a></h8>
 
   <div class="doc doc-object doc-attribute">
 
 
 
-<h9 id="kiara.operations.included_core_operations.serialize.SerializeDetails.serialization_format" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">serialization_format</span><span class="p">:</span> <span class="nb">str</span></code>
+<h9 id="kiara.operations.included_core_operations.serialize.DeSerializeDetails.object_output_field" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">object_output_field</span><span class="p">:</span> <span class="nb">str</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
       <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
-<a href="#kiara.operations.included_core_operations.serialize.SerializeDetails.serialization_format" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.operations.included_core_operations.serialize.DeSerializeDetails.object_output_field" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
-      <p>The name of the serialization format.</p>
+      <p>The (output) field name containing the deserialized python class.</p>
     </div>
 
   </div>
@@ -7561,19 +6791,19 @@ SerializeDetails            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 
-<h9 id="kiara.operations.included_core_operations.serialize.SerializeDetails.serialized_value_output_field" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">serialized_value_output_field</span><span class="p">:</span> <span class="nb">str</span></code>
+<h9 id="kiara.operations.included_core_operations.serialize.DeSerializeDetails.serialization_profile" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">serialization_profile</span><span class="p">:</span> <span class="nb">str</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
       <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
-<a href="#kiara.operations.included_core_operations.serialize.SerializeDetails.serialized_value_output_field" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.operations.included_core_operations.serialize.DeSerializeDetails.serialization_profile" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
-      <p>The (output) field name containing the serialzied form of the value.</p>
+      <p>The name for the serialization profile used on the source value.</p>
     </div>
 
   </div>
@@ -7584,19 +6814,40 @@ SerializeDetails            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 
-<h9 id="kiara.operations.included_core_operations.serialize.SerializeDetails.value_input_field" class="doc doc-heading">
+<h9 id="kiara.operations.included_core_operations.serialize.DeSerializeDetails.target_profile" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">target_profile</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.operations.included_core_operations.serialize.DeSerializeDetails.target_profile" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>The target profile name.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.operations.included_core_operations.serialize.DeSerializeDetails.value_input_field" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">value_input_field</span><span class="p">:</span> <span class="nb">str</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
-<a href="#kiara.operations.included_core_operations.serialize.SerializeDetails.value_input_field" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.operations.included_core_operations.serialize.DeSerializeDetails.value_input_field" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
-      <p>The (input) field name containing the value to be serialized.</p>
     </div>
 
   </div>
@@ -7607,19 +6858,17 @@ SerializeDetails            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 
-<h9 id="kiara.operations.included_core_operations.serialize.SerializeDetails.value_input_type" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">value_input_type</span><span class="p">:</span> <span class="nb">str</span></code>
+<h9 id="kiara.operations.included_core_operations.serialize.DeSerializeDetails.value_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">value_type</span><span class="p">:</span> <span class="nb">str</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
-<a href="#kiara.operations.included_core_operations.serialize.SerializeDetails.value_input_type" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.operations.included_core_operations.serialize.DeSerializeDetails.value_type" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
-      <p>The type of the value to be serialized.</p>
     </div>
 
   </div>
@@ -7633,11 +6882,11 @@ SerializeDetails            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 
-<h9 id="kiara.operations.included_core_operations.serialize.SerializeDetails.create_module_inputs" class="doc doc-heading">
+<h9 id="kiara.operations.included_core_operations.serialize.DeSerializeDetails.create_module_inputs" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_module_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span></code>
 
 
-<a href="#kiara.operations.included_core_operations.serialize.SerializeDetails.create_module_inputs" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.operations.included_core_operations.serialize.DeSerializeDetails.create_module_inputs" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
@@ -7645,7 +6894,9 @@ SerializeDetails            (<a class="autorefs autorefs-internal" title="kiara.
         <details class="quote">
           <summary>Source code in <code>kiara/operations/included_core_operations/serialize.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_module_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_input_field</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]}</span>
+    <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
         </details>
     </div>
@@ -7658,11 +6909,11 @@ SerializeDetails            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 
-<h9 id="kiara.operations.included_core_operations.serialize.SerializeDetails.create_operation_outputs" class="doc doc-heading">
+<h9 id="kiara.operations.included_core_operations.serialize.DeSerializeDetails.create_operation_outputs" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_operation_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span></code>
 
 
-<a href="#kiara.operations.included_core_operations.serialize.SerializeDetails.create_operation_outputs" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.operations.included_core_operations.serialize.DeSerializeDetails.create_operation_outputs" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
@@ -7670,7 +6921,8 @@ SerializeDetails            (<a class="autorefs autorefs-internal" title="kiara.
         <details class="quote">
           <summary>Source code in <code>kiara/operations/included_core_operations/serialize.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_operation_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]:</span>
-    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">outputs</span>
 </code></pre></div>
         </details>
     </div>
@@ -7683,11 +6935,11 @@ SerializeDetails            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 
-<h9 id="kiara.operations.included_core_operations.serialize.SerializeDetails.retrieve_inputs_schema" class="doc doc-heading">
+<h9 id="kiara.operations.included_core_operations.serialize.DeSerializeDetails.retrieve_inputs_schema" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">retrieve_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
-<a href="#kiara.operations.included_core_operations.serialize.SerializeDetails.retrieve_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.operations.included_core_operations.serialize.DeSerializeDetails.retrieve_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
@@ -7696,7 +6948,7 @@ SerializeDetails            (<a class="autorefs autorefs-internal" title="kiara.
           <summary>Source code in <code>kiara/operations/included_core_operations/serialize.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
 
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to serialzie.&quot;</span><span class="p">}}</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to de-serialize.&quot;</span><span class="p">}}</span>
 </code></pre></div>
         </details>
     </div>
@@ -7709,11 +6961,11 @@ SerializeDetails            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 
-<h9 id="kiara.operations.included_core_operations.serialize.SerializeDetails.retrieve_outputs_schema" class="doc doc-heading">
+<h9 id="kiara.operations.included_core_operations.serialize.DeSerializeDetails.retrieve_outputs_schema" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">retrieve_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
-<a href="#kiara.operations.included_core_operations.serialize.SerializeDetails.retrieve_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.operations.included_core_operations.serialize.DeSerializeDetails.retrieve_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
@@ -7723,9 +6975,9 @@ SerializeDetails            (<a class="autorefs autorefs-internal" title="kiara.
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;serialized_value&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;serialized_value&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The serialized value details (and data).&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;python_object&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The de-serialized python object instance.&quot;</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">}</span>
 </code></pre></div>
@@ -7750,14 +7002,14 @@ SerializeDetails            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 
-<h7 id="kiara.operations.included_core_operations.serialize.SerializeOperationType" class="doc doc-heading">
+<h7 id="kiara.operations.included_core_operations.serialize.DeSerializeOperationType" class="doc doc-heading">
         <code>
-SerializeOperationType            (<a class="autorefs autorefs-internal" title="kiara.operations.OperationType" href="#kiara.operations.OperationType">OperationType</a>)
+DeSerializeOperationType            (<a class="autorefs autorefs-internal" title="kiara.operations.OperationType" href="#kiara.operations.OperationType">OperationType</a>)
         </code>
 
 
 
-<a href="#kiara.operations.included_core_operations.serialize.SerializeOperationType" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.operations.included_core_operations.serialize.DeSerializeOperationType" class="headerlink" title="Permanent link">&para;</a></h7>
 
     <div class="doc doc-contents ">
 
@@ -7771,7 +7023,7 @@ SerializeOperationType            (<a class="autorefs autorefs-internal" title="
 
         <details class="quote">
           <summary>Source code in <code>kiara/operations/included_core_operations/serialize.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SerializeOperationType</span><span class="p">(</span><span class="n">OperationType</span><span class="p">[</span><span class="n">SerializeDetails</span><span class="p">]):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">DeSerializeOperationType</span><span class="p">(</span><span class="n">OperationType</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;An operation that takes a value, and serializes it into the format suitable to the [`serialized_value`][kiara.data_types.included_core_types.SeriailzedValue] value type.</span>
 
 <span class="sd">    For a module profile to be picked up by this operation type, it needs to have:</span>
@@ -7782,7 +7034,7 @@ SerializeOperationType            (<a class="autorefs autorefs-internal" title="
 <span class="sd">      - an input field called &#39;value&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">_operation_type_name</span> <span class="o">=</span> <span class="s2">&quot;serialize&quot;</span>
+    <span class="n">_operation_type_name</span> <span class="o">=</span> <span class="s2">&quot;deserialize&quot;</span>
 
     <span class="k">def</span> <span class="nf">retrieve_included_operation_configs</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -7790,14 +7042,43 @@ SerializeOperationType            (<a class="autorefs autorefs-internal" title="
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">module_cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">module_type_classes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">module_cls</span><span class="p">,</span> <span class="n">SerializeValueModule</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module_cls</span><span class="p">,</span> <span class="s2">&quot;retrieve_source_value_type&quot;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module_cls</span><span class="p">,</span> <span class="s2">&quot;retrieve_supported_target_profiles&quot;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module_cls</span><span class="p">,</span> <span class="s2">&quot;retrieve_supported_serialization_profile&quot;</span><span class="p">):</span>
                 <span class="k">continue</span>
 
-            <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">module_cls</span><span class="o">.</span><span class="n">retrieve_supported_source_types</span><span class="p">():</span>
-                <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;from__</span><span class="si">{</span><span class="n">st</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">value_type</span> <span class="o">=</span> <span class="n">module_cls</span><span class="o">.</span><span class="n">retrieve_source_value_type</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve source value type for deserialization module &#39;</span><span class="si">{</span><span class="n">module_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;. This is most likely a bug, maybe you are missing a &#39;@classmethod&#39; annotation on the &#39;retrieve_source_value_type&#39; method?&quot;</span>
+                <span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">serialization_profile</span> <span class="o">=</span> <span class="n">module_cls</span><span class="o">.</span><span class="n">retrieve_supported_serialization_profile</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve supported serialization profiles for deserialization module &#39;</span><span class="si">{</span><span class="n">module_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;. This is most likely a bug, maybe you are missing a &#39;@classmethod&#39; annotation on the &#39;retrieve_supported_serialization_profile&#39; method?&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">target_profiles</span> <span class="o">=</span> <span class="n">module_cls</span><span class="o">.</span><span class="n">retrieve_supported_target_profiles</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve supported target profile for deserialization module &#39;</span><span class="si">{</span><span class="n">module_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;. This is most likely a bug, maybe you are missing a &#39;@classmethod&#39; annotation on the &#39;retrieve_supported_target_profile&#39; method?&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">_profile_name</span><span class="p">,</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">target_profiles</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;to__</span><span class="si">{</span><span class="n">_profile_name</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module_cls</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
                 <span class="n">doc</span> <span class="o">=</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-                <span class="n">mc</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;source_type&quot;</span><span class="p">:</span> <span class="n">st</span><span class="p">}</span>
+                <span class="n">mc</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="n">value_type</span><span class="p">,</span>
+                    <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="n">_profile_name</span><span class="p">,</span>
+                    <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="n">serialization_profile</span>
+                    <span class="c1"># &quot;target_class&quot;: PythonClass.from_class(cls),</span>
+                <span class="p">}</span>
                 <span class="n">oc</span> <span class="o">=</span> <span class="n">ManifestOperationConfig</span><span class="p">(</span>
                     <span class="n">module_type</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">mc</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">doc</span>
                 <span class="p">)</span>
@@ -7807,7 +7088,7 @@ SerializeOperationType            (<a class="autorefs autorefs-internal" title="
 
     <span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SerializeDetails</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">]:</span>
 
         <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_details</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
 
@@ -7816,120 +7097,126 @@ SerializeOperationType            (<a class="autorefs autorefs-internal" title="
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">details</span>
 
-    <span class="k">def</span> <span class="nf">extract_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="n">KiaraModule</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SerializeDetails</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">extract_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">]:</span>
 
-        <span class="n">match</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">result_field_name</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">SERIALIZED_DATA_TYPE_NAME</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;python_object&quot;</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">result_field_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">log_message</span><span class="p">(</span>
                         <span class="s2">&quot;ignore.operation&quot;</span><span class="p">,</span>
-                        <span class="n">reason</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;More than one field of type &#39;</span><span class="si">{</span><span class="n">SERIALIZED_DATA_TYPE_NAME</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
+                        <span class="n">reason</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;found more than one potential result value field: </span><span class="si">{</span><span class="n">result_field_name</span><span class="si">}</span><span class="s2"> -- </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
                         <span class="n">module_type</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="k">continue</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">match</span> <span class="o">=</span> <span class="n">field_name</span>
+                    <span class="n">result_field_name</span> <span class="o">=</span> <span class="n">field_name</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">result_field_name</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">input_field</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">input_field_match</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">field_name</span> <span class="o">==</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">input_field_match</span> <span class="o">=</span> <span class="kc">None</span>
-                        <span class="k">break</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">input_field_match</span> <span class="o">=</span> <span class="n">field_name</span>
-            <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">input_field</span> <span class="o">=</span> <span class="n">input_field_match</span>
-            <span class="k">elif</span> <span class="s2">&quot;value&quot;</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">input_field</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span>
+        <span class="n">input_field_name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">field_name</span> <span class="o">!=</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">input_field_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">log_message</span><span class="p">(</span>
+                    <span class="s2">&quot;ignore.operation&quot;</span><span class="p">,</span>
+                    <span class="n">reason</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;found more than one potential result value field: </span><span class="si">{</span><span class="n">result_field_name</span><span class="si">}</span><span class="s2"> -- </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
+                    <span class="n">module_type</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">input_field</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">input_field_name</span> <span class="o">=</span> <span class="n">field_name</span>
 
-        <span class="k">if</span> <span class="n">input_field</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">input_field_name</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="n">input_field_type</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">[</span><span class="n">input_field</span><span class="p">]</span><span class="o">.</span><span class="n">type</span>
-        <span class="n">value_schema</span><span class="p">:</span> <span class="n">ValueSchema</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">[</span><span class="n">match</span><span class="p">]</span>
-        <span class="n">serialized_value_type</span><span class="p">:</span> <span class="n">SerializedValueType</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">retrieve_data_type</span><span class="p">(</span>  <span class="c1"># type: ignore  # type: ignore</span>
-            <span class="n">data_type_name</span><span class="o">=</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
-            <span class="n">data_type_config</span><span class="o">=</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type_config</span><span class="p">,</span>
-        <span class="p">)</span>  <span class="c1"># type: ignore</span>
-
-        <span class="k">if</span> <span class="n">input_field_type</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
-            <span class="n">operation_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;serialize.as.</span><span class="si">{</span><span class="n">serialized_value_type</span><span class="o">.</span><span class="n">format_name</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">operation_id</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;serialize.</span><span class="si">{</span><span class="n">input_field_type</span><span class="si">}</span><span class="s2">.as.</span><span class="si">{</span><span class="n">serialized_value_type</span><span class="o">.</span><span class="n">format_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value_type</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value_type&quot;</span><span class="p">)</span>
+            <span class="n">target_profile</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target_profile&quot;</span><span class="p">)</span>
+            <span class="n">serialization_profile</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;serialization_profile&quot;</span><span class="p">)</span>
+            <span class="c1"># target_class = module.config.get(&quot;target_class&quot;)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log_message</span><span class="p">(</span>
+                <span class="s2">&quot;ignore.operation&quot;</span><span class="p">,</span>
+                <span class="n">reason</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
+                <span class="n">module_type</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="p">,</span>
             <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">value_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">data_type_names</span><span class="p">:</span>
+            <span class="n">log_message</span><span class="p">(</span>
+                <span class="s2">&quot;ignore.operation&quot;</span><span class="p">,</span>
+                <span class="n">reason</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Invalid value type: </span><span class="si">{</span><span class="n">value_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">module_type</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">input_field_name</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
+            <span class="n">operation_id</span> <span class="o">=</span> <span class="s2">&quot;deserialize.value&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">operation_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;deserialize.</span><span class="si">{</span><span class="n">input_field_name</span><span class="si">}</span><span class="s2">.as.</span><span class="si">{</span><span class="n">target_profile</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="n">details</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;operation_id&quot;</span><span class="p">:</span> <span class="n">operation_id</span><span class="p">,</span>
-            <span class="s2">&quot;value_input_field&quot;</span><span class="p">:</span> <span class="n">input_field</span><span class="p">,</span>
-            <span class="s2">&quot;value_input_type&quot;</span><span class="p">:</span> <span class="n">input_field_type</span><span class="p">,</span>
-            <span class="s2">&quot;serialized_value_output_field&quot;</span><span class="p">:</span> <span class="n">match</span><span class="p">,</span>
-            <span class="s2">&quot;serialization_format&quot;</span><span class="p">:</span> <span class="n">serialized_value_type</span><span class="o">.</span><span class="n">format_name</span><span class="p">,</span>
+            <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="n">input_field_name</span><span class="p">,</span>
+            <span class="s2">&quot;value_input_field&quot;</span><span class="p">:</span> <span class="n">input_field_name</span><span class="p">,</span>
+            <span class="s2">&quot;object_output_field&quot;</span><span class="p">:</span> <span class="n">result_field_name</span><span class="p">,</span>
+            <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="n">target_profile</span><span class="p">,</span>
+            <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="n">serialization_profile</span><span class="p">,</span>
+            <span class="c1"># &quot;target_class&quot;: target_class,</span>
             <span class="s2">&quot;is_internal_operation&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
         <span class="p">}</span>
 
-        <span class="n">result</span> <span class="o">=</span> <span class="n">SerializeDetails</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="o">**</span><span class="n">details</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">DeSerializeDetails</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="o">**</span><span class="n">details</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="nf">find_serialzation_operation_for_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">find_deserialization_operations_for_type</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
 
         <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span><span class="n">type_name</span><span class="p">)</span>
-        <span class="n">serialize_op</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="n">lineage</span><span class="p">:</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_operation_details</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">details</span><span class="o">.</span><span class="n">value_type</span> <span class="o">==</span> <span class="n">data_type</span><span class="p">:</span>
+                    <span class="k">match</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+
+            <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">match</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">find_deserialzation_operation_for_type_and_profile</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">serialization_profile</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+
+        <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span><span class="n">type_name</span><span class="p">)</span>
+        <span class="n">serialize_ops</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="n">lineage</span><span class="p">:</span>
             <span class="n">match</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">op</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
                 <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_operation_details</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">details</span><span class="o">.</span><span class="n">value_input_type</span> <span class="o">==</span> <span class="n">data_type</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">details</span><span class="o">.</span><span class="n">value_type</span> <span class="o">==</span> <span class="n">data_type</span>
+                    <span class="ow">and</span> <span class="n">details</span><span class="o">.</span><span class="n">serialization_profile</span> <span class="o">==</span> <span class="n">serialization_profile</span>
+                <span class="p">):</span>
                     <span class="k">match</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="k">assert</span> <span class="n">op</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Multiple serialization operations found for type of &#39;</span><span class="si">{</span><span class="n">op</span><span class="o">.</span><span class="n">operation_id</span><span class="si">}</span><span class="s2">&#39;. This is not supported (yet).&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Multiple deserialization operations found for data type &#39;</span><span class="si">{</span><span class="n">type_name</span><span class="si">}</span><span class="s2">&#39; and serialization profile &#39;</span><span class="si">{</span><span class="n">serialization_profile</span><span class="si">}</span><span class="s2">&#39;. This is not supported (yet).&quot;</span>
                     <span class="p">)</span>
-                <span class="n">serialize_op</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">serialize_ops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-        <span class="k">if</span> <span class="n">serialize_op</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Can&#39;t find serialization operation for type &#39;</span><span class="si">{</span><span class="n">type_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
-            <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">serialize_op</span>
-
-    <span class="c1"># def find_operation(self, **op_args: Any) -&gt; Operation:</span>
-    <span class="c1">#     op_conf = SerializeValueInputs(**op_args)</span>
-    <span class="c1">#     input_value_type = op_conf.value.data_type_name</span>
-    <span class="c1">#     op = self.find_serialzation_operation_for_type(input_value_type)</span>
-    <span class="c1">#     return op</span>
-
-    <span class="c1"># def apply(self, inputs: SerializeValueInputs) -&gt; SerializeValueOutputs:</span>
-    <span class="c1">#</span>
-    <span class="c1">#     input_value_type = inputs.value.data_type_name</span>
-    <span class="c1">#</span>
-    <span class="c1">#     op = self.find_serialzation_operation_for_type(input_value_type)</span>
-    <span class="c1">#     op_details = self.retrieve_operation_details(op)</span>
-    <span class="c1">#     op_inputs = {</span>
-    <span class="c1">#         op_details.value_input_field: inputs.value</span>
-    <span class="c1">#     }</span>
-    <span class="c1">#</span>
-    <span class="c1">#     result = self._kiara.execute(manifest=op, inputs=op_inputs)</span>
-    <span class="c1">#     op_details = self.retrieve_operation_details(op)</span>
-    <span class="c1">#     result_data = {&quot;serialized_value&quot;: result.get_value_obj(op_details.serialized_value_output_field)}</span>
-    <span class="c1">#     return SerializeValueOutputs.construct(**result_data)</span>
+        <span class="k">return</span> <span class="n">serialize_ops</span>
 </code></pre></div>
         </details>
 
@@ -7943,17 +7230,17 @@ SerializeOperationType            (<a class="autorefs autorefs-internal" title="
 
 
 
-<h8 id="kiara.operations.included_core_operations.serialize.SerializeOperationType-methods">Methods<a href="#kiara.operations.included_core_operations.serialize.SerializeOperationType-methods" class="headerlink" title="Permanent link">&para;</a></h8>
+<h8 id="kiara.operations.included_core_operations.serialize.DeSerializeOperationType-methods">Methods<a href="#kiara.operations.included_core_operations.serialize.DeSerializeOperationType-methods" class="headerlink" title="Permanent link">&para;</a></h8>
 
   <div class="doc doc-object doc-method">
 
 
 
-<h9 id="kiara.operations.included_core_operations.serialize.SerializeOperationType.check_matching_operation" class="doc doc-heading">
+<h9 id="kiara.operations.included_core_operations.serialize.DeSerializeOperationType.check_matching_operation" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">check_matching_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span></code>
 
 
-<a href="#kiara.operations.included_core_operations.serialize.SerializeOperationType.check_matching_operation" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.operations.included_core_operations.serialize.DeSerializeOperationType.check_matching_operation" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
@@ -7963,7 +7250,7 @@ SerializeOperationType            (<a class="autorefs autorefs-internal" title="
           <summary>Source code in <code>kiara/operations/included_core_operations/serialize.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SerializeDetails</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">]:</span>
 
     <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_details</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
 
@@ -7983,82 +7270,92 @@ SerializeOperationType            (<a class="autorefs autorefs-internal" title="
 
 
 
-<h9 id="kiara.operations.included_core_operations.serialize.SerializeOperationType.extract_details" class="doc doc-heading">
+<h9 id="kiara.operations.included_core_operations.serialize.DeSerializeOperationType.extract_details" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">extract_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span></code>
 
 
-<a href="#kiara.operations.included_core_operations.serialize.SerializeOperationType.extract_details" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.operations.included_core_operations.serialize.DeSerializeOperationType.extract_details" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/operations/included_core_operations/serialize.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">extract_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="n">KiaraModule</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SerializeDetails</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">extract_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">]:</span>
 
-    <span class="n">match</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">result_field_name</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">SERIALIZED_DATA_TYPE_NAME</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;python_object&quot;</span><span class="p">:</span>
             <span class="k">continue</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">result_field_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">log_message</span><span class="p">(</span>
                     <span class="s2">&quot;ignore.operation&quot;</span><span class="p">,</span>
-                    <span class="n">reason</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;More than one field of type &#39;</span><span class="si">{</span><span class="n">SERIALIZED_DATA_TYPE_NAME</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
+                    <span class="n">reason</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;found more than one potential result value field: </span><span class="si">{</span><span class="n">result_field_name</span><span class="si">}</span><span class="s2"> -- </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
                     <span class="n">module_type</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="k">continue</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">match</span> <span class="o">=</span> <span class="n">field_name</span>
+                <span class="n">result_field_name</span> <span class="o">=</span> <span class="n">field_name</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">result_field_name</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">input_field</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">input_field_match</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">field_name</span> <span class="o">==</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">input_field_match</span> <span class="o">=</span> <span class="kc">None</span>
-                    <span class="k">break</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">input_field_match</span> <span class="o">=</span> <span class="n">field_name</span>
-        <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">input_field</span> <span class="o">=</span> <span class="n">input_field_match</span>
-        <span class="k">elif</span> <span class="s2">&quot;value&quot;</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">input_field</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span>
+    <span class="n">input_field_name</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">field_name</span> <span class="o">!=</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">input_field_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">log_message</span><span class="p">(</span>
+                <span class="s2">&quot;ignore.operation&quot;</span><span class="p">,</span>
+                <span class="n">reason</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;found more than one potential result value field: </span><span class="si">{</span><span class="n">result_field_name</span><span class="si">}</span><span class="s2"> -- </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
+                <span class="n">module_type</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">continue</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">input_field</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">input_field_name</span> <span class="o">=</span> <span class="n">field_name</span>
 
-    <span class="k">if</span> <span class="n">input_field</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">input_field_name</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="n">input_field_type</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">[</span><span class="n">input_field</span><span class="p">]</span><span class="o">.</span><span class="n">type</span>
-    <span class="n">value_schema</span><span class="p">:</span> <span class="n">ValueSchema</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">[</span><span class="n">match</span><span class="p">]</span>
-    <span class="n">serialized_value_type</span><span class="p">:</span> <span class="n">SerializedValueType</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">retrieve_data_type</span><span class="p">(</span>  <span class="c1"># type: ignore  # type: ignore</span>
-        <span class="n">data_type_name</span><span class="o">=</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
-        <span class="n">data_type_config</span><span class="o">=</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type_config</span><span class="p">,</span>
-    <span class="p">)</span>  <span class="c1"># type: ignore</span>
-
-    <span class="k">if</span> <span class="n">input_field_type</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
-        <span class="n">operation_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;serialize.as.</span><span class="si">{</span><span class="n">serialized_value_type</span><span class="o">.</span><span class="n">format_name</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">operation_id</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;serialize.</span><span class="si">{</span><span class="n">input_field_type</span><span class="si">}</span><span class="s2">.as.</span><span class="si">{</span><span class="n">serialized_value_type</span><span class="o">.</span><span class="n">format_name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">value_type</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value_type&quot;</span><span class="p">)</span>
+        <span class="n">target_profile</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target_profile&quot;</span><span class="p">)</span>
+        <span class="n">serialization_profile</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;serialization_profile&quot;</span><span class="p">)</span>
+        <span class="c1"># target_class = module.config.get(&quot;target_class&quot;)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">log_message</span><span class="p">(</span>
+            <span class="s2">&quot;ignore.operation&quot;</span><span class="p">,</span>
+            <span class="n">reason</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
+            <span class="n">module_type</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">value_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">data_type_names</span><span class="p">:</span>
+        <span class="n">log_message</span><span class="p">(</span>
+            <span class="s2">&quot;ignore.operation&quot;</span><span class="p">,</span>
+            <span class="n">reason</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Invalid value type: </span><span class="si">{</span><span class="n">value_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">module_type</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">input_field_name</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
+        <span class="n">operation_id</span> <span class="o">=</span> <span class="s2">&quot;deserialize.value&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">operation_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;deserialize.</span><span class="si">{</span><span class="n">input_field_name</span><span class="si">}</span><span class="s2">.as.</span><span class="si">{</span><span class="n">target_profile</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="n">details</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;operation_id&quot;</span><span class="p">:</span> <span class="n">operation_id</span><span class="p">,</span>
-        <span class="s2">&quot;value_input_field&quot;</span><span class="p">:</span> <span class="n">input_field</span><span class="p">,</span>
-        <span class="s2">&quot;value_input_type&quot;</span><span class="p">:</span> <span class="n">input_field_type</span><span class="p">,</span>
-        <span class="s2">&quot;serialized_value_output_field&quot;</span><span class="p">:</span> <span class="n">match</span><span class="p">,</span>
-        <span class="s2">&quot;serialization_format&quot;</span><span class="p">:</span> <span class="n">serialized_value_type</span><span class="o">.</span><span class="n">format_name</span><span class="p">,</span>
+        <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="n">input_field_name</span><span class="p">,</span>
+        <span class="s2">&quot;value_input_field&quot;</span><span class="p">:</span> <span class="n">input_field_name</span><span class="p">,</span>
+        <span class="s2">&quot;object_output_field&quot;</span><span class="p">:</span> <span class="n">result_field_name</span><span class="p">,</span>
+        <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="n">target_profile</span><span class="p">,</span>
+        <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="n">serialization_profile</span><span class="p">,</span>
+        <span class="c1"># &quot;target_class&quot;: target_class,</span>
         <span class="s2">&quot;is_internal_operation&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">}</span>
 
-    <span class="n">result</span> <span class="o">=</span> <span class="n">SerializeDetails</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="o">**</span><span class="n">details</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">DeSerializeDetails</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="o">**</span><span class="n">details</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
         </details>
@@ -8072,43 +7369,33 @@ SerializeOperationType            (<a class="autorefs autorefs-internal" title="
 
 
 
-<h9 id="kiara.operations.included_core_operations.serialize.SerializeOperationType.find_serialzation_operation_for_type" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">find_serialzation_operation_for_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">)</span></code>
+<h9 id="kiara.operations.included_core_operations.serialize.DeSerializeOperationType.find_deserialization_operations_for_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">find_deserialization_operations_for_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">)</span></code>
 
 
-<a href="#kiara.operations.included_core_operations.serialize.SerializeOperationType.find_serialzation_operation_for_type" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.operations.included_core_operations.serialize.DeSerializeOperationType.find_deserialization_operations_for_type" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/operations/included_core_operations/serialize.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_serialzation_operation_for_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_deserialization_operations_for_type</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
 
     <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span><span class="n">type_name</span><span class="p">)</span>
-    <span class="n">serialize_op</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="n">lineage</span><span class="p">:</span>
         <span class="n">match</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_operation_details</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">details</span><span class="o">.</span><span class="n">value_input_type</span> <span class="o">==</span> <span class="n">data_type</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">details</span><span class="o">.</span><span class="n">value_type</span> <span class="o">==</span> <span class="n">data_type</span><span class="p">:</span>
                 <span class="k">match</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="n">op</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Multiple serialization operations found for type of &#39;</span><span class="si">{</span><span class="n">op</span><span class="o">.</span><span class="n">operation_id</span><span class="si">}</span><span class="s2">&#39;. This is not supported (yet).&quot;</span>
-                <span class="p">)</span>
-            <span class="n">serialize_op</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">match</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">serialize_op</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Can&#39;t find serialization operation for type &#39;</span><span class="si">{</span><span class="n">type_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
-        <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">serialize_op</span>
+    <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
         </details>
     </div>
@@ -8121,11 +7408,60 @@ SerializeOperationType            (<a class="autorefs autorefs-internal" title="
 
 
 
-<h9 id="kiara.operations.included_core_operations.serialize.SerializeOperationType.retrieve_included_operation_configs" class="doc doc-heading">
+<h9 id="kiara.operations.included_core_operations.serialize.DeSerializeOperationType.find_deserialzation_operation_for_type_and_profile" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">find_deserialzation_operation_for_type_and_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">,</span> <span class="n">serialization_profile</span><span class="p">)</span></code>
+
+
+<a href="#kiara.operations.included_core_operations.serialize.DeSerializeOperationType.find_deserialzation_operation_for_type_and_profile" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/operations/included_core_operations/serialize.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_deserialzation_operation_for_type_and_profile</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">serialization_profile</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+
+    <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span><span class="n">type_name</span><span class="p">)</span>
+    <span class="n">serialize_ops</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="n">lineage</span><span class="p">:</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_operation_details</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">details</span><span class="o">.</span><span class="n">value_type</span> <span class="o">==</span> <span class="n">data_type</span>
+                <span class="ow">and</span> <span class="n">details</span><span class="o">.</span><span class="n">serialization_profile</span> <span class="o">==</span> <span class="n">serialization_profile</span>
+            <span class="p">):</span>
+                <span class="k">match</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">op</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Multiple deserialization operations found for data type &#39;</span><span class="si">{</span><span class="n">type_name</span><span class="si">}</span><span class="s2">&#39; and serialization profile &#39;</span><span class="si">{</span><span class="n">serialization_profile</span><span class="si">}</span><span class="s2">&#39;. This is not supported (yet).&quot;</span>
+                <span class="p">)</span>
+            <span class="n">serialize_ops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">serialize_ops</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.operations.included_core_operations.serialize.DeSerializeOperationType.retrieve_included_operation_configs" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">retrieve_included_operation_configs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
-<a href="#kiara.operations.included_core_operations.serialize.SerializeOperationType.retrieve_included_operation_configs" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.operations.included_core_operations.serialize.DeSerializeOperationType.retrieve_included_operation_configs" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
@@ -8138,14 +7474,43 @@ SerializeOperationType            (<a class="autorefs autorefs-internal" title="
     <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">module_cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">module_type_classes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">module_cls</span><span class="p">,</span> <span class="n">SerializeValueModule</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module_cls</span><span class="p">,</span> <span class="s2">&quot;retrieve_source_value_type&quot;</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module_cls</span><span class="p">,</span> <span class="s2">&quot;retrieve_supported_target_profiles&quot;</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module_cls</span><span class="p">,</span> <span class="s2">&quot;retrieve_supported_serialization_profile&quot;</span><span class="p">):</span>
             <span class="k">continue</span>
 
-        <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">module_cls</span><span class="o">.</span><span class="n">retrieve_supported_source_types</span><span class="p">():</span>
-            <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;from__</span><span class="si">{</span><span class="n">st</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value_type</span> <span class="o">=</span> <span class="n">module_cls</span><span class="o">.</span><span class="n">retrieve_source_value_type</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve source value type for deserialization module &#39;</span><span class="si">{</span><span class="n">module_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;. This is most likely a bug, maybe you are missing a &#39;@classmethod&#39; annotation on the &#39;retrieve_source_value_type&#39; method?&quot;</span>
+            <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">serialization_profile</span> <span class="o">=</span> <span class="n">module_cls</span><span class="o">.</span><span class="n">retrieve_supported_serialization_profile</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve supported serialization profiles for deserialization module &#39;</span><span class="si">{</span><span class="n">module_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;. This is most likely a bug, maybe you are missing a &#39;@classmethod&#39; annotation on the &#39;retrieve_supported_serialization_profile&#39; method?&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">target_profiles</span> <span class="o">=</span> <span class="n">module_cls</span><span class="o">.</span><span class="n">retrieve_supported_target_profiles</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve supported target profile for deserialization module &#39;</span><span class="si">{</span><span class="n">module_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;. This is most likely a bug, maybe you are missing a &#39;@classmethod&#39; annotation on the &#39;retrieve_supported_target_profile&#39; method?&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">_profile_name</span><span class="p">,</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">target_profiles</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;to__</span><span class="si">{</span><span class="n">_profile_name</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module_cls</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
             <span class="n">doc</span> <span class="o">=</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-            <span class="n">mc</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;source_type&quot;</span><span class="p">:</span> <span class="n">st</span><span class="p">}</span>
+            <span class="n">mc</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="n">value_type</span><span class="p">,</span>
+                <span class="s2">&quot;target_profile&quot;</span><span class="p">:</span> <span class="n">_profile_name</span><span class="p">,</span>
+                <span class="s2">&quot;serialization_profile&quot;</span><span class="p">:</span> <span class="n">serialization_profile</span>
+                <span class="c1"># &quot;target_class&quot;: PythonClass.from_class(cls),</span>
+            <span class="p">}</span>
             <span class="n">oc</span> <span class="o">=</span> <span class="n">ManifestOperationConfig</span><span class="p">(</span>
                 <span class="n">module_type</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">mc</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">doc</span>
             <span class="p">)</span>
@@ -8269,7 +7634,7 @@ SerializeOperationType            (<a class="autorefs autorefs-internal" title="
     <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.6e54b5cd.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.ed9748b7.min.js"></script>
       
     
   </body>

@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/registries/data/data_store/__init__/">
       
       <link rel="icon" href="../../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.9">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
     
     
       
@@ -23,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.120efc48.min.css">
+      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.e411adfe.min.css">
       
         
-        <link rel="stylesheet" href="../../../../../../assets/stylesheets/palette.9647289d.min.css">
+        <link rel="stylesheet" href="../../../../../../assets/stylesheets/palette.cc9b2e1e.min.css">
         
       
     
@@ -2164,20 +2164,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../modules/included_core_modules/persistence/" class="md-nav__link">
-        persistence
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../../../modules/included_core_modules/pipeline/" class="md-nav__link">
         pipeline
       </a>
@@ -2314,20 +2300,6 @@
     <li class="md-nav__item">
       <a href="../../../../operations/included_core_operations/metadata/" class="md-nav__link">
         metadata
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../../operations/included_core_operations/persistence/" class="md-nav__link">
-        persistence
       </a>
     </li>
   
@@ -3132,6 +3104,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../../utils/hashfs/__init__/" class="md-nav__link">
+        hashfs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../../utils/hashing/" class="md-nav__link">
         hashing
       </a>
@@ -3429,12 +3415,12 @@ BaseDataStore            (<a class="autorefs autorefs-internal" title="kiara.reg
         <details class="quote">
           <summary>Source code in <code>kiara/registries/data/data_store/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">BaseDataStore</span><span class="p">(</span><span class="n">DataStore</span><span class="p">):</span>
-    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_persist_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bytes_structure</span><span class="p">:</span> <span class="n">BytesStructure</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BytesAliasStructure</span><span class="p">:</span>
-        <span class="k">pass</span>
+    <span class="c1"># @abc.abstractmethod</span>
+    <span class="c1"># def _persist_bytes(self, bytes_structure: BytesStructure) -&gt; BytesAliasStructure:</span>
+    <span class="c1">#     pass</span>
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_persist_load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">load_config</span><span class="p">:</span> <span class="n">LoadConfig</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_persist_stored_value_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">persisted_value</span><span class="p">:</span> <span class="n">PersistedData</span><span class="p">):</span>
         <span class="k">pass</span>
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
@@ -3442,9 +3428,7 @@ BaseDataStore            (<a class="autorefs autorefs-internal" title="kiara.reg
         <span class="k">pass</span>
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_persist_value_data</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">LoadConfig</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BytesStructure</span><span class="p">]]:</span>
+    <span class="k">def</span> <span class="nf">_persist_value_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PersistedData</span><span class="p">:</span>
         <span class="k">pass</span>
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
@@ -3465,7 +3449,7 @@ BaseDataStore            (<a class="autorefs autorefs-internal" title="kiara.reg
     <span class="k">def</span> <span class="nf">_persist_destiny_backlinks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">):</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">store_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LoadConfig</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">store_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PersistedData</span><span class="p">:</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="s2">&quot;store.value&quot;</span><span class="p">,</span>
@@ -3486,8 +3470,8 @@ BaseDataStore            (<a class="autorefs autorefs-internal" title="kiara.reg
             <span class="bp">self</span><span class="o">.</span><span class="n">persist_environment</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 
         <span class="c1"># save the value data and metadata</span>
-        <span class="n">load_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_persist_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_load_config_cache</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_config</span>
+        <span class="n">persisted_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_persist_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_persisted_value_cache</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">persisted_value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_value_cache</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_value_hash_index</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">value_hash</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">)</span>
 
@@ -3495,44 +3479,30 @@ BaseDataStore            (<a class="autorefs autorefs-internal" title="kiara.reg
         <span class="c1"># then, make sure the manifest is persisted</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_persist_value_pedigree</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">load_config</span>
+        <span class="k">return</span> <span class="n">persisted_value</span>
 
-    <span class="k">def</span> <span class="nf">_persist_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LoadConfig</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_persist_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PersistedData</span><span class="p">:</span>
 
         <span class="c1"># TODO: check if value id is already persisted?</span>
-        <span class="n">load_config</span><span class="p">,</span> <span class="n">bytes_structure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_persist_value_data</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">persisted_value_info</span><span class="p">:</span> <span class="n">PersistedData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_persist_value_data</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">load_config</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">persisted_value_info</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="s2">&quot;Can&#39;t write load config, no load config returned when persisting value.&quot;</span>
+                <span class="s2">&quot;Can&#39;t write persisted value info, no load config returned when persisting value.&quot;</span>
             <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">load_config</span><span class="p">,</span> <span class="n">LoadConfig</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">persisted_value_info</span><span class="p">,</span> <span class="n">PersistedData</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Can&#39;t write load config, invalid result type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">load_config</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; when persisting value.&quot;</span>
-            <span class="p">)</span>
-
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="n">load_config</span><span class="o">.</span><span class="n">provisioning_strategy</span> <span class="o">!=</span> <span class="n">ByteProvisioningStrategy</span><span class="o">.</span><span class="n">INLINE</span>
-            <span class="ow">and</span> <span class="ow">not</span> <span class="n">bytes_structure</span>
-        <span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="s2">&quot;Can&#39;t write load config, no bytes structure returned when persisting value.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t write persisted value info, invalid result type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">persisted_value_info</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; when persisting value.&quot;</span>
             <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">bytes_structure</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bytes_structure</span><span class="p">,</span> <span class="n">BytesStructure</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Can&#39;t write load config, invalid result bytes structure type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">bytes_structure</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; when persisting value.&quot;</span>
-            <span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">bytes_structure</span><span class="p">:</span>
-            <span class="n">alias_structure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_persist_bytes</span><span class="p">(</span><span class="n">bytes_structure</span><span class="o">=</span><span class="n">bytes_structure</span><span class="p">)</span>
-            <span class="n">load_config</span><span class="o">.</span><span class="n">bytes_map</span> <span class="o">=</span> <span class="n">alias_structure</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_persist_load_config</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">load_config</span><span class="o">=</span><span class="n">load_config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_persist_stored_value_info</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">persisted_value</span><span class="o">=</span><span class="n">persisted_value_info</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_persist_value_details</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">destiny_backlinks</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_persist_destiny_backlinks</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">load_config</span>
+        <span class="k">return</span> <span class="n">persisted_value_info</span>
 
     <span class="k">def</span> <span class="nf">persist_environment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">:</span> <span class="n">RuntimeEnvironment</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Persist the specified environment.</span>
@@ -3707,14 +3677,14 @@ This is to make sure it can still be loaded later on, in case the Python model h
   </thead>
   <tbody>
     <tr>
-      <td><code>LoadConfig</code></td>
+      <td><code>PersistedData</code></td>
       <td><p>the load config that is needed to retrieve the value data later</p></td>
     </tr>
   </tbody>
 </table>
         <details class="quote">
           <summary>Source code in <code>kiara/registries/data/data_store/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">store_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LoadConfig</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">store_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PersistedData</span><span class="p">:</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
         <span class="s2">&quot;store.value&quot;</span><span class="p">,</span>
@@ -3735,8 +3705,8 @@ This is to make sure it can still be loaded later on, in case the Python model h
         <span class="bp">self</span><span class="o">.</span><span class="n">persist_environment</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 
     <span class="c1"># save the value data and metadata</span>
-    <span class="n">load_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_persist_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_load_config_cache</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_config</span>
+    <span class="n">persisted_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_persist_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_persisted_value_cache</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">persisted_value</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_value_cache</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_value_hash_index</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">value_hash</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">)</span>
 
@@ -3744,7 +3714,7 @@ This is to make sure it can still be loaded later on, in case the Python model h
     <span class="c1"># then, make sure the manifest is persisted</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_persist_value_pedigree</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">load_config</span>
+    <span class="k">return</span> <span class="n">persisted_value</span>
 </code></pre></div>
         </details>
     </div>
@@ -3793,10 +3763,12 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_env_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_value_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Value</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_load_config_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">LoadConfig</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_value_hash_index</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_persisted_value_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">PersistedData</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_hash_index</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">def</span> <span class="nf">retrieve_load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Value</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LoadConfig</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">retrieve_serialized_value</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Value</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PersistedData</span><span class="p">:</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Value</span><span class="p">):</span>
             <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">value_id</span>
@@ -3805,20 +3777,20 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
             <span class="n">value_id</span> <span class="o">=</span> <span class="n">value</span>
             <span class="n">_value</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_config_cache</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_config_cache</span><span class="p">[</span><span class="n">value_id</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_persisted_value_cache</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_persisted_value_cache</span><span class="p">[</span><span class="n">value_id</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_value</span><span class="p">(</span><span class="n">value_id</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="n">_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
-        <span class="n">load_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_load_config</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">_value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_load_config_cache</span><span class="p">[</span><span class="n">_value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_config</span>
-        <span class="k">return</span> <span class="n">load_config</span>
+        <span class="n">persisted_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_serialized_value</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">_value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_persisted_value_cache</span><span class="p">[</span><span class="n">_value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">persisted_value</span>
+        <span class="k">return</span> <span class="n">persisted_value</span>
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_retrieve_load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LoadConfig</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_retrieve_serialized_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PersistedData</span><span class="p">:</span>
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">retrieve_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Value</span><span class="p">:</span>
@@ -3906,7 +3878,7 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
 
     <span class="k">def</span> <span class="nf">find_values_with_hash</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">value_hash</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">value_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">value_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
@@ -3933,7 +3905,7 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">_find_values_with_hash</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">value_hash</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">value_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">value_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]:</span>
@@ -3954,7 +3926,12 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
         <span class="k">pass</span>
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">retrieve_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunk_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">as_bytes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">retrieve_chunk</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">chunk_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">as_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">symlink_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
         <span class="k">pass</span>
 
     <span class="c1"># def retrieve_job_record(self, inputs_manifest: InputsManifest) -&gt; Optional[JobRecord]:</span>
@@ -4051,7 +4028,7 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
           <summary>Source code in <code>kiara/registries/data/data_store/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_values_with_hash</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">value_hash</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">value_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">value_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
@@ -4159,11 +4136,11 @@ way to quickly determine whether a value id is valid for this data store.</p>
 
 
 
-<h5 id="kiara.registries.data.data_store.DataArchive.retrieve_bytes" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">retrieve_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunk_id</span><span class="p">,</span> <span class="n">as_bytes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+<h5 id="kiara.registries.data.data_store.DataArchive.retrieve_chunk" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunk_id</span><span class="p">,</span> <span class="n">as_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">symlink_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 
-<a href="#kiara.registries.data.data_store.DataArchive.retrieve_bytes" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.registries.data.data_store.DataArchive.retrieve_chunk" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -4171,7 +4148,12 @@ way to quickly determine whether a value id is valid for this data store.</p>
         <details class="quote">
           <summary>Source code in <code>kiara/registries/data/data_store/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-<span class="k">def</span> <span class="nf">retrieve_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunk_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">as_bytes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">retrieve_chunk</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">chunk_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">as_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">symlink_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
     <span class="k">pass</span>
 </code></pre></div>
         </details>
@@ -4227,18 +4209,20 @@ This is to make sure it can still be loaded later on, in case the Python model h
 
 
 
-<h5 id="kiara.registries.data.data_store.DataArchive.retrieve_load_config" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">retrieve_load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></code>
+<h5 id="kiara.registries.data.data_store.DataArchive.retrieve_serialized_value" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_serialized_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></code>
 
 
-<a href="#kiara.registries.data.data_store.DataArchive.retrieve_load_config" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.registries.data.data_store.DataArchive.retrieve_serialized_value" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/data/data_store/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Value</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LoadConfig</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_serialized_value</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Value</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PersistedData</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Value</span><span class="p">):</span>
         <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">value_id</span>
@@ -4247,17 +4231,17 @@ This is to make sure it can still be loaded later on, in case the Python model h
         <span class="n">value_id</span> <span class="o">=</span> <span class="n">value</span>
         <span class="n">_value</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">if</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_config_cache</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_config_cache</span><span class="p">[</span><span class="n">value_id</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_persisted_value_cache</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_persisted_value_cache</span><span class="p">[</span><span class="n">value_id</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_value</span><span class="p">(</span><span class="n">value_id</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
-    <span class="n">load_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_load_config</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">_value</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_load_config_cache</span><span class="p">[</span><span class="n">_value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_config</span>
-    <span class="k">return</span> <span class="n">load_config</span>
+    <span class="n">persisted_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_serialized_value</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">_value</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_persisted_value_cache</span><span class="p">[</span><span class="n">_value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">persisted_value</span>
+    <span class="k">return</span> <span class="n">persisted_value</span>
 </code></pre></div>
         </details>
     </div>
@@ -4384,7 +4368,7 @@ DataStore            (<a class="autorefs autorefs-internal" title="kiara.registr
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">store_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LoadConfig</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">store_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PersistedData</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; &quot;Store the value, its data and metadata into the store.</span>
 
 <span class="sd">        Arguments:</span>
@@ -4480,7 +4464,7 @@ DataStore            (<a class="autorefs autorefs-internal" title="kiara.registr
   </thead>
   <tbody>
     <tr>
-      <td><code>LoadConfig</code></td>
+      <td><code>PersistedData</code></td>
       <td><p>the load config that is needed to retrieve the value data later</p></td>
     </tr>
   </tbody>
@@ -4488,7 +4472,7 @@ DataStore            (<a class="autorefs autorefs-internal" title="kiara.registr
         <details class="quote">
           <summary>Source code in <code>kiara/registries/data/data_store/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-<span class="k">def</span> <span class="nf">store_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LoadConfig</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">store_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PersistedData</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; &quot;Store the value, its data and metadata into the store.</span>
 
 <span class="sd">    Arguments:</span>
@@ -4823,7 +4807,7 @@ FileSystemDataArchive            (<a class="autorefs autorefs-internal" title="k
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">base_path</span><span class="p">)</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">archive_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">archive_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span>
 
@@ -4839,7 +4823,7 @@ FileSystemDataArchive            (<a class="autorefs autorefs-internal" title="k
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hashfs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_hashfs</span> <span class="o">=</span> <span class="n">HashFS</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">hash_fs_path</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">hash_fs_path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">(),</span>
                 <span class="n">depth</span><span class="o">=</span><span class="n">DEFAULT_HASHFS_DEPTH</span><span class="p">,</span>
                 <span class="n">width</span><span class="o">=</span><span class="n">DEFAULT_HASHFS_WIDTH</span><span class="p">,</span>
                 <span class="n">algorithm</span><span class="o">=</span><span class="n">DEFAULT_HASH_FS_ALGORITHM</span><span class="p">,</span>
@@ -4944,7 +4928,7 @@ FileSystemDataArchive            (<a class="autorefs autorefs-internal" title="k
 
     <span class="k">def</span> <span class="nf">_find_values_with_hash</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">value_hash</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">value_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">value_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
@@ -5035,23 +5019,31 @@ FileSystemDataArchive            (<a class="autorefs autorefs-internal" title="k
         <span class="n">value_data</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">base_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">value_data</span>
 
-    <span class="k">def</span> <span class="nf">_retrieve_load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LoadConfig</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_retrieve_serialized_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PersistedData</span><span class="p">:</span>
 
         <span class="n">base_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">entity_type</span><span class="o">=</span><span class="n">EntityType</span><span class="o">.</span><span class="n">VALUE_DATA</span><span class="p">)</span>
         <span class="n">data_dir</span> <span class="o">=</span> <span class="n">base_path</span> <span class="o">/</span> <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">value_hash</span><span class="p">)</span>
 
-        <span class="n">load_config_file</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">/</span> <span class="s2">&quot;.load_config.json&quot;</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">load_config_file</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
+        <span class="n">serialized_value_file</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">/</span> <span class="s2">&quot;.serialized_value.json&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">serialized_value_file</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
 
-        <span class="k">return</span> <span class="n">LoadConfig</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">PersistedData</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">retrieve_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunk_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">as_bytes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">retrieve_chunk</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">chunk_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">as_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">symlink_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 
         <span class="n">addr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hashfs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">chunk_id</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">as_bytes</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">as_file</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">addr</span><span class="o">.</span><span class="n">abspath</span>
+        <span class="k">elif</span> <span class="n">as_file</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">addr</span><span class="o">.</span><span class="n">abspath</span><span class="p">)</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">addr</span><span class="o">.</span><span class="n">abspath</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 </code></pre></div>
         </details>
 
@@ -5155,7 +5147,9 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.regis
           <summary>Source code in <code>kiara/registries/data/data_store/filesystem_store.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">FileSystemArchiveConfig</span><span class="p">(</span><span class="n">ArchiveConfig</span><span class="p">):</span>
 
-    <span class="n">base_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The base path for this archive.&quot;</span><span class="p">)</span>
+    <span class="n">archive_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The path where the data for this archive is stored.&quot;</span>
+    <span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -5172,19 +5166,19 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.regis
 
 
 
-<h9 id="kiara.registries.data.data_store.filesystem_store.FileSystemDataArchive._config_cls.base_path" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">base_path</span><span class="p">:</span> <span class="nb">str</span></code>
+<h9 id="kiara.registries.data.data_store.filesystem_store.FileSystemDataArchive._config_cls.archive_path" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">archive_path</span><span class="p">:</span> <span class="nb">str</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
       <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
-<a href="#kiara.registries.data.data_store.filesystem_store.FileSystemDataArchive._config_cls.base_path" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.registries.data.data_store.filesystem_store.FileSystemDataArchive._config_cls.archive_path" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
-      <p>The base path for this archive.</p>
+      <p>The path where the data for this archive is stored.</p>
     </div>
 
   </div>
@@ -5384,24 +5378,32 @@ way to quickly determine whether a value id is valid for this data store.</p>
 
 
 
-<h7 id="kiara.registries.data.data_store.filesystem_store.FileSystemDataArchive.retrieve_bytes" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">retrieve_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunk_id</span><span class="p">,</span> <span class="n">as_bytes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+<h7 id="kiara.registries.data.data_store.filesystem_store.FileSystemDataArchive.retrieve_chunk" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunk_id</span><span class="p">,</span> <span class="n">as_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">symlink_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 
-<a href="#kiara.registries.data.data_store.filesystem_store.FileSystemDataArchive.retrieve_bytes" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.registries.data.data_store.filesystem_store.FileSystemDataArchive.retrieve_chunk" class="headerlink" title="Permanent link">&para;</a></h7>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/data/data_store/filesystem_store.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunk_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">as_bytes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_chunk</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">chunk_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">as_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">symlink_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 
     <span class="n">addr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hashfs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">chunk_id</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">as_bytes</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="n">as_file</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">addr</span><span class="o">.</span><span class="n">abspath</span>
+    <span class="k">elif</span> <span class="n">as_file</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">addr</span><span class="o">.</span><span class="n">abspath</span><span class="p">)</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">addr</span><span class="o">.</span><span class="n">abspath</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 </code></pre></div>
         </details>
     </div>
@@ -5454,13 +5456,13 @@ FilesystemDataStore            (<a class="autorefs autorefs-internal" title="kia
         <span class="k">if</span> <span class="ow">not</span> <span class="n">env_details_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="n">env_details_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">orjson_dumps</span><span class="p">(</span><span class="n">env_data</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_persist_load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">load_config</span><span class="p">:</span> <span class="n">LoadConfig</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_persist_stored_value_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">persisted_value</span><span class="p">:</span> <span class="n">PersistedData</span><span class="p">):</span>
 
         <span class="n">working_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">entity_type</span><span class="o">=</span><span class="n">EntityType</span><span class="o">.</span><span class="n">VALUE_DATA</span><span class="p">)</span>
         <span class="n">data_dir</span> <span class="o">=</span> <span class="n">working_dir</span> <span class="o">/</span> <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">value_hash</span><span class="p">)</span>
-        <span class="n">load_config_file</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">/</span> <span class="s2">&quot;.load_config.json&quot;</span>
+        <span class="n">sv_file</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">/</span> <span class="s2">&quot;.serialized_value.json&quot;</span>
         <span class="n">data_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">load_config_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">load_config</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+        <span class="n">sv_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">persisted_value</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">_persist_value_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">):</span>
 
@@ -5496,67 +5498,57 @@ FilesystemDataStore            (<a class="autorefs autorefs-internal" title="kia
 
             <span class="n">destiny_file</span><span class="o">.</span><span class="n">symlink_to</span><span class="p">(</span><span class="n">value_file</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_persist_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bytes_structure</span><span class="p">:</span> <span class="n">BytesStructure</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BytesAliasStructure</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_persist_value_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PersistedData</span><span class="p">:</span>
 
-        <span class="n">bytes_alias_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">serialized_value</span><span class="p">:</span> <span class="n">SerializedData</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">serialized_data</span>
 
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">bytes_list</span> <span class="ow">in</span> <span class="n">bytes_structure</span><span class="o">.</span><span class="n">chunk_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">chunk_id_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">serialized_value</span><span class="o">.</span><span class="n">get_keys</span><span class="p">():</span>
 
-            <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bytes_list</span><span class="p">,</span> <span class="p">(</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
+            <span class="n">data_model</span> <span class="o">=</span> <span class="n">serialized_value</span><span class="o">.</span><span class="n">get_serialized_data</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
-            <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">bytes_list</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                    <span class="n">addr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hashfs</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
-                    <span class="n">_chunk</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
-                    <span class="n">addr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hashfs</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">_chunk</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">addr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hashfs</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
-                    <span class="c1"># raise Exception(</span>
-                    <span class="c1">#     f&quot;Can&#39;t persist chunk: invalid type &#39;{type(chunk)}&#39;&quot;</span>
-                    <span class="c1"># )</span>
-                <span class="c1"># we don&#39;t want anyone writing to a stored file</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">addr</span><span class="o">.</span><span class="n">abspath</span><span class="p">,</span> <span class="n">S_IREAD</span> <span class="o">|</span> <span class="n">S_IRGRP</span> <span class="o">|</span> <span class="n">S_IROTH</span><span class="p">)</span>
-                <span class="n">bytes_alias_map</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">addr</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">data_model</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;chunk&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+                <span class="n">chunks</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BytesIO</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">data_model</span><span class="o">.</span><span class="n">chunk</span><span class="p">)]</span>  <span class="c1"># type: ignore</span>
+            <span class="k">elif</span> <span class="n">data_model</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;chunks&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+                <span class="n">chunks</span> <span class="o">=</span> <span class="p">(</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">data_model</span><span class="o">.</span><span class="n">chunks</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="k">elif</span> <span class="n">data_model</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;file&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+                <span class="n">chunks</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_model</span><span class="o">.</span><span class="n">file</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+            <span class="k">elif</span> <span class="n">data_model</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;files&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+                <span class="n">chunks</span> <span class="o">=</span> <span class="n">data_model</span><span class="o">.</span><span class="n">files</span>  <span class="c1"># type: ignore</span>
+            <span class="k">elif</span> <span class="n">data_model</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;inline-json&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+                <span class="n">chunks</span> <span class="o">=</span> <span class="p">[</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">data_model</span><span class="o">.</span><span class="n">as_json</span><span class="p">())]</span>  <span class="c1"># type: ignore</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Invalid serialized data type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data_model</span><span class="p">)</span><span class="si">}</span><span class="s2">. Available types: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SERIALIZE_TYPES</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
 
-        <span class="n">alias_structure</span> <span class="o">=</span> <span class="n">BytesAliasStructure</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
-            <span class="n">data_type</span><span class="o">=</span><span class="n">bytes_structure</span><span class="o">.</span><span class="n">data_type</span><span class="p">,</span>
-            <span class="n">data_type_config</span><span class="o">=</span><span class="n">bytes_structure</span><span class="o">.</span><span class="n">data_type_config</span><span class="p">,</span>
-            <span class="n">chunk_id_map</span><span class="o">=</span><span class="n">bytes_alias_map</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">alias_structure</span>
+            <span class="n">chunk_ids</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">serialized_value</span><span class="o">.</span><span class="n">get_cids_for_key</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">chunks</span><span class="p">):</span>
+                <span class="n">cid</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">_chunk</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">addr</span><span class="p">:</span> <span class="n">HashAddress</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hashfs</span><span class="o">.</span><span class="n">put_with_precomputed_hash</span><span class="p">(</span>
+                    <span class="n">_chunk</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">cid</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">chunk_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">addr</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_persist_value_data</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">LoadConfig</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BytesStructure</span><span class="p">]]:</span>
-
-        <span class="n">persist_op_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kiara_context</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operation_types</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-            <span class="s2">&quot;persist_value&quot;</span><span class="p">,</span> <span class="kc">None</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="n">persist_op_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="s2">&quot;Can&#39;t persist value, &#39;persist_value&#39; operation type not available.&quot;</span>
+            <span class="n">scids</span> <span class="o">=</span> <span class="n">SerializedChunkIDs</span><span class="p">(</span>
+                <span class="n">chunk_id_list</span><span class="o">=</span><span class="n">chunk_ids</span><span class="p">,</span>
+                <span class="n">archive_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">archive_id</span><span class="p">,</span>
+                <span class="n">size</span><span class="o">=</span><span class="n">data_model</span><span class="o">.</span><span class="n">get_size</span><span class="p">(),</span>
             <span class="p">)</span>
+            <span class="n">scids</span><span class="o">.</span><span class="n">_data_registry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kiara_context</span><span class="o">.</span><span class="n">data_registry</span>
+            <span class="n">chunk_id_map</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">scids</span>
 
-        <span class="n">op_type</span><span class="p">:</span> <span class="n">PersistValueOperationType</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation_type</span><span class="p">(</span><span class="s2">&quot;persist_value&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="n">op_type</span><span class="o">.</span><span class="n">get_operation_for_data_type</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
-
-        <span class="n">working_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">entity_type</span><span class="o">=</span><span class="n">EntityType</span><span class="o">.</span><span class="n">VALUE_DATA</span><span class="p">)</span>
-        <span class="n">data_dir</span> <span class="o">=</span> <span class="n">working_dir</span> <span class="o">/</span> <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">value_hash</span><span class="p">)</span>
-
-        <span class="n">result</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-            <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kiara_context</span><span class="p">,</span>
-            <span class="n">inputs</span><span class="o">=</span><span class="p">{</span>
-                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span>
-                <span class="s2">&quot;persistence_config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;temp_dir&quot;</span><span class="p">:</span> <span class="n">data_dir</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()},</span>
-            <span class="p">},</span>
+        <span class="n">pers_value</span> <span class="o">=</span> <span class="n">PersistedData</span><span class="p">(</span>
+            <span class="n">archive_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">archive_id</span><span class="p">,</span>
+            <span class="n">chunk_id_map</span><span class="o">=</span><span class="n">chunk_id_map</span><span class="p">,</span>
+            <span class="n">data_type</span><span class="o">=</span><span class="n">serialized_value</span><span class="o">.</span><span class="n">data_type</span><span class="p">,</span>
+            <span class="n">data_type_config</span><span class="o">=</span><span class="n">serialized_value</span><span class="o">.</span><span class="n">data_type_config</span><span class="p">,</span>
+            <span class="n">serialization_profile</span><span class="o">=</span><span class="n">serialized_value</span><span class="o">.</span><span class="n">serialization_profile</span><span class="p">,</span>
+            <span class="n">serialization_metadata</span><span class="o">=</span><span class="n">serialized_value</span><span class="o">.</span><span class="n">serialization_metadata</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">load_config</span><span class="p">:</span> <span class="n">LoadConfig</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;load_config&quot;</span><span class="p">)</span>
-        <span class="n">bytes_structure</span><span class="p">:</span> <span class="n">BytesStructure</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;bytes_structure&quot;</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">load_config</span><span class="p">,</span> <span class="n">bytes_structure</span>
+        <span class="k">return</span> <span class="n">pers_value</span>
 
     <span class="k">def</span> <span class="nf">_persist_value_pedigree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">):</span>
 
@@ -5700,7 +5692,7 @@ FilesystemDataStore            (<a class="autorefs autorefs-internal" title="kia
     <script id="__config" type="application/json">{"base": "../../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../../../assets/javascripts/bundle.6e54b5cd.min.js"></script>
+      <script src="../../../../../../assets/javascripts/bundle.ed9748b7.min.js"></script>
       
     
   </body>

@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/modules/included_core_modules/serialization/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.9">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
     
     
       
@@ -23,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.120efc48.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.e411adfe.min.css">
       
         
-        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.9647289d.min.css">
+        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.cc9b2e1e.min.css">
         
       
     
@@ -2168,20 +2168,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../persistence/" class="md-nav__link">
-        persistence
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../pipeline/" class="md-nav__link">
         pipeline
       </a>
@@ -2255,8 +2241,29 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.modules.included_core_modules.serialization.PickleModule" class="md-nav__link">
-    PickleModule
+  <a href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule" class="md-nav__link">
+    DeserializeValueModule
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.modules.included_core_modules.serialization.LoadBytesModule" class="md-nav__link">
+    LoadBytesModule
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.modules.included_core_modules.serialization.LoadInternalModel" class="md-nav__link">
+    LoadInternalModel
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.modules.included_core_modules.serialization.LoadStringModule" class="md-nav__link">
+    LoadStringModule
   </a>
   
 </li>
@@ -2264,20 +2271,6 @@
           <li class="md-nav__item">
   <a href="#kiara.modules.included_core_modules.serialization.SerializeConfig" class="md-nav__link">
     SerializeConfig
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.modules.included_core_modules.serialization.SerializeValueModule" class="md-nav__link">
-    SerializeValueModule
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.modules.included_core_modules.serialization.UnpickleConfig" class="md-nav__link">
-    UnpickleConfig
   </a>
   
 </li>
@@ -2403,20 +2396,6 @@
     <li class="md-nav__item">
       <a href="../../../operations/included_core_operations/metadata/" class="md-nav__link">
         metadata
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../operations/included_core_operations/persistence/" class="md-nav__link">
-        persistence
       </a>
     </li>
   
@@ -3215,6 +3194,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../utils/hashfs/__init__/" class="md-nav__link">
+        hashfs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../utils/hashing/" class="md-nav__link">
         hashing
       </a>
@@ -3381,8 +3374,29 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.modules.included_core_modules.serialization.PickleModule" class="md-nav__link">
-    PickleModule
+  <a href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule" class="md-nav__link">
+    DeserializeValueModule
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.modules.included_core_modules.serialization.LoadBytesModule" class="md-nav__link">
+    LoadBytesModule
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.modules.included_core_modules.serialization.LoadInternalModel" class="md-nav__link">
+    LoadInternalModel
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.modules.included_core_modules.serialization.LoadStringModule" class="md-nav__link">
+    LoadStringModule
   </a>
   
 </li>
@@ -3390,20 +3404,6 @@
           <li class="md-nav__item">
   <a href="#kiara.modules.included_core_modules.serialization.SerializeConfig" class="md-nav__link">
     SerializeConfig
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.modules.included_core_modules.serialization.SerializeValueModule" class="md-nav__link">
-    SerializeValueModule
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.modules.included_core_modules.serialization.UnpickleConfig" class="md-nav__link">
-    UnpickleConfig
   </a>
   
 </li>
@@ -3460,49 +3460,519 @@
 
 
 
-<h3 id="kiara.modules.included_core_modules.serialization.PickleModule" class="doc doc-heading">
+<h3 id="kiara.modules.included_core_modules.serialization.DeserializeValueModule" class="doc doc-heading">
         <code>
-PickleModule            (<a class="autorefs autorefs-internal" title="kiara.modules.included_core_modules.serialization.SerializeValueModule" href="#kiara.modules.included_core_modules.serialization.SerializeValueModule">SerializeValueModule</a>)
+DeserializeValueModule            (<a class="autorefs autorefs-internal" title="kiara.modules.KiaraModule" href="../../__init__/#kiara.modules.KiaraModule">KiaraModule</a>)
         </code>
 
 
 
-<a href="#kiara.modules.included_core_modules.serialization.PickleModule" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule" class="headerlink" title="Permanent link">&para;</a></h3>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PickleModule</span><span class="p">(</span><span class="n">SerializeValueModule</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">DeserializeValueModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
 
-    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;value.serialize.pickle&quot;</span>
+    <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">SerializeConfig</span>
 
-    <span class="k">def</span> <span class="nf">get_serialization_format_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;pickle&quot;</span>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_source_value_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">from__any</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;Serialize any Python object into a bytes array using &#39;pickle&#39;.&quot;&quot;&quot;</span>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_supported_target_profiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
-        <span class="kn">import</span> <span class="nn">pickle5</span> <span class="k">as</span> <span class="nn">pickle</span>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_supported_serialization_profile</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
-        <span class="n">pickled</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">pickled</span><span class="p">}</span>
+    <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
 
-        <span class="n">data_type_name</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span>
-
-        <span class="n">deserialization_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="s2">&quot;value.serialize.pickle&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;target_type&quot;</span><span class="p">:</span> <span class="n">data_type_name</span><span class="p">},</span>
-            <span class="s2">&quot;output_name&quot;</span><span class="p">:</span> <span class="n">data_type_name</span><span class="p">,</span>
+        <span class="n">value_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;value_type&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">value_type</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">value_type</span><span class="p">,</span>
+                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value object.&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;deserialization_config&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;Serialization-format specific configuration.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;optional&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="p">},</span>
         <span class="p">}</span>
-        <span class="n">ser_val</span> <span class="o">=</span> <span class="n">SerializedValueModel</span><span class="p">(</span>
-            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
-            <span class="n">deserialization_config</span><span class="o">=</span><span class="n">DeserializationConfig</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
-                <span class="o">**</span><span class="n">deserialization_config</span>
-            <span class="p">),</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">ser_val</span>
+
+    <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;python_object&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The deserialized python object instance.&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="n">value_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;value_type&quot;</span><span class="p">)</span>
+        <span class="n">serialized_value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">value_type</span><span class="p">)</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="s2">&quot;deserialization_config&quot;</span><span class="p">)</span>
+
+        <span class="n">target_profile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_profile&quot;</span><span class="p">)</span>
+        <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;to__</span><span class="si">{</span><span class="n">target_profile</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
+            <span class="n">_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_config</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">result</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">serialized_value</span><span class="o">.</span><span class="n">serialized_data</span><span class="p">,</span> <span class="o">**</span><span class="n">_config</span><span class="p">)</span>
+        <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;python_object&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+<h4 id="kiara.modules.included_core_modules.serialization.DeserializeValueModule-classes">Classes<a href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule-classes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h5 id="kiara.modules.included_core_modules.serialization.DeserializeValueModule._config_cls" class="doc doc-heading">
+        <code>
+_config_cls            (<a class="autorefs autorefs-internal" title="kiara.models.module.KiaraModuleConfig" href="../../../models/module/__init__/#kiara.models.module.KiaraModuleConfig">KiaraModuleConfig</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-private"><code>private</code></small>
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule._config_cls" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SerializeConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
+
+    <span class="n">value_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value type of the actual (unserialized) value.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">target_profile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The profile name of the de-serialization result data.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">serialization_profile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The name of the serialization profile used to serialize the source value.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;value_type&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">validate_source_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;serialization_config&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid source type: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h6 id="kiara.modules.included_core_modules.serialization.DeserializeValueModule._config_cls-attributes">Attributes<a href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule._config_cls-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.modules.included_core_modules.serialization.DeserializeValueModule._config_cls.serialization_profile" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">serialization_profile</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule._config_cls.serialization_profile" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The name of the serialization profile used to serialize the source value.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.modules.included_core_modules.serialization.DeserializeValueModule._config_cls.target_profile" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">target_profile</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule._config_cls.target_profile" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The profile name of the de-serialization result data.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.modules.included_core_modules.serialization.DeserializeValueModule._config_cls.value_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">value_type</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule._config_cls.value_type" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The value type of the actual (unserialized) value.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.modules.included_core_modules.serialization.DeserializeValueModule._config_cls.validate_source_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">validate_source_type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule._config_cls.validate_source_type" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;value_type&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">validate_source_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;serialization_config&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid source type: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+<h4 id="kiara.modules.included_core_modules.serialization.DeserializeValueModule-methods">Methods<a href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule-methods" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.modules.included_core_modules.serialization.DeserializeValueModule.create_inputs_schema" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Return the schema for this types' inputs.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+
+    <span class="n">value_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;value_type&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="n">value_type</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">value_type</span><span class="p">,</span>
+            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value object.&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;deserialization_config&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;Serialization-format specific configuration.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;optional&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.modules.included_core_modules.serialization.DeserializeValueModule.create_outputs_schema" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Return the schema for this types' outputs.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;python_object&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The deserialized python object instance.&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.modules.included_core_modules.serialization.DeserializeValueModule.process" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span></code>
+
+
+<a href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule.process" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+    <span class="n">value_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;value_type&quot;</span><span class="p">)</span>
+    <span class="n">serialized_value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">value_type</span><span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="s2">&quot;deserialization_config&quot;</span><span class="p">)</span>
+
+    <span class="n">target_profile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_profile&quot;</span><span class="p">)</span>
+    <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;to__</span><span class="si">{</span><span class="n">target_profile</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
+        <span class="n">_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">data</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_config</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">result</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">serialized_value</span><span class="o">.</span><span class="n">serialized_data</span><span class="p">,</span> <span class="o">**</span><span class="n">_config</span><span class="p">)</span>
+    <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;python_object&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.modules.included_core_modules.serialization.DeserializeValueModule.retrieve_source_value_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_source_value_type</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule.retrieve_source_value_type" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_source_value_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.modules.included_core_modules.serialization.DeserializeValueModule.retrieve_supported_serialization_profile" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_supported_serialization_profile</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule.retrieve_supported_serialization_profile" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_supported_serialization_profile</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.modules.included_core_modules.serialization.DeserializeValueModule.retrieve_supported_target_profiles" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_supported_target_profiles</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule.retrieve_supported_target_profiles" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_supported_target_profiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">]:</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="kiara.modules.included_core_modules.serialization.LoadBytesModule" class="doc doc-heading">
+        <code>
+LoadBytesModule            (<a class="autorefs autorefs-internal" title="kiara.modules.included_core_modules.serialization.DeserializeValueModule" href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule">DeserializeValueModule</a>)
+        </code>
+
+
+
+<a href="#kiara.modules.included_core_modules.serialization.LoadBytesModule" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">LoadBytesModule</span><span class="p">(</span><span class="n">DeserializeValueModule</span><span class="p">):</span>
+
+    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;load.bytes&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_supported_target_profiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;bytes&quot;</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">}</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_supported_serialization_profile</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;raw&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_source_value_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;bytes&quot;</span>
+
+    <span class="k">def</span> <span class="nf">to__bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">SerializedData</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+
+        <span class="n">chunks</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_serialized_data</span><span class="p">(</span><span class="s2">&quot;bytes&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">chunks</span><span class="o">.</span><span class="n">get_number_of_chunks</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">_chunks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chunks</span><span class="o">.</span><span class="n">get_chunks</span><span class="p">(</span><span class="n">as_files</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">_chunks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">_chunk</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">_chunks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+        <span class="k">return</span> <span class="n">_chunk</span>
 </code></pre></div>
         </details>
 
@@ -3516,46 +3986,29 @@ PickleModule            (<a class="autorefs autorefs-internal" title="kiara.modu
 
 
 
-<h4 id="kiara.modules.included_core_modules.serialization.PickleModule-methods">Methods<a href="#kiara.modules.included_core_modules.serialization.PickleModule-methods" class="headerlink" title="Permanent link">&para;</a></h4>
+
 
   <div class="doc doc-object doc-method">
 
 
 
-<h5 id="kiara.modules.included_core_modules.serialization.PickleModule.from__any" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">from__any</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span></code>
+<h5 id="kiara.modules.included_core_modules.serialization.LoadBytesModule.retrieve_source_value_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_source_value_type</span><span class="p">()</span></code>
 
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
 
-<a href="#kiara.modules.included_core_modules.serialization.PickleModule.from__any" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.serialization.LoadBytesModule.retrieve_source_value_type" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
-      <p>Serialize any Python object into a bytes array using 'pickle'.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">from__any</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;Serialize any Python object into a bytes array using &#39;pickle&#39;.&quot;&quot;&quot;</span>
-
-    <span class="kn">import</span> <span class="nn">pickle5</span> <span class="k">as</span> <span class="nn">pickle</span>
-
-    <span class="n">pickled</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">pickled</span><span class="p">}</span>
-
-    <span class="n">data_type_name</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span>
-
-    <span class="n">deserialization_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="s2">&quot;value.serialize.pickle&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;target_type&quot;</span><span class="p">:</span> <span class="n">data_type_name</span><span class="p">},</span>
-        <span class="s2">&quot;output_name&quot;</span><span class="p">:</span> <span class="n">data_type_name</span><span class="p">,</span>
-    <span class="p">}</span>
-    <span class="n">ser_val</span> <span class="o">=</span> <span class="n">SerializedValueModel</span><span class="p">(</span>
-        <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
-        <span class="n">deserialization_config</span><span class="o">=</span><span class="n">DeserializationConfig</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
-            <span class="o">**</span><span class="n">deserialization_config</span>
-        <span class="p">),</span>
-    <span class="p">)</span>
-    <span class="k">return</span> <span class="n">ser_val</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_source_value_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;bytes&quot;</span>
 </code></pre></div>
         </details>
     </div>
@@ -3568,19 +4021,471 @@ PickleModule            (<a class="autorefs autorefs-internal" title="kiara.modu
 
 
 
-<h5 id="kiara.modules.included_core_modules.serialization.PickleModule.get_serialization_format_name" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_serialization_format_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+<h5 id="kiara.modules.included_core_modules.serialization.LoadBytesModule.retrieve_supported_serialization_profile" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_supported_serialization_profile</span><span class="p">()</span></code>
 
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
 
-<a href="#kiara.modules.included_core_modules.serialization.PickleModule.get_serialization_format_name" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.serialization.LoadBytesModule.retrieve_supported_serialization_profile" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_serialization_format_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="s2">&quot;pickle&quot;</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_supported_serialization_profile</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;raw&quot;</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.modules.included_core_modules.serialization.LoadBytesModule.retrieve_supported_target_profiles" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_supported_target_profiles</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.serialization.LoadBytesModule.retrieve_supported_target_profiles" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_supported_target_profiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;bytes&quot;</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">}</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.modules.included_core_modules.serialization.LoadBytesModule.to__bytes" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">to__bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
+
+
+<a href="#kiara.modules.included_core_modules.serialization.LoadBytesModule.to__bytes" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">to__bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">SerializedData</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+
+    <span class="n">chunks</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_serialized_data</span><span class="p">(</span><span class="s2">&quot;bytes&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">chunks</span><span class="o">.</span><span class="n">get_number_of_chunks</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="n">_chunks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chunks</span><span class="o">.</span><span class="n">get_chunks</span><span class="p">(</span><span class="n">as_files</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">_chunks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="n">_chunk</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">_chunks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+    <span class="k">return</span> <span class="n">_chunk</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="kiara.modules.included_core_modules.serialization.LoadInternalModel" class="doc doc-heading">
+        <code>
+LoadInternalModel            (<a class="autorefs autorefs-internal" title="kiara.modules.included_core_modules.serialization.DeserializeValueModule" href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule">DeserializeValueModule</a>)
+        </code>
+
+
+
+<a href="#kiara.modules.included_core_modules.serialization.LoadInternalModel" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">LoadInternalModel</span><span class="p">(</span><span class="n">DeserializeValueModule</span><span class="p">):</span>
+
+    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;load.internal_model&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_supported_target_profiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;model_obj&quot;</span><span class="p">:</span> <span class="n">KiaraModel</span><span class="p">}</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_supported_serialization_profile</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;json&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_source_value_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;internal_model&quot;</span>
+
+    <span class="k">def</span> <span class="nf">to__model_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">SerializedData</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraModel</span><span class="p">:</span>
+
+        <span class="n">chunks</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_serialized_data</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">chunks</span><span class="o">.</span><span class="n">get_number_of_chunks</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">_chunks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chunks</span><span class="o">.</span><span class="n">get_chunks</span><span class="p">(</span><span class="n">as_files</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">_chunks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+        <span class="n">bytes_string</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">_chunks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+        <span class="n">model_data</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">bytes_string</span><span class="p">)</span>
+
+        <span class="n">m_cls_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data_type_config</span><span class="p">[</span><span class="s2">&quot;model_cls&quot;</span><span class="p">]</span>
+        <span class="n">python_module</span><span class="p">,</span> <span class="n">cls_name</span> <span class="o">=</span> <span class="n">m_cls_path</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">python_module</span><span class="p">)</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">cls_name</span><span class="p">)</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">model_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obj</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.modules.included_core_modules.serialization.LoadInternalModel.retrieve_source_value_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_source_value_type</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.serialization.LoadInternalModel.retrieve_source_value_type" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_source_value_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;internal_model&quot;</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.modules.included_core_modules.serialization.LoadInternalModel.retrieve_supported_serialization_profile" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_supported_serialization_profile</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.serialization.LoadInternalModel.retrieve_supported_serialization_profile" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_supported_serialization_profile</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;json&quot;</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.modules.included_core_modules.serialization.LoadInternalModel.retrieve_supported_target_profiles" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_supported_target_profiles</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.serialization.LoadInternalModel.retrieve_supported_target_profiles" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_supported_target_profiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;model_obj&quot;</span><span class="p">:</span> <span class="n">KiaraModel</span><span class="p">}</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.modules.included_core_modules.serialization.LoadInternalModel.to__model_obj" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">to__model_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
+
+
+<a href="#kiara.modules.included_core_modules.serialization.LoadInternalModel.to__model_obj" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">to__model_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">SerializedData</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraModel</span><span class="p">:</span>
+
+    <span class="n">chunks</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_serialized_data</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">chunks</span><span class="o">.</span><span class="n">get_number_of_chunks</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="n">_chunks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chunks</span><span class="o">.</span><span class="n">get_chunks</span><span class="p">(</span><span class="n">as_files</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">_chunks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+    <span class="n">bytes_string</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">_chunks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+    <span class="n">model_data</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">bytes_string</span><span class="p">)</span>
+
+    <span class="n">m_cls_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data_type_config</span><span class="p">[</span><span class="s2">&quot;model_cls&quot;</span><span class="p">]</span>
+    <span class="n">python_module</span><span class="p">,</span> <span class="n">cls_name</span> <span class="o">=</span> <span class="n">m_cls_path</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">python_module</span><span class="p">)</span>
+    <span class="bp">cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">cls_name</span><span class="p">)</span>
+    <span class="n">obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">model_data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">obj</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="kiara.modules.included_core_modules.serialization.LoadStringModule" class="doc doc-heading">
+        <code>
+LoadStringModule            (<a class="autorefs autorefs-internal" title="kiara.modules.included_core_modules.serialization.DeserializeValueModule" href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule">DeserializeValueModule</a>)
+        </code>
+
+
+
+<a href="#kiara.modules.included_core_modules.serialization.LoadStringModule" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">LoadStringModule</span><span class="p">(</span><span class="n">DeserializeValueModule</span><span class="p">):</span>
+
+    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;load.string&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_supported_target_profiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">}</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_supported_serialization_profile</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;raw&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_source_value_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;string&quot;</span>
+
+    <span class="k">def</span> <span class="nf">to__string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">SerializedData</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+        <span class="n">chunks</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_serialized_data</span><span class="p">(</span><span class="s2">&quot;string&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">chunks</span><span class="o">.</span><span class="n">get_number_of_chunks</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">_chunks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chunks</span><span class="o">.</span><span class="n">get_chunks</span><span class="p">(</span><span class="n">as_files</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">_chunks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+        <span class="n">bytes_string</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">_chunks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+        <span class="k">return</span> <span class="n">bytes_string</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.modules.included_core_modules.serialization.LoadStringModule.retrieve_source_value_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_source_value_type</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.serialization.LoadStringModule.retrieve_source_value_type" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_source_value_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;string&quot;</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.modules.included_core_modules.serialization.LoadStringModule.retrieve_supported_serialization_profile" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_supported_serialization_profile</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.serialization.LoadStringModule.retrieve_supported_serialization_profile" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_supported_serialization_profile</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;raw&quot;</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.modules.included_core_modules.serialization.LoadStringModule.retrieve_supported_target_profiles" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_supported_target_profiles</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.serialization.LoadStringModule.retrieve_supported_target_profiles" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_supported_target_profiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">}</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.modules.included_core_modules.serialization.LoadStringModule.to__string" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">to__string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
+
+
+<a href="#kiara.modules.included_core_modules.serialization.LoadStringModule.to__string" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">to__string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">SerializedData</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+    <span class="n">chunks</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_serialized_data</span><span class="p">(</span><span class="s2">&quot;string&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">chunks</span><span class="o">.</span><span class="n">get_number_of_chunks</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="n">_chunks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chunks</span><span class="o">.</span><span class="n">get_chunks</span><span class="p">(</span><span class="n">as_files</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">_chunks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+    <span class="n">bytes_string</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">_chunks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+    <span class="k">return</span> <span class="n">bytes_string</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -3622,9 +4527,17 @@ SerializeConfig            (<a class="autorefs autorefs-internal" title="kiara.m
           <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SerializeConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
 
-    <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value type of the source.&quot;</span><span class="p">)</span>
+    <span class="n">value_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value type of the actual (unserialized) value.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">target_profile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The profile name of the de-serialization result data.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">serialization_profile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The name of the serialization profile used to serialize the source value.&quot;</span>
+    <span class="p">)</span>
 
-    <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
+    <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;value_type&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">validate_source_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;serialization_config&quot;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid source type: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
@@ -3645,19 +4558,65 @@ SerializeConfig            (<a class="autorefs autorefs-internal" title="kiara.m
 
 
 
-<h5 id="kiara.modules.included_core_modules.serialization.SerializeConfig.source_type" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span></code>
+<h5 id="kiara.modules.included_core_modules.serialization.SerializeConfig.serialization_profile" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">serialization_profile</span><span class="p">:</span> <span class="nb">str</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
       <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
-<a href="#kiara.modules.included_core_modules.serialization.SerializeConfig.source_type" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.serialization.SerializeConfig.serialization_profile" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
-      <p>The value type of the source.</p>
+      <p>The name of the serialization profile used to serialize the source value.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.modules.included_core_modules.serialization.SerializeConfig.target_profile" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">target_profile</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.serialization.SerializeConfig.target_profile" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The profile name of the de-serialization result data.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.modules.included_core_modules.serialization.SerializeConfig.value_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">value_type</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.serialization.SerializeConfig.value_type" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The value type of the actual (unserialized) value.</p>
     </div>
 
   </div>
@@ -3685,7 +4644,7 @@ SerializeConfig            (<a class="autorefs autorefs-internal" title="kiara.m
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;value_type&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">validate_source_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;serialization_config&quot;</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid source type: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
@@ -3695,462 +4654,6 @@ SerializeConfig            (<a class="autorefs autorefs-internal" title="kiara.m
     </div>
 
   </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h3 id="kiara.modules.included_core_modules.serialization.SerializeValueModule" class="doc doc-heading">
-        <code>
-SerializeValueModule            (<a class="autorefs autorefs-internal" title="kiara.modules.KiaraModule" href="../../__init__/#kiara.modules.KiaraModule">KiaraModule</a>)
-        </code>
-
-
-
-<a href="#kiara.modules.included_core_modules.serialization.SerializeValueModule" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SerializeValueModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
-
-    <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">SerializeConfig</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">retrieve_supported_source_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-
-        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;from__&quot;</span><span class="p">):</span>
-                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr</span><span class="p">[</span><span class="mi">6</span><span class="p">:])</span>
-        <span class="k">return</span> <span class="n">result</span>
-
-    <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
-
-        <span class="n">source_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="n">source_type</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to serialize.&quot;</span><span class="p">},</span>
-            <span class="s2">&quot;serialization_config&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;Serialization-format specific configuration.&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;optional&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="p">},</span>
-        <span class="p">}</span>
-
-    <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
-
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;serialized_value&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">SERIALIZED_DATA_TYPE_NAME</span><span class="p">,</span>
-                <span class="s2">&quot;type_config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;format_name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_serialization_format_name</span><span class="p">()},</span>
-                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value in serialized form.&quot;</span><span class="p">,</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-
-    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">get_serialization_format_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">pass</span>
-
-    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-
-        <span class="n">value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">))</span>
-        <span class="n">config</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="s2">&quot;serialization_config&quot;</span><span class="p">)</span>
-
-        <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;from__</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s1">&#39;source_type&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
-            <span class="n">_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">data</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">_config</span> <span class="o">=</span> <span class="p">{}</span>
-
-        <span class="n">result</span><span class="p">:</span> <span class="n">SerializedValueModel</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">_config</span><span class="p">)</span>
-        <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;serialized_value&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-<h4 id="kiara.modules.included_core_modules.serialization.SerializeValueModule-classes">Classes<a href="#kiara.modules.included_core_modules.serialization.SerializeValueModule-classes" class="headerlink" title="Permanent link">&para;</a></h4>
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h5 id="kiara.modules.included_core_modules.serialization.SerializeValueModule._config_cls" class="doc doc-heading">
-        <code>
-_config_cls            (<a class="autorefs autorefs-internal" title="kiara.models.module.KiaraModuleConfig" href="../../../models/module/__init__/#kiara.models.module.KiaraModuleConfig">KiaraModuleConfig</a>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-private"><code>private</code></small>
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.modules.included_core_modules.serialization.SerializeValueModule._config_cls" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SerializeConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
-
-    <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value type of the source.&quot;</span><span class="p">)</span>
-
-    <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">validate_source_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;serialization_config&quot;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid source type: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">value</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-<h6 id="kiara.modules.included_core_modules.serialization.SerializeValueModule._config_cls-attributes">Attributes<a href="#kiara.modules.included_core_modules.serialization.SerializeValueModule._config_cls-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.modules.included_core_modules.serialization.SerializeValueModule._config_cls.source_type" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.modules.included_core_modules.serialization.SerializeValueModule._config_cls.source_type" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>The value type of the source.</p>
-    </div>
-
-  </div>
-
-
-
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h7 id="kiara.modules.included_core_modules.serialization.SerializeValueModule._config_cls.validate_source_type" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">validate_source_type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.modules.included_core_modules.serialization.SerializeValueModule._config_cls.validate_source_type" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">validate_source_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;serialization_config&quot;</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid source type: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">value</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-<h4 id="kiara.modules.included_core_modules.serialization.SerializeValueModule-methods">Methods<a href="#kiara.modules.included_core_modules.serialization.SerializeValueModule-methods" class="headerlink" title="Permanent link">&para;</a></h4>
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.modules.included_core_modules.serialization.SerializeValueModule.create_inputs_schema" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
-
-
-<a href="#kiara.modules.included_core_modules.serialization.SerializeValueModule.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>Return the schema for this types' inputs.</p>
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
-
-    <span class="n">source_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="n">source_type</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to serialize.&quot;</span><span class="p">},</span>
-        <span class="s2">&quot;serialization_config&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;Serialization-format specific configuration.&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;optional&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="p">},</span>
-    <span class="p">}</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.modules.included_core_modules.serialization.SerializeValueModule.create_outputs_schema" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
-
-
-<a href="#kiara.modules.included_core_modules.serialization.SerializeValueModule.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>Return the schema for this types' outputs.</p>
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
-
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;serialized_value&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">SERIALIZED_DATA_TYPE_NAME</span><span class="p">,</span>
-            <span class="s2">&quot;type_config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;format_name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_serialization_format_name</span><span class="p">()},</span>
-            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value in serialized form.&quot;</span><span class="p">,</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.modules.included_core_modules.serialization.SerializeValueModule.get_serialization_format_name" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_serialization_format_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
-
-
-<a href="#kiara.modules.included_core_modules.serialization.SerializeValueModule.get_serialization_format_name" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-<span class="k">def</span> <span class="nf">get_serialization_format_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="k">pass</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.modules.included_core_modules.serialization.SerializeValueModule.process" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span></code>
-
-
-<a href="#kiara.modules.included_core_modules.serialization.SerializeValueModule.process" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-
-    <span class="n">value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">))</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="s2">&quot;serialization_config&quot;</span><span class="p">)</span>
-
-    <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;from__</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s1">&#39;source_type&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
-        <span class="n">_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">data</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">_config</span> <span class="o">=</span> <span class="p">{}</span>
-
-    <span class="n">result</span><span class="p">:</span> <span class="n">SerializedValueModel</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">_config</span><span class="p">)</span>
-    <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;serialized_value&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.modules.included_core_modules.serialization.SerializeValueModule.retrieve_supported_source_types" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">retrieve_supported_source_types</span><span class="p">()</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.modules.included_core_modules.serialization.SerializeValueModule.retrieve_supported_source_types" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">retrieve_supported_source_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-
-    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;from__&quot;</span><span class="p">):</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr</span><span class="p">[</span><span class="mi">6</span><span class="p">:])</span>
-    <span class="k">return</span> <span class="n">result</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h3 id="kiara.modules.included_core_modules.serialization.UnpickleConfig" class="doc doc-heading">
-        <code>
-UnpickleConfig            (<a class="autorefs autorefs-internal" title="kiara.models.module.KiaraModuleConfig" href="../../../models/module/__init__/#kiara.models.module.KiaraModuleConfig">KiaraModuleConfig</a>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.modules.included_core_modules.serialization.UnpickleConfig" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">UnpickleConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
-
-    <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The type of the value to unpickle.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">ANY_TYPE_NAME</span>
-    <span class="p">)</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-<h4 id="kiara.modules.included_core_modules.serialization.UnpickleConfig-attributes">Attributes<a href="#kiara.modules.included_core_modules.serialization.UnpickleConfig-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.modules.included_core_modules.serialization.UnpickleConfig.target_type" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-  </span>
-
-<a href="#kiara.modules.included_core_modules.serialization.UnpickleConfig.target_type" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>The type of the value to unpickle.</p>
-    </div>
-
-  </div>
-
-
-
 
 
 
@@ -4170,7 +4673,7 @@ UnpickleConfig            (<a class="autorefs autorefs-internal" title="kiara.mo
 
 <h3 id="kiara.modules.included_core_modules.serialization.UnpickleModule" class="doc doc-heading">
         <code>
-UnpickleModule            (<a class="autorefs autorefs-internal" title="kiara.modules.KiaraModule" href="../../__init__/#kiara.modules.KiaraModule">KiaraModule</a>)
+UnpickleModule            (<a class="autorefs autorefs-internal" title="kiara.modules.included_core_modules.serialization.DeserializeValueModule" href="#kiara.modules.included_core_modules.serialization.DeserializeValueModule">DeserializeValueModule</a>)
         </code>
 
 
@@ -4182,48 +4685,39 @@ UnpickleModule            (<a class="autorefs autorefs-internal" title="kiara.mo
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">UnpickleModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">UnpickleModule</span><span class="p">(</span><span class="n">DeserializeValueModule</span><span class="p">):</span>
 
-    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;value.serialize.unpickle&quot;</span>
-    <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">UnpickleConfig</span>
+    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;unpickle.value&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_retrieve_module_characteristics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleCharacteristics</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">ModuleCharacteristics</span><span class="p">(</span><span class="n">is_internal</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_supported_target_profiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">]:</span>
 
-    <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="nb">object</span><span class="p">}</span>
 
-        <span class="n">target_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_type&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;bytes&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bytes&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;The serialized bytes of the &#39;</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&#39; value.&quot;</span><span class="p">,</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_supported_serialization_profile</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;pickle&quot;</span>
 
-    <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_source_value_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 
-        <span class="n">target_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_type&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="n">target_type</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">target_type</span><span class="p">,</span>
-                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The type of the value to unpickle.&quot;</span><span class="p">,</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
+        <span class="k">return</span> <span class="s2">&quot;any&quot;</span>
 
-    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">to__object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">SerializedData</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 
-        <span class="kn">import</span> <span class="nn">pickle5</span> <span class="k">as</span> <span class="nn">pickle</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">pickle5</span> <span class="k">as</span> <span class="nn">pickle</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">pickle</span>  <span class="c1"># type: ignore</span>
 
-        <span class="n">target_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_type&quot;</span><span class="p">)</span>
-        <span class="n">_bytes</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;bytes&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="s2">&quot;python_object&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get_keys</span><span class="p">()</span>
+        <span class="n">python_object_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_serialized_data</span><span class="p">(</span><span class="s2">&quot;python_object&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">python_object_data</span><span class="o">.</span><span class="n">get_number_of_chunks</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span>
 
+        <span class="n">_bytes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">python_object_data</span><span class="o">.</span><span class="n">get_chunks</span><span class="p">(</span><span class="n">as_files</span><span class="o">=</span><span class="kc">False</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">_bytes</span><span class="p">)</span>
 
-        <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">target_type</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
 </code></pre></div>
         </details>
 
@@ -4235,111 +4729,61 @@ UnpickleModule            (<a class="autorefs autorefs-internal" title="kiara.mo
 
 
 
-<h4 id="kiara.modules.included_core_modules.serialization.UnpickleModule-classes">Classes<a href="#kiara.modules.included_core_modules.serialization.UnpickleModule-classes" class="headerlink" title="Permanent link">&para;</a></h4>
-
-  <div class="doc doc-object doc-class">
 
 
 
-<h5 id="kiara.modules.included_core_modules.serialization.UnpickleModule._config_cls" class="doc doc-heading">
-        <code>
-_config_cls            (<a class="autorefs autorefs-internal" title="kiara.models.module.KiaraModuleConfig" href="../../../models/module/__init__/#kiara.models.module.KiaraModuleConfig">KiaraModuleConfig</a>)
-        </code>
 
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.modules.included_core_modules.serialization.UnpickleModule.retrieve_source_value_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_source_value_type</span><span class="p">()</span></code>
 
   <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-private"><code>private</code></small>
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#kiara.modules.included_core_modules.serialization.UnpickleModule._config_cls" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.serialization.UnpickleModule.retrieve_source_value_type" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">UnpickleConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_source_value_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 
-    <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The type of the value to unpickle.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">ANY_TYPE_NAME</span>
-    <span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;any&quot;</span>
 </code></pre></div>
         </details>
+    </div>
+
+  </div>
 
 
 
-  <div class="doc doc-children">
+  <div class="doc doc-object doc-method">
 
 
 
-
-<h6 id="kiara.modules.included_core_modules.serialization.UnpickleModule._config_cls-attributes">Attributes<a href="#kiara.modules.included_core_modules.serialization.UnpickleModule._config_cls-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.modules.included_core_modules.serialization.UnpickleModule._config_cls.target_type" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span></code>
+<h5 id="kiara.modules.included_core_modules.serialization.UnpickleModule.retrieve_supported_serialization_profile" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_supported_serialization_profile</span><span class="p">()</span></code>
 
   <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#kiara.modules.included_core_modules.serialization.UnpickleModule._config_cls.target_type" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.modules.included_core_modules.serialization.UnpickleModule.retrieve_supported_serialization_profile" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
-      <p>The type of the value to unpickle.</p>
-    </div>
-
-  </div>
-
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-<h4 id="kiara.modules.included_core_modules.serialization.UnpickleModule-methods">Methods<a href="#kiara.modules.included_core_modules.serialization.UnpickleModule-methods" class="headerlink" title="Permanent link">&para;</a></h4>
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.modules.included_core_modules.serialization.UnpickleModule.create_inputs_schema" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
-
-
-<a href="#kiara.modules.included_core_modules.serialization.UnpickleModule.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>Return the schema for this types' inputs.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
-
-    <span class="n">target_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_type&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;bytes&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bytes&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;The serialized bytes of the &#39;</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&#39; value.&quot;</span><span class="p">,</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_supported_serialization_profile</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;pickle&quot;</span>
 </code></pre></div>
         </details>
     </div>
@@ -4352,29 +4796,24 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
 
 
-<h5 id="kiara.modules.included_core_modules.serialization.UnpickleModule.create_outputs_schema" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+<h5 id="kiara.modules.included_core_modules.serialization.UnpickleModule.retrieve_supported_target_profiles" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_supported_target_profiles</span><span class="p">()</span></code>
 
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
 
-<a href="#kiara.modules.included_core_modules.serialization.UnpickleModule.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.serialization.UnpickleModule.retrieve_supported_target_profiles" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
-      <p>Return the schema for this types' outputs.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_supported_target_profiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">]:</span>
 
-    <span class="n">target_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_type&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="n">target_type</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">target_type</span><span class="p">,</span>
-            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The type of the value to unpickle.&quot;</span><span class="p">,</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="nb">object</span><span class="p">}</span>
 </code></pre></div>
         </details>
     </div>
@@ -4387,27 +4826,32 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
 
 
-<h5 id="kiara.modules.included_core_modules.serialization.UnpickleModule.process" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span></code>
+<h5 id="kiara.modules.included_core_modules.serialization.UnpickleModule.to__object" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">to__object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.serialization.UnpickleModule.process" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.serialization.UnpickleModule.to__object" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">to__object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">SerializedData</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 
-    <span class="kn">import</span> <span class="nn">pickle5</span> <span class="k">as</span> <span class="nn">pickle</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pickle5</span> <span class="k">as</span> <span class="nn">pickle</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pickle</span>  <span class="c1"># type: ignore</span>
 
-    <span class="n">target_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_type&quot;</span><span class="p">)</span>
-    <span class="n">_bytes</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;bytes&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="s2">&quot;python_object&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get_keys</span><span class="p">()</span>
+    <span class="n">python_object_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_serialized_data</span><span class="p">(</span><span class="s2">&quot;python_object&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">python_object_data</span><span class="o">.</span><span class="n">get_number_of_chunks</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span>
 
+    <span class="n">_bytes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">python_object_data</span><span class="o">.</span><span class="n">get_chunks</span><span class="p">(</span><span class="n">as_files</span><span class="o">=</span><span class="kc">False</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">_bytes</span><span class="p">)</span>
 
-    <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">target_type</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span>
 </code></pre></div>
         </details>
     </div>
@@ -4507,7 +4951,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
     <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.6e54b5cd.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.ed9748b7.min.js"></script>
       
     
   </body>

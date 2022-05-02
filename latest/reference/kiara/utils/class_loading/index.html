@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/utils/class_loading/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.9">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
     
     
       
@@ -23,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.120efc48.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.e411adfe.min.css">
       
         
-        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.9647289d.min.css">
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.cc9b2e1e.min.css">
         
       
     
@@ -2164,20 +2164,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../modules/included_core_modules/persistence/" class="md-nav__link">
-        persistence
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../modules/included_core_modules/pipeline/" class="md-nav__link">
         pipeline
       </a>
@@ -2314,20 +2300,6 @@
     <li class="md-nav__item">
       <a href="../../operations/included_core_operations/metadata/" class="md-nav__link">
         metadata
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../operations/included_core_operations/persistence/" class="md-nav__link">
-        persistence
       </a>
     </li>
   
@@ -3109,6 +3081,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.utils.class_loading.find_all_kiara_model_classes" class="md-nav__link">
+    find_all_kiara_model_classes()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.utils.class_loading.find_all_kiara_modules" class="md-nav__link">
     find_all_kiara_modules()
   </a>
@@ -3139,6 +3118,13 @@
           <li class="md-nav__item">
   <a href="#kiara.utils.class_loading.find_data_types_under" class="md-nav__link">
     find_data_types_under()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.utils.class_loading.find_kiara_model_classes_under" class="md-nav__link">
+    find_kiara_model_classes_under()
   </a>
   
 </li>
@@ -3291,6 +3277,20 @@
     <li class="md-nav__item">
       <a href="../graphs/" class="md-nav__link">
         graphs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hashfs/__init__/" class="md-nav__link">
+        hashfs
       </a>
     </li>
   
@@ -3517,6 +3517,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.utils.class_loading.find_all_kiara_model_classes" class="md-nav__link">
+    find_all_kiara_model_classes()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.utils.class_loading.find_all_kiara_modules" class="md-nav__link">
     find_all_kiara_modules()
   </a>
@@ -3547,6 +3554,13 @@
           <li class="md-nav__item">
   <a href="#kiara.utils.class_loading.find_data_types_under" class="md-nav__link">
     find_data_types_under()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.utils.class_loading.find_kiara_model_classes_under" class="md-nav__link">
+    find_kiara_model_classes_under()
   </a>
   
 </li>
@@ -3782,6 +3796,46 @@
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">all_data_types</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="kiara.utils.class_loading.find_all_kiara_model_classes" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">find_all_kiara_model_classes</span><span class="p">()</span></code>
+
+
+<a href="#kiara.utils.class_loading.find_all_kiara_model_classes" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.</p>
+<p>TODO</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/class_loading.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_kiara_model_classes</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraModel&quot;</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.</span>
+
+<span class="sd">    TODO</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">kiara.models</span> <span class="kn">import</span> <span class="n">KiaraModel</span>
+
+    <span class="k">return</span> <span class="n">load_all_subclasses_for_entry_point</span><span class="p">(</span>
+        <span class="n">entry_point_name</span><span class="o">=</span><span class="s2">&quot;kiara.model_classes&quot;</span><span class="p">,</span>
+        <span class="n">base_class</span><span class="o">=</span><span class="n">KiaraModel</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">type_id_key</span><span class="o">=</span><span class="s2">&quot;_kiara_model_id&quot;</span><span class="p">,</span>
+        <span class="n">type_id_func</span><span class="o">=</span><span class="n">_cls_name_id_func</span><span class="p">,</span>
+        <span class="n">attach_python_metadata</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -4047,6 +4101,41 @@
         <span class="n">base_class</span><span class="o">=</span><span class="n">DataType</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
         <span class="n">python_module</span><span class="o">=</span><span class="n">module</span><span class="p">,</span>
     <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="kiara.utils.class_loading.find_kiara_model_classes_under" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">find_kiara_model_classes_under</span><span class="p">(</span><span class="n">module</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.class_loading.find_kiara_model_classes_under" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/class_loading.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_kiara_model_classes_under</span><span class="p">(</span>
+    <span class="n">module</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModuleType</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraModel&quot;</span><span class="p">]]:</span>
+
+    <span class="kn">from</span> <span class="nn">kiara.models</span> <span class="kn">import</span> <span class="n">KiaraModel</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">find_subclasses_under</span><span class="p">(</span>
+        <span class="n">base_class</span><span class="o">=</span><span class="n">KiaraModel</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">python_module</span><span class="o">=</span><span class="n">module</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
         </details>
     </div>
@@ -4585,7 +4674,7 @@
     <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.6e54b5cd.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.ed9748b7.min.js"></script>
       
     
   </body>

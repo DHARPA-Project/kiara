@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/included_components/operation_types/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.9">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
     
     
       
@@ -23,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.120efc48.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.e411adfe.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.9647289d.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.cc9b2e1e.min.css">
         
       
     
@@ -367,15 +367,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara_info.operation_types.extract_metadata" class="md-nav__link">
-    extract_metadata
+  <a href="#kiara_info.operation_types.deserialize" class="md-nav__link">
+    deserialize
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara_info.operation_types.persist_value" class="md-nav__link">
-    persist_value
+  <a href="#kiara_info.operation_types.extract_metadata" class="md-nav__link">
+    extract_metadata
   </a>
   
 </li>
@@ -390,13 +390,6 @@
         <li class="md-nav__item">
   <a href="#kiara_info.operation_types.render_value" class="md-nav__link">
     render_value
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#kiara_info.operation_types.serialize" class="md-nav__link">
-    serialize
   </a>
   
 </li>
@@ -2241,20 +2234,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/kiara/modules/included_core_modules/persistence/" class="md-nav__link">
-        persistence
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../reference/kiara/modules/included_core_modules/pipeline/" class="md-nav__link">
         pipeline
       </a>
@@ -2391,20 +2370,6 @@
     <li class="md-nav__item">
       <a href="../../reference/kiara/operations/included_core_operations/metadata/" class="md-nav__link">
         metadata
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/kiara/operations/included_core_operations/persistence/" class="md-nav__link">
-        persistence
       </a>
     </li>
   
@@ -3203,6 +3168,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/hashfs/__init__/" class="md-nav__link">
+        hashfs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../reference/kiara/utils/hashing/" class="md-nav__link">
         hashing
       </a>
@@ -3368,15 +3347,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara_info.operation_types.extract_metadata" class="md-nav__link">
-    extract_metadata
+  <a href="#kiara_info.operation_types.deserialize" class="md-nav__link">
+    deserialize
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara_info.operation_types.persist_value" class="md-nav__link">
-    persist_value
+  <a href="#kiara_info.operation_types.extract_metadata" class="md-nav__link">
+    extract_metadata
   </a>
   
 </li>
@@ -3391,13 +3370,6 @@
         <li class="md-nav__item">
   <a href="#kiara_info.operation_types.render_value" class="md-nav__link">
     render_value
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#kiara_info.operation_types.serialize" class="md-nav__link">
-    serialize
   </a>
   
 </li>
@@ -3434,9 +3406,9 @@
                               <a href="https://dharpa.org/kiara_documentation/">https://dharpa.org/kiara_documentation/</a>           
                                                                                 
  <span style="font-style: italic">Python class </span>                                                                  
-                <span style="font-style: italic"> class_name  </span>  CreateFromOperationType                          
-                <span style="font-style: italic"> module_name </span>  kiara.operations.included_core_operations.cre…   
-                <span style="font-style: italic"> full_name   </span>  kiara.operations.included_core_operations.cre…   
+                <span style="font-style: italic"> python_class_name  </span>  CreateFromOperationType                   
+                <span style="font-style: italic"> python_module_name </span>  kiara.operations.included_core_operati…   
+                <span style="font-style: italic"> full_name          </span>  kiara.operations.included_core_operati…   
                                                                                 
                                                                                 
 </pre>
@@ -3456,9 +3428,44 @@
                               <a href="https://dharpa.org/kiara_documentation/">https://dharpa.org/kiara_documentation/</a>           
                                                                                 
  <span style="font-style: italic">Python class </span>                                                                  
-                <span style="font-style: italic"> class_name  </span>  CustomModuleOperationType                        
-                <span style="font-style: italic"> module_name </span>  kiara.operations.included_core_operations        
-                <span style="font-style: italic"> full_name   </span>  kiara.operations.included_core_operations.Cus…   
+                <span style="font-style: italic"> python_class_name  </span>  CustomModuleOperationType                 
+                <span style="font-style: italic"> python_module_name </span>  kiara.operations.included_core_operati…   
+                <span style="font-style: italic"> full_name          </span>  kiara.operations.included_core_operati…   
+                                                                                
+                                                                                
+</pre>
+<h3 id="kiara_info.operation_types.deserialize"><code>deserialize</code><a class="headerlink" href="#kiara_info.operation_types.deserialize" title="Permanent link">&para;</a></h3>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">                                                                                
+ <span style="font-style: italic">Documentation</span>                                                                  
+                 An operation that takes a value, and serializes it into the    
+                 format suitable to the                                         
+                 [<span style="color: #ffffff; text-decoration-color: #ffffff; background-color: #000000">serialized_value</span>][kiara.data_types.included_core_types.Ser…   
+                 value type.                                                    
+                                                                                
+                 For a module profile to be picked up by this operation type,   
+                 it needs to have:                                              
+                                                                                
+                 <span style="color: #808000; text-decoration-color: #808000; font-weight: bold"> • </span>exactly one output field of type <span style="color: #ffffff; text-decoration-color: #ffffff; background-color: #000000">serialized_value</span>           
+                 <span style="color: #808000; text-decoration-color: #808000; font-weight: bold"> • </span>either one of (in this order):                              
+                 <span style="color: #808000; text-decoration-color: #808000; font-weight: bold">    • </span>exactly one input field                                  
+                 <span style="color: #808000; text-decoration-color: #808000; font-weight: bold">    • </span>one input field where the field name equals the type     
+                 <span style="color: #808000; text-decoration-color: #808000; font-weight: bold">      </span>name                                                     
+                 <span style="color: #808000; text-decoration-color: #808000; font-weight: bold">    • </span>an input field called 'value'                            
+                                                                                
+ <span style="font-style: italic">Author(s)    </span>                                                                  
+                 Markus Binsteiner  <span style="font-style: italic"> markus@frkl.io </span>                            
+                                                                                
+ <span style="font-style: italic">Context      </span>                                                                  
+                <span style="font-style: italic"> Labels     </span>  <span style="font-style: italic">package</span>: kiara                                    
+                <span style="font-style: italic"> References </span>  <span style="font-style: italic">source_repo</span>:                                      
+                              <a href="https://github.com/DHARPA-Project/kiara">https://github.com/DHARPA-Project/kiara</a>           
+                              <span style="font-style: italic">documentation</span>:                                    
+                              <a href="https://dharpa.org/kiara_documentation/">https://dharpa.org/kiara_documentation/</a>           
+                                                                                
+ <span style="font-style: italic">Python class </span>                                                                  
+                <span style="font-style: italic"> python_class_name  </span>  DeSerializeOperationType                  
+                <span style="font-style: italic"> python_module_name </span>  kiara.operations.included_core_operati…   
+                <span style="font-style: italic"> full_name          </span>  kiara.operations.included_core_operati…   
                                                                                 
                                                                                 
 </pre>
@@ -3489,44 +3496,9 @@
                               <a href="https://dharpa.org/kiara_documentation/">https://dharpa.org/kiara_documentation/</a>           
                                                                                 
  <span style="font-style: italic">Python class </span>                                                                  
-                <span style="font-style: italic"> class_name  </span>  ExtractMetadataOperationType                     
-                <span style="font-style: italic"> module_name </span>  kiara.operations.included_core_operations.met…   
-                <span style="font-style: italic"> full_name   </span>  kiara.operations.included_core_operations.met…   
-                                                                                
-                                                                                
-</pre>
-<h3 id="kiara_info.operation_types.persist_value"><code>persist_value</code><a class="headerlink" href="#kiara_info.operation_types.persist_value" title="Permanent link">&para;</a></h3>
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">                                                                                
- <span style="font-style: italic">Documentation</span>                                                                  
-                 An operation that takes a value, and saves it to disk and      
-                 returns details about how to re-assemble the value (via a      
-                 [kiara.data_types.included_core_types.persistence.LoadConfi…   
-                 object).                                                       
-                                                                                
-                 For a module profile to be picked up by this operation type,   
-                 it needs to:                                                   
-                                                                                
-                 <span style="color: #808000; text-decoration-color: #808000; font-weight: bold"> • </span>exactly one output field of type <span style="color: #ffffff; text-decoration-color: #ffffff; background-color: #000000">load_config</span>                
-                 <span style="color: #808000; text-decoration-color: #808000; font-weight: bold"> • </span>either one of (in this order):                              
-                 <span style="color: #808000; text-decoration-color: #808000; font-weight: bold">    • </span>exactly one input field                                  
-                 <span style="color: #808000; text-decoration-color: #808000; font-weight: bold">    • </span>one input field where the field name equals the type     
-                 <span style="color: #808000; text-decoration-color: #808000; font-weight: bold">      </span>name                                                     
-                 <span style="color: #808000; text-decoration-color: #808000; font-weight: bold">    • </span>an input field called 'value'                            
-                                                                                
- <span style="font-style: italic">Author(s)    </span>                                                                  
-                 Markus Binsteiner  <span style="font-style: italic"> markus@frkl.io </span>                            
-                                                                                
- <span style="font-style: italic">Context      </span>                                                                  
-                <span style="font-style: italic"> Labels     </span>  <span style="font-style: italic">package</span>: kiara                                    
-                <span style="font-style: italic"> References </span>  <span style="font-style: italic">source_repo</span>:                                      
-                              <a href="https://github.com/DHARPA-Project/kiara">https://github.com/DHARPA-Project/kiara</a>           
-                              <span style="font-style: italic">documentation</span>:                                    
-                              <a href="https://dharpa.org/kiara_documentation/">https://dharpa.org/kiara_documentation/</a>           
-                                                                                
- <span style="font-style: italic">Python class </span>                                                                  
-                <span style="font-style: italic"> class_name  </span>  PersistValueOperationType                        
-                <span style="font-style: italic"> module_name </span>  kiara.operations.included_core_operations.per…   
-                <span style="font-style: italic"> full_name   </span>  kiara.operations.included_core_operations.per…   
+                <span style="font-style: italic"> python_class_name  </span>  ExtractMetadataOperationType              
+                <span style="font-style: italic"> python_module_name </span>  kiara.operations.included_core_operati…   
+                <span style="font-style: italic"> full_name          </span>  kiara.operations.included_core_operati…   
                                                                                 
                                                                                 
 </pre>
@@ -3546,9 +3518,9 @@
                               <a href="https://dharpa.org/kiara_documentation/">https://dharpa.org/kiara_documentation/</a>           
                                                                                 
  <span style="font-style: italic">Python class </span>                                                                  
-                <span style="font-style: italic"> class_name  </span>  PipelineOperationType                            
-                <span style="font-style: italic"> module_name </span>  kiara.operations.included_core_operations.pip…   
-                <span style="font-style: italic"> full_name   </span>  kiara.operations.included_core_operations.pip…   
+                <span style="font-style: italic"> python_class_name  </span>  PipelineOperationType                     
+                <span style="font-style: italic"> python_module_name </span>  kiara.operations.included_core_operati…   
+                <span style="font-style: italic"> full_name          </span>  kiara.operations.included_core_operati…   
                                                                                 
                                                                                 
 </pre>
@@ -3577,44 +3549,9 @@
                               <a href="https://dharpa.org/kiara_documentation/">https://dharpa.org/kiara_documentation/</a>           
                                                                                 
  <span style="font-style: italic">Python class </span>                                                                  
-                <span style="font-style: italic"> class_name  </span>  RenderValueOperationType                         
-                <span style="font-style: italic"> module_name </span>  kiara.operations.included_core_operations.ren…   
-                <span style="font-style: italic"> full_name   </span>  kiara.operations.included_core_operations.ren…   
-                                                                                
-                                                                                
-</pre>
-<h3 id="kiara_info.operation_types.serialize"><code>serialize</code><a class="headerlink" href="#kiara_info.operation_types.serialize" title="Permanent link">&para;</a></h3>
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">                                                                                
- <span style="font-style: italic">Documentation</span>                                                                  
-                 An operation that takes a value, and serializes it into the    
-                 format suitable to the                                         
-                 [<span style="color: #ffffff; text-decoration-color: #ffffff; background-color: #000000">serialized_value</span>][kiara.data_types.included_core_types.Ser…   
-                 value type.                                                    
-                                                                                
-                 For a module profile to be picked up by this operation type,   
-                 it needs to have:                                              
-                                                                                
-                 <span style="color: #808000; text-decoration-color: #808000; font-weight: bold"> • </span>exactly one output field of type <span style="color: #ffffff; text-decoration-color: #ffffff; background-color: #000000">serialized_value</span>           
-                 <span style="color: #808000; text-decoration-color: #808000; font-weight: bold"> • </span>either one of (in this order):                              
-                 <span style="color: #808000; text-decoration-color: #808000; font-weight: bold">    • </span>exactly one input field                                  
-                 <span style="color: #808000; text-decoration-color: #808000; font-weight: bold">    • </span>one input field where the field name equals the type     
-                 <span style="color: #808000; text-decoration-color: #808000; font-weight: bold">      </span>name                                                     
-                 <span style="color: #808000; text-decoration-color: #808000; font-weight: bold">    • </span>an input field called 'value'                            
-                                                                                
- <span style="font-style: italic">Author(s)    </span>                                                                  
-                 Markus Binsteiner  <span style="font-style: italic"> markus@frkl.io </span>                            
-                                                                                
- <span style="font-style: italic">Context      </span>                                                                  
-                <span style="font-style: italic"> Labels     </span>  <span style="font-style: italic">package</span>: kiara                                    
-                <span style="font-style: italic"> References </span>  <span style="font-style: italic">source_repo</span>:                                      
-                              <a href="https://github.com/DHARPA-Project/kiara">https://github.com/DHARPA-Project/kiara</a>           
-                              <span style="font-style: italic">documentation</span>:                                    
-                              <a href="https://dharpa.org/kiara_documentation/">https://dharpa.org/kiara_documentation/</a>           
-                                                                                
- <span style="font-style: italic">Python class </span>                                                                  
-                <span style="font-style: italic"> class_name  </span>  SerializeOperationType                           
-                <span style="font-style: italic"> module_name </span>  kiara.operations.included_core_operations.ser…   
-                <span style="font-style: italic"> full_name   </span>  kiara.operations.included_core_operations.ser…   
+                <span style="font-style: italic"> python_class_name  </span>  RenderValueOperationType                  
+                <span style="font-style: italic"> python_module_name </span>  kiara.operations.included_core_operati…   
+                <span style="font-style: italic"> full_name          </span>  kiara.operations.included_core_operati…   
                                                                                 
                                                                                 
 </pre>
@@ -3690,7 +3627,7 @@
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.6e54b5cd.min.js"></script>
+      <script src="../../assets/javascripts/bundle.ed9748b7.min.js"></script>
       
     
   </body>

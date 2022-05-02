@@ -99,11 +99,11 @@ class InternalModelValueType(InternalType[KiaraModel, InternalModelTypeConfig]):
             "serialization_metadata": {
                 "environment": {},
                 "deserialize": {
-                    "object": {
+                    "python_object": {
                         "module_name": "load.internal_model",
                         "module_config": {
                             "value_type": "internal_model",
-                            "target_profile": "model_obj",
+                            "target_profile": "python_object",
                             "serialization_profile": "json",
                         },
                     }

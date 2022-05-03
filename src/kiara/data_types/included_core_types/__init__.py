@@ -106,7 +106,7 @@ class BytesType(AnyType[bytes, DataTypeConfig]):
                         "module_name": "load.bytes",
                         "module_config": {
                             "value_type": "bytes",
-                            "target_profile": "bytes",
+                            "target_profile": "python_object",
                             "serialization_profile": "raw",
                         },
                     }
@@ -152,8 +152,8 @@ class StringType(AnyType[str, DataTypeConfig]):
                     "python_object": {
                         "module_type": "load.string",
                         "module_config": {
-                            "value_type": "bytes",
-                            "target_profile": "bytes",
+                            "value_type": "string",
+                            "target_profile": "python_object",
                             "serialization_profile": "raw",
                         },
                     }

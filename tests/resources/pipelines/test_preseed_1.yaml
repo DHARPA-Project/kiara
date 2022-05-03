@@ -45,9 +45,9 @@ output_aliases:
   create_label_array.array: labels_array
 
 inputs:
-  edges_file_path: /home/markus/projects/dharpa/data/network_analysis/edges.csv
-  nodes_file_path: /home/markus/projects/dharpa/data/network_analysis/nodes.csv
+  edges_file_path: examples/data/network_analysis/edges.csv
+  nodes_file_path: examples/data/network_analysis/nodes.csv
   city_column_name: City
-  journals_folder_path: /home/markus/projects/dharpa/data/network_analysis
+  journals_folder_path: examples/data/network_analysis
   label_column_name: LabelOrig
-  text_corpus_folder_path: /home/markus/projects/dharpa/kiara_modules.playground/data/CI_newspaper_subcorpora/Il_Patriota
+#  text_corpus_folder_path: /kiara_modules.playground/data/CI_newspaper_subcorpora/Il_Patriota

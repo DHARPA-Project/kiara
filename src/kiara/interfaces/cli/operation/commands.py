@@ -139,9 +139,12 @@ def list_operations(
     help="Show module source code (or pipeline configuration).",
     is_flag=True,
 )
+@click.option(
+    "--module-info", "-m", help="Show module type and config information.", is_flag=True
+)
 @output_format_option()
 @click.pass_context
-def explain(ctx, operation_id: str, source: bool, format: str):
+def explain(ctx, operation_id: str, source: bool, format: str, module_info: bool):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
@@ -161,4 +164,5 @@ def explain(ctx, operation_id: str, source: bool, format: str):
         format=format,
         in_panel=f"Operation: [b i]{operation_id}[/b i]",
         include_src=source,
+        include_module_details=module_info,
     )

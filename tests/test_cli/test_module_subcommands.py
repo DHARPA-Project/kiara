@@ -53,4 +53,3 @@ def test_module_explain_instance_subcommand():
     result = runner.invoke(cli, "module explain-instance logic.and")
     assert result.exit_code == 0
     assert "Inputs" in result.stdout
-    assert "constants" in result.stdout

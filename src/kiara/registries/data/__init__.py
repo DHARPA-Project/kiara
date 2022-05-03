@@ -725,14 +725,17 @@ class DataRegistry(object):
         op = Operation.create_from_module(module=module)
 
         input_field_match: Optional[str] = None
-        for input_field, schema in op.inputs_schema.items():
-            if schema.type == value.data_type_name:
-                if input_field_match is not None:
-                    raise Exception(
-                        f"Can't determine input field for deserialization operation '{module.module_type_name}': multiple input fields with type '{input_field_match}'."
-                    )
-                else:
-                    input_field_match = input_field
+        if len(op.inputs_schema) == 1:
+            input_field_match = next(iter(op.inputs_schema.keys()))
+        else:
+            for input_field, schema in op.inputs_schema.items():
+                if schema.type == value.data_type_name:
+                    if input_field_match is not None:
+                        raise Exception(
+                            f"Can't determine input field for deserialization operation '{module.module_type_name}': multiple input fields with type '{input_field_match}'."
+                        )
+                    else:
+                        input_field_match = input_field
         if input_field_match is None:
             raise Exception(
                 f"Can't determine input field for deserialization operation '{module.module_type_name}'."

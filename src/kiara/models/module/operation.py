@@ -373,7 +373,7 @@ class Operation(Manifest):
         include_src = config.get("include_src", False)
         include_inputs = config.get("include_inputs", True)
         include_outputs = config.get("include_outputs", True)
-        include_module_details = config.get("include_moduel_details", True)
+        include_module_details = config.get("include_module_details", False)
 
         table = Table(box=box.SIMPLE, show_header=False, show_lines=True)
         table.add_column("Property", style="i")

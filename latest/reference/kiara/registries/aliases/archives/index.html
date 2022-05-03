@@ -3413,6 +3413,8 @@ FileSystemAliasArchive            (<a class="autorefs autorefs-internal" title="
             <span class="o">.</span><span class="n">as_posix</span><span class="p">()[:</span><span class="o">-</span><span class="mi">6</span><span class="p">]</span>
         <span class="p">)</span>
 
+        <span class="n">relative</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">relative</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">relative</span><span class="p">:</span>
             <span class="n">alias</span> <span class="o">=</span> <span class="n">relative</span>
         <span class="k">else</span><span class="p">:</span>
@@ -3435,6 +3437,7 @@ FileSystemAliasArchive            (<a class="autorefs autorefs-internal" title="
             <span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_id_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">())</span>
             <span class="o">.</span><span class="n">as_posix</span><span class="p">()[:</span><span class="o">-</span><span class="mi">6</span><span class="p">]</span>
         <span class="p">)</span>
+        <span class="n">relative</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">relative</span><span class="p">)</span>
         <span class="n">value_id_str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">relative</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="n">value_id_str</span><span class="p">)</span>

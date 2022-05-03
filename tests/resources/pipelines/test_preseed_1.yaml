@@ -45,9 +45,9 @@ output_aliases:
   create_label_array.array: labels_array
 
 inputs:
-  edges_file_path: examples/data/network_analysis/edges.csv
-  nodes_file_path: examples/data/network_analysis/nodes.csv
+  edges_file_path: examples/data/journals/JournalEdges1902.csv
+  nodes_file_path: examples/data/journals/JournalNodes1902.csv
   city_column_name: City
-  journals_folder_path: examples/data/network_analysis
-  label_column_name: LabelOrig
+  journals_folder_path: examples/data/journals
+  label_column_name: Label
   text_corpus_folder_path: examples/data/text_corpus

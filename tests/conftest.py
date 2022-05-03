@@ -13,12 +13,12 @@
     Read more about conftest.py under:
     https://pytest.org/latest/plugins.html
 """
-
 import pytest
 
 import os
 import tempfile
 import uuid
+from pathlib import Path
 
 from kiara import Kiara
 from kiara.context.config import KiaraConfig
@@ -29,6 +29,16 @@ from .utils import INVALID_PIPELINES_FOLDER, MODULE_CONFIGS_FOLDER, PIPELINES_FO
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 DATA_FOLDER = os.path.join(ROOT_DIR, "examples", "data")
+
+
+def create_temp_dir():
+    session_id = str(uuid.uuid4())
+    TEMP_DIR = Path(os.path.join(tempfile.gettempdir(), "kiara_tests"))
+
+    instance_path = os.path.join(
+        TEMP_DIR.resolve().absolute(), f"instance_{session_id}"
+    )
+    return instance_path
 
 
 @pytest.fixture
@@ -76,10 +86,7 @@ def module_config_paths():
 @pytest.fixture
 def kiara() -> Kiara:
 
-    session_id = str(uuid.uuid4())
-    TEMP_DIR = os.path.abspath(os.path.join(tempfile.gettempdir(), "kiara_tests"))
-
-    instance_path = os.path.join(TEMP_DIR, f"instance_{session_id}")
+    instance_path = create_temp_dir()
     kc = KiaraConfig.create_in_folder(instance_path)
     kiara = kc.create_context()
     return kiara
@@ -88,10 +95,7 @@ def kiara() -> Kiara:
 @pytest.fixture(scope="module")
 def presseeded_data_store_minimal() -> Kiara:
 
-    session_id = str(uuid.uuid4())
-    TEMP_DIR = os.path.abspath(os.path.join(tempfile.gettempdir(), "kiara_tests"))
-
-    instance_path = os.path.join(TEMP_DIR, f"instance_{session_id}")
+    instance_path = create_temp_dir()
 
     pipeline_file = os.path.join(PIPELINES_FOLDER, "table_import.json")
 
@@ -115,10 +119,7 @@ def presseeded_data_store_minimal() -> Kiara:
 @pytest.fixture(scope="module")
 def preseeded_data_store() -> Kiara:
 
-    session_id = str(uuid.uuid4())
-
-    TEMP_DIR = os.path.abspath(os.path.join(tempfile.gettempdir(), "kiara_tests"))
-    instance_path = os.path.join(TEMP_DIR, f"instance_{session_id}")
+    instance_path = create_temp_dir()
     kc = KiaraConfig.create_in_folder(instance_path)
     kiara = kc.create_context()
 

@@ -171,6 +171,7 @@ class KiaraConfig(BaseSettings):
 
         if isinstance(path, str):
             path = Path(path)
+        path = path.absolute()
         if path.exists():
             raise Exception(
                 f"Can't create new kiara config, path exists: {path.as_posix()}"
@@ -243,10 +244,10 @@ class KiaraConfig(BaseSettings):
 
         base_path = values.get("base_data_path", None)
         if not base_path:
-            base_path = kiara_app_dirs.user_data_dir
+            base_path = os.path.abspath(kiara_app_dirs.user_data_dir)
             values["base_data_path"] = base_path
         elif isinstance(base_path, Path):
-            base_path = base_path.as_posix()
+            base_path = base_path.absolute().as_posix()
             values["base_data_path"] = base_path
 
         stores_base_path = values.get("stores_base_path", None)

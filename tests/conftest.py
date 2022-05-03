@@ -26,7 +26,6 @@ from kiara.interfaces.python_api.batch import BatchOperation
 
 from .utils import INVALID_PIPELINES_FOLDER, MODULE_CONFIGS_FOLDER, PIPELINES_FOLDER
 
-TEMP_DIR = os.path.join(tempfile.gettempdir(), "kiara_tests")
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 DATA_FOLDER = os.path.join(ROOT_DIR, "examples", "data")
@@ -78,6 +77,7 @@ def module_config_paths():
 def kiara() -> Kiara:
 
     session_id = str(uuid.uuid4())
+    TEMP_DIR = os.path.join(tempfile.gettempdir(), "kiara_tests")
 
     instance_path = os.path.join(TEMP_DIR, f"instance_{session_id}")
     kc = KiaraConfig.create_in_folder(instance_path)
@@ -89,6 +89,8 @@ def kiara() -> Kiara:
 def presseeded_data_store_minimal() -> Kiara:
 
     session_id = str(uuid.uuid4())
+    TEMP_DIR = os.path.join(tempfile.gettempdir(), "kiara_tests")
+
     instance_path = os.path.join(TEMP_DIR, f"instance_{session_id}")
 
     pipeline_file = os.path.join(PIPELINES_FOLDER, "table_import.json")
@@ -115,6 +117,7 @@ def preseeded_data_store() -> Kiara:
 
     session_id = str(uuid.uuid4())
 
+    TEMP_DIR = os.path.join(tempfile.gettempdir(), "kiara_tests")
     instance_path = os.path.join(TEMP_DIR, f"instance_{session_id}")
     kc = KiaraConfig.create_in_folder(instance_path)
     kiara = kc.create_context()

@@ -111,7 +111,7 @@ class FileValueType(KiaraModelValueType[FileModel, FileTypeConfig]):
         max_lines = render_config.get("max_lines", 34)
         try:
             lines = []
-            with open(data.path, "r") as f:
+            with open(data.path, "r", encoding="utf-8") as f:
                 for idx, l in enumerate(f):
                     if idx > max_lines:
                         lines.append("...\n")
@@ -140,7 +140,7 @@ class FileValueType(KiaraModelValueType[FileModel, FileTypeConfig]):
         max_lines = render_config.get("max_lines", 34)
         try:
             lines = []
-            with open(data.path, "r") as f:
+            with open(data.path, "r", encoding="utf-8") as f:
                 for idx, l in enumerate(f):
                     if idx > max_lines:
                         lines.append("...\n")

@@ -62,6 +62,8 @@ class FileSystemAliasArchive(AliasArchive):
             .as_posix()[:-6]
         )
 
+        relative = os.path.normpath(relative)
+
         if os.path.sep not in relative:
             alias = relative
         else:
@@ -84,6 +86,7 @@ class FileSystemAliasArchive(AliasArchive):
             .relative_to(self.value_id_path.absolute())
             .as_posix()[:-6]
         )
+        relative = os.path.normpath(relative)
         value_id_str = "-".join(relative.split(os.path.sep))
 
         return uuid.UUID(value_id_str)

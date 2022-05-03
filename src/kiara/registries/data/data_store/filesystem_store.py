@@ -81,7 +81,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
         if self._base_path is not None:
             return self._base_path
 
-        self._base_path = Path(self.config.archive_path)
+        self._base_path = Path(self.config.archive_path).absolute()
         self._base_path.mkdir(parents=True, exist_ok=True)
         return self._base_path
 

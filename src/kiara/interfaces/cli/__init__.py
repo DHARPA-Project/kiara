@@ -17,7 +17,7 @@ from typing import Any, Dict, Optional, Tuple
 
 from kiara.context.config import KiaraConfig
 from kiara.defaults import KIARA_CONFIG_FILE_NAME, KIARA_MAIN_CONFIG_FILE
-from kiara.utils import is_debug, is_develop, log_message
+from kiara.utils import is_debug, is_develop
 from kiara.utils.cli import terminal_print
 
 from .context.commands import context
@@ -27,7 +27,8 @@ from .module.commands import module
 from .operation.commands import operation
 from .pipeline.commands import pipeline
 from .run import run
-from .service.commands import service
+
+# from .service.commands import service
 from .type.commands import type_group
 
 # click.rich_click.USE_MARKDOWN = True
@@ -145,12 +146,12 @@ cli.add_command(pipeline)
 cli.add_command(type_group)
 cli.add_command(context)
 
-try:
-    pass
-
-    cli.add_command(service)
-except Exception:
-    log_message("skip.service_subcommand", reason="'fastapi' package not installed")
+# try:
+#     pass
+#
+#     cli.add_command(service)
+# except Exception:
+#     log_message("skip.service_subcommand", reason="'fastapi' package not installed")
 
 if is_develop():
     cli.add_command(dev_group)

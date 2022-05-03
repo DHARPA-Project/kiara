@@ -56,7 +56,11 @@ class FileSystemAliasArchive(AliasArchive):
 
     def _translate_alias_path(self, alias_path: Path) -> str:
 
-        relative = alias_path.relative_to(self.aliases_path).as_posix()[:-6]
+        relative = (
+            alias_path.absolute()
+            .relative_to(self.aliases_path.absolute())
+            .as_posix()[:-6]
+        )
 
         if os.path.sep not in relative:
             alias = relative
@@ -75,7 +79,11 @@ class FileSystemAliasArchive(AliasArchive):
 
     def _translate_value_path(self, value_path: Path) -> uuid.UUID:
 
-        relative = value_path.relative_to(self.value_id_path).as_posix()[:-6]
+        relative = (
+            value_path.absolute()
+            .relative_to(self.value_id_path.absolute())
+            .as_posix()[:-6]
+        )
         value_id_str = "-".join(relative.split(os.path.sep))
 
         return uuid.UUID(value_id_str)

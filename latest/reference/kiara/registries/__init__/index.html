@@ -2914,7 +2914,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../service/__init__/">service</a>
+          <a href="../../utils/__init__/">utils</a>
           
             <label for="__nav_3_1_12">
               <span class="md-nav__icon md-icon"></span>
@@ -2922,61 +2922,8 @@
           
         </div>
       
-      <nav class="md-nav" aria-label="service" data-md-level="3">
-        <label class="md-nav__title" for="__nav_3_1_12">
-          <span class="md-nav__icon md-icon"></span>
-          service
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../service/rest/__init__/" class="md-nav__link">
-        rest
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_13" type="checkbox" id="__nav_3_1_13" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../utils/__init__/">utils</a>
-          
-            <label for="__nav_3_1_13">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
       <nav class="md-nav" aria-label="utils" data-md-level="3">
-        <label class="md-nav__title" for="__nav_3_1_13">
+        <label class="md-nav__title" for="__nav_3_1_12">
           <span class="md-nav__icon md-icon"></span>
           utils
         </label>
@@ -5611,7 +5558,7 @@ FileSystemAliasArchive            (<a class="autorefs autorefs-internal" title="
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">archive_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">archive_path</span><span class="p">)</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span>
 
@@ -5636,7 +5583,11 @@ FileSystemAliasArchive            (<a class="autorefs autorefs-internal" title="
 
     <span class="k">def</span> <span class="nf">_translate_alias_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 
-        <span class="n">relative</span> <span class="o">=</span> <span class="n">alias_path</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases_path</span><span class="p">)</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()[:</span><span class="o">-</span><span class="mi">6</span><span class="p">]</span>
+        <span class="n">relative</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">alias_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">())</span>
+            <span class="o">.</span><span class="n">as_posix</span><span class="p">()[:</span><span class="o">-</span><span class="mi">6</span><span class="p">]</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">relative</span><span class="p">:</span>
             <span class="n">alias</span> <span class="o">=</span> <span class="n">relative</span>
@@ -5655,7 +5606,11 @@ FileSystemAliasArchive            (<a class="autorefs autorefs-internal" title="
 
     <span class="k">def</span> <span class="nf">_translate_value_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
 
-        <span class="n">relative</span> <span class="o">=</span> <span class="n">value_path</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_id_path</span><span class="p">)</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()[:</span><span class="o">-</span><span class="mi">6</span><span class="p">]</span>
+        <span class="n">relative</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">value_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_id_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">())</span>
+            <span class="o">.</span><span class="n">as_posix</span><span class="p">()[:</span><span class="o">-</span><span class="mi">6</span><span class="p">]</span>
+        <span class="p">)</span>
         <span class="n">value_id_str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">relative</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="n">value_id_str</span><span class="p">)</span>
@@ -6839,14 +6794,17 @@ DataRegistry        </code>
         <span class="n">op</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">create_from_module</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">)</span>
 
         <span class="n">input_field_match</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">for</span> <span class="n">input_field</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine input field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;: multiple input fields with type &#39;</span><span class="si">{</span><span class="n">input_field_match</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
-                    <span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">input_field_match</span> <span class="o">=</span> <span class="n">input_field</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">input_field_match</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">input_field</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine input field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;: multiple input fields with type &#39;</span><span class="si">{</span><span class="n">input_field_match</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">input_field_match</span> <span class="o">=</span> <span class="n">input_field</span>
         <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine input field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
@@ -7952,14 +7910,17 @@ DataRegistry        </code>
     <span class="n">op</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">create_from_module</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">)</span>
 
     <span class="n">input_field_match</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">for</span> <span class="n">input_field</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine input field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;: multiple input fields with type &#39;</span><span class="si">{</span><span class="n">input_field_match</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">input_field_match</span> <span class="o">=</span> <span class="n">input_field</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">input_field_match</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">input_field</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine input field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;: multiple input fields with type &#39;</span><span class="si">{</span><span class="n">input_field_match</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">input_field_match</span> <span class="o">=</span> <span class="n">input_field</span>
     <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine input field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
@@ -9547,7 +9508,7 @@ FileSystemDataArchive            (<a class="autorefs autorefs-internal" title="k
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">archive_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">archive_path</span><span class="p">)</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span>
 
@@ -14518,7 +14479,7 @@ FileSystemJobArchive            (<a class="autorefs autorefs-internal" title="ki
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">archive_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">archive_path</span><span class="p">)</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span>
 

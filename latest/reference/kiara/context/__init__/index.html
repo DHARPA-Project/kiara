@@ -2914,7 +2914,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../service/__init__/">service</a>
+          <a href="../../utils/__init__/">utils</a>
           
             <label for="__nav_3_1_12">
               <span class="md-nav__icon md-icon"></span>
@@ -2922,61 +2922,8 @@
           
         </div>
       
-      <nav class="md-nav" aria-label="service" data-md-level="3">
-        <label class="md-nav__title" for="__nav_3_1_12">
-          <span class="md-nav__icon md-icon"></span>
-          service
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../service/rest/__init__/" class="md-nav__link">
-        rest
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_13" type="checkbox" id="__nav_3_1_13" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../utils/__init__/">utils</a>
-          
-            <label for="__nav_3_1_13">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
       <nav class="md-nav" aria-label="utils" data-md-level="3">
-        <label class="md-nav__title" for="__nav_3_1_13">
+        <label class="md-nav__title" for="__nav_3_1_12">
           <span class="md-nav__icon md-icon"></span>
           utils
         </label>
@@ -5236,6 +5183,7 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Can&#39;t create new kiara config, path exists: </span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -5308,10 +5256,10 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
 
         <span class="n">base_path</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;base_data_path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">base_path</span><span class="p">:</span>
-            <span class="n">base_path</span> <span class="o">=</span> <span class="n">kiara_app_dirs</span><span class="o">.</span><span class="n">user_data_dir</span>
+            <span class="n">base_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">kiara_app_dirs</span><span class="o">.</span><span class="n">user_data_dir</span><span class="p">)</span>
             <span class="n">values</span><span class="p">[</span><span class="s2">&quot;base_data_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">base_path</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base_path</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
-            <span class="n">base_path</span> <span class="o">=</span> <span class="n">base_path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
+            <span class="n">base_path</span> <span class="o">=</span> <span class="n">base_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
             <span class="n">values</span><span class="p">[</span><span class="s2">&quot;base_data_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">base_path</span>
 
         <span class="n">stores_base_path</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stores_base_path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -5849,6 +5797,7 @@ Config        </code>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Can&#39;t create new kiara config, path exists: </span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -6308,8 +6257,10 @@ Config        </code>
 
     <span class="n">data_store_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="s2">&quot;default data store id&quot;</span><span class="p">)</span>
     <span class="n">data_archive_config</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;archive_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="n">kiara_config</span><span class="o">.</span><span class="n">stores_base_path</span><span class="p">,</span> <span class="n">data_store_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">data_store_id</span><span class="p">)</span>
+        <span class="s2">&quot;archive_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">kiara_config</span><span class="o">.</span><span class="n">stores_base_path</span><span class="p">,</span> <span class="n">data_store_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">data_store_id</span><span class="p">)</span>
+            <span class="p">)</span>
         <span class="p">)</span>
     <span class="p">}</span>
     <span class="n">data_store</span> <span class="o">=</span> <span class="n">KiaraArchiveConfig</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
@@ -6319,10 +6270,13 @@ Config        </code>
     <span class="p">)</span>
 
     <span class="n">job_store_type</span> <span class="o">=</span> <span class="s2">&quot;filesystem_job_store&quot;</span>
+    <span class="k">assert</span> <span class="n">job_store_type</span> <span class="ow">in</span> <span class="n">archives</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
     <span class="n">job_store_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="s2">&quot;default job store id&quot;</span><span class="p">)</span>
     <span class="n">job_archive_config</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;archive_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="n">kiara_config</span><span class="o">.</span><span class="n">stores_base_path</span><span class="p">,</span> <span class="n">job_store_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">job_store_id</span><span class="p">)</span>
+        <span class="s2">&quot;archive_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">kiara_config</span><span class="o">.</span><span class="n">stores_base_path</span><span class="p">,</span> <span class="n">job_store_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">job_store_id</span><span class="p">)</span>
+            <span class="p">)</span>
         <span class="p">)</span>
     <span class="p">}</span>
     <span class="n">job_store</span> <span class="o">=</span> <span class="n">KiaraArchiveConfig</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
@@ -6332,10 +6286,13 @@ Config        </code>
     <span class="p">)</span>
 
     <span class="n">alias_store_type</span> <span class="o">=</span> <span class="s2">&quot;filesystem_alias_store&quot;</span>
+    <span class="k">assert</span> <span class="n">job_store_type</span> <span class="ow">in</span> <span class="n">archives</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
     <span class="n">alias_store_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="s2">&quot;default alias store id&quot;</span><span class="p">)</span>
     <span class="n">alias_store_config</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;archive_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="n">kiara_config</span><span class="o">.</span><span class="n">stores_base_path</span><span class="p">,</span> <span class="n">alias_store_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">alias_store_id</span><span class="p">)</span>
+        <span class="s2">&quot;archive_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">kiara_config</span><span class="o">.</span><span class="n">stores_base_path</span><span class="p">,</span> <span class="n">alias_store_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">alias_store_id</span><span class="p">)</span>
+            <span class="p">)</span>
         <span class="p">)</span>
     <span class="p">}</span>
     <span class="n">alias_store</span> <span class="o">=</span> <span class="n">KiaraArchiveConfig</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>

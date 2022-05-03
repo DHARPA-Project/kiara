@@ -40,33 +40,33 @@ jobs:
       - name: test with pytest
         run: make test
 
-#  coverage:
-#    name: test coverage
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: "Set up Python 3.9"
-#        uses: actions/setup-python@v2
-#        with:
-#          python-version: 3.9
-#      - name: pip cache
-#        id: pip-cache
-#        uses: actions/cache@v1
-#        with:
-#          path: ~/.cache/pip
-#          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*') }}
-#      - uses: actions/checkout@v2
-#      - name: install kiara_modules.core
-#        run: pip install -U --pre --extra-index-url https://pypi.fury.io/dharpa/ kiara_modules.core[all]
-#      - name: install kiara
-#        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]
-#      - name: display installed kiara and module package versions
-#        run: pip list | grep kiara
-#      - name: Run coverage
-#        run: coverage run -m pytest tests
-#      - name: Upload coverage data to coveralls.io
-#        run: coveralls --service=github
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  coverage:
+    name: test coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Set up Python 3.9"
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: pip cache
+        id: pip-cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*') }}
+      - uses: actions/checkout@v2
+      - name: install required plugin packages
+        run: pip install -U --pre --extra-index-url https://pypi.fury.io/dharpa/ kiara_plugin.core_types kiara_plugin.tabular
+      - name: install kiara
+        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]
+      - name: display installed kiara and module package versions
+        run: pip list | grep kiara
+      - name: Run coverage
+        run: coverage run -m pytest tests
+      - name: Upload coverage data to coveralls.io
+        run: coveralls --service=github
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   mypy-linux:
     name: mypy check on linux

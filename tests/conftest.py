@@ -77,7 +77,7 @@ def module_config_paths():
 def kiara() -> Kiara:
 
     session_id = str(uuid.uuid4())
-    TEMP_DIR = os.path.join(tempfile.gettempdir(), "kiara_tests")
+    TEMP_DIR = os.path.abspath(os.path.join(tempfile.gettempdir(), "kiara_tests"))
 
     instance_path = os.path.join(TEMP_DIR, f"instance_{session_id}")
     kc = KiaraConfig.create_in_folder(instance_path)
@@ -89,7 +89,7 @@ def kiara() -> Kiara:
 def presseeded_data_store_minimal() -> Kiara:
 
     session_id = str(uuid.uuid4())
-    TEMP_DIR = os.path.join(tempfile.gettempdir(), "kiara_tests")
+    TEMP_DIR = os.path.abspath(os.path.join(tempfile.gettempdir(), "kiara_tests"))
 
     instance_path = os.path.join(TEMP_DIR, f"instance_{session_id}")
 
@@ -117,7 +117,7 @@ def preseeded_data_store() -> Kiara:
 
     session_id = str(uuid.uuid4())
 
-    TEMP_DIR = os.path.join(tempfile.gettempdir(), "kiara_tests")
+    TEMP_DIR = os.path.abspath(os.path.join(tempfile.gettempdir(), "kiara_tests"))
     instance_path = os.path.join(TEMP_DIR, f"instance_{session_id}")
     kc = KiaraConfig.create_in_folder(instance_path)
     kiara = kc.create_context()

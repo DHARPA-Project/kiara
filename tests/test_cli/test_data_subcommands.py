@@ -23,7 +23,7 @@ def _run_command(kiara_ctx: Kiara, cmd):
 
     config_path = kiara_ctx.context_config._context_config_path
 
-    cmd = f"--context {config_path} {cmd}"
+    cmd = f"--context '{config_path}' {cmd}"
     print(f"Running command:\n\nkiara {cmd}")
 
     runner = CliRunner()

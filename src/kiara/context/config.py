@@ -73,8 +73,10 @@ def create_default_archives(kiara_config: "KiaraConfig"):
 
     data_store_id = ID_REGISTRY.generate(comment="default data store id")
     data_archive_config = {
-        "archive_path": os.path.join(
-            kiara_config.stores_base_path, data_store_type, str(data_store_id)
+        "archive_path": os.path.abspath(
+            os.path.join(
+                kiara_config.stores_base_path, data_store_type, str(data_store_id)
+            )
         )
     }
     data_store = KiaraArchiveConfig.construct(
@@ -84,10 +86,13 @@ def create_default_archives(kiara_config: "KiaraConfig"):
     )
 
     job_store_type = "filesystem_job_store"
+    assert job_store_type in archives.keys()
     job_store_id = ID_REGISTRY.generate(comment="default job store id")
     job_archive_config = {
-        "archive_path": os.path.join(
-            kiara_config.stores_base_path, job_store_type, str(job_store_id)
+        "archive_path": os.path.abspath(
+            os.path.join(
+                kiara_config.stores_base_path, job_store_type, str(job_store_id)
+            )
         )
     }
     job_store = KiaraArchiveConfig.construct(
@@ -97,10 +102,13 @@ def create_default_archives(kiara_config: "KiaraConfig"):
     )
 
     alias_store_type = "filesystem_alias_store"
+    assert job_store_type in archives.keys()
     alias_store_id = ID_REGISTRY.generate(comment="default alias store id")
     alias_store_config = {
-        "archive_path": os.path.join(
-            kiara_config.stores_base_path, alias_store_type, str(alias_store_id)
+        "archive_path": os.path.abspath(
+            os.path.join(
+                kiara_config.stores_base_path, alias_store_type, str(alias_store_id)
+            )
         )
     }
     alias_store = KiaraArchiveConfig.construct(

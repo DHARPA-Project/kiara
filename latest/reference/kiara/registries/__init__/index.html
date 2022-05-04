@@ -6102,6 +6102,24 @@ FileSystemAliasStore            (<a class="autorefs autorefs-internal" title="ki
 
 
 
+<h5 id="kiara.registries.data.NONE_PERSISTED_DATA" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">NONE_PERSISTED_DATA</span></code>
+
+
+<a href="#kiara.registries.data.NONE_PERSISTED_DATA" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
 <h5 id="kiara.registries.data.logger" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">logger</span></code>
 
@@ -6154,7 +6172,7 @@ DataRegistry        </code>
         <span class="bp">self</span><span class="o">.</span><span class="n">_persisted_value_descs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PersistedData</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="c1"># initialize special values</span>
-        <span class="n">special_value_cls</span> <span class="o">=</span> <span class="n">PythonClass</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">SpecialValue</span><span class="p">)</span>
+        <span class="n">special_value_cls</span> <span class="o">=</span> <span class="n">PythonClass</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">NoneType</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_not_set_value</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="n">Value</span><span class="p">(</span>
             <span class="n">value_id</span><span class="o">=</span><span class="n">NOT_SET_VALUE_ID</span><span class="p">,</span>
             <span class="n">kiara_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
@@ -6171,7 +6189,10 @@ DataRegistry        </code>
             <span class="n">pedigree_output_name</span><span class="o">=</span><span class="s2">&quot;__void__&quot;</span><span class="p">,</span>
             <span class="n">data_type_class</span><span class="o">=</span><span class="n">special_value_cls</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_not_set_value</span><span class="o">.</span><span class="n">_data_registry</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_data</span><span class="p">[</span><span class="n">NOT_SET_VALUE_ID</span><span class="p">]</span> <span class="o">=</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NOT_SET</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_registered_values</span><span class="p">[</span><span class="n">NOT_SET_VALUE_ID</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_not_set_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_persisted_value_descs</span><span class="p">[</span><span class="n">NOT_SET_VALUE_ID</span><span class="p">]</span> <span class="o">=</span> <span class="n">NONE_PERSISTED_DATA</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_none_value</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="n">Value</span><span class="p">(</span>
             <span class="n">value_id</span><span class="o">=</span><span class="n">NONE_VALUE_ID</span><span class="p">,</span>
@@ -6189,7 +6210,10 @@ DataRegistry        </code>
             <span class="n">pedigree_output_name</span><span class="o">=</span><span class="s2">&quot;__void__&quot;</span><span class="p">,</span>
             <span class="n">data_type_class</span><span class="o">=</span><span class="n">special_value_cls</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_none_value</span><span class="o">.</span><span class="n">_data_registry</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_data</span><span class="p">[</span><span class="n">NONE_VALUE_ID</span><span class="p">]</span> <span class="o">=</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NO_VALUE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_registered_values</span><span class="p">[</span><span class="n">NONE_VALUE_ID</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_none_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_persisted_value_descs</span><span class="p">[</span><span class="n">NONE_VALUE_ID</span><span class="p">]</span> <span class="o">=</span> <span class="n">NONE_PERSISTED_DATA</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">kiara_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
@@ -6528,7 +6552,8 @@ DataRegistry        </code>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Value</span><span class="p">):</span>
 
             <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">value_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_registered_values</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">is_serializable</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">is_set</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">is_serializable</span><span class="p">:</span>
                     <span class="n">serialized</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SerializedData</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">serialized_data</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">serialized</span> <span class="o">=</span> <span class="n">NO_SERIALIZATION_MARKER</span>
@@ -6639,6 +6664,11 @@ DataRegistry        </code>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Can&#39;t register data of type &#39;</span><span class="si">{</span><span class="n">schema</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&#39;: type not registered. Available types: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_type_names</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NO_VALUE</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NONE_VALUE</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">data</span> <span class="ow">is</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NOT_SET</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NOT_SET_VALUE</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># data_type: Optional[DataType] = None</span>
         <span class="c1"># status: Optional[ValueStatus] = None</span>
@@ -6905,10 +6935,15 @@ DataRegistry        </code>
 
             <span class="k">if</span> <span class="n">input_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="n">value_data</span> <span class="o">=</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NOT_SET</span>
-            <span class="k">elif</span> <span class="n">data</span><span class="p">[</span><span class="n">input_name</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">data</span><span class="p">[</span><span class="n">input_name</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="kc">None</span><span class="p">,</span>
+                <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NO_VALUE</span><span class="p">,</span>
+                <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NOT_SET</span><span class="p">,</span>
+            <span class="p">]:</span>
                 <span class="n">value_data</span> <span class="o">=</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NO_VALUE</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">value_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">input_name</span><span class="p">]</span>
+
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">register_data</span><span class="p">(</span>
                     <span class="n">data</span><span class="o">=</span><span class="n">value_data</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">value_schema</span><span class="p">,</span> <span class="n">reuse_existing</span><span class="o">=</span><span class="kc">True</span>
@@ -7168,10 +7203,15 @@ DataRegistry        </code>
 
         <span class="k">if</span> <span class="n">input_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">value_data</span> <span class="o">=</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NOT_SET</span>
-        <span class="k">elif</span> <span class="n">data</span><span class="p">[</span><span class="n">input_name</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">data</span><span class="p">[</span><span class="n">input_name</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NO_VALUE</span><span class="p">,</span>
+            <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NOT_SET</span><span class="p">,</span>
+        <span class="p">]:</span>
             <span class="n">value_data</span> <span class="o">=</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NO_VALUE</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">value_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">input_name</span><span class="p">]</span>
+
         <span class="k">try</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">register_data</span><span class="p">(</span>
                 <span class="n">data</span><span class="o">=</span><span class="n">value_data</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">value_schema</span><span class="p">,</span> <span class="n">reuse_existing</span><span class="o">=</span><span class="kc">True</span>
@@ -8511,7 +8551,6 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
         <span class="c1">#     )</span>
 
         <span class="n">pedigree</span> <span class="o">=</span> <span class="n">ValuePedigree</span><span class="p">(</span><span class="o">**</span><span class="n">value_data</span><span class="p">[</span><span class="s2">&quot;pedigree&quot;</span><span class="p">])</span>
-
         <span class="n">value</span> <span class="o">=</span> <span class="n">Value</span><span class="p">(</span>
             <span class="n">value_id</span><span class="o">=</span><span class="n">value_data</span><span class="p">[</span><span class="s2">&quot;value_id&quot;</span><span class="p">],</span>
             <span class="n">kiara_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kiara_context</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
@@ -8983,7 +9022,6 @@ This is to make sure it can still be loaded later on, in case the Python model h
     <span class="c1">#     )</span>
 
     <span class="n">pedigree</span> <span class="o">=</span> <span class="n">ValuePedigree</span><span class="p">(</span><span class="o">**</span><span class="n">value_data</span><span class="p">[</span><span class="s2">&quot;pedigree&quot;</span><span class="p">])</span>
-
     <span class="n">value</span> <span class="o">=</span> <span class="n">Value</span><span class="p">(</span>
         <span class="n">value_id</span><span class="o">=</span><span class="n">value_data</span><span class="p">[</span><span class="s2">&quot;value_id&quot;</span><span class="p">],</span>
         <span class="n">kiara_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kiara_context</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>

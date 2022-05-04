@@ -3555,7 +3555,7 @@ FileBundle            (<a class="autorefs autorefs-internal" title="kiara.models
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">files</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">FileModel</span><span class="p">],</span>
         <span class="n">bundle_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">sum_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">import_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;FileBundle&quot;</span><span class="p">:</span>
@@ -4004,7 +4004,7 @@ FileBundle            (<a class="autorefs autorefs-internal" title="kiara.models
 
 
 <h5 id="kiara.models.filesystem.FileBundle.create_from_file_models" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_from_file_models</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">bundle_name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">sum_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">import_time</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_from_file_models</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">bundle_name</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sum_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">import_time</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
@@ -4022,7 +4022,7 @@ FileBundle            (<a class="autorefs autorefs-internal" title="kiara.models
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">files</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">FileModel</span><span class="p">],</span>
     <span class="n">bundle_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">sum_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">import_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;FileBundle&quot;</span><span class="p">:</span>

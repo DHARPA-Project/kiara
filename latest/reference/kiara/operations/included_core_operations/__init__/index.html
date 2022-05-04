@@ -3955,10 +3955,17 @@ CreateFromOperationType            (<a class="autorefs autorefs-internal" title=
         <span class="k">else</span><span class="p">:</span>
             <span class="n">is_internal</span> <span class="o">=</span> <span class="kc">True</span>
 
+        <span class="n">optional</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="n">source_type</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">optional</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
+
         <span class="n">details</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;operation_id&quot;</span><span class="p">:</span> <span class="n">op_id</span><span class="p">,</span>
             <span class="s2">&quot;source_type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span>
             <span class="s2">&quot;target_type&quot;</span><span class="p">:</span> <span class="n">target_type</span><span class="p">,</span>
+            <span class="s2">&quot;optional_args&quot;</span><span class="p">:</span> <span class="n">optional</span><span class="p">,</span>
             <span class="s2">&quot;is_internal_operation&quot;</span><span class="p">:</span> <span class="n">is_internal</span><span class="p">,</span>
         <span class="p">}</span>
 
@@ -4042,10 +4049,17 @@ CreateFromOperationType            (<a class="autorefs autorefs-internal" title=
     <span class="k">else</span><span class="p">:</span>
         <span class="n">is_internal</span> <span class="o">=</span> <span class="kc">True</span>
 
+    <span class="n">optional</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="n">source_type</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">optional</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
+
     <span class="n">details</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;operation_id&quot;</span><span class="p">:</span> <span class="n">op_id</span><span class="p">,</span>
         <span class="s2">&quot;source_type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span>
         <span class="s2">&quot;target_type&quot;</span><span class="p">:</span> <span class="n">target_type</span><span class="p">,</span>
+        <span class="s2">&quot;optional_args&quot;</span><span class="p">:</span> <span class="n">optional</span><span class="p">,</span>
         <span class="s2">&quot;is_internal_operation&quot;</span><span class="p">:</span> <span class="n">is_internal</span><span class="p">,</span>
     <span class="p">}</span>
 
@@ -4178,12 +4192,20 @@ CreateValueFromDetails            (<a class="autorefs autorefs-internal" title="
 
     <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The type of the value to be created.&quot;</span><span class="p">)</span>
     <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The result type.&quot;</span><span class="p">)</span>
+    <span class="n">optional_args</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional arguments.&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">retrieve_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
 
-        <span class="k">return</span> <span class="p">{</span>
+        <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">source_type</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The source value.&quot;</span><span class="p">},</span>
         <span class="p">}</span>
+        <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">optional_args</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t create &#39;create_from&#39; operation &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source_type</span><span class="si">}</span><span class="s2">&#39; -&gt; &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&#39;: duplicate input field &#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
+        <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="nf">retrieve_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
 
@@ -4209,6 +4231,29 @@ CreateValueFromDetails            (<a class="autorefs autorefs-internal" title="
 
 
 <h6 id="kiara.operations.included_core_operations.create_from.CreateValueFromDetails-attributes">Attributes<a href="#kiara.operations.included_core_operations.create_from.CreateValueFromDetails-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.operations.included_core_operations.create_from.CreateValueFromDetails.optional_args" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">optional_args</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">ValueSchema</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.operations.included_core_operations.create_from.CreateValueFromDetails.optional_args" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>Optional arguments.</p>
+    </div>
+
+  </div>
+
+
 
   <div class="doc doc-object doc-attribute">
 
@@ -4328,9 +4373,16 @@ CreateValueFromDetails            (<a class="autorefs autorefs-internal" title="
           <summary>Source code in <code>kiara/operations/included_core_operations/create_from.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
 
-    <span class="k">return</span> <span class="p">{</span>
+    <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source_type</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The source value.&quot;</span><span class="p">},</span>
     <span class="p">}</span>
+    <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">optional_args</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t create &#39;create_from&#39; operation &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source_type</span><span class="si">}</span><span class="s2">&#39; -&gt; &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&#39;: duplicate input field &#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
+    <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
         </details>
     </div>

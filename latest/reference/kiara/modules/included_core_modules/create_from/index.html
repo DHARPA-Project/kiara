@@ -3397,6 +3397,11 @@ CreateFromModule            (<a class="autorefs autorefs-internal" title="kiara.
             <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
+    <span class="k">def</span> <span class="nf">create_optional_inputs</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target_type</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
@@ -3404,10 +3409,33 @@ CreateFromModule            (<a class="autorefs autorefs-internal" title="kiara.
         <span class="n">source_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">source_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="s2">&quot;base_name&quot;</span><span class="p">]</span>
 
-        <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">source_type</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to render.&quot;</span><span class="p">},</span>
-        <span class="p">}</span>
+        <span class="n">target_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_type&quot;</span><span class="p">)</span>
+        <span class="n">optional</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_optional_inputs</span><span class="p">(</span>
+            <span class="n">source_type</span><span class="o">=</span><span class="n">source_type</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="n">target_type</span>
+        <span class="p">)</span>
 
+        <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">source_type</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The type of the source value.&quot;</span><span class="p">},</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">optional</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">field_schema</span> <span class="ow">in</span> <span class="n">optional</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">field_schema</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">field_schema</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Can&#39;t create inputs schema for &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;: duplicate field &#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="n">source_type</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Can&#39;t create inputs schema for &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;: invalid field name &#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                    <span class="p">)</span>
+
+                <span class="n">optional</span> <span class="o">=</span> <span class="n">field_schema</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;optional&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">optional</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Can&#39;t create inputs schema for &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;: non-optional field &#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&#39; specified.&quot;</span>
+                    <span class="p">)</span>
+                <span class="n">field_schema</span><span class="p">[</span><span class="s2">&quot;optional&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">schema</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">field_schema</span>
         <span class="k">return</span> <span class="n">schema</span>
 
     <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
@@ -3431,7 +3459,23 @@ CreateFromModule            (<a class="autorefs autorefs-internal" title="kiara.
 
         <span class="n">source_value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">source_type</span><span class="p">)</span>
 
-        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">source_value</span><span class="o">=</span><span class="n">source_value</span><span class="p">)</span>
+        <span class="n">signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;optional&quot;</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+            <span class="n">optional</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">op_schemas</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="n">source_type</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">optional</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+                <span class="n">op_schemas</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span>
+                <span class="n">source_value</span><span class="o">=</span><span class="n">source_value</span><span class="p">,</span>
+                <span class="n">optional</span><span class="o">=</span><span class="n">ValueMapReadOnly</span><span class="p">(</span>
+                    <span class="n">value_items</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span> <span class="n">values_schema</span><span class="o">=</span><span class="n">op_schemas</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">source_value</span><span class="o">=</span><span class="n">source_value</span><span class="p">)</span>
         <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">target_type</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -3568,11 +3612,61 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
     <span class="n">source_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">source_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="s2">&quot;base_name&quot;</span><span class="p">]</span>
 
-    <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">source_type</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to render.&quot;</span><span class="p">},</span>
-    <span class="p">}</span>
+    <span class="n">target_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_type&quot;</span><span class="p">)</span>
+    <span class="n">optional</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_optional_inputs</span><span class="p">(</span>
+        <span class="n">source_type</span><span class="o">=</span><span class="n">source_type</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="n">target_type</span>
+    <span class="p">)</span>
 
+    <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">source_type</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The type of the source value.&quot;</span><span class="p">},</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">optional</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">field_schema</span> <span class="ow">in</span> <span class="n">optional</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">field_schema</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">field_schema</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t create inputs schema for &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;: duplicate field &#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="n">source_type</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t create inputs schema for &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;: invalid field name &#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">optional</span> <span class="o">=</span> <span class="n">field_schema</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;optional&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">optional</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t create inputs schema for &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;: non-optional field &#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&#39; specified.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">field_schema</span><span class="p">[</span><span class="s2">&quot;optional&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">schema</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">field_schema</span>
     <span class="k">return</span> <span class="n">schema</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.modules.included_core_modules.create_from.CreateFromModule.create_optional_inputs" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_optional_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_type</span><span class="p">,</span> <span class="n">target_type</span><span class="p">)</span></code>
+
+
+<a href="#kiara.modules.included_core_modules.create_from.CreateFromModule.create_optional_inputs" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/create_from.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_optional_inputs</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target_type</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+    <span class="k">return</span> <span class="kc">None</span>
 </code></pre></div>
         </details>
     </div>
@@ -3640,7 +3734,23 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
     <span class="n">source_value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">source_type</span><span class="p">)</span>
 
-    <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">source_value</span><span class="o">=</span><span class="n">source_value</span><span class="p">)</span>
+    <span class="n">signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;optional&quot;</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+        <span class="n">optional</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">op_schemas</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="n">source_type</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">optional</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+            <span class="n">op_schemas</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span>
+            <span class="n">source_value</span><span class="o">=</span><span class="n">source_value</span><span class="p">,</span>
+            <span class="n">optional</span><span class="o">=</span><span class="n">ValueMapReadOnly</span><span class="p">(</span>
+                <span class="n">value_items</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span> <span class="n">values_schema</span><span class="o">=</span><span class="n">op_schemas</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">source_value</span><span class="o">=</span><span class="n">source_value</span><span class="p">)</span>
     <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">target_type</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div>
         </details>

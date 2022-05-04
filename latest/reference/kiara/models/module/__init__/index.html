@@ -5891,7 +5891,6 @@ JobConfig            (<a class="autorefs autorefs-internal" title="kiara.models.
         <span class="n">values</span> <span class="o">=</span> <span class="n">data_registry</span><span class="o">.</span><span class="n">create_valueset</span><span class="p">(</span>
             <span class="n">data</span><span class="o">=</span><span class="n">augmented</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span>
         <span class="p">)</span>
-
         <span class="n">invalid</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">check_invalid</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">invalid</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">InvalidValuesException</span><span class="p">(</span><span class="n">invalid_values</span><span class="o">=</span><span class="n">invalid</span><span class="p">)</span>
@@ -5956,7 +5955,6 @@ JobConfig            (<a class="autorefs autorefs-internal" title="kiara.models.
     <span class="n">values</span> <span class="o">=</span> <span class="n">data_registry</span><span class="o">.</span><span class="n">create_valueset</span><span class="p">(</span>
         <span class="n">data</span><span class="o">=</span><span class="n">augmented</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span>
     <span class="p">)</span>
-
     <span class="n">invalid</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">check_invalid</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">invalid</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">InvalidValuesException</span><span class="p">(</span><span class="n">invalid_values</span><span class="o">=</span><span class="n">invalid</span><span class="p">)</span>

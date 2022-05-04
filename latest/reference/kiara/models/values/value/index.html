@@ -6826,6 +6826,9 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">serialized_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SerializedData</span><span class="p">:</span>
 
+        <span class="c1"># if not self.is_set:</span>
+        <span class="c1">#     raise Exception(f&quot;Can&#39;t retrieve serialized data: value not set.&quot;)</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialized_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_serialized_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
@@ -6896,9 +6899,8 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_type</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_data_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type_class</span><span class="o">.</span><span class="n">get_class</span><span class="p">()(</span>
-            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type_config</span>
-        <span class="p">)</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type_class</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_type</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type_config</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_type</span>
 
     <span class="nd">@property</span>
@@ -8126,17 +8128,20 @@ ValueMap            (<a class="autorefs autorefs-internal" title="kiara.models.K
         <span class="n">invalid</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">is_valid</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">is_required</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
-                        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;not set&quot;</span>
-                    <span class="k">elif</span> <span class="n">item</span><span class="o">.</span><span class="n">value_status</span> <span class="o">==</span> <span class="n">ValueStatus</span><span class="o">.</span><span class="n">NONE</span><span class="p">:</span>
-                        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;no value&quot;</span>
+            <span class="n">field_schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_schema</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">field_schema</span><span class="o">.</span><span class="n">optional</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">value_status</span> <span class="o">==</span> <span class="n">ValueStatus</span><span class="o">.</span><span class="n">SET</span><span class="p">:</span>
+
+                    <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">is_required</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
+                            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;not set&quot;</span>
+                        <span class="k">elif</span> <span class="n">item</span><span class="o">.</span><span class="n">value_status</span> <span class="o">==</span> <span class="n">ValueStatus</span><span class="o">.</span><span class="n">NONE</span><span class="p">:</span>
+                            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;no value&quot;</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;n/a&quot;</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;n/a&quot;</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;n/a&quot;</span>
-                <span class="n">invalid</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span>
+                    <span class="n">invalid</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span>
         <span class="k">return</span> <span class="n">invalid</span>
 
     <span class="k">def</span> <span class="nf">get_value_data_for_fields</span><span class="p">(</span>
@@ -8370,17 +8375,20 @@ ValueMap            (<a class="autorefs autorefs-internal" title="kiara.models.K
     <span class="n">invalid</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">is_valid</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">is_required</span><span class="p">():</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;not set&quot;</span>
-                <span class="k">elif</span> <span class="n">item</span><span class="o">.</span><span class="n">value_status</span> <span class="o">==</span> <span class="n">ValueStatus</span><span class="o">.</span><span class="n">NONE</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;no value&quot;</span>
+        <span class="n">field_schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_schema</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">field_schema</span><span class="o">.</span><span class="n">optional</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">value_status</span> <span class="o">==</span> <span class="n">ValueStatus</span><span class="o">.</span><span class="n">SET</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">is_required</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;not set&quot;</span>
+                    <span class="k">elif</span> <span class="n">item</span><span class="o">.</span><span class="n">value_status</span> <span class="o">==</span> <span class="n">ValueStatus</span><span class="o">.</span><span class="n">NONE</span><span class="p">:</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;no value&quot;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;n/a&quot;</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;n/a&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;n/a&quot;</span>
-            <span class="n">invalid</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span>
+                <span class="n">invalid</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span>
     <span class="k">return</span> <span class="n">invalid</span>
 </code></pre></div>
         </details>

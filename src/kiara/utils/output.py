@@ -621,6 +621,7 @@ def create_value_map_status_renderable(
         render_config = {}
 
     show_required: bool = render_config.get("show_required", True)
+    show_default: bool = render_config.get("show_default", True)
 
     table = RichTable(box=box.SIMPLE, show_header=True)
     table.add_column("field name", style="i")
@@ -630,6 +631,9 @@ def create_value_map_status_renderable(
 
     if show_required:
         table.add_column("required")
+
+    if show_default:
+        table.add_column("default")
 
     invalid = inputs.check_invalid()
 
@@ -642,14 +646,16 @@ def create_value_map_status_renderable(
         else:
             row.append("[green]valid[/green]")
 
-        row.extend([value.value_schema.type, value.value_schema.doc.description])
+        value_schema = inputs.values_schema[field_name]
+
+        row.extend([value_schema.type, value_schema.doc.description])
 
         if show_required:
-            req = value.value_schema.is_required()
+            req = value_schema.is_required()
             if not req:
                 req_str = "no"
             else:
-                if value.value_schema.default in [
+                if value_schema.default in [
                     None,
                     SpecialValue.NO_VALUE,
                     SpecialValue.NOT_SET,
@@ -658,6 +664,20 @@ def create_value_map_status_renderable(
                 else:
                     req_str = "no"
             row.append(req_str)
+
+        if show_default:
+            default = value_schema.default
+            if callable(default):
+                default_val = default()
+            else:
+                default_val = default
+
+            if default_val in [None, SpecialValue.NOT_SET, SpecialValue.NO_VALUE]:
+                default_str = ""
+            else:
+                default_str = str(default_val)
+
+            row.append(default_str)
 
         table.add_row(*row)
 

@@ -19,7 +19,10 @@ from kiara.models.module.operation import Operation
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.values.value import ValueMap
 from kiara.utils import get_data_from_file
-from kiara.utils.output import create_value_map_status_renderable
+from kiara.utils.output import (
+    create_table_from_field_schemas,
+    create_value_map_status_renderable,
+)
 
 
 class KiaraOperation(object):
@@ -314,7 +317,8 @@ class KiaraOperation(object):
 
         show_operation_name = config.get("show_operation_name", True)
         show_operation_doc = config.get("show_operation_doc", True)
-        show_inputs_schema = config.get("show_inputs_schema", False)
+        show_inputs = config.get("show_inputs", False)
+        show_outputs_schema = config.get("show_outputs_schema", False)
 
         items: List[Any] = []
 
@@ -324,7 +328,7 @@ class KiaraOperation(object):
             items.append("")
             items.append(Markdown(self.operation.doc.full_doc, style="i"))
 
-        if show_inputs_schema:
+        if show_inputs:
             items.append("\nInputs:")
             try:
                 op_inputs = self.operation_inputs
@@ -334,5 +338,15 @@ class KiaraOperation(object):
             except Exception as e:
                 inputs = f"[red bold]{e}[/red bold]"
             items.append(inputs)
+        if show_outputs_schema:
+            items.append("\nOutputs:")
+            outputs_schema = create_table_from_field_schemas(
+                _add_default=False,
+                _add_required=False,
+                _show_header=True,
+                _constants=None,
+                **self.operation.outputs_schema,
+            )
+            items.append(outputs_schema)
 
         return Group(*items)

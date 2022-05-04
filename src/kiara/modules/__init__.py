@@ -172,6 +172,7 @@ class InputOutputObject(abc.ABC):
             self._inputs_schema, self._constants = overlay_constants_and_defaults(
                 _input_schemas, defaults=defaults, constants=constants
             )
+
         except Exception as e:
             raise Exception(f"Can't create input schemas for instance '{self.alias}': {e}")  # type: ignore
 

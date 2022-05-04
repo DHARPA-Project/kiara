@@ -215,7 +215,7 @@ def run(
             Rule(),
             "",
             kiara_op.create_renderable(
-                show_operation_name=True, show_inputs_schema=True
+                show_operation_name=True, show_inputs=True, show_outputs_schema=True
             ),
         )
         terminal_print(rg, in_panel=f"Run info: [b]{kiara_op.operation_name}[/b]")
@@ -232,7 +232,7 @@ def run(
             Rule(),
             "",
             kiara_op.create_renderable(
-                show_operation_name=True, show_inputs_schema=True
+                show_operation_name=True, show_inputs=True, show_outputs_schema=True
             ),
         )
         terminal_print(rg, in_panel=f"Run info: [b]{kiara_op.operation_name}[/b]")

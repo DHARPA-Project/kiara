@@ -1194,18 +1194,19 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
             item = self.get_value_obj(field_name)
             field_schema = self.values_schema[field_name]
             if not field_schema.optional:
+                msg: Optional[str] = None
                 if not item.value_status == ValueStatus.SET:
 
-                    if item.value_schema.is_required():
+                    item_schema = self.values_schema[field_name]
+                    if item_schema.is_required():
+
                         if not item.is_set:
                             msg = "not set"
                         elif item.value_status == ValueStatus.NONE:
                             msg = "no value"
-                        else:
-                            msg = "n/a"
-                    else:
-                        msg = "n/a"
+                if msg:
                     invalid[field_name] = msg
+
         return invalid
 
     def get_value_data_for_fields(
@@ -1321,6 +1322,7 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
         table.add_column(value_title, style="i")
 
         for field_name in self.field_names:
+
             value = self.get_value_obj(field_name=field_name)
             if render_value_data:
                 rendered = value._data_registry.render_data(

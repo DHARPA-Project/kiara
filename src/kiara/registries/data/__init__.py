@@ -897,7 +897,6 @@ class DataRegistry(object):
                 msg=f"Can't create values instance: {', '.join(msg)}",
                 invalid_values={k: str(v) for k, v in failed.items()},
             )
-
         return ValueMapReadOnly(value_items=values, values_schema=schema)  # type: ignore
 
     def create_renderable(self, **config: Any) -> RenderableType:

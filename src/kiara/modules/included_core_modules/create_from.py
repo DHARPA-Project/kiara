@@ -4,12 +4,12 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
+import inspect
 from pydantic import Field
-from typing import Any, Iterable, Mapping, Union
+from typing import Any, Dict, Iterable, Mapping, Optional, Union
 
 from kiara.models.module import KiaraModuleConfig
-from kiara.models.values.value import ValueMap
+from kiara.models.values.value import Value, ValueMap, ValueMapReadOnly
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule
 
@@ -52,6 +52,11 @@ class CreateFromModule(KiaraModule):
             result.append(data)
         return result
 
+    def create_optional_inputs(
+        self, source_type: str, target_type
+    ) -> Optional[Mapping[str, Mapping[str, Any]]]:
+        return None
+
     def create_inputs_schema(
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
@@ -59,10 +64,33 @@ class CreateFromModule(KiaraModule):
         source_type = self.get_config_value("source_type")
         assert source_type not in ["target", "base_name"]
 
-        schema = {
-            source_type: {"type": source_type, "doc": "The value to render."},
-        }
+        target_type = self.get_config_value("target_type")
+        optional = self.create_optional_inputs(
+            source_type=source_type, target_type=target_type
+        )
 
+        schema = {
+            source_type: {"type": source_type, "doc": "The type of the source value."},
+        }
+        if optional:
+            for field, field_schema in optional.items():
+                field_schema = dict(field_schema)
+                if field in schema.keys():
+                    raise Exception(
+                        f"Can't create inputs schema for '{self.module_type_name}': duplicate field '{field}'."
+                    )
+                if field == source_type:
+                    raise Exception(
+                        f"Can't create inputs schema for '{self.module_type_name}': invalid field name '{field}'."
+                    )
+
+                optional = field_schema.get("optional", True)
+                if not optional:
+                    raise Exception(
+                        f"Can't create inputs schema for '{self.module_type_name}': non-optional field '{field}' specified."
+                    )
+                field_schema["optional"] = True
+                schema[field] = field_schema
         return schema
 
     def create_outputs_schema(
@@ -86,5 +114,21 @@ class CreateFromModule(KiaraModule):
 
         source_value = inputs.get_value_obj(source_type)
 
-        result = func(source_value=source_value)
+        signature = inspect.signature(func)
+        if "optional" in signature.parameters:
+            optional: Dict[str, Value] = {}
+            op_schemas = {}
+            for field, schema in self.inputs_schema.items():
+                if field == source_type:
+                    continue
+                optional[field] = inputs.get_value_obj(field)
+                op_schemas[field] = schema
+            result = func(
+                source_value=source_value,
+                optional=ValueMapReadOnly(
+                    value_items=optional, values_schema=op_schemas
+                ),
+            )
+        else:
+            result = func(source_value=source_value)
         outputs.set_value(target_type, result)

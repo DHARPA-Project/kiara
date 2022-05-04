@@ -309,7 +309,7 @@ class FileBundle(KiaraModel):
         cls,
         files: Mapping[str, FileModel],
         bundle_name: str,
-        path: str,
+        path: Optional[str] = None,
         sum_size: Optional[int] = None,
         import_time: Optional[datetime.datetime] = None,
     ) -> "FileBundle":

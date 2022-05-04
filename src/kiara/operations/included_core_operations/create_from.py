@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import structlog
 from pydantic import Field
-from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Union
 
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.operation import (
@@ -10,6 +10,7 @@ from kiara.models.module.operation import (
     OperationConfig,
 )
 from kiara.models.values.value import Value, ValueMap
+from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import ValueSetSchema
 from kiara.modules.included_core_modules.create_from import CreateFromModule
 from kiara.operations import OperationType
@@ -25,12 +26,20 @@ class CreateValueFromDetails(BaseOperationDetails):
 
     source_type: str = Field(description="The type of the value to be created.")
     target_type: str = Field(description="The result type.")
+    optional_args: Mapping[str, ValueSchema] = Field(description="Optional arguments.")
 
     def retrieve_inputs_schema(self) -> ValueSetSchema:
 
-        return {
+        result: Dict[str, Union[ValueSchema, Dict[str, Any]]] = {
             self.source_type: {"type": self.source_type, "doc": "The source value."},
         }
+        for field, schema in self.optional_args.items():
+            if field in result.keys():
+                raise Exception(
+                    f"Can't create 'create_from' operation '{self.source_type}' -> '{self.target_type}': duplicate input field '{field}'."
+                )
+            result[field] = schema
+        return result
 
     def retrieve_outputs_schema(self) -> ValueSetSchema:
 
@@ -169,10 +178,17 @@ class CreateFromOperationType(OperationType[CreateValueFromDetails]):
         else:
             is_internal = True
 
+        optional = {}
+        for field, schema in module.inputs_schema.items():
+            if field == source_type:
+                continue
+            optional[field] = schema
+
         details = {
             "operation_id": op_id,
             "source_type": source_type,
             "target_type": target_type,
+            "optional_args": optional,
             "is_internal_operation": is_internal,
         }
 

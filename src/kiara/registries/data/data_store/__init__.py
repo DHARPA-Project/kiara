@@ -78,7 +78,6 @@ class DataArchive(BaseArchive):
         #     )
 
         pedigree = ValuePedigree(**value_data["pedigree"])
-
         value = Value(
             value_id=value_data["value_id"],
             kiara_id=self.kiara_context.id,

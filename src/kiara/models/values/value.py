@@ -924,6 +924,9 @@ class Value(ValueDetails):
     @property
     def serialized_data(self) -> SerializedData:
 
+        # if not self.is_set:
+        #     raise Exception(f"Can't retrieve serialized data: value not set.")
+
         if self._serialized_data is not None:
             if isinstance(self._serialized_data, str):
                 raise Exception(
@@ -994,9 +997,8 @@ class Value(ValueDetails):
         if self._data_type is not None:
             return self._data_type
 
-        self._data_type = self.data_type_class.get_class()(
-            **self.value_schema.type_config
-        )
+        cls = self.data_type_class.get_class()
+        self._data_type = cls(**self.value_schema.type_config)
         return self._data_type
 
     @property
@@ -1190,17 +1192,20 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
         invalid: Dict[str, str] = {}
         for field_name in self.values_schema.keys():
             item = self.get_value_obj(field_name)
-            if not item.is_valid:
-                if item.value_schema.is_required():
-                    if not item.is_set:
-                        msg = "not set"
-                    elif item.value_status == ValueStatus.NONE:
-                        msg = "no value"
+            field_schema = self.values_schema[field_name]
+            if not field_schema.optional:
+                if not item.value_status == ValueStatus.SET:
+
+                    if item.value_schema.is_required():
+                        if not item.is_set:
+                            msg = "not set"
+                        elif item.value_status == ValueStatus.NONE:
+                            msg = "no value"
+                        else:
+                            msg = "n/a"
                     else:
                         msg = "n/a"
-                else:
-                    msg = "n/a"
-                invalid[field_name] = msg
+                    invalid[field_name] = msg
         return invalid
 
     def get_value_data_for_fields(

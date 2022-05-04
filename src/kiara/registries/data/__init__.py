@@ -21,9 +21,11 @@ from typing import (
 )
 
 from kiara.data_types import DataType
+from kiara.data_types.included_core_types import NoneType
 from kiara.defaults import (
     INVALID_HASH_MARKER,
     NO_SERIALIZATION_MARKER,
+    NONE_STORE_ID,
     NONE_VALUE_ID,
     NOT_SET_VALUE_ID,
     ORPHAN_PEDIGREE_OUTPUT_NAME,
@@ -44,6 +46,7 @@ from kiara.models.values import ValueStatus
 from kiara.models.values.value import (
     ORPHAN,
     PersistedData,
+    SerializationMetadata,
     SerializedData,
     Value,
     ValueMap,
@@ -60,6 +63,17 @@ if TYPE_CHECKING:
     from kiara.context import Kiara
 
 logger = structlog.getLogger()
+
+
+NONE_PERSISTED_DATA = PersistedData.construct(
+    data_type="none",
+    data_type_config={},
+    serialization_profile="none",
+    metadata=SerializationMetadata(),
+    hash_codec="sha2-256",
+    archive_id=NONE_STORE_ID,
+    chunk_id_map={},
+)
 
 
 class DataRegistry(object):
@@ -82,7 +96,7 @@ class DataRegistry(object):
         self._persisted_value_descs: Dict[uuid.UUID, Optional[PersistedData]] = {}
 
         # initialize special values
-        special_value_cls = PythonClass.from_class(SpecialValue)
+        special_value_cls = PythonClass.from_class(NoneType)
         self._not_set_value: Value = Value(
             value_id=NOT_SET_VALUE_ID,
             kiara_id=self._kiara.id,
@@ -99,7 +113,10 @@ class DataRegistry(object):
             pedigree_output_name="__void__",
             data_type_class=special_value_cls,
         )
+        self._not_set_value._data_registry = self
         self._cached_data[NOT_SET_VALUE_ID] = SpecialValue.NOT_SET
+        self._registered_values[NOT_SET_VALUE_ID] = self._not_set_value
+        self._persisted_value_descs[NOT_SET_VALUE_ID] = NONE_PERSISTED_DATA
 
         self._none_value: Value = Value(
             value_id=NONE_VALUE_ID,
@@ -117,7 +134,10 @@ class DataRegistry(object):
             pedigree_output_name="__void__",
             data_type_class=special_value_cls,
         )
+        self._none_value._data_registry = self
         self._cached_data[NONE_VALUE_ID] = SpecialValue.NO_VALUE
+        self._registered_values[NONE_VALUE_ID] = self._none_value
+        self._persisted_value_descs[NONE_VALUE_ID] = NONE_PERSISTED_DATA
 
     @property
     def kiara_id(self) -> uuid.UUID:
@@ -456,7 +476,8 @@ class DataRegistry(object):
         if isinstance(data, Value):
 
             if data.value_id in self._registered_values.keys():
-                if data.is_serializable:
+
+                if data.is_set and data.is_serializable:
                     serialized: Union[str, SerializedData] = data.serialized_data
                 else:
                     serialized = NO_SERIALIZATION_MARKER
@@ -567,6 +588,11 @@ class DataRegistry(object):
             raise Exception(
                 f"Can't register data of type '{schema.type}': type not registered. Available types: {', '.join(self._kiara.data_type_names)}"
             )
+
+        if data in [None, SpecialValue.NO_VALUE]:
+            return (self.NONE_VALUE, False)
+        elif data is SpecialValue.NOT_SET:
+            return (self.NOT_SET_VALUE, False)
 
         # data_type: Optional[DataType] = None
         # status: Optional[ValueStatus] = None
@@ -833,10 +859,15 @@ class DataRegistry(object):
 
             if input_name not in data.keys():
                 value_data = SpecialValue.NOT_SET
-            elif data[input_name] is None:
+            elif data[input_name] in [
+                None,
+                SpecialValue.NO_VALUE,
+                SpecialValue.NOT_SET,
+            ]:
                 value_data = SpecialValue.NO_VALUE
             else:
                 value_data = data[input_name]
+
             try:
                 value = self.register_data(
                     data=value_data, schema=value_schema, reuse_existing=True

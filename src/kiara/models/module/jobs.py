@@ -75,7 +75,6 @@ class JobConfig(InputsManifest):
         values = data_registry.create_valueset(
             data=augmented, schema=module.inputs_schema
         )
-
         invalid = values.check_invalid()
         if invalid:
             raise InvalidValuesException(invalid_values=invalid)

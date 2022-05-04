@@ -31,6 +31,7 @@ from kiara.utils import (
     _import_modules_recursively,
     camel_case_to_snake_case,
     is_debug,
+    log_exception,
     log_message,
 )
 
@@ -97,10 +98,15 @@ def find_subclasses_under(
     if hasattr(sys, "frozen"):
         raise NotImplementedError("Pyinstaller bundling not supported yet.")
 
-    if isinstance(python_module, str):
-        python_module = importlib.import_module(python_module)
+    try:
+        if isinstance(python_module, str):
+            python_module = importlib.import_module(python_module)
 
-    _import_modules_recursively(python_module)
+        _import_modules_recursively(python_module)
+    except Exception as e:
+        log_exception(e)
+        log_message("ignore.python_module", module=str(python_module), reason=str(e))
+        return []
 
     subclasses: Iterable[Type[SUBCLASS_TYPE]] = _get_all_subclasses(base_class)
 

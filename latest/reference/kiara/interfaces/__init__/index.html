@@ -5254,7 +5254,8 @@ KiaraOperation        </code>
 
         <span class="n">show_operation_name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_operation_name&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="n">show_operation_doc</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_operation_doc&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">show_inputs_schema</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_inputs_schema&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">show_inputs</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_inputs&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">show_outputs_schema</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_outputs_schema&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
         <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -5264,7 +5265,7 @@ KiaraOperation        </code>
             <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
             <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">full_doc</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">))</span>
 
-        <span class="k">if</span> <span class="n">show_inputs_schema</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">show_inputs</span><span class="p">:</span>
             <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Inputs:&quot;</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">op_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_inputs</span>
@@ -5274,6 +5275,16 @@ KiaraOperation        </code>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="n">inputs</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[red bold]</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">[/red bold]&quot;</span>
             <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">show_outputs_schema</span><span class="p">:</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Outputs:&quot;</span><span class="p">)</span>
+            <span class="n">outputs_schema</span> <span class="o">=</span> <span class="n">create_table_from_field_schemas</span><span class="p">(</span>
+                <span class="n">_add_default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">_add_required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">_show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">_constants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputs_schema</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">Group</span><span class="p">(</span><span class="o">*</span><span class="n">items</span><span class="p">)</span>
 </code></pre></div>
@@ -5420,7 +5431,8 @@ KiaraOperation        </code>
 
     <span class="n">show_operation_name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_operation_name&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
     <span class="n">show_operation_doc</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_operation_doc&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-    <span class="n">show_inputs_schema</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_inputs_schema&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">show_inputs</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_inputs&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">show_outputs_schema</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_outputs_schema&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
     <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -5430,7 +5442,7 @@ KiaraOperation        </code>
         <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">full_doc</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">))</span>
 
-    <span class="k">if</span> <span class="n">show_inputs_schema</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">show_inputs</span><span class="p">:</span>
         <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Inputs:&quot;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">op_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_inputs</span>
@@ -5440,6 +5452,16 @@ KiaraOperation        </code>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">inputs</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[red bold]</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">[/red bold]&quot;</span>
         <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show_outputs_schema</span><span class="p">:</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Outputs:&quot;</span><span class="p">)</span>
+        <span class="n">outputs_schema</span> <span class="o">=</span> <span class="n">create_table_from_field_schemas</span><span class="p">(</span>
+            <span class="n">_add_default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">_add_required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">_show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">_constants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputs_schema</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">Group</span><span class="p">(</span><span class="o">*</span><span class="n">items</span><span class="p">)</span>
 </code></pre></div>

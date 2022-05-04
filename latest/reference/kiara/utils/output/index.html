@@ -5185,6 +5185,7 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
         <span class="n">render_config</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="n">show_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_required&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">show_default</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_default&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
     <span class="n">table</span> <span class="o">=</span> <span class="n">RichTable</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;field name&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
@@ -5194,6 +5195,9 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
 
     <span class="k">if</span> <span class="n">show_required</span><span class="p">:</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;required&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_default</span><span class="p">:</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
 
     <span class="n">invalid</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">check_invalid</span><span class="p">()</span>
 
@@ -5206,14 +5210,16 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
         <span class="k">else</span><span class="p">:</span>
             <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;[green]valid[/green]&quot;</span><span class="p">)</span>
 
-        <span class="n">row</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">description</span><span class="p">])</span>
+        <span class="n">value_schema</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">values_schema</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
+
+        <span class="n">row</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">value_schema</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">description</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">show_required</span><span class="p">:</span>
-            <span class="n">req</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">is_required</span><span class="p">()</span>
+            <span class="n">req</span> <span class="o">=</span> <span class="n">value_schema</span><span class="o">.</span><span class="n">is_required</span><span class="p">()</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">req</span><span class="p">:</span>
                 <span class="n">req_str</span> <span class="o">=</span> <span class="s2">&quot;no&quot;</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">default</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="k">if</span> <span class="n">value_schema</span><span class="o">.</span><span class="n">default</span> <span class="ow">in</span> <span class="p">[</span>
                     <span class="kc">None</span><span class="p">,</span>
                     <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NO_VALUE</span><span class="p">,</span>
                     <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NOT_SET</span><span class="p">,</span>
@@ -5222,6 +5228,20 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">req_str</span> <span class="o">=</span> <span class="s2">&quot;no&quot;</span>
             <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">req_str</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">show_default</span><span class="p">:</span>
+            <span class="n">default</span> <span class="o">=</span> <span class="n">value_schema</span><span class="o">.</span><span class="n">default</span>
+            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">default</span><span class="p">):</span>
+                <span class="n">default_val</span> <span class="o">=</span> <span class="n">default</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">default_val</span> <span class="o">=</span> <span class="n">default</span>
+
+            <span class="k">if</span> <span class="n">default_val</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NOT_SET</span><span class="p">,</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NO_VALUE</span><span class="p">]:</span>
+                <span class="n">default_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">default_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">default_val</span><span class="p">)</span>
+
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">default_str</span><span class="p">)</span>
 
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
 

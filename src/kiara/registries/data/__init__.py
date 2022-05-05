@@ -4,6 +4,7 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
+import copy
 import structlog
 import uuid
 from rich.console import RenderableType
@@ -589,10 +590,18 @@ class DataRegistry(object):
                 f"Can't register data of type '{schema.type}': type not registered. Available types: {', '.join(self._kiara.data_type_names)}"
             )
 
-        if data in [None, SpecialValue.NO_VALUE]:
-            return (self.NONE_VALUE, False)
-        elif data is SpecialValue.NOT_SET:
-            return (self.NOT_SET_VALUE, False)
+        if schema.default in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
+            if data in [None, SpecialValue.NO_VALUE]:
+                return (self.NONE_VALUE, False)
+            elif data is SpecialValue.NOT_SET:
+                return (self.NOT_SET_VALUE, False)
+        else:
+            # TODO: allow other value_ids in defaults?
+            if data in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
+                if callable(schema.default):
+                    data = schema.default()
+                else:
+                    data = copy.deepcopy(schema.default)
 
         # data_type: Optional[DataType] = None
         # status: Optional[ValueStatus] = None

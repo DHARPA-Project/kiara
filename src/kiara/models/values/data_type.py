@@ -15,7 +15,6 @@ from rich.table import Table
 from typing import TYPE_CHECKING, Any, List, Literal, Mapping, Optional, Type
 
 from kiara.data_types import DataType
-from kiara.defaults import DATA_TYPE_CLASS_CATEGORY_ID
 from kiara.models.documentation import (
     AuthorsMetadataModel,
     ContextMetadataModel,
@@ -30,6 +29,9 @@ if TYPE_CHECKING:
 
 
 class DataTypeClassInfo(KiaraTypeInfoModel[DataType]):
+
+    _kiara_model_id = "instance.info.data_type"
+
     @classmethod
     def create_from_type_class(
         self, type_cls: Type[DataType], kiara: Optional["Kiara"] = None
@@ -93,9 +95,6 @@ class DataTypeClassInfo(KiaraTypeInfoModel[DataType]):
     def _retrieve_id(self) -> str:
         return self.type_name
 
-    def _retrieve_category_id(self) -> str:
-        return DATA_TYPE_CLASS_CATEGORY_ID
-
     def _retrieve_data_to_hash(self) -> Any:
         return self.type_name
 
@@ -142,6 +141,9 @@ class DataTypeClassInfo(KiaraTypeInfoModel[DataType]):
 
 
 class DataTypeClassesInfo(TypeInfoModelGroup):
+
+    _kiara_model_id = "instance.info.data_types"
+
     @classmethod
     def create_from_type_items(
         cls,

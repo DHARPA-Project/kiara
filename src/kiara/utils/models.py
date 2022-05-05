@@ -87,7 +87,7 @@ def get_subcomponent_from_model(data: "KiaraModel", path: str) -> "KiaraModel":
             return getattr(data, path)
         else:
             raise KeyError(
-                f"No subcomponent for key '{path}' in model: {data.model_id}."
+                f"No subcomponent for key '{path}' in model: {data.instance_id}."
             )
 
 

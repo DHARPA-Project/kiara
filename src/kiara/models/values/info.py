@@ -13,7 +13,7 @@ from rich.syntax import Syntax
 from rich.table import Table
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
 
-from kiara.models.values.value import ORPHAN, LoadConfig, PersistedData, Value
+from kiara.models.values.value import ORPHAN, PersistedData, Value
 from kiara.models.values.value_schema import ValueSchema
 from kiara.registries.aliases import AliasRegistry
 from kiara.utils import is_debug, log_message, orjson_dumps
@@ -82,6 +82,9 @@ RENDER_FIELDS: Dict[str, Dict[str, Any]] = {
 
 
 class ValueInfo(Value):
+
+    _kiara_model_id = "instance.info.value"
+
     @classmethod
     def create_from_value(
         cls,
@@ -102,10 +105,8 @@ class ValueInfo(Value):
             persisted_details = kiara.data_registry.retrieve_persisted_value_details(
                 value_id=value.value_id
             )
-            load_config = None
         else:
             persisted_details = None
-            load_config = None
 
         is_internal = "internal" in kiara.type_registry.get_type_lineage(
             value.data_type_name
@@ -140,7 +141,6 @@ class ValueInfo(Value):
             destiny_links=filtered_destinies,
             destiny_backlinks=value.destiny_backlinks,
             aliases=aliases,
-            load_config=load_config,
             serialized=persisted_details,
         )
         model._set_registry(value._data_registry)
@@ -160,9 +160,6 @@ class ValueInfo(Value):
     serialized: Optional[PersistedData] = Field(
         description="Details for the serialization process that was used for this value."
     )
-    load_config: Optional[LoadConfig] = Field(
-        description="The load config associated with this value."
-    )
     destiny_links: Optional[Mapping[str, uuid.UUID]] = Field(
         description="References to all the values that act as destiny for this value in this context."
     )
@@ -173,11 +170,8 @@ class ValueInfo(Value):
     def _retrieve_id(self) -> str:
         return str(self.value_id)
 
-    def _retrieve_category_id(self) -> str:
-        return "instance.value_info"
-
     def _retrieve_data_to_hash(self) -> Any:
-        return self.value_id
+        return self.value_id.bytes
 
     def resolve_aliases(self):
         aliases = self._alias_registry.find_aliases_for_value_id(self.value_id)

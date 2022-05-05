@@ -32,7 +32,7 @@ class DataArchive(BaseArchive):
 
         super().__init__(archive_id=archive_id, config=config)
 
-        self._env_cache: Dict[str, Dict[int, Mapping[str, Any]]] = {}
+        self._env_cache: Dict[str, Dict[str, Mapping[str, Any]]] = {}
         self._value_cache: Dict[uuid.UUID, Value] = {}
         self._persisted_value_cache: Dict[uuid.UUID, PersistedData] = {}
         self._value_hash_index: Dict[str, Set[uuid.UUID]] = {}
@@ -124,7 +124,7 @@ class DataArchive(BaseArchive):
         return value_id in self._retrieve_all_value_ids()
 
     def retrieve_environment_details(
-        self, env_type: str, env_hash: int
+        self, env_type: str, env_hash: str
     ) -> Mapping[str, Any]:
         """Retrieve the environment details with the specified type and hash.
 
@@ -142,7 +142,7 @@ class DataArchive(BaseArchive):
 
     @abc.abstractmethod
     def _retrieve_environment_details(
-        self, env_type: str, env_hash: int
+        self, env_type: str, env_hash: str
     ) -> Mapping[str, Any]:
         pass
 
@@ -260,7 +260,7 @@ class BaseDataStore(DataStore):
 
     @abc.abstractmethod
     def _persist_environment_details(
-        self, env_type: str, env_hash: int, env_data: Mapping[str, Any]
+        self, env_type: str, env_hash: str, env_data: Mapping[str, Any]
     ):
         pass
 
@@ -283,7 +283,7 @@ class BaseDataStore(DataStore):
             if cached is not None:
                 continue
 
-            env = self.kiara_context.environment_registry.get_environment_for_hash(
+            env = self.kiara_context.environment_registry.get_environment_for_cid(
                 env_hash
             )
             self.persist_environment(env)
@@ -330,7 +330,7 @@ class BaseDataStore(DataStore):
         """
 
         env_type = environment.get_environment_type_name()
-        env_hash = environment.model_data_hash
+        env_hash = str(environment.instance_cid)
 
         env = self._env_cache.get(env_type, {}).get(env_hash, None)
         if env is not None:

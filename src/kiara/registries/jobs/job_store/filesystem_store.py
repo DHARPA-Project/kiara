@@ -48,7 +48,7 @@ class FileSystemJobArchive(JobArchive):
         self, inputs_manifest: InputsManifest
     ) -> Optional[JobRecord]:
 
-        manifest_hash = inputs_manifest.manifest_hash
+        manifest_hash = inputs_manifest.instance_cid
         jobs_hash = inputs_manifest.job_hash
 
         base_path = self.job_store_path / MANIFEST_SUB_PATH
@@ -92,7 +92,7 @@ class FileSystemJobStore(FileSystemJobArchive, JobStore):
 
     def store_job_record(self, job_record: JobRecord):
 
-        manifest_hash = job_record.manifest_hash
+        manifest_hash = job_record.instance_cid
         jobs_hash = job_record.job_hash
 
         base_path = self.job_store_path / MANIFEST_SUB_PATH

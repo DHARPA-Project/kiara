@@ -66,12 +66,6 @@ class RuntimeEnvironment(KiaraModel):
     def _retrieve_id(self) -> str:
         return self.__class__.get_environment_type_name()
 
-    def _retrieve_category_id(self) -> str:
-        return ENVIRONMENT_TYPE_CATEGORY_ID
-
-    def _retrieve_data_to_hash(self) -> Any:
-        return self.dict()
-
     def create_renderable(self, **config: Any) -> RenderableType:
 
         summary = config.get("summary", False)

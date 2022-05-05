@@ -6,25 +6,21 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import datetime
-import hashlib
 import os
 import shutil
 import structlog
 from deepdiff import DeepHash
+from multiformats import CID
 from pydantic import BaseModel, Field, PrivateAttr
 from rich import box
 from rich.console import RenderableType
 from rich.table import Table
 from typing import Any, Dict, List, Mapping, Optional, Union
 
-from kiara.defaults import (
-    DEFAULT_EXCLUDE_FILES,
-    FILE_BUNDLE_MODEL_CATEOGORY_ID,
-    FILE_MODEL_CATEOGORY_ID,
-    KIARA_HASH_FUNCTION,
-)
+from kiara.defaults import DEFAULT_EXCLUDE_FILES, KIARA_HASH_FUNCTION
 from kiara.models import KiaraModel
 from kiara.utils import log_message
+from kiara.utils.hashing import compute_cid_from_file
 
 logger = structlog.getLogger()
 
@@ -41,6 +37,8 @@ FILE_BUNDLE_IMPORT_AVAILABLE_COLUMNS = [
 
 class FileModel(KiaraModel):
     """Describes properties for the 'file' value type."""
+
+    _kiara_model_id = "instance.data.file"
 
     @classmethod
     def load_file(
@@ -94,8 +92,6 @@ class FileModel(KiaraModel):
         m._path = path
         return m
 
-    _file_hash: Optional[str] = PrivateAttr(default=None)
-
     import_time: datetime.datetime = Field(
         description="The time when the file was imported."
     )
@@ -104,6 +100,8 @@ class FileModel(KiaraModel):
     size: int = Field(description="The size of the file.")
 
     _path: Optional[str] = PrivateAttr(default=None)
+    _file_hash: Optional[str] = PrivateAttr(default=None)
+    _file_cid: Optional[CID] = PrivateAttr(default=None)
 
     # @validator("path")
     # def ensure_abs_path(cls, value):
@@ -115,17 +113,12 @@ class FileModel(KiaraModel):
             raise Exception("File path not set for file model.")
         return self._path
 
-    def _retrieve_id(self) -> str:
-        return self.file_hash
-
-    def _retrieve_category_id(self) -> str:
-        return FILE_MODEL_CATEOGORY_ID
-
     def _retrieve_data_to_hash(self) -> Any:
-        return {
+        data = {
             "file_name": self.file_name,
-            "file_hash": self.file_hash,
+            "file_cid": self.file_cid,
         }
+        return data
 
     # def get_id(self) -> str:
     #     return self.path
@@ -154,14 +147,18 @@ class FileModel(KiaraModel):
         if self._file_hash is not None:
             return self._file_hash
 
-        sha256_hash = hashlib.sha3_256()
-        with open(self.path, "rb") as f:
-            # Read and update hash string value in blocks of 4K
-            for byte_block in iter(lambda: f.read(4096), b""):
-                sha256_hash.update(byte_block)
-
-        self._file_hash = sha256_hash.hexdigest()
+        self._file_hash = str(self.file_cid)
         return self._file_hash
+
+    @property
+    def file_cid(self) -> CID:
+
+        if self._file_cid is not None:
+            return self._file_cid
+
+        # TODO: auto-set codec?
+        self._file_cid = compute_cid_from_file(file=self.path, codec="raw")
+        return self._file_cid
 
     @property
     def file_name_without_extension(self) -> str:
@@ -213,6 +210,8 @@ class FolderImportConfig(BaseModel):
 
 class FileBundle(KiaraModel):
     """Describes properties for the 'file_bundle' value type."""
+
+    _kiara_model_id = "instance.data.file_bundle"
 
     @classmethod
     def import_folder(
@@ -365,15 +364,18 @@ class FileBundle(KiaraModel):
     def _retrieve_id(self) -> str:
         return str(self.file_bundle_hash)
 
-    def _retrieve_category_id(self) -> str:
-        return FILE_BUNDLE_MODEL_CATEOGORY_ID
-
-    @property
-    def model_data_hash(self) -> int:
-        return self.file_bundle_hash
+    # @property
+    # def model_data_hash(self) -> int:
+    #     return self.file_bundle_hash
 
     def _retrieve_data_to_hash(self) -> Any:
-        raise NotImplementedError()
+
+        return {
+            "bundle_name": self.bundle_name,
+            "included_files": {
+                k: v.instance_cid for k, v in self.included_files.items()
+            },
+        }
 
     def get_relative_path(self, file: FileModel):
         return os.path.relpath(file.path, self.path)

@@ -24,11 +24,7 @@ from typing import (
 
 from kiara.context.config import KiaraConfig, KiaraContextConfig
 from kiara.data_types import DataType
-from kiara.defaults import (
-    CONTEXT_INFO_CATEGORY_ID,
-    KIARA_DB_MIGRATIONS_CONFIG,
-    KIARA_DB_MIGRATIONS_FOLDER,
-)
+from kiara.defaults import KIARA_DB_MIGRATIONS_CONFIG, KIARA_DB_MIGRATIONS_FOLDER
 from kiara.interfaces import get_console
 from kiara.interfaces.python_api import StoreValueResult, StoreValuesResult
 from kiara.models import KiaraModel
@@ -465,9 +461,6 @@ class KiaraContextInfo(KiaraModel):
             return str(self.kiara_id)
         else:
             return f"{self.kiara_id}.package_{self.package_filter}"
-
-    def _retrieve_category_id(self) -> str:
-        return CONTEXT_INFO_CATEGORY_ID
 
     def _retrieve_data_to_hash(self) -> Any:
         return {"kiara_id": self.kiara_id, "package": self.package_filter}

@@ -9,12 +9,11 @@ import uuid
 from pydantic import Field, PrivateAttr
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional
 
-from kiara.defaults import DESTINY_CATEGORY_ID, SpecialValue
+from kiara.defaults import SpecialValue
 from kiara.models.module import KiaraModuleClass
 from kiara.models.module.manifest import Manifest
 from kiara.models.values.value_schema import ValueSchema
 from kiara.registries.ids import ID_REGISTRY
-from kiara.utils.hashing import compute_hash
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -27,6 +26,8 @@ class Destiny(Manifest):
     It is immutable, once executed, each of the input values can only have one destiny with a specific alias.
     This is similar to what is usually called a 'future' in programming languages, but more deterministic, sorta.
     """
+
+    _kiara_model_id = "instance.destiny"
 
     @classmethod
     def create_from_values(
@@ -107,23 +108,20 @@ class Destiny(Manifest):
     _job_id: Optional[uuid.UUID] = PrivateAttr(default=None)
 
     _merged_inputs: Optional[Dict[str, uuid.UUID]] = PrivateAttr(default=None)
-    _job_config_hash: Optional[int] = PrivateAttr(default=None)
+    # _job_config_hash: Optional[int] = PrivateAttr(default=None)
     _module: Optional["KiaraModule"] = PrivateAttr(default=None)
 
     def _retrieve_id(self) -> str:
         return str(self.destiny_id)
 
-    def _retrieve_category_id(self) -> str:
-        return DESTINY_CATEGORY_ID
-
     def _retrieve_data_to_hash(self) -> Any:
-        return self.destiny_id
+        return self.destiny_id.bytes
 
-    @property
-    def job_config_hash(self) -> int:
-        if self._job_config_hash is None:
-            self._job_config_hash = self._retrieve_job_config_hash()
-        return self._job_config_hash
+    # @property
+    # def job_config_hash(self) -> int:
+    #     if self._job_config_hash is None:
+    #         self._job_config_hash = self._retrieve_job_config_hash()
+    #     return self._job_config_hash
 
     @property
     def merged_inputs(self) -> Mapping[str, uuid.UUID]:
@@ -162,6 +160,6 @@ class Destiny(Manifest):
             self._module = m_cls(module_config=self.module_config)
         return self._module
 
-    def _retrieve_job_config_hash(self) -> int:
-        obj = {"module_config": self.manifest_data, "inputs": self.merged_inputs}
-        return compute_hash(obj)
+    # def _retrieve_job_config_hash(self) -> int:
+    #     obj = {"module_config": self.manifest_data, "inputs": self.merged_inputs}
+    #     return compute_cid(obj)

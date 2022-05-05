@@ -7,7 +7,6 @@
 
 import abc
 import atexit
-import dag_cbor
 import hashlib
 import logging
 import orjson
@@ -15,8 +14,7 @@ import os
 import tempfile
 import uuid
 from humanfriendly import format_size
-from multiformats import CID, multicodec, multihash
-from multiformats.multicodec import Multicodec
+from multiformats import CID, multihash
 from multiformats.multihash import Multihash
 from multiformats.varint import BytesLike
 from pydantic import BaseModel, Extra, PrivateAttr, root_validator
@@ -29,7 +27,6 @@ from rich.table import Table
 from typing import (
     TYPE_CHECKING,
     Any,
-    Callable,
     Dict,
     Iterable,
     List,
@@ -38,19 +35,10 @@ from typing import (
     MutableMapping,
     Optional,
     Sequence,
-    Tuple,
     Union,
 )
 
-from kiara.defaults import (
-    NO_MODULE_TYPE,
-    UNOLOADABLE_DATA_CATEGORY_ID,
-    VALUE_CATEGORY_ID,
-    VALUE_PEDIGREE_TYPE_CATEGORY_ID,
-    VALUES_CATEGORY_ID,
-    VOID_KIARA_ID,
-    SpecialValue,
-)
+from kiara.defaults import NO_MODULE_TYPE, VOID_KIARA_ID, SpecialValue
 from kiara.exceptions import InvalidValuesException
 from kiara.models import KiaraModel
 from kiara.models.module.manifest import InputsManifest, Manifest
@@ -58,6 +46,7 @@ from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
 from kiara.models.values.value_schema import ValueSchema
 from kiara.utils import StringYAML, is_debug, orjson_dumps
+from kiara.utils.hashing import create_cid_digest
 
 log = logging.getLogger("kiara")
 yaml = StringYAML()
@@ -66,17 +55,6 @@ if TYPE_CHECKING:
     from kiara.context import Kiara
     from kiara.data_types import DataType
     from kiara.registries.data import DataRegistry
-
-
-def create_cid_digest(
-    codec: Union[str, int, Multicodec],
-    digest: Union[
-        str, BytesLike, Tuple[Union[str, int, Multihash], Union[str, BytesLike]]
-    ],
-) -> CID:
-
-    cid = CID("base58btc", 1, codec, digest)
-    return cid
 
 
 class SerializedChunks(BaseModel, abc.ABC):
@@ -200,7 +178,7 @@ class SerializedPreStoreChunks(SerializedChunks):
 
         multihash = Multihash(codec=hash_codec)
         hash = multihash.digest(chunk)
-        return create_cid_digest(self.codec, hash)
+        return create_cid_digest(digest=hash, codec=self.codec)
 
     def _create_cid_from_file(self, file: str, hash_codec: str) -> CID:
 
@@ -217,7 +195,7 @@ class SerializedPreStoreChunks(SerializedChunks):
                 fb = f.read(CHUNK_SIZE)
 
         wrapped = multihash.wrap(file_hash.digest(), "sha2-256")
-        return create_cid_digest(self.codec, wrapped)
+        return create_cid_digest(digest=wrapped, codec=self.codec)
 
 
 class SerializedBytes(SerializedPreStoreChunks):
@@ -461,6 +439,8 @@ SERIALIZE_TYPES = {
 
 class SerializationMetadata(KiaraModel):
 
+    _kiara_model_id = "instance.metadata.serialized_data"
+
     environment: Mapping[str, int] = Field(
         description="Hash(es) for the environments the value was created/serialized.",
         default_factory=dict,
@@ -469,15 +449,6 @@ class SerializationMetadata(KiaraModel):
         description="Suggested manifest configs to use to de-serialize the data.",
         default_factory=dict,
     )
-
-    def _retrieve_id(self) -> str:
-        raise NotImplementedError()
-
-    def _retrieve_category_id(self) -> str:
-        return "instance.serialization_metadata"
-
-    def _retrieve_data_to_hash(self) -> Any:
-        raise NotImplementedError()
 
 
 class SerializedData(KiaraModel):
@@ -502,42 +473,25 @@ class SerializedData(KiaraModel):
     )
     _cids_cache: Dict[str, Sequence[CID]] = PrivateAttr(default_factory=dict)
 
-    _cached_hash_func: Optional[
-        Callable[[Union[str, int, Multicodec], bytes], bytes]
-    ] = PrivateAttr(default=None)
-    _cached_size: Optional[int] = PrivateAttr(default=None)
-    _cached_dag: Optional[bytes] = PrivateAttr(default=None)
-    _cached_cid: Optional[CID] = PrivateAttr(default=None)
-
-    def _retrieve_id(self) -> str:
-        raise NotImplementedError()
-
-    def _retrieve_category_id(self) -> str:
-        return "instance.serialized_value"
+    _cached_data_size: Optional[int] = PrivateAttr(default=None)
+    _cached_dag: Optional[Dict[str, Sequence[CID]]] = PrivateAttr(default=None)
+    # _cached_cid: Optional[CID] = PrivateAttr(default=None)
 
     def _retrieve_data_to_hash(self) -> Any:
-        raise NotImplementedError()
-        # return {
-        #     "serialized_hash": self.serialized_hash,
-        #     "data_type": self.data_type,
-        #     "data_type_config": self.data_type_config
-        # }
+
+        return self.dag
 
     @property
-    def size(self) -> int:
-        if self._cached_size is not None:
-            return self._cached_size
+    def data_size(self) -> int:
+        if self._cached_data_size is not None:
+            return self._cached_data_size
 
         size = 0
         for k in self.get_keys():
             model = self.get_serialized_data(k)
             size = size + model.get_size()
-        self._cached_size = size
-        return self._cached_size
-
-    @property
-    def serialized_hash(self) -> str:
-        return str(self.cid)
+        self._cached_data_size = size
+        return self._cached_data_size
 
     @abc.abstractmethod
     def get_keys(self) -> Iterable[str]:
@@ -547,21 +501,21 @@ class SerializedData(KiaraModel):
     def get_serialized_data(self, key: str) -> SerializedChunks:
         pass
 
-    @property
-    def cid(self) -> CID:
-
-        if self._cached_cid is not None:
-            return self._cached_cid
-
-        # TODO: check whether that is correect, or whether it needs another wrapping in an 'identity' type
-        codec = multicodec.get("dag-cbor")
-
-        hash_func = Multihash(codec=self.hash_codec).digest
-        hash = hash_func(self.dag)
-        cid = create_cid_digest(codec, hash)
-        self._cached_cid = cid
-
-        return self._cached_cid
+    # @property
+    # def cid(self) -> CID:
+    #
+    #     if self._cached_cid is not None:
+    #         return self._cached_cid
+    #
+    #     # TODO: check whether that is correect, or whether it needs another wrapping in an 'identity' type
+    #     codec = multicodec.get("dag-cbor")
+    #
+    #     hash_func = Multihash(codec=self.hash_codec).digest
+    #     hash = hash_func(self.dag)
+    #     cid = create_cid_digest(codec, hash)
+    #     self._cached_cid = cid
+    #
+    #     return self._cached_cid
 
     def get_cids_for_key(self, key) -> Sequence[CID]:
 
@@ -573,7 +527,7 @@ class SerializedData(KiaraModel):
         return self._cids_cache[key]
 
     @property
-    def dag(self) -> bytes:
+    def dag(self) -> Mapping[str, Sequence[CID]]:
 
         if self._cached_dag is not None:
             return self._cached_dag
@@ -582,12 +536,13 @@ class SerializedData(KiaraModel):
         for key in self.get_keys():
             dag[key] = self.get_cids_for_key(key)
 
-        encoded = dag_cbor.encode(dag)
-        self._cached_dag = encoded
+        self._cached_dag = dag
         return self._cached_dag
 
 
 class SerializationResult(SerializedData):
+
+    _kiara_model_id = "instance.serialization_result"
 
     data: Dict[
         str,
@@ -660,20 +615,22 @@ class SerializationResult(SerializedData):
             orjson_dumps(data_fields), "json", background_color="default"
         )
         table.add_row("data", data_json)
-        table.add_row("size", str(self.size))
-        table.add_row("hash", str(self.serialized_hash))
+        table.add_row("size", str(self.data_size))
+        table.add_row("hash", self.instance_id)
 
         return table
 
     def __repr__(self):
 
-        return f"{self.__class__.__name__}(type={self.data_type} size={self.size})"
+        return f"{self.__class__.__name__}(type={self.data_type} size={self.data_size})"
 
     def __str__(self):
         return self.__repr__()
 
 
 class PersistedData(SerializedData):
+
+    _kiara_model_id = "instance.persisted_data"
 
     archive_id: uuid.UUID = Field(
         description="The id of the store that persisted the data."
@@ -682,9 +639,6 @@ class PersistedData(SerializedData):
         description="Reference-ids that resolve to the values' serialized chunks."
     )
 
-    def _retrieve_category_id(self) -> str:
-        return "instance.persisted_value_info"
-
     def get_keys(self) -> Iterable[str]:
         return self.chunk_id_map.keys()
 
@@ -692,50 +646,46 @@ class PersistedData(SerializedData):
         return self.chunk_id_map[key]
 
 
-class LoadConfig(Manifest):
-
-    inputs: Mapping[str, PersistedData] = Field(
-        description="A map translating from input field name to alias (key) in bytes_structure."
-    )
-    output_name: str = Field(
-        description="The name of the field that contains the persisted value details."
-    )
-
-    def _retrieve_data_to_hash(self) -> Any:
-        return self.dict()
-
-    def __repr__(self):
-
-        return f"{self.__class__.__name__}(module_type={self.module_type}, output_name={self.output_name})"
-
-    def __str__(self):
-        return self.__repr__()
+# class LoadConfig(Manifest):
+#
+#     inputs: Mapping[str, PersistedData] = Field(
+#         description="A map translating from input field name to alias (key) in bytes_structure."
+#     )
+#     output_name: str = Field(
+#         description="The name of the field that contains the persisted value details."
+#     )
+#
+#     def _retrieve_data_to_hash(self) -> Any:
+#         return self.dict()
+#
+#     def __repr__(self):
+#
+#         return f"{self.__class__.__name__}(module_type={self.module_type}, output_name={self.output_name})"
+#
+#     def __str__(self):
+#         return self.__repr__()
 
 
 class ValuePedigree(InputsManifest):
 
+    _kiara_model_id = "instance.value_pedigree"
+
     kiara_id: uuid.UUID = Field(
         description="The id of the kiara context a value was created in."
     )
-    environments: Dict[str, int] = Field(
+    environments: Dict[str, str] = Field(
         description="References to the runtime environment details a value was created in."
     )
 
-    def _retrieve_id(self) -> str:
-        return str(self.model_data_hash)
-
-    def _retrieve_category_id(self) -> str:
-        return VALUE_PEDIGREE_TYPE_CATEGORY_ID
-
     def _retrieve_data_to_hash(self) -> Any:
         return {
-            "manifest": self.manifest_hash,
-            "inputs": self.inputs_hash,
-            # "environments": self.environments
+            "manifest": self.manifest_cid,
+            "inputs": self.inputs_cid,
+            "environments": self.environments,
         }
 
     def __repr__(self):
-        return f"ValuePedigree(module_type={self.module_type}, inputs=[{', '.join(self.inputs.keys())}], hash={self.model_data_hash})"
+        return f"ValuePedigree(module_type={self.module_type}, inputs=[{', '.join(self.inputs.keys())}], instance_id={self.instance_id})"
 
     def __str__(self):
         return self.__repr__()
@@ -743,6 +693,8 @@ class ValuePedigree(InputsManifest):
 
 class ValueDetails(KiaraModel):
     """A wrapper class that manages and retieves value data and its details."""
+
+    _kiara_model_id = "instance.value_details"
 
     value_id: uuid.UUID = Field(description="The id of the value.")
 
@@ -770,15 +722,12 @@ class ValueDetails(KiaraModel):
     def _retrieve_id(self) -> str:
         return str(self.value_id)
 
-    def _retrieve_category_id(self) -> str:
-        return VALUE_CATEGORY_ID
-
-    # @property
-    # def model_data_hash(self) -> int:
-    #     return self._retrieve_data_to_hash()
-
     def _retrieve_data_to_hash(self) -> Any:
-        return {"value_type": self.value_schema.type, "value_hash": self.value_hash}
+        return {
+            "value_type": self.value_schema.type,
+            "value_hash": self.value_hash,
+            "value_size": self.value_size,
+        }
 
     @property
     def data_type_name(self) -> str:
@@ -836,6 +785,8 @@ class ValueDetails(KiaraModel):
 
 
 class Value(ValueDetails):
+
+    _kiara_model_id = "instance.value"
 
     _value_data: Any = PrivateAttr(default=SpecialValue.NOT_SET)
     _serialized_data: Union[None, str, SerializedData] = PrivateAttr(default=None)
@@ -1151,17 +1102,15 @@ class UnloadableData(KiaraModel):
 
     In most cases, the reason this happens is because the current kiara context is missing some value types and/or modules."""
 
+    _kiara_model_id = "instance.unloadable_data"
+
     value: Value = Field(description="A reference to the value.")
-    load_config: LoadConfig = Field(description="The load config")
 
     def _retrieve_id(self) -> str:
-        return self.value.model_id
-
-    def _retrieve_category_id(self) -> str:
-        return UNOLOADABLE_DATA_CATEGORY_ID
+        return self.value.instance_id
 
     def _retrieve_data_to_hash(self) -> Any:
-        return self.value.model_data_hash
+        return self.value.value_id.bytes
 
 
 class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
@@ -1185,6 +1134,11 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
             if not item.is_valid:
                 return False
         return True
+
+    def _retrieve_data_to_hash(self) -> Any:
+        return {
+            k: self.get_value_obj(k).instance_cid for k in self.values_schema.keys()
+        }
 
     def check_invalid(self) -> Dict[str, str]:
         """Check whether the value set is invalid, if it is, return a description of what's wrong."""
@@ -1340,6 +1294,9 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
 
 
 class ValueMapReadOnly(ValueMap):  # type: ignore
+
+    _kiara_model_id = "instance.value_map.readonly"
+
     @classmethod
     def create_from_ids(cls, data_registry: "DataRegistry", **value_ids: uuid.UUID):
 
@@ -1349,17 +1306,6 @@ class ValueMapReadOnly(ValueMap):  # type: ignore
     value_items: Dict[str, Value] = Field(
         description="The values contained in this set."
     )
-
-    def _retrieve_id(self) -> str:
-        return str(uuid.uuid4())
-
-    def _retrieve_category_id(self) -> str:
-        return VALUES_CATEGORY_ID
-
-    def _retrieve_data_to_hash(self) -> Any:
-        return {
-            k: self.get_value_obj(k).model_data_hash for k in self.values_schema.keys()
-        }
 
     def get_value_obj(self, field_name: str) -> Value:
 
@@ -1371,6 +1317,9 @@ class ValueMapReadOnly(ValueMap):  # type: ignore
 
 
 class ValueMapWritable(ValueMap):  # type: ignore
+
+    _kiara_model_id = "instance.value_map.writeable"
+
     @classmethod
     def create_from_schema(
         cls, kiara: "Kiara", schema: Mapping[str, ValueSchema], pedigree: ValuePedigree
@@ -1390,17 +1339,6 @@ class ValueMapWritable(ValueMap):  # type: ignore
     _values_uncommitted: Dict[str, Any] = PrivateAttr(default_factory=dict)
     _data_registry: "DataRegistry" = PrivateAttr(default=None)
     _auto_commit: bool = PrivateAttr(default=True)
-
-    def _retrieve_id(self) -> str:
-        return str(uuid.uuid4())
-
-    def _retrieve_category_id(self) -> str:
-        return VALUES_CATEGORY_ID
-
-    def _retrieve_data_to_hash(self) -> Any:
-        return {
-            k: self.get_value_obj(k).model_data_hash for k in self.values_schema.keys()
-        }
 
     def get_value_obj(self, field_name: str) -> Value:
         """Retrieve the value object for the specified field.

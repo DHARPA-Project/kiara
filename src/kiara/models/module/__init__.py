@@ -23,11 +23,7 @@ from rich.syntax import Syntax
 from rich.table import Table
 from typing import TYPE_CHECKING, Any, Dict, Literal, Mapping, Optional, Type
 
-from kiara.defaults import (
-    DEFAULT_NO_DESC_VALUE,
-    MODULE_CONFIG_METADATA_CATEGORY_ID,
-    MODULE_CONFIG_SCHEMA_CATEGORY_ID,
-)
+from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.models import KiaraModel
 from kiara.models.documentation import (
     AuthorsMetadataModel,
@@ -56,6 +52,8 @@ class KiaraModuleConfig(KiaraModel):
      values that override the schema defaults, and those can be overwritten by users. If both a constant and a default
      value is set for an input field, an error is thrown.
     """
+
+    _kiara_model_id = "instance.module_config"
 
     @classmethod
     def requires_config(cls, config: Optional[Mapping[str, Any]] = None) -> bool:
@@ -92,16 +90,6 @@ class KiaraModuleConfig(KiaraModel):
 
         return getattr(self, key)
 
-    def _retrieve_id(self) -> str:
-        return str(self.model_data_hash)
-
-    def _retrieve_category_id(self) -> str:
-        return MODULE_CONFIG_SCHEMA_CATEGORY_ID
-
-    def _retrieve_data_to_hash(self) -> Any:
-
-        return self.dict()
-
     def create_renderable(self, **config: Any) -> RenderableType:
 
         my_table = Table(box=box.MINIMAL, show_header=False)
@@ -121,17 +109,6 @@ class KiaraModuleConfig(KiaraModel):
 
         return my_table
 
-    def __eq__(self, other):
-
-        if self.__class__ != other.__class__:
-            return False
-
-        return self.model_data_hash == other.model_data_hash
-
-    def __hash__(self):
-
-        return self.model_data_hash
-
 
 class ValueTypeAndDescription(BaseModel):
 
@@ -142,6 +119,9 @@ class ValueTypeAndDescription(BaseModel):
 
 
 class KiaraModuleConfigMetadata(KiaraModel):
+
+    _kiara_model_id = "metadata.module_config"
+
     @classmethod
     def from_config_class(
         cls,
@@ -183,13 +163,10 @@ class KiaraModuleConfigMetadata(KiaraModel):
     )
 
     def _retrieve_id(self) -> str:
-        return self.python_class.model_id
-
-    def _retrieve_category_id(self) -> str:
-        return MODULE_CONFIG_METADATA_CATEGORY_ID
+        return self.python_class.full_name
 
     def _retrieve_data_to_hash(self) -> Any:
-        return self.python_class.model_id
+        return self.python_class.full_name
 
 
 def calculate_class_doc_url(base_url: str, module_type_name: str):
@@ -225,6 +202,9 @@ def calculate_class_source_url(
 
 
 class KiaraModuleTypeInfo(KiaraTypeInfoModel["KiaraModule"]):
+
+    _kiara_model_id = "instance.info.kiara_module_type"
+
     @classmethod
     def create_from_type_class(
         cls, type_cls: Type["KiaraModule"]
@@ -309,6 +289,9 @@ class KiaraModuleTypeInfo(KiaraTypeInfoModel["KiaraModule"]):
 
 
 class ModuleTypeClassesInfo(TypeInfoModelGroup):
+
+    _kiara_model_id = "instance.info.module_types"
+
     @classmethod
     def base_info_class(cls) -> Type[KiaraTypeInfoModel]:
         return KiaraModuleTypeInfo
@@ -320,6 +303,9 @@ class ModuleTypeClassesInfo(TypeInfoModelGroup):
 
 
 class KiaraModuleClass(PythonClass):
+
+    _kiara_model_id: str = "instance.metadata.kiara_module_class"
+
     @classmethod
     def from_module(cls, module: "KiaraModule"):
 

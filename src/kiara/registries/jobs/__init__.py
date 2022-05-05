@@ -51,9 +51,9 @@ class JobRegistry(object):
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
-        self._active_jobs: bidict[int, uuid.UUID] = bidict()
-        self._failed_jobs: Dict[int, uuid.UUID] = {}
-        self._finished_jobs: Dict[int, uuid.UUID] = {}
+        self._active_jobs: bidict[str, uuid.UUID] = bidict()
+        self._failed_jobs: Dict[str, uuid.UUID] = {}
+        self._finished_jobs: Dict[str, uuid.UUID] = {}
         self._archived_records: Dict[uuid.UUID, JobRecord] = {}
 
         self._processor: ModuleProcessor = SynchronousProcessor(kiara=self._kiara)
@@ -238,7 +238,7 @@ class JobRegistry(object):
             module_type=job_config.module_type,
             module_config=job_config.module_config,
             inputs={k: str(v) for k, v in job_config.inputs.items()},
-            job_hash=job_config.model_data_hash,
+            job_hash=job_config.job_hash,
         )
 
         stored_job = self.find_matching_job_record(inputs_manifest=job_config)

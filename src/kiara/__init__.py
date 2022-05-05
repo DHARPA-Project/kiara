@@ -23,6 +23,7 @@ import typing
 
 from .context import Kiara, explain  # noqa
 from .modules import KiaraModule  # noqa
+from .utils.class_loading import KiaraEntryPointItem, find_kiara_model_classes_under
 
 try:
     builtins = __import__("__builtin__")
@@ -100,6 +101,11 @@ KIARA_METADATA = {
     "tags": [],
     "labels": {"package": "kiara"},
 }
+
+find_model_classes: KiaraEntryPointItem = (
+    find_kiara_model_classes_under,
+    "kiara.models",
+)
 
 
 def get_version() -> str:

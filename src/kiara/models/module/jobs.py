@@ -14,12 +14,7 @@ from pydantic.fields import Field, PrivateAttr
 from pydantic.main import BaseModel
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional
 
-from kiara.defaults import (
-    JOB_CATEGORY_ID,
-    JOB_CONFIG_TYPE_CATEGORY_ID,
-    JOB_RECORD_TYPE_CATEGORY_ID,
-    KIARA_HASH_FUNCTION,
-)
+from kiara.defaults import KIARA_HASH_FUNCTION
 from kiara.exceptions import InvalidValuesException
 from kiara.models import KiaraModel
 from kiara.models.module.manifest import InputsManifest
@@ -63,6 +58,9 @@ class JobLog(BaseModel):
 
 
 class JobConfig(InputsManifest):
+
+    _kiara_model_id = "instance.job_config"
+
     @classmethod
     def create_from_module(
         cls,
@@ -86,17 +84,13 @@ class JobConfig(InputsManifest):
             inputs=value_ids,
         )
 
-    def _retrieve_id(self) -> str:
-        return str(self.model_data_hash)
-
-    def _retrieve_category_id(self) -> str:
-        return JOB_CONFIG_TYPE_CATEGORY_ID
-
     def _retrieve_data_to_hash(self) -> Any:
-        return {"manifest": self.manifest_data, "inputs": self.inputs_hash}
+        return {"manifest": self.manifest_cid, "inputs": self.inputs_cid}
 
 
 class ActiveJob(KiaraModel):
+
+    _kiara_model_id = "instance.active_job"
 
     job_id: uuid.UUID = Field(description="The job id.")
 
@@ -121,11 +115,8 @@ class ActiveJob(KiaraModel):
     def _retrieve_id(self) -> str:
         return str(self.job_id)
 
-    def _retrieve_category_id(self) -> str:
-        return JOB_CATEGORY_ID
-
     def _retrieve_data_to_hash(self) -> Any:
-        return self.job_id
+        return self.job_id.bytes
 
     @property
     def exception(self) -> Optional[Exception]:
@@ -166,6 +157,9 @@ class JobRuntimeDetails(BaseModel):
 
 
 class JobRecord(JobConfig):
+
+    _kiara_model_id = "instance.job_record"
+
     @classmethod
     def from_active_job(self, active_job: ActiveJob):
 
@@ -199,14 +193,11 @@ class JobRecord(JobConfig):
     _is_stored: bool = PrivateAttr(default=None)
     _outputs_hash: Optional[int] = PrivateAttr(default=None)
 
-    def _retrieve_category_id(self) -> str:
-        return JOB_RECORD_TYPE_CATEGORY_ID
-
     def _retrieve_data_to_hash(self) -> Any:
         return {
-            "manifest_hash": self.manifest_hash,
-            "inputs": self.inputs,
-            "outputs": self.outputs,
+            "manifest": self.manifest_cid,
+            "inputs": self.inputs_cid,
+            "outputs": {k: v.bytes for k, v in self.outputs.items()},
         }
 
     @property

@@ -19,11 +19,7 @@ from typing import (
     Set,
 )
 
-from kiara.defaults import (
-    NONE_VALUE_ID,
-    NOT_SET_VALUE_ID,
-    PIPELINE_STEP_DETAILS_CATEGORY_ID,
-)
+from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID
 from kiara.models.events import KiaraEvent
 from kiara.models.module.pipeline import StepStatus
 from kiara.utils import orjson_dumps
@@ -84,18 +80,10 @@ class StepDetails(BaseModel):
         return result
 
     def _retrieve_data_to_hash(self) -> Any:
-        return {
-            "kiara_id": self.kiara_id,
-            "pipeline_id": self.pipeline_id,
-            "step_id": self.step_id,
-            "inputs": self.inputs,
-        }
+        return f"{self.kiara_id}.{self.pipeline_id}.{self.step_id}"
 
     def _retrieve_id(self) -> str:
         return f"{self.kiara_id}.{self.pipeline_id}.{self.step_id}"
-
-    def _retrieve_category_id(self) -> str:
-        return PIPELINE_STEP_DETAILS_CATEGORY_ID
 
 
 class PipelineDetails(BaseModel):

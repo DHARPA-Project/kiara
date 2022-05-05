@@ -20,6 +20,8 @@ if TYPE_CHECKING:
 class PythonClass(KiaraModel):
     """Python class and module information."""
 
+    _kiara_model_id = "instance.wrapped_python_class"
+
     @classmethod
     def from_class(cls, item_cls: Type, attach_context_metadata: bool = False):
 
@@ -61,9 +63,6 @@ class PythonClass(KiaraModel):
 
     def _retrieve_id(self) -> str:
         return self.full_name
-
-    def _retrieve_category_id(self) -> str:
-        return "metadata.python_class"
 
     def _retrieve_data_to_hash(self) -> Any:
         return self.full_name

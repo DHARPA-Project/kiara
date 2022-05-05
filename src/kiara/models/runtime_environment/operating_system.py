@@ -18,6 +18,8 @@ class OSRuntimeEnvironment(RuntimeEnvironment):
     # TODO: details for other OS's (mainly BSDs)
     """
 
+    _kiara_model_id = "instance.info.runtime.os"
+
     environment_type: typing.Literal["operating_system"]
     operation_system: str = Field(description="The operation system name.")
     platform: str = Field(description="The platform name.")

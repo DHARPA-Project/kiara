@@ -122,7 +122,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
         return result
 
     def _retrieve_environment_details(
-        self, env_type: str, env_hash: int
+        self, env_type: str, env_hash: str
     ) -> Mapping[str, Any]:
 
         base_path = self.get_path(entity_type=EntityType.ENVIRONMENT)
@@ -141,12 +141,12 @@ class FileSystemDataArchive(DataArchive, JobArchive):
     ) -> Optional[JobRecord]:
 
         return self._retrieve_job_record(
-            manifest_hash=inputs_manifest.manifest_hash,
+            manifest_hash=str(inputs_manifest.instance_cid),
             jobs_hash=inputs_manifest.job_hash,
         )
 
     def _retrieve_job_record(
-        self, manifest_hash: int, jobs_hash: int
+        self, manifest_hash: str, jobs_hash: str
     ) -> Optional[JobRecord]:
 
         base_path = self.get_path(entity_type=EntityType.MANIFEST)
@@ -164,7 +164,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
 
         manifest_data = orjson.loads(manifest_file.read_text())
 
-        job_folder = manifest_folder / str(jobs_hash)
+        job_folder = manifest_folder / jobs_hash
 
         if not job_folder.exists():
             return None
@@ -326,7 +326,7 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
     _archive_type_name = "filesystem_data_store"
 
     def _persist_environment_details(
-        self, env_type: str, env_hash: int, env_data: Mapping[str, Any]
+        self, env_type: str, env_hash: str, env_data: Mapping[str, Any]
     ):
 
         base_path = self.get_path(entity_type=EntityType.ENVIRONMENT)
@@ -431,7 +431,7 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
 
     def _persist_value_pedigree(self, value: Value):
 
-        manifest_hash = value.pedigree.manifest_hash
+        manifest_hash = value.pedigree.instance_cid
         jobs_hash = value.pedigree.job_hash
 
         base_path = self.get_path(entity_type=EntityType.MANIFEST)

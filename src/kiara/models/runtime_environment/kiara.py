@@ -26,6 +26,9 @@ from kiara.utils.metadata import find_metadata_models
 
 
 class ArchiveTypeInfoModel(KiaraTypeInfoModel):
+
+    _kiara_model_id = "instance.info.archive_type"
+
     @classmethod
     def create_from_type_class(
         self, type_cls: Type[KiaraArchive]
@@ -87,6 +90,9 @@ class ArchiveTypeInfoModel(KiaraTypeInfoModel):
 
 
 class ArchiveTypeClassesInfo(TypeInfoModelGroup):
+
+    _kiara_model_id = "instance.info.archive_types"
+
     @classmethod
     def base_info_class(cls) -> Type[ArchiveTypeInfoModel]:
         return ArchiveTypeInfoModel
@@ -121,6 +127,8 @@ def find_archive_types(
 
 
 class KiaraTypesRuntimeEnvironment(RuntimeEnvironment):
+
+    _kiara_model_id = "instance.info.runtime.kiara_types"
 
     environment_type: Literal["kiara_types"]
     archive_types: ArchiveTypeClassesInfo = Field(

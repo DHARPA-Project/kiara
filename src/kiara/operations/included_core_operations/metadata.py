@@ -78,7 +78,7 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
                     "module_type": "value.extract_metadata",
                     "module_config": {
                         "data_type": data_type,
-                        "metadata_model": PythonClass.from_class(model_cls),
+                        "metadata_model": PythonClass.from_class(model_cls).dict(),
                     },
                     "doc": f"Extract '{metadata_key}' metadata for value type '{data_type}'.",
                 }

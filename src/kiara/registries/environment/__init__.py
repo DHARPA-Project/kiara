@@ -35,16 +35,14 @@ class EnvironmentRegistry(object):
 
         self._full_env_model: Optional[BaseModel] = None
 
-    def get_environment_for_hash(self, env_hash: int) -> RuntimeEnvironment:
+    def get_environment_for_cid(self, env_cid: str) -> RuntimeEnvironment:
 
-        envs = [
-            env for env in self.environments.values() if env.model_data_hash == env_hash
-        ]
+        envs = [env for env in self.environments.values() if env.instance_id == env_cid]
         if len(envs) == 0:
-            raise Exception(f"No environment with hash '{env_hash}' available.")
+            raise Exception(f"No environment with id '{env_cid}' available.")
         elif len(envs) > 1:
             raise Exception(
-                f"Multipe environments with hash '{env_hash}' available. This is most likely a bug."
+                f"Multipe environments with id '{env_cid}' available. This is most likely a bug."
             )
         return envs[0]
 
@@ -112,7 +110,7 @@ class EnvironmentRegistry(object):
                 Field(description=f"Metadata describing the {k} environment."),
             )
             schemas[k] = v[0].schema_json()
-            hashes[k] = self.environments[k].model_data_hash
+            hashes[k] = self.environments[k].instance_cid
 
         cls: Type[BaseModel] = create_model("KiaraRuntimeInfo", **models)  # type: ignore
         data = {}
@@ -120,7 +118,7 @@ class EnvironmentRegistry(object):
             d = v2.dict()
             assert "metadata_hash" not in d.keys()
             assert "metadata_schema" not in d.keys()
-            d["metadata_hash"] = hashes[k2]
+            d["metadata_hash"] = str(hashes[k2])
             d["metadata_schema"] = schemas[k]
             data[k2] = d
         model = cls.construct(**data)  # type: ignore

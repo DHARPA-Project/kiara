@@ -5,12 +5,12 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import rich_click as click
 
-# noqa
-# type: ignore
-from kiara import Kiara
-
 # from alembic import command  # type: ignore
 # from alembic.config import Config  # type: ignore
+from kiara.utils.hashing import compute_cid
+
+# noqa
+# type: ignore
 
 
 @click.group("dev")
@@ -23,34 +23,14 @@ def dev_group(ctx):
 @click.pass_context
 def test(ctx):
 
-    kiara: Kiara = ctx.obj["kiara"]
-    # value = kiara.data_registry.register_data(100, schema="integer")
-    value = kiara.data_registry.register_data("100", schema="string")
-    pp_result = kiara.data_registry.render_data(value_id=value.value_id)
-    print(pp_result)
+    # kiara: Kiara = ctx.obj["kiara"]
 
-    # DATA_FOLDER = "/home/markus/projects/kiara_new/kiara/examples/data"
-    # PIPELINES_FOLDER = "/home/markus/projects/kiara_new/kiara/tests/resources/pipelines"
-    #
-    # instance_path = "/tmp/kiara_tests"
-    # shutil.rmtree(instance_path, ignore_errors=True)
-    #
-    # kiara = Kiara.create_in_path(instance_path)
-    #
-    # pipeline = os.path.join(PIPELINES_FOLDER, "test_preseed_1.yaml")
-    # batch_op = BatchOperation.from_file(pipeline, kiara=kiara)
+    data = {"x": "1", "y": 2}
+    cid = compute_cid(data)
+    print(cid)
 
-    # inputs = {
-    #     "edges_file_path": os.path.join(DATA_FOLDER, "journals/JournalEdges1902.csv"),
-    #     "nodes_file_path": os.path.join(DATA_FOLDER, "journals/JournalNodes1902.csv"),
-    #     "journals_folder_path": os.path.join(DATA_FOLDER, "journals"),
-    #     "text_corpus_folder_path": os.path.join(DATA_FOLDER, "text_corpus"),
-    #     "city_column_name": "City",
-    #     "label_column_name": "Label",
-    # }
-    #
-    # results = batch_op.run(save="journals_data")
-    # terminal_print(result)
+    # model_classes = find_all_kiara_model_classes()
+    # dbg(model_classes)
 
 
 # @dev_group.command("reinit-db")

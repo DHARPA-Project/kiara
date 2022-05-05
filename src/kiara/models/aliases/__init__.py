@@ -11,7 +11,7 @@ from pydantic import Field, PrivateAttr
 from rich.tree import Tree
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional
 
-from kiara.defaults import NONE_VALUE_ID, VALUES_CATEGORY_ID
+from kiara.defaults import NONE_VALUE_ID
 from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.utils.cli import terminal_print
@@ -26,6 +26,8 @@ VALUE_ALIAS_SEPARATOR = "."
 
 
 class AliasValueMap(ValueMap):
+
+    _kiara_model_id = "instance.value_map.aliases"
 
     alias: Optional[str] = Field(description="This maps own (full) alias.")
     version: int = Field(description="The version of this map (in this maps parent).")
@@ -47,12 +49,6 @@ class AliasValueMap(ValueMap):
     _schema_locked: bool = PrivateAttr(default=False)
     _auto_schema: bool = PrivateAttr(default=True)
     _is_stored: bool = PrivateAttr(default=False)
-
-    def _retrieve_id(self) -> str:
-        return str(uuid.uuid4())
-
-    def _retrieve_category_id(self) -> str:
-        return VALUES_CATEGORY_ID
 
     def _retrieve_data_to_hash(self) -> Any:
         raise NotImplementedError()

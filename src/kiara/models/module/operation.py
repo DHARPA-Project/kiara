@@ -28,13 +28,7 @@ from typing import (
     Union,
 )
 
-from kiara.defaults import (
-    OPERATION_CATEOGORY_ID,
-    OPERATION_CONFIG_CATEOGORY_ID,
-    OPERATION_DETAILS_CATEOGORY_ID,
-    OPERATION_TYPE_CATEGORY_ID,
-    PYDANTIC_USE_CONSTRUCT,
-)
+from kiara.defaults import PYDANTIC_USE_CONSTRUCT
 from kiara.models import KiaraModel
 from kiara.models.documentation import (
     AuthorsMetadataModel,
@@ -94,6 +88,9 @@ class OperationSchema(InputOutputObject):
 
 
 class OperationDetails(KiaraModel):
+
+    _kiara_model_id = "instance.operation_details"
+
     @classmethod
     def create_operation_details(cls, **details: Any):
 
@@ -112,12 +109,6 @@ class OperationDetails(KiaraModel):
 
     def _retrieve_id(self) -> str:
         return self.operation_id
-
-    def _retrieve_category_id(self) -> str:
-        return OPERATION_DETAILS_CATEOGORY_ID
-
-    def _retrieve_data_to_hash(self) -> Any:
-        return self.dict()
 
     @property
     def inputs_schema(self) -> Mapping[str, ValueSchema]:
@@ -142,6 +133,8 @@ class OperationDetails(KiaraModel):
 
 
 class BaseOperationDetails(OperationDetails):
+
+    _kiara_model_id = "instance.operation_details.base"
 
     _op_schema: OperationSchema = PrivateAttr(default=None)
 
@@ -174,15 +167,6 @@ class OperationConfig(KiaraModel):
     def validate_doc(cls, value):
         return DocumentationMetadataModel.create(value)
 
-    def _retrieve_id(self) -> str:
-        return str(self.model_data_hash)
-
-    def _retrieve_category_id(self) -> str:
-        return OPERATION_CONFIG_CATEOGORY_ID
-
-    def _retrieve_data_to_hash(self) -> Any:
-        return self.dict()
-
     @abc.abstractmethod
     def retrieve_module_type(self, kiara: "Kiara") -> str:
         pass
@@ -193,6 +177,8 @@ class OperationConfig(KiaraModel):
 
 
 class ManifestOperationConfig(OperationConfig):
+
+    _kiara_model_id = "instance.operation_config.manifest"
 
     module_type: str = Field(description="The module type.")
     module_config: Dict[str, Any] = Field(
@@ -207,6 +193,8 @@ class ManifestOperationConfig(OperationConfig):
 
 
 class PipelineOperationConfig(OperationConfig):
+
+    _kiara_model_id = "instance.operation_config.pipeline"
 
     pipeline_name: str = Field(description="The pipeline id.")
     pipeline_config: Mapping[str, Any] = Field(description="The pipeline config data.")
@@ -247,10 +235,13 @@ class PipelineOperationConfig(OperationConfig):
 
     def __repr__(self):
 
-        return f"{self.__class__.__name__}(pipeline_name={self.pipeline_name} required_modules={list(self.required_module_types)} model_id={self.model_id}, category={self.category_id}, fields=[{', '.join(self.__fields__.keys())}])"
+        return f"{self.__class__.__name__}(pipeline_name={self.pipeline_name} required_modules={list(self.required_module_types)} instance_id={self.instance_id}, category={self.model_type_id}, fields=[{', '.join(self.__fields__.keys())}])"
 
 
 class Operation(Manifest):
+
+    _kiara_model_id = "instance.operation"
+
     @classmethod
     def create_from_module(cls, module: KiaraModule, doc: Any = None) -> "Operation":
 
@@ -258,7 +249,7 @@ class Operation(Manifest):
             CustomModuleOperationDetails,
         )
 
-        op_id = f"{module.module_type_name}._{module.module_instance_hash}"
+        op_id = f"{module.module_type_name}._{module.module_instance_cid}"
 
         details = CustomModuleOperationDetails.create_from_module(module=module)
 
@@ -295,14 +286,8 @@ class Operation(Manifest):
 
     _module: Optional["KiaraModule"] = PrivateAttr(default=None)
 
-    def _retrieve_id(self) -> str:
-        return str(self.model_data_hash)
-
-    def _retrieve_category_id(self) -> str:
-        return OPERATION_CATEOGORY_ID
-
     def _retrieve_data_to_hash(self) -> Any:
-        raise NotImplementedError()
+        return {"operation_id": self.operation_id, "manifest": self.manifest_cid}
 
     @property
     def module(self) -> "KiaraModule":
@@ -435,6 +420,9 @@ class Operation(Manifest):
 
 
 class OperationTypeInfo(KiaraTypeInfoModel):
+
+    _kiara_model_id = "instance.info.operation_type"
+
     @classmethod
     def create_from_type_class(
         cls, type_cls: Type["OperationType"]
@@ -468,14 +456,14 @@ class OperationTypeInfo(KiaraTypeInfoModel):
     def _retrieve_id(self) -> str:
         return self.type_name
 
-    def _retrieve_category_id(self) -> str:
-        return OPERATION_TYPE_CATEGORY_ID
-
     def _retrieve_data_to_hash(self) -> Any:
         return self.type_name
 
 
 class OperationTypeClassesInfo(TypeInfoModelGroup):
+
+    _kiara_model_id = "instance.info.operation_types"
+
     @classmethod
     def base_info_class(cls) -> Type[KiaraTypeInfoModel]:
         return OperationTypeInfo
@@ -487,6 +475,9 @@ class OperationTypeClassesInfo(TypeInfoModelGroup):
 
 
 class OperationInfo(KiaraInfoModel):
+
+    _kiara_model_id = "instance.info.operation"
+
     @classmethod
     def create_from_operation(cls, kiara: "Kiara", operation: Operation):
 
@@ -541,6 +532,9 @@ class OperationInfo(KiaraInfoModel):
 
 
 class OperationGroupInfo(InfoModelGroup):
+
+    _kiara_model_id = "instance.info.operations"
+
     @classmethod
     def base_info_class(cls) -> Type[KiaraInfoModel]:
         return OperationInfo

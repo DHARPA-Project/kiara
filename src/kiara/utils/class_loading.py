@@ -307,7 +307,7 @@ def load_all_subclasses_for_entry_point(
 
                 if type_id in result_dynamic.keys():
                     raise Exception(
-                        f"Duplicate item name for type {entry_point_name}: {type_id}"
+                        f"Duplicate type id '{type_id}' for type {entry_point_name}: {result_dynamic[type_id]} -- {sub_class}"
                     )
                 result_dynamic[type_id] = sub_class
 

@@ -104,7 +104,7 @@ class ModuleProcessor(abc.ABC):
     def create_job(self, job_config: JobConfig) -> uuid.UUID:
 
         environments = {
-            env_name: env.model_data_hash
+            env_name: env.instance_id
             for env_name, env in self._kiara.current_environments.items()
         }
 

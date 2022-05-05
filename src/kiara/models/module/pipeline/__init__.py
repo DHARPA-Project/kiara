@@ -11,10 +11,6 @@ from rich.console import RenderableType
 from slugify import slugify
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Optional
 
-from kiara.defaults import (
-    PIPELINE_CONFIG_TYPE_CATEGORY_ID,
-    PIPELINE_STEP_TYPE_CATEGORY_ID,
-)
 from kiara.models.module import KiaraModuleClass, KiaraModuleConfig
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.pipeline.value_refs import StepValueAddress
@@ -38,6 +34,8 @@ class StepStatus(Enum):
 
 class PipelineStep(Manifest):
     """A step within a pipeline-structure, includes information about it's connection(s) and other metadata."""
+
+    _kiara_model_id = "instance.pipeline_step"
 
     class Config:
         validate_assignment = True
@@ -148,15 +146,6 @@ class PipelineStep(Manifest):
         description="The class of the underlying module."
     )
     _module: Optional["KiaraModule"] = PrivateAttr(default=None)
-
-    def _retrieve_data_to_hash(self) -> Any:
-        return self.dict()
-
-    def _retrieve_id(self) -> str:
-        return str(self.model_data_hash)
-
-    def _retrieve_category_id(self) -> str:
-        return PIPELINE_STEP_TYPE_CATEGORY_ID
 
     @root_validator(pre=True)
     def create_step_id(cls, values):
@@ -313,6 +302,8 @@ class PipelineConfig(KiaraModuleConfig):
         ```
     """
 
+    _kiara_model_id = "instance.module_config.pipeline"
+
     @classmethod
     def from_file(
         cls,
@@ -391,15 +382,6 @@ class PipelineConfig(KiaraModuleConfig):
         default_factory=dict, description="Metadata for this workflow."
     )
     _structure: Optional["PipelineStructure"] = PrivateAttr(default=None)
-
-    def _retrieve_id(self) -> str:
-        return str(self.model_data_hash)
-
-    def _retrieve_category_id(self) -> str:
-        return PIPELINE_CONFIG_TYPE_CATEGORY_ID
-
-    def _retrieve_data_to_hash(self) -> Any:
-        return self.dict()
 
     @validator("steps", pre=True)
     def _validate_steps(cls, v):

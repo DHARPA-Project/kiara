@@ -6,7 +6,6 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import inspect
-import uuid
 from pydantic import Extra
 from pydantic.fields import Field
 from pydantic.main import BaseModel
@@ -17,12 +16,7 @@ from rich.markdown import Markdown
 from rich.table import Table
 from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Type, Union
 
-from kiara.defaults import (
-    AUTHORS_METADATA_CATEGORY_ID,
-    CONTEXT_METADATA_CATEOGORY_ID,
-    DEFAULT_NO_DESC_VALUE,
-    DOCUMENTATION_CATEGORY_ID,
-)
+from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.models import KiaraModel
 from kiara.utils import merge_dicts
 from kiara.utils.global_metadata import get_metadata_for_python_module_or_class
@@ -46,6 +40,9 @@ class LinkModel(BaseModel):
 
 
 class AuthorsMetadataModel(KiaraModel):
+
+    _kiara_model_id = "instance.metadata.authors"
+
     class Config:
         extra = Extra.ignore
 
@@ -61,15 +58,6 @@ class AuthorsMetadataModel(KiaraModel):
     authors: List[AuthorModel] = Field(
         description="The authors/creators of this item.", default_factory=list
     )
-
-    def _retrieve_id(self) -> str:
-        return str(uuid.uuid4())
-
-    def _retrieve_category_id(self) -> str:
-        return AUTHORS_METADATA_CATEGORY_ID
-
-    def _retrieve_data_to_hash(self) -> Any:
-        return self.authors
 
     def create_renderable(self, **config: Any) -> RenderableType:
 
@@ -88,6 +76,9 @@ class AuthorsMetadataModel(KiaraModel):
 
 
 class ContextMetadataModel(KiaraModel):
+
+    _kiara_model_id = "instance.metadata.context"
+
     class Config:
         extra = Extra.ignore
 
@@ -109,15 +100,6 @@ class ContextMetadataModel(KiaraModel):
     labels: Dict[str, str] = Field(
         description="A list of labels for the item.", default_factory=list
     )
-
-    def _retrieve_id(self) -> str:
-        return str(uuid.uuid4())
-
-    def _retrieve_category_id(self) -> str:
-        return CONTEXT_METADATA_CATEOGORY_ID
-
-    def _retrieve_data_to_hash(self) -> Any:
-        return self.dict()
 
     def create_renderable(self, **config: Any) -> RenderableType:
 
@@ -165,6 +147,8 @@ class ContextMetadataModel(KiaraModel):
 
 
 class DocumentationMetadataModel(KiaraModel):
+
+    _kiara_model_id = "instance.metadata.documentation"
 
     _metadata_key = "documentation"
 
@@ -253,12 +237,6 @@ class DocumentationMetadataModel(KiaraModel):
             return True
         else:
             return False
-
-    def _retrieve_id(self) -> str:
-        return str(self.model_data_hash)
-
-    def _retrieve_category_id(self) -> str:
-        return DOCUMENTATION_CATEGORY_ID
 
     def _retrieve_data_to_hash(self) -> Any:
         return self.full_doc

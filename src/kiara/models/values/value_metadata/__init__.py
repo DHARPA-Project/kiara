@@ -15,7 +15,6 @@ from rich.syntax import Syntax
 from rich.table import Table
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Literal, Mapping, Type, Union
 
-from kiara.defaults import VALUE_METADATA_CATEGORY_ID
 from kiara.models import KiaraModel
 from kiara.models.documentation import (
     AuthorsMetadataModel,
@@ -50,14 +49,14 @@ class ValueMetadata(KiaraModel):
     def _retrieve_id(self) -> str:
         return self._metadata_key  # type: ignore
 
-    def _retrieve_category_id(self) -> str:
-        return f"{VALUE_METADATA_CATEGORY_ID}.{self._metadata_key}"  # type: ignore
-
     def _retrieve_data_to_hash(self) -> Any:
         return {"metadata": self.dict(), "schema": self.schema_json()}
 
 
 class MetadataTypeInfoModel(KiaraTypeInfoModel):
+
+    _kiara_model_id = "instance.info.metadata_type"
+
     @classmethod
     def create_from_type_class(
         self, type_cls: Type[ValueMetadata]
@@ -123,6 +122,9 @@ class MetadataTypeInfoModel(KiaraTypeInfoModel):
 
 
 class MetadataTypeClassesInfo(TypeInfoModelGroup):
+
+    _kiara_model_id = "instance.info.metadata_types"
+
     @classmethod
     def base_info_class(cls) -> Type[KiaraTypeInfoModel]:
         return MetadataTypeInfoModel

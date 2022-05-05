@@ -249,12 +249,12 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
     def calculate_hash(self, data: "SerializedData") -> str:
         """Calculate the hash of the value."""
 
-        return data.serialized_hash
+        return data.instance_id
 
     def calculate_size(self, data: "SerializedData") -> int:
         """Calculate the size of the value."""
 
-        return data.size
+        return data.data_size
 
     def serialize_as_json(self, data: Any) -> "SerializedData":
 
@@ -391,8 +391,8 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
                 size = INVALID_SIZE_MARKER
                 value_hash = INVALID_HASH_MARKER
             else:
-                size = serialized.size  # type: ignore
-                value_hash = serialized.serialized_hash  # type: ignore
+                size = serialized.data_size  # type: ignore
+                value_hash = serialized.instance_id  # type: ignore
 
         assert serialized is not None
         result = (data, serialized, status, value_hash, size)

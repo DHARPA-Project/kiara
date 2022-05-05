@@ -10,7 +10,6 @@ from functools import lru_cache
 from pydantic import Field, PrivateAttr, root_validator
 from typing import Any, Dict, Iterable, List, Mapping, Set
 
-from kiara.defaults import PIPELINE_STRUCTURE_TYPE_CATEGORY_ID
 from kiara.models import KiaraModel
 from kiara.models.module.pipeline import PipelineConfig, PipelineStep
 from kiara.models.module.pipeline.value_refs import (
@@ -99,6 +98,8 @@ def generate_pipeline_endpoint_name(step_id: str, value_name: str):
 class PipelineStructure(KiaraModel):
     """An object that holds one or several steps, and describes the connections between them."""
 
+    _kiara_model_id = "instance.pipeline_structure"
+
     pipeline_config: PipelineConfig = Field(
         description="The underlying pipeline config."
     )
@@ -179,16 +180,13 @@ class PipelineStructure(KiaraModel):
 
     def _retrieve_data_to_hash(self) -> Any:
         return {
-            "steps": [step.model_data_hash for step in self.steps],
+            "steps": [step.instance_cid for step in self.steps],
             "input_aliases": self.input_aliases,
             "output_aliases": self.output_aliases,
         }
 
     def _retrieve_id(self) -> str:
-        return self.pipeline_config.model_id
-
-    def _retrieve_category_id(self) -> str:
-        return PIPELINE_STRUCTURE_TYPE_CATEGORY_ID
+        return self.pipeline_config.instance_id
 
     @property
     def steps_details(self) -> Mapping[str, Any]:

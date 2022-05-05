@@ -6,7 +6,6 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
-import uuid
 from pydantic import Field, validator
 from rich import box
 from rich.console import RenderableType
@@ -31,7 +30,6 @@ from kiara.models.documentation import (
     DocumentationMetadataModel,
 )
 from kiara.models.python_class import PythonClass
-from kiara.registries.ids import ID_REGISTRY
 
 if TYPE_CHECKING:
     pass
@@ -63,9 +61,6 @@ class KiaraInfoModel(KiaraModel, Generic[INFO_BASE_CLASS]):
 
     def _retrieve_id(self) -> str:
         return self.type_name
-
-    def _retrieve_category_id(self) -> str:
-        return f"type_info.{self.__class__.category_name()}"
 
     def _retrieve_data_to_hash(self) -> Any:
         return self.type_name
@@ -119,16 +114,13 @@ class InfoModelGroup(KiaraModel, Mapping[str, KiaraInfoModel]):
     def base_info_class(cls) -> Type[KiaraInfoModel]:
         pass
 
-    group_id: uuid.UUID = Field(
-        description="The unique group id.", default_factory=ID_REGISTRY.generate
-    )
+    # group_id: uuid.UUID = Field(
+    #     description="The unique group id.", default_factory=ID_REGISTRY.generate
+    # )
     group_alias: Optional[str] = Field(description="The group alias.", default=None)
 
-    def _retrieve_id(self) -> str:
-        return str(self.group_id)
-
-    def _retrieve_category_id(self) -> str:
-        return f"type_info_group.{self.type_name}"  # type: ignore
+    # def _retrieve_id(self) -> str:
+    #     return str(self.group_id)
 
     def _retrieve_subcomponent_keys(self) -> Iterable[str]:
         return self.type_infos.keys()  # type: ignore

@@ -7,9 +7,10 @@
 
 import networkx as nx
 import orjson
-import sys
-from abc import ABC, abstractmethod
+from abc import ABC
+from dag_cbor.encoding import EncodableType
 from deepdiff import DeepHash
+from multiformats import CID
 from pydantic import Extra
 from pydantic.fields import PrivateAttr
 from pydantic.main import BaseModel
@@ -22,6 +23,8 @@ from typing import Any, ClassVar, Dict, Iterable, List, Optional
 
 from kiara.defaults import KIARA_HASH_FUNCTION
 from kiara.utils import orjson_dumps
+from kiara.utils.class_loading import _default_id_func
+from kiara.utils.hashing import compute_cid
 from kiara.utils.models import (
     assemble_subcomponent_tree,
     get_subcomponent_from_model,
@@ -61,59 +64,72 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
     _id_cache: Optional[str] = PrivateAttr(default=None)
     _category_id_cache: Optional[str] = PrivateAttr(default=None)
     _schema_hash_cache: ClassVar = None
-    _hash_cache: Optional[int] = PrivateAttr(default=None)
+    _cid_cache: Optional[CID] = PrivateAttr(default=None)
+    _dag_cache: Optional[bytes] = PrivateAttr(default=None)
     _size_cache: Optional[int] = PrivateAttr(default=None)
 
-    @abstractmethod
-    def _retrieve_id(self) -> str:
-        """Retrieve the unique id (with its category) of this model."""
-
-    @abstractmethod
-    def _retrieve_category_id(self) -> str:
-        """Return the id of the category this model is part of."""
-
-    @abstractmethod
-    def _retrieve_data_to_hash(self) -> Any:
+    def _retrieve_data_to_hash(self) -> EncodableType:
         """Return data important for hashing this model instance. Implemented by sub-classes.
 
         This returns the relevant data that makes this model unique, excluding any secondary metadata that is not
         necessary for this model to be used functionally. Like for example documentation.
         """
 
+        return self.dict()
+
     @property
-    def model_id(self) -> str:
+    def instance_id(self) -> str:
         """The unique id of this model, within its category."""
 
-        if self._id_cache is None:
-            self._id_cache = self._retrieve_id()
+        if self._id_cache is not None:
+            return self._id_cache
+
+        self._id_cache = self._retrieve_id()
         return self._id_cache
 
     @property
-    def category_id(self) -> str:
-        """The id of the category of this model."""
-        if self._category_id_cache is None:
-            self._category_id_cache = self._retrieve_category_id()
-        return self._category_id_cache
+    def instance_cid(self) -> CID:
+        if self._cid_cache is None:
+            self._compute_cid()
+        return self._cid_cache  # type: ignore
 
     @property
-    def model_data_hash(self) -> int:
+    def instance_dag(self) -> bytes:
+
+        if self._dag_cache is None:
+            self._compute_cid()
+        return self._dag_cache  # type: ignore
+
+    @property
+    def instance_size(self) -> int:
+
+        if self._size_cache is None:
+            self._compute_cid()
+        return self._size_cache  # type: ignore
+
+    @property
+    def model_type_id(self) -> str:
+        """The id of the category of this model."""
+
+        if hasattr(self.__class__, "_kiara_model_id"):
+            return self._kiara_model_id  # type: ignore
+        else:
+            return _default_id_func(self.__class__)
+
+    def _retrieve_id(self) -> str:
+        return str(self.instance_cid)
+
+    def _compute_cid(self):
         """A hash for this model."""
-        if self._hash_cache is not None:
-            return self._hash_cache
+        if self._cid_cache is not None:
+            return
 
         obj = self._retrieve_data_to_hash()
-        h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
-        self._hash_cache = h[obj]
-        return self._hash_cache
+        dag, cid = compute_cid(data=obj)
 
-    @property
-    def model_size(self) -> int:
-
-        if self._size_cache is not None:
-            return self._size_cache
-
-        self._size_cache = sys.getsizeof(self.dict())
-        return self._size_cache
+        self._cid_cache = cid
+        self._dag_cache = dag
+        self._size_cache = len(dag)
 
     # ==========================================================================================
     # subcomponent related methods
@@ -223,26 +239,26 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         return '{"data": ' + data_json + ', "schema": ' + schema_json + "}"
 
     def __hash__(self):
-        return self.model_data_hash
+        return int.from_bytes(self.instance_cid.digest, "big")
 
     def __eq__(self, other):
 
         if self.__class__ != other.__class__:
             return False
         else:
-            return (self.model_id, self.model_data_hash) == (
-                other.model_id,
-                other.model_data_hash,
+            return (self.instance_id, self.instance_cid) == (
+                other.instance_id,
+                other.instance_cid,
             )
 
     def __repr__(self):
 
         try:
-            model_id = self.model_id
+            model_id = self.instance_id
         except Exception:
             model_id = "-- n/a --"
 
-        return f"{self.__class__.__name__}(model_id={model_id}, category={self.category_id}, fields=[{', '.join(self.__fields__.keys())}])"
+        return f"{self.__class__.__name__}(model_id={model_id}, category={self.model_type_id}, fields=[{', '.join(self.__fields__.keys())}])"
 
     def __str__(self):
         return self.__repr__()

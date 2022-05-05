@@ -8,6 +8,7 @@
 """Base module for code that handles the import and management of [KiaraModule][kiara.module.KiaraModule] sub-classes."""
 
 import structlog
+from multiformats import CID
 from typing import TYPE_CHECKING, Dict, Iterable, Mapping, Optional, Type, Union
 
 from kiara.models.module import KiaraModuleTypeInfo, ModuleTypeClassesInfo
@@ -22,7 +23,7 @@ logget = structlog.getLogger()
 class ModuleRegistry(object):
     def __init__(self):
 
-        self._cached_modules: Dict[str, Dict[int, KiaraModule]] = {}
+        self._cached_modules: Dict[str, Dict[CID, KiaraModule]] = {}
 
         from kiara.utils.class_loading import find_all_kiara_modules
 
@@ -84,18 +85,18 @@ class ModuleRegistry(object):
             manifest = Manifest.construct(module_type=manifest, module_config={})
 
         if self._cached_modules.setdefault(manifest.module_type, {}).get(
-            manifest.manifest_hash, None
+            manifest.instance_cid, None
         ):
-            return self._cached_modules[manifest.module_type][manifest.manifest_hash]
+            return self._cached_modules[manifest.module_type][manifest.instance_cid]
 
         if manifest.module_type in self.get_module_type_names():
 
             m_cls: Type[KiaraModule] = self.get_module_class(manifest.module_type)
-            m_hash = m_cls._calculate_module_hash(manifest.module_config)
+            m_hash = m_cls._calculate_module_cid(manifest.module_config)
 
             kiara_module = m_cls(module_config=manifest.module_config)
             assert (
-                kiara_module.module_instance_hash == m_hash
+                kiara_module.module_instance_cid == m_hash
             )  # TODO: might not be necessary? Leaving it in here for now, to see if it triggers at any stage.
         else:
             raise Exception(

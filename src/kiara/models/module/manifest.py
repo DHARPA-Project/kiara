@@ -7,31 +7,29 @@
 
 import orjson
 import uuid
-from deepdiff import DeepHash
+from multiformats import CID
 from pydantic import Extra, Field, PrivateAttr, validator
 from rich.console import RenderableType
 from rich.syntax import Syntax
 from typing import Any, Mapping, Optional
 
-from kiara.defaults import (
-    KIARA_HASH_FUNCTION,
-    MODULE_CONFIG_CATEGORY_ID,
-    NO_MODULE_TYPE,
-    NONE_VALUE_ID,
-)
+from kiara.defaults import NONE_VALUE_ID
 from kiara.models import KiaraModel
 from kiara.utils import orjson_dumps
+from kiara.utils.hashing import compute_cid
 
 
 class Manifest(KiaraModel):
     """A class to hold the type and configuration for a module instance."""
+
+    _kiara_model_id = "instance.manifest"
 
     class Config:
         extra = Extra.forbid
         validate_all = True
 
     _manifest_data: Optional[Mapping[str, Any]] = PrivateAttr(default=None)
-    _manifest_hash: Optional[int] = PrivateAttr(default=None)
+    _manifest_cid: Optional[CID] = PrivateAttr(default=None)
 
     module_type: str = Field(description="The module type.")
     module_config: Mapping[str, Any] = Field(
@@ -41,6 +39,11 @@ class Manifest(KiaraModel):
     # doc: DocumentationMetadataModel = Field(
     #     description="Documentation for this module instance.", default=None
     # )
+
+    # @validator("module_config")
+    # def _validate_module_config(cls, value):
+    #
+    #     return value
 
     @property
     def manifest_data(self):
@@ -54,32 +57,20 @@ class Manifest(KiaraModel):
         }
         return self._manifest_data
 
+    @property
+    def manifest_cid(self) -> CID:
+        if self._manifest_cid is not None:
+            return self._manifest_cid
+
+        _, self._manifest_cid = compute_cid(self.manifest_data)
+        return self._manifest_cid
+
     def manifest_data_as_json(self):
 
         return self.json(include={"module_type", "module_config"})
 
-    @property
-    def manifest_hash(self) -> int:
-        """The hash for the inherent module config (composted of type and render_config data).
-
-        Not that this can (but might not) be different to the `model_data_hash`.
-        """
-
-        if self._manifest_hash is not None:
-            return self._manifest_hash
-
-        h = DeepHash(self.manifest_data, hasher=KIARA_HASH_FUNCTION)
-        self._manifest_hash = h[self.manifest_data]
-        return self._manifest_hash
-
     def _retrieve_data_to_hash(self) -> Any:
         return self.manifest_data
-
-    def _retrieve_id(self) -> str:
-        return str(self.model_data_hash)
-
-    def _retrieve_category_id(self) -> str:
-        return MODULE_CONFIG_CATEGORY_ID
 
     def create_renderable(self, **config: Any) -> RenderableType:
         """Create a renderable for this module configuration."""
@@ -103,22 +94,13 @@ class Manifest(KiaraModel):
 
 class InputsManifest(Manifest):
 
+    _kiara_model_id = "instance.manifest_with_inputs"
+
     inputs: Mapping[str, uuid.UUID] = Field(
         description="A map of all the input fields and value references."
     )
-    _inputs_hash: Optional[int] = PrivateAttr(default=None)
-    _jobs_hash: Optional[int] = PrivateAttr(default=None)
-
-    @property
-    def job_hash(self) -> int:
-
-        if self._jobs_hash is not None:
-            return self._jobs_hash
-
-        obj = {"manifest": self.manifest_hash, "inputs": self.inputs_hash}
-        h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
-        self._jobs_hash = h[obj]
-        return self._jobs_hash
+    _inputs_cid: Optional[CID] = PrivateAttr(default=None)
+    _jobs_cid: Optional[CID] = PrivateAttr(default=None)
 
     @validator("inputs")
     def replace_none_values(cls, value):
@@ -130,13 +112,25 @@ class InputsManifest(Manifest):
         return result
 
     @property
-    def inputs_hash(self) -> int:
-        if self._inputs_hash is not None:
-            return self._inputs_hash
+    def job_hash(self) -> str:
 
-        if self.module_type == NO_MODULE_TYPE and not self.inputs:
-            self._inputs_hash = 0
-        else:
-            h = DeepHash(self.inputs, hasher=KIARA_HASH_FUNCTION)
-            self._inputs_hash = h[self.inputs]
-        return self._inputs_hash
+        return str(self.job_cid)
+
+    @property
+    def job_cid(self) -> CID:
+
+        if self._jobs_cid is not None:
+            return self._jobs_cid
+
+        obj = {"manifest": self.manifest_cid, "inputs": self.inputs_cid}
+        _, self._jobs_cid = compute_cid(data=obj)
+        return self._jobs_cid
+
+    @property
+    def inputs_cid(self) -> CID:
+        if self._inputs_cid is not None:
+            return self._inputs_cid
+
+        _, cid = compute_cid(data={k: v.bytes for k, v in self.inputs.items()})
+        self._inputs_cid = cid
+        return self._inputs_cid

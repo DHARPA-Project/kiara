@@ -24,6 +24,8 @@ class PythonPackage(BaseModel):
 
 class PythonRuntimeEnvironment(RuntimeEnvironment):
 
+    _kiara_model_id = "instance.info.runtime.python"
+
     environment_type: Literal["python"]
     python_version: str = Field(description="The version of Python.")
     packages: List[PythonPackage] = Field(

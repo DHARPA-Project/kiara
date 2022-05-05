@@ -9,7 +9,7 @@ import abc
 import inspect
 import uuid
 from abc import abstractmethod
-from deepdiff import DeepHash
+from multiformats import CID
 from pydantic import BaseModel, Field, ValidationError
 from rich.console import RenderableType
 from typing import (
@@ -25,12 +25,12 @@ from typing import (
     Union,
 )
 
-from kiara.defaults import KIARA_HASH_FUNCTION
 from kiara.exceptions import KiaraModuleConfigException
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.module.jobs import JobLog
 from kiara.models.values.value_schema import ValueSchema
 from kiara.utils import StringYAML, is_debug
+from kiara.utils.hashing import compute_cid
 from kiara.utils.values import (
     augment_values,
     create_schema_dict,
@@ -279,19 +279,19 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
         return False
 
     @classmethod
-    def _calculate_module_hash(
+    def _calculate_module_cid(
         cls, module_type_config: Union[Mapping[str, Any], KIARA_CONFIG]
-    ):
+    ) -> CID:
 
         if isinstance(module_type_config, Mapping):
             module_type_config = cls._config_cls(**module_type_config)
 
         obj = {
             "module_type": cls._module_type_name,  # type: ignore
-            "module_type_config": module_type_config.model_data_hash,  # type: ignore
+            "module_type_config": module_type_config.dict(),  # type: ignore
         }
-        h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
-        return h[obj]
+        _, cid = compute_cid(data=obj)
+        return cid
 
     def __init__(
         self,
@@ -316,7 +316,7 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
         else:
             raise TypeError(f"Invalid type for module config: {type(module_config)}")
 
-        self._module_hash: Optional[int] = None
+        self._module_cid: Optional[CID] = None
         self._characteristics: Optional[ModuleCharacteristics] = None
 
         super().__init__(alias=self.__class__._module_type_name, config=self._config)  # type: ignore
@@ -343,11 +343,11 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
         return self._config
 
     @property
-    def module_instance_hash(self) -> int:
+    def module_instance_cid(self) -> CID:
 
-        if self._module_hash is None:
-            self._module_hash = self.__class__._calculate_module_hash(self._config)
-        return self._module_hash
+        if self._module_cid is None:
+            self._module_cid = self.__class__._calculate_module_cid(self._config)
+        return self._module_cid
 
     @property
     def characteristics(self) -> ModuleCharacteristics:
@@ -423,10 +423,10 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
     def __eq__(self, other):
         if self.__class__ != other.__class__:
             return False
-        return self.module_instance_hash == other.module_instance_hash
+        return self.module_instance_cid == other.module_instance_cid
 
     def __hash__(self):
-        return self.module_instance_hash
+        return int.from_bytes(self.module_instance_cid.digest, "big")
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.module_id} module_type={self.module_type_name} input_names={list(self.input_names)} output_names={list(self.output_names)})"

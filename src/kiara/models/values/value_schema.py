@@ -9,7 +9,7 @@ import typing
 from pydantic import Field
 from pydantic.class_validators import validator
 
-from kiara.defaults import VALUE_SCHEMA_CATEGORY_ID, SpecialValue
+from kiara.defaults import SpecialValue
 from kiara.models import KiaraModel
 from kiara.models.documentation import DocumentationMetadataModel
 
@@ -22,6 +22,8 @@ class ValueSchema(KiaraModel):
 
     For more complex container data_types like array, tables, unions etc, data_types can also be configured with values from the ``type_config`` field.
     """
+
+    _kiara_model_id = "instance.value_schema"
 
     class Config:
         use_enum_values = True
@@ -52,12 +54,6 @@ class ValueSchema(KiaraModel):
     @validator("doc", pre=True)
     def validate_doc(cls, value):
         return DocumentationMetadataModel.create(value)
-
-    def _retrieve_id(self) -> str:
-        return str(self.model_data_hash)
-
-    def _retrieve_category_id(self) -> str:
-        return VALUE_SCHEMA_CATEGORY_ID
 
     def _retrieve_data_to_hash(self) -> typing.Any:
 

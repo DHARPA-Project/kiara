@@ -20,6 +20,7 @@ class PythonClassMetadata(ValueMetadata):
     """Python class and module information."""
 
     _metadata_key = "python_class"
+    _kiara_model_id = "instance.metadata.python_class"
 
     @classmethod
     def retrieve_supported_data_types(cls) -> Iterable[str]:
@@ -42,6 +43,7 @@ class FileMetadata(ValueMetadata):
     """File stats."""
 
     _metadata_key = "file"
+    _kiara_model_id = "instance.metadata.file"
 
     @classmethod
     def retrieve_supported_data_types(cls) -> Iterable[str]:
@@ -56,9 +58,10 @@ class FileMetadata(ValueMetadata):
 
 
 class FileBundleMetadata(ValueMetadata):
-    """File stats."""
+    """File bundle stats."""
 
     _metadata_key = "file_bundle"
+    _kiara_model_id = "instance.metadata.file_bundle"
 
     @classmethod
     def retrieve_supported_data_types(cls) -> Iterable[str]:

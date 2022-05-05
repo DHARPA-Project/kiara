@@ -3540,6 +3540,8 @@ BaseOperationDetails            (<a class="autorefs autorefs-internal" title="ki
           <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">BaseOperationDetails</span><span class="p">(</span><span class="n">OperationDetails</span><span class="p">):</span>
 
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.operation_details.base&quot;</span>
+
     <span class="n">_op_schema</span><span class="p">:</span> <span class="n">OperationSchema</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">retrieve_inputs_schema</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
@@ -3690,6 +3692,8 @@ ManifestOperationConfig            (<a class="autorefs autorefs-internal" title=
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ManifestOperationConfig</span><span class="p">(</span><span class="n">OperationConfig</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.operation_config.manifest&quot;</span>
 
     <span class="n">module_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The module type.&quot;</span><span class="p">)</span>
     <span class="n">module_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
@@ -3843,6 +3847,9 @@ Operation            (<a class="autorefs autorefs-internal" title="kiara.models.
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Operation</span><span class="p">(</span><span class="n">Manifest</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.operation&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_from_module</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="n">KiaraModule</span><span class="p">,</span> <span class="n">doc</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Operation&quot;</span><span class="p">:</span>
 
@@ -3850,7 +3857,7 @@ Operation            (<a class="autorefs autorefs-internal" title="kiara.models.
             <span class="n">CustomModuleOperationDetails</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">op_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">._</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_instance_hash</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">op_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">._</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_instance_cid</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="n">details</span> <span class="o">=</span> <span class="n">CustomModuleOperationDetails</span><span class="o">.</span><span class="n">create_from_module</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">)</span>
 
@@ -3887,14 +3894,8 @@ Operation            (<a class="autorefs autorefs-internal" title="kiara.models.
 
     <span class="n">_module</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;KiaraModule&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_data_hash</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">OPERATION_CATEOGORY_ID</span>
-
     <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;operation_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_id</span><span class="p">,</span> <span class="s2">&quot;manifest&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">manifest_cid</span><span class="p">}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">module</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">:</span>
@@ -4244,7 +4245,7 @@ Operation            (<a class="autorefs autorefs-internal" title="kiara.models.
         <span class="n">CustomModuleOperationDetails</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">op_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">._</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_instance_hash</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">op_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">._</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_instance_cid</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="n">details</span> <span class="o">=</span> <span class="n">CustomModuleOperationDetails</span><span class="o">.</span><span class="n">create_from_module</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">)</span>
 
@@ -4514,15 +4515,6 @@ OperationConfig            (<a class="autorefs autorefs-internal" title="kiara.m
     <span class="k">def</span> <span class="nf">validate_doc</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_data_hash</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">OPERATION_CONFIG_CATEOGORY_ID</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
-
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">retrieve_module_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">pass</span>
@@ -4681,6 +4673,9 @@ OperationDetails            (<a class="autorefs autorefs-internal" title="kiara.
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OperationDetails</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.operation_details&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_operation_details</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">details</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 
@@ -4699,12 +4694,6 @@ OperationDetails            (<a class="autorefs autorefs-internal" title="kiara.
 
     <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_id</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">OPERATION_DETAILS_CATEOGORY_ID</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]:</span>
@@ -4974,6 +4963,9 @@ OperationGroupInfo            (<a class="autorefs autorefs-internal" title="kiar
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OperationGroupInfo</span><span class="p">(</span><span class="n">InfoModelGroup</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.info.operations&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">base_info_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">KiaraInfoModel</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">OperationInfo</span>
@@ -5306,6 +5298,9 @@ OperationInfo            (<a class="autorefs autorefs-internal" title="kiara.mod
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OperationInfo</span><span class="p">(</span><span class="n">KiaraInfoModel</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.info.operation&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_from_operation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">):</span>
 
@@ -5695,6 +5690,9 @@ OperationTypeClassesInfo            (<a class="autorefs autorefs-internal" title
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OperationTypeClassesInfo</span><span class="p">(</span><span class="n">TypeInfoModelGroup</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.info.operation_types&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">base_info_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">KiaraTypeInfoModel</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">OperationTypeInfo</span>
@@ -5823,6 +5821,9 @@ OperationTypeInfo            (<a class="autorefs autorefs-internal" title="kiara
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OperationTypeInfo</span><span class="p">(</span><span class="n">KiaraTypeInfoModel</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.info.operation_type&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_from_type_class</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">type_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;OperationType&quot;</span><span class="p">]</span>
@@ -5855,9 +5856,6 @@ OperationTypeInfo            (<a class="autorefs autorefs-internal" title="kiara
 
     <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">OPERATION_TYPE_CATEGORY_ID</span>
 
     <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span>
@@ -6014,6 +6012,8 @@ PipelineOperationConfig            (<a class="autorefs autorefs-internal" title=
           <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineOperationConfig</span><span class="p">(</span><span class="n">OperationConfig</span><span class="p">):</span>
 
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.operation_config.pipeline&quot;</span>
+
     <span class="n">pipeline_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The pipeline id.&quot;</span><span class="p">)</span>
     <span class="n">pipeline_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The pipeline config data.&quot;</span><span class="p">)</span>
     <span class="n">module_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
@@ -6053,7 +6053,7 @@ PipelineOperationConfig            (<a class="autorefs autorefs-internal" title=
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(pipeline_name=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_name</span><span class="si">}</span><span class="s2"> required_modules=</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">required_module_types</span><span class="p">)</span><span class="si">}</span><span class="s2"> model_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">, category=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">category_id</span><span class="si">}</span><span class="s2">, fields=[</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__fields__</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">])&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(pipeline_name=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_name</span><span class="si">}</span><span class="s2"> required_modules=</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">required_module_types</span><span class="p">)</span><span class="si">}</span><span class="s2"> instance_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instance_id</span><span class="si">}</span><span class="s2">, category=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_type_id</span><span class="si">}</span><span class="s2">, fields=[</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__fields__</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">])&quot;</span>
 </code></pre></div>
         </details>
 

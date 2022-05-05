@@ -4545,9 +4545,6 @@ KiaraContextInfo            (<a class="autorefs autorefs-internal" title="kiara.
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">kiara_id</span><span class="si">}</span><span class="s2">.package_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">package_filter</span><span class="si">}</span><span class="s2">&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">CONTEXT_INFO_CATEGORY_ID</span>
-
     <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;kiara_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kiara_id</span><span class="p">,</span> <span class="s2">&quot;package&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">package_filter</span><span class="p">}</span>
 

@@ -3355,7 +3355,7 @@ FileSystemJobArchive            (<a class="autorefs autorefs-internal" title="ki
         <span class="bp">self</span><span class="p">,</span> <span class="n">inputs_manifest</span><span class="p">:</span> <span class="n">InputsManifest</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">]:</span>
 
-        <span class="n">manifest_hash</span> <span class="o">=</span> <span class="n">inputs_manifest</span><span class="o">.</span><span class="n">manifest_hash</span>
+        <span class="n">manifest_hash</span> <span class="o">=</span> <span class="n">inputs_manifest</span><span class="o">.</span><span class="n">instance_cid</span>
         <span class="n">jobs_hash</span> <span class="o">=</span> <span class="n">inputs_manifest</span><span class="o">.</span><span class="n">job_hash</span>
 
         <span class="n">base_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_store_path</span> <span class="o">/</span> <span class="n">MANIFEST_SUB_PATH</span>
@@ -3518,7 +3518,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.regis
     <span class="bp">self</span><span class="p">,</span> <span class="n">inputs_manifest</span><span class="p">:</span> <span class="n">InputsManifest</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">]:</span>
 
-    <span class="n">manifest_hash</span> <span class="o">=</span> <span class="n">inputs_manifest</span><span class="o">.</span><span class="n">manifest_hash</span>
+    <span class="n">manifest_hash</span> <span class="o">=</span> <span class="n">inputs_manifest</span><span class="o">.</span><span class="n">instance_cid</span>
     <span class="n">jobs_hash</span> <span class="o">=</span> <span class="n">inputs_manifest</span><span class="o">.</span><span class="n">job_hash</span>
 
     <span class="n">base_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_store_path</span> <span class="o">/</span> <span class="n">MANIFEST_SUB_PATH</span>
@@ -3654,7 +3654,7 @@ FileSystemJobStore            (<a class="autorefs autorefs-internal" title="kiar
 
     <span class="k">def</span> <span class="nf">store_job_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_record</span><span class="p">:</span> <span class="n">JobRecord</span><span class="p">):</span>
 
-        <span class="n">manifest_hash</span> <span class="o">=</span> <span class="n">job_record</span><span class="o">.</span><span class="n">manifest_hash</span>
+        <span class="n">manifest_hash</span> <span class="o">=</span> <span class="n">job_record</span><span class="o">.</span><span class="n">instance_cid</span>
         <span class="n">jobs_hash</span> <span class="o">=</span> <span class="n">job_record</span><span class="o">.</span><span class="n">job_hash</span>
 
         <span class="n">base_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_store_path</span> <span class="o">/</span> <span class="n">MANIFEST_SUB_PATH</span>
@@ -3751,7 +3751,7 @@ FileSystemJobStore            (<a class="autorefs autorefs-internal" title="kiar
           <summary>Source code in <code>kiara/registries/jobs/job_store/filesystem_store.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">store_job_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_record</span><span class="p">:</span> <span class="n">JobRecord</span><span class="p">):</span>
 
-    <span class="n">manifest_hash</span> <span class="o">=</span> <span class="n">job_record</span><span class="o">.</span><span class="n">manifest_hash</span>
+    <span class="n">manifest_hash</span> <span class="o">=</span> <span class="n">job_record</span><span class="o">.</span><span class="n">instance_cid</span>
     <span class="n">jobs_hash</span> <span class="o">=</span> <span class="n">job_record</span><span class="o">.</span><span class="n">job_hash</span>
 
     <span class="n">base_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_store_path</span> <span class="o">/</span> <span class="n">MANIFEST_SUB_PATH</span>

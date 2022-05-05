@@ -3367,6 +3367,8 @@ will be used if no user input was given (yet) for a value.</p>
 <span class="sd">    For more complex container data_types like array, tables, unions etc, data_types can also be configured with values from the ``type_config`` field.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.value_schema&quot;</span>
+
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
         <span class="n">use_enum_values</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="c1"># extra = Extra.forbid</span>
@@ -3396,12 +3398,6 @@ will be used if no user input was given (yet) for a value.</p>
     <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">validate_doc</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_data_hash</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">VALUE_SCHEMA_CATEGORY_ID</span>
 
     <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
 

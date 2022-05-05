@@ -3427,6 +3427,9 @@ ValueInfo            (<a class="autorefs autorefs-internal" title="kiara.models.
         <details class="quote">
           <summary>Source code in <code>kiara/models/values/info.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueInfo</span><span class="p">(</span><span class="n">Value</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.info.value&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_from_value</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -3447,10 +3450,8 @@ ValueInfo            (<a class="autorefs autorefs-internal" title="kiara.models.
             <span class="n">persisted_details</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">retrieve_persisted_value_details</span><span class="p">(</span>
                 <span class="n">value_id</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span>
             <span class="p">)</span>
-            <span class="n">load_config</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">persisted_details</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="n">load_config</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">is_internal</span> <span class="o">=</span> <span class="s2">&quot;internal&quot;</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span>
             <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span>
@@ -3485,7 +3486,6 @@ ValueInfo            (<a class="autorefs autorefs-internal" title="kiara.models.
             <span class="n">destiny_links</span><span class="o">=</span><span class="n">filtered_destinies</span><span class="p">,</span>
             <span class="n">destiny_backlinks</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">destiny_backlinks</span><span class="p">,</span>
             <span class="n">aliases</span><span class="o">=</span><span class="n">aliases</span><span class="p">,</span>
-            <span class="n">load_config</span><span class="o">=</span><span class="n">load_config</span><span class="p">,</span>
             <span class="n">serialized</span><span class="o">=</span><span class="n">persisted_details</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">model</span><span class="o">.</span><span class="n">_set_registry</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">_data_registry</span><span class="p">)</span>
@@ -3505,9 +3505,6 @@ ValueInfo            (<a class="autorefs autorefs-internal" title="kiara.models.
     <span class="n">serialized</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PersistedData</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Details for the serialization process that was used for this value.&quot;</span>
     <span class="p">)</span>
-    <span class="n">load_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LoadConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The load config associated with this value.&quot;</span>
-    <span class="p">)</span>
     <span class="n">destiny_links</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;References to all the values that act as destiny for this value in this context.&quot;</span>
     <span class="p">)</span>
@@ -3518,11 +3515,8 @@ ValueInfo            (<a class="autorefs autorefs-internal" title="kiara.models.
     <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_id</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;instance.value_info&quot;</span>
-
     <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_id</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_id</span><span class="o">.</span><span class="n">bytes</span>
 
     <span class="k">def</span> <span class="nf">resolve_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">aliases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alias_registry</span><span class="o">.</span><span class="n">find_aliases_for_value_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_id</span><span class="p">)</span>
@@ -3603,28 +3597,6 @@ ValueInfo            (<a class="autorefs autorefs-internal" title="kiara.models.
 
 
 
-<h5 id="kiara.models.values.info.ValueInfo.load_config" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">load_config</span><span class="p">:</span> <span class="n">LoadConfig</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-  </span>
-
-<a href="#kiara.models.values.info.ValueInfo.load_config" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>The load config associated with this value.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
 <h5 id="kiara.models.values.info.ValueInfo.serialized" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">serialized</span><span class="p">:</span> <span class="n">PersistedData</span></code>
 
@@ -3684,10 +3656,8 @@ ValueInfo            (<a class="autorefs autorefs-internal" title="kiara.models.
         <span class="n">persisted_details</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">retrieve_persisted_value_details</span><span class="p">(</span>
             <span class="n">value_id</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span>
         <span class="p">)</span>
-        <span class="n">load_config</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">persisted_details</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">load_config</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="n">is_internal</span> <span class="o">=</span> <span class="s2">&quot;internal&quot;</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span>
         <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span>
@@ -3722,7 +3692,6 @@ ValueInfo            (<a class="autorefs autorefs-internal" title="kiara.models.
         <span class="n">destiny_links</span><span class="o">=</span><span class="n">filtered_destinies</span><span class="p">,</span>
         <span class="n">destiny_backlinks</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">destiny_backlinks</span><span class="p">,</span>
         <span class="n">aliases</span><span class="o">=</span><span class="n">aliases</span><span class="p">,</span>
-        <span class="n">load_config</span><span class="o">=</span><span class="n">load_config</span><span class="p">,</span>
         <span class="n">serialized</span><span class="o">=</span><span class="n">persisted_details</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">model</span><span class="o">.</span><span class="n">_set_registry</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">_data_registry</span><span class="p">)</span>

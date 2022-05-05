@@ -3356,6 +3356,8 @@ PythonClass            (<a class="autorefs autorefs-internal" title="kiara.model
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PythonClass</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Python class and module information.&quot;&quot;&quot;</span>
 
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.wrapped_python_class&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">,</span> <span class="n">attach_context_metadata</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 
@@ -3397,9 +3399,6 @@ PythonClass            (<a class="autorefs autorefs-internal" title="kiara.model
 
     <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_name</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;metadata.python_class&quot;</span>
 
     <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_name</span>

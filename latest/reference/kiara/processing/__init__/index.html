@@ -3440,7 +3440,7 @@ ModuleProcessor            (<span title="abc.ABC">ABC</span>)
     <span class="k">def</span> <span class="nf">create_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_config</span><span class="p">:</span> <span class="n">JobConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
 
         <span class="n">environments</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">env_name</span><span class="p">:</span> <span class="n">env</span><span class="o">.</span><span class="n">model_data_hash</span>
+            <span class="n">env_name</span><span class="p">:</span> <span class="n">env</span><span class="o">.</span><span class="n">instance_id</span>
             <span class="k">for</span> <span class="n">env_name</span><span class="p">,</span> <span class="n">env</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">current_environments</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
         <span class="p">}</span>
 
@@ -3642,7 +3642,7 @@ ModuleProcessor            (<span title="abc.ABC">ABC</span>)
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_config</span><span class="p">:</span> <span class="n">JobConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
 
     <span class="n">environments</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">env_name</span><span class="p">:</span> <span class="n">env</span><span class="o">.</span><span class="n">model_data_hash</span>
+        <span class="n">env_name</span><span class="p">:</span> <span class="n">env</span><span class="o">.</span><span class="n">instance_id</span>
         <span class="k">for</span> <span class="n">env_name</span><span class="p">,</span> <span class="n">env</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">current_environments</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
     <span class="p">}</span>
 

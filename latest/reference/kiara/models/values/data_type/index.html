@@ -3369,6 +3369,9 @@ DataTypeClassInfo            (<a class="autorefs autorefs-internal" title="kiara
         <details class="quote">
           <summary>Source code in <code>kiara/models/values/data_type.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">DataTypeClassInfo</span><span class="p">(</span><span class="n">KiaraTypeInfoModel</span><span class="p">[</span><span class="n">DataType</span><span class="p">]):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.info.data_type&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_from_type_class</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">type_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">DataType</span><span class="p">],</span> <span class="n">kiara</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -3431,9 +3434,6 @@ DataTypeClassInfo            (<a class="autorefs autorefs-internal" title="kiara
 
     <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">DATA_TYPE_CLASS_CATEGORY_ID</span>
 
     <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span>
@@ -3803,6 +3803,9 @@ DataTypeClassesInfo            (<a class="autorefs autorefs-internal" title="kia
         <details class="quote">
           <summary>Source code in <code>kiara/models/values/data_type.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">DataTypeClassesInfo</span><span class="p">(</span><span class="n">TypeInfoModelGroup</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.info.data_types&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_from_type_items</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>

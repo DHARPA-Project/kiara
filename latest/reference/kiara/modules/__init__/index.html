@@ -4172,19 +4172,19 @@ KiaraModule            (<a class="autorefs autorefs-internal" title="kiara.modul
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_calculate_module_hash</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">_calculate_module_cid</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">module_type_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">KIARA_CONFIG</span><span class="p">]</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CID</span><span class="p">:</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module_type_config</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
             <span class="n">module_type_config</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_config_cls</span><span class="p">(</span><span class="o">**</span><span class="n">module_type_config</span><span class="p">)</span>
 
         <span class="n">obj</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_module_type_name</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
-            <span class="s2">&quot;module_type_config&quot;</span><span class="p">:</span> <span class="n">module_type_config</span><span class="o">.</span><span class="n">model_data_hash</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+            <span class="s2">&quot;module_type_config&quot;</span><span class="p">:</span> <span class="n">module_type_config</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>  <span class="c1"># type: ignore</span>
         <span class="p">}</span>
-        <span class="n">h</span> <span class="o">=</span> <span class="n">DeepHash</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">hasher</span><span class="o">=</span><span class="n">KIARA_HASH_FUNCTION</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">h</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">cid</span> <span class="o">=</span> <span class="n">compute_cid</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cid</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -4209,7 +4209,7 @@ KiaraModule            (<a class="autorefs autorefs-internal" title="kiara.modul
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid type for module config: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">module_config</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_module_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_module_cid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CID</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_characteristics</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ModuleCharacteristics</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_module_type_name</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
@@ -4236,11 +4236,11 @@ KiaraModule            (<a class="autorefs autorefs-internal" title="kiara.modul
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">module_instance_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">module_instance_cid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CID</span><span class="p">:</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_hash</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_module_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_calculate_module_hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_hash</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_cid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_module_cid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_calculate_module_cid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_cid</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">characteristics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleCharacteristics</span><span class="p">:</span>
@@ -4316,10 +4316,10 @@ KiaraModule            (<a class="autorefs autorefs-internal" title="kiara.modul
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="vm">__class__</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_instance_hash</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">module_instance_hash</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_instance_cid</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">module_instance_cid</span>
 
     <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_instance_hash</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">module_instance_cid</span><span class="o">.</span><span class="n">digest</span><span class="p">,</span> <span class="s2">&quot;big&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">module_id</span><span class="si">}</span><span class="s2"> module_type=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2"> input_names=</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_names</span><span class="p">)</span><span class="si">}</span><span class="s2"> output_names=</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_names</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
@@ -4432,15 +4432,15 @@ KiaraModule            (<a class="autorefs autorefs-internal" title="kiara.modul
 
 
 
-<h5 id="kiara.modules.KiaraModule.module_instance_hash" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">module_instance_hash</span><span class="p">:</span> <span class="nb">int</span></code>
+<h5 id="kiara.modules.KiaraModule.module_instance_cid" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">module_instance_cid</span><span class="p">:</span> <span class="n">CID</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-property"><code>property</code></small>
       <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
   </span>
 
-<a href="#kiara.modules.KiaraModule.module_instance_hash" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.KiaraModule.module_instance_cid" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -4520,6 +4520,8 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 <span class="sd">     value is set for an input field, an error is thrown.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.module_config&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">requires_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return whether this class can be used as-is, or requires configuration before an instance can be created.&quot;&quot;&quot;</span>
@@ -4555,16 +4557,6 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_data_hash</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">MODULE_CONFIG_SCHEMA_CATEGORY_ID</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
-
     <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
         <span class="n">my_table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">MINIMAL</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -4583,17 +4575,6 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
             <span class="n">my_table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">attr_str</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">my_table</span>
-
-    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="vm">__class__</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_data_hash</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">model_data_hash</span>
-
-    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_data_hash</span>
 </code></pre></div>
         </details>
 
@@ -7381,6 +7362,8 @@ to the shortest possible names for each case.</p>
 <span class="sd">        ```</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.module_config.pipeline&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -7459,15 +7442,6 @@ to the shortest possible names for each case.</p>
         <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Metadata for this workflow.&quot;</span>
     <span class="p">)</span>
     <span class="n">_structure</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;PipelineStructure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_data_hash</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">PIPELINE_CONFIG_TYPE_CATEGORY_ID</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
 
     <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;steps&quot;</span><span class="p">,</span> <span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">_validate_steps</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>

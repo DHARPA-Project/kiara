@@ -3466,6 +3466,8 @@ PythonRuntimeEnvironment            (<a class="autorefs autorefs-internal" title
           <summary>Source code in <code>kiara/models/runtime_environment/python.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PythonRuntimeEnvironment</span><span class="p">(</span><span class="n">RuntimeEnvironment</span><span class="p">):</span>
 
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.info.runtime.python&quot;</span>
+
     <span class="n">environment_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">]</span>
     <span class="n">python_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The version of Python.&quot;</span><span class="p">)</span>
     <span class="n">packages</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PythonPackage</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>

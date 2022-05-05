@@ -3370,22 +3370,13 @@ InputsManifest            (<a class="autorefs autorefs-internal" title="kiara.mo
           <summary>Source code in <code>kiara/models/module/manifest.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">InputsManifest</span><span class="p">(</span><span class="n">Manifest</span><span class="p">):</span>
 
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.manifest_with_inputs&quot;</span>
+
     <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A map of all the input fields and value references.&quot;</span>
     <span class="p">)</span>
-    <span class="n">_inputs_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">_jobs_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">job_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jobs_hash</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jobs_hash</span>
-
-        <span class="n">obj</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;manifest&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">manifest_hash</span><span class="p">,</span> <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs_hash</span><span class="p">}</span>
-        <span class="n">h</span> <span class="o">=</span> <span class="n">DeepHash</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">hasher</span><span class="o">=</span><span class="n">KIARA_HASH_FUNCTION</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_jobs_hash</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jobs_hash</span>
+    <span class="n">_inputs_cid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CID</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_jobs_cid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CID</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">replace_none_values</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -3397,16 +3388,28 @@ InputsManifest            (<a class="autorefs autorefs-internal" title="kiara.mo
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">inputs_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_hash</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_hash</span>
+    <span class="k">def</span> <span class="nf">job_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_type</span> <span class="o">==</span> <span class="n">NO_MODULE_TYPE</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_hash</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">h</span> <span class="o">=</span> <span class="n">DeepHash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">,</span> <span class="n">hasher</span><span class="o">=</span><span class="n">KIARA_HASH_FUNCTION</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_hash</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">]</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_hash</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">job_cid</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">job_cid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CID</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jobs_cid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jobs_cid</span>
+
+        <span class="n">obj</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;manifest&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">manifest_cid</span><span class="p">,</span> <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs_cid</span><span class="p">}</span>
+        <span class="n">_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jobs_cid</span> <span class="o">=</span> <span class="n">compute_cid</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jobs_cid</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">inputs_cid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CID</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_cid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_cid</span>
+
+        <span class="n">_</span><span class="p">,</span> <span class="n">cid</span> <span class="o">=</span> <span class="n">compute_cid</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">bytes</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_cid</span> <span class="o">=</span> <span class="n">cid</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_cid</span>
 </code></pre></div>
         </details>
 
@@ -3446,15 +3449,37 @@ InputsManifest            (<a class="autorefs autorefs-internal" title="kiara.mo
 
 
 
-<h5 id="kiara.models.module.manifest.InputsManifest.inputs_hash" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">inputs_hash</span><span class="p">:</span> <span class="nb">int</span></code>
+<h5 id="kiara.models.module.manifest.InputsManifest.inputs_cid" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">inputs_cid</span><span class="p">:</span> <span class="n">CID</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-property"><code>property</code></small>
       <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
   </span>
 
-<a href="#kiara.models.module.manifest.InputsManifest.inputs_hash" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.module.manifest.InputsManifest.inputs_cid" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.module.manifest.InputsManifest.job_cid" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">job_cid</span><span class="p">:</span> <span class="n">CID</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.models.module.manifest.InputsManifest.job_cid" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -3469,7 +3494,7 @@ InputsManifest            (<a class="autorefs autorefs-internal" title="kiara.mo
 
 
 <h5 id="kiara.models.module.manifest.InputsManifest.job_hash" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">job_hash</span><span class="p">:</span> <span class="nb">int</span></code>
+<code class="highlight language-python"><span class="n">job_hash</span><span class="p">:</span> <span class="nb">str</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-property"><code>property</code></small>
@@ -3558,12 +3583,14 @@ Manifest            (<a class="autorefs autorefs-internal" title="kiara.models.K
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Manifest</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A class to hold the type and configuration for a module instance.&quot;&quot;&quot;</span>
 
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.manifest&quot;</span>
+
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
         <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
         <span class="n">validate_all</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="n">_manifest_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">_manifest_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_manifest_cid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CID</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="n">module_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The module type.&quot;</span><span class="p">)</span>
     <span class="n">module_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
@@ -3573,6 +3600,11 @@ Manifest            (<a class="autorefs autorefs-internal" title="kiara.models.K
     <span class="c1"># doc: DocumentationMetadataModel = Field(</span>
     <span class="c1">#     description=&quot;Documentation for this module instance.&quot;, default=None</span>
     <span class="c1"># )</span>
+
+    <span class="c1"># @validator(&quot;module_config&quot;)</span>
+    <span class="c1"># def _validate_module_config(cls, value):</span>
+    <span class="c1">#</span>
+    <span class="c1">#     return value</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">manifest_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -3586,32 +3618,20 @@ Manifest            (<a class="autorefs autorefs-internal" title="kiara.models.K
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manifest_data</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">manifest_cid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CID</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manifest_cid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manifest_cid</span>
+
+        <span class="n">_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manifest_cid</span> <span class="o">=</span> <span class="n">compute_cid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manifest_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manifest_cid</span>
+
     <span class="k">def</span> <span class="nf">manifest_data_as_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;module_type&quot;</span><span class="p">,</span> <span class="s2">&quot;module_config&quot;</span><span class="p">})</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">manifest_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The hash for the inherent module config (composted of type and render_config data).</span>
-
-<span class="sd">        Not that this can (but might not) be different to the `model_data_hash`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manifest_hash</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manifest_hash</span>
-
-        <span class="n">h</span> <span class="o">=</span> <span class="n">DeepHash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manifest_data</span><span class="p">,</span> <span class="n">hasher</span><span class="o">=</span><span class="n">KIARA_HASH_FUNCTION</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_manifest_hash</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">manifest_data</span><span class="p">]</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manifest_hash</span>
-
     <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">manifest_data</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_data_hash</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">MODULE_CONFIG_CATEGORY_ID</span>
 
     <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Create a renderable for this module configuration.&quot;&quot;&quot;</span>
@@ -3647,6 +3667,28 @@ Manifest            (<a class="autorefs autorefs-internal" title="kiara.models.K
 
 
 
+<h5 id="kiara.models.module.manifest.Manifest.manifest_cid" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">manifest_cid</span><span class="p">:</span> <span class="n">CID</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.models.module.manifest.Manifest.manifest_cid" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
 <h5 id="kiara.models.module.manifest.Manifest.manifest_data" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">manifest_data</span></code>
 
@@ -3660,30 +3702,6 @@ Manifest            (<a class="autorefs autorefs-internal" title="kiara.models.K
     <div class="doc doc-contents ">
 
       <p>The configuration data for this module instance.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.models.module.manifest.Manifest.manifest_hash" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">manifest_hash</span><span class="p">:</span> <span class="nb">int</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-property"><code>property</code></small>
-      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
-  </span>
-
-<a href="#kiara.models.module.manifest.Manifest.manifest_hash" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>The hash for the inherent module config (composted of type and render_config data).</p>
-<p>Not that this can (but might not) be different to the <code>model_data_hash</code>.</p>
     </div>
 
   </div>

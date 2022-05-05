@@ -3767,7 +3767,7 @@ FileSystemDataArchive            (<a class="autorefs autorefs-internal" title="k
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="nf">_retrieve_environment_details</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">env_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">env_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
         <span class="n">base_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">entity_type</span><span class="o">=</span><span class="n">EntityType</span><span class="o">.</span><span class="n">ENVIRONMENT</span><span class="p">)</span>
@@ -3786,12 +3786,12 @@ FileSystemDataArchive            (<a class="autorefs autorefs-internal" title="k
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">]:</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_job_record</span><span class="p">(</span>
-            <span class="n">manifest_hash</span><span class="o">=</span><span class="n">inputs_manifest</span><span class="o">.</span><span class="n">manifest_hash</span><span class="p">,</span>
+            <span class="n">manifest_hash</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">inputs_manifest</span><span class="o">.</span><span class="n">instance_cid</span><span class="p">),</span>
             <span class="n">jobs_hash</span><span class="o">=</span><span class="n">inputs_manifest</span><span class="o">.</span><span class="n">job_hash</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_retrieve_job_record</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">manifest_hash</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">jobs_hash</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">manifest_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">jobs_hash</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">]:</span>
 
         <span class="n">base_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">entity_type</span><span class="o">=</span><span class="n">EntityType</span><span class="o">.</span><span class="n">MANIFEST</span><span class="p">)</span>
@@ -3809,7 +3809,7 @@ FileSystemDataArchive            (<a class="autorefs autorefs-internal" title="k
 
         <span class="n">manifest_data</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">manifest_file</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
 
-        <span class="n">job_folder</span> <span class="o">=</span> <span class="n">manifest_folder</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span><span class="n">jobs_hash</span><span class="p">)</span>
+        <span class="n">job_folder</span> <span class="o">=</span> <span class="n">manifest_folder</span> <span class="o">/</span> <span class="n">jobs_hash</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">job_folder</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -4139,7 +4139,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.regis
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">]:</span>
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_job_record</span><span class="p">(</span>
-        <span class="n">manifest_hash</span><span class="o">=</span><span class="n">inputs_manifest</span><span class="o">.</span><span class="n">manifest_hash</span><span class="p">,</span>
+        <span class="n">manifest_hash</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">inputs_manifest</span><span class="o">.</span><span class="n">instance_cid</span><span class="p">),</span>
         <span class="n">jobs_hash</span><span class="o">=</span><span class="n">inputs_manifest</span><span class="o">.</span><span class="n">job_hash</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
@@ -4366,7 +4366,7 @@ FilesystemDataStore            (<a class="autorefs autorefs-internal" title="kia
     <span class="n">_archive_type_name</span> <span class="o">=</span> <span class="s2">&quot;filesystem_data_store&quot;</span>
 
     <span class="k">def</span> <span class="nf">_persist_environment_details</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">env_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">env_data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">env_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
     <span class="p">):</span>
 
         <span class="n">base_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">entity_type</span><span class="o">=</span><span class="n">EntityType</span><span class="o">.</span><span class="n">ENVIRONMENT</span><span class="p">)</span>
@@ -4471,7 +4471,7 @@ FilesystemDataStore            (<a class="autorefs autorefs-internal" title="kia
 
     <span class="k">def</span> <span class="nf">_persist_value_pedigree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">):</span>
 
-        <span class="n">manifest_hash</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pedigree</span><span class="o">.</span><span class="n">manifest_hash</span>
+        <span class="n">manifest_hash</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pedigree</span><span class="o">.</span><span class="n">instance_cid</span>
         <span class="n">jobs_hash</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pedigree</span><span class="o">.</span><span class="n">job_hash</span>
 
         <span class="n">base_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">entity_type</span><span class="o">=</span><span class="n">EntityType</span><span class="o">.</span><span class="n">MANIFEST</span><span class="p">)</span>

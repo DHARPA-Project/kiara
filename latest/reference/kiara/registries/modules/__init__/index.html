@@ -3396,7 +3396,7 @@ ModuleRegistry        </code>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ModuleRegistry</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_modules</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">KiaraModule</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_modules</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">CID</span><span class="p">,</span> <span class="n">KiaraModule</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="kn">from</span> <span class="nn">kiara.utils.class_loading</span> <span class="kn">import</span> <span class="n">find_all_kiara_modules</span>
 
@@ -3458,18 +3458,18 @@ ModuleRegistry        </code>
             <span class="n">manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">module_type</span><span class="o">=</span><span class="n">manifest</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="p">{})</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_modules</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-            <span class="n">manifest</span><span class="o">.</span><span class="n">manifest_hash</span><span class="p">,</span> <span class="kc">None</span>
+            <span class="n">manifest</span><span class="o">.</span><span class="n">instance_cid</span><span class="p">,</span> <span class="kc">None</span>
         <span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_modules</span><span class="p">[</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">][</span><span class="n">manifest</span><span class="o">.</span><span class="n">manifest_hash</span><span class="p">]</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_modules</span><span class="p">[</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">][</span><span class="n">manifest</span><span class="o">.</span><span class="n">instance_cid</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_module_type_names</span><span class="p">():</span>
 
             <span class="n">m_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">KiaraModule</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_module_class</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">)</span>
-            <span class="n">m_hash</span> <span class="o">=</span> <span class="n">m_cls</span><span class="o">.</span><span class="n">_calculate_module_hash</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_config</span><span class="p">)</span>
+            <span class="n">m_hash</span> <span class="o">=</span> <span class="n">m_cls</span><span class="o">.</span><span class="n">_calculate_module_cid</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_config</span><span class="p">)</span>
 
             <span class="n">kiara_module</span> <span class="o">=</span> <span class="n">m_cls</span><span class="p">(</span><span class="n">module_config</span><span class="o">=</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_config</span><span class="p">)</span>
             <span class="k">assert</span> <span class="p">(</span>
-                <span class="n">kiara_module</span><span class="o">.</span><span class="n">module_instance_hash</span> <span class="o">==</span> <span class="n">m_hash</span>
+                <span class="n">kiara_module</span><span class="o">.</span><span class="n">module_instance_cid</span> <span class="o">==</span> <span class="n">m_hash</span>
             <span class="p">)</span>  <span class="c1"># TODO: might not be necessary? Leaving it in here for now, to see if it triggers at any stage.</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
@@ -3560,18 +3560,18 @@ ModuleRegistry        </code>
         <span class="n">manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">module_type</span><span class="o">=</span><span class="n">manifest</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="p">{})</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_modules</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-        <span class="n">manifest</span><span class="o">.</span><span class="n">manifest_hash</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="n">manifest</span><span class="o">.</span><span class="n">instance_cid</span><span class="p">,</span> <span class="kc">None</span>
     <span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_modules</span><span class="p">[</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">][</span><span class="n">manifest</span><span class="o">.</span><span class="n">manifest_hash</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_modules</span><span class="p">[</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">][</span><span class="n">manifest</span><span class="o">.</span><span class="n">instance_cid</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_module_type_names</span><span class="p">():</span>
 
         <span class="n">m_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">KiaraModule</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_module_class</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">)</span>
-        <span class="n">m_hash</span> <span class="o">=</span> <span class="n">m_cls</span><span class="o">.</span><span class="n">_calculate_module_hash</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_config</span><span class="p">)</span>
+        <span class="n">m_hash</span> <span class="o">=</span> <span class="n">m_cls</span><span class="o">.</span><span class="n">_calculate_module_cid</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_config</span><span class="p">)</span>
 
         <span class="n">kiara_module</span> <span class="o">=</span> <span class="n">m_cls</span><span class="p">(</span><span class="n">module_config</span><span class="o">=</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_config</span><span class="p">)</span>
         <span class="k">assert</span> <span class="p">(</span>
-            <span class="n">kiara_module</span><span class="o">.</span><span class="n">module_instance_hash</span> <span class="o">==</span> <span class="n">m_hash</span>
+            <span class="n">kiara_module</span><span class="o">.</span><span class="n">module_instance_cid</span> <span class="o">==</span> <span class="n">m_hash</span>
         <span class="p">)</span>  <span class="c1"># TODO: might not be necessary? Leaving it in here for now, to see if it triggers at any stage.</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>

@@ -3334,6 +3334,9 @@ MetadataTypeClassesInfo            (<a class="autorefs autorefs-internal" title=
         <details class="quote">
           <summary>Source code in <code>kiara/models/values/value_metadata/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MetadataTypeClassesInfo</span><span class="p">(</span><span class="n">TypeInfoModelGroup</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.info.metadata_types&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">base_info_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">KiaraTypeInfoModel</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">MetadataTypeInfoModel</span>
@@ -3462,6 +3465,9 @@ MetadataTypeInfoModel            (<a class="autorefs autorefs-internal" title="k
         <details class="quote">
           <summary>Source code in <code>kiara/models/values/value_metadata/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MetadataTypeInfoModel</span><span class="p">(</span><span class="n">KiaraTypeInfoModel</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.info.metadata_type&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_from_type_class</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">type_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">ValueMetadata</span><span class="p">]</span>
@@ -3769,9 +3775,6 @@ ValueMetadata            (<a class="autorefs autorefs-internal" title="kiara.mod
     <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata_key</span>  <span class="c1"># type: ignore</span>
 
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">VALUE_METADATA_CATEGORY_ID</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_metadata_key</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># type: ignore</span>
-
     <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span> <span class="s2">&quot;schema&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema_json</span><span class="p">()}</span>
 </code></pre></div>
@@ -3909,14 +3912,15 @@ FileBundleMetadata            (<a class="autorefs autorefs-internal" title="kiar
 
     <div class="doc doc-contents ">
 
-      <p>File stats.</p>
+      <p>File bundle stats.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/values/value_metadata/included_metadata_types/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">FileBundleMetadata</span><span class="p">(</span><span class="n">ValueMetadata</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;File stats.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;File bundle stats.&quot;&quot;&quot;</span>
 
     <span class="n">_metadata_key</span> <span class="o">=</span> <span class="s2">&quot;file_bundle&quot;</span>
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.metadata.file_bundle&quot;</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">retrieve_supported_data_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
@@ -4061,6 +4065,7 @@ FileMetadata            (<a class="autorefs autorefs-internal" title="kiara.mode
     <span class="sd">&quot;&quot;&quot;File stats.&quot;&quot;&quot;</span>
 
     <span class="n">_metadata_key</span> <span class="o">=</span> <span class="s2">&quot;file&quot;</span>
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.metadata.file&quot;</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">retrieve_supported_data_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
@@ -4205,6 +4210,7 @@ PythonClassMetadata            (<a class="autorefs autorefs-internal" title="kia
     <span class="sd">&quot;&quot;&quot;Python class and module information.&quot;&quot;&quot;</span>
 
     <span class="n">_metadata_key</span> <span class="o">=</span> <span class="s2">&quot;python_class&quot;</span>
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.metadata.python_class&quot;</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">retrieve_supported_data_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>

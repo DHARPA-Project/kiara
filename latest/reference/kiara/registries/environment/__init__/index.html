@@ -3367,16 +3367,14 @@ EnvironmentRegistry        </code>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_full_env_model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">get_environment_for_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RuntimeEnvironment</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_environment_for_cid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_cid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RuntimeEnvironment</span><span class="p">:</span>
 
-        <span class="n">envs</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">env</span> <span class="k">for</span> <span class="n">env</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">environments</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">model_data_hash</span> <span class="o">==</span> <span class="n">env_hash</span>
-        <span class="p">]</span>
+        <span class="n">envs</span> <span class="o">=</span> <span class="p">[</span><span class="n">env</span> <span class="k">for</span> <span class="n">env</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">environments</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">instance_id</span> <span class="o">==</span> <span class="n">env_cid</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">envs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No environment with hash &#39;</span><span class="si">{</span><span class="n">env_hash</span><span class="si">}</span><span class="s2">&#39; available.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No environment with id &#39;</span><span class="si">{</span><span class="n">env_cid</span><span class="si">}</span><span class="s2">&#39; available.&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">envs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Multipe environments with hash &#39;</span><span class="si">{</span><span class="n">env_hash</span><span class="si">}</span><span class="s2">&#39; available. This is most likely a bug.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Multipe environments with id &#39;</span><span class="si">{</span><span class="n">env_cid</span><span class="si">}</span><span class="s2">&#39; available. This is most likely a bug.&quot;</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">envs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -3444,7 +3442,7 @@ EnvironmentRegistry        </code>
                 <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Metadata describing the </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> environment.&quot;</span><span class="p">),</span>
             <span class="p">)</span>
             <span class="n">schemas</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">schema_json</span><span class="p">()</span>
-            <span class="n">hashes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">environments</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">model_data_hash</span>
+            <span class="n">hashes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">environments</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">instance_cid</span>
 
         <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_model</span><span class="p">(</span><span class="s2">&quot;KiaraRuntimeInfo&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">models</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
@@ -3452,7 +3450,7 @@ EnvironmentRegistry        </code>
             <span class="n">d</span> <span class="o">=</span> <span class="n">v2</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
             <span class="k">assert</span> <span class="s2">&quot;metadata_hash&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
             <span class="k">assert</span> <span class="s2">&quot;metadata_schema&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;metadata_hash&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hashes</span><span class="p">[</span><span class="n">k2</span><span class="p">]</span>
+            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;metadata_hash&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">hashes</span><span class="p">[</span><span class="n">k2</span><span class="p">])</span>
             <span class="n">d</span><span class="p">[</span><span class="s2">&quot;metadata_schema&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">schemas</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
             <span class="n">data</span><span class="p">[</span><span class="n">k2</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span>
         <span class="n">model</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
@@ -3573,27 +3571,25 @@ EnvironmentRegistry        </code>
 
 
 
-<h5 id="kiara.registries.environment.EnvironmentRegistry.get_environment_for_hash" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_environment_for_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">)</span></code>
+<h5 id="kiara.registries.environment.EnvironmentRegistry.get_environment_for_cid" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_environment_for_cid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_cid</span><span class="p">)</span></code>
 
 
-<a href="#kiara.registries.environment.EnvironmentRegistry.get_environment_for_hash" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.registries.environment.EnvironmentRegistry.get_environment_for_cid" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/environment/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_environment_for_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RuntimeEnvironment</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_environment_for_cid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_cid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RuntimeEnvironment</span><span class="p">:</span>
 
-    <span class="n">envs</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">env</span> <span class="k">for</span> <span class="n">env</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">environments</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">model_data_hash</span> <span class="o">==</span> <span class="n">env_hash</span>
-    <span class="p">]</span>
+    <span class="n">envs</span> <span class="o">=</span> <span class="p">[</span><span class="n">env</span> <span class="k">for</span> <span class="n">env</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">environments</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">instance_id</span> <span class="o">==</span> <span class="n">env_cid</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">envs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No environment with hash &#39;</span><span class="si">{</span><span class="n">env_hash</span><span class="si">}</span><span class="s2">&#39; available.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No environment with id &#39;</span><span class="si">{</span><span class="n">env_cid</span><span class="si">}</span><span class="s2">&#39; available.&quot;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">envs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Multipe environments with hash &#39;</span><span class="si">{</span><span class="n">env_hash</span><span class="si">}</span><span class="s2">&#39; available. This is most likely a bug.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Multipe environments with id &#39;</span><span class="si">{</span><span class="n">env_cid</span><span class="si">}</span><span class="s2">&#39; available. This is most likely a bug.&quot;</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">envs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </code></pre></div>

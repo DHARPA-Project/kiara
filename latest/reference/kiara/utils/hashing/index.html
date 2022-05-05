@@ -3099,8 +3099,22 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.utils.hashing.compute_hash" class="md-nav__link">
-    compute_hash()
+  <a href="#kiara.utils.hashing.compute_cid" class="md-nav__link">
+    compute_cid()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.utils.hashing.compute_cid_from_file" class="md-nav__link">
+    compute_cid_from_file()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.utils.hashing.create_cid_digest" class="md-nav__link">
+    create_cid_digest()
   </a>
   
 </li>
@@ -3270,8 +3284,22 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.utils.hashing.compute_hash" class="md-nav__link">
-    compute_hash()
+  <a href="#kiara.utils.hashing.compute_cid" class="md-nav__link">
+    compute_cid()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.utils.hashing.compute_cid_from_file" class="md-nav__link">
+    compute_cid_from_file()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.utils.hashing.create_cid_digest" class="md-nav__link">
+    create_cid_digest()
   </a>
   
 </li>
@@ -3322,21 +3350,102 @@
 
 
 
-<h3 id="kiara.utils.hashing.compute_hash" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">compute_hash</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span></code>
+<h3 id="kiara.utils.hashing.compute_cid" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">compute_cid</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">hash_codec</span><span class="o">=</span><span class="s1">&#39;sha2-256&#39;</span><span class="p">,</span> <span class="n">encode</span><span class="o">=</span><span class="s1">&#39;base58btc&#39;</span><span class="p">)</span></code>
 
 
-<a href="#kiara.utils.hashing.compute_hash" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#kiara.utils.hashing.compute_cid" class="headerlink" title="Permanent link">&para;</a></h3>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/utils/hashing.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">compute_hash</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">compute_cid</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">EncodableType</span><span class="p">,</span>
+    <span class="n">hash_codec</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;sha2-256&quot;</span><span class="p">,</span>
+    <span class="n">encode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;base58btc&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">CID</span><span class="p">]:</span>
 
-    <span class="n">h</span> <span class="o">=</span> <span class="n">DeepHash</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">hasher</span><span class="o">=</span><span class="n">KIARA_HASH_FUNCTION</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">h</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span>
+    <span class="n">encoded</span> <span class="o">=</span> <span class="n">dag_cbor</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">hash_func</span> <span class="o">=</span> <span class="n">multihash</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">hash_codec</span><span class="p">)</span>
+    <span class="n">digest</span> <span class="o">=</span> <span class="n">hash_func</span><span class="o">.</span><span class="n">digest</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+
+    <span class="n">cid</span> <span class="o">=</span> <span class="n">CID</span><span class="p">(</span><span class="n">encode</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">codec</span><span class="o">=</span><span class="s2">&quot;dag-cbor&quot;</span><span class="p">,</span> <span class="n">digest</span><span class="o">=</span><span class="n">digest</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">encoded</span><span class="p">,</span> <span class="n">cid</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="kiara.utils.hashing.compute_cid_from_file" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">compute_cid_from_file</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">codec</span><span class="o">=</span><span class="s1">&#39;raw&#39;</span><span class="p">,</span> <span class="n">hash_codec</span><span class="o">=</span><span class="s1">&#39;sha2-256&#39;</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.hashing.compute_cid_from_file" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/hashing.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">compute_cid_from_file</span><span class="p">(</span>
+    <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">codec</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Multicodec</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;raw&quot;</span><span class="p">,</span> <span class="n">hash_codec</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;sha2-256&quot;</span>
+<span class="p">):</span>
+
+    <span class="k">assert</span> <span class="n">hash_codec</span> <span class="o">==</span> <span class="s2">&quot;sha2-256&quot;</span>
+
+    <span class="n">hash_func</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span>
+    <span class="n">file_hash</span> <span class="o">=</span> <span class="n">hash_func</span><span class="p">()</span>
+
+    <span class="n">CHUNK_SIZE</span> <span class="o">=</span> <span class="mi">65536</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">fb</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">CHUNK_SIZE</span><span class="p">)</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">fb</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">file_hash</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fb</span><span class="p">)</span>
+            <span class="n">fb</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">CHUNK_SIZE</span><span class="p">)</span>
+
+    <span class="n">wrapped</span> <span class="o">=</span> <span class="n">multihash</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">file_hash</span><span class="o">.</span><span class="n">digest</span><span class="p">(),</span> <span class="s2">&quot;sha2-256&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">create_cid_digest</span><span class="p">(</span><span class="n">digest</span><span class="o">=</span><span class="n">wrapped</span><span class="p">,</span> <span class="n">codec</span><span class="o">=</span><span class="n">codec</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="kiara.utils.hashing.create_cid_digest" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_cid_digest</span><span class="p">(</span><span class="n">digest</span><span class="p">,</span> <span class="n">codec</span><span class="o">=</span><span class="s1">&#39;raw&#39;</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.hashing.create_cid_digest" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/hashing.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_cid_digest</span><span class="p">(</span>
+    <span class="n">digest</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> <span class="n">BytesLike</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Multihash</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BytesLike</span><span class="p">]]</span>
+    <span class="p">],</span>
+    <span class="n">codec</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Multicodec</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;raw&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CID</span><span class="p">:</span>
+
+    <span class="n">cid</span> <span class="o">=</span> <span class="n">CID</span><span class="p">(</span><span class="s2">&quot;base58btc&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">codec</span><span class="p">,</span> <span class="n">digest</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cid</span>
 </code></pre></div>
         </details>
     </div>

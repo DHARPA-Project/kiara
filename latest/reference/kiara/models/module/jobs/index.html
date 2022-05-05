@@ -3440,6 +3440,8 @@ ActiveJob            (<a class="autorefs autorefs-internal" title="kiara.models.
           <summary>Source code in <code>kiara/models/module/jobs.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ActiveJob</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
 
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.active_job&quot;</span>
+
     <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The job id.&quot;</span><span class="p">)</span>
 
     <span class="n">job_config</span><span class="p">:</span> <span class="n">JobConfig</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The job details.&quot;</span><span class="p">)</span>
@@ -3463,11 +3465,8 @@ ActiveJob            (<a class="autorefs autorefs-internal" title="kiara.models.
     <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">JOB_CATEGORY_ID</span>
-
     <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="o">.</span><span class="n">bytes</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">exception</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]:</span>
@@ -3773,6 +3772,9 @@ JobConfig            (<a class="autorefs autorefs-internal" title="kiara.models.
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/jobs.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">JobConfig</span><span class="p">(</span><span class="n">InputsManifest</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.job_config&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_from_module</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -3796,14 +3798,8 @@ JobConfig            (<a class="autorefs autorefs-internal" title="kiara.models.
             <span class="n">inputs</span><span class="o">=</span><span class="n">value_ids</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_data_hash</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">JOB_CONFIG_TYPE_CATEGORY_ID</span>
-
     <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;manifest&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">manifest_data</span><span class="p">,</span> <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs_hash</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;manifest&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">manifest_cid</span><span class="p">,</span> <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs_cid</span><span class="p">}</span>
 </code></pre></div>
         </details>
 
@@ -4030,6 +4026,9 @@ JobRecord            (<a class="autorefs autorefs-internal" title="kiara.models.
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/jobs.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">JobRecord</span><span class="p">(</span><span class="n">JobConfig</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.job_record&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_active_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">active_job</span><span class="p">:</span> <span class="n">ActiveJob</span><span class="p">):</span>
 
@@ -4063,14 +4062,11 @@ JobRecord            (<a class="autorefs autorefs-internal" title="kiara.models.
     <span class="n">_is_stored</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">_outputs_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">JOB_RECORD_TYPE_CATEGORY_ID</span>
-
     <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;manifest_hash&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">manifest_hash</span><span class="p">,</span>
-            <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">,</span>
-            <span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">,</span>
+            <span class="s2">&quot;manifest&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">manifest_cid</span><span class="p">,</span>
+            <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs_cid</span><span class="p">,</span>
+            <span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">bytes</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">items</span><span class="p">()},</span>
         <span class="p">}</span>
 
     <span class="nd">@property</span>

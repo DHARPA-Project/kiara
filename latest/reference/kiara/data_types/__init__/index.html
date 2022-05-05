@@ -3525,12 +3525,12 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
     <span class="k">def</span> <span class="nf">calculate_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calculate the hash of the value.&quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">serialized_hash</span>
+        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">instance_id</span>
 
     <span class="k">def</span> <span class="nf">calculate_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calculate the size of the value.&quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">data_size</span>
 
     <span class="k">def</span> <span class="nf">serialize_as_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">:</span>
 
@@ -3667,8 +3667,8 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
                 <span class="n">size</span> <span class="o">=</span> <span class="n">INVALID_SIZE_MARKER</span>
                 <span class="n">value_hash</span> <span class="o">=</span> <span class="n">INVALID_HASH_MARKER</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">size</span> <span class="o">=</span> <span class="n">serialized</span><span class="o">.</span><span class="n">size</span>  <span class="c1"># type: ignore</span>
-                <span class="n">value_hash</span> <span class="o">=</span> <span class="n">serialized</span><span class="o">.</span><span class="n">serialized_hash</span>  <span class="c1"># type: ignore</span>
+                <span class="n">size</span> <span class="o">=</span> <span class="n">serialized</span><span class="o">.</span><span class="n">data_size</span>  <span class="c1"># type: ignore</span>
+                <span class="n">value_hash</span> <span class="o">=</span> <span class="n">serialized</span><span class="o">.</span><span class="n">instance_id</span>  <span class="c1"># type: ignore</span>
 
         <span class="k">assert</span> <span class="n">serialized</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">serialized</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">value_hash</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
@@ -3979,7 +3979,7 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">calculate_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Calculate the hash of the value.&quot;&quot;&quot;</span>
 
-    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">serialized_hash</span>
+    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">instance_id</span>
 </code></pre></div>
         </details>
     </div>
@@ -4007,7 +4007,7 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">calculate_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Calculate the size of the value.&quot;&quot;&quot;</span>
 
-    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span>
+    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">data_size</span>
 </code></pre></div>
         </details>
     </div>

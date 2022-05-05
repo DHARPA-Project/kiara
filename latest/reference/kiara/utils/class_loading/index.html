@@ -4516,7 +4516,7 @@
 
                 <span class="k">if</span> <span class="n">type_id</span> <span class="ow">in</span> <span class="n">result_dynamic</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Duplicate item name for type </span><span class="si">{</span><span class="n">entry_point_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">type_id</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Duplicate type id &#39;</span><span class="si">{</span><span class="n">type_id</span><span class="si">}</span><span class="s2">&#39; for type </span><span class="si">{</span><span class="n">entry_point_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">result_dynamic</span><span class="p">[</span><span class="n">type_id</span><span class="p">]</span><span class="si">}</span><span class="s2"> -- </span><span class="si">{</span><span class="n">sub_class</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="p">)</span>
                 <span class="n">result_dynamic</span><span class="p">[</span><span class="n">type_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">sub_class</span>
 

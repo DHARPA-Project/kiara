@@ -3460,6 +3460,8 @@ FileBundle            (<a class="autorefs autorefs-internal" title="kiara.models
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">FileBundle</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Describes properties for the &#39;file_bundle&#39; value type.&quot;&quot;&quot;</span>
 
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.data.file_bundle&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">import_folder</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -3611,15 +3613,18 @@ FileBundle            (<a class="autorefs autorefs-internal" title="kiara.models
     <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_bundle_hash</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">FILE_BUNDLE_MODEL_CATEOGORY_ID</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">model_data_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_bundle_hash</span>
+    <span class="c1"># @property</span>
+    <span class="c1"># def model_data_hash(self) -&gt; int:</span>
+    <span class="c1">#     return self.file_bundle_hash</span>
 
     <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;bundle_name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bundle_name</span><span class="p">,</span>
+            <span class="s2">&quot;included_files&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">instance_cid</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">included_files</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">get_relative_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">FileModel</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
@@ -3849,29 +3854,6 @@ FileBundle            (<a class="autorefs autorefs-internal" title="kiara.models
     <div class="doc doc-contents ">
 
       <p>A map of all the included files, incl. their properties. Uses the relative path of each file as key.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.models.filesystem.FileBundle.model_data_hash" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">model_data_hash</span><span class="p">:</span> <span class="nb">int</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-property"><code>property</code></small>
-      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
-  </span>
-
-<a href="#kiara.models.filesystem.FileBundle.model_data_hash" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>A hash for this model.</p>
     </div>
 
   </div>
@@ -4323,6 +4305,8 @@ FileModel            (<a class="autorefs autorefs-internal" title="kiara.models.
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">FileModel</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Describes properties for the &#39;file&#39; value type.&quot;&quot;&quot;</span>
 
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.data.file&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load_file</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -4375,8 +4359,6 @@ FileModel            (<a class="autorefs autorefs-internal" title="kiara.models.
         <span class="n">m</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span>
         <span class="k">return</span> <span class="n">m</span>
 
-    <span class="n">_file_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-
     <span class="n">import_time</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The time when the file was imported.&quot;</span>
     <span class="p">)</span>
@@ -4385,6 +4367,8 @@ FileModel            (<a class="autorefs autorefs-internal" title="kiara.models.
     <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The size of the file.&quot;</span><span class="p">)</span>
 
     <span class="n">_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_file_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_file_cid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CID</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="c1"># @validator(&quot;path&quot;)</span>
     <span class="c1"># def ensure_abs_path(cls, value):</span>
@@ -4396,17 +4380,12 @@ FileModel            (<a class="autorefs autorefs-internal" title="kiara.models.
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;File path not set for file model.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
 
-    <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_hash</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">FILE_MODEL_CATEOGORY_ID</span>
-
     <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">{</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;file_name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
-            <span class="s2">&quot;file_hash&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_hash</span><span class="p">,</span>
+            <span class="s2">&quot;file_cid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_cid</span><span class="p">,</span>
         <span class="p">}</span>
+        <span class="k">return</span> <span class="n">data</span>
 
     <span class="c1"># def get_id(self) -&gt; str:</span>
     <span class="c1">#     return self.path</span>
@@ -4435,14 +4414,18 @@ FileModel            (<a class="autorefs autorefs-internal" title="kiara.models.
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_hash</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_hash</span>
 
-        <span class="n">sha256_hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha3_256</span><span class="p">()</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="c1"># Read and update hash string value in blocks of 4K</span>
-            <span class="k">for</span> <span class="n">byte_block</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4096</span><span class="p">),</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
-                <span class="n">sha256_hash</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">byte_block</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_file_hash</span> <span class="o">=</span> <span class="n">sha256_hash</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file_hash</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_cid</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_hash</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">file_cid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CID</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_cid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_cid</span>
+
+        <span class="c1"># TODO: auto-set codec?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file_cid</span> <span class="o">=</span> <span class="n">compute_cid_from_file</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">codec</span><span class="o">=</span><span class="s2">&quot;raw&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_cid</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">file_name_without_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -4485,6 +4468,28 @@ FileModel            (<a class="autorefs autorefs-internal" title="kiara.models.
 
 
 <h4 id="kiara.models.filesystem.FileModel-attributes">Attributes<a href="#kiara.models.filesystem.FileModel-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.filesystem.FileModel.file_cid" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">file_cid</span><span class="p">:</span> <span class="n">CID</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.models.filesystem.FileModel.file_cid" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
 
   <div class="doc doc-object doc-attribute">
 

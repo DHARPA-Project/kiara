@@ -3397,12 +3397,6 @@ RuntimeEnvironment            (<a class="autorefs autorefs-internal" title="kiar
     <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">get_environment_type_name</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">ENVIRONMENT_TYPE_CATEGORY_ID</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
-
     <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
         <span class="n">summary</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;summary&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
@@ -3742,6 +3736,9 @@ ArchiveTypeClassesInfo            (<a class="autorefs autorefs-internal" title="
         <details class="quote">
           <summary>Source code in <code>kiara/models/runtime_environment/kiara.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ArchiveTypeClassesInfo</span><span class="p">(</span><span class="n">TypeInfoModelGroup</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.info.archive_types&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">base_info_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">ArchiveTypeInfoModel</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">ArchiveTypeInfoModel</span>
@@ -3870,6 +3867,9 @@ ArchiveTypeInfoModel            (<a class="autorefs autorefs-internal" title="ki
         <details class="quote">
           <summary>Source code in <code>kiara/models/runtime_environment/kiara.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ArchiveTypeInfoModel</span><span class="p">(</span><span class="n">KiaraTypeInfoModel</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.info.archive_type&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_from_type_class</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">type_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">KiaraArchive</span><span class="p">]</span>
@@ -4170,6 +4170,8 @@ KiaraTypesRuntimeEnvironment            (<a class="autorefs autorefs-internal" t
           <summary>Source code in <code>kiara/models/runtime_environment/kiara.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraTypesRuntimeEnvironment</span><span class="p">(</span><span class="n">RuntimeEnvironment</span><span class="p">):</span>
 
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.info.runtime.kiara_types&quot;</span>
+
     <span class="n">environment_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;kiara_types&quot;</span><span class="p">]</span>
     <span class="n">archive_types</span><span class="p">:</span> <span class="n">ArchiveTypeClassesInfo</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The available implemented store types.&quot;</span>
@@ -4421,6 +4423,8 @@ OSRuntimeEnvironment            (<a class="autorefs autorefs-internal" title="ki
 
 <span class="sd">    # TODO: details for other OS&#39;s (mainly BSDs)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.info.runtime.os&quot;</span>
 
     <span class="n">environment_type</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;operating_system&quot;</span><span class="p">]</span>
     <span class="n">operation_system</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The operation system name.&quot;</span><span class="p">)</span>
@@ -4858,6 +4862,8 @@ PythonRuntimeEnvironment            (<a class="autorefs autorefs-internal" title
         <details class="quote">
           <summary>Source code in <code>kiara/models/runtime_environment/python.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PythonRuntimeEnvironment</span><span class="p">(</span><span class="n">RuntimeEnvironment</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.info.runtime.python&quot;</span>
 
     <span class="n">environment_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">]</span>
     <span class="n">python_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The version of Python.&quot;</span><span class="p">)</span>

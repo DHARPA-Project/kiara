@@ -4790,7 +4790,7 @@ ExtractMetadataOperationType            (<a class="autorefs autorefs-internal" t
                     <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="s2">&quot;value.extract_metadata&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="s2">&quot;data_type&quot;</span><span class="p">:</span> <span class="n">data_type</span><span class="p">,</span>
-                        <span class="s2">&quot;metadata_model&quot;</span><span class="p">:</span> <span class="n">PythonClass</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">model_cls</span><span class="p">),</span>
+                        <span class="s2">&quot;metadata_model&quot;</span><span class="p">:</span> <span class="n">PythonClass</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">model_cls</span><span class="p">)</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
                     <span class="p">},</span>
                     <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Extract &#39;</span><span class="si">{</span><span class="n">metadata_key</span><span class="si">}</span><span class="s2">&#39; metadata for value type &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span>
                 <span class="p">}</span>
@@ -5068,7 +5068,7 @@ ExtractMetadataOperationType            (<a class="autorefs autorefs-internal" t
                 <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="s2">&quot;value.extract_metadata&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="s2">&quot;data_type&quot;</span><span class="p">:</span> <span class="n">data_type</span><span class="p">,</span>
-                    <span class="s2">&quot;metadata_model&quot;</span><span class="p">:</span> <span class="n">PythonClass</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">model_cls</span><span class="p">),</span>
+                    <span class="s2">&quot;metadata_model&quot;</span><span class="p">:</span> <span class="n">PythonClass</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">model_cls</span><span class="p">)</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
                 <span class="p">},</span>
                 <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Extract &#39;</span><span class="si">{</span><span class="n">metadata_key</span><span class="si">}</span><span class="s2">&#39; metadata for value type &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span>
             <span class="p">}</span>

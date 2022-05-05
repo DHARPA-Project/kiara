@@ -3364,6 +3364,8 @@ This is similar to what is usually called a 'future' in programming languages, b
 <span class="sd">    This is similar to what is usually called a &#39;future&#39; in programming languages, but more deterministic, sorta.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.destiny&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_from_values</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -3443,23 +3445,20 @@ This is similar to what is usually called a 'future' in programming languages, b
     <span class="n">_job_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="n">_merged_inputs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">_job_config_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="c1"># _job_config_hash: Optional[int] = PrivateAttr(default=None)</span>
     <span class="n">_module</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;KiaraModule&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">destiny_id</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_retrieve_category_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">DESTINY_CATEGORY_ID</span>
-
     <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">destiny_id</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">destiny_id</span><span class="o">.</span><span class="n">bytes</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">job_config_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job_config_hash</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_job_config_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_job_config_hash</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job_config_hash</span>
+    <span class="c1"># @property</span>
+    <span class="c1"># def job_config_hash(self) -&gt; int:</span>
+    <span class="c1">#     if self._job_config_hash is None:</span>
+    <span class="c1">#         self._job_config_hash = self._retrieve_job_config_hash()</span>
+    <span class="c1">#     return self._job_config_hash</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">merged_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
@@ -3498,9 +3497,9 @@ This is similar to what is usually called a 'future' in programming languages, b
             <span class="bp">self</span><span class="o">.</span><span class="n">_module</span> <span class="o">=</span> <span class="n">m_cls</span><span class="p">(</span><span class="n">module_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">module_config</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module</span>
 
-    <span class="k">def</span> <span class="nf">_retrieve_job_config_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="n">obj</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">manifest_data</span><span class="p">,</span> <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">merged_inputs</span><span class="p">}</span>
-        <span class="k">return</span> <span class="n">compute_hash</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="c1"># def _retrieve_job_config_hash(self) -&gt; int:</span>
+    <span class="c1">#     obj = {&quot;module_config&quot;: self.manifest_data, &quot;inputs&quot;: self.merged_inputs}</span>
+    <span class="c1">#     return compute_cid(obj)</span>
 </code></pre></div>
         </details>
 
@@ -3622,28 +3621,6 @@ This is similar to what is usually called a 'future' in programming languages, b
     <div class="doc doc-contents ">
 
       <p>The schemas of all deferred input fields.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.models.module.destiniy.Destiny.job_config_hash" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">job_config_hash</span><span class="p">:</span> <span class="nb">int</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-property"><code>property</code></small>
-      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
-  </span>
-
-<a href="#kiara.models.module.destiniy.Destiny.job_config_hash" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
     </div>
 
   </div>

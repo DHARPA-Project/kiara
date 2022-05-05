@@ -3388,7 +3388,7 @@ BaseDataStore            (<a class="autorefs autorefs-internal" title="kiara.reg
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">_persist_environment_details</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">env_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">env_data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">env_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
     <span class="p">):</span>
         <span class="k">pass</span>
 
@@ -3411,7 +3411,7 @@ BaseDataStore            (<a class="autorefs autorefs-internal" title="kiara.reg
             <span class="k">if</span> <span class="n">cached</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">continue</span>
 
-            <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kiara_context</span><span class="o">.</span><span class="n">environment_registry</span><span class="o">.</span><span class="n">get_environment_for_hash</span><span class="p">(</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kiara_context</span><span class="o">.</span><span class="n">environment_registry</span><span class="o">.</span><span class="n">get_environment_for_cid</span><span class="p">(</span>
                 <span class="n">env_hash</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">persist_environment</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
@@ -3458,7 +3458,7 @@ BaseDataStore            (<a class="autorefs autorefs-internal" title="kiara.reg
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">env_type</span> <span class="o">=</span> <span class="n">environment</span><span class="o">.</span><span class="n">get_environment_type_name</span><span class="p">()</span>
-        <span class="n">env_hash</span> <span class="o">=</span> <span class="n">environment</span><span class="o">.</span><span class="n">model_data_hash</span>
+        <span class="n">env_hash</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">environment</span><span class="o">.</span><span class="n">instance_cid</span><span class="p">)</span>
 
         <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">env_type</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">env_hash</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -3561,7 +3561,7 @@ This is to make sure it can still be loaded later on, in case the Python model h
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">env_type</span> <span class="o">=</span> <span class="n">environment</span><span class="o">.</span><span class="n">get_environment_type_name</span><span class="p">()</span>
-    <span class="n">env_hash</span> <span class="o">=</span> <span class="n">environment</span><span class="o">.</span><span class="n">model_data_hash</span>
+    <span class="n">env_hash</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">environment</span><span class="o">.</span><span class="n">instance_cid</span><span class="p">)</span>
 
     <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">env_type</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">env_hash</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -3645,7 +3645,7 @@ This is to make sure it can still be loaded later on, in case the Python model h
         <span class="k">if</span> <span class="n">cached</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">continue</span>
 
-        <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kiara_context</span><span class="o">.</span><span class="n">environment_registry</span><span class="o">.</span><span class="n">get_environment_for_hash</span><span class="p">(</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kiara_context</span><span class="o">.</span><span class="n">environment_registry</span><span class="o">.</span><span class="n">get_environment_for_cid</span><span class="p">(</span>
             <span class="n">env_hash</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">persist_environment</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
@@ -3707,7 +3707,7 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">archive_id</span><span class="o">=</span><span class="n">archive_id</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_env_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_value_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Value</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_persisted_value_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">PersistedData</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_value_hash_index</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -3799,7 +3799,7 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
         <span class="k">return</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_all_value_ids</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">retrieve_environment_details</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">env_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">env_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Retrieve the environment details with the specified type and hash.</span>
 
@@ -3817,7 +3817,7 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">_retrieve_environment_details</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">env_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">env_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="k">pass</span>
 
@@ -4127,7 +4127,7 @@ This is to make sure it can still be loaded later on, in case the Python model h
         <details class="quote">
           <summary>Source code in <code>kiara/registries/data/data_store/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_environment_details</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">env_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">env_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Retrieve the environment details with the specified type and hash.</span>
 
@@ -4792,7 +4792,7 @@ FileSystemDataArchive            (<a class="autorefs autorefs-internal" title="k
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="nf">_retrieve_environment_details</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">env_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">env_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
         <span class="n">base_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">entity_type</span><span class="o">=</span><span class="n">EntityType</span><span class="o">.</span><span class="n">ENVIRONMENT</span><span class="p">)</span>
@@ -4811,12 +4811,12 @@ FileSystemDataArchive            (<a class="autorefs autorefs-internal" title="k
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">]:</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_job_record</span><span class="p">(</span>
-            <span class="n">manifest_hash</span><span class="o">=</span><span class="n">inputs_manifest</span><span class="o">.</span><span class="n">manifest_hash</span><span class="p">,</span>
+            <span class="n">manifest_hash</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">inputs_manifest</span><span class="o">.</span><span class="n">instance_cid</span><span class="p">),</span>
             <span class="n">jobs_hash</span><span class="o">=</span><span class="n">inputs_manifest</span><span class="o">.</span><span class="n">job_hash</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_retrieve_job_record</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">manifest_hash</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">jobs_hash</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">manifest_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">jobs_hash</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">]:</span>
 
         <span class="n">base_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">entity_type</span><span class="o">=</span><span class="n">EntityType</span><span class="o">.</span><span class="n">MANIFEST</span><span class="p">)</span>
@@ -4834,7 +4834,7 @@ FileSystemDataArchive            (<a class="autorefs autorefs-internal" title="k
 
         <span class="n">manifest_data</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">manifest_file</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
 
-        <span class="n">job_folder</span> <span class="o">=</span> <span class="n">manifest_folder</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span><span class="n">jobs_hash</span><span class="p">)</span>
+        <span class="n">job_folder</span> <span class="o">=</span> <span class="n">manifest_folder</span> <span class="o">/</span> <span class="n">jobs_hash</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">job_folder</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -5164,7 +5164,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.regis
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">]:</span>
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_job_record</span><span class="p">(</span>
-        <span class="n">manifest_hash</span><span class="o">=</span><span class="n">inputs_manifest</span><span class="o">.</span><span class="n">manifest_hash</span><span class="p">,</span>
+        <span class="n">manifest_hash</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">inputs_manifest</span><span class="o">.</span><span class="n">instance_cid</span><span class="p">),</span>
         <span class="n">jobs_hash</span><span class="o">=</span><span class="n">inputs_manifest</span><span class="o">.</span><span class="n">job_hash</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
@@ -5391,7 +5391,7 @@ FilesystemDataStore            (<a class="autorefs autorefs-internal" title="kia
     <span class="n">_archive_type_name</span> <span class="o">=</span> <span class="s2">&quot;filesystem_data_store&quot;</span>
 
     <span class="k">def</span> <span class="nf">_persist_environment_details</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">env_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">env_data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">env_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
     <span class="p">):</span>
 
         <span class="n">base_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">entity_type</span><span class="o">=</span><span class="n">EntityType</span><span class="o">.</span><span class="n">ENVIRONMENT</span><span class="p">)</span>
@@ -5496,7 +5496,7 @@ FilesystemDataStore            (<a class="autorefs autorefs-internal" title="kia
 
     <span class="k">def</span> <span class="nf">_persist_value_pedigree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">):</span>
 
-        <span class="n">manifest_hash</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pedigree</span><span class="o">.</span><span class="n">manifest_hash</span>
+        <span class="n">manifest_hash</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pedigree</span><span class="o">.</span><span class="n">instance_cid</span>
         <span class="n">jobs_hash</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">pedigree</span><span class="o">.</span><span class="n">job_hash</span>
 
         <span class="n">base_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">entity_type</span><span class="o">=</span><span class="n">EntityType</span><span class="o">.</span><span class="n">MANIFEST</span><span class="p">)</span>

@@ -126,7 +126,7 @@ class InfoModelGroup(KiaraModel, Mapping[str, KiaraInfoModel]):
         return self.type_infos.keys()  # type: ignore
 
     def _retrieve_data_to_hash(self) -> Any:
-        return {"type_name": self.type_name, "included_types": self.type_infos.keys()}  # type: ignore
+        return {"type_name": self.type_name, "included_types": list(self.type_infos.keys())}  # type: ignore
 
     def get_type_infos(self) -> Mapping[str, KiaraInfoModel]:
         return self.type_infos  # type: ignore

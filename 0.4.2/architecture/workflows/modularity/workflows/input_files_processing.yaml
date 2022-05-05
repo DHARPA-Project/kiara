@@ -1,0 +1,20 @@
+---
+_doc: |
+  Reads one or several (text)-files, tokenzies the content, then processes the tokenized content according to the provided settings.
+
+  Currently, lowercasing and the removal of stopwords is supported.
+
+modules:
+
+- type: file_reader
+  input_map:
+    files: __workflow_input__.files
+
+- type: corpus_processing
+  input_map:
+    text_map: file_reader.content_map
+    make_lowercase: __workflow_input__.make_lowercase
+    remove_stopwords: __workflow_input__.remove_stopwords
+    stopwords: __workflow_input__.stopwords
+  workflow_outputs:
+    processed_text_corpus: processed_text_corpus

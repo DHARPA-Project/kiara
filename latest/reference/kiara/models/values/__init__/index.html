@@ -1967,6 +1967,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../lineage/" class="md-nav__link">
+        lineage
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../value/" class="md-nav__link">
         value
       </a>
@@ -1984,7 +1998,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_7_9_4" type="checkbox" id="__nav_3_1_7_9_4" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_7_9_5" type="checkbox" id="__nav_3_1_7_9_5" >
       
       
       
@@ -1994,14 +2008,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../value_metadata/__init__/">value_metadata</a>
           
-            <label for="__nav_3_1_7_9_4">
+            <label for="__nav_3_1_7_9_5">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="value_metadata" data-md-level="5">
-        <label class="md-nav__title" for="__nav_3_1_7_9_4">
+        <label class="md-nav__title" for="__nav_3_1_7_9_5">
           <span class="md-nav__icon md-icon"></span>
           value_metadata
         </label>
@@ -3258,6 +3272,13 @@
           <li class="md-nav__item">
   <a href="#kiara.models.values.info" class="md-nav__link">
     info
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.models.values.lineage" class="md-nav__link">
+    lineage
   </a>
   
 </li>
@@ -5181,6 +5202,242 @@ Config        </code>
         <span class="n">renderable</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">data</span><span class="p">)]</span>
 
     <span class="k">return</span> <span class="n">renderable</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h3 id="kiara.models.values.lineage" class="doc doc-heading">
+        <code>lineage</code>
+
+
+
+<a href="#kiara.models.values.lineage" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.values.lineage.COLOR_LIST" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">COLOR_LIST</span></code>
+
+
+<a href="#kiara.models.values.lineage.COLOR_LIST" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h5 id="kiara.models.values.lineage.ValueLineage" class="doc doc-heading">
+        <code>
+ValueLineage        </code>
+
+
+
+<a href="#kiara.models.values.lineage.ValueLineage" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/values/lineage.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueLineage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValueLineage&quot;</span><span class="p">:</span>
+
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">kiara</span>
+
+    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+        <span class="n">include_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_ids&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">fill_lineage_tree</span><span class="p">(</span>
+            <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span> <span class="n">pedigree</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="o">.</span><span class="n">pedigree</span><span class="p">,</span> <span class="n">include_ids</span><span class="o">=</span><span class="n">include_ids</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">tree</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.models.values.lineage.ValueLineage.create_renderable" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
+
+
+<a href="#kiara.models.values.lineage.ValueLineage.create_renderable" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/values/lineage.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+    <span class="n">include_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_ids&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">fill_lineage_tree</span><span class="p">(</span>
+        <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span> <span class="n">pedigree</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="o">.</span><span class="n">pedigree</span><span class="p">,</span> <span class="n">include_ids</span><span class="o">=</span><span class="n">include_ids</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">tree</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.models.values.lineage.ValueLineage.from_value" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">from_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.models.values.lineage.ValueLineage.from_value" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/values/lineage.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">from_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValueLineage&quot;</span><span class="p">:</span>
+
+    <span class="k">pass</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.models.values.lineage.fill_lineage_tree" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">fill_lineage_tree</span><span class="p">(</span><span class="n">kiara</span><span class="p">,</span> <span class="n">pedigree</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_ids</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></code>
+
+
+<a href="#kiara.models.values.lineage.fill_lineage_tree" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/values/lineage.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">fill_lineage_tree</span><span class="p">(</span>
+    <span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span>
+    <span class="n">pedigree</span><span class="p">:</span> <span class="n">ValuePedigree</span><span class="p">,</span>
+    <span class="n">node</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tree</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">include_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">):</span>
+
+    <span class="n">color</span> <span class="o">=</span> <span class="n">COLOR_LIST</span><span class="p">[</span><span class="n">level</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">COLOR_LIST</span><span class="p">)]</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[b </span><span class="si">{</span><span class="n">color</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">pedigree</span><span class="o">.</span><span class="n">module_type</span><span class="si">}</span><span class="s2">[/b </span><span class="si">{</span><span class="n">color</span><span class="si">}</span><span class="s2">]&quot;</span>
+    <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">main</span> <span class="o">=</span> <span class="n">Tree</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">main</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">input_name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">pedigree</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+
+        <span class="n">child_value_id</span> <span class="o">=</span> <span class="n">pedigree</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="n">input_name</span><span class="p">]</span>
+
+        <span class="n">child_value</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">child_value_id</span><span class="p">)</span>
+
+        <span class="n">value_type</span> <span class="o">=</span> <span class="n">child_value</span><span class="o">.</span><span class="n">data_type_name</span>
+        <span class="k">if</span> <span class="n">include_ids</span><span class="p">:</span>
+            <span class="n">v_id_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; = </span><span class="si">{</span><span class="n">child_value</span><span class="o">.</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">v_id_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">input_node</span> <span class="o">=</span> <span class="n">main</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;input: [i </span><span class="si">{</span><span class="n">color</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">input_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">value_type</span><span class="si">}</span><span class="s2">)[/i </span><span class="si">{</span><span class="n">color</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">v_id_str</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">child_value</span><span class="o">.</span><span class="n">pedigree</span> <span class="o">!=</span> <span class="n">ORPHAN</span><span class="p">:</span>
+            <span class="n">fill_lineage_tree</span><span class="p">(</span>
+                <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span>
+                <span class="n">pedigree</span><span class="o">=</span><span class="n">child_value</span><span class="o">.</span><span class="n">pedigree</span><span class="p">,</span>
+                <span class="n">node</span><span class="o">=</span><span class="n">input_node</span><span class="p">,</span>
+                <span class="n">level</span><span class="o">=</span><span class="n">level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="n">include_ids</span><span class="o">=</span><span class="n">include_ids</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">main</span>
 </code></pre></div>
         </details>
     </div>
@@ -8276,6 +8533,7 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
         <span class="kn">from</span> <span class="nn">kiara.utils.output</span> <span class="kn">import</span> <span class="n">extract_renderable</span>
 
         <span class="n">show_pedigree</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_pedigree&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">show_lineage</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_lineage&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">show_properties</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_properties&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">show_destinies</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_destinies&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">show_destiny_backlinks</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_destiny_backlinks&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
@@ -8316,6 +8574,7 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
 
         <span class="k">if</span> <span class="p">(</span>
             <span class="n">show_pedigree</span>
+            <span class="ow">or</span> <span class="n">show_lineage</span>
             <span class="ow">or</span> <span class="n">show_serialized</span>
             <span class="ow">or</span> <span class="n">show_properties</span>
             <span class="ow">or</span> <span class="n">show_destinies</span>
@@ -8340,6 +8599,12 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
             <span class="k">if</span> <span class="n">pedigree_output_name</span><span class="p">:</span>
                 <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pedigree_output_name&quot;</span><span class="p">,</span> <span class="n">pedigree_output_name</span><span class="p">]</span>
                 <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">show_lineage</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">kiara.models.values.lineage</span> <span class="kn">import</span> <span class="n">ValueLineage</span>
+
+            <span class="n">vl</span> <span class="o">=</span> <span class="n">ValueLineage</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;lineage&quot;</span><span class="p">,</span> <span class="n">vl</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="n">include_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">show_serialized</span><span class="p">:</span>
             <span class="n">serialized</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">retrieve_persisted_value_details</span><span class="p">(</span>
@@ -8722,6 +8987,7 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
     <span class="kn">from</span> <span class="nn">kiara.utils.output</span> <span class="kn">import</span> <span class="n">extract_renderable</span>
 
     <span class="n">show_pedigree</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_pedigree&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">show_lineage</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_lineage&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">show_properties</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_properties&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">show_destinies</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_destinies&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">show_destiny_backlinks</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_destiny_backlinks&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
@@ -8762,6 +9028,7 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
 
     <span class="k">if</span> <span class="p">(</span>
         <span class="n">show_pedigree</span>
+        <span class="ow">or</span> <span class="n">show_lineage</span>
         <span class="ow">or</span> <span class="n">show_serialized</span>
         <span class="ow">or</span> <span class="n">show_properties</span>
         <span class="ow">or</span> <span class="n">show_destinies</span>
@@ -8786,6 +9053,12 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
         <span class="k">if</span> <span class="n">pedigree_output_name</span><span class="p">:</span>
             <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pedigree_output_name&quot;</span><span class="p">,</span> <span class="n">pedigree_output_name</span><span class="p">]</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_lineage</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">kiara.models.values.lineage</span> <span class="kn">import</span> <span class="n">ValueLineage</span>
+
+        <span class="n">vl</span> <span class="o">=</span> <span class="n">ValueLineage</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;lineage&quot;</span><span class="p">,</span> <span class="n">vl</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="n">include_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">show_serialized</span><span class="p">:</span>
         <span class="n">serialized</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">retrieve_persisted_value_details</span><span class="p">(</span>

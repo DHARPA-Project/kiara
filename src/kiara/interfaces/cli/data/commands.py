@@ -154,6 +154,9 @@ def list_values(
     "--pedigree", "-P", help="Display pedigree information for the value.", is_flag=True
 )
 @click.option(
+    "--lineage", "-l", help="Display lineage information for the value.", is_flag=True
+)
+@click.option(
     "--serialized",
     "-s",
     help="Display this values' serialization information.",
@@ -191,6 +194,7 @@ def explain_value(
     properties: bool,
     destinies: bool,
     destiny_backlinks: bool,
+    lineage: bool,
 ):
     """Print the metadata of a stored value.
 
@@ -207,6 +211,7 @@ def explain_value(
         "show_properties": properties,
         "show_destinies": destinies,
         "show_destiny_backlinks": destiny_backlinks,
+        "show_lineage": lineage,
     }
 
     all_values = []

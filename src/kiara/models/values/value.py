@@ -983,6 +983,7 @@ class Value(ValueDetails):
         from kiara.utils.output import extract_renderable
 
         show_pedigree = render_config.get("show_pedigree", False)
+        show_lineage = render_config.get("show_lineage", False)
         show_properties = render_config.get("show_properties", False)
         show_destinies = render_config.get("show_destinies", False)
         show_destiny_backlinks = render_config.get("show_destiny_backlinks", False)
@@ -1023,6 +1024,7 @@ class Value(ValueDetails):
 
         if (
             show_pedigree
+            or show_lineage
             or show_serialized
             or show_properties
             or show_destinies
@@ -1047,6 +1049,12 @@ class Value(ValueDetails):
             if pedigree_output_name:
                 row = ["pedigree_output_name", pedigree_output_name]
                 table.add_row(*row)
+
+        if show_lineage:
+            from kiara.models.values.lineage import ValueLineage
+
+            vl = ValueLineage(kiara=self._data_registry._kiara, value=self)
+            table.add_row("lineage", vl.create_renderable(include_ids=True))
 
         if show_serialized:
             serialized = self._data_registry.retrieve_persisted_value_details(

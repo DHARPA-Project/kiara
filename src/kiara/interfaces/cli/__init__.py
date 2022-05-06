@@ -78,11 +78,11 @@ else:
 def cli(
     ctx, config: Optional[str], context: Optional[str], pipeline_folder: Tuple[str]
 ):
-    """[i b]kiara[/b i] ia a data-orchestration framework, this is the command-line frontend for it.
+    """[i b]kiara[/b i] ia a data-orchestration framework; this is the command-line frontend for it.
 
 
 
-    For more information, visit the [i][b]kiara[/b] homepage[/i]]: https://dharpa.org/kiara.documentation .
+    For more information, visit the [i][b]kiara[/b] homepage[/i]: https://dharpa.org/kiara.documentation .
     """
 
     ctx.obj = {}

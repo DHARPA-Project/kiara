@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/included_components/">
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.14">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.e411adfe.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.3de6f41f.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.cc9b2e1e.min.css">
@@ -642,20 +642,6 @@
     <li class="md-nav__item">
       <a href="../reference/kiara/data_types/included_core_types/internal/" class="md-nav__link">
         internal
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reference/kiara/data_types/included_core_types/persistence/" class="md-nav__link">
-        persistence
       </a>
     </li>
   
@@ -2268,8 +2254,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/kiara/modules/included_core_modules/render_value/" class="md-nav__link">
-        render_value
+      <a href="../reference/kiara/modules/included_core_modules/pretty_print/" class="md-nav__link">
+        pretty_print
       </a>
     </li>
   
@@ -2416,8 +2402,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/kiara/operations/included_core_operations/render_value/" class="md-nav__link">
-        render_value
+      <a href="../reference/kiara/operations/included_core_operations/pretty_print/" class="md-nav__link">
+        pretty_print
       </a>
     </li>
   
@@ -3434,16 +3420,16 @@
 <p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.pipeline"><code>pipeline</code></a>: -- n/a --</p>
 </li>
 <li>
+<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.pretty_print.any.value"><code>pretty_print.any.value</code></a>: -- n/a --</p>
+</li>
+<li>
+<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.pretty_print.value"><code>pretty_print.value</code></a>: -- n/a --</p>
+</li>
+<li>
 <p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.unpickle.value"><code>unpickle.value</code></a>: -- n/a --</p>
 </li>
 <li>
 <p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.value.extract_metadata"><code>value.extract_metadata</code></a>: Base class to use when writing a module to extract metadata from a file.</p>
-</li>
-<li>
-<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.value.render"><code>value.render</code></a>: -- n/a --</p>
-</li>
-<li>
-<p><a class="autorefs autorefs-internal" href="module_types/#kiara_info.module_types.value.render.any"><code>value.render.any</code></a>: -- n/a --</p>
 </li>
 </ul>
 <h3 id="metadata_types">metadata_types<a class="headerlink" href="#metadata_types" title="Permanent link">&para;</a></h3>
@@ -3476,7 +3462,7 @@
 <p><a class="autorefs autorefs-internal" href="operation_types/#kiara_info.operation_types.pipeline"><code>pipeline</code></a>: -- n/a --</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="operation_types/#kiara_info.operation_types.render_value"><code>render_value</code></a>: An operation that takes a value, and renders into a format that can be printed for output..</p>
+<p><a class="autorefs autorefs-internal" href="operation_types/#kiara_info.operation_types.pretty_print"><code>pretty_print</code></a>: An operation that takes a value, and renders into a format that can be printed for output..</p>
 </li>
 </ul>
 <h3 id="operations">operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h3>
@@ -3518,31 +3504,37 @@
 <p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.import.file_bundle"><code>import.file_bundle</code></a>: Import a folder (file_bundle) from the local filesystem.</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.render.as.string"><code>render.as.string</code></a>: -- n/a --</p>
+<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.pretty_print.as.string"><code>pretty_print.as.string</code></a>: Pretty print a any value as a string.</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.render.as.terminal_renderable"><code>render.as.terminal_renderable</code></a>: -- n/a --</p>
+<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.pretty_print.bytes.as.string"><code>pretty_print.bytes.as.string</code></a>: Pretty print a bytes value as a string.</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.render.bytes.as.string"><code>render.bytes.as.string</code></a>: Render a bytes value as string.</p>
+<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.pretty_print.doc.as.terminal_renderable"><code>pretty_print.doc.as.terminal_renderable</code></a>: Pretty print a doc value as a terminal_renderable.</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.render.doc.as.terminal_renderable"><code>render.doc.as.terminal_renderable</code></a>: Render a doc value as terminal_renderable.</p>
+<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.pretty_print.file.as.terminal_renderable"><code>pretty_print.file.as.terminal_renderable</code></a>: Pretty print a file value as a terminal_renderable.</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.render.file.as.terminal_renderable"><code>render.file.as.terminal_renderable</code></a>: Render a file value as terminal_renderable.</p>
+<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.pretty_print.file_bundle.as.terminal_renderable"><code>pretty_print.file_bundle.as.terminal_renderable</code></a>: Pretty print a file_bundle value as a terminal_renderable.</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.render.file_bundle.as.terminal_renderable"><code>render.file_bundle.as.terminal_renderable</code></a>: Render a file_bundle value as terminal_renderable.</p>
+<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.pretty_print.internal.as.string"><code>pretty_print.internal.as.string</code></a>: Pretty print a internal value as a string.</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.render.internal_model.as.terminal_renderable"><code>render.internal_model.as.terminal_renderable</code></a>: Render a internal_model value as terminal_renderable.</p>
+<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.pretty_print.internal_model.as.terminal_renderable"><code>pretty_print.internal_model.as.terminal_renderable</code></a>: Pretty print a internal_model value as a terminal_renderable.</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.render.python_object.as.terminal_renderable"><code>render.python_object.as.terminal_renderable</code></a>: Render a python_object value as terminal_renderable.</p>
+<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.pretty_print.none.as.string"><code>pretty_print.none.as.string</code></a>: Pretty print a none value as a string.</p>
 </li>
 <li>
-<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.render.string.as.bytes"><code>render.string.as.bytes</code></a>: Render a string value as bytes.</p>
+<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.pretty_print.python_object.as.terminal_renderable"><code>pretty_print.python_object.as.terminal_renderable</code></a>: Pretty print a python_object value as a terminal_renderable.</p>
+</li>
+<li>
+<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.pretty_print.string.as.string"><code>pretty_print.string.as.string</code></a>: Pretty print a string value as a string.</p>
+</li>
+<li>
+<p><a class="autorefs autorefs-internal" href="operations/#kiara_info.operations.pretty_print.terminal_renderable.as.string"><code>pretty_print.terminal_renderable.as.string</code></a>: Pretty print a terminal_renderable value as a string.</p>
 </li>
 </ul>
 
@@ -3617,7 +3609,7 @@
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking"], "search": "../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.ed9748b7.min.js"></script>
+      <script src="../assets/javascripts/bundle.c2e1ee47.min.js"></script>
       
     
   </body>

@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/modules/__init__/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.14">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.e411adfe.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.3de6f41f.min.css">
       
         
         <link rel="stylesheet" href="../../../../assets/stylesheets/palette.cc9b2e1e.min.css">
@@ -566,20 +566,6 @@
     <li class="md-nav__item">
       <a href="../../data_types/included_core_types/internal/" class="md-nav__link">
         internal
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../data_types/included_core_types/persistence/" class="md-nav__link">
-        persistence
       </a>
     </li>
   
@@ -2194,8 +2180,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../included_core_modules/render_value/" class="md-nav__link">
-        render_value
+      <a href="../included_core_modules/pretty_print/" class="md-nav__link">
+        pretty_print
       </a>
     </li>
   
@@ -2342,8 +2328,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../operations/included_core_operations/render_value/" class="md-nav__link">
-        render_value
+      <a href="../../operations/included_core_operations/pretty_print/" class="md-nav__link">
+        pretty_print
       </a>
     </li>
   
@@ -3439,42 +3425,42 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.modules.included_core_modules.render_value.RenderValueModule._config_cls.source_type" class="md-nav__link">
+  <a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintModule._config_cls.source_type" class="md-nav__link">
     source_type
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.modules.included_core_modules.render_value.RenderValueModule._config_cls.target_type" class="md-nav__link">
+  <a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintModule._config_cls.target_type" class="md-nav__link">
     target_type
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.modules.included_core_modules.render_value.RenderValueModule._config_cls.validate_source_type" class="md-nav__link">
+  <a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintModule._config_cls.validate_source_type" class="md-nav__link">
     validate_source_type()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.modules.included_core_modules.render_value.ValueTypeRenderModule._config_cls.source_type" class="md-nav__link">
+  <a href="#kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule._config_cls.source_type" class="md-nav__link">
     source_type
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.modules.included_core_modules.render_value.ValueTypeRenderModule._config_cls.target_type" class="md-nav__link">
+  <a href="#kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule._config_cls.target_type" class="md-nav__link">
     target_type
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.modules.included_core_modules.render_value.ValueTypeRenderModule._config_cls.validate_source_type" class="md-nav__link">
+  <a href="#kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule._config_cls.validate_source_type" class="md-nav__link">
     validate_source_type()
   </a>
   
@@ -4238,6 +4224,10 @@ KiaraModule            (<a class="autorefs autorefs-internal" title="kiara.modul
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">module_type_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_type_name</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Module class &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; does not have a &#39;_module_type_name&#39; attribute. This is a bug.&quot;</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_type_name</span>  <span class="c1"># type: ignore</span>
 
     <span class="nd">@property</span>
@@ -8055,12 +8045,12 @@ Config        </code>
 
 
 
-<h5 id="kiara.modules.included_core_modules.render_value" class="doc doc-heading">
-        <code>render_value</code>
+<h5 id="kiara.modules.included_core_modules.pretty_print" class="doc doc-heading">
+        <code>pretty_print</code>
 
 
 
-<a href="#kiara.modules.included_core_modules.render_value" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.pretty_print" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -8073,29 +8063,29 @@ Config        </code>
 
 
 
-<h6 id="kiara.modules.included_core_modules.render_value-classes">Classes<a href="#kiara.modules.included_core_modules.render_value-classes" class="headerlink" title="Permanent link">&para;</a></h6>
+<h6 id="kiara.modules.included_core_modules.pretty_print-classes">Classes<a href="#kiara.modules.included_core_modules.pretty_print-classes" class="headerlink" title="Permanent link">&para;</a></h6>
 
   <div class="doc doc-object doc-class">
 
 
 
-<h7 id="kiara.modules.included_core_modules.render_value.RenderAnyValueModule" class="doc doc-heading">
+<h7 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintAnyValueModule" class="doc doc-heading">
         <code>
-RenderAnyValueModule            (<a class="autorefs autorefs-internal" title="kiara.modules.included_core_modules.render_value.RenderValueModule" href="../included_core_modules/render_value/#kiara.modules.included_core_modules.render_value.RenderValueModule">RenderValueModule</a>)
+PrettyPrintAnyValueModule            (<a class="autorefs autorefs-internal" title="kiara.modules.included_core_modules.pretty_print.PrettyPrintModule" href="../included_core_modules/pretty_print/#kiara.modules.included_core_modules.pretty_print.PrettyPrintModule">PrettyPrintModule</a>)
         </code>
 
 
 
-<a href="#kiara.modules.included_core_modules.render_value.RenderAnyValueModule" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintAnyValueModule" class="headerlink" title="Permanent link">&para;</a></h7>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/render_value.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RenderAnyValueModule</span><span class="p">(</span><span class="n">RenderValueModule</span><span class="p">):</span>
+          <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PrettyPrintAnyValueModule</span><span class="p">(</span><span class="n">PrettyPrintModule</span><span class="p">):</span>
 
-    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;value.render.any&quot;</span>
+    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;pretty_print.any.value&quot;</span>
 
     <span class="k">def</span> <span class="nf">render__any__as__string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
 
@@ -8139,17 +8129,17 @@ RenderAnyValueModule            (<a class="autorefs autorefs-internal" title="ki
 
 
 
-<h9 id="kiara.modules.included_core_modules.render_value.RenderAnyValueModule.render__any__as__string" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintAnyValueModule.render__any__as__string" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">render__any__as__string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">render_config</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.render_value.RenderAnyValueModule.render__any__as__string" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintAnyValueModule.render__any__as__string" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/render_value.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">render__any__as__string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
@@ -8169,17 +8159,17 @@ RenderAnyValueModule            (<a class="autorefs autorefs-internal" title="ki
 
 
 
-<h9 id="kiara.modules.included_core_modules.render_value.RenderAnyValueModule.render__any__as__terminal_renderable" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintAnyValueModule.render__any__as__terminal_renderable" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">render__any__as__terminal_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">render_config</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.render_value.RenderAnyValueModule.render__any__as__terminal_renderable" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintAnyValueModule.render__any__as__terminal_renderable" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/render_value.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">render__any__as__terminal_renderable</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
 <span class="p">):</span>
@@ -8217,9 +8207,9 @@ RenderAnyValueModule            (<a class="autorefs autorefs-internal" title="ki
 
 
 
-<h7 id="kiara.modules.included_core_modules.render_value.RenderValueConfig" class="doc doc-heading">
+<h7 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintConfig" class="doc doc-heading">
         <code>
-RenderValueConfig            (<a class="autorefs autorefs-internal" title="kiara.models.module.KiaraModuleConfig" href="../../models/module/__init__/#kiara.models.module.KiaraModuleConfig">KiaraModuleConfig</a>)
+PrettyPrintConfig            (<a class="autorefs autorefs-internal" title="kiara.models.module.KiaraModuleConfig" href="../../models/module/__init__/#kiara.models.module.KiaraModuleConfig">KiaraModuleConfig</a>)
         </code>
 
 
@@ -8227,14 +8217,14 @@ RenderValueConfig            (<a class="autorefs autorefs-internal" title="kiara
       <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
   </span>
 
-<a href="#kiara.modules.included_core_modules.render_value.RenderValueConfig" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintConfig" class="headerlink" title="Permanent link">&para;</a></h7>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/render_value.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RenderValueConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
+          <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PrettyPrintConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
 
     <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value type of the source value.&quot;</span><span class="p">)</span>
     <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value type of the rendered value.&quot;</span><span class="p">)</span>
@@ -8254,13 +8244,13 @@ RenderValueConfig            (<a class="autorefs autorefs-internal" title="kiara
 
 
 
-<h8 id="kiara.modules.included_core_modules.render_value.RenderValueConfig-attributes">Attributes<a href="#kiara.modules.included_core_modules.render_value.RenderValueConfig-attributes" class="headerlink" title="Permanent link">&para;</a></h8>
+<h8 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintConfig-attributes">Attributes<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintConfig-attributes" class="headerlink" title="Permanent link">&para;</a></h8>
 
   <div class="doc doc-object doc-attribute">
 
 
 
-<h9 id="kiara.modules.included_core_modules.render_value.RenderValueConfig.source_type" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintConfig.source_type" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span></code>
 
   <span class="doc doc-properties">
@@ -8268,7 +8258,7 @@ RenderValueConfig            (<a class="autorefs autorefs-internal" title="kiara
       <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
-<a href="#kiara.modules.included_core_modules.render_value.RenderValueConfig.source_type" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintConfig.source_type" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
@@ -8283,7 +8273,7 @@ RenderValueConfig            (<a class="autorefs autorefs-internal" title="kiara
 
 
 
-<h9 id="kiara.modules.included_core_modules.render_value.RenderValueConfig.target_type" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintConfig.target_type" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span></code>
 
   <span class="doc doc-properties">
@@ -8291,7 +8281,7 @@ RenderValueConfig            (<a class="autorefs autorefs-internal" title="kiara
       <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
-<a href="#kiara.modules.included_core_modules.render_value.RenderValueConfig.target_type" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintConfig.target_type" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
@@ -8309,20 +8299,20 @@ RenderValueConfig            (<a class="autorefs autorefs-internal" title="kiara
 
 
 
-<h9 id="kiara.modules.included_core_modules.render_value.RenderValueConfig.validate_source_type" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintConfig.validate_source_type" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">validate_source_type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#kiara.modules.included_core_modules.render_value.RenderValueConfig.validate_source_type" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintConfig.validate_source_type" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/render_value.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">validate_source_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;render_config&quot;</span><span class="p">:</span>
@@ -8350,24 +8340,24 @@ RenderValueConfig            (<a class="autorefs autorefs-internal" title="kiara
 
 
 
-<h7 id="kiara.modules.included_core_modules.render_value.RenderValueModule" class="doc doc-heading">
+<h7 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintModule" class="doc doc-heading">
         <code>
-RenderValueModule            (<a class="autorefs autorefs-internal" title="kiara.modules.KiaraModule" href="#kiara.modules.KiaraModule">KiaraModule</a>)
+PrettyPrintModule            (<a class="autorefs autorefs-internal" title="kiara.modules.KiaraModule" href="#kiara.modules.KiaraModule">KiaraModule</a>)
         </code>
 
 
 
-<a href="#kiara.modules.included_core_modules.render_value.RenderValueModule" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintModule" class="headerlink" title="Permanent link">&para;</a></h7>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/render_value.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RenderValueModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
+          <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PrettyPrintModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
 
     <span class="n">_module_type_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
-    <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">RenderValueConfig</span>
+    <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">PrettyPrintConfig</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">retrieve_supported_render_combinations</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
@@ -8375,13 +8365,13 @@ RenderValueModule            (<a class="autorefs autorefs-internal" title="kiara
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
             <span class="k">if</span> <span class="p">(</span>
-                <span class="nb">len</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">16</span>
-                <span class="ow">or</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;render__&quot;</span><span class="p">)</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">19</span>
+                <span class="ow">or</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;pretty_print__&quot;</span><span class="p">)</span>
                 <span class="ow">or</span> <span class="s2">&quot;__as__&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">attr</span>
             <span class="p">):</span>
                 <span class="k">continue</span>
 
-            <span class="n">attr</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span>
+            <span class="n">attr</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="mi">14</span><span class="p">:]</span>
             <span class="n">end_start_type</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;__as__&quot;</span><span class="p">)</span>
             <span class="n">source_type</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">end_start_type</span><span class="p">]</span>
             <span class="n">target_type</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="n">end_start_type</span> <span class="o">+</span> <span class="mi">6</span> <span class="p">:]</span>  <span class="c1"># noqa</span>
@@ -8428,7 +8418,7 @@ RenderValueModule            (<a class="autorefs autorefs-internal" title="kiara
         <span class="n">value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">source_type</span><span class="p">)</span>
         <span class="n">render_config</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;render_config&quot;</span><span class="p">)</span>
 
-        <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;render__</span><span class="si">{</span><span class="n">source_type</span><span class="si">}</span><span class="s2">__as__</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;pretty_print__</span><span class="si">{</span><span class="n">source_type</span><span class="si">}</span><span class="s2">__as__</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
         <span class="c1"># TODO: check function signature is valid</span>
@@ -8446,13 +8436,13 @@ RenderValueModule            (<a class="autorefs autorefs-internal" title="kiara
 
 
 
-<h8 id="kiara.modules.included_core_modules.render_value.RenderValueModule-classes">Classes<a href="#kiara.modules.included_core_modules.render_value.RenderValueModule-classes" class="headerlink" title="Permanent link">&para;</a></h8>
+<h8 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintModule-classes">Classes<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintModule-classes" class="headerlink" title="Permanent link">&para;</a></h8>
 
   <div class="doc doc-object doc-class">
 
 
 
-<h9 id="kiara.modules.included_core_modules.render_value.RenderValueModule._config_cls" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintModule._config_cls" class="doc doc-heading">
         <code>
 _config_cls            (<a class="autorefs autorefs-internal" title="kiara.models.module.KiaraModuleConfig" href="../../models/module/__init__/#kiara.models.module.KiaraModuleConfig">KiaraModuleConfig</a>)
         </code>
@@ -8463,14 +8453,14 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
       <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
   </span>
 
-<a href="#kiara.modules.included_core_modules.render_value.RenderValueModule._config_cls" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintModule._config_cls" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/render_value.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RenderValueConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
+          <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PrettyPrintConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
 
     <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value type of the source value.&quot;</span><span class="p">)</span>
     <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value type of the rendered value.&quot;</span><span class="p">)</span>
@@ -8490,13 +8480,13 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
 
 
-<h10 id="kiara.modules.included_core_modules.render_value.RenderValueModule._config_cls-attributes">Attributes<a href="#kiara.modules.included_core_modules.render_value.RenderValueModule._config_cls-attributes" class="headerlink" title="Permanent link">&para;</a></h10>
+<h10 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintModule._config_cls-attributes">Attributes<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintModule._config_cls-attributes" class="headerlink" title="Permanent link">&para;</a></h10>
 
   <div class="doc doc-object doc-attribute">
 
 
 
-<h11 id="kiara.modules.included_core_modules.render_value.RenderValueModule._config_cls.source_type" class="doc doc-heading">
+<h11 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintModule._config_cls.source_type" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span></code>
 
   <span class="doc doc-properties">
@@ -8504,7 +8494,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
       <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
-<a href="#kiara.modules.included_core_modules.render_value.RenderValueModule._config_cls.source_type" class="headerlink" title="Permanent link">&para;</a></h11>
+<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintModule._config_cls.source_type" class="headerlink" title="Permanent link">&para;</a></h11>
 
     <div class="doc doc-contents ">
 
@@ -8519,7 +8509,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
 
 
-<h11 id="kiara.modules.included_core_modules.render_value.RenderValueModule._config_cls.target_type" class="doc doc-heading">
+<h11 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintModule._config_cls.target_type" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span></code>
 
   <span class="doc doc-properties">
@@ -8527,7 +8517,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
       <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
-<a href="#kiara.modules.included_core_modules.render_value.RenderValueModule._config_cls.target_type" class="headerlink" title="Permanent link">&para;</a></h11>
+<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintModule._config_cls.target_type" class="headerlink" title="Permanent link">&para;</a></h11>
 
     <div class="doc doc-contents ">
 
@@ -8545,20 +8535,20 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
 
 
-<h11 id="kiara.modules.included_core_modules.render_value.RenderValueModule._config_cls.validate_source_type" class="doc doc-heading">
+<h11 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintModule._config_cls.validate_source_type" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">validate_source_type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#kiara.modules.included_core_modules.render_value.RenderValueModule._config_cls.validate_source_type" class="headerlink" title="Permanent link">&para;</a></h11>
+<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintModule._config_cls.validate_source_type" class="headerlink" title="Permanent link">&para;</a></h11>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/render_value.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">validate_source_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;render_config&quot;</span><span class="p">:</span>
@@ -8582,24 +8572,24 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
 
 
-<h8 id="kiara.modules.included_core_modules.render_value.RenderValueModule-methods">Methods<a href="#kiara.modules.included_core_modules.render_value.RenderValueModule-methods" class="headerlink" title="Permanent link">&para;</a></h8>
+<h8 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintModule-methods">Methods<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintModule-methods" class="headerlink" title="Permanent link">&para;</a></h8>
 
   <div class="doc doc-object doc-method">
 
 
 
-<h9 id="kiara.modules.included_core_modules.render_value.RenderValueModule.create_inputs_schema" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintModule.create_inputs_schema" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.render_value.RenderValueModule.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintModule.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
       <p>Return the schema for this types' inputs.</p>
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/render_value.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
@@ -8629,18 +8619,18 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
 
 
-<h9 id="kiara.modules.included_core_modules.render_value.RenderValueModule.create_outputs_schema" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintModule.create_outputs_schema" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.render_value.RenderValueModule.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintModule.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
       <p>Return the schema for this types' outputs.</p>
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/render_value.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
@@ -8663,17 +8653,17 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
 
 
-<h9 id="kiara.modules.included_core_modules.render_value.RenderValueModule.process" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintModule.process" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.render_value.RenderValueModule.process" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintModule.process" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/render_value.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
 
     <span class="n">source_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
@@ -8682,7 +8672,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
     <span class="n">value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">source_type</span><span class="p">)</span>
     <span class="n">render_config</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;render_config&quot;</span><span class="p">)</span>
 
-    <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;render__</span><span class="si">{</span><span class="n">source_type</span><span class="si">}</span><span class="s2">__as__</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;pretty_print__</span><span class="si">{</span><span class="n">source_type</span><span class="si">}</span><span class="s2">__as__</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
     <span class="c1"># TODO: check function signature is valid</span>
@@ -8701,33 +8691,33 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
 
 
-<h9 id="kiara.modules.included_core_modules.render_value.RenderValueModule.retrieve_supported_render_combinations" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintModule.retrieve_supported_render_combinations" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">retrieve_supported_render_combinations</span><span class="p">()</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#kiara.modules.included_core_modules.render_value.RenderValueModule.retrieve_supported_render_combinations" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintModule.retrieve_supported_render_combinations" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/render_value.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">retrieve_supported_render_combinations</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">if</span> <span class="p">(</span>
-            <span class="nb">len</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">16</span>
-            <span class="ow">or</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;render__&quot;</span><span class="p">)</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">19</span>
+            <span class="ow">or</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;pretty_print__&quot;</span><span class="p">)</span>
             <span class="ow">or</span> <span class="s2">&quot;__as__&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">attr</span>
         <span class="p">):</span>
             <span class="k">continue</span>
 
-        <span class="n">attr</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="mi">14</span><span class="p">:]</span>
         <span class="n">end_start_type</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;__as__&quot;</span><span class="p">)</span>
         <span class="n">source_type</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">end_start_type</span><span class="p">]</span>
         <span class="n">target_type</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="n">end_start_type</span> <span class="o">+</span> <span class="mi">6</span> <span class="p">:]</span>  <span class="c1"># noqa</span>
@@ -8755,24 +8745,24 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
 
 
-<h7 id="kiara.modules.included_core_modules.render_value.ValueTypeRenderModule" class="doc doc-heading">
+<h7 id="kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule" class="doc doc-heading">
         <code>
-ValueTypeRenderModule            (<a class="autorefs autorefs-internal" title="kiara.modules.KiaraModule" href="#kiara.modules.KiaraModule">KiaraModule</a>)
+ValueTypePrettyPrintModule            (<a class="autorefs autorefs-internal" title="kiara.modules.KiaraModule" href="#kiara.modules.KiaraModule">KiaraModule</a>)
         </code>
 
 
 
-<a href="#kiara.modules.included_core_modules.render_value.ValueTypeRenderModule" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule" class="headerlink" title="Permanent link">&para;</a></h7>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/render_value.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueTypeRenderModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
+          <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueTypePrettyPrintModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
 
-    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;value.render&quot;</span>
-    <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">RenderValueConfig</span>
+    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;pretty_print.value&quot;</span>
+    <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">PrettyPrintConfig</span>
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -8814,7 +8804,7 @@ ValueTypeRenderModule            (<a class="autorefs autorefs-internal" title="k
         <span class="n">data_type_cls</span> <span class="o">=</span> <span class="n">source_value</span><span class="o">.</span><span class="n">data_type_class</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>
         <span class="n">data_type</span> <span class="o">=</span> <span class="n">data_type_cls</span><span class="p">(</span><span class="o">**</span><span class="n">source_value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type_config</span><span class="p">)</span>
 
-        <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;render_as__</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;pretty_print_as__</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
 
         <span class="n">render_config_dict</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">data</span>
@@ -8835,13 +8825,13 @@ ValueTypeRenderModule            (<a class="autorefs autorefs-internal" title="k
 
 
 
-<h8 id="kiara.modules.included_core_modules.render_value.ValueTypeRenderModule-classes">Classes<a href="#kiara.modules.included_core_modules.render_value.ValueTypeRenderModule-classes" class="headerlink" title="Permanent link">&para;</a></h8>
+<h8 id="kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule-classes">Classes<a href="#kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule-classes" class="headerlink" title="Permanent link">&para;</a></h8>
 
   <div class="doc doc-object doc-class">
 
 
 
-<h9 id="kiara.modules.included_core_modules.render_value.ValueTypeRenderModule._config_cls" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule._config_cls" class="doc doc-heading">
         <code>
 _config_cls            (<a class="autorefs autorefs-internal" title="kiara.models.module.KiaraModuleConfig" href="../../models/module/__init__/#kiara.models.module.KiaraModuleConfig">KiaraModuleConfig</a>)
         </code>
@@ -8852,14 +8842,14 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
       <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
   </span>
 
-<a href="#kiara.modules.included_core_modules.render_value.ValueTypeRenderModule._config_cls" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule._config_cls" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/render_value.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RenderValueConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
+          <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PrettyPrintConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
 
     <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value type of the source value.&quot;</span><span class="p">)</span>
     <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value type of the rendered value.&quot;</span><span class="p">)</span>
@@ -8879,13 +8869,13 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
 
 
-<h10 id="kiara.modules.included_core_modules.render_value.ValueTypeRenderModule._config_cls-attributes">Attributes<a href="#kiara.modules.included_core_modules.render_value.ValueTypeRenderModule._config_cls-attributes" class="headerlink" title="Permanent link">&para;</a></h10>
+<h10 id="kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule._config_cls-attributes">Attributes<a href="#kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule._config_cls-attributes" class="headerlink" title="Permanent link">&para;</a></h10>
 
   <div class="doc doc-object doc-attribute">
 
 
 
-<h11 id="kiara.modules.included_core_modules.render_value.ValueTypeRenderModule._config_cls.source_type" class="doc doc-heading">
+<h11 id="kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule._config_cls.source_type" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span></code>
 
   <span class="doc doc-properties">
@@ -8893,7 +8883,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
       <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
-<a href="#kiara.modules.included_core_modules.render_value.ValueTypeRenderModule._config_cls.source_type" class="headerlink" title="Permanent link">&para;</a></h11>
+<a href="#kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule._config_cls.source_type" class="headerlink" title="Permanent link">&para;</a></h11>
 
     <div class="doc doc-contents ">
 
@@ -8908,7 +8898,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
 
 
-<h11 id="kiara.modules.included_core_modules.render_value.ValueTypeRenderModule._config_cls.target_type" class="doc doc-heading">
+<h11 id="kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule._config_cls.target_type" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span></code>
 
   <span class="doc doc-properties">
@@ -8916,7 +8906,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
       <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
-<a href="#kiara.modules.included_core_modules.render_value.ValueTypeRenderModule._config_cls.target_type" class="headerlink" title="Permanent link">&para;</a></h11>
+<a href="#kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule._config_cls.target_type" class="headerlink" title="Permanent link">&para;</a></h11>
 
     <div class="doc doc-contents ">
 
@@ -8934,20 +8924,20 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
 
 
-<h11 id="kiara.modules.included_core_modules.render_value.ValueTypeRenderModule._config_cls.validate_source_type" class="doc doc-heading">
+<h11 id="kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule._config_cls.validate_source_type" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">validate_source_type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#kiara.modules.included_core_modules.render_value.ValueTypeRenderModule._config_cls.validate_source_type" class="headerlink" title="Permanent link">&para;</a></h11>
+<a href="#kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule._config_cls.validate_source_type" class="headerlink" title="Permanent link">&para;</a></h11>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/render_value.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">validate_source_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;render_config&quot;</span><span class="p">:</span>
@@ -8971,24 +8961,24 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
 
 
-<h8 id="kiara.modules.included_core_modules.render_value.ValueTypeRenderModule-methods">Methods<a href="#kiara.modules.included_core_modules.render_value.ValueTypeRenderModule-methods" class="headerlink" title="Permanent link">&para;</a></h8>
+<h8 id="kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule-methods">Methods<a href="#kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule-methods" class="headerlink" title="Permanent link">&para;</a></h8>
 
   <div class="doc doc-object doc-method">
 
 
 
-<h9 id="kiara.modules.included_core_modules.render_value.ValueTypeRenderModule.create_inputs_schema" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule.create_inputs_schema" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.render_value.ValueTypeRenderModule.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
       <p>Return the schema for this types' inputs.</p>
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/render_value.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
@@ -9018,18 +9008,18 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
 
 
-<h9 id="kiara.modules.included_core_modules.render_value.ValueTypeRenderModule.create_outputs_schema" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule.create_outputs_schema" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.render_value.ValueTypeRenderModule.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
       <p>Return the schema for this types' outputs.</p>
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/render_value.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
@@ -9052,17 +9042,17 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
 
 
-<h9 id="kiara.modules.included_core_modules.render_value.ValueTypeRenderModule.process" class="doc doc-heading">
+<h9 id="kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule.process" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span></code>
 
 
-<a href="#kiara.modules.included_core_modules.render_value.ValueTypeRenderModule.process" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule.process" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/render_value.py</code></summary>
+          <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
 
     <span class="n">source_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
@@ -9074,7 +9064,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
     <span class="n">data_type_cls</span> <span class="o">=</span> <span class="n">source_value</span><span class="o">.</span><span class="n">data_type_class</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>
     <span class="n">data_type</span> <span class="o">=</span> <span class="n">data_type_cls</span><span class="p">(</span><span class="o">**</span><span class="n">source_value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type_config</span><span class="p">)</span>
 
-    <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;render_as__</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;pretty_print_as__</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
 
     <span class="n">render_config_dict</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">data</span>
@@ -10987,7 +10977,7 @@ UnpickleModule            (<a class="autorefs autorefs-internal" title="kiara.mo
     <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.ed9748b7.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.c2e1ee47.min.js"></script>
       
     
   </body>

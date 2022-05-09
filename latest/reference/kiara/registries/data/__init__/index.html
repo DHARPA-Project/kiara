@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/registries/data/__init__/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.14">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.e411adfe.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.3de6f41f.min.css">
       
         
         <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.cc9b2e1e.min.css">
@@ -566,20 +566,6 @@
     <li class="md-nav__item">
       <a href="../../../data_types/included_core_types/internal/" class="md-nav__link">
         internal
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../data_types/included_core_types/persistence/" class="md-nav__link">
-        persistence
       </a>
     </li>
   
@@ -2192,8 +2178,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../modules/included_core_modules/render_value/" class="md-nav__link">
-        render_value
+      <a href="../../../modules/included_core_modules/pretty_print/" class="md-nav__link">
+        pretty_print
       </a>
     </li>
   
@@ -2340,8 +2326,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../operations/included_core_operations/render_value/" class="md-nav__link">
-        render_value
+      <a href="../../../operations/included_core_operations/pretty_print/" class="md-nav__link">
+        pretty_print
       </a>
     </li>
   
@@ -4229,7 +4215,7 @@ DataRegistry        </code>
         <span class="n">table</span> <span class="o">=</span> <span class="n">create_renderable_from_values</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">all_values</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">table</span>
 
-    <span class="k">def</span> <span class="nf">render_data</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">pretty_print_data</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span>
         <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;terminal_renderable&quot;</span><span class="p">,</span>
@@ -4238,7 +4224,7 @@ DataRegistry        </code>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value_id</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">render_data</span><span class="p">(</span>
+        <span class="k">return</span> <span class="n">pretty_print_data</span><span class="p">(</span>
             <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span>
             <span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">,</span>
             <span class="n">target_type</span><span class="o">=</span><span class="n">target_type</span><span class="p">,</span>
@@ -4854,6 +4840,44 @@ DataRegistry        </code>
 
 
 
+<h5 id="kiara.registries.data.DataRegistry.pretty_print_data" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pretty_print_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s1">&#39;terminal_renderable&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">render_config</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.data.DataRegistry.pretty_print_data" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/data/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">pretty_print_data</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span>
+    <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;terminal_renderable&quot;</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">render_config</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value_id</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pretty_print_data</span><span class="p">(</span>
+        <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span>
+        <span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">,</span>
+        <span class="n">target_type</span><span class="o">=</span><span class="n">target_type</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">render_config</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
 <h5 id="kiara.registries.data.DataRegistry.register_data" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">register_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pedigree</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pedigree_output_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reuse_existing</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
@@ -4950,44 +4974,6 @@ DataRegistry        </code>
         <span class="n">is_default_store</span><span class="o">=</span><span class="n">is_default_store</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_event_callback</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.registries.data.DataRegistry.render_data" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">render_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s1">&#39;terminal_renderable&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">render_config</span><span class="p">)</span></code>
-
-
-<a href="#kiara.registries.data.DataRegistry.render_data" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/registries/data/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">render_data</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span>
-    <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span>
-    <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;terminal_renderable&quot;</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">render_config</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value_id</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">render_data</span><span class="p">(</span>
-        <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span>
-        <span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">,</span>
-        <span class="n">target_type</span><span class="o">=</span><span class="n">target_type</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">render_config</span><span class="p">,</span>
-    <span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -7685,7 +7671,7 @@ FilesystemDataStore            (<a class="autorefs autorefs-internal" title="kia
     <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.ed9748b7.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.c2e1ee47.min.js"></script>
       
     
   </body>

@@ -808,7 +808,7 @@ def create_renderable_from_values(
                 pedigree = value.pedigree.json(option=orjson.OPT_INDENT_2)
             row.append(pedigree)
         if show_data:
-            data = value._data_registry.render_data(
+            data = value._data_registry.pretty_print_data(
                 value_id=value.value_id, target_type="terminal_renderable", **config
             )
             row.append(data)

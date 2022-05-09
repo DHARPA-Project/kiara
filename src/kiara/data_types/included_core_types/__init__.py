@@ -47,7 +47,7 @@ class NoneType(DataType[SpecialValue, DataTypeConfig]):
     def parse_python_obj(self, data: Any) -> SpecialValue:
         return SpecialValue.NO_VALUE
 
-    def reender_as__string(
+    def pretty_print_as__string(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
 
@@ -61,7 +61,7 @@ class AnyType(
     """'Any' type, the parent type for most other types.
 
     This type acts as the parents for all (or at least most) non-internal value types. There are some generic operations
-    (like 'persist_value', or 'render_value') which are implemented for this type, so it's descendents have a fallback
+    (like 'persist_value', or 'pretty_print') which are implemented for this type, so it's descendents have a fallback
     option in case no subtype-specific operations are implemented for it. In general, it is not recommended to use the 'any'
     type as module input or output, but it is possible. Values of type 'any' are not allowed to be persisted (at the moment,
     this might or might not change).
@@ -73,7 +73,7 @@ class AnyType(
     def python_class(cls) -> Type:
         return object
 
-    def reender_as__string(
+    def pretty_print_as__string(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
 
@@ -118,7 +118,7 @@ class BytesType(AnyType[bytes, DataTypeConfig]):
         serialized = SerializationResult(**serialized_data)
         return serialized
 
-    def render_as__string(
+    def pretty_print_as__string(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
 
@@ -173,7 +173,7 @@ class StringType(AnyType[str, DataTypeConfig]):
         if not isinstance(value, str):
             raise ValueError(f"Invalid type '{type(value)}': string required")
 
-    def render_as__bytes(self, value: "Value", render_config: Mapping[str, Any]):
+    def pretty_print_as__bytes(self, value: "Value", render_config: Mapping[str, Any]):
         value_str: str = value.data
         return value_str.encode()
 

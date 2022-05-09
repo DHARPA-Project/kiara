@@ -10,8 +10,8 @@ import uuid
 from typing import TYPE_CHECKING, Any, Optional
 
 from kiara.models.module.operation import Operation
-from kiara.operations.included_core_operations.render_value import (
-    RenderValueOperationType,
+from kiara.operations.included_core_operations.pretty_print import (
+    PrettyPrintOperationType,
 )
 
 if TYPE_CHECKING:
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 logger = structlog.getLogger()
 
 
-def render_data(
+def pretty_print_data(
     kiara: "Kiara",
     value_id: uuid.UUID,
     target_type="terminal_renderable",
@@ -29,7 +29,7 @@ def render_data(
 
     value = kiara.data_registry.get_value(value_id=value_id)
 
-    op_type: RenderValueOperationType = kiara.operation_registry.get_operation_type("render_value")  # type: ignore
+    op_type: PrettyPrintOperationType = kiara.operation_registry.get_operation_type("pretty_print")  # type: ignore
 
     try:
         op: Optional[Operation] = op_type.get_operation_for_render_combination(
@@ -38,7 +38,7 @@ def render_data(
     except Exception as e:
 
         logger.debug(
-            "error.render_value",
+            "error.pretty_print",
             source_type=value.value_schema.type,
             target_type=target_type,
             error=e,
@@ -52,12 +52,12 @@ def render_data(
                 )
             except Exception:
                 pass
-        if op is None:
-            raise Exception(
-                f"Can't find operation to render '{value.value_schema.type}' as '{target_type}."
-            )
 
-    assert op is not None
+    if op is None:
+        raise Exception(
+            f"Can't find operation to render '{value.value_schema.type}' as '{target_type}."
+        )
+
     result = op.run(kiara=kiara, inputs={"value": value})
     rendered = result.get_value_data("rendered_value")
     return rendered

@@ -331,6 +331,10 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
 
     @property
     def module_type_name(self) -> str:
+        if not self._module_type_name:  # type: ignore
+            raise Exception(
+                f"Module class '{self.__class__.__name__}' does not have a '_module_type_name' attribute. This is a bug."
+            )
         return self._module_type_name  # type: ignore
 
     @property

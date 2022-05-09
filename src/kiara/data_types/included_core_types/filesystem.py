@@ -103,7 +103,7 @@ class FileValueType(KiaraModelValueType[FileModel, FileTypeConfig]):
         else:
             raise Exception(f"Can't create FileModel from data of type '{type(data)}'.")
 
-    def render_as__string(
+    def pretty_print_as__string(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
 
@@ -132,7 +132,7 @@ class FileValueType(KiaraModelValueType[FileModel, FileTypeConfig]):
             ]
             return "\n".join("lines")
 
-    def render_as__terminal_renderable(
+    def pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
 
@@ -242,7 +242,7 @@ class FileBundleValueType(AnyType[FileBundle, FileTypeConfig]):
                 f"Can't create FileBundle from data of type '{type(data)}'."
             )
 
-    def render_as__terminal_renderable(
+    def pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
 

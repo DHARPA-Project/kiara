@@ -31,7 +31,7 @@ class InternalType(
     def python_class(cls) -> Type:
         return object
 
-    def reender_as__string(
+    def pretty_print_as__string(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
 
@@ -151,7 +151,7 @@ class InternalModelValueType(InternalType[KiaraModel, InternalModelTypeConfig]):
         if not isinstance(value, KiaraModel):
             raise Exception(f"Invalid type: {type(value)}.")
 
-    def render_as__terminal_renderable(
+    def pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ):
         json_str = value.data.json(option=orjson.OPT_INDENT_2)
@@ -171,7 +171,7 @@ class DocumentationModelValueType(InternalModelValueType):
     def python_class(cls) -> Type:
         return DocumentationMetadataModel
 
-    def render_as__terminal_renderable(
+    def pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ):
         json_str = value.data.json(option=orjson.OPT_INDENT_2)

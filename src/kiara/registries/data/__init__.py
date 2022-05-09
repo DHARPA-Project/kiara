@@ -58,7 +58,7 @@ from kiara.models.values.value_schema import ValueSchema
 from kiara.registries.data.data_store import DataArchive, DataStore
 from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import log_exception, log_message
-from kiara.utils.data import render_data
+from kiara.utils.data import pretty_print_data
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -918,7 +918,7 @@ class DataRegistry(object):
         table = create_renderable_from_values(values=all_values, config=config)
         return table
 
-    def render_data(
+    def pretty_print_data(
         self,
         value_id: uuid.UUID,
         target_type="terminal_renderable",
@@ -927,7 +927,7 @@ class DataRegistry(object):
 
         assert isinstance(value_id, uuid.UUID)
 
-        return render_data(
+        return pretty_print_data(
             kiara=self._kiara,
             value_id=value_id,
             target_type=target_type,

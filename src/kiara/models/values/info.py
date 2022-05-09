@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 def render_value_data(value: Value):
 
     try:
-        renderable = value._data_registry.render_data(
+        renderable = value._data_registry.pretty_print_data(
             value.value_id, target_type="terminal_renderable"
         )
     except Exception as e:
@@ -34,7 +34,7 @@ def render_value_data(value: Value):
             import traceback
 
             traceback.print_exc()
-        log_message("error.render_value", value=value.value_id, error=e)
+        log_message("error.pretty_print", value=value.value_id, error=e)
         renderable = [str(value.data)]
 
     return renderable

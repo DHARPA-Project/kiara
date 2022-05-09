@@ -280,7 +280,7 @@ def load_value(ctx, value_id: str):
     #     sys.exit(1)
 
     try:
-        renderable = kiara_obj.data_registry.render_data(
+        renderable = kiara_obj.data_registry.pretty_print_data(
             value.value_id, target_type="terminal_renderable"
         )
     except Exception as e:
@@ -289,7 +289,7 @@ def load_value(ctx, value_id: str):
             import traceback
 
             traceback.print_exc()
-        log_message("error.render_value", value=value.value_id, error=e)
+        log_message("error.pretty_print", value=value.value_id, error=e)
 
         renderable = [str(value.data)]
 

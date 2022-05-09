@@ -1088,14 +1088,14 @@ class Value(ValueDetails):
                     destiny_items.append(
                         f"[b]Value: [i]{v_id}[/i] (destiny alias: {alias})[/b]"
                     )
-                    rendered = self._data_registry.render_data(
+                    rendered = self._data_registry.pretty_print_data(
                         value_id=v_id, **render_config
                     )
                     destiny_items.append(rendered)
                 table.add_row("destiny backlinks", Group(*destiny_items))
 
         if show_data:
-            rendered = self._data_registry.render_data(
+            rendered = self._data_registry.pretty_print_data(
                 self.value_id, target_type="terminal_renderable"
             )
             table.add_row("", "")
@@ -1287,7 +1287,7 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
 
             value = self.get_value_obj(field_name=field_name)
             if render_value_data:
-                rendered = value._data_registry.render_data(
+                rendered = value._data_registry.pretty_print_data(
                     value_id=value.value_id, target_type="terminal_renderable", **config
                 )
             else:

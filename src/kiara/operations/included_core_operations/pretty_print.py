@@ -17,12 +17,12 @@ from kiara.models.module.operation import (
 )
 from kiara.models.values.value import Value, ValueMap
 from kiara.modules import KiaraModule, ValueSetSchema
-from kiara.modules.included_core_modules.render_value import RenderValueModule
+from kiara.modules.included_core_modules.pretty_print import PrettyPrintModule
 from kiara.operations import OperationType
 from kiara.utils import log_message
 
 
-class RenderValueDetails(BaseOperationDetails):
+class PrettyPrintDetails(BaseOperationDetails):
 
     source_type: str = Field(description="The type of the value to be rendered.")
     target_type: str = Field(description="The type of the render result.")
@@ -58,7 +58,7 @@ class RenderValueDetails(BaseOperationDetails):
         return {"rendered_value": outputs.get_value_obj("rendered_value")}
 
 
-class RenderValueOperationType(OperationType[RenderValueDetails]):
+class PrettyPrintOperationType(OperationType[PrettyPrintDetails]):
     """An operation that takes a value, and renders into a format that can be printed for output..
 
     For a module profile to be picked up by this operation type, it needs to have:
@@ -66,14 +66,14 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
     - exactly two input fields, one of them named after the type it supports, and the other called 'render_config', of type 'dict'
     """
 
-    _operation_type_name = "render_value"
+    _operation_type_name = "pretty_print"
 
     def _calculate_op_id(self, source_type: str, target_type: str):
 
         if source_type == "any":
-            operation_id = f"render.as.{target_type}"
+            operation_id = f"pretty_print.as.{target_type}"
         else:
-            operation_id = f"render.{source_type}.as.{target_type}"
+            operation_id = f"pretty_print.{source_type}.as.{target_type}"
 
         return operation_id
 
@@ -84,7 +84,7 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
         result = {}
         for name, module_cls in self._kiara.module_type_classes.items():
 
-            if not issubclass(module_cls, RenderValueModule):
+            if not issubclass(module_cls, PrettyPrintModule):
                 continue
 
             for (
@@ -92,19 +92,19 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
                 target_type,
             ) in module_cls.retrieve_supported_render_combinations():
                 if source_type not in self._kiara.data_type_names:
-                    log_message("ignore.operation_config", operation_type="render_value", module_type=module_cls._module_type_name, source_type=source_type, target_type=target_type, reason=f"Source type '{source_type}' not registered.")  # type: ignore
+                    log_message("ignore.operation_config", operation_type="pretty_print", module_type=module_cls._module_type_name, source_type=source_type, target_type=target_type, reason=f"Source type '{source_type}' not registered.")  # type: ignore
                     continue
                 if target_type not in self._kiara.data_type_names:
                     log_message(
                         "ignore.operation_config",
-                        operation_type="render_value",
+                        operation_type="pretty_print",
                         module_type=module_cls._module_type_name,
                         source_type=source_type,  # type: ignore
                         target_type=target_type,
                         reason=f"Target type '{target_type}' not registered.",
                     )
                     continue
-                func_name = f"render__{source_type}__as__{target_type}"
+                func_name = f"pretty_print__{source_type}__as__{target_type}"
                 attr = getattr(module_cls, func_name)
                 doc = DocumentationMetadataModel.from_function(attr)
                 mc = {"source_type": source_type, "target_type": target_type}
@@ -118,15 +118,14 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
 
         for data_type_name, data_type_class in self._kiara.data_type_classes.items():
             for attr in dir(data_type_class):
-                if not attr.startswith("render_as__"):
+                if not attr.startswith("pretty_print_as__"):
                     continue
 
-                target_type = attr[11:]
+                target_type = attr[17:]
                 if target_type not in self._kiara.data_type_names:
                     log_message(
                         "operation_config.ignore",
-                        operation_type="render_value",
-                        module_type="value.extract_metadata",
+                        operation_type="pretty_print",
                         source_type=data_type_name,
                         target_type=target_type,
                         reason=f"Target type '{target_type}' not registered.",
@@ -134,14 +133,14 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
 
                 # TODO: inspect signature?
                 doc = DocumentationMetadataModel.from_string(
-                    f"Render a {data_type_name} value as {target_type}."
+                    f"Pretty print a {data_type_name} value as a {target_type}."
                 )
                 mc = {
                     "source_type": data_type_name,
                     "target_type": target_type,
                 }
                 oc = ManifestOperationConfig(
-                    module_type="value.render", module_config=mc, doc=doc
+                    module_type="pretty_print.value", module_config=mc, doc=doc
                 )
                 result[f"_type_{data_type_name}"] = oc
 
@@ -149,7 +148,7 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
 
     def check_matching_operation(
         self, module: "KiaraModule"
-    ) -> Optional[RenderValueDetails]:
+    ) -> Optional[PrettyPrintDetails]:
 
         details = self.extract_details(module)
 
@@ -158,7 +157,7 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
         else:
             return details
 
-    def extract_details(self, module: "KiaraModule") -> Optional[RenderValueDetails]:
+    def extract_details(self, module: "KiaraModule") -> Optional[PrettyPrintDetails]:
 
         if len(module.inputs_schema) != 2 or len(module.outputs_schema) != 1:
             return None
@@ -210,7 +209,7 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
             "is_internal_operation": True,
         }
 
-        result = RenderValueDetails.create_operation_details(**details)
+        result = PrettyPrintDetails.create_operation_details(**details)
         return result
 
     def get_target_types_for(self, source_type: str) -> Mapping[str, Operation]:
@@ -224,7 +223,7 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
                 target_type = details.target_type
                 if target_type in result.keys():
                     raise Exception(
-                        f"More than one operation for render combination '{source_type}'/'{target_type}', this is not supported (for now)."
+                        f"More than one operation for pretty_print combination '{source_type}'/'{target_type}', this is not supported (for now)."
                     )
                 result[target_type] = operation
 
@@ -242,11 +241,11 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
             target_types = self.get_target_types_for(source_type=st)
             if not target_types:
                 continue
-
             if target_type not in target_types.keys():
                 raise Exception(
                     f"No operation that produces '{target_type}' for source type: {st}."
                 )
-            return target_types[target_type]
+            result = target_types[target_type]
+            return result
 
-        raise Exception(f"No render opration(s) for source type: {source_type}.")
+        raise Exception(f"No pretty_print opration(s) for source type: {source_type}.")

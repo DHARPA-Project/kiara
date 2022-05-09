@@ -18,7 +18,7 @@ from kiara.modules import KiaraModule
 from kiara.utils.output import create_table_from_model_object
 
 
-class RenderValueConfig(KiaraModuleConfig):
+class PrettyPrintConfig(KiaraModuleConfig):
 
     source_type: str = Field(description="The value type of the source value.")
     target_type: str = Field(description="The value type of the rendered value.")
@@ -30,10 +30,10 @@ class RenderValueConfig(KiaraModuleConfig):
         return value
 
 
-class RenderValueModule(KiaraModule):
+class PrettyPrintModule(KiaraModule):
 
     _module_type_name: str = None  # type: ignore
-    _config_cls = RenderValueConfig
+    _config_cls = PrettyPrintConfig
 
     @classmethod
     def retrieve_supported_render_combinations(cls) -> Iterable[Tuple[str, str]]:
@@ -41,13 +41,13 @@ class RenderValueModule(KiaraModule):
         result = []
         for attr in dir(cls):
             if (
-                len(attr) <= 16
-                or not attr.startswith("render__")
+                len(attr) <= 19
+                or not attr.startswith("pretty_print__")
                 or "__as__" not in attr
             ):
                 continue
 
-            attr = attr[8:]
+            attr = attr[14:]
             end_start_type = attr.find("__as__")
             source_type = attr[0:end_start_type]
             target_type = attr[end_start_type + 6 :]  # noqa
@@ -94,7 +94,7 @@ class RenderValueModule(KiaraModule):
         value = inputs.get_value_obj(source_type)
         render_config = inputs.get_value_data("render_config")
 
-        func_name = f"render__{source_type}__as__{target_type}"
+        func_name = f"pretty_print__{source_type}__as__{target_type}"
 
         func = getattr(self, func_name)
         # TODO: check function signature is valid
@@ -103,10 +103,10 @@ class RenderValueModule(KiaraModule):
         outputs.set_value("rendered_value", result)
 
 
-class ValueTypeRenderModule(KiaraModule):
+class ValueTypePrettyPrintModule(KiaraModule):
 
-    _module_type_name = "value.render"
-    _config_cls = RenderValueConfig
+    _module_type_name = "pretty_print.value"
+    _config_cls = PrettyPrintConfig
 
     def create_inputs_schema(
         self,
@@ -148,7 +148,7 @@ class ValueTypeRenderModule(KiaraModule):
         data_type_cls = source_value.data_type_class.get_class()
         data_type = data_type_cls(**source_value.value_schema.type_config)
 
-        func_name = f"render_as__{target_type}"
+        func_name = f"pretty_print_as__{target_type}"
         func = getattr(data_type, func_name)
 
         render_config_dict = render_config.data
@@ -160,9 +160,9 @@ class ValueTypeRenderModule(KiaraModule):
         outputs.set_value("rendered_value", result)
 
 
-class RenderAnyValueModule(RenderValueModule):
+class PrettyPrintAnyValueModule(PrettyPrintModule):
 
-    _module_type_name = "value.render.any"
+    _module_type_name = "pretty_print.any.value"
 
     def render__any__as__string(self, value: Value, render_config: Dict[str, Any]):
 

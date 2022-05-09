@@ -64,6 +64,7 @@ def run(
     explain: bool,
     save: Iterable[str],
 ):
+    """Run a kiara operation."""
 
     # =========================================================================
     # initialize a few variables

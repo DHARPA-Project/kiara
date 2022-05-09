@@ -32,7 +32,7 @@ def filter_operations(
                 continue
         else:
             package: Optional[str] = op.metadata.get("labels", {}).get("package", None)
-            if package and package == pkg_name:
+            if not pkg_name or (package and package == pkg_name):
                 result[op_id] = OperationInfo.create_from_operation(
                     kiara=kiara, operation=op
                 )

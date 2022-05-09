@@ -7,9 +7,7 @@ import rich_click as click
 
 # from alembic import command  # type: ignore
 # from alembic.config import Config  # type: ignore
-from kiara.context import Kiara
-from kiara.models.values.lineage import ValueLineage
-from kiara.utils.cli import terminal_print
+from kiara.utils.class_loading import find_all_cli_subcommands
 
 # noqa
 # type: ignore
@@ -25,12 +23,14 @@ def dev_group(ctx):
 @click.pass_context
 def test(ctx):
 
-    kiara: Kiara = ctx.obj["kiara"]
+    find_all_cli_subcommands()
 
-    value = kiara.data_registry.get_value("alias:network_data")
-    vl = ValueLineage(kiara=kiara, value=value)
-
-    terminal_print(vl)
+    # kiara: Kiara = ctx.obj["kiara"]
+    #
+    # value = kiara.data_registry.get_value("alias:network_data")
+    # vl = ValueLineage(kiara=kiara, value=value)
+    #
+    # terminal_print(vl)
 
 
 # @dev_group.command("reinit-db")

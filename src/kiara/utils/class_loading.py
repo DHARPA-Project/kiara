@@ -613,6 +613,35 @@ def find_all_kiara_pipeline_paths(
     return paths
 
 
+def find_all_cli_subcommands():
+
+    entry_point_name = "kiara.cli_subcommands"
+    log2 = logging.getLogger("stevedore")
+    out_hdlr = logging.StreamHandler(sys.stdout)
+    out_hdlr.setFormatter(
+        logging.Formatter(
+            f"{entry_point_name} plugin search message/error -> %(message)s"
+        )
+    )
+    out_hdlr.setLevel(logging.INFO)
+    log2.addHandler(out_hdlr)
+    if is_debug():
+        log2.setLevel(logging.DEBUG)
+    else:
+        out_hdlr.setLevel(logging.INFO)
+        log2.setLevel(logging.INFO)
+
+    log_message("events.loading.entry_points", entry_point_name=entry_point_name)
+
+    mgr = ExtensionManager(
+        namespace=entry_point_name,
+        invoke_on_load=False,
+        propagate_map_exceptions=True,
+    )
+
+    return [plugin.plugin for plugin in mgr]
+
+
 # def _find_pipeline_folders_using_callable(
 #     func: Union[Callable, Tuple]
 # ) -> Tuple[Optional[str], str]:

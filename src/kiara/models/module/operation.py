@@ -20,10 +20,10 @@ from typing import (
     Any,
     Dict,
     Iterable,
+    List,
     Literal,
     Mapping,
     Optional,
-    Set,
     Type,
     Union,
 )
@@ -493,7 +493,7 @@ class OperationInfo(KiaraInfoModel):
 
         op_info = OperationInfo.construct(
             type_name=operation.operation_id,
-            operation_types=op_types,
+            operation_types=list(op_types),
             operation=operation,
             documentation=operation.doc,
             authors=authors_md,
@@ -507,7 +507,7 @@ class OperationInfo(KiaraInfoModel):
         return "operation"
 
     operation: Operation = Field(description="The operation instance.")
-    operation_types: Set[str] = Field(
+    operation_types: List[str] = Field(
         description="The operation types this operation belongs to."
     )
 
@@ -586,10 +586,8 @@ class OperationGroupInfo(InfoModelGroup):
 
             types = op_info.operation_types
 
-            try:
+            if "custom_module" in types:
                 types.remove("custom_module")
-            except KeyError:
-                pass
 
             desc_str = op_info.documentation.description
             if full_doc:

@@ -72,7 +72,7 @@ def test_data_explain_subcommand_2(preseeded_data_store: Kiara):
 
 def test_data_load_subcommand_3(preseeded_data_store: Kiara):
 
-    cmd = "data load alias:preseed.journal_nodes_table"
+    cmd = "data load -s alias:preseed.journal_nodes_table"
     result = _run_command(kiara_ctx=preseeded_data_store, cmd=cmd)
 
     assert result.exit_code == 0

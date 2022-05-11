@@ -10,9 +10,11 @@ import rich_click as click
 import shutil
 import structlog
 import sys
+from typing import Optional
 
 from kiara import Kiara
 from kiara.interfaces.tui.pager import PagerApp
+from kiara.models.module.operation import Operation
 from kiara.models.values.info import RENDER_FIELDS, ValueInfo, ValuesInfo
 from kiara.operations.included_core_operations.render_value import (
     RenderValueOperationType,
@@ -275,18 +277,26 @@ def explain_value(
 
 @data.command(name="load")
 @click.argument("value_id", nargs=1, required=True)
+@click.option(
+    "--single-page",
+    "-s",
+    help="Only pretty print a single (preview) page, instead of using a pager when available.",
+    is_flag=True,
+)
 @click.pass_context
-def load_value(ctx, value_id: str):
+def load_value(ctx, value_id: str, pretty_print: bool):
     """Load a stored value and print it in a format suitable for the terminal."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     value = kiara_obj.data_registry.get_value(value_id=value_id)
 
-    render_value_op_type: RenderValueOperationType = kiara_obj.operation_registry.get_operation_type("render_value")  # type: ignore
-    render_op = render_value_op_type.get_render_operation(
-        source_type=value.data_type_name, target_type="terminal_renderable"
-    )
+    render_op: Optional[Operation] = None
+    if not pretty_print:
+        render_value_op_type: RenderValueOperationType = kiara_obj.operation_registry.get_operation_type("render_value")  # type: ignore
+        render_op = render_value_op_type.get_render_operation(
+            source_type=value.data_type_name, target_type="terminal_renderable"
+        )
 
     if not render_op:
         logger.debug(

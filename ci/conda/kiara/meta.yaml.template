@@ -55,6 +55,7 @@ requirements:
     - sqlite
     - stevedore>=3.3.0,<4.0.0
     - structlog>=21.5.0
+    - textual>=0.1.0,<0.2.0
     - typing-validation>=0.0.1
     - tzlocal>=2.1,<3.0
 about:

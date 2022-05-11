@@ -8,12 +8,19 @@
 """Data-related sub-commands for the cli."""
 import rich_click as click
 import shutil
+import structlog
 import sys
 
 from kiara import Kiara
+from kiara.interfaces.tui.pager import PagerApp
 from kiara.models.values.info import RENDER_FIELDS, ValueInfo, ValuesInfo
+from kiara.operations.included_core_operations.render_value import (
+    RenderValueOperationType,
+)
 from kiara.utils import StringYAML, is_debug, is_develop, log_message
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
+
+logger = structlog.getLogger()
 
 yaml = StringYAML()
 
@@ -275,25 +282,37 @@ def load_value(ctx, value_id: str):
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     value = kiara_obj.data_registry.get_value(value_id=value_id)
-    # if value is None:
-    #     print(f"No value available for id: {value_id}")
-    #     sys.exit(1)
 
-    try:
-        renderable = kiara_obj.data_registry.pretty_print_data(
-            value.value_id, target_type="terminal_renderable"
+    render_value_op_type: RenderValueOperationType = kiara_obj.operation_registry.get_operation_type("render_value")  # type: ignore
+    render_op = render_value_op_type.get_render_operation(
+        source_type=value.data_type_name, target_type="terminal_renderable"
+    )
+
+    if not render_op:
+        logger.debug(
+            "fallback.render_value",
+            solution="use pretty print",
+            source_type=value.data_type_name,
+            target_type="terminal_renderable",
+            reason="no 'render_value' operation for source/target operation",
         )
-    except Exception as e:
+        try:
+            renderable = kiara_obj.data_registry.pretty_print_data(
+                value.value_id, target_type="terminal_renderable"
+            )
+        except Exception as e:
 
-        if is_debug():
-            import traceback
+            if is_debug():
+                import traceback
 
-            traceback.print_exc()
-        log_message("error.pretty_print", value=value.value_id, error=e)
+                traceback.print_exc()
+            log_message("error.pretty_print", value=value.value_id, error=e)
+            renderable = [str(value.data)]
 
-        renderable = [str(value.data)]
+        terminal_print(renderable)
+        sys.exit(0)
 
-    terminal_print(renderable)
+    PagerApp.run(kiara=kiara_obj, value=value, operation=render_op)
 
 
 if is_develop():

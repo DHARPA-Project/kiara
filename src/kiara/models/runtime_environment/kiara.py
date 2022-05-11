@@ -16,7 +16,7 @@ from kiara.models.documentation import (
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
-from kiara.models.info import KiaraTypeInfoModel, TypeInfoModelGroup
+from kiara.models.info import TypeInfo, TypeInfoModelGroup
 from kiara.models.python_class import PythonClass
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.value_metadata import MetadataTypeClassesInfo
@@ -25,14 +25,12 @@ from kiara.utils.class_loading import find_all_archive_types
 from kiara.utils.metadata import find_metadata_models
 
 
-class ArchiveTypeInfoModel(KiaraTypeInfoModel):
+class ArchiveTypeInfo(TypeInfo):
 
-    _kiara_model_id = "instance.info.archive_type"
+    _kiara_model_id = "info.archive_type"
 
     @classmethod
-    def create_from_type_class(
-        self, type_cls: Type[KiaraArchive]
-    ) -> "ArchiveTypeInfoModel":
+    def create_from_type_class(self, type_cls: Type[KiaraArchive]) -> "ArchiveTypeInfo":
 
         authors_md = AuthorsMetadataModel.from_class(type_cls)
         doc = DocumentationMetadataModel.from_class_doc(type_cls)
@@ -40,7 +38,7 @@ class ArchiveTypeInfoModel(KiaraTypeInfoModel):
         properties_md = ContextMetadataModel.from_class(type_cls)
         type_name = type_cls._archive_type_name  # type: ignore
 
-        return ArchiveTypeInfoModel.construct(
+        return ArchiveTypeInfo.construct(
             type_name=type_name,
             documentation=doc,
             authors=authors_md,
@@ -91,14 +89,14 @@ class ArchiveTypeInfoModel(KiaraTypeInfoModel):
 
 class ArchiveTypeClassesInfo(TypeInfoModelGroup):
 
-    _kiara_model_id = "instance.info.archive_types"
+    _kiara_model_id = "info.archive_types"
 
     @classmethod
-    def base_info_class(cls) -> Type[ArchiveTypeInfoModel]:
-        return ArchiveTypeInfoModel
+    def base_info_class(cls) -> Type[ArchiveTypeInfo]:
+        return ArchiveTypeInfo
 
     type_name: Literal["archive_type"] = "archive_type"
-    type_infos: Mapping[str, ArchiveTypeInfoModel] = Field(
+    type_infos: Mapping[str, ArchiveTypeInfo] = Field(
         description="The archive info instances for each type."
     )
 
@@ -114,7 +112,7 @@ def find_archive_types(
     )
 
     if only_for_package:
-        temp: Dict[str, KiaraTypeInfoModel] = {}
+        temp: Dict[str, TypeInfo] = {}
         for key, info in group.items():
             if info.context.labels.get("package") == only_for_package:
                 temp[key] = info  # type: ignore
@@ -128,7 +126,7 @@ def find_archive_types(
 
 class KiaraTypesRuntimeEnvironment(RuntimeEnvironment):
 
-    _kiara_model_id = "instance.info.runtime.kiara_types"
+    _kiara_model_id = "info.runtime.kiara_types"
 
     environment_type: Literal["kiara_types"]
     archive_types: ArchiveTypeClassesInfo = Field(

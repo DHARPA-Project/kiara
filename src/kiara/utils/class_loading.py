@@ -38,7 +38,6 @@ from kiara.utils import (
 if TYPE_CHECKING:
     from kiara.modules import KiaraModule
     from kiara.operations import OperationType
-    from kiara.models.values.value_metadata import ValueMetadata
     from kiara.data_types import DataType
     from kiara.registries import KiaraArchive
     from kiara.models import KiaraModel
@@ -376,21 +375,21 @@ def find_all_kiara_model_classes() -> Dict[str, Type["KiaraModel"]]:
     )
 
 
-def find_all_value_metadata_models() -> Dict[str, Type["ValueMetadata"]]:
-    """Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.
-
-    TODO
-    """
-
-    from kiara.models.values.value_metadata import ValueMetadata
-
-    return load_all_subclasses_for_entry_point(
-        entry_point_name="kiara.metadata_models",
-        base_class=ValueMetadata,  # type: ignore
-        type_id_key="_metadata_key",
-        type_id_func=_cls_name_id_func,
-        attach_python_metadata=False,
-    )
+# def find_all_value_metadata_models() -> Dict[str, Type["ValueMetadata"]]:
+#     """Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.
+#
+#     TODO
+#     """
+#
+#     from kiara.models.values.value_metadata import ValueMetadata
+#
+#     return load_all_subclasses_for_entry_point(
+#         entry_point_name="kiara.metadata_models",
+#         base_class=ValueMetadata,  # type: ignore
+#         type_id_key="_metadata_key",
+#         type_id_func=_cls_name_id_func,
+#         attach_python_metadata=False,
+#     )
 
 
 def find_all_archive_types() -> Dict[str, Type["KiaraArchive"]]:
@@ -469,18 +468,18 @@ def find_kiara_model_classes_under(
     return result
 
 
-def find_value_metadata_models_under(
-    module: Union[str, ModuleType]
-) -> List[Type["ValueMetadata"]]:
-
-    from kiara.models.values.value_metadata import ValueMetadata
-
-    result = find_subclasses_under(
-        base_class=ValueMetadata,  # type: ignore
-        python_module=module,
-    )
-
-    return result
+# def find_value_metadata_models_under(
+#     module: Union[str, ModuleType]
+# ) -> List[Type["ValueMetadata"]]:
+#
+#     from kiara.models.values.value_metadata import ValueMetadata
+#
+#     result = find_subclasses_under(
+#         base_class=ValueMetadata,  # type: ignore
+#         python_module=module,
+#     )
+#
+#     return result
 
 
 def find_data_types_under(module: Union[str, ModuleType]) -> List[Type["DataType"]]:

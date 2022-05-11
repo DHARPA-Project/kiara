@@ -83,7 +83,7 @@ RENDER_FIELDS: Dict[str, Dict[str, Any]] = {
 
 class ValueInfo(Value):
 
-    _kiara_model_id = "instance.info.value"
+    _kiara_model_id = "info.value"
 
     @classmethod
     def create_from_value(

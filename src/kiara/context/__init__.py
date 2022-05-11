@@ -28,7 +28,7 @@ from kiara.defaults import KIARA_DB_MIGRATIONS_CONFIG, KIARA_DB_MIGRATIONS_FOLDE
 from kiara.interfaces import get_console
 from kiara.interfaces.python_api import StoreValueResult, StoreValuesResult
 from kiara.models import KiaraModel
-from kiara.models.info import InfoModelGroup, KiaraInfoModel
+from kiara.models.info import InfoModelGroup, ItemInfo, KiaraModelClassesInfo
 from kiara.models.module import KiaraModuleTypeInfo, ModuleTypeClassesInfo
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import OperationGroupInfo, OperationTypeClassesInfo
@@ -45,6 +45,7 @@ from kiara.registries.events.metadata import CreateMetadataDestinies
 from kiara.registries.events.registry import EventRegistry
 from kiara.registries.ids import ID_REGISTRY
 from kiara.registries.jobs import JobRegistry
+from kiara.registries.models import ModelRegistry
 from kiara.registries.modules import ModuleRegistry
 from kiara.registries.operations import OperationRegistry
 from kiara.registries.types import TypeRegistry
@@ -139,6 +140,8 @@ class Kiara(object):
         self._module_registry: ModuleRegistry = ModuleRegistry()
         self._operation_registry: OperationRegistry = OperationRegistry(kiara=self)
 
+        self._kiara_model_registry: ModelRegistry = ModelRegistry.instance()
+
         self._alias_registry: AliasRegistry = AliasRegistry(kiara=self)
         self._destiny_registry: DestinyRegistry = DestinyRegistry(kiara=self)
 
@@ -220,6 +223,10 @@ class Kiara(object):
     @property
     def module_registry(self) -> ModuleRegistry:
         return self._module_registry
+
+    @property
+    def kiara_model_registry(self) -> ModelRegistry:
+        return self._kiara_model_registry
 
     @property
     def alias_registry(self) -> AliasRegistry:
@@ -428,6 +435,14 @@ class KiaraContextInfo(KiaraModel):
             kiara=kiara, pkg_name=package_filter, **kiara.operation_registry.operations
         )
 
+        model_registry = kiara.kiara_model_registry
+        if package_filter:
+            kiara_models = model_registry.get_models_for_package(
+                package_name=package_filter
+            )
+        else:
+            kiara_models = model_registry.all_models
+
         metadata_types = find_metadata_models(only_for_package=package_filter)
 
         return KiaraContextInfo.construct(
@@ -435,6 +450,7 @@ class KiaraContextInfo(KiaraModel):
             package_filter=package_filter,
             data_types=data_types,
             module_types=modules,
+            kiara_model_types=kiara_models,
             metadata_types=metadata_types,
             operation_types=operation_types,
             operations=operations,
@@ -447,6 +463,9 @@ class KiaraContextInfo(KiaraModel):
     data_types: DataTypeClassesInfo = Field(description="The included data types.")
     module_types: ModuleTypeClassesInfo = Field(
         description="The included kiara module types."
+    )
+    kiara_model_types: KiaraModelClassesInfo = Field(
+        description="The included model classes."
     )
     metadata_types: MetadataTypeClassesInfo = Field(
         description="The included value metadata types."
@@ -465,7 +484,7 @@ class KiaraContextInfo(KiaraModel):
     def _retrieve_data_to_hash(self) -> Any:
         return {"kiara_id": self.kiara_id, "package": self.package_filter}
 
-    def get_info(self, item_type: str, item_id: str) -> KiaraInfoModel:
+    def get_info(self, item_type: str, item_id: str) -> ItemInfo:
 
         if "data_type" == item_type or "data_types" == item_type:
             group_info: InfoModelGroup = self.data_types
@@ -477,11 +496,13 @@ class KiaraContextInfo(KiaraModel):
             group_info = self.operation_types
         elif "operation" in item_type:
             group_info = self.operations
+        elif "kiara_model" in item_type:
+            group_info = self.kiara_model_types
         else:
             item_types = [
                 "data_type",
                 "module_type",
-                "metadata_type",
+                "kiara_model_type" "metadata_type",
                 "operation_type",
                 "operation",
             ]
@@ -497,6 +518,8 @@ class KiaraContextInfo(KiaraModel):
             result["data_types"] = self.data_types
         if self.module_types or not skip_empty_types:
             result["module_types"] = self.module_types
+        if self.kiara_model_types or not skip_empty_types:
+            result["kiara_model_types"] = self.kiara_model_types
         if self.metadata_types or not skip_empty_types:
             result["metadata_types"] = self.metadata_types
         if self.operation_types or not skip_empty_types:

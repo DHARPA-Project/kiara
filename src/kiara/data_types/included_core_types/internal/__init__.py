@@ -3,7 +3,6 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-import importlib
 import orjson
 import structlog
 from pydantic import Field, PrivateAttr
@@ -15,6 +14,7 @@ from kiara.defaults import NO_SERIALIZATION_MARKER
 from kiara.models import KiaraModel
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.values.value import SerializedData, Value
+from kiara.registries.models import ModelRegistry
 
 logger = structlog.getLogger()
 
@@ -54,7 +54,7 @@ class TerminalRenderable(InternalType[object, DataTypeConfig]):
 
 class InternalModelTypeConfig(DataTypeConfig):
 
-    model_cls: Optional[str] = Field(
+    kiara_model_id: Optional[str] = Field(
         description="The Python class backing this model (must sub-class 'KiaraModel')."
     )
 
@@ -74,12 +74,12 @@ class InternalModelValueType(InternalType[KiaraModel, InternalModelTypeConfig]):
 
     def serialize(self, data: KiaraModel) -> Union[str, SerializedData]:
 
-        if self.type_config.model_cls is None:
+        if self.type_config.kiara_model_id is None:
             logger.debug(
                 "ignore.serialize_request",
                 data_type="internal_model",
                 cls=data.__class__.__name__,
-                reason="no python type specified in module config",
+                reason="no model id in module config",
             )
             return NO_SERIALIZATION_MARKER
 
@@ -125,14 +125,16 @@ class InternalModelValueType(InternalType[KiaraModel, InternalModelTypeConfig]):
         if self._cls_cache is not None:
             return self._cls_cache
 
-        full_path = self.type_config.model_cls
-        assert full_path and "." in full_path
-        module, cls_name = full_path.rsplit(".", maxsplit=1)
-        m = importlib.import_module(module)
-        cls_cache = getattr(m, cls_name)
+        model_type_id = self.type_config.kiara_model_id
+        assert model_type_id is not None
 
-        assert issubclass(cls_cache, KiaraModel)
-        self._cls_cache = cls_cache
+        model_registry = ModelRegistry.instance()
+
+        model_cls = model_registry.get_model_cls(
+            model_type_id, required_subclass=KiaraModel
+        )
+
+        self._cls_cache = model_cls
         return self._cls_cache
 
     def parse_python_obj(self, data: Any) -> KiaraModel:

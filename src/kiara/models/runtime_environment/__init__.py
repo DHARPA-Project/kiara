@@ -46,7 +46,6 @@ class RuntimeEnvironment(KiaraModel):
 
         except Exception as e:
             raise Exception(f"Can't create environment model for '{cls.__name__}': {e}")
-
         return cls(**data)
 
     def get_category_alias(self) -> str:

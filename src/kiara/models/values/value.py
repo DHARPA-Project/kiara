@@ -38,7 +38,12 @@ from typing import (
     Union,
 )
 
-from kiara.defaults import NO_MODULE_TYPE, VOID_KIARA_ID, SpecialValue
+from kiara.defaults import (
+    NO_MODULE_TYPE,
+    NO_SERIALIZATION_MARKER,
+    VOID_KIARA_ID,
+    SpecialValue,
+)
 from kiara.exceptions import InvalidValuesException
 from kiara.models import KiaraModel
 from kiara.models.module.manifest import InputsManifest, Manifest
@@ -439,7 +444,7 @@ SERIALIZE_TYPES = {
 
 class SerializationMetadata(KiaraModel):
 
-    _kiara_model_id = "instance.metadata.serialized_data"
+    _kiara_model_id = "metadata.serialized_data"
 
     environment: Mapping[str, int] = Field(
         description="Hash(es) for the environments the value was created/serialized.",
@@ -458,7 +463,7 @@ class SerializedData(KiaraModel):
     )
     data_type_config: Mapping[str, Any] = Field(
         description="The (optional) config for the data type for this serialized value.",
-        default=dict,
+        default_factory=dict,
     )
     serialization_profile: str = Field(
         description="An identifying name for the serialization method used."
@@ -862,9 +867,12 @@ class Value(ValueDetails):
 
         self.destiny_backlinks[value_id] = destiny_alias  # type: ignore
 
+    @property
     def is_serializable(self) -> bool:
 
         try:
+            if self._serialized_data == NO_SERIALIZATION_MARKER:
+                return False
             self.serialized_data
             return True
         except Exception:

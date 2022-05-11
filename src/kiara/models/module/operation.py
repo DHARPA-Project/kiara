@@ -35,12 +35,7 @@ from kiara.models.documentation import (
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
-from kiara.models.info import (
-    InfoModelGroup,
-    KiaraInfoModel,
-    KiaraTypeInfoModel,
-    TypeInfoModelGroup,
-)
+from kiara.models.info import InfoModelGroup, ItemInfo, TypeInfo, TypeInfoModelGroup
 from kiara.models.module import KiaraModuleClass, KiaraModuleTypeInfo
 from kiara.models.module.jobs import JobConfig
 from kiara.models.module.manifest import Manifest
@@ -419,9 +414,9 @@ class Operation(Manifest):
         return table
 
 
-class OperationTypeInfo(KiaraTypeInfoModel):
+class OperationTypeInfo(TypeInfo):
 
-    _kiara_model_id = "instance.info.operation_type"
+    _kiara_model_id = "info.operation_type"
 
     @classmethod
     def create_from_type_class(
@@ -462,10 +457,10 @@ class OperationTypeInfo(KiaraTypeInfoModel):
 
 class OperationTypeClassesInfo(TypeInfoModelGroup):
 
-    _kiara_model_id = "instance.info.operation_types"
+    _kiara_model_id = "info.operation_types"
 
     @classmethod
-    def base_info_class(cls) -> Type[KiaraTypeInfoModel]:
+    def base_info_class(cls) -> Type[TypeInfo]:
         return OperationTypeInfo
 
     type_name: Literal["operation_type"] = "operation_type"
@@ -474,9 +469,9 @@ class OperationTypeClassesInfo(TypeInfoModelGroup):
     )
 
 
-class OperationInfo(KiaraInfoModel):
+class OperationInfo(ItemInfo):
 
-    _kiara_model_id = "instance.info.operation"
+    _kiara_model_id = "info.operation"
 
     @classmethod
     def create_from_operation(cls, kiara: "Kiara", operation: Operation):
@@ -533,10 +528,10 @@ class OperationInfo(KiaraInfoModel):
 
 class OperationGroupInfo(InfoModelGroup):
 
-    _kiara_model_id = "instance.info.operations"
+    _kiara_model_id = "info.operations"
 
     @classmethod
-    def base_info_class(cls) -> Type[KiaraInfoModel]:
+    def base_info_class(cls) -> Type[ItemInfo]:
         return OperationInfo
 
     @classmethod

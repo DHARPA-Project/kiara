@@ -30,7 +30,7 @@ from kiara.models.documentation import (
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
-from kiara.models.info import KiaraTypeInfoModel, TypeInfoModelGroup
+from kiara.models.info import TypeInfo, TypeInfoModelGroup
 from kiara.models.python_class import PythonClass
 from kiara.models.values.value_schema import ValueSchema
 
@@ -201,9 +201,9 @@ def calculate_class_source_url(
     return url
 
 
-class KiaraModuleTypeInfo(KiaraTypeInfoModel["KiaraModule"]):
+class KiaraModuleTypeInfo(TypeInfo["KiaraModule"]):
 
-    _kiara_model_id = "instance.info.kiara_module_type"
+    _kiara_model_id = "info.kiara_module_type"
 
     @classmethod
     def create_from_type_class(
@@ -290,10 +290,10 @@ class KiaraModuleTypeInfo(KiaraTypeInfoModel["KiaraModule"]):
 
 class ModuleTypeClassesInfo(TypeInfoModelGroup):
 
-    _kiara_model_id = "instance.info.module_types"
+    _kiara_model_id = "info.module_types"
 
     @classmethod
-    def base_info_class(cls) -> Type[KiaraTypeInfoModel]:
+    def base_info_class(cls) -> Type[TypeInfo]:
         return KiaraModuleTypeInfo
 
     type_name: Literal["module_type"] = "module_type"
@@ -304,7 +304,7 @@ class ModuleTypeClassesInfo(TypeInfoModelGroup):
 
 class KiaraModuleClass(PythonClass):
 
-    _kiara_model_id: str = "instance.metadata.kiara_module_class"
+    _kiara_model_id: str = "metadata.kiara_module_class"
 
     @classmethod
     def from_module(cls, module: "KiaraModule"):

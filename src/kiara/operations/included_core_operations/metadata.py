@@ -6,18 +6,18 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 from pydantic import Field
-from typing import Any, Iterable, Mapping, Optional, Union
+from typing import Any, Iterable, Mapping, Optional, Type, Union
 
 from kiara.models.module.operation import (
     BaseOperationDetails,
     Operation,
     OperationConfig,
 )
-from kiara.models.python_class import PythonClass
 from kiara.models.values.value import ValueMap
+from kiara.models.values.value_metadata import ValueMetadata
 from kiara.modules import KiaraModule, ValueSetSchema
 from kiara.operations import OperationType
-from kiara.utils.class_loading import find_all_value_metadata_models
+from kiara.registries.models import ModelRegistry
 
 
 class ExtractMetadataDetails(BaseOperationDetails):
@@ -65,10 +65,13 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
         self,
     ) -> Iterable[Union[Mapping, OperationConfig]]:
 
-        all_models = find_all_value_metadata_models()
+        model_registry = ModelRegistry.instance()
+        all_models = model_registry.get_models_of_type(ValueMetadata)
 
         result = []
-        for metadata_key, model_cls in all_models.items():
+        for model_id, model_cls_info in all_models.items():
+            model_cls: Type[ValueMetadata] = model_cls_info.python_class.get_class()  # type: ignore
+            metadata_key = model_cls._metadata_key  # type: ignore
             data_types = model_cls.retrieve_supported_data_types()
             if isinstance(data_types, str):
                 data_types = [data_types]
@@ -78,7 +81,7 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
                     "module_type": "value.extract_metadata",
                     "module_config": {
                         "data_type": data_type,
-                        "metadata_model": PythonClass.from_class(model_cls).dict(),
+                        "kiara_model_id": model_cls._kiara_model_id,  # type: ignore
                     },
                     "doc": f"Extract '{metadata_key}' metadata for value type '{data_type}'.",
                 }
@@ -107,9 +110,14 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
             return None
 
         data_type_name = module.inputs_schema["value"].type
-        # metadata_key=module.get_config_value("metadata_key")
-        metadata_model: PythonClass = module.get_config_value("metadata_model")
-        metadata_key = metadata_model.get_class()._metadata_key  # type: ignore
+        model_id: str = module.get_config_value("kiara_model_id")
+
+        registry = ModelRegistry.instance()
+        metadata_model_cls = registry.get_model_cls(
+            kiara_model_id=model_id, required_subclass=ValueMetadata
+        )
+
+        metadata_key = metadata_model_cls._metadata_key  # type: ignore
 
         if data_type_name == "any":
             op_id = f"extract.{metadata_key}.metadata"

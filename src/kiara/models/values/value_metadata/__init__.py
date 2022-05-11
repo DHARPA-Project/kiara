@@ -21,7 +21,7 @@ from kiara.models.documentation import (
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
-from kiara.models.info import KiaraTypeInfoModel, TypeInfoModelGroup
+from kiara.models.info import TypeInfo, TypeInfoModelGroup
 from kiara.models.python_class import PythonClass
 from kiara.utils import orjson_dumps
 
@@ -53,14 +53,14 @@ class ValueMetadata(KiaraModel):
         return {"metadata": self.dict(), "schema": self.schema_json()}
 
 
-class MetadataTypeInfoModel(KiaraTypeInfoModel):
+class MetadataTypeInfo(TypeInfo):
 
-    _kiara_model_id = "instance.info.metadata_type"
+    _kiara_model_id = "info.metadata_type"
 
     @classmethod
     def create_from_type_class(
         self, type_cls: Type[ValueMetadata]
-    ) -> "MetadataTypeInfoModel":
+    ) -> "MetadataTypeInfo":
 
         authors_md = AuthorsMetadataModel.from_class(type_cls)
         doc = DocumentationMetadataModel.from_class_doc(type_cls)
@@ -69,7 +69,7 @@ class MetadataTypeInfoModel(KiaraTypeInfoModel):
         type_name = type_cls._metadata_key  # type: ignore
         schema = type_cls.schema()
 
-        return MetadataTypeInfoModel.construct(
+        return MetadataTypeInfo.construct(
             type_name=type_name,
             documentation=doc,
             authors=authors_md,
@@ -123,13 +123,13 @@ class MetadataTypeInfoModel(KiaraTypeInfoModel):
 
 class MetadataTypeClassesInfo(TypeInfoModelGroup):
 
-    _kiara_model_id = "instance.info.metadata_types"
+    _kiara_model_id = "info.metadata_types"
 
     @classmethod
-    def base_info_class(cls) -> Type[KiaraTypeInfoModel]:
-        return MetadataTypeInfoModel
+    def base_info_class(cls) -> Type[TypeInfo]:
+        return MetadataTypeInfo
 
     type_name: Literal["value_metadata"] = "value_metadata"
-    type_infos: Mapping[str, MetadataTypeInfoModel] = Field(
+    type_infos: Mapping[str, MetadataTypeInfo] = Field(
         description="The value metadata info instances for each type."
     )

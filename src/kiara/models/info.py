@@ -6,17 +6,21 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
+import orjson
 from pydantic import Field, validator
 from rich import box
 from rich.console import RenderableType
 from rich.markdown import Markdown
 from rich.panel import Panel
+from rich.syntax import Syntax
 from rich.table import Table
 from typing import (
     TYPE_CHECKING,
     Any,
+    Dict,
     Generic,
     Iterable,
+    Literal,
     Mapping,
     Optional,
     Type,
@@ -30,6 +34,8 @@ from kiara.models.documentation import (
     DocumentationMetadataModel,
 )
 from kiara.models.python_class import PythonClass
+from kiara.utils import orjson_dumps
+from kiara.utils.class_loading import find_all_kiara_model_classes
 
 if TYPE_CHECKING:
     pass
@@ -37,7 +43,9 @@ if TYPE_CHECKING:
 INFO_BASE_CLASS = TypeVar("INFO_BASE_CLASS")
 
 
-class KiaraInfoModel(KiaraModel, Generic[INFO_BASE_CLASS]):
+class ItemInfo(KiaraModel, Generic[INFO_BASE_CLASS]):
+    """Base class that holds/manages information about an item within kiara."""
+
     @classmethod
     @abc.abstractmethod
     def category_name(cls) -> str:
@@ -87,12 +95,10 @@ class KiaraInfoModel(KiaraModel, Generic[INFO_BASE_CLASS]):
         return table
 
 
-class KiaraTypeInfoModel(KiaraInfoModel, Generic[INFO_BASE_CLASS]):
+class TypeInfo(ItemInfo, Generic[INFO_BASE_CLASS]):
     @classmethod
     @abc.abstractmethod
-    def create_from_type_class(
-        self, type_cls: Type[INFO_BASE_CLASS]
-    ) -> "KiaraInfoModel":
+    def create_from_type_class(self, type_cls: Type[INFO_BASE_CLASS]) -> "ItemInfo":
         pass
 
     @classmethod
@@ -105,13 +111,13 @@ class KiaraTypeInfoModel(KiaraInfoModel, Generic[INFO_BASE_CLASS]):
     )
 
 
-INFO_CLASS = TypeVar("INFO_CLASS", bound=KiaraInfoModel)
+INFO_CLASS = TypeVar("INFO_CLASS", bound=ItemInfo)
 
 
-class InfoModelGroup(KiaraModel, Mapping[str, KiaraInfoModel]):
+class InfoModelGroup(KiaraModel, Mapping[str, ItemInfo]):
     @classmethod
     @abc.abstractmethod
-    def base_info_class(cls) -> Type[KiaraInfoModel]:
+    def base_info_class(cls) -> Type[ItemInfo]:
         pass
 
     # group_id: uuid.UUID = Field(
@@ -128,7 +134,7 @@ class InfoModelGroup(KiaraModel, Mapping[str, KiaraInfoModel]):
     def _retrieve_data_to_hash(self) -> Any:
         return {"type_name": self.type_name, "included_types": list(self.type_infos.keys())}  # type: ignore
 
-    def get_type_infos(self) -> Mapping[str, KiaraInfoModel]:
+    def get_type_infos(self) -> Mapping[str, ItemInfo]:
         return self.type_infos  # type: ignore
 
     def create_renderable(self, **config: Any) -> RenderableType:
@@ -149,7 +155,7 @@ class InfoModelGroup(KiaraModel, Mapping[str, KiaraInfoModel]):
 
         return table
 
-    def __getitem__(self, item: str) -> KiaraInfoModel:
+    def __getitem__(self, item: str) -> ItemInfo:
 
         return self.get_type_infos()[item]
 
@@ -160,10 +166,10 @@ class InfoModelGroup(KiaraModel, Mapping[str, KiaraInfoModel]):
         return len(self.get_type_infos())
 
 
-class TypeInfoModelGroup(InfoModelGroup, Mapping[str, KiaraTypeInfoModel]):
+class TypeInfoModelGroup(InfoModelGroup, Mapping[str, TypeInfo]):
     @classmethod
     @abc.abstractmethod
-    def base_info_class(cls) -> Type[KiaraTypeInfoModel]:
+    def base_info_class(cls) -> Type[TypeInfo]:
         pass
 
     @classmethod
@@ -177,10 +183,10 @@ class TypeInfoModelGroup(InfoModelGroup, Mapping[str, KiaraTypeInfoModel]):
         data_types_info = cls.construct(group_alias=group_alias, type_infos=type_infos)  # type: ignore
         return data_types_info
 
-    def get_type_infos(self) -> Mapping[str, KiaraTypeInfoModel]:
+    def get_type_infos(self) -> Mapping[str, TypeInfo]:
         return self.type_infos  # type: ignore
 
-    def __getitem__(self, item: str) -> KiaraTypeInfoModel:
+    def __getitem__(self, item: str) -> TypeInfo:
 
         return self.get_type_infos()[item]
 
@@ -189,3 +195,106 @@ class TypeInfoModelGroup(InfoModelGroup, Mapping[str, KiaraTypeInfoModel]):
 
     def __len__(self):
         return len(self.get_type_infos())
+
+
+class KiaraModelTypeInfo(TypeInfo):
+
+    _kiara_model_id = "info.kiara_model"
+
+    @classmethod
+    def create_from_type_class(
+        self, type_cls: Type[KiaraModel]
+    ) -> "KiaraModelTypeInfo":
+
+        authors_md = AuthorsMetadataModel.from_class(type_cls)
+        doc = DocumentationMetadataModel.from_class_doc(type_cls)
+        python_class = PythonClass.from_class(type_cls)
+        properties_md = ContextMetadataModel.from_class(type_cls)
+        type_name = type_cls._kiara_model_id  # type: ignore
+        schema = type_cls.schema()
+
+        return KiaraModelTypeInfo.construct(
+            type_name=type_name,
+            documentation=doc,
+            authors=authors_md,
+            context=properties_md,
+            python_class=python_class,
+            metadata_schema=schema,
+        )
+
+    @classmethod
+    def base_class(self) -> Type[KiaraModel]:
+        return KiaraModel
+
+    @classmethod
+    def category_name(cls) -> str:
+        return "info.kiara_model"
+
+    metadata_schema: Dict[str, Any] = Field(
+        description="The (json) schema for this model data."
+    )
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        include_doc = config.get("include_doc", True)
+        include_schema = config.get("include_schema", True)
+
+        table = Table(box=box.SIMPLE, show_header=False, padding=(0, 0, 0, 0))
+        table.add_column("property", style="i")
+        table.add_column("value")
+
+        if include_doc:
+            table.add_row(
+                "Documentation",
+                Panel(self.documentation.create_renderable(), box=box.SIMPLE),
+            )
+        table.add_row("Author(s)", self.authors.create_renderable())
+        table.add_row("Context", self.context.create_renderable())
+
+        if hasattr(self, "python_class"):
+            table.add_row("Python class", self.python_class.create_renderable())
+
+        if include_schema:
+            schema = Syntax(
+                orjson_dumps(self.metadata_schema, option=orjson.OPT_INDENT_2),
+                "json",
+                background_color="default",
+            )
+            table.add_row("metadata_schema", schema)
+
+        return table
+
+
+class KiaraModelClassesInfo(TypeInfoModelGroup):
+
+    _kiara_model_id = "info.kiara_models"
+
+    @classmethod
+    def base_info_class(cls) -> Type[TypeInfo]:
+        return KiaraModelTypeInfo
+
+    type_name: Literal["kiara_model"] = "kiara_model"
+    type_infos: Mapping[str, KiaraModelTypeInfo] = Field(
+        description="The value metadata info instances for each type."
+    )
+
+
+def find_kiara_models(
+    alias: Optional[str] = None, only_for_package: Optional[str] = None
+) -> KiaraModelClassesInfo:
+
+    models = find_all_kiara_model_classes()
+
+    group: KiaraModelClassesInfo = KiaraModelClassesInfo.create_from_type_items(group_alias=alias, **models)  # type: ignore
+
+    if only_for_package:
+        temp = {}
+        for key, info in group.items():
+            if info.context.labels.get("package") == only_for_package:
+                temp[key] = info
+
+        group = KiaraModelClassesInfo.construct(
+            group_id=group.instance_id, group_alias=group.group_alias, type_infos=temp  # type: ignore
+        )
+
+    return group

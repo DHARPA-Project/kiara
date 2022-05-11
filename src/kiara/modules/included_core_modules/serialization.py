@@ -6,7 +6,6 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
-import importlib
 import orjson
 from pydantic import Field, validator
 from typing import Any, Mapping, Optional, Type, Union
@@ -16,6 +15,7 @@ from kiara.models.module import KiaraModuleConfig
 from kiara.models.values.value import SerializedData, Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule, ValueSetSchema
+from kiara.registries.models import ModelRegistry
 
 
 class SerializeConfig(KiaraModuleConfig):
@@ -217,11 +217,10 @@ class LoadInternalModel(DeserializeValueModule):
         bytes_string: bytes = _chunks[0]  # type: ignore
         model_data = orjson.loads(bytes_string)
 
-        m_cls_path: str = data.data_type_config["model_cls"]
-        python_module, cls_name = m_cls_path.rsplit(".", maxsplit=1)
-        m = importlib.import_module(python_module)
-        cls = getattr(m, cls_name)
-        obj = cls(**model_data)
+        model_id: str = data.data_type_config["kiara_model_id"]
+        model_registry = ModelRegistry.instance()
+        m_cls = model_registry.get_model_cls(kiara_model_id=model_id)
+        obj = m_cls(**model_data)
         return obj
 
 

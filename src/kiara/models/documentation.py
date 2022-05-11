@@ -41,7 +41,7 @@ class LinkModel(BaseModel):
 
 class AuthorsMetadataModel(KiaraModel):
 
-    _kiara_model_id = "instance.metadata.authors"
+    _kiara_model_id = "metadata.authors"
 
     class Config:
         extra = Extra.ignore
@@ -77,7 +77,7 @@ class AuthorsMetadataModel(KiaraModel):
 
 class ContextMetadataModel(KiaraModel):
 
-    _kiara_model_id = "instance.metadata.context"
+    _kiara_model_id = "metadata.context"
 
     class Config:
         extra = Extra.ignore
@@ -148,7 +148,7 @@ class ContextMetadataModel(KiaraModel):
 
 class DocumentationMetadataModel(KiaraModel):
 
-    _kiara_model_id = "instance.metadata.documentation"
+    _kiara_model_id = "metadata.documentation"
 
     _metadata_key = "documentation"
 

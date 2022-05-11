@@ -20,7 +20,7 @@ from kiara.models.documentation import (
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
-from kiara.models.info import KiaraTypeInfoModel, TypeInfoModelGroup
+from kiara.models.info import TypeInfo, TypeInfoModelGroup
 from kiara.models.python_class import PythonClass
 from kiara.utils import orjson_dumps
 
@@ -28,9 +28,9 @@ if TYPE_CHECKING:
     from kiara import Kiara
 
 
-class DataTypeClassInfo(KiaraTypeInfoModel[DataType]):
+class DataTypeClassInfo(TypeInfo[DataType]):
 
-    _kiara_model_id = "instance.info.data_type"
+    _kiara_model_id = "info.data_type"
 
     @classmethod
     def create_from_type_class(
@@ -142,7 +142,7 @@ class DataTypeClassInfo(KiaraTypeInfoModel[DataType]):
 
 class DataTypeClassesInfo(TypeInfoModelGroup):
 
-    _kiara_model_id = "instance.info.data_types"
+    _kiara_model_id = "info.data_types"
 
     @classmethod
     def create_from_type_items(

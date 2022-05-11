@@ -10,7 +10,7 @@ from mkdocstrings.handlers.base import BaseCollector, CollectionError, Collector
 from mkdocstrings.loggers import get_logger
 
 from kiara.context import Kiara, KiaraContextInfo
-from kiara.models.info import KiaraInfoModel
+from kiara.models.info import ItemInfo
 
 logger = get_logger(__name__)
 
@@ -59,7 +59,7 @@ class KiaraCollector(BaseCollector):
 
         ctx: KiaraContextInfo = builtins.plugin_package_context_info  # type: ignore
         try:
-            item: KiaraInfoModel = ctx.get_info(item_type=item_type, item_id=item_id)
+            item: ItemInfo = ctx.get_info(item_type=item_type, item_id=item_id)
         except Exception:
             import traceback
 

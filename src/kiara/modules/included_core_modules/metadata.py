@@ -10,18 +10,17 @@ from typing import Any, Mapping, Type, Union
 
 from kiara.exceptions import KiaraProcessingException
 from kiara.models.module import KiaraModuleConfig
-from kiara.models.python_class import PythonClass
 from kiara.models.values.value import ValueMap
 from kiara.models.values.value_metadata import ValueMetadata
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule
+from kiara.registries.models import ModelRegistry
 
 
 class MetadataModuleConfig(KiaraModuleConfig):
 
-    # metadata_key: str = Field(description="The key for the metadata association.")
     data_type: str = Field(description="The data type this module will be used for.")
-    metadata_model: PythonClass = Field(description="The metadata model class.")
+    kiara_model_id: str = Field(description="The id of the kiara (metadata) model.")
 
 
 class ExtractMetadataModule(KiaraModule):
@@ -51,12 +50,14 @@ class ExtractMetadataModule(KiaraModule):
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
 
-        result_model_cls: PythonClass = self.get_config_value("metadata_model")
+        kiara_model_id: str = self.get_config_value("kiara_model_id")
+
+        # TODO: check it's subclassing the right class
 
         outputs = {
             "value_metadata": {
                 "type": "internal_model",
-                "type_config": {"model_cls": result_model_cls.full_name},
+                "type_config": {"kiara_model_id": kiara_model_id},
                 "doc": "The metadata for the provided value.",
             }
         }
@@ -65,27 +66,18 @@ class ExtractMetadataModule(KiaraModule):
 
     def process(self, inputs: ValueMap, outputs: ValueMap) -> None:
 
-        # metadata_key = self.get_config_value("metadata_key")
-        # data_type = self.get_config_value("data_type")
-        metadata_model: PythonClass = self.get_config_value("metadata_model")
-
         value = inputs.get_value_obj("value")
 
-        metadata_model_cls: Type[ValueMetadata] = metadata_model.get_class()  # type: ignore
+        kiara_model_id: str = self.get_config_value("kiara_model_id")
+
+        model_registry = ModelRegistry.instance()
+        metadata_model_cls: Type[ValueMetadata] = model_registry.get_model_cls(kiara_model_id=kiara_model_id, required_subclass=ValueMetadata)  # type: ignore
+
         metadata = metadata_model_cls.create_value_metadata(value=value)
 
         if not isinstance(metadata, metadata_model_cls):
             raise KiaraProcessingException(
                 f"Invalid metadata model result, should be class '{metadata_model_cls.__name__}', but is: {metadata.__class__.__name__}. This is most likely a bug."
             )
-
-        # if isinstance(metadata, Mapping):
-        #     md = metadata_model_cls(**metadata)
-        # elif isinstance(metadata, metadata_model_cls):
-        #     md = metadata
-        # else:
-        #     raise KiaraProcessingException(
-        #         f"Invalid type '{type(metadata)}' for result metadata, must be a mapping or subclass of '{metadata_model_cls.__name__}'."
-        #     )
 
         outputs.set_value("value_metadata", metadata)

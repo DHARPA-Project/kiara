@@ -10,8 +10,12 @@ import uuid
 from typing import TYPE_CHECKING, Any, Optional
 
 from kiara.models.module.operation import Operation
+from kiara.models.render_value import RenderInstruction, RenderValueResult
 from kiara.operations.included_core_operations.pretty_print import (
     PrettyPrintOperationType,
+)
+from kiara.operations.included_core_operations.render_value import (
+    RenderValueOperationType,
 )
 
 if TYPE_CHECKING:
@@ -61,3 +65,34 @@ def pretty_print_data(
     result = op.run(kiara=kiara, inputs={"value": value})
     rendered = result.get_value_data("rendered_value")
     return rendered
+
+
+def render_value(
+    kiara: "Kiara",
+    value_id: uuid.UUID,
+    target_type="terminal_renderable",
+    render_instruction: Optional[RenderInstruction] = None,
+) -> RenderValueResult:
+
+    value = kiara.data_registry.get_value(value_id=value_id)
+    op_type: RenderValueOperationType = kiara.operation_registry.get_operation_type("render_value")  # type: ignore
+
+    ops = op_type.get_render_operations_for_source_type(value.data_type_name)
+    if target_type not in ops.keys():
+        if not ops:
+            msg = f"No render operations registered for source type '{value.data_type_name}'."
+        else:
+            msg = f"Registered target types for source type '{value.data}': {', '.join(ops.keys())}."
+        raise Exception(
+            f"No render operation for source type '{value.data_type_name}' to target type '{target_type}' registered. {msg}"
+        )
+
+    op = ops[target_type]
+    result = op.run(
+        kiara=kiara, inputs={"value": value, "render_instruction": render_instruction}
+    )
+
+    return RenderValueResult(
+        rendered=result.get_value_data("rendered_value"),
+        metadata=result.get_value_data("render_metadata"),
+    )

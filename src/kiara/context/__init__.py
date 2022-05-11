@@ -35,7 +35,6 @@ from kiara.models.module.operation import OperationGroupInfo, OperationTypeClass
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.data_type import DataTypeClassesInfo
 from kiara.models.values.value import ValueMap
-from kiara.models.values.value_metadata import MetadataTypeClassesInfo
 from kiara.registries import KiaraArchive
 from kiara.registries.aliases import AliasRegistry
 from kiara.registries.data import DataRegistry
@@ -51,7 +50,6 @@ from kiara.registries.operations import OperationRegistry
 from kiara.registries.types import TypeRegistry
 from kiara.utils import is_debug, log_message
 from kiara.utils.class_loading import find_all_archive_types
-from kiara.utils.metadata import find_metadata_models
 from kiara.utils.operations import filter_operations
 
 if TYPE_CHECKING:
@@ -443,7 +441,7 @@ class KiaraContextInfo(KiaraModel):
         else:
             kiara_models = model_registry.all_models
 
-        metadata_types = find_metadata_models(only_for_package=package_filter)
+        # metadata_types = find_metadata_models(only_for_package=package_filter)
 
         return KiaraContextInfo.construct(
             kiara_id=kiara.id,
@@ -451,7 +449,7 @@ class KiaraContextInfo(KiaraModel):
             data_types=data_types,
             module_types=modules,
             kiara_model_types=kiara_models,
-            metadata_types=metadata_types,
+            # metadata_types=metadata_types,
             operation_types=operation_types,
             operations=operations,
         )
@@ -467,9 +465,9 @@ class KiaraContextInfo(KiaraModel):
     kiara_model_types: KiaraModelClassesInfo = Field(
         description="The included model classes."
     )
-    metadata_types: MetadataTypeClassesInfo = Field(
-        description="The included value metadata types."
-    )
+    # metadata_types: MetadataTypeClassesInfo = Field(
+    #     description="The included value metadata types."
+    # )
     operation_types: OperationTypeClassesInfo = Field(
         description="The included operation types."
     )
@@ -490,8 +488,8 @@ class KiaraContextInfo(KiaraModel):
             group_info: InfoModelGroup = self.data_types
         elif "module" in item_type:
             group_info = self.module_types
-        elif "metadata" in item_type:
-            group_info = self.metadata_types
+        # elif "metadata" in item_type:
+        #     group_info = self.metadata_types
         elif "operation_type" in item_type or "operation_types" in item_type:
             group_info = self.operation_types
         elif "operation" in item_type:
@@ -502,7 +500,7 @@ class KiaraContextInfo(KiaraModel):
             item_types = [
                 "data_type",
                 "module_type",
-                "kiara_model_type" "metadata_type",
+                "kiara_model_type",
                 "operation_type",
                 "operation",
             ]
@@ -520,8 +518,8 @@ class KiaraContextInfo(KiaraModel):
             result["module_types"] = self.module_types
         if self.kiara_model_types or not skip_empty_types:
             result["kiara_model_types"] = self.kiara_model_types
-        if self.metadata_types or not skip_empty_types:
-            result["metadata_types"] = self.metadata_types
+        # if self.metadata_types or not skip_empty_types:
+        #     result["metadata_types"] = self.metadata_types
         if self.operation_types or not skip_empty_types:
             result["operation_types"] = self.operation_types
         if self.operations or not skip_empty_types:

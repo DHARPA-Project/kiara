@@ -341,6 +341,16 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/tui/__init__/</loc>
+         <lastmod>2022-05-11</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/tui/pager/</loc>
+         <lastmod>2022-05-11</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/__init__/</loc>
          <lastmod>2022-05-11</lastmod>
          <changefreq>daily</changefreq>

@@ -1435,6 +1435,59 @@
 
             
           
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_3" type="checkbox" id="__nav_3_1_6_3" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../tui/__init__/">tui</a>
+          
+            <label for="__nav_3_1_6_3">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="tui" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_6_3">
+          <span class="md-nav__icon md-icon"></span>
+          tui
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tui/pager/" class="md-nav__link">
+        pager
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3355,6 +3408,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#kiara.interfaces.tui" class="md-nav__link">
+    tui
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3601,6 +3661,24 @@
 
 
 
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.interfaces.cli.data.commands.logger" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">logger</span></code>
+
+
+<a href="#kiara.interfaces.cli.data.commands.logger" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
 
 
 
@@ -5986,6 +6064,678 @@ KiaraOperation        </code>
     </div>
 
   </div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h3 id="kiara.interfaces.tui" class="doc doc-heading">
+        <code>tui</code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-special"><code>special</code></small>
+  </span>
+
+<a href="#kiara.interfaces.tui" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<h4 id="kiara.interfaces.tui-modules">Modules<a href="#kiara.interfaces.tui-modules" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h5 id="kiara.interfaces.tui.pager" class="doc doc-heading">
+        <code>pager</code>
+
+
+
+<a href="#kiara.interfaces.tui.pager" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+<h6 id="kiara.interfaces.tui.pager-classes">Classes<a href="#kiara.interfaces.tui.pager-classes" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h7 id="kiara.interfaces.tui.pager.PagerApp" class="doc doc-heading">
+        <code>
+PagerApp            (<span title="textual.app.App">App</span>)
+        </code>
+
+
+
+<a href="#kiara.interfaces.tui.pager.PagerApp" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PagerApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control</span> <span class="o">=</span> <span class="n">PagerControl</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pager</span> <span class="o">=</span> <span class="n">ValuePager</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pager</span><span class="o">.</span><span class="n">_render_op</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;operation&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pager</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pager</span><span class="o">.</span><span class="n">_kiara</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;kiara&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pager</span><span class="o">.</span><span class="n">_control_widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">_pager</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pager</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># async def on_mount(self) -&gt; None:</span>
+    <span class="c1">#</span>
+    <span class="c1">#     await self.view.dock(Footer(), edge=&quot;bottom&quot;)</span>
+    <span class="c1">#     await self.view.dock(self._pager, name=&quot;data&quot;)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">dock</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pager</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="p">,</span> <span class="n">edge</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">dock</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="p">,</span> <span class="n">edge</span><span class="o">=</span><span class="s2">&quot;bottom&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;q&quot;</span><span class="p">,</span> <span class="s2">&quot;quit&quot;</span><span class="p">,</span> <span class="s2">&quot;Quit&quot;</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">key_pressed</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.interfaces.tui.pager.PagerApp.on_key" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">on_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-async"><code>async</code></small>
+  </span>
+
+<a href="#kiara.interfaces.tui.pager.PagerApp.on_key" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">on_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">key_pressed</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.interfaces.tui.pager.PagerApp.on_load" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">on_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-async"><code>async</code></small>
+  </span>
+
+<a href="#kiara.interfaces.tui.pager.PagerApp.on_load" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">on_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+
+    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;q&quot;</span><span class="p">,</span> <span class="s2">&quot;quit&quot;</span><span class="p">,</span> <span class="s2">&quot;Quit&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.interfaces.tui.pager.PagerApp.on_mount" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-async"><code>async</code></small>
+  </span>
+
+<a href="#kiara.interfaces.tui.pager.PagerApp.on_mount" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">dock</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pager</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="p">,</span> <span class="n">edge</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">dock</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="p">,</span> <span class="n">edge</span><span class="o">=</span><span class="s2">&quot;bottom&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h7 id="kiara.interfaces.tui.pager.PagerControl" class="doc doc-heading">
+        <code>
+PagerControl            (<span title="textual.widget.Widget">Widget</span>)
+        </code>
+
+
+
+<a href="#kiara.interfaces.tui.pager.PagerControl" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PagerControl</span><span class="p">(</span><span class="n">Widget</span><span class="p">):</span>
+
+    <span class="n">_pager</span><span class="p">:</span> <span class="n">ValuePager</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+    <span class="n">_instruction_keys</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+
+    <span class="n">render_metadata</span><span class="p">:</span> <span class="n">RenderMetadata</span> <span class="o">=</span> <span class="n">Reactive</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+    <span class="k">def</span> <span class="nf">key_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instruction_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">command</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instruction_keys</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">new_ri</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_metadata</span><span class="o">.</span><span class="n">related_instructions</span><span class="p">[</span><span class="n">command</span><span class="p">]</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pager</span><span class="o">.</span><span class="n">update_render_instruction</span><span class="p">(</span><span class="n">new_ri</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+        <span class="n">instruction_keys</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_metadata</span><span class="o">.</span><span class="n">related_instructions</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">instruction_keys</span><span class="p">[</span><span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">key</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;\[</span><span class="si">{</span><span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">key</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa: W605</span>
+
+        <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;\[q]uit&quot;</span><span class="p">)</span>  <span class="c1"># noqa: W605</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instruction_keys</span> <span class="o">=</span> <span class="n">instruction_keys</span>
+
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.interfaces.tui.pager.PagerControl.can_focus" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">can_focus</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.PagerControl.can_focus" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.interfaces.tui.pager.PagerControl.render_metadata" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">render_metadata</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.PagerControl.render_metadata" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+
+<h8 id="kiara.interfaces.tui.pager.PagerControl-methods">Methods<a href="#kiara.interfaces.tui.pager.PagerControl-methods" class="headerlink" title="Permanent link">&para;</a></h8>
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.interfaces.tui.pager.PagerControl.key_pressed" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">key_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.PagerControl.key_pressed" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">key_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instruction_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instruction_keys</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="n">new_ri</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_metadata</span><span class="o">.</span><span class="n">related_instructions</span><span class="p">[</span><span class="n">command</span><span class="p">]</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pager</span><span class="o">.</span><span class="n">update_render_instruction</span><span class="p">(</span><span class="n">new_ri</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.interfaces.tui.pager.PagerControl.render" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.PagerControl.render" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>Get renderable for widget.</p>
+
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>RenderableType</code></td>
+      <td><p>Any renderable</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+    <span class="n">instruction_keys</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_metadata</span><span class="o">.</span><span class="n">related_instructions</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">instruction_keys</span><span class="p">[</span><span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;\[</span><span class="si">{</span><span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">key</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa: W605</span>
+
+    <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;\[q]uit&quot;</span><span class="p">)</span>  <span class="c1"># noqa: W605</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_instruction_keys</span> <span class="o">=</span> <span class="n">instruction_keys</span>
+
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h7 id="kiara.interfaces.tui.pager.ValuePager" class="doc doc-heading">
+        <code>
+ValuePager            (<span title="textual.widget.Widget">Widget</span>)
+        </code>
+
+
+
+<a href="#kiara.interfaces.tui.pager.ValuePager" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValuePager</span><span class="p">(</span><span class="n">Widget</span><span class="p">):</span>
+
+    <span class="n">_render_op</span><span class="p">:</span> <span class="n">Operation</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+    <span class="n">_kiara</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+    <span class="n">_value</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+    <span class="n">_control_widget</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+
+    <span class="n">render_instruction</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Reactive</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+    <span class="n">current_rendered_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+    <span class="n">current_render_metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RenderMetadata</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+
+    <span class="k">def</span> <span class="nf">update_render_instruction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_metadata</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+
+        <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="mi">4</span>
+        <span class="k">if</span> <span class="n">rows</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="n">new_ri</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">render_metadata</span><span class="p">)</span>
+        <span class="n">new_ri</span><span class="p">[</span><span class="s2">&quot;number_of_rows&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rows</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">render_instruction</span> <span class="o">=</span> <span class="n">new_ri</span>
+
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_instruction</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_render_instruction</span><span class="p">({})</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_render_op</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span>
+            <span class="n">inputs</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span>
+                <span class="s2">&quot;render_instruction&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_instruction</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_rendered_value</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;rendered_value&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_render_metadata</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;render_metadata&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control_widget</span><span class="o">.</span><span class="n">render_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_render_metadata</span>  <span class="c1"># type: ignore</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_rendered_value</span>  <span class="c1"># type: ignore</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.interfaces.tui.pager.ValuePager.can_focus" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">can_focus</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.ValuePager.can_focus" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.interfaces.tui.pager.ValuePager.current_render_metadata" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">current_render_metadata</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.ValuePager.current_render_metadata" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.interfaces.tui.pager.ValuePager.current_rendered_value" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">current_rendered_value</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.ValuePager.current_rendered_value" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.interfaces.tui.pager.ValuePager.render_instruction" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">render_instruction</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.ValuePager.render_instruction" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+
+<h8 id="kiara.interfaces.tui.pager.ValuePager-methods">Methods<a href="#kiara.interfaces.tui.pager.ValuePager-methods" class="headerlink" title="Permanent link">&para;</a></h8>
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.interfaces.tui.pager.ValuePager.render" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.ValuePager.render" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>Get renderable for widget.</p>
+
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>RenderableType</code></td>
+      <td><p>Any renderable</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_instruction</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_render_instruction</span><span class="p">({})</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_render_op</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span>
+        <span class="n">inputs</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span>
+            <span class="s2">&quot;render_instruction&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_instruction</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">current_rendered_value</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;rendered_value&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">current_render_metadata</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;render_metadata&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_control_widget</span><span class="o">.</span><span class="n">render_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_render_metadata</span>  <span class="c1"># type: ignore</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_rendered_value</span>  <span class="c1"># type: ignore</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.interfaces.tui.pager.ValuePager.update_render_instruction" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">update_render_instruction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_metadata</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.ValuePager.update_render_instruction" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">update_render_instruction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_metadata</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+
+    <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="mi">4</span>
+    <span class="k">if</span> <span class="n">rows</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">new_ri</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">render_metadata</span><span class="p">)</span>
+    <span class="n">new_ri</span><span class="p">[</span><span class="s2">&quot;number_of_rows&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rows</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">render_instruction</span> <span class="o">=</span> <span class="n">new_ri</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
 
 
 

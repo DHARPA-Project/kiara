@@ -284,7 +284,7 @@ def explain_value(
     is_flag=True,
 )
 @click.pass_context
-def load_value(ctx, value_id: str, pretty_print: bool):
+def load_value(ctx, value_id: str, single_page: bool):
     """Load a stored value and print it in a format suitable for the terminal."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
@@ -292,7 +292,7 @@ def load_value(ctx, value_id: str, pretty_print: bool):
     value = kiara_obj.data_registry.get_value(value_id=value_id)
 
     render_op: Optional[Operation] = None
-    if not pretty_print:
+    if not single_page:
         render_value_op_type: RenderValueOperationType = kiara_obj.operation_registry.get_operation_type("render_value")  # type: ignore
         render_op = render_value_op_type.get_render_operation(
             source_type=value.data_type_name, target_type="terminal_renderable"

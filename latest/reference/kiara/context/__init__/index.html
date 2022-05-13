@@ -3846,41 +3846,6 @@ how something was created, and in which environment.</p>
                 <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">StoreValuesResult</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">__root__</span><span class="o">=</span><span class="n">stored</span><span class="p">)</span>
-
-    <span class="c1"># def run(self, module_or_operation: str, module_config: Mapping[str, Any] = None):</span>
-    <span class="c1">#</span>
-    <span class="c1">#     if isinstance(module_or_operation, str):</span>
-    <span class="c1">#         if module_or_operation in self.operation_registry.operation_ids:</span>
-    <span class="c1">#</span>
-    <span class="c1">#             operation = self.operation_registry.get_operation(module_or_operation)</span>
-    <span class="c1">#             if module_config:</span>
-    <span class="c1">#                 print(</span>
-    <span class="c1">#                     f&quot;Specified run target &#39;{module_or_operation}&#39; is an operation, additional module configuration is not allowed.&quot;</span>
-    <span class="c1">#                 )</span>
-    <span class="c1">#</span>
-    <span class="c1">#     elif module_or_operation in self.module_type_names:</span>
-    <span class="c1">#</span>
-    <span class="c1">#         if module_config is None:</span>
-    <span class="c1">#             module_config = {}</span>
-    <span class="c1">#         manifest = Manifest(</span>
-    <span class="c1">#             module_type=module_or_operation, module_config=module_config</span>
-    <span class="c1">#         )</span>
-    <span class="c1">#</span>
-    <span class="c1">#         module = self.create_module(manifest=manifest)</span>
-    <span class="c1">#         operation = Operation.create_from_module(module)</span>
-    <span class="c1">#</span>
-    <span class="c1">#     elif os.path.isfile(module_or_operation):</span>
-    <span class="c1">#         raise NotImplementedError()</span>
-    <span class="c1">#         # module_name = kiara_obj.register_pipeline_description(</span>
-    <span class="c1">#         #     module_or_operation, raise_exception=True</span>
-    <span class="c1">#         # )</span>
-    <span class="c1">#     else:</span>
-    <span class="c1">#         merged = list(self.module_type_names)</span>
-    <span class="c1">#         merged.extend(self.operation_registry.operation_ids)</span>
-    <span class="c1">#         raise NoSuchExecutionTargetException(</span>
-    <span class="c1">#             msg=f&quot;Invalid run target name &#39;[i]{module_or_operation}[/i]&#39;. Must be a path to a pipeline file, or one of the available modules/operations.&quot;,</span>
-    <span class="c1">#             available_targets=sorted(merged),</span>
-    <span class="c1">#         )</span>
 </code></pre></div>
         </details>
 
@@ -5613,7 +5578,7 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
         <span class="n">path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span> <span class="n">f</span><span class="p">)</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;context&quot;</span><span class="p">}),</span> <span class="n">f</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_config_path</span> <span class="o">=</span> <span class="n">path</span>
 </code></pre></div>
@@ -6168,7 +6133,7 @@ Config        </code>
     <span class="n">path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span> <span class="n">f</span><span class="p">)</span>
+        <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;context&quot;</span><span class="p">}),</span> <span class="n">f</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_config_path</span> <span class="o">=</span> <span class="n">path</span>
 </code></pre></div>

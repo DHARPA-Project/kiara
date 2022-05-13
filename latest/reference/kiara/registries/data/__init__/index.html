@@ -3746,8 +3746,9 @@ DataRegistry        </code>
                             <span class="n">alias</span><span class="o">=</span><span class="n">rest</span>
                         <span class="p">)</span>
                         <span class="k">if</span> <span class="n">_value_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                                <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrive value for alias &#39;</span><span class="si">{</span><span class="n">rest</span><span class="si">}</span><span class="s2">&#39;: no such alias registered.&quot;</span>
+                            <span class="k">raise</span> <span class="n">NoSuchValueAliasException</span><span class="p">(</span>
+                                <span class="n">alias</span><span class="o">=</span><span class="n">rest</span><span class="p">,</span>
+                                <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t retrive value for alias &#39;</span><span class="si">{</span><span class="n">rest</span><span class="si">}</span><span class="s2">&#39;: no such alias registered.&quot;</span><span class="p">,</span>
                             <span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
@@ -3769,10 +3770,13 @@ DataRegistry        </code>
                 <span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">store_id</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No value registered with id: </span><span class="si">{</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">NoSuchValueIdException</span><span class="p">(</span>
+                <span class="n">value_id</span><span class="o">=</span><span class="n">_value_id</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;No value registered with id: </span><span class="si">{</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Found value with id &#39;</span><span class="si">{</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&#39; in multiple archives, this is not supported (yet): </span><span class="si">{</span><span class="n">matches</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="n">NoSuchValueIdException</span><span class="p">(</span>
+                <span class="n">value_id</span><span class="o">=</span><span class="n">_value_id</span><span class="p">,</span>
+                <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Found value with id &#39;</span><span class="si">{</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&#39; in multiple archives, this is not supported (yet): </span><span class="si">{</span><span class="n">matches</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_value_archive_lookup_map</span><span class="p">[</span><span class="n">_value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -3957,6 +3961,8 @@ DataRegistry        </code>
                 <span class="n">value</span><span class="o">.</span><span class="n">value_hash</span><span class="p">,</span>
                 <span class="n">value</span><span class="o">.</span><span class="n">value_size</span><span class="p">,</span>
             <span class="p">)</span>
+        <span class="k">except</span> <span class="n">NoSuchValueException</span> <span class="k">as</span> <span class="n">nsve</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">nsve</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="c1"># TODO: differentiate between &#39;value not found&#39; and other type of errors</span>
             <span class="k">pass</span>
@@ -4877,8 +4883,9 @@ DataRegistry        </code>
                         <span class="n">alias</span><span class="o">=</span><span class="n">rest</span>
                     <span class="p">)</span>
                     <span class="k">if</span> <span class="n">_value_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrive value for alias &#39;</span><span class="si">{</span><span class="n">rest</span><span class="si">}</span><span class="s2">&#39;: no such alias registered.&quot;</span>
+                        <span class="k">raise</span> <span class="n">NoSuchValueAliasException</span><span class="p">(</span>
+                            <span class="n">alias</span><span class="o">=</span><span class="n">rest</span><span class="p">,</span>
+                            <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t retrive value for alias &#39;</span><span class="si">{</span><span class="n">rest</span><span class="si">}</span><span class="s2">&#39;: no such alias registered.&quot;</span><span class="p">,</span>
                         <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
@@ -4900,10 +4907,13 @@ DataRegistry        </code>
             <span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">store_id</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No value registered with id: </span><span class="si">{</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">NoSuchValueIdException</span><span class="p">(</span>
+            <span class="n">value_id</span><span class="o">=</span><span class="n">_value_id</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;No value registered with id: </span><span class="si">{</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
     <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Found value with id &#39;</span><span class="si">{</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&#39; in multiple archives, this is not supported (yet): </span><span class="si">{</span><span class="n">matches</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">raise</span> <span class="n">NoSuchValueIdException</span><span class="p">(</span>
+            <span class="n">value_id</span><span class="o">=</span><span class="n">_value_id</span><span class="p">,</span>
+            <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Found value with id &#39;</span><span class="si">{</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&#39; in multiple archives, this is not supported (yet): </span><span class="si">{</span><span class="n">matches</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_value_archive_lookup_map</span><span class="p">[</span><span class="n">_value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>

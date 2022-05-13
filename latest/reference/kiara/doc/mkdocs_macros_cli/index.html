@@ -759,8 +759,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.doc.mkdocs_macros_cli.CACHE_DIR" class="md-nav__link">
-    CACHE_DIR
+  <a href="#kiara.doc.mkdocs_macros_cli.KIARA_DOC_BUILD_CACHE_DIR" class="md-nav__link">
+    KIARA_DOC_BUILD_CACHE_DIR
   </a>
   
 </li>
@@ -3445,8 +3445,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.doc.mkdocs_macros_cli.CACHE_DIR" class="md-nav__link">
-    CACHE_DIR
+  <a href="#kiara.doc.mkdocs_macros_cli.KIARA_DOC_BUILD_CACHE_DIR" class="md-nav__link">
+    KIARA_DOC_BUILD_CACHE_DIR
   </a>
   
 </li>
@@ -3522,11 +3522,11 @@
 
 
 
-<h3 id="kiara.doc.mkdocs_macros_cli.CACHE_DIR" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">CACHE_DIR</span></code>
+<h3 id="kiara.doc.mkdocs_macros_cli.KIARA_DOC_BUILD_CACHE_DIR" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">KIARA_DOC_BUILD_CACHE_DIR</span></code>
 
 
-<a href="#kiara.doc.mkdocs_macros_cli.CACHE_DIR" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#kiara.doc.mkdocs_macros_cli.KIARA_DOC_BUILD_CACHE_DIR" class="headerlink" title="Permanent link">&para;</a></h3>
 
     <div class="doc doc-contents ">
 
@@ -3604,6 +3604,7 @@
         <span class="n">cache_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">extra_env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fake_command</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fail_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Execute the provided command, save the output and return it to be used in documentation modules.&quot;&quot;&quot;</span>
 
@@ -3616,42 +3617,105 @@
         <span class="k">if</span> <span class="n">cache_key</span><span class="p">:</span>
             <span class="n">hash_str</span> <span class="o">=</span> <span class="n">hash_str</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">cache_key</span>
 
-        <span class="n">cache_file</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">CACHE_DIR</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">hash_str</span><span class="p">)))</span>
+        <span class="n">cache_file</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">KIARA_DOC_BUILD_CACHE_DIR</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">hash_str</span><span class="p">)))</span>
+        <span class="n">failed_cache_file</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">KIARA_DOC_BUILD_CACHE_DIR</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hash_str</span><span class="si">}</span><span class="s2">.failed&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">cache_info_file</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">KIARA_DOC_BUILD_CACHE_DIR</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hash_str</span><span class="si">}</span><span class="s2">.command&quot;</span>
+        <span class="p">)</span>
 
         <span class="n">_run_env</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">os_env_vars</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">extra_env</span><span class="p">:</span>
             <span class="n">_run_env</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">extra_env</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">cache_file</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
-            <span class="n">stdout</span> <span class="o">=</span> <span class="n">cache_file</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+            <span class="n">stdout_str</span> <span class="o">=</span> <span class="n">cache_file</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RUNNING: </span><span class="si">{</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">command</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">_run_env</span><span class="p">)</span>
-                <span class="n">stdout</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
-                <span class="n">cache_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
-            <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">stdout</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">Stdout: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">stdout</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">Stderr: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">stderr</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;stdout:&quot;</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;stderr:&quot;</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;FAIL_DOC_BUILD_ON_ERROR&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
-                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">timer</span><span class="p">()</span>
+
+            <span class="n">cache_info</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="n">command</span><span class="p">,</span>
+                <span class="s2">&quot;extra_env&quot;</span><span class="p">:</span> <span class="n">extra_env</span><span class="p">,</span>
+                <span class="s2">&quot;cmd_hash&quot;</span><span class="p">:</span> <span class="n">hash_str</span><span class="p">,</span>
+                <span class="s2">&quot;cache_key&quot;</span><span class="p">:</span> <span class="n">cache_key</span><span class="p">,</span>
+                <span class="s2">&quot;fail_ok&quot;</span><span class="p">:</span> <span class="n">fail_ok</span><span class="p">,</span>
+                <span class="s2">&quot;started&quot;</span><span class="p">:</span> <span class="n">start</span><span class="p">,</span>
+            <span class="p">}</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RUNNING: </span><span class="si">{</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">command</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">_run_env</span><span class="p">)</span>
+            <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+
+            <span class="n">stdout_str</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+            <span class="n">stderr_str</span> <span class="o">=</span> <span class="n">stderr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;stdout:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">stdout_str</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;stderr:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">stderr_str</span><span class="p">)</span>
+
+            <span class="n">cache_info</span><span class="p">[</span><span class="s2">&quot;exit_code&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">returncode</span>
+
+            <span class="n">end</span> <span class="o">=</span> <span class="n">timer</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+                <span class="c1"># result = subprocess.check_output(command, env=_run_env)</span>
+
+                <span class="c1"># stdout = result.decode()</span>
+                <span class="n">cache_file</span><span class="o">.</span><span class="n">write_bytes</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
+                <span class="n">cache_info</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
+                <span class="n">cache_info</span><span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+                <span class="n">cache_info</span><span class="p">[</span><span class="s2">&quot;success&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">cache_info</span><span class="p">[</span><span class="s2">&quot;output_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cache_file</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
+                <span class="n">cache_info_file</span><span class="o">.</span><span class="n">write_bytes</span><span class="p">(</span><span class="n">orjson</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">cache_info</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">failed_cache_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                    <span class="n">failed_cache_file</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">cache_info</span><span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+
+                <span class="k">if</span> <span class="n">fail_ok</span><span class="p">:</span>
+                    <span class="n">cache_info</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
+                    <span class="n">cache_info</span><span class="p">[</span><span class="s2">&quot;success&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">cache_file</span><span class="o">.</span><span class="n">write_bytes</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
+                    <span class="n">cache_info</span><span class="p">[</span><span class="s2">&quot;output_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cache_file</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
+                    <span class="n">cache_info_file</span><span class="o">.</span><span class="n">write_bytes</span><span class="p">(</span><span class="n">orjson</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">cache_info</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">failed_cache_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                        <span class="n">failed_cache_file</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">cache_info</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
+                    <span class="n">cache_info</span><span class="p">[</span><span class="s2">&quot;success&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="n">failed_cache_file</span><span class="o">.</span><span class="n">write_bytes</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
+                    <span class="n">cache_info</span><span class="p">[</span><span class="s2">&quot;output_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">failed_cache_file</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
+                    <span class="n">cache_info_file</span><span class="o">.</span><span class="n">write_bytes</span><span class="p">(</span><span class="n">orjson</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">cache_info</span><span class="p">))</span>
+                    <span class="c1"># stdout = f&quot;Error: {e}\n\nStdout: {e.stdout}\n\nStderr: {e.stderr}&quot;</span>
+                    <span class="c1"># cache_info[&quot;size&quot;] = len(stdout)</span>
+                    <span class="c1"># cache_info[&quot;success&quot;] = False</span>
+                    <span class="c1"># print(&quot;stdout:&quot;)</span>
+                    <span class="c1"># print(e.stdout)</span>
+                    <span class="c1"># print(&quot;stderr:&quot;)</span>
+                    <span class="c1"># print(e.stderr)</span>
+                    <span class="c1"># failed_cache_file.write_text(stdout)</span>
+                    <span class="c1"># cache_info[&quot;output_file&quot;] = failed_cache_file.as_posix()</span>
+                    <span class="c1"># cache_info_file.write_bytes(orjson.dumps(cache_info))</span>
+                    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;FAIL_DOC_BUILD_ON_ERROR&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">fake_command</span><span class="p">:</span>
             <span class="n">command_str</span> <span class="o">=</span> <span class="n">fake_command</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">command_str</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">split_command_and_output</span> <span class="ow">and</span> <span class="n">print_command</span><span class="p">:</span>
             <span class="n">_c</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">``` console</span><span class="se">\n</span><span class="si">{</span><span class="n">command_str</span><span class="si">}</span><span class="se">\n</span><span class="s2">```</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">_output</span> <span class="o">=</span> <span class="s2">&quot;``` console</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">stdout</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">```</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">_output</span> <span class="o">=</span> <span class="s2">&quot;``` console</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">stdout_str</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">```</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="k">if</span> <span class="n">max_height</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_height</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">_output</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&lt;div style=&#39;max-height:</span><span class="si">{</span><span class="n">max_height</span><span class="si">}</span><span class="s2">px;overflow:auto&#39;&gt;</span><span class="se">\n</span><span class="si">{</span><span class="n">_output</span><span class="si">}</span><span class="se">\n</span><span class="s2">&lt;/div&gt;&quot;</span>
             <span class="n">_stdout</span> <span class="o">=</span> <span class="n">_c</span> <span class="o">+</span> <span class="n">_output</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">print_command</span><span class="p">:</span>
-                <span class="n">_stdout</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&gt; </span><span class="si">{</span><span class="n">command_str</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">stdout</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">_stdout</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&gt; </span><span class="si">{</span><span class="n">command_str</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">stdout_str</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="k">if</span> <span class="n">code_block</span><span class="p">:</span>
                 <span class="n">_stdout</span> <span class="o">=</span> <span class="s2">&quot;``` console</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">_stdout</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">```</span><span class="se">\n</span><span class="s2">&quot;</span>
 

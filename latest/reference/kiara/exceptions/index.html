@@ -929,6 +929,27 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.exceptions.NoSuchValueAliasException" class="md-nav__link">
+    NoSuchValueAliasException
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.exceptions.NoSuchValueException" class="md-nav__link">
+    NoSuchValueException
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.exceptions.NoSuchValueIdException" class="md-nav__link">
+    NoSuchValueIdException
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.exceptions.ValueTypeConfigException" class="md-nav__link">
     ValueTypeConfigException
   </a>
@@ -3528,6 +3549,27 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.exceptions.NoSuchValueAliasException" class="md-nav__link">
+    NoSuchValueAliasException
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.exceptions.NoSuchValueException" class="md-nav__link">
+    NoSuchValueException
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.exceptions.NoSuchValueIdException" class="md-nav__link">
+    NoSuchValueIdException
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.exceptions.ValueTypeConfigException" class="md-nav__link">
     ValueTypeConfigException
   </a>
@@ -4136,6 +4178,105 @@ NoSuchExecutionTargetException            (<span title="Exception">Exception</sp
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Specified run target &#39;</span><span class="si">{</span><span class="n">selected_target</span><span class="si">}</span><span class="s2">&#39; is an operation, additional module configuration is not allowed.&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">avaliable_targets</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">available_targets</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="kiara.exceptions.NoSuchValueAliasException" class="doc doc-heading">
+        <code>
+NoSuchValueAliasException            (<a class="autorefs autorefs-internal" title="kiara.exceptions.NoSuchValueException" href="#kiara.exceptions.NoSuchValueException">NoSuchValueException</a>)
+        </code>
+
+
+
+<a href="#kiara.exceptions.NoSuchValueAliasException" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/exceptions.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">NoSuchValueAliasException</span><span class="p">(</span><span class="n">NoSuchValueException</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;No value with alias: </span><span class="si">{</span><span class="n">alias</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="kiara.exceptions.NoSuchValueException" class="doc doc-heading">
+        <code>
+NoSuchValueException            (<span title="Exception">Exception</span>)
+        </code>
+
+
+
+<a href="#kiara.exceptions.NoSuchValueException" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/exceptions.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">NoSuchValueException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+
+    <span class="k">pass</span>
+</code></pre></div>
+        </details>
+
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="kiara.exceptions.NoSuchValueIdException" class="doc doc-heading">
+        <code>
+NoSuchValueIdException            (<a class="autorefs autorefs-internal" title="kiara.exceptions.NoSuchValueException" href="#kiara.exceptions.NoSuchValueException">NoSuchValueException</a>)
+        </code>
+
+
+
+<a href="#kiara.exceptions.NoSuchValueIdException" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/exceptions.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">NoSuchValueIdException</span><span class="p">(</span><span class="n">NoSuchValueException</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;No value with id: </span><span class="si">{</span><span class="n">value_id</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </code></pre></div>
         </details>

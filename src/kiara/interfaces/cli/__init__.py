@@ -9,6 +9,7 @@
 """
 
 import logging
+import os
 import rich_click as click
 import structlog
 import sys
@@ -84,7 +85,7 @@ def cli(
 
     extra_context_config["create_context"] = False
 
-    kiara_config: Optional[KiaraConfig] = None
+    # kiara_config: Optional[KiaraConfig] = None
     exists = False
     create = False
     if config:
@@ -123,10 +124,14 @@ def cli(
     ctx.obj["kiara_config"] = kiara_config
 
     if not context:
+        context = os.environ.get("KIARA_CONTEXT", None)
+
+    if not context:
         context = kiara_config.default_context
 
     kiara = kiara_config.create_context(context=context)
     ctx.obj["kiara"] = kiara
+    ctx.obj["kiara_config"] = kiara_config
 
 
 for plugin in find_all_cli_subcommands():

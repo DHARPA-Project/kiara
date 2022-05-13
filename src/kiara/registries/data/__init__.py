@@ -33,7 +33,12 @@ from kiara.defaults import (
     STRICT_CHECKS,
     SpecialValue,
 )
-from kiara.exceptions import InvalidValuesException
+from kiara.exceptions import (
+    InvalidValuesException,
+    NoSuchValueAliasException,
+    NoSuchValueException,
+    NoSuchValueIdException,
+)
 from kiara.models.events.data_registry import (
     DataArchiveAddedEvent,
     ValueCreatedEvent,
@@ -301,8 +306,9 @@ class DataRegistry(object):
                             alias=rest
                         )
                         if _value_id is None:
-                            raise Exception(
-                                f"Can't retrive value for alias '{rest}': no such alias registered."
+                            raise NoSuchValueAliasException(
+                                alias=rest,
+                                msg=f"Can't retrive value for alias '{rest}': no such alias registered.",
                             )
                     else:
                         raise Exception(
@@ -324,10 +330,13 @@ class DataRegistry(object):
                 matches.append(store_id)
 
         if len(matches) == 0:
-            raise Exception(f"No value registered with id: {value_id}")
+            raise NoSuchValueIdException(
+                value_id=_value_id, msg=f"No value registered with id: {value_id}"
+            )
         elif len(matches) > 1:
-            raise Exception(
-                f"Found value with id '{value_id}' in multiple archives, this is not supported (yet): {matches}"
+            raise NoSuchValueIdException(
+                value_id=_value_id,
+                msg=f"Found value with id '{value_id}' in multiple archives, this is not supported (yet): {matches}",
             )
 
         self._value_archive_lookup_map[_value_id] = matches[0]
@@ -512,6 +521,8 @@ class DataRegistry(object):
                 value.value_hash,
                 value.value_size,
             )
+        except NoSuchValueException as nsve:
+            raise nsve
         except Exception:
             # TODO: differentiate between 'value not found' and other type of errors
             pass

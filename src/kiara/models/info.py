@@ -43,7 +43,7 @@ if TYPE_CHECKING:
 INFO_BASE_CLASS = TypeVar("INFO_BASE_CLASS")
 
 
-class ItemInfo(KiaraModel, Generic[INFO_BASE_CLASS]):
+class ItemInfo(KiaraModel):
     """Base class that holds/manages information about an item within kiara."""
 
     @classmethod

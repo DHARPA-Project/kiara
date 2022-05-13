@@ -378,41 +378,6 @@ class Kiara(object):
 
         return StoreValuesResult.construct(__root__=stored)
 
-    # def run(self, module_or_operation: str, module_config: Mapping[str, Any] = None):
-    #
-    #     if isinstance(module_or_operation, str):
-    #         if module_or_operation in self.operation_registry.operation_ids:
-    #
-    #             operation = self.operation_registry.get_operation(module_or_operation)
-    #             if module_config:
-    #                 print(
-    #                     f"Specified run target '{module_or_operation}' is an operation, additional module configuration is not allowed."
-    #                 )
-    #
-    #     elif module_or_operation in self.module_type_names:
-    #
-    #         if module_config is None:
-    #             module_config = {}
-    #         manifest = Manifest(
-    #             module_type=module_or_operation, module_config=module_config
-    #         )
-    #
-    #         module = self.create_module(manifest=manifest)
-    #         operation = Operation.create_from_module(module)
-    #
-    #     elif os.path.isfile(module_or_operation):
-    #         raise NotImplementedError()
-    #         # module_name = kiara_obj.register_pipeline_description(
-    #         #     module_or_operation, raise_exception=True
-    #         # )
-    #     else:
-    #         merged = list(self.module_type_names)
-    #         merged.extend(self.operation_registry.operation_ids)
-    #         raise NoSuchExecutionTargetException(
-    #             msg=f"Invalid run target name '[i]{module_or_operation}[/i]'. Must be a path to a pipeline file, or one of the available modules/operations.",
-    #             available_targets=sorted(merged),
-    #         )
-
 
 class KiaraContextInfo(KiaraModel):
     @classmethod

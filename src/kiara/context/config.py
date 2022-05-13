@@ -407,7 +407,7 @@ class KiaraConfig(BaseSettings):
         path.parent.mkdir(parents=True, exist_ok=True)
 
         with path.open("wt") as f:
-            yaml.dump(self.dict(), f)
+            yaml.dump(self.dict(exclude={"context"}), f)
 
         self._config_path = path
 

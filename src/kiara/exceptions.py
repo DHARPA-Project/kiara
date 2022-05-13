@@ -4,7 +4,7 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
+import uuid
 from rich import box
 from rich.console import RenderableType
 from rich.table import Table
@@ -209,4 +209,25 @@ class FailedJobException(Exception):
         self.job: ActiveJob = job
         if msg is None:
             msg = "Job failed."
+        super().__init__(msg)
+
+
+class NoSuchValueException(Exception):
+
+    pass
+
+
+class NoSuchValueIdException(NoSuchValueException):
+    def __init__(self, value_id: uuid.UUID, msg: Optional[str] = None):
+        self.value_id: uuid.UUID
+        if not msg:
+            msg = f"No value with id: {value_id}."
+        super().__init__(msg)
+
+
+class NoSuchValueAliasException(NoSuchValueException):
+    def __init__(self, alias: str, msg: Optional[str] = None):
+        self.value_id: uuid.UUID
+        if not msg:
+            msg = f"No value with alias: {alias}."
         super().__init__(msg)

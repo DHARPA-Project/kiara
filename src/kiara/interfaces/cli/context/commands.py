@@ -6,7 +6,7 @@
 import rich_click as click
 import sys
 
-from kiara import Kiara
+from kiara.context import Kiara
 from kiara.registries.environment import EnvironmentRegistry
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
 
@@ -43,6 +43,23 @@ def print_context(ctx, format: str):
         format=format,
         in_panel=f"Context info for kiara id: {kiara_obj.id}",
     )
+
+
+# @context.command("list")
+# @click.pass_context
+# def list_contexts(ctx):
+#     """List existing contexts."""
+#
+#     kiara_config: KiaraConfig = ctx.obj["kiara_config"]
+#
+#     table = Table(show_header=True, box=box.SIMPLE)
+#
+#     for context_name in kiara_config.available_context_names:
+#         context_config = kiara_config.get_context_config(context_name)
+#
+#         k = Kiara(config=context_config)
+#         print(k)
+#         dbg(context.dict())
 
 
 @context.group("config")

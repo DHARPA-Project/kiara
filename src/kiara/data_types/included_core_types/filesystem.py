@@ -28,7 +28,7 @@ class FileTypeConfig(DataTypeConfig):
     )
 
 
-SUPPORTED_FILE_TYPES = ["csv", "json"]
+SUPPORTED_FILE_TYPES = ["csv", "json", "text", "binary"]
 
 
 class FileValueType(KiaraModelValueType[FileModel, FileTypeConfig]):

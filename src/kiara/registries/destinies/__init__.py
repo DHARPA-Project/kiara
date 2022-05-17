@@ -6,15 +6,20 @@
 
 import abc
 import uuid
-from typing import Optional, Set
+from typing import Iterable, Optional, Set
 
 from kiara.models.module.destiniy import Destiny
+from kiara.registries import ARCHIVE_CONFIG_CLS, BaseArchive
 
 
-class DestinyArchive(abc.ABC):
-    @abc.abstractmethod
-    def get_destiny_archive_id(self) -> uuid.UUID:
-        pass
+class DestinyArchive(BaseArchive):
+    @classmethod
+    def supported_item_types(cls) -> Iterable[str]:
+        return ["destiny"]
+
+    def __init__(self, archive_id: uuid.UUID, config: ARCHIVE_CONFIG_CLS):
+
+        super().__init__(archive_id=archive_id, config=config)
 
     @abc.abstractmethod
     def get_all_value_ids(self) -> Set[uuid.UUID]:

@@ -93,7 +93,8 @@ class AliasRegistry(object):
         set_as_default_store: Optional[bool] = None,
     ):
 
-        alias_archive_id = archive.register_archive(kiara=self._kiara)
+        alias_archive_id = archive.archive_id
+        archive.register_archive(kiara=self._kiara)
 
         if alias is None:
             alias = str(alias_archive_id)
@@ -135,6 +136,10 @@ class AliasRegistry(object):
         if self._default_alias_store is None:
             raise Exception("No default alias store set (yet).")
         return self._default_alias_store
+
+    @property
+    def alias_archives(self) -> Mapping[str, AliasArchive]:
+        return self._alias_archives
 
     def get_archive(self, archive_id: Optional[str] = None) -> Optional[AliasArchive]:
         if archive_id is None:

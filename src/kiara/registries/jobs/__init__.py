@@ -117,6 +117,10 @@ class JobRegistry(object):
 
         return self._job_archives[store_id]
 
+    @property
+    def job_archives(self) -> Mapping[str, JobArchive]:
+        return self._job_archives
+
     def job_status_changed(
         self, job_id: uuid.UUID, old_status: Optional[JobStatus], new_status: JobStatus
     ):
@@ -208,6 +212,7 @@ class JobRegistry(object):
             )
 
         job_record = matches[0]
+        job_record._is_stored = True
 
         self._finished_jobs[inputs_manifest.job_hash] = job_record.job_id
         self._archived_records[job_record.job_id] = job_record

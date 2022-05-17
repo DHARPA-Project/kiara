@@ -173,12 +173,15 @@ class DataRegistry(object):
         set_as_default_store: Optional[bool] = None,
     ):
 
-        data_store_id = archive.register_archive(kiara=self._kiara)
+        data_store_id = archive.archive_id
+        archive.register_archive(kiara=self._kiara)
         if alias is None:
             alias = str(data_store_id)
 
         if alias in self._data_archives.keys():
-            raise Exception(f"Can't add store, alias '{alias}' already registered.")
+            raise Exception(
+                f"Can't add data archive, alias '{alias}' already registered."
+            )
         self._data_archives[alias] = archive
         is_store = False
         is_default_store = False

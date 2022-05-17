@@ -49,8 +49,7 @@ def list_types(
     if not include_internal:
         type_classes: Dict[str, Type[DataType]] = {}
         for name, cls in kiara_obj.data_type_classes.items():
-            lineage = kiara_obj.type_registry.get_type_lineage(name)
-            if "any" in lineage:
+            if not kiara_obj.type_registry.is_internal_type(name):
                 type_classes[name] = cls
     else:
         type_classes = dict(kiara_obj.data_type_classes)

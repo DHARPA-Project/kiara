@@ -129,24 +129,24 @@ class InfoModelGroup(KiaraModel, Mapping[str, ItemInfo]):
     #     return str(self.group_id)
 
     def _retrieve_subcomponent_keys(self) -> Iterable[str]:
-        return self.type_infos.keys()  # type: ignore
+        return self.item_infos.keys()  # type: ignore
 
     def _retrieve_data_to_hash(self) -> Any:
-        return {"type_name": self.type_name, "included_types": list(self.type_infos.keys())}  # type: ignore
+        return {"type_name": self.type_name, "included_types": list(self.item_infos.keys())}  # type: ignore
 
-    def get_type_infos(self) -> Mapping[str, ItemInfo]:
-        return self.type_infos  # type: ignore
+    def get_item_infos(self) -> Mapping[str, ItemInfo]:
+        return self.item_infos  # type: ignore
 
     def create_renderable(self, **config: Any) -> RenderableType:
 
         full_doc = config.get("full_doc", False)
 
         table = Table(show_header=True, box=box.SIMPLE, show_lines=full_doc)
-        table.add_column("Type name", style="i")
+        table.add_column("Name", style="i")
         table.add_column("Description")
 
-        for type_name in sorted(self.type_infos.keys()):  # type: ignore
-            t_md = self.type_infos[type_name]  # type: ignore
+        for type_name in sorted(self.item_infos.keys()):  # type: ignore
+            t_md = self.item_infos[type_name]  # type: ignore
             if full_doc:
                 md = Markdown(t_md.documentation.full_doc)
             else:
@@ -157,13 +157,13 @@ class InfoModelGroup(KiaraModel, Mapping[str, ItemInfo]):
 
     def __getitem__(self, item: str) -> ItemInfo:
 
-        return self.get_type_infos()[item]
+        return self.get_item_infos()[item]
 
     def __iter__(self):
-        return iter(self.get_type_infos())
+        return iter(self.get_item_infos())
 
     def __len__(self):
-        return len(self.get_type_infos())
+        return len(self.get_item_infos())
 
 
 class TypeInfoModelGroup(InfoModelGroup, Mapping[str, TypeInfo]):
@@ -180,21 +180,21 @@ class TypeInfoModelGroup(InfoModelGroup, Mapping[str, TypeInfo]):
         type_infos = {
             k: cls.base_info_class().create_from_type_class(v) for k, v in items.items()
         }
-        data_types_info = cls.construct(group_alias=group_alias, type_infos=type_infos)  # type: ignore
+        data_types_info = cls.construct(group_alias=group_alias, item_infos=type_infos)  # type: ignore
         return data_types_info
 
-    def get_type_infos(self) -> Mapping[str, TypeInfo]:
-        return self.type_infos  # type: ignore
+    def get_item_infos(self) -> Mapping[str, TypeInfo]:
+        return self.item_infos  # type: ignore
 
     def __getitem__(self, item: str) -> TypeInfo:
 
-        return self.get_type_infos()[item]
+        return self.get_item_infos()[item]
 
     def __iter__(self):
-        return iter(self.get_type_infos())
+        return iter(self.get_item_infos())
 
     def __len__(self):
-        return len(self.get_type_infos())
+        return len(self.get_item_infos())
 
 
 class KiaraModelTypeInfo(TypeInfo):
@@ -274,7 +274,7 @@ class KiaraModelClassesInfo(TypeInfoModelGroup):
         return KiaraModelTypeInfo
 
     type_name: Literal["kiara_model"] = "kiara_model"
-    type_infos: Mapping[str, KiaraModelTypeInfo] = Field(
+    item_infos: Mapping[str, KiaraModelTypeInfo] = Field(
         description="The value metadata info instances for each type."
     )
 
@@ -294,7 +294,7 @@ def find_kiara_models(
                 temp[key] = info
 
         group = KiaraModelClassesInfo.construct(
-            group_id=group.instance_id, group_alias=group.group_alias, type_infos=temp  # type: ignore
+            group_id=group.instance_id, group_alias=group.group_alias, item_infos=temp  # type: ignore
         )
 
     return group

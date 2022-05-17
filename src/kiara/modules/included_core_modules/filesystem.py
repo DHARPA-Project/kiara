@@ -10,7 +10,7 @@ from typing import Any, Mapping, Type
 from kiara import KiaraModule
 from kiara.models.filesystem import FileBundle, FileModel
 from kiara.models.values.value import SerializedData, ValueMap
-from kiara.modules import ValueSetSchema
+from kiara.modules import ModuleCharacteristics, ValueSetSchema
 from kiara.modules.included_core_modules.serialization import DeserializeValueModule
 
 
@@ -30,6 +30,9 @@ class ImportFileModule(KiaraModule):
     ) -> ValueSetSchema:
 
         return {"file": {"type": "file", "doc": "The loaded files."}}
+
+    def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
+        return ModuleCharacteristics(is_idempotent=False)
 
     def process(self, inputs: ValueMap, outputs: ValueMap):
 
@@ -104,6 +107,9 @@ class ImportFileBundleModule(KiaraModule):
         return {
             "file_bundle": {"type": "file_bundle", "doc": "The imported file bundle."}
         }
+
+    def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
+        return ModuleCharacteristics(is_idempotent=False)
 
     def process(self, inputs: ValueMap, outputs: ValueMap):
 

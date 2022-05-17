@@ -81,7 +81,10 @@ DEFAULT_JOB_STORE_MARKER = "default_job_store"
 """Name for the default context job store."""
 
 DEFAULT_ALIAS_STORE_MARKER = "default_alias_store"
-"""Name for the default context job store."""
+"""Name for the default context alias store."""
+
+METADATA_DESTINY_STORE_MARKER = "metadata"
+"""Name for the default context destiny store."""
 
 PIPELINE_PARENT_MARKER = "__pipeline__"
 """Marker string in the pipeline structure that indicates a parent pipeline element."""

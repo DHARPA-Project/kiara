@@ -4,8 +4,8 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
 import orjson
+import shutil
 import uuid
 from pathlib import Path
 from typing import Any, Dict, Iterable, Optional
@@ -40,9 +40,13 @@ class FileSystemJobArchive(JobArchive):
         if self._base_path is not None:
             return self._base_path
 
-        self._base_path = Path(self.config.archive_path).absolute()
+        self._base_path = Path(self.config.archive_path).absolute()  # type: ignore
         self._base_path.mkdir(parents=True, exist_ok=True)
         return self._base_path
+
+    def _delete_archive(self):
+
+        shutil.rmtree(self.job_store_path)
 
     def find_matching_job_record(
         self, inputs_manifest: InputsManifest

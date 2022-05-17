@@ -7,9 +7,20 @@
 
 import abc
 import orjson
+import structlog
 import uuid
 from pydantic import BaseModel, Field
-from typing import TYPE_CHECKING, ClassVar, Generic, Iterable, Optional, Type, TypeVar
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    ClassVar,
+    Generic,
+    Iterable,
+    Mapping,
+    Optional,
+    Type,
+    TypeVar,
+)
 
 from kiara.utils import orjson_dumps
 
@@ -24,6 +35,9 @@ class ArchiveConfig(BaseModel):
 
 
 ARCHIVE_CONFIG_CLS = TypeVar("ARCHIVE_CONFIG_CLS", bound=ArchiveConfig)
+
+
+logger = structlog.getLogger()
 
 
 class KiaraArchive(abc.ABC):
@@ -41,8 +55,56 @@ class KiaraArchive(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def register_archive(self, kiara: "Kiara") -> uuid.UUID:
+    def register_archive(self, kiara: "Kiara"):
         pass
+
+    @abc.abstractmethod
+    def retrieve_archive_id(self) -> uuid.UUID:
+        pass
+
+    @property
+    def archive_id(self) -> uuid.UUID:
+        return self.retrieve_archive_id()
+
+    @property
+    def config(self) -> ArchiveConfig:
+        return self._get_config()
+
+    @abc.abstractmethod
+    def _get_config(self) -> ArchiveConfig:
+        pass
+
+    def get_archive_details(self) -> Mapping[str, Any]:
+        return {}
+
+    def delete_archive(self, archive_id: Optional[uuid.UUID] = None):
+
+        if archive_id != self.archive_id:
+            raise Exception(
+                f"Not deleting archive with id '{self.archive_id}': confirmation id '{archive_id}' does not match."
+            )
+
+        logger.info(
+            "deleteing.archive",
+            archive_id=self.archive_id,
+            item_types=self.supported_item_types(),
+            archive_type=self.__class__.__name__,
+        )
+        self._delete_archive()
+
+    @abc.abstractmethod
+    def _delete_archive(self):
+        pass
+
+    def __hash__(self):
+        return hash(self.archive_id)
+
+    def __eq__(self, other):
+
+        if not isinstance(other, self.__class__):
+            return False
+
+        return self.archive_id == other.archive_id
 
 
 class BaseArchive(KiaraArchive, Generic[ARCHIVE_CONFIG_CLS]):
@@ -55,13 +117,10 @@ class BaseArchive(KiaraArchive, Generic[ARCHIVE_CONFIG_CLS]):
         self._config: ARCHIVE_CONFIG_CLS = config
         self._kiara: Optional["Kiara"] = None
 
-    @property
-    def config(self) -> ARCHIVE_CONFIG_CLS:
-
+    def _get_config(self) -> ARCHIVE_CONFIG_CLS:
         return self._config
 
-    @property
-    def archive_id(self) -> uuid.UUID:
+    def retrieve_archive_id(self) -> uuid.UUID:
         return self._archive_id
 
     @property
@@ -70,9 +129,20 @@ class BaseArchive(KiaraArchive, Generic[ARCHIVE_CONFIG_CLS]):
             raise Exception("Archive not registered into a kiara context yet.")
         return self._kiara
 
-    def register_archive(self, kiara: "Kiara") -> uuid.UUID:
+    def register_archive(self, kiara: "Kiara"):
+        if self._kiara is not None:
+            raise Exception("Archive already registered in a context.")
         self._kiara = kiara
-        return self.archive_id
+
+    def _delete_archive(self):
+
+        logger.info(
+            "ignore.archive_delete_request",
+            reason="not implemented/applicable",
+            archive_id=self.archive_id,
+            item_types=self.supported_item_types(),
+            archive_type=self.__class__.__name__,
+        )
 
 
 class FileSystemArchiveConfig(ArchiveConfig):

@@ -132,6 +132,7 @@ def cli(
     kiara = kiara_config.create_context(context=context)
     ctx.obj["kiara"] = kiara
     ctx.obj["kiara_config"] = kiara_config
+    ctx.obj["kiara_context_name"] = context
 
 
 for plugin in find_all_cli_subcommands():

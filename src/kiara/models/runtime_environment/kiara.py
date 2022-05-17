@@ -5,100 +5,14 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 from pydantic import Field
-from rich import box
-from rich.console import RenderableType
-from rich.panel import Panel
-from rich.table import Table
-from typing import Any, Dict, List, Literal, Mapping, Optional, Type
+from typing import Any, Dict, Literal, Optional
 
-from kiara.models.documentation import (
-    AuthorsMetadataModel,
-    ContextMetadataModel,
-    DocumentationMetadataModel,
-)
-from kiara.models.info import TypeInfo, TypeInfoModelGroup
-from kiara.models.python_class import PythonClass
+from kiara.models.archives import ArchiveTypeClassesInfo
+from kiara.models.info import TypeInfo
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.value_metadata import MetadataTypeClassesInfo
-from kiara.registries import KiaraArchive
 from kiara.utils.class_loading import find_all_archive_types
 from kiara.utils.metadata import find_metadata_models
-
-
-class ArchiveTypeInfo(TypeInfo):
-
-    _kiara_model_id = "info.archive_type"
-
-    @classmethod
-    def create_from_type_class(self, type_cls: Type[KiaraArchive]) -> "ArchiveTypeInfo":
-
-        authors_md = AuthorsMetadataModel.from_class(type_cls)
-        doc = DocumentationMetadataModel.from_class_doc(type_cls)
-        python_class = PythonClass.from_class(type_cls)
-        properties_md = ContextMetadataModel.from_class(type_cls)
-        type_name = type_cls._archive_type_name  # type: ignore
-
-        return ArchiveTypeInfo.construct(
-            type_name=type_name,
-            documentation=doc,
-            authors=authors_md,
-            context=properties_md,
-            python_class=python_class,
-        )
-
-    @classmethod
-    def base_class(self) -> Type[KiaraArchive]:
-        return KiaraArchive
-
-    @classmethod
-    def category_name(cls) -> str:
-        return "archive_type"
-
-    is_writable: bool = Field(
-        description="Whether this archive is writeable.", default=False
-    )
-    supported_item_types: List[str] = Field(
-        description="The item types this archive suports."
-    )
-
-    def create_renderable(self, **config: Any) -> RenderableType:
-
-        include_doc = config.get("include_doc", True)
-
-        table = Table(box=box.SIMPLE, show_header=False, padding=(0, 0, 0, 0))
-        table.add_column("property", style="i")
-        table.add_column("value")
-
-        if include_doc:
-            table.add_row(
-                "Documentation",
-                Panel(self.documentation.create_renderable(), box=box.SIMPLE),
-            )
-        table.add_row("Author(s)", self.authors.create_renderable())
-        table.add_row("Context", self.context.create_renderable())
-
-        table.add_row("Python class", self.python_class.create_renderable())
-
-        table.add_row("is_writeable", "yes" if self.is_writable else "no")
-        table.add_row(
-            "supported_item_types", ", ".join(sorted(self.supported_item_types))
-        )
-
-        return table
-
-
-class ArchiveTypeClassesInfo(TypeInfoModelGroup):
-
-    _kiara_model_id = "info.archive_types"
-
-    @classmethod
-    def base_info_class(cls) -> Type[ArchiveTypeInfo]:
-        return ArchiveTypeInfo
-
-    type_name: Literal["archive_type"] = "archive_type"
-    type_infos: Mapping[str, ArchiveTypeInfo] = Field(
-        description="The archive info instances for each type."
-    )
 
 
 def find_archive_types(
@@ -118,7 +32,7 @@ def find_archive_types(
                 temp[key] = info  # type: ignore
 
         group = ArchiveTypeClassesInfo.construct(
-            group_id=group.group_id, group_alias=group.group_alias, type_infos=temp  # type: ignore
+            group_id=group.group_id, group_alias=group.group_alias, item_infos=temp  # type: ignore
         )
 
     return group

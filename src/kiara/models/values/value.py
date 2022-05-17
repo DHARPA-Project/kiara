@@ -355,7 +355,9 @@ class SerializedInlineJson(SerializedPreStoreChunks):
     def as_json(self) -> bytes:
         assert self.inline_data is not None
         if self._json_cache is None:
-            self._json_cache = orjson.dumps(self.inline_data)
+            self._json_cache = orjson.dumps(
+                self.inline_data, option=orjson.OPT_NON_STR_KEYS
+            )
         return self._json_cache
 
     def get_chunks(

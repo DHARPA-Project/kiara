@@ -33,7 +33,7 @@ def render_item_listing(item_type: str, items: InfoModelGroup, sub_path: str = "
 
     list_template = get_jina_env().get_template("info_listing.j2")
 
-    render_args = {"items": items.get_type_infos(), "item_type": item_type}
+    render_args = {"items": items.get_item_infos(), "item_type": item_type}
     rendered = list_template.render(**render_args)
 
     path = f"{sub_path}/{item_type}.md"

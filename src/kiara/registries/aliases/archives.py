@@ -6,6 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import os
+import shutil
 import uuid
 from pathlib import Path
 from typing import Mapping, Optional, Set
@@ -31,7 +32,7 @@ class FileSystemAliasArchive(AliasArchive):
         if self._base_path is not None:
             return self._base_path
 
-        self._base_path = Path(self.config.archive_path).absolute()
+        self._base_path = Path(self.config.archive_path).absolute()  # type: ignore
         self._base_path.mkdir(parents=True, exist_ok=True)
         return self._base_path
 
@@ -42,6 +43,9 @@ class FileSystemAliasArchive(AliasArchive):
     @property
     def value_id_path(self) -> Path:
         return self.alias_store_path / "value_ids"
+
+    def _delete_archive(self):
+        shutil.rmtree(self.alias_store_path)
 
     def _translate_alias(self, alias: str) -> Path:
 

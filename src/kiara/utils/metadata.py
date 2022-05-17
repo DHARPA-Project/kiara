@@ -31,7 +31,7 @@ def find_metadata_models(
                 temp[key] = info
 
         group = MetadataTypeClassesInfo.construct(
-            group_id=group.instance_id, group_alias=group.group_alias, type_infos=temp  # type: ignore
+            group_id=group.instance_id, group_alias=group.group_alias, item_infos=temp  # type: ignore
         )
 
     return group

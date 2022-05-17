@@ -130,6 +130,6 @@ class MetadataTypeClassesInfo(TypeInfoModelGroup):
         return MetadataTypeInfo
 
     type_name: Literal["value_metadata"] = "value_metadata"
-    type_infos: Mapping[str, MetadataTypeInfo] = Field(
+    item_infos: Mapping[str, MetadataTypeInfo] = Field(
         description="The value metadata info instances for each type."
     )

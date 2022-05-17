@@ -154,7 +154,7 @@ class DataTypeClassesInfo(TypeInfoModelGroup):
         type_infos = {
             k: cls.base_info_class().create_from_type_class(v) for k, v in items.items()  # type: ignore
         }
-        data_types_info = cls.construct(group_alias=group_alias, type_infos=type_infos)  # type: ignore
+        data_types_info = cls.construct(group_alias=group_alias, item_infos=type_infos)  # type: ignore
         return data_types_info
 
     @classmethod
@@ -168,7 +168,7 @@ class DataTypeClassesInfo(TypeInfoModelGroup):
         type_infos = {
             k: cls.base_info_class().create_from_type_class(v, kiara=kiara) for k, v in items.items()  # type: ignore
         }
-        data_types_info = cls.construct(group_alias=group_alias, type_infos=type_infos)  # type: ignore
+        data_types_info = cls.construct(group_alias=group_alias, item_infos=type_infos)  # type: ignore
         data_types_info._kiara = kiara
         return data_types_info
 
@@ -177,7 +177,7 @@ class DataTypeClassesInfo(TypeInfoModelGroup):
         return DataTypeClassInfo
 
     type_name: Literal["data_type"] = "data_type"
-    type_infos: Mapping[str, DataTypeClassInfo] = Field(
+    item_infos: Mapping[str, DataTypeClassInfo] = Field(
         description="The data_type info instances for each type."
     )
     _kiara: Optional["Kiara"] = PrivateAttr(default=None)
@@ -204,11 +204,11 @@ class DataTypeClassesInfo(TypeInfoModelGroup):
         else:
             table.add_column("description")
 
-        all_types = self.type_infos.keys()
+        all_types = self.item_infos.keys()
 
         for type_name in sorted(all_types):  # type: ignore
 
-            t_md = self.type_infos[type_name]  # type: ignore
+            t_md = self.item_infos[type_name]  # type: ignore
             row: List[Any] = [type_name]
 
             if show_lineage:

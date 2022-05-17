@@ -270,6 +270,11 @@ class TypeRegistry(object):
             else:
                 result[type_name] = md
 
-        _result = DataTypeClassesInfo.construct(group_alias=alias, type_infos=result)  # type: ignore
+        _result = DataTypeClassesInfo.construct(group_alias=alias, item_infos=result)  # type: ignore
         _result._kiara = self._kiara
         return _result
+
+    def is_internal_type(self, data_type_name: str) -> bool:
+
+        lineage = self.get_type_lineage(data_type_name=data_type_name)
+        return "any" not in lineage

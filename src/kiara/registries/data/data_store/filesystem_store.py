@@ -5,6 +5,7 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import orjson
+import shutil
 import structlog
 import uuid
 from enum import Enum
@@ -81,9 +82,12 @@ class FileSystemDataArchive(DataArchive, JobArchive):
         if self._base_path is not None:
             return self._base_path
 
-        self._base_path = Path(self.config.archive_path).absolute()
+        self._base_path = Path(self.config.archive_path).absolute()  # type: ignore
         self._base_path.mkdir(parents=True, exist_ok=True)
         return self._base_path
+
+    def _delete_archive(self):
+        shutil.rmtree(self.data_store_path)
 
     @property
     def hash_fs_path(self) -> Path:

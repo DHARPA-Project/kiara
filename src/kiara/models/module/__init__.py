@@ -297,7 +297,7 @@ class ModuleTypeClassesInfo(TypeInfoModelGroup):
         return KiaraModuleTypeInfo
 
     type_name: Literal["module_type"] = "module_type"
-    type_infos: Mapping[str, KiaraModuleTypeInfo] = Field(
+    item_infos: Mapping[str, KiaraModuleTypeInfo] = Field(
         description="The module type info instances for each type."
     )
 

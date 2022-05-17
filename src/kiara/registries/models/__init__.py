@@ -62,7 +62,7 @@ class ModelRegistry(object):
                 temp[key] = info
 
         group = KiaraModelClassesInfo.construct(
-            group_alias=f"kiara_models.{package_name}", type_infos=temp  # type: ignore
+            group_alias=f"kiara_models.{package_name}", item_infos=temp  # type: ignore
         )
 
         self._models_per_package[package_name] = group
@@ -74,14 +74,14 @@ class ModelRegistry(object):
             return self._sub_models[model_type]
 
         sub_classes = {}
-        for model_id, type_info in self.all_models.type_infos.items():
+        for model_id, type_info in self.all_models.item_infos.items():
             cls: Type[KiaraModel] = type_info.python_class.get_class()  # type: ignore
 
             if issubclass(cls, model_type):
                 sub_classes[model_id] = type_info
 
         classes = KiaraModelClassesInfo(
-            group_alias=f"{model_type.__name__}-submodels", type_infos=sub_classes
+            group_alias=f"{model_type.__name__}-submodels", item_infos=sub_classes
         )
         self._sub_models[model_type] = classes
         return classes

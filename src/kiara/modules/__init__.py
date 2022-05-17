@@ -231,6 +231,8 @@ class InputOutputObject(abc.ABC):
 
 
 class ModuleCharacteristics(BaseModel):
+    class Config:
+        allow_mutation = False
 
     is_idempotent: bool = Field(
         description="Whether this module is idempotent (aka always produces the same output with the same inputs.",
@@ -240,6 +242,11 @@ class ModuleCharacteristics(BaseModel):
         description="Hint for frontends whether this module is used predominantly internally, and users won't need to know of its existence.",
         default=False,
     )
+
+
+DEFAULT_IDEMPOTENT_MODULE_CHARACTERISTICS = ModuleCharacteristics(
+    is_idempotent=True, is_internal=False
+)
 
 
 class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
@@ -362,7 +369,8 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
         return self._characteristics
 
     def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
-        return ModuleCharacteristics()
+
+        return DEFAULT_IDEMPOTENT_MODULE_CHARACTERISTICS
 
     def get_config_value(self, key: str) -> Any:
         """Retrieve the value for a specific configuration option.

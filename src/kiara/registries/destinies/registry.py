@@ -6,13 +6,24 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import uuid
-from typing import TYPE_CHECKING, Dict, Iterable, List, Optional, Set, Tuple, Union
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Mapping,
+    Optional,
+    Set,
+    Tuple,
+    Union,
+)
 
+from kiara.models.events.destiny_registry import DestinyArchiveAddedEvent
 from kiara.models.module.destiniy import Destiny
 from kiara.models.module.manifest import Manifest
 from kiara.models.values.value import Value
 from kiara.registries.destinies import DestinyArchive, DestinyStore
-from kiara.registries.destinies.filesystem_store import FileSystemDestinyStore
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -22,12 +33,15 @@ class DestinyRegistry(object):
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
+
+        self._event_callback: Callable = self._kiara.event_registry.add_producer(self)
+
         self._destiny_archives: Dict[str, DestinyArchive] = {}
         self._default_destiny_store: Optional[str] = None
-        default_metadata_archive = FileSystemDestinyStore.create_from_kiara_context(
-            self._kiara
-        )
-        self.register_destiny_archive("metadata", default_metadata_archive)
+        # default_metadata_archive = FileSystemDestinyStore.create_from_kiara_context(
+        #     self._kiara
+        # )
+        # self.register_destiny_archive("metadata", default_metadata_archive)
 
         self._all_values: Optional[Dict[uuid.UUID, Set[str]]] = None
         self._cached_value_aliases: Dict[uuid.UUID, Dict[str, Optional[Destiny]]] = {}
@@ -44,39 +58,83 @@ class DestinyRegistry(object):
 
         return self._destiny_archives[self._default_destiny_store]  # type: ignore
 
-    def register_destiny_archive(self, registered_name: str, alias_store: DestinyStore):
+    @property
+    def destiny_archives(self) -> Mapping[str, DestinyArchive]:
+        return self._destiny_archives
 
-        if not registered_name.isalnum():
+    def register_destiny_archive(
+        self,
+        archive: DestinyArchive,
+        alias: str = None,
+        set_as_default_store: Optional[bool] = None,
+    ):
+
+        destiny_store_id = archive.archive_id
+        archive.register_archive(kiara=self._kiara)
+        if alias is None:
+            alias = str(destiny_store_id)
+
+        if alias in self._destiny_archives.keys():
             raise Exception(
-                f"Can't register destiny archive with name '{registered_name}: name must only contain alphanumeric characters.'"
+                f"Can't add destiny archive, alias '{alias}' already registered."
             )
 
-        if registered_name in self._destiny_archives.keys():
-            raise Exception(
-                f"Can't register alias store, store id already registered: {registered_name}."
-            )
+        self._destiny_archives[alias] = archive
 
-        self._destiny_archives[registered_name] = alias_store
+        is_store = False
+        is_default_store = False
 
-        if self._default_destiny_store is None and isinstance(
-            alias_store, DestinyStore
-        ):
-            self._default_destiny_store = registered_name
+        if isinstance(archive, DestinyStore):
+            is_store = True
 
-    def _split_alias(self, alias: str) -> Tuple[str, str]:
+            if set_as_default_store and self._default_destiny_store is not None:
+                raise Exception(
+                    f"Can't set data store '{alias}' as default store: default store already set."
+                )
+
+            if self._default_destiny_store is None or set_as_default_store:
+                is_default_store = True
+                self._default_destiny_store = alias
+
+        event = DestinyArchiveAddedEvent.construct(
+            kiara_id=self._kiara.id,
+            destiny_archive_id=archive.archive_id,
+            destiny_archive_alias=alias,
+            is_store=is_store,
+            is_default_store=is_default_store,
+        )
+        self._event_callback(event)
+
+        # if not registered_name.isalnum():
+        #     raise Exception(
+        #         f"Can't register destiny archive with name '{registered_name}: name must only contain alphanumeric characters.'"
+        #     )
+        #
+        # if registered_name in self._destiny_archives.keys():
+        #     raise Exception(
+        #         f"Can't register alias store, store id already registered: {registered_name}."
+        #     )
+        #
+        # self._destiny_archives[registered_name] = alias_store
+        #
+        # if self._default_destiny_store is None and isinstance(
+        #     alias_store, DestinyStore
+        # ):
+        #     self._default_destiny_store = registered_name
+
+    def _extract_archive(self, alias: str) -> Tuple[str, str]:
 
         if "." not in alias:
             assert self._default_destiny_store is not None
-            return self._default_destiny_store, alias
+            return (self._default_destiny_store, alias)
 
         store_id, rest = alias.split(".", maxsplit=1)
 
         if store_id not in self._destiny_archives.keys():
-            raise Exception(
-                f"Invalid alias '{alias}', no store with prefix '{store_id}' registered. Available prefixes: {', '.join(self._destiny_archives.keys())}"
-            )
-
-        return (store_id, rest)
+            assert self._default_destiny_store is not None
+            return (self._default_destiny_store, alias)
+        else:
+            return (store_id, rest)
 
     def add_destiny(
         self,
@@ -93,7 +151,7 @@ class DestinyRegistry(object):
         if not values:
             raise Exception("Can't add destiny, no values provided.")
 
-        store_id, alias = self._split_alias(destiny_alias)
+        store_id, alias = self._extract_archive(destiny_alias)
 
         destiny = Destiny.create_from_values(
             kiara=self._kiara,

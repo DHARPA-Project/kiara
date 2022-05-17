@@ -7,6 +7,7 @@
 
 
 import os
+import structlog
 import uuid
 from pathlib import Path
 from pydantic import BaseModel, root_validator, validator
@@ -24,6 +25,7 @@ from kiara.defaults import (
     KIARA_CONFIG_FILE_NAME,
     KIARA_MAIN_CONFIG_FILE,
     KIARA_MAIN_CONTEXTS_PATH,
+    METADATA_DESTINY_STORE_MARKER,
     kiara_app_dirs,
 )
 from kiara.registries.environment import EnvironmentRegistry
@@ -32,6 +34,8 @@ from kiara.utils import get_data_from_file
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
+
+logger = structlog.getLogger()
 
 yaml = r_yaml.YAML(typ="safe", pure=True)
 yaml.default_flow_style = False
@@ -62,66 +66,79 @@ class KiaraArchiveConfig(BaseModel):
         return uuid.UUID(self.archive_id)
 
 
-def create_default_archives(kiara_config: "KiaraConfig"):
-
-    env_registry = EnvironmentRegistry.instance()
-
-    archives = env_registry.environments["kiara_types"].archive_types
-    data_store_type = "filesystem_data_store"
-
-    assert data_store_type in archives.keys()
-
-    data_store_id = ID_REGISTRY.generate(comment="default data store id")
-    data_archive_config = {
-        "archive_path": os.path.abspath(
-            os.path.join(
-                kiara_config.stores_base_path, data_store_type, str(data_store_id)
-            )
-        )
-    }
-    data_store = KiaraArchiveConfig.construct(
-        archive_id=str(data_store_id),
-        archive_type=data_store_type,
-        config=data_archive_config,
-    )
-
-    job_store_type = "filesystem_job_store"
-    assert job_store_type in archives.keys()
-    job_store_id = ID_REGISTRY.generate(comment="default job store id")
-    job_archive_config = {
-        "archive_path": os.path.abspath(
-            os.path.join(
-                kiara_config.stores_base_path, job_store_type, str(job_store_id)
-            )
-        )
-    }
-    job_store = KiaraArchiveConfig.construct(
-        archive_id=str(job_store_id),
-        archive_type=job_store_type,
-        config=job_archive_config,
-    )
-
-    alias_store_type = "filesystem_alias_store"
-    assert job_store_type in archives.keys()
-    alias_store_id = ID_REGISTRY.generate(comment="default alias store id")
-    alias_store_config = {
-        "archive_path": os.path.abspath(
-            os.path.join(
-                kiara_config.stores_base_path, alias_store_type, str(alias_store_id)
-            )
-        )
-    }
-    alias_store = KiaraArchiveConfig.construct(
-        archive_id=str(alias_store_id),
-        archive_type=alias_store_type,
-        config=alias_store_config,
-    )
-
-    return {
-        DEFAULT_DATA_STORE_MARKER: data_store,
-        DEFAULT_JOB_STORE_MARKER: job_store,
-        DEFAULT_ALIAS_STORE_MARKER: alias_store,
-    }
+# def create_default_archives(kiara_config: "KiaraConfig"):
+#
+#     env_registry = EnvironmentRegistry.instance()
+#
+#     archives = env_registry.environments["kiara_types"].archive_types
+#     data_store_type = "filesystem_data_store"
+#
+#     assert data_store_type in archives.keys()
+#
+#     data_store_id = ID_REGISTRY.generate(comment="default data store id")
+#     data_archive_config = {
+#         "archive_path": os.path.abspath(
+#             os.path.join(
+#                 kiara_config.stores_base_path, data_store_type, str(data_store_id)
+#             )
+#         )
+#     }
+#     data_store = KiaraArchiveConfig.construct(
+#         archive_id=str(data_store_id),
+#         archive_type=data_store_type,
+#         config=data_archive_config,
+#     )
+#
+#     job_store_type = "filesystem_job_store"
+#     assert job_store_type in archives.keys()
+#     job_store_id = ID_REGISTRY.generate(comment="default job store id")
+#     job_archive_config = {
+#         "archive_path": os.path.abspath(
+#             os.path.join(
+#                 kiara_config.stores_base_path, job_store_type, str(job_store_id)
+#             )
+#         )
+#     }
+#     job_store = KiaraArchiveConfig.construct(
+#         archive_id=str(job_store_id),
+#         archive_type=job_store_type,
+#         config=job_archive_config,
+#     )
+#
+#     alias_store_type = "filesystem_alias_store"
+#     assert alias_store_type in archives.keys()
+#     alias_store_id = ID_REGISTRY.generate(comment="default alias store id")
+#     alias_store_config = {
+#         "archive_path": os.path.abspath(
+#             os.path.join(
+#                 kiara_config.stores_base_path, alias_store_type, str(alias_store_id)
+#             )
+#         )
+#     }
+#     alias_store = KiaraArchiveConfig.construct(
+#         archive_id=str(alias_store_id),
+#         archive_type=alias_store_type,
+#         config=alias_store_config,
+#     )
+#
+#     destiny_store_type = "filesystem_destiny_store"
+#     assert destiny_store_type in archives.keys()
+#     destiny_store_id = ID_REGISTRY.generate(comment="default destiny store id")
+#     destiny_store_config = {
+#         "archive_path": os.path.abspath(os.path.join(kiara_config.stores_base_path, alias_store_type, str(destiny_store_id)))
+#     }
+#     destiny_store = KiaraArchiveConfig.construct(
+#         archive_id=str(destiny_store_id),
+#         archive_type=destiny_store_type,
+#         config=destiny_store_config
+#     )
+#
+#     return {
+#         DEFAULT_DATA_STORE_MARKER: data_store,
+#         DEFAULT_JOB_STORE_MARKER: job_store,
+#         DEFAULT_ALIAS_STORE_MARKER: alias_store,
+#         METADATA_DESTINY_STORE_MARKER: destiny_store
+#     }
 
 
 class KiaraContextConfig(BaseSettings):
@@ -287,32 +304,141 @@ class KiaraConfig(BaseSettings):
         self._available_context_files = result
         return self._available_context_files.keys()
 
+    @property
+    def context_configs(self) -> Mapping[str, KiaraContextConfig]:
+
+        return {a: self.get_context_config(a) for a in self.available_context_names}
+
     def get_context_config(
-        self, context_alias: str = DEFAULT_CONTEXT_NAME
+        self, context_name: str = DEFAULT_CONTEXT_NAME
     ) -> KiaraContextConfig:
 
-        if context_alias not in self.available_context_names:
+        if context_name not in self.available_context_names:
             if (
                 not self.auto_generate_contexts
-                and not context_alias == DEFAULT_CONTEXT_NAME
+                and not context_name == DEFAULT_CONTEXT_NAME
             ):
                 raise Exception(
-                    f"No kiara context with name '{context_alias}' available."
+                    f"No kiara context with name '{context_name}' available."
                 )
             else:
-                return self.create_context_config(context_alias=context_alias)
+                return self.create_context_config(context_alias=context_name)
 
-        if context_alias in self._context_data.keys():
-            return self._context_data[context_alias]
+        if context_name in self._context_data.keys():
+            return self._context_data[context_name]
 
-        context_file = self._available_context_files[context_alias]
+        context_file = self._available_context_files[context_name]
         context_data = get_data_from_file(context_file, content_type="yaml")
-
         context = KiaraContextConfig(**context_data)
+
+        changed = self._validate_context(context_config=context)
+
+        if changed:
+            logger.debug(
+                "write.context_file",
+                context_config_file=context_file.as_posix(),
+                context_name=context_name,
+                reason="context changed after validation",
+            )
+            context_file.parent.mkdir(parents=True, exist_ok=True)
+            with open(context_file, "wt") as f:
+                yaml.dump(context.dict(), f)
+
         context._context_config_path = context_file
 
-        self._context_data[context_alias] = context
+        self._context_data[context_name] = context
         return context
+
+    def _validate_context(self, context_config: KiaraContextConfig) -> bool:
+
+        env_registry = EnvironmentRegistry.instance()
+        available_archives = env_registry.environments["kiara_types"].archive_types
+
+        changed = False
+        if DEFAULT_DATA_STORE_MARKER not in context_config.archives.keys():
+            data_store_type = "filesystem_data_store"
+            assert data_store_type in available_archives.keys()
+
+            data_store_id = ID_REGISTRY.generate(comment="default data store id")
+            data_archive_config = {
+                "archive_path": os.path.abspath(
+                    os.path.join(
+                        self.stores_base_path, data_store_type, str(data_store_id)
+                    )
+                )
+            }
+            data_store = KiaraArchiveConfig.construct(
+                archive_id=str(data_store_id),
+                archive_type=data_store_type,
+                config=data_archive_config,
+            )
+            context_config.archives[DEFAULT_DATA_STORE_MARKER] = data_store
+
+            changed = True
+
+        if DEFAULT_JOB_STORE_MARKER not in context_config.archives.keys():
+            job_store_type = "filesystem_job_store"
+            assert job_store_type in available_archives.keys()
+
+            job_store_id = ID_REGISTRY.generate(comment="default job store id")
+            job_archive_config = {
+                "archive_path": os.path.abspath(
+                    os.path.join(
+                        self.stores_base_path, job_store_type, str(job_store_id)
+                    )
+                )
+            }
+            job_store = KiaraArchiveConfig.construct(
+                archive_id=str(job_store_id),
+                archive_type=job_store_type,
+                config=job_archive_config,
+            )
+            context_config.archives[DEFAULT_JOB_STORE_MARKER] = job_store
+
+            changed = True
+
+        if DEFAULT_ALIAS_STORE_MARKER not in context_config.archives.keys():
+
+            alias_store_type = "filesystem_alias_store"
+            assert alias_store_type in available_archives.keys()
+            alias_store_id = ID_REGISTRY.generate(comment="default alias store id")
+            alias_store_config = {
+                "archive_path": os.path.abspath(
+                    os.path.join(
+                        self.stores_base_path, alias_store_type, str(alias_store_id)
+                    )
+                )
+            }
+            alias_store = KiaraArchiveConfig.construct(
+                archive_id=str(alias_store_id),
+                archive_type=alias_store_type,
+                config=alias_store_config,
+            )
+            context_config.archives[DEFAULT_ALIAS_STORE_MARKER] = alias_store
+
+            changed = True
+
+        if METADATA_DESTINY_STORE_MARKER not in context_config.archives.keys():
+            destiny_store_type = "filesystem_destiny_store"
+            assert destiny_store_type in available_archives.keys()
+            destiny_store_id = ID_REGISTRY.generate(comment="default destiny store id")
+            destiny_store_config = {
+                "archive_path": os.path.abspath(
+                    os.path.join(
+                        self.stores_base_path, destiny_store_type, str(destiny_store_id)
+                    )
+                )
+            }
+            destiny_store = KiaraArchiveConfig.construct(
+                archive_id=str(destiny_store_id),
+                archive_type=destiny_store_type,
+                config=destiny_store_config,
+            )
+            context_config.archives[METADATA_DESTINY_STORE_MARKER] = destiny_store
+
+            changed = True
+
+        return changed
 
     def create_context_config(
         self, context_alias: Optional[str] = None
@@ -334,7 +460,8 @@ class KiaraConfig(BaseSettings):
             Path(os.path.join(self.context_search_paths[0])) / f"{context_alias}.yaml"
         )
 
-        archives = create_default_archives(kiara_config=self)
+        archives: Dict[str, KiaraArchiveConfig] = {}
+        # create_default_archives(kiara_config=self)
         context_id = ID_REGISTRY.generate(
             obj_type=KiaraContextConfig, comment=f"new kiara context '{context_alias}'"
         )
@@ -342,6 +469,8 @@ class KiaraConfig(BaseSettings):
         context_config = KiaraContextConfig(
             context_id=str(context_id), archives=archives, extra_pipeline_folders=[]
         )
+
+        self._validate_context(context_config=context_config)
 
         context_file.parent.mkdir(parents=True, exist_ok=True)
         with open(context_file, "wt") as f:
@@ -374,7 +503,7 @@ class KiaraConfig(BaseSettings):
                 data = yaml.load(f)
             context_config = KiaraContextConfig(**data)
         elif isinstance(context, str):
-            context_config = self.get_context_config(context_alias=context)
+            context_config = self.get_context_config(context_name=context)
         elif isinstance(context, uuid.UUID):
             context_config = self.find_context_config(context_id=context)
         else:

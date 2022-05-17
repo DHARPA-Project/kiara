@@ -230,7 +230,7 @@ class PipelineOperationConfig(OperationConfig):
 
     def __repr__(self):
 
-        return f"{self.__class__.__name__}(pipeline_name={self.pipeline_name} required_modules={list(self.required_module_types)} instance_id={self.instance_id}, category={self.model_type_id}, fields=[{', '.join(self.__fields__.keys())}])"
+        return f"{self.__class__.__name__}(pipeline_name={self.pipeline_name} required_modules={list(self.required_module_types)} instance_id={self.instance_id}, category={self.model_type_d}, fields=[{', '.join(self.__fields__.keys())}])"
 
 
 class Operation(Manifest):
@@ -464,7 +464,7 @@ class OperationTypeClassesInfo(TypeInfoModelGroup):
         return OperationTypeInfo
 
     type_name: Literal["operation_type"] = "operation_type"
-    type_infos: Mapping[str, OperationTypeInfo] = Field(
+    item_infos: Mapping[str, OperationTypeInfo] = Field(
         description="The operation info instances for each type."
     )
 
@@ -539,15 +539,17 @@ class OperationGroupInfo(InfoModelGroup):
         cls, kiara: "Kiara", group_alias: Optional[str] = None, **items: Operation
     ) -> "OperationGroupInfo":
 
-        type_infos = {
+        op_infos = {
             k: OperationInfo.create_from_operation(kiara=kiara, operation=v)
             for k, v in items.items()
         }
-        data_types_info = cls.construct(group_alias=group_alias, type_infos=type_infos)
+        data_types_info = cls.construct(
+            group_alias=group_alias, operation_infos=op_infos
+        )
         return data_types_info
 
-    type_name: Literal["operation_type"] = "operation_type"
-    type_infos: Mapping[str, OperationInfo] = Field(
+    # type_name: Literal["operation_type"] = "operation_type"
+    operation_infos: Mapping[str, OperationInfo] = Field(
         description="The operation info instances for each type."
     )
 
@@ -571,7 +573,7 @@ class OperationGroupInfo(InfoModelGroup):
         table.add_column("Type(s)", style="green")
         table.add_column("Description")
 
-        for op_id, op_info in self.type_infos.items():
+        for op_id, op_info in self.operation_infos.items():
 
             if (
                 not include_internal_operations
@@ -614,7 +616,7 @@ class OperationGroupInfo(InfoModelGroup):
         filter = config.get("filter", [])
 
         by_type = {}
-        for op_id, op in self.type_infos.items():
+        for op_id, op in self.operation_infos.items():
             if filter:
                 match = True
                 for f in filter:

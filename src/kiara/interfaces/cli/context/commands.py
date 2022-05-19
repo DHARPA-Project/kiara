@@ -71,7 +71,8 @@ def explain_context(
     kiara_config: KiaraConfig = ctx.obj["kiara_config"]
 
     if not context_name:
-        contexts = [kiara_config.default_context]
+        cn = ctx.obj["kiara_context_name"]
+        contexts = [cn]
     else:
         contexts = list(context_name)
 
@@ -140,7 +141,7 @@ def delete_context(ctx, context_name: Optional[str] = None, force: bool = False)
         sys.exit(0)
 
     terminal_print("Deleting archives:")
-    for archive in kiara.get_all_archives():
+    for archive in kiara.get_all_archives().keys():
         archive.delete_archive(archive_id=archive.archive_id)
         terminal_print(f"  - {archive.archive_id}")
     terminal_print("Done.")

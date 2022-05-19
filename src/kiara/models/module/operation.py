@@ -641,8 +641,8 @@ class OperationGroupInfo(InfoModelGroup):
 
         for operation_name in sorted(by_type.keys()):
 
-            if operation_name == "custom_module":
-                continue
+            # if operation_name == "custom_module":
+            #     continue
 
             first_line_value = True
             op_infos = by_type[operation_name]

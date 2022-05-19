@@ -33,7 +33,7 @@ def _run_command(kiara_ctx: Kiara, cmd):
 
 def test_data_list_subcommand(presseeded_data_store_minimal: Kiara):
 
-    command = "data list --all-ids --format json"
+    command = "data list --all-values --format json"
     result = _run_command(kiara_ctx=presseeded_data_store_minimal, cmd=command)
 
     assert result.exit_code == 0

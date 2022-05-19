@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import humanfriendly
 import uuid
 from humanfriendly import format_size
 from pydantic import BaseModel, Field, PrivateAttr
@@ -214,7 +215,7 @@ class ContextSummaries(BaseModel):
             table.add_column("no. aliaes")
             for context_name, context_summary in self.__root__.items():
                 value_summary = context_summary.value_summary()
-                size = str(value_summary["size"])
+                size = humanfriendly.format_size(value_summary["size"])
                 no_values = str(value_summary["no_values"])
                 no_aliases = str(len(context_summary.aliases))
                 table.add_row(

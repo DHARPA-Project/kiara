@@ -7,7 +7,7 @@ from rich.console import RenderableType
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Dict, List, Literal, Mapping, Optional, Type
+from typing import TYPE_CHECKING, Any, Iterable, List, Literal, Mapping, Optional, Type
 
 from kiara.models.documentation import (
     AuthorsMetadataModel,
@@ -103,19 +103,27 @@ class ArchiveTypeClassesInfo(TypeInfoModelGroup):
 class ArchiveInfo(ItemInfo):
     @classmethod
     def create_from_archive(
-        cls, kiara: "Kiara", archive: KiaraArchive, archive_alias: str
+        cls,
+        kiara: "Kiara",
+        archive: KiaraArchive,
+        archive_aliases: Optional[Iterable[str]] = None,
     ):
 
         archive_type_info = ArchiveTypeInfo.create_from_type_class(archive.__class__)
+        if archive_aliases is None:
+            archive_aliases = []
+        else:
+            archive_aliases = list(archive_aliases)
         return ArchiveInfo(
             archive_type_info=archive_type_info,
-            type_name=archive_alias,
+            type_name=str(archive.archive_id),
             documentation=archive_type_info.documentation,
             authors=archive_type_info.authors,
             context=archive_type_info.context,
             archive_id=archive.archive_id,
             details=archive.get_archive_details(),
             config=archive.config.dict(),
+            aliases=archive_aliases,
         )
 
     @classmethod
@@ -129,6 +137,9 @@ class ArchiveInfo(ItemInfo):
     config: Mapping[str, Any] = Field(description="The configuration of this archive.")
     details: Mapping[str, Any] = Field(
         description="Type dependent (runtime) details for this archive."
+    )
+    aliases: List[str] = Field(
+        description="Aliases for this archive.", default_factory=list
     )
 
 
@@ -146,9 +157,9 @@ class ArchiveGroupInfo(InfoModelGroup):
     ) -> "ArchiveGroupInfo":
 
         archives = {}
-        for archive_alias, archive in kiara.alias_registry.alias_archives.items():
+        for archive, aliases in kiara.get_all_archives().items():
             archives[str(archive.archive_id)] = ArchiveInfo.create_from_archive(
-                kiara=kiara, archive=archive, archive_alias=archive_alias
+                kiara=kiara, archive=archive, archive_aliases=aliases
             )
 
         info = cls(group_alias=group_alias, item_infos=archives)
@@ -164,50 +175,42 @@ class ArchiveGroupInfo(InfoModelGroup):
         show_config = config.get("show_config", True)
         show_details = config.get("show_details", False)
 
-        by_type: Dict[str, Dict[str, ArchiveInfo]] = {}
-        for archive_id, archive in sorted(self.item_infos.items()):
-            for item_type in archive.archive_type_info.supported_item_types:
-                by_type.setdefault(item_type, {})[archive.type_name] = archive
+        # by_type: Dict[str, Dict[str, ArchiveInfo]] = {}
+        # for archive_id, archive in sorted(self.item_infos.items()):
+        #     for item_type in archive.archive_type_info.supported_item_types:
+        #         by_type.setdefault(item_type, {})[archive.type_name] = archive
 
         table = Table(show_header=True, box=box.SIMPLE)
-        table.add_column("type", style="i")
-        table.add_column("alias", style="i")
         if show_archive_id:
             table.add_column("archive id")
+        table.add_column("alias(es)", style="i")
+        table.add_column("item type(s)", style="i")
         if show_config:
             table.add_column("config")
         if show_details:
             table.add_column("details")
 
-        for item_type, details in by_type.items():
+        for archive in self.item_infos.values():
+            row: List[RenderableType] = []
+            if show_archive_id:
+                row.append(str(archive.archive_id))
+            row.append("\n".join(archive.aliases))
+            row.append("\n".join(archive.archive_type_info.supported_item_types))
 
-            if len(details) == 1:
-                archive_alias = next(iter(details))
-                archive = details[archive_alias]
-
-                row: List[RenderableType] = [item_type, archive_alias]
-
-                if show_archive_id:
-                    row.append(str(archive.archive_id))
-
-                if show_config:
-                    config_json = Syntax(
-                        orjson_dumps(archive.config, option=orjson.OPT_INDENT_2),
-                        "json",
-                        background_color="default",
-                    )
-                    row.append(config_json)
-
-                if show_details:
-                    details_json = Syntax(
-                        orjson_dumps(archive.details, option=orjson.OPT_INDENT_2),
-                        "json",
-                        background_color="default",
-                    )
-                    row.append(details_json)
-
-            else:
-                raise NotImplementedError()
+            if show_config:
+                config_json = Syntax(
+                    orjson_dumps(archive.config, option=orjson.OPT_INDENT_2),
+                    "json",
+                    background_color="default",
+                )
+                row.append(config_json)
+            if show_details:
+                details_json = Syntax(
+                    orjson_dumps(archive.details, option=orjson.OPT_INDENT_2),
+                    "json",
+                    background_color="default",
+                )
+                row.append(details_json)
 
             table.add_row(*row)
 

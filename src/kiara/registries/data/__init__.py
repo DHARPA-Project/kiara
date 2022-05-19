@@ -275,6 +275,7 @@ class DataRegistry(object):
 
     def get_value(self, value_id: Union[uuid.UUID, Value, str]) -> Value:
         _value_id = None
+
         if not isinstance(value_id, uuid.UUID):
             # fallbacks for common mistakes, this should error out if not a Value or string.
             if hasattr(value_id, "value_id"):

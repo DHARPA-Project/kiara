@@ -35,7 +35,7 @@ def data(ctx):
 
 @data.command(name="list")
 @click.option(
-    "--all-ids",
+    "--all-values",
     "-a",
     help="Also list values without aliases.",
     is_flag=True,
@@ -87,7 +87,7 @@ def data(ctx):
 def list_values(
     ctx,
     format,
-    all_ids,
+    all_values,
     include_internal,
     value_id,
     pedigree,
@@ -101,9 +101,9 @@ def list_values(
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     if include_internal:
-        all_ids = True
+        all_values = True
 
-    if not all_ids:
+    if not all_values:
         alias_registry = kiara_obj.alias_registry
         value_ids = [v.value_id for v in alias_registry.aliases.values()]
     else:
@@ -118,7 +118,7 @@ def list_values(
         render_fields[0] = "aliases"
         render_fields[1] = "value_id"
 
-    if not value_id and not all_ids:
+    if not value_id and not all_values:
         render_fields.remove("value_id")
     if type_config:
         render_fields.append("data_type_config")
@@ -136,11 +136,11 @@ def list_values(
     render_config = {
         "render_type": "terminal",
         "list_by_alias": list_by_alias,
-        "show_internal": include_internal,
+        "show_internal_values": include_internal,
         "render_fields": render_fields,
     }
 
-    if not all_ids:
+    if not all_values:
         title = "Available aliases"
     else:
         title = "Available values"

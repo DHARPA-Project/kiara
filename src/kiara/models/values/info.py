@@ -216,7 +216,7 @@ class ValuesInfo(BaseModel):
     def create_render_map(self, render_type: str = "terminal", **render_config):
 
         list_by_alias = render_config.get("list_by_alias", True)
-        show_internal = render_config.get("show_internal", False)
+        show_internal = render_config.get("show_internal_values", False)
 
         render_fields = render_config.get("render_fields", None)
         if not render_fields:

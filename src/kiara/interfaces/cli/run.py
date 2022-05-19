@@ -197,7 +197,7 @@ def run(
     # prepare inputs
     list_keys = []
     for name, value_schema in operation.operation_details.inputs_schema.items():
-        if value_schema.type in ["array", "list"]:
+        if value_schema.type in ["list"]:
             list_keys.append(name)
 
     inputs_dict = dict_from_cli_args(*inputs, list_keys=list_keys)

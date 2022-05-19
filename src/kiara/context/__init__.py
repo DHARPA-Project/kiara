@@ -96,15 +96,28 @@ class Kiara(object):
     how something was created, and in which environment.
     """
 
-    _instance = None
+    _instances: Dict[str, "Kiara"] = {}
+    _instance_kiara_config = KiaraConfig()
 
     @classmethod
-    def instance(cls) -> "Kiara":
+    def instance(cls, context_name: Optional[str] = None) -> "Kiara":
         """The default *kiara* context. In most cases, it's recommended you create and manage your own, though."""
 
-        if cls._instance is None:
-            cls._instance = Kiara()
-        return cls._instance
+        # TODO: make this thread-safe
+        if context_name is None:
+            _context_name = os.environ.get("KIARA_CONTEXT", None)
+        else:
+            _context_name = context_name
+
+        if not _context_name:
+            _context_name = cls._instance_kiara_config.default_context
+
+        if _context_name in cls._instances.keys():
+            return cls._instances[_context_name]
+
+        kiara = cls._instance_kiara_config.create_context(context=context_name)
+        cls._instances[_context_name] = kiara
+        return kiara
 
     def __init__(self, config: Optional[KiaraContextConfig] = None):
 
@@ -387,13 +400,19 @@ class Kiara(object):
     def create_context_summary(self) -> ContextSummary:
         return ContextSummary.create_from_context(kiara=self)
 
-    def get_all_archives(self) -> Set[KiaraArchive]:
+    def get_all_archives(self) -> Dict[KiaraArchive, Set[str]]:
 
-        result: Set[KiaraArchive] = set()
-        result.update(self.data_registry.data_archives.values())
-        result.update(self.alias_registry.alias_archives.values())
-        result.update(self.destiny_registry.destiny_archives.values())
-        result.update(self.job_registry.job_archives.values())
+        result: Dict[KiaraArchive, Set[str]] = {}
+
+        archive: KiaraArchive
+        for alias, archive in self.data_registry.data_archives.items():
+            result.setdefault(archive, set()).add(alias)
+        for alias, archive in self.alias_registry.alias_archives.items():
+            result.setdefault(archive, set()).add(alias)
+        for alias, archive in self.destiny_registry.destiny_archives.items():
+            result.setdefault(archive, set()).add(alias)
+        for alias, archive in self.job_registry.job_archives.items():
+            result.setdefault(archive, set()).add(alias)
 
         return result
 

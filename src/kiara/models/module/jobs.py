@@ -6,6 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import logging
+import os
 import uuid
 from datetime import datetime
 from deepdiff import DeepHash
@@ -22,6 +23,18 @@ from kiara.models.module.manifest import InputsManifest
 if TYPE_CHECKING:
     from kiara.context import DataRegistry
     from kiara.modules import KiaraModule
+
+
+class ExecutionContext(KiaraModel):
+
+    _kiara_model_id = "instance.execution_context"
+
+    working_dir: str = Field(
+        description="The path of the working directory.", default_factory=os.getcwd
+    )
+    pipeline_dir: Optional[str] = Field(
+        description="The path of the pipeline file that is being executed (if applicable)."
+    )
 
 
 class JobStatus(Enum):
@@ -70,8 +83,9 @@ class JobConfig(InputsManifest):
     ):
 
         augmented = module.augment_module_inputs(inputs=inputs)
+
         values = data_registry.create_valueset(
-            data=augmented, schema=module.inputs_schema
+            data=augmented, schema=module.full_inputs_schema
         )
         invalid = values.check_invalid()
         if invalid:

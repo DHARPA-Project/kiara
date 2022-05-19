@@ -13,7 +13,7 @@ from kiara.exceptions import (
 )
 from kiara.interfaces.python_api import StoreValuesResult
 from kiara.interfaces.python_api.utils import create_save_config
-from kiara.models.module.jobs import JobConfig, JobStatus
+from kiara.models.module.jobs import ExecutionContext, JobConfig, JobStatus
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
 from kiara.models.module.pipeline import PipelineConfig
@@ -26,6 +26,8 @@ from kiara.utils.output import (
 
 
 class KiaraOperation(object):
+    """A class to provide a convenience API around executing a specific operation."""
+
     def __init__(
         self,
         kiara: "Kiara",
@@ -175,7 +177,7 @@ class KiaraOperation(object):
         self._defaults = None
 
         module_or_operation = self._operation_name
-        operation: Optional[Operation] = None
+        operation: Optional[Operation]
 
         if module_or_operation in self._kiara.operation_registry.operation_ids:
 
@@ -203,8 +205,15 @@ class KiaraOperation(object):
 
             self._defaults = data.pop("inputs", {})
 
+            execution_context = ExecutionContext(
+                pipeline_dir=os.path.abspath(os.path.dirname(module_or_operation))
+            )
+
             pipeline_config = PipelineConfig.from_config(
-                pipeline_name=pipeline_name, data=data, kiara=self._kiara
+                pipeline_name=pipeline_name,
+                data=data,
+                kiara=self._kiara,
+                execution_context=execution_context,
             )
 
             manifest = self._kiara.create_manifest(

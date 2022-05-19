@@ -12,11 +12,13 @@ from slugify import slugify
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Optional
 
 from kiara.models.module import KiaraModuleClass, KiaraModuleConfig
+from kiara.models.module.jobs import ExecutionContext
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.pipeline.value_refs import StepValueAddress
 from kiara.utils import get_data_from_file
 from kiara.utils.output import create_table_from_model_object
 from kiara.utils.pipelines import ensure_step_value_addresses
+from kiara.utils.string_vars import replace_var_names_in_obj
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -317,7 +319,15 @@ class PipelineConfig(KiaraModuleConfig):
         if pipeline_name is None:
             pipeline_name = os.path.basename(path)
 
-        return cls.from_config(pipeline_name=pipeline_name, data=data, kiara=kiara)
+        pipeline_dir = os.path.abspath(os.path.dirname(path))
+
+        execution_context = ExecutionContext(pipeline_dir=pipeline_dir)
+        return cls.from_config(
+            pipeline_name=pipeline_name,
+            data=data,
+            kiara=kiara,
+            execution_context=execution_context,
+        )
 
     @classmethod
     def from_config(
@@ -325,7 +335,7 @@ class PipelineConfig(KiaraModuleConfig):
         pipeline_name: str,
         data: Mapping[str, Any],
         kiara: Optional["Kiara"] = None,
-        # module_map: Optional[Mapping[str, Any]] = None,
+        execution_context: Optional[ExecutionContext] = None,
     ):
 
         if kiara is None:
@@ -336,7 +346,15 @@ class PipelineConfig(KiaraModuleConfig):
         if not kiara.operation_registry.is_initialized:
             kiara.operation_registry.operations  # noqa
 
-        config = cls._from_config(pipeline_name=pipeline_name, data=data, kiara=kiara)
+        if execution_context is None:
+            execution_context = ExecutionContext()
+
+        config = cls._from_config(
+            pipeline_name=pipeline_name,
+            data=data,
+            kiara=kiara,
+            execution_context=execution_context,
+        )
         return config
 
     @classmethod
@@ -346,7 +364,13 @@ class PipelineConfig(KiaraModuleConfig):
         data: Mapping[str, Any],
         kiara: "Kiara",
         module_map: Optional[Mapping[str, Any]] = None,
+        execution_context: Optional[ExecutionContext] = None,
     ):
+
+        if execution_context is None:
+            execution_context = ExecutionContext()
+
+        repl_dict = execution_context.dict()
 
         data = dict(data)
         steps = data.pop("steps")
@@ -356,6 +380,21 @@ class PipelineConfig(KiaraModuleConfig):
             data["input_aliases"] = create_input_alias_map(steps)
         if not data.get("output_aliases"):
             data["output_aliases"] = create_output_alias_map(steps)
+
+        if "defaults" in data.keys():
+            defaults = data.pop("defaults")
+            replaced = replace_var_names_in_obj(defaults, repl_dict=repl_dict)
+            data["defaults"] = replaced
+
+        if "constants" in data.keys():
+            constants = data.pop("constants")
+            replaced = replace_var_names_in_obj(constants, repl_dict=repl_dict)
+            data["constants"] = replaced
+
+        if "inputs" in data.keys():
+            inputs = data.pop("inputs")
+            replaced = replace_var_names_in_obj(inputs, repl_dict=repl_dict)
+            data["inputs"] = replaced
 
         result = cls(pipeline_name=pipeline_name, **data)
 

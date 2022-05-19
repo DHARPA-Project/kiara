@@ -78,6 +78,7 @@ class InputOutputObject(abc.ABC):
 
         self._alias: str = alias
         self._inputs_schema: Mapping[str, ValueSchema] = None  # type: ignore
+        self._full_inputs_schema: Mapping[str, ValueSchema] = None  # type: ignore
         self._outputs_schema: Mapping[str, ValueSchema] = None  # type: ignore
         self._constants: Mapping[str, ValueSchema] = None  # type: ignore
 
@@ -127,6 +128,16 @@ class InputOutputObject(abc.ABC):
             self._create_inputs_schema()
 
         return self._inputs_schema  # type: ignore
+
+    @property
+    def full_inputs_schema(self) -> Mapping[str, ValueSchema]:
+
+        if self._full_inputs_schema is not None:
+            return self._full_inputs_schema
+
+        self._full_inputs_schema = dict(self.inputs_schema)
+        self._full_inputs_schema.update(self._constants)
+        return self._full_inputs_schema
 
     @property
     def constants(self) -> Mapping[str, ValueSchema]:
@@ -222,6 +233,7 @@ class InputOutputObject(abc.ABC):
         return self.outputs_schema.keys()
 
     def augment_module_inputs(self, inputs: Mapping[str, Any]) -> Dict[str, Any]:
+
         return augment_values(
             values=inputs, schemas=self.inputs_schema, constants=self.constants
         )

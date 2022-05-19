@@ -83,7 +83,7 @@ def overlay_constants_and_defaults(
 def augment_values(
     values: Mapping[str, Any],
     schemas: Mapping[str, ValueSchema],
-    constants: Optional[Mapping[str, Any]] = None,
+    constants: Optional[Mapping[str, ValueSchema]] = None,
 ) -> Dict[str, Any]:
 
     # TODO: check if extra fields were provided
@@ -94,12 +94,25 @@ def augment_values(
                 raise Exception(f"Invalid input: value provided for constant '{k}'")
 
     values_new = {}
+
+    if constants:
+        for field_name, schema in constants.items():
+            v = schema.default
+            assert v not in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]
+            if callable(v):
+                values_new[field_name] = v()
+            else:
+                values_new[field_name] = copy.deepcopy(v)
+
     for field_name, schema in schemas.items():
 
+        if field_name in values_new.keys():
+            raise Exception(
+                f"Duplicate field '{field_name}', this is most likely a bug."
+            )
+
         if field_name not in values.keys():
-            if constants and field_name in constants:
-                values_new[field_name] = copy.deepcopy(constants[field_name])
-            elif schema.default != SpecialValue.NOT_SET:
+            if schema.default != SpecialValue.NOT_SET:
                 if callable(schema.default):
                     values_new[field_name] = schema.default()
                 else:

@@ -3612,15 +3612,28 @@ how something was created, and in which environment.</p>
 <span class="sd">    how something was created, and in which environment.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_instances</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">_instance_kiara_config</span> <span class="o">=</span> <span class="n">KiaraConfig</span><span class="p">()</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;The default *kiara* context. In most cases, it&#39;s recommended you create and manage your own, though.&quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="n">Kiara</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+        <span class="c1"># TODO: make this thread-safe</span>
+        <span class="k">if</span> <span class="n">context_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_context_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;KIARA_CONTEXT&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_context_name</span> <span class="o">=</span> <span class="n">context_name</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_context_name</span><span class="p">:</span>
+            <span class="n">_context_name</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance_kiara_config</span><span class="o">.</span><span class="n">default_context</span>
+
+        <span class="k">if</span> <span class="n">_context_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="n">_context_name</span><span class="p">]</span>
+
+        <span class="n">kiara</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance_kiara_config</span><span class="o">.</span><span class="n">create_context</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">context_name</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="n">_context_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">kiara</span>
+        <span class="k">return</span> <span class="n">kiara</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KiaraContextConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 
@@ -3903,13 +3916,19 @@ how something was created, and in which environment.</p>
     <span class="k">def</span> <span class="nf">create_context_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextSummary</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">ContextSummary</span><span class="o">.</span><span class="n">create_from_context</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_all_archives</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">KiaraArchive</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">get_all_archives</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">KiaraArchive</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 
-        <span class="n">result</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">KiaraArchive</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">data_archives</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-        <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alias_registry</span><span class="o">.</span><span class="n">alias_archives</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-        <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">destiny_registry</span><span class="o">.</span><span class="n">destiny_archives</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-        <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">job_registry</span><span class="o">.</span><span class="n">job_archives</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">KiaraArchive</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">archive</span><span class="p">:</span> <span class="n">KiaraArchive</span>
+        <span class="k">for</span> <span class="n">alias</span><span class="p">,</span> <span class="n">archive</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">data_archives</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">archive</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">alias</span><span class="p">,</span> <span class="n">archive</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alias_registry</span><span class="o">.</span><span class="n">alias_archives</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">archive</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">alias</span><span class="p">,</span> <span class="n">archive</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">destiny_registry</span><span class="o">.</span><span class="n">destiny_archives</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">archive</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">alias</span><span class="p">,</span> <span class="n">archive</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_registry</span><span class="o">.</span><span class="n">job_archives</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">archive</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
@@ -4467,13 +4486,19 @@ how something was created, and in which environment.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/context/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_all_archives</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">KiaraArchive</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_all_archives</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">KiaraArchive</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 
-    <span class="n">result</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">KiaraArchive</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-    <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">data_archives</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-    <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alias_registry</span><span class="o">.</span><span class="n">alias_archives</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-    <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">destiny_registry</span><span class="o">.</span><span class="n">destiny_archives</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-    <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">job_registry</span><span class="o">.</span><span class="n">job_archives</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">KiaraArchive</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">archive</span><span class="p">:</span> <span class="n">KiaraArchive</span>
+    <span class="k">for</span> <span class="n">alias</span><span class="p">,</span> <span class="n">archive</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">data_archives</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">archive</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">alias</span><span class="p">,</span> <span class="n">archive</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alias_registry</span><span class="o">.</span><span class="n">alias_archives</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">archive</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">alias</span><span class="p">,</span> <span class="n">archive</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">destiny_registry</span><span class="o">.</span><span class="n">destiny_archives</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">archive</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">alias</span><span class="p">,</span> <span class="n">archive</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_registry</span><span class="o">.</span><span class="n">job_archives</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">archive</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
@@ -4489,7 +4514,7 @@ how something was created, and in which environment.</p>
 
 
 <h5 id="kiara.context.Kiara.instance" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">instance</span><span class="p">()</span></code>
+<code class="highlight language-python"><span class="n">instance</span><span class="p">(</span><span class="n">context_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
@@ -4504,12 +4529,24 @@ how something was created, and in which environment.</p>
         <details class="quote">
           <summary>Source code in <code>kiara/context/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;The default *kiara* context. In most cases, it&#39;s recommended you create and manage your own, though.&quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="n">Kiara</span><span class="p">()</span>
-    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+    <span class="c1"># TODO: make this thread-safe</span>
+    <span class="k">if</span> <span class="n">context_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_context_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;KIARA_CONTEXT&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_context_name</span> <span class="o">=</span> <span class="n">context_name</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_context_name</span><span class="p">:</span>
+        <span class="n">_context_name</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance_kiara_config</span><span class="o">.</span><span class="n">default_context</span>
+
+    <span class="k">if</span> <span class="n">_context_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="n">_context_name</span><span class="p">]</span>
+
+    <span class="n">kiara</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance_kiara_config</span><span class="o">.</span><span class="n">create_context</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">context_name</span><span class="p">)</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="n">_context_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">kiara</span>
+    <span class="k">return</span> <span class="n">kiara</span>
 </code></pre></div>
         </details>
     </div>

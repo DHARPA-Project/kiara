@@ -6301,9 +6301,9 @@ ArchiveGroupInfo            (<a class="autorefs autorefs-internal" title="kiara.
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ArchiveGroupInfo&quot;</span><span class="p">:</span>
 
         <span class="n">archives</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">archive_alias</span><span class="p">,</span> <span class="n">archive</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">alias_registry</span><span class="o">.</span><span class="n">alias_archives</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">archive</span><span class="p">,</span> <span class="n">aliases</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">get_all_archives</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">archives</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">archive_id</span><span class="p">)]</span> <span class="o">=</span> <span class="n">ArchiveInfo</span><span class="o">.</span><span class="n">create_from_archive</span><span class="p">(</span>
-                <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">archive</span><span class="o">=</span><span class="n">archive</span><span class="p">,</span> <span class="n">archive_alias</span><span class="o">=</span><span class="n">archive_alias</span>
+                <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">archive</span><span class="o">=</span><span class="n">archive</span><span class="p">,</span> <span class="n">archive_aliases</span><span class="o">=</span><span class="n">aliases</span>
             <span class="p">)</span>
 
         <span class="n">info</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">group_alias</span><span class="o">=</span><span class="n">group_alias</span><span class="p">,</span> <span class="n">item_infos</span><span class="o">=</span><span class="n">archives</span><span class="p">)</span>
@@ -6319,50 +6319,42 @@ ArchiveGroupInfo            (<a class="autorefs autorefs-internal" title="kiara.
         <span class="n">show_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_config&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="n">show_details</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_details&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
-        <span class="n">by_type</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ArchiveInfo</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">archive_id</span><span class="p">,</span> <span class="n">archive</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-            <span class="k">for</span> <span class="n">item_type</span> <span class="ow">in</span> <span class="n">archive</span><span class="o">.</span><span class="n">archive_type_info</span><span class="o">.</span><span class="n">supported_item_types</span><span class="p">:</span>
-                <span class="n">by_type</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">item_type</span><span class="p">,</span> <span class="p">{})[</span><span class="n">archive</span><span class="o">.</span><span class="n">type_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">archive</span>
+        <span class="c1"># by_type: Dict[str, Dict[str, ArchiveInfo]] = {}</span>
+        <span class="c1"># for archive_id, archive in sorted(self.item_infos.items()):</span>
+        <span class="c1">#     for item_type in archive.archive_type_info.supported_item_types:</span>
+        <span class="c1">#         by_type.setdefault(item_type, {})[archive.type_name] = archive</span>
 
         <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;alias&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">show_archive_id</span><span class="p">:</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;archive id&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;alias(es)&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;item type(s)&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">show_config</span><span class="p">:</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;config&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">show_details</span><span class="p">:</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;details&quot;</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">item_type</span><span class="p">,</span> <span class="n">details</span> <span class="ow">in</span> <span class="n">by_type</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">archive</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">row</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">show_archive_id</span><span class="p">:</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">archive_id</span><span class="p">))</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">aliases</span><span class="p">))</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">archive_type_info</span><span class="o">.</span><span class="n">supported_item_types</span><span class="p">))</span>
 
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">details</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">archive_alias</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">details</span><span class="p">))</span>
-                <span class="n">archive</span> <span class="o">=</span> <span class="n">details</span><span class="p">[</span><span class="n">archive_alias</span><span class="p">]</span>
-
-                <span class="n">row</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">item_type</span><span class="p">,</span> <span class="n">archive_alias</span><span class="p">]</span>
-
-                <span class="k">if</span> <span class="n">show_archive_id</span><span class="p">:</span>
-                    <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">archive_id</span><span class="p">))</span>
-
-                <span class="k">if</span> <span class="n">show_config</span><span class="p">:</span>
-                    <span class="n">config_json</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span>
-                        <span class="n">orjson_dumps</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">),</span>
-                        <span class="s2">&quot;json&quot;</span><span class="p">,</span>
-                        <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
-                    <span class="p">)</span>
-                    <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">config_json</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="n">show_details</span><span class="p">:</span>
-                    <span class="n">details_json</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span>
-                        <span class="n">orjson_dumps</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">details</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">),</span>
-                        <span class="s2">&quot;json&quot;</span><span class="p">,</span>
-                        <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
-                    <span class="p">)</span>
-                    <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">details_json</span><span class="p">)</span>
-
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">show_config</span><span class="p">:</span>
+                <span class="n">config_json</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span>
+                    <span class="n">orjson_dumps</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">),</span>
+                    <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+                    <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">config_json</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">show_details</span><span class="p">:</span>
+                <span class="n">details_json</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span>
+                    <span class="n">orjson_dumps</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">details</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">),</span>
+                    <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+                    <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">details_json</span><span class="p">)</span>
 
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
 
@@ -6458,9 +6450,9 @@ ArchiveGroupInfo            (<a class="autorefs autorefs-internal" title="kiara.
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ArchiveGroupInfo&quot;</span><span class="p">:</span>
 
     <span class="n">archives</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">archive_alias</span><span class="p">,</span> <span class="n">archive</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">alias_registry</span><span class="o">.</span><span class="n">alias_archives</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">archive</span><span class="p">,</span> <span class="n">aliases</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">get_all_archives</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">archives</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">archive_id</span><span class="p">)]</span> <span class="o">=</span> <span class="n">ArchiveInfo</span><span class="o">.</span><span class="n">create_from_archive</span><span class="p">(</span>
-            <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">archive</span><span class="o">=</span><span class="n">archive</span><span class="p">,</span> <span class="n">archive_alias</span><span class="o">=</span><span class="n">archive_alias</span>
+            <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">archive</span><span class="o">=</span><span class="n">archive</span><span class="p">,</span> <span class="n">archive_aliases</span><span class="o">=</span><span class="n">aliases</span>
         <span class="p">)</span>
 
     <span class="n">info</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">group_alias</span><span class="o">=</span><span class="n">group_alias</span><span class="p">,</span> <span class="n">item_infos</span><span class="o">=</span><span class="n">archives</span><span class="p">)</span>
@@ -6494,50 +6486,42 @@ ArchiveGroupInfo            (<a class="autorefs autorefs-internal" title="kiara.
     <span class="n">show_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_config&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
     <span class="n">show_details</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_details&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
-    <span class="n">by_type</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ArchiveInfo</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">archive_id</span><span class="p">,</span> <span class="n">archive</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-        <span class="k">for</span> <span class="n">item_type</span> <span class="ow">in</span> <span class="n">archive</span><span class="o">.</span><span class="n">archive_type_info</span><span class="o">.</span><span class="n">supported_item_types</span><span class="p">:</span>
-            <span class="n">by_type</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">item_type</span><span class="p">,</span> <span class="p">{})[</span><span class="n">archive</span><span class="o">.</span><span class="n">type_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">archive</span>
+    <span class="c1"># by_type: Dict[str, Dict[str, ArchiveInfo]] = {}</span>
+    <span class="c1"># for archive_id, archive in sorted(self.item_infos.items()):</span>
+    <span class="c1">#     for item_type in archive.archive_type_info.supported_item_types:</span>
+    <span class="c1">#         by_type.setdefault(item_type, {})[archive.type_name] = archive</span>
 
     <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;alias&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">show_archive_id</span><span class="p">:</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;archive id&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;alias(es)&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;item type(s)&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">show_config</span><span class="p">:</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;config&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">show_details</span><span class="p">:</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;details&quot;</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">item_type</span><span class="p">,</span> <span class="n">details</span> <span class="ow">in</span> <span class="n">by_type</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">archive</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">row</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">show_archive_id</span><span class="p">:</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">archive_id</span><span class="p">))</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">aliases</span><span class="p">))</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">archive_type_info</span><span class="o">.</span><span class="n">supported_item_types</span><span class="p">))</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">details</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">archive_alias</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">details</span><span class="p">))</span>
-            <span class="n">archive</span> <span class="o">=</span> <span class="n">details</span><span class="p">[</span><span class="n">archive_alias</span><span class="p">]</span>
-
-            <span class="n">row</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">item_type</span><span class="p">,</span> <span class="n">archive_alias</span><span class="p">]</span>
-
-            <span class="k">if</span> <span class="n">show_archive_id</span><span class="p">:</span>
-                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">archive_id</span><span class="p">))</span>
-
-            <span class="k">if</span> <span class="n">show_config</span><span class="p">:</span>
-                <span class="n">config_json</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span>
-                    <span class="n">orjson_dumps</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">),</span>
-                    <span class="s2">&quot;json&quot;</span><span class="p">,</span>
-                    <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">config_json</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">show_details</span><span class="p">:</span>
-                <span class="n">details_json</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span>
-                    <span class="n">orjson_dumps</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">details</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">),</span>
-                    <span class="s2">&quot;json&quot;</span><span class="p">,</span>
-                    <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">details_json</span><span class="p">)</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">show_config</span><span class="p">:</span>
+            <span class="n">config_json</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span>
+                <span class="n">orjson_dumps</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">),</span>
+                <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+                <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">show_details</span><span class="p">:</span>
+            <span class="n">details_json</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span>
+                <span class="n">orjson_dumps</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">details</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">),</span>
+                <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+                <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">details_json</span><span class="p">)</span>
 
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
 
@@ -6584,19 +6568,27 @@ ArchiveInfo            (<a class="autorefs autorefs-internal" title="kiara.model
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ArchiveInfo</span><span class="p">(</span><span class="n">ItemInfo</span><span class="p">):</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_from_archive</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">archive</span><span class="p">:</span> <span class="n">KiaraArchive</span><span class="p">,</span> <span class="n">archive_alias</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
+        <span class="n">archive</span><span class="p">:</span> <span class="n">KiaraArchive</span><span class="p">,</span>
+        <span class="n">archive_aliases</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 
         <span class="n">archive_type_info</span> <span class="o">=</span> <span class="n">ArchiveTypeInfo</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">archive_aliases</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">archive_aliases</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">archive_aliases</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">archive_aliases</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ArchiveInfo</span><span class="p">(</span>
             <span class="n">archive_type_info</span><span class="o">=</span><span class="n">archive_type_info</span><span class="p">,</span>
-            <span class="n">type_name</span><span class="o">=</span><span class="n">archive_alias</span><span class="p">,</span>
+            <span class="n">type_name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">archive_id</span><span class="p">),</span>
             <span class="n">documentation</span><span class="o">=</span><span class="n">archive_type_info</span><span class="o">.</span><span class="n">documentation</span><span class="p">,</span>
             <span class="n">authors</span><span class="o">=</span><span class="n">archive_type_info</span><span class="o">.</span><span class="n">authors</span><span class="p">,</span>
             <span class="n">context</span><span class="o">=</span><span class="n">archive_type_info</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
             <span class="n">archive_id</span><span class="o">=</span><span class="n">archive</span><span class="o">.</span><span class="n">archive_id</span><span class="p">,</span>
             <span class="n">details</span><span class="o">=</span><span class="n">archive</span><span class="o">.</span><span class="n">get_archive_details</span><span class="p">(),</span>
             <span class="n">config</span><span class="o">=</span><span class="n">archive</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
+            <span class="n">aliases</span><span class="o">=</span><span class="n">archive_aliases</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="nd">@classmethod</span>
@@ -6611,6 +6603,9 @@ ArchiveInfo            (<a class="autorefs autorefs-internal" title="kiara.model
     <span class="n">details</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Type dependent (runtime) details for this archive.&quot;</span>
     <span class="p">)</span>
+    <span class="n">aliases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Aliases for this archive.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span>
+    <span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -6622,6 +6617,28 @@ ArchiveInfo            (<a class="autorefs autorefs-internal" title="kiara.model
 
 
 <h6 id="kiara.models.archives.ArchiveInfo-attributes">Attributes<a href="#kiara.models.archives.ArchiveInfo-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.archives.ArchiveInfo.aliases" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">aliases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.archives.ArchiveInfo.aliases" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>Aliases for this archive.</p>
+    </div>
+
+  </div>
+
+
 
   <div class="doc doc-object doc-attribute">
 
@@ -6752,7 +6769,7 @@ ArchiveInfo            (<a class="autorefs autorefs-internal" title="kiara.model
 
 
 <h7 id="kiara.models.archives.ArchiveInfo.create_from_archive" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_from_archive</span><span class="p">(</span><span class="n">kiara</span><span class="p">,</span> <span class="n">archive</span><span class="p">,</span> <span class="n">archive_alias</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_from_archive</span><span class="p">(</span><span class="n">kiara</span><span class="p">,</span> <span class="n">archive</span><span class="p">,</span> <span class="n">archive_aliases</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
@@ -6767,19 +6784,27 @@ ArchiveInfo            (<a class="autorefs autorefs-internal" title="kiara.model
           <summary>Source code in <code>kiara/models/archives.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create_from_archive</span><span class="p">(</span>
-    <span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">archive</span><span class="p">:</span> <span class="n">KiaraArchive</span><span class="p">,</span> <span class="n">archive_alias</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="bp">cls</span><span class="p">,</span>
+    <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
+    <span class="n">archive</span><span class="p">:</span> <span class="n">KiaraArchive</span><span class="p">,</span>
+    <span class="n">archive_aliases</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 
     <span class="n">archive_type_info</span> <span class="o">=</span> <span class="n">ArchiveTypeInfo</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">archive_aliases</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">archive_aliases</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">archive_aliases</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">archive_aliases</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ArchiveInfo</span><span class="p">(</span>
         <span class="n">archive_type_info</span><span class="o">=</span><span class="n">archive_type_info</span><span class="p">,</span>
-        <span class="n">type_name</span><span class="o">=</span><span class="n">archive_alias</span><span class="p">,</span>
+        <span class="n">type_name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">archive_id</span><span class="p">),</span>
         <span class="n">documentation</span><span class="o">=</span><span class="n">archive_type_info</span><span class="o">.</span><span class="n">documentation</span><span class="p">,</span>
         <span class="n">authors</span><span class="o">=</span><span class="n">archive_type_info</span><span class="o">.</span><span class="n">authors</span><span class="p">,</span>
         <span class="n">context</span><span class="o">=</span><span class="n">archive_type_info</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
         <span class="n">archive_id</span><span class="o">=</span><span class="n">archive</span><span class="o">.</span><span class="n">archive_id</span><span class="p">,</span>
         <span class="n">details</span><span class="o">=</span><span class="n">archive</span><span class="o">.</span><span class="n">get_archive_details</span><span class="p">(),</span>
         <span class="n">config</span><span class="o">=</span><span class="n">archive</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
+        <span class="n">aliases</span><span class="o">=</span><span class="n">archive_aliases</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -7319,7 +7344,7 @@ ContextSummaries            (<span title="pydantic.main.BaseModel">BaseModel</sp
             <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;no. aliaes&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">context_name</span><span class="p">,</span> <span class="n">context_summary</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">value_summary</span> <span class="o">=</span> <span class="n">context_summary</span><span class="o">.</span><span class="n">value_summary</span><span class="p">()</span>
-                <span class="n">size</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value_summary</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">])</span>
+                <span class="n">size</span> <span class="o">=</span> <span class="n">humanfriendly</span><span class="o">.</span><span class="n">format_size</span><span class="p">(</span><span class="n">value_summary</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">])</span>
                 <span class="n">no_values</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value_summary</span><span class="p">[</span><span class="s2">&quot;no_values&quot;</span><span class="p">])</span>
                 <span class="n">no_aliases</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">context_summary</span><span class="o">.</span><span class="n">aliases</span><span class="p">))</span>
                 <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
@@ -7424,7 +7449,7 @@ ContextSummaries            (<span title="pydantic.main.BaseModel">BaseModel</sp
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;no. aliaes&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">context_name</span><span class="p">,</span> <span class="n">context_summary</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">value_summary</span> <span class="o">=</span> <span class="n">context_summary</span><span class="o">.</span><span class="n">value_summary</span><span class="p">()</span>
-            <span class="n">size</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value_summary</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">])</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="n">humanfriendly</span><span class="o">.</span><span class="n">format_size</span><span class="p">(</span><span class="n">value_summary</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">])</span>
             <span class="n">no_values</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value_summary</span><span class="p">[</span><span class="s2">&quot;no_values&quot;</span><span class="p">])</span>
             <span class="n">no_aliases</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">context_summary</span><span class="o">.</span><span class="n">aliases</span><span class="p">))</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
@@ -20889,13 +20914,11 @@ OperationGroupInfo            (<a class="autorefs autorefs-internal" title="kiar
             <span class="n">k</span><span class="p">:</span> <span class="n">OperationInfo</span><span class="o">.</span><span class="n">create_from_operation</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
         <span class="p">}</span>
-        <span class="n">data_types_info</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
-            <span class="n">group_alias</span><span class="o">=</span><span class="n">group_alias</span><span class="p">,</span> <span class="n">operation_infos</span><span class="o">=</span><span class="n">op_infos</span>
-        <span class="p">)</span>
+        <span class="n">data_types_info</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">group_alias</span><span class="o">=</span><span class="n">group_alias</span><span class="p">,</span> <span class="n">item_infos</span><span class="o">=</span><span class="n">op_infos</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data_types_info</span>
 
     <span class="c1"># type_name: Literal[&quot;operation_type&quot;] = &quot;operation_type&quot;</span>
-    <span class="n">operation_infos</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OperationInfo</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">item_infos</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OperationInfo</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The operation info instances for each type.&quot;</span>
     <span class="p">)</span>
 
@@ -20919,7 +20942,7 @@ OperationGroupInfo            (<a class="autorefs autorefs-internal" title="kiar
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Type(s)&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Description&quot;</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">op_id</span><span class="p">,</span> <span class="n">op_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_infos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">op_id</span><span class="p">,</span> <span class="n">op_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
             <span class="k">if</span> <span class="p">(</span>
                 <span class="ow">not</span> <span class="n">include_internal_operations</span>
@@ -20962,7 +20985,7 @@ OperationGroupInfo            (<a class="autorefs autorefs-internal" title="kiar
         <span class="nb">filter</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;filter&quot;</span><span class="p">,</span> <span class="p">[])</span>
 
         <span class="n">by_type</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">op_id</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_infos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">op_id</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">filter</span><span class="p">:</span>
                 <span class="n">match</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">:</span>
@@ -20987,8 +21010,8 @@ OperationGroupInfo            (<a class="autorefs autorefs-internal" title="kiar
 
         <span class="k">for</span> <span class="n">operation_name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">by_type</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
 
-            <span class="k">if</span> <span class="n">operation_name</span> <span class="o">==</span> <span class="s2">&quot;custom_module&quot;</span><span class="p">:</span>
-                <span class="k">continue</span>
+            <span class="c1"># if operation_name == &quot;custom_module&quot;:</span>
+            <span class="c1">#     continue</span>
 
             <span class="n">first_line_value</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="n">op_infos</span> <span class="o">=</span> <span class="n">by_type</span><span class="p">[</span><span class="n">operation_name</span><span class="p">]</span>
@@ -21036,15 +21059,15 @@ OperationGroupInfo            (<a class="autorefs autorefs-internal" title="kiar
 
 
 
-<h9 id="kiara.models.module.operation.OperationGroupInfo.operation_infos" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">operation_infos</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">OperationInfo</span><span class="p">]</span></code>
+<h9 id="kiara.models.module.operation.OperationGroupInfo.item_infos" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">item_infos</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">OperationInfo</span><span class="p">]</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
       <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
-<a href="#kiara.models.module.operation.OperationGroupInfo.operation_infos" class="headerlink" title="Permanent link">&para;</a></h9>
+<a href="#kiara.models.module.operation.OperationGroupInfo.item_infos" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
@@ -21114,9 +21137,7 @@ OperationGroupInfo            (<a class="autorefs autorefs-internal" title="kiar
         <span class="n">k</span><span class="p">:</span> <span class="n">OperationInfo</span><span class="o">.</span><span class="n">create_from_operation</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
     <span class="p">}</span>
-    <span class="n">data_types_info</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
-        <span class="n">group_alias</span><span class="o">=</span><span class="n">group_alias</span><span class="p">,</span> <span class="n">operation_infos</span><span class="o">=</span><span class="n">op_infos</span>
-    <span class="p">)</span>
+    <span class="n">data_types_info</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">group_alias</span><span class="o">=</span><span class="n">group_alias</span><span class="p">,</span> <span class="n">item_infos</span><span class="o">=</span><span class="n">op_infos</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data_types_info</span>
 </code></pre></div>
         </details>
@@ -32261,7 +32282,7 @@ ValuesInfo            (<span title="pydantic.main.BaseModel">BaseModel</span>)
     <span class="k">def</span> <span class="nf">create_render_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;terminal&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">render_config</span><span class="p">):</span>
 
         <span class="n">list_by_alias</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;list_by_alias&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">show_internal</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_internal&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">show_internal</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_internal_values&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
         <span class="n">render_fields</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;render_fields&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">render_fields</span><span class="p">:</span>
@@ -32509,7 +32530,7 @@ Config        </code>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_render_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;terminal&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">render_config</span><span class="p">):</span>
 
     <span class="n">list_by_alias</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;list_by_alias&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-    <span class="n">show_internal</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_internal&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">show_internal</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_internal_values&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
     <span class="n">render_fields</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;render_fields&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">render_fields</span><span class="p">:</span>

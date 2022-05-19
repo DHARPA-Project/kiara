@@ -3757,6 +3757,7 @@ DataRegistry        </code>
 
     <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Value</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Value</span><span class="p">:</span>
         <span class="n">_value_id</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value_id</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
             <span class="c1"># fallbacks for common mistakes, this should error out if not a Value or string.</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value_id</span><span class="p">,</span> <span class="s2">&quot;value_id&quot;</span><span class="p">):</span>
@@ -4894,6 +4895,7 @@ DataRegistry        </code>
           <summary>Source code in <code>kiara/registries/data/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Value</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Value</span><span class="p">:</span>
     <span class="n">_value_id</span> <span class="o">=</span> <span class="kc">None</span>
+
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value_id</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
         <span class="c1"># fallbacks for common mistakes, this should error out if not a Value or string.</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value_id</span><span class="p">,</span> <span class="s2">&quot;value_id&quot;</span><span class="p">):</span>

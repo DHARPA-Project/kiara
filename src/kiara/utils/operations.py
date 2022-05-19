@@ -49,4 +49,4 @@ def filter_operations(
         #         kiara=kiara, operation=op
         #     )
 
-    return OperationGroupInfo.construct(operation_infos=result)  # type: ignore
+    return OperationGroupInfo.construct(item_infos=result)  # type: ignore

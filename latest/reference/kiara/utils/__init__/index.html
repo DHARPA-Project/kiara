@@ -3349,6 +3349,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../string_vars/" class="md-nav__link">
+        string_vars
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../values/" class="md-nav__link">
         values
       </a>
@@ -3704,6 +3718,13 @@
           <li class="md-nav__item">
   <a href="#kiara.utils.pipelines" class="md-nav__link">
     pipelines
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.utils.string_vars" class="md-nav__link">
+    string_vars
   </a>
   
 </li>
@@ -11404,6 +11425,304 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
 
 
 
+<h3 id="kiara.utils.string_vars" class="doc doc-heading">
+        <code>string_vars</code>
+
+
+
+<a href="#kiara.utils.string_vars" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.utils.string_vars.log" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">log</span></code>
+
+
+<a href="#kiara.utils.string_vars.log" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.utils.string_vars.create_var_regex" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_var_regex</span><span class="p">(</span><span class="n">delimiter_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delimiter_end</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.string_vars.create_var_regex" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/string_vars.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_var_regex</span><span class="p">(</span>
+    <span class="n">delimiter_start</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">delimiter_end</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Pattern</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="n">delimiter_start</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">delimiter_start</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">$</span><span class="se">\\</span><span class="s2">{&quot;</span>
+
+    <span class="c1"># TODO: make this smarter</span>
+    <span class="k">if</span> <span class="n">delimiter_end</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">delimiter_end</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">}&quot;</span>
+
+    <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">delimiter_start</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">s*(.+?)</span><span class="se">\\</span><span class="s2">s*&quot;</span> <span class="o">+</span> <span class="n">delimiter_end</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">regex</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.utils.string_vars.find_regex_matches_in_obj" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">find_regex_matches_in_obj</span><span class="p">(</span><span class="n">source_obj</span><span class="p">,</span> <span class="n">regex</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.string_vars.find_regex_matches_in_obj" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/string_vars.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_regex_matches_in_obj</span><span class="p">(</span>
+    <span class="n">source_obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">regex</span><span class="p">:</span> <span class="n">Pattern</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+
+    <span class="k">if</span> <span class="n">current</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">current</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">source_obj</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">current</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source_obj</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">source_obj</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">find_regex_matches_in_obj</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="n">regex</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="n">current</span><span class="p">)</span>
+            <span class="n">find_regex_matches_in_obj</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="n">regex</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="n">current</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source_obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+
+        <span class="n">matches</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">source_obj</span><span class="p">)</span>
+        <span class="n">current</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source_obj</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">source_obj</span><span class="p">:</span>
+            <span class="n">find_regex_matches_in_obj</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="n">regex</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="n">current</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">current</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.utils.string_vars.find_var_names_in_obj" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">find_var_names_in_obj</span><span class="p">(</span><span class="n">template_obj</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delimiter_end</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.string_vars.find_var_names_in_obj" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/string_vars.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_var_names_in_obj</span><span class="p">(</span>
+    <span class="n">template_obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">delimiter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Pattern</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">delimiter_end</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">delimiter</span><span class="p">,</span> <span class="n">Pattern</span><span class="p">):</span>
+        <span class="n">regex</span> <span class="o">=</span> <span class="n">delimiter</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">regex</span> <span class="o">=</span> <span class="n">create_var_regex</span><span class="p">(</span><span class="n">delimiter_start</span><span class="o">=</span><span class="n">delimiter</span><span class="p">,</span> <span class="n">delimiter_end</span><span class="o">=</span><span class="n">delimiter_end</span><span class="p">)</span>
+
+    <span class="n">var_names</span> <span class="o">=</span> <span class="n">find_regex_matches_in_obj</span><span class="p">(</span><span class="n">template_obj</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="n">regex</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">var_names</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.utils.string_vars.replace_var_names_in_obj" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">replace_var_names_in_obj</span><span class="p">(</span><span class="n">template_obj</span><span class="p">,</span> <span class="n">repl_dict</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delimiter_end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ignore_missing_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.string_vars.replace_var_names_in_obj" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/string_vars.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">replace_var_names_in_obj</span><span class="p">(</span>
+    <span class="n">template_obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">repl_dict</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">delimiter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Pattern</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">delimiter_end</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">ignore_missing_keys</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">delimiter</span><span class="p">,</span> <span class="n">Pattern</span><span class="p">):</span>
+        <span class="n">regex</span> <span class="o">=</span> <span class="n">delimiter</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">regex</span> <span class="o">=</span> <span class="n">create_var_regex</span><span class="p">(</span><span class="n">delimiter_start</span><span class="o">=</span><span class="n">delimiter</span><span class="p">,</span> <span class="n">delimiter_end</span><span class="o">=</span><span class="n">delimiter_end</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">template_obj</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">template_obj</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">template_obj</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+        <span class="n">result</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">template_obj</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">replace_var_names_in_obj</span><span class="p">(</span>
+                <span class="n">template_obj</span><span class="o">=</span><span class="n">k</span><span class="p">,</span>
+                <span class="n">repl_dict</span><span class="o">=</span><span class="n">repl_dict</span><span class="p">,</span>
+                <span class="n">delimiter</span><span class="o">=</span><span class="n">regex</span><span class="p">,</span>
+                <span class="n">ignore_missing_keys</span><span class="o">=</span><span class="n">ignore_missing_keys</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">replace_var_names_in_obj</span><span class="p">(</span>
+                <span class="n">template_obj</span><span class="o">=</span><span class="n">v</span><span class="p">,</span>
+                <span class="n">repl_dict</span><span class="o">=</span><span class="n">repl_dict</span><span class="p">,</span>
+                <span class="n">delimiter</span><span class="o">=</span><span class="n">regex</span><span class="p">,</span>
+                <span class="n">ignore_missing_keys</span><span class="o">=</span><span class="n">ignore_missing_keys</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">template_obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">replace_var_names_in_string</span><span class="p">(</span>
+            <span class="n">template_obj</span><span class="p">,</span>
+            <span class="n">repl_dict</span><span class="o">=</span><span class="n">repl_dict</span><span class="p">,</span>
+            <span class="n">regex</span><span class="o">=</span><span class="n">regex</span><span class="p">,</span>
+            <span class="n">ignore_missing_keys</span><span class="o">=</span><span class="n">ignore_missing_keys</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">template_obj</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">template_obj</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">replace_var_names_in_obj</span><span class="p">(</span>
+                <span class="n">item</span><span class="p">,</span>
+                <span class="n">repl_dict</span><span class="o">=</span><span class="n">repl_dict</span><span class="p">,</span>
+                <span class="n">delimiter</span><span class="o">=</span><span class="n">regex</span><span class="p">,</span>
+                <span class="n">ignore_missing_keys</span><span class="o">=</span><span class="n">ignore_missing_keys</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">template_obj</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.utils.string_vars.replace_var_names_in_string" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">replace_var_names_in_string</span><span class="p">(</span><span class="n">template_string</span><span class="p">,</span> <span class="n">repl_dict</span><span class="p">,</span> <span class="n">regex</span><span class="p">,</span> <span class="n">ignore_missing_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.string_vars.replace_var_names_in_string" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/string_vars.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">replace_var_names_in_string</span><span class="p">(</span>
+    <span class="n">template_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">repl_dict</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">regex</span><span class="p">:</span> <span class="n">Pattern</span><span class="p">,</span>
+    <span class="n">ignore_missing_keys</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="n">match</span><span class="p">):</span>
+
+        <span class="n">key</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">repl_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_missing_keys</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t insert variable &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;. Key not in provided input values, available keys: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">repl_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">repl_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">sub</span><span class="p">,</span> <span class="n">template_string</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+
+
 <h3 id="kiara.utils.values" class="doc doc-heading">
         <code>values</code>
 
@@ -11443,7 +11762,7 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">augment_values</span><span class="p">(</span>
     <span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
     <span class="n">schemas</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">],</span>
-    <span class="n">constants</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">constants</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
     <span class="c1"># TODO: check if extra fields were provided</span>
@@ -11454,12 +11773,25 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid input: value provided for constant &#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
 
     <span class="n">values_new</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="n">constants</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">default</span>
+            <span class="k">assert</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NO_VALUE</span><span class="p">,</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NOT_SET</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                <span class="n">values_new</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">values_new</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
     <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">schemas</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
+        <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">values_new</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Duplicate field &#39;</span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2">&#39;, this is most likely a bug.&quot;</span>
+            <span class="p">)</span>
+
         <span class="k">if</span> <span class="n">field_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">constants</span> <span class="ow">and</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">constants</span><span class="p">:</span>
-                <span class="n">values_new</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">constants</span><span class="p">[</span><span class="n">field_name</span><span class="p">])</span>
-            <span class="k">elif</span> <span class="n">schema</span><span class="o">.</span><span class="n">default</span> <span class="o">!=</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NOT_SET</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">default</span> <span class="o">!=</span> <span class="n">SpecialValue</span><span class="o">.</span><span class="n">NOT_SET</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">schema</span><span class="o">.</span><span class="n">default</span><span class="p">):</span>
                     <span class="n">values_new</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">default</span><span class="p">()</span>
                 <span class="k">else</span><span class="p">:</span>

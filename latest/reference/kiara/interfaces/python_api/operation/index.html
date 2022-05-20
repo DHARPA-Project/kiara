@@ -1442,7 +1442,14 @@
     kiara.interfaces.python_api.operation
   </a>
   
-    <nav class="md-nav" aria-label="kiara.interfaces.python_api.operation">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.interfaces.python_api.operation-classes" class="md-nav__link">
+    Classes
+  </a>
+  
+    <nav class="md-nav" aria-label="Classes">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -3401,6 +3408,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../utils/string_vars/" class="md-nav__link">
+        string_vars
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../utils/values/" class="md-nav__link">
         values
       </a>
@@ -3458,7 +3479,14 @@
     kiara.interfaces.python_api.operation
   </a>
   
-    <nav class="md-nav" aria-label="kiara.interfaces.python_api.operation">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.interfaces.python_api.operation-classes" class="md-nav__link">
+    Classes
+  </a>
+  
+    <nav class="md-nav" aria-label="Classes">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -3507,7 +3535,7 @@
 
 
 
-
+<h2 id="kiara.interfaces.python_api.operation-classes">Classes<a href="#kiara.interfaces.python_api.operation-classes" class="headerlink" title="Permanent link">&para;</a></h2>
 
   <div class="doc doc-object doc-class">
 
@@ -3523,10 +3551,13 @@ KiaraOperation        </code>
 
     <div class="doc doc-contents ">
 
+      <p>A class to provide a convenience API around executing a specific operation.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraOperation</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A class to provide a convenience API around executing a specific operation.&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
@@ -3676,7 +3707,7 @@ KiaraOperation        </code>
         <span class="bp">self</span><span class="o">.</span><span class="n">_defaults</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">module_or_operation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operation_name</span>
-        <span class="n">operation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">operation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Operation</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">module_or_operation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operation_ids</span><span class="p">:</span>
 
@@ -3704,8 +3735,15 @@ KiaraOperation        </code>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_defaults</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="p">{})</span>
 
+            <span class="n">execution_context</span> <span class="o">=</span> <span class="n">ExecutionContext</span><span class="p">(</span>
+                <span class="n">pipeline_dir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">module_or_operation</span><span class="p">))</span>
+            <span class="p">)</span>
+
             <span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span>
-                <span class="n">pipeline_name</span><span class="o">=</span><span class="n">pipeline_name</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span>
+                <span class="n">pipeline_name</span><span class="o">=</span><span class="n">pipeline_name</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span>
+                <span class="n">execution_context</span><span class="o">=</span><span class="n">execution_context</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="n">manifest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>

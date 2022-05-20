@@ -3447,6 +3447,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../utils/string_vars/" class="md-nav__link">
+        string_vars
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../utils/values/" class="md-nav__link">
         values
       </a>
@@ -3940,14 +3954,17 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
         <span class="k">return</span> <span class="p">{</span><span class="n">a</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_context_config</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_context_names</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">get_context_config</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_CONTEXT_NAME</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">auto_generate</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraContextConfig</span><span class="p">:</span>
 
+        <span class="k">if</span> <span class="n">auto_generate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">auto_generate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_generate_contexts</span>
+
+        <span class="k">if</span> <span class="n">context_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">context_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_context</span>
+
         <span class="k">if</span> <span class="n">context_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_context_names</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_generate_contexts</span>
-                <span class="ow">and</span> <span class="ow">not</span> <span class="n">context_name</span> <span class="o">==</span> <span class="n">DEFAULT_CONTEXT_NAME</span>
-            <span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">auto_generate</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">context_name</span> <span class="o">==</span> <span class="n">DEFAULT_CONTEXT_NAME</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;No kiara context with name &#39;</span><span class="si">{</span><span class="n">context_name</span><span class="si">}</span><span class="s2">&#39; available.&quot;</span>
                 <span class="p">)</span>
@@ -4169,6 +4186,36 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
             <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;context&quot;</span><span class="p">}),</span> <span class="n">f</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_config_path</span> <span class="o">=</span> <span class="n">path</span>
+
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dry_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ContextSummary&quot;</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">context_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">context_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_context</span>
+
+        <span class="kn">from</span> <span class="nn">kiara.context</span> <span class="kn">import</span> <span class="n">Kiara</span>
+        <span class="kn">from</span> <span class="nn">kiara.models.context</span> <span class="kn">import</span> <span class="n">ContextSummary</span>
+
+        <span class="n">context_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_context_config</span><span class="p">(</span>
+            <span class="n">context_name</span><span class="o">=</span><span class="n">context_name</span><span class="p">,</span> <span class="n">auto_generate</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">context_config</span><span class="p">)</span>
+
+        <span class="n">context_summary</span> <span class="o">=</span> <span class="n">ContextSummary</span><span class="o">.</span><span class="n">create_from_context</span><span class="p">(</span>
+            <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">context_name</span><span class="o">=</span><span class="n">context_name</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dry_run</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">context_summary</span>
+
+        <span class="k">for</span> <span class="n">archive</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">get_all_archives</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">archive</span><span class="o">.</span><span class="n">delete_archive</span><span class="p">(</span><span class="n">archive_id</span><span class="o">=</span><span class="n">archive</span><span class="o">.</span><span class="n">archive_id</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">context_config</span><span class="o">.</span><span class="n">_context_config_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">context_config</span><span class="o">.</span><span class="n">_context_config_path</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">context_summary</span>
 </code></pre></div>
         </details>
 
@@ -4601,6 +4648,58 @@ Config        </code>
 
 
 
+<h5 id="kiara.context.config.KiaraConfig.delete" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dry_run</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+
+<a href="#kiara.context.config.KiaraConfig.delete" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/context/config.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">delete</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dry_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ContextSummary&quot;</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="n">context_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">context_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_context</span>
+
+    <span class="kn">from</span> <span class="nn">kiara.context</span> <span class="kn">import</span> <span class="n">Kiara</span>
+    <span class="kn">from</span> <span class="nn">kiara.models.context</span> <span class="kn">import</span> <span class="n">ContextSummary</span>
+
+    <span class="n">context_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_context_config</span><span class="p">(</span>
+        <span class="n">context_name</span><span class="o">=</span><span class="n">context_name</span><span class="p">,</span> <span class="n">auto_generate</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">context_config</span><span class="p">)</span>
+
+    <span class="n">context_summary</span> <span class="o">=</span> <span class="n">ContextSummary</span><span class="o">.</span><span class="n">create_from_context</span><span class="p">(</span>
+        <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">context_name</span><span class="o">=</span><span class="n">context_name</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">dry_run</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">context_summary</span>
+
+    <span class="k">for</span> <span class="n">archive</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">get_all_archives</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">archive</span><span class="o">.</span><span class="n">delete_archive</span><span class="p">(</span><span class="n">archive_id</span><span class="o">=</span><span class="n">archive</span><span class="o">.</span><span class="n">archive_id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">context_config</span><span class="o">.</span><span class="n">_context_config_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">context_config</span><span class="o">.</span><span class="n">_context_config_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">context_summary</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
 <h5 id="kiara.context.config.KiaraConfig.find_context_config" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">find_context_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_id</span><span class="p">)</span></code>
 
@@ -4627,7 +4726,7 @@ Config        </code>
 
 
 <h5 id="kiara.context.config.KiaraConfig.get_context_config" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_context_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">get_context_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">auto_generate</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 <a href="#kiara.context.config.KiaraConfig.get_context_config" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -4638,14 +4737,17 @@ Config        </code>
         <details class="quote">
           <summary>Source code in <code>kiara/context/config.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_context_config</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_CONTEXT_NAME</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">auto_generate</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraContextConfig</span><span class="p">:</span>
 
+    <span class="k">if</span> <span class="n">auto_generate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">auto_generate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_generate_contexts</span>
+
+    <span class="k">if</span> <span class="n">context_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">context_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_context</span>
+
     <span class="k">if</span> <span class="n">context_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_context_names</span><span class="p">:</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_generate_contexts</span>
-            <span class="ow">and</span> <span class="ow">not</span> <span class="n">context_name</span> <span class="o">==</span> <span class="n">DEFAULT_CONTEXT_NAME</span>
-        <span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">auto_generate</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">context_name</span> <span class="o">==</span> <span class="n">DEFAULT_CONTEXT_NAME</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;No kiara context with name &#39;</span><span class="si">{</span><span class="n">context_name</span><span class="si">}</span><span class="s2">&#39; available.&quot;</span>
             <span class="p">)</span>

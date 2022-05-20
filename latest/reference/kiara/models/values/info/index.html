@@ -3435,6 +3435,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../utils/string_vars/" class="md-nav__link">
+        string_vars
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../utils/values/" class="md-nav__link">
         values
       </a>
@@ -4085,6 +4099,8 @@ ValuesInfo            (<span title="pydantic.main.BaseModel">BaseModel</span>)
         <span class="k">for</span> <span class="nb">property</span> <span class="ow">in</span> <span class="n">render_fields</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">property</span> <span class="o">==</span> <span class="s2">&quot;aliases&quot;</span> <span class="ow">and</span> <span class="n">list_by_alias</span><span class="p">:</span>
                 <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;alias&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">property</span> <span class="o">==</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="nb">property</span><span class="p">)</span>
 
@@ -4355,6 +4371,8 @@ Config        </code>
     <span class="k">for</span> <span class="nb">property</span> <span class="ow">in</span> <span class="n">render_fields</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">property</span> <span class="o">==</span> <span class="s2">&quot;aliases&quot;</span> <span class="ow">and</span> <span class="n">list_by_alias</span><span class="p">:</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;alias&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">property</span> <span class="o">==</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="nb">property</span><span class="p">)</span>
 

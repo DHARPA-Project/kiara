@@ -1826,6 +1826,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.models.module.jobs.ExecutionContext" class="md-nav__link">
+    ExecutionContext
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.models.module.jobs.JobConfig" class="md-nav__link">
     JobConfig
   </a>
@@ -3450,6 +3457,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../utils/string_vars/" class="md-nav__link">
+        string_vars
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../utils/values/" class="md-nav__link">
         values
       </a>
@@ -3520,6 +3541,13 @@
           <li class="md-nav__item">
   <a href="#kiara.models.module.jobs.ActiveJob" class="md-nav__link">
     ActiveJob
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.models.module.jobs.ExecutionContext" class="md-nav__link">
+    ExecutionContext
   </a>
   
 </li>
@@ -3944,6 +3972,106 @@ ActiveJob            (<a class="autorefs autorefs-internal" title="kiara.models.
 
 
 
+<h3 id="kiara.models.module.jobs.ExecutionContext" class="doc doc-heading">
+        <code>
+ExecutionContext            (<a class="autorefs autorefs-internal" title="kiara.models.KiaraModel" href="../../__init__/#kiara.models.KiaraModel">KiaraModel</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.models.module.jobs.ExecutionContext" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/module/jobs.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ExecutionContext</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.execution_context&quot;</span>
+
+    <span class="n">working_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The path of the working directory.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span>
+    <span class="p">)</span>
+    <span class="n">pipeline_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The path of the pipeline file that is being executed (if applicable).&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h4 id="kiara.models.module.jobs.ExecutionContext-attributes">Attributes<a href="#kiara.models.module.jobs.ExecutionContext-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.module.jobs.ExecutionContext.pipeline_dir" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pipeline_dir</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.module.jobs.ExecutionContext.pipeline_dir" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The path of the pipeline file that is being executed (if applicable).</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.module.jobs.ExecutionContext.working_dir" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">working_dir</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.module.jobs.ExecutionContext.working_dir" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The path of the working directory.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
 <h3 id="kiara.models.module.jobs.JobConfig" class="doc doc-heading">
         <code>
 JobConfig            (<a class="autorefs autorefs-internal" title="kiara.models.module.manifest.InputsManifest" href="../manifest/#kiara.models.module.manifest.InputsManifest">InputsManifest</a>)
@@ -3974,8 +4102,9 @@ JobConfig            (<a class="autorefs autorefs-internal" title="kiara.models.
     <span class="p">):</span>
 
         <span class="n">augmented</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">augment_module_inputs</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">)</span>
+
         <span class="n">values</span> <span class="o">=</span> <span class="n">data_registry</span><span class="o">.</span><span class="n">create_valueset</span><span class="p">(</span>
-            <span class="n">data</span><span class="o">=</span><span class="n">augmented</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">augmented</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">full_inputs_schema</span>
         <span class="p">)</span>
         <span class="n">invalid</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">check_invalid</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">invalid</span><span class="p">:</span>
@@ -4032,8 +4161,9 @@ JobConfig            (<a class="autorefs autorefs-internal" title="kiara.models.
 <span class="p">):</span>
 
     <span class="n">augmented</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">augment_module_inputs</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">)</span>
+
     <span class="n">values</span> <span class="o">=</span> <span class="n">data_registry</span><span class="o">.</span><span class="n">create_valueset</span><span class="p">(</span>
-        <span class="n">data</span><span class="o">=</span><span class="n">augmented</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">augmented</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">full_inputs_schema</span>
     <span class="p">)</span>
     <span class="n">invalid</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">check_invalid</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">invalid</span><span class="p">:</span>

@@ -809,9 +809,14 @@ class DataRegistry(object):
 
         result = op.run(kiara=self._kiara, inputs=inputs)
         python_object = result.get_value_data(result_field_match)
-        self._cached_data[value.value_id] = python_object
 
-        return python_object
+        # TODO: can we do without this?
+        parsed = value.data_type.parse_python_obj(python_object)
+        value.data_type._validate(parsed)
+
+        self._cached_data[value.value_id] = parsed
+
+        return parsed
 
         # op_type: DeSerializeOperationType = self._kiara.operation_registry.get_operation_type("deserialize")  # type: ignore
         # ops = op_type.find_deserialzation_operation_for_type_and_profile(

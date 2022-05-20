@@ -107,16 +107,11 @@ def delete_context(ctx, context_name: Optional[str] = None, force: bool = False)
     kiara_config: KiaraConfig = ctx.obj["kiara_config"]
 
     if not context_name:
-        kiara = ctx.obj["kiara"]
         _context_name = ctx.obj["kiara_context_name"]
     else:
-        context_config = kiara_config.get_context_config(context_name)
-        kiara = Kiara(config=context_config)
         _context_name = context_name
 
-    context_summary = ContextSummary.create_from_context(
-        kiara=kiara, context_name=_context_name
-    )
+    context_summary = kiara_config.delete(context_name=context_name, dry_run=True)
 
     confirmed = False
     if not force or not context_name:
@@ -140,10 +135,9 @@ def delete_context(ctx, context_name: Optional[str] = None, force: bool = False)
         terminal_print("\nDoing nothing...")
         sys.exit(0)
 
-    terminal_print("Deleting archives:")
-    for archive in kiara.get_all_archives().keys():
-        archive.delete_archive(archive_id=archive.archive_id)
-        terminal_print(f"  - {archive.archive_id}")
+    terminal_print("Deleting context...")
+    kiara_config.delete(context_name=context_name, dry_run=False)
+
     terminal_print("Done.")
 
 

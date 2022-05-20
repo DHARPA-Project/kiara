@@ -34,6 +34,7 @@ from kiara.utils import get_data_from_file
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
+    from kiara.models.context import ContextSummary
 
 logger = structlog.getLogger()
 
@@ -310,14 +311,17 @@ class KiaraConfig(BaseSettings):
         return {a: self.get_context_config(a) for a in self.available_context_names}
 
     def get_context_config(
-        self, context_name: str = DEFAULT_CONTEXT_NAME
+        self, context_name: Optional[str] = None, auto_generate: Optional[bool] = None
     ) -> KiaraContextConfig:
 
+        if auto_generate is None:
+            auto_generate = self.auto_generate_contexts
+
+        if context_name is None:
+            context_name = self.default_context
+
         if context_name not in self.available_context_names:
-            if (
-                not self.auto_generate_contexts
-                and not context_name == DEFAULT_CONTEXT_NAME
-            ):
+            if not auto_generate and not context_name == DEFAULT_CONTEXT_NAME:
                 raise Exception(
                     f"No kiara context with name '{context_name}' available."
                 )
@@ -539,6 +543,36 @@ class KiaraConfig(BaseSettings):
             yaml.dump(self.dict(exclude={"context"}), f)
 
         self._config_path = path
+
+    def delete(
+        self, context_name: Optional[str] = None, dry_run: bool = True
+    ) -> "ContextSummary":
+
+        if context_name is None:
+            context_name = self.default_context
+
+        from kiara.context import Kiara
+        from kiara.models.context import ContextSummary
+
+        context_config = self.get_context_config(
+            context_name=context_name, auto_generate=False
+        )
+        kiara = Kiara(config=context_config)
+
+        context_summary = ContextSummary.create_from_context(
+            kiara=kiara, context_name=context_name
+        )
+
+        if dry_run:
+            return context_summary
+
+        for archive in kiara.get_all_archives().keys():
+            archive.delete_archive(archive_id=archive.archive_id)
+
+        if context_config._context_config_path is not None:
+            os.unlink(context_config._context_config_path)
+
+        return context_summary
 
 
 # class KiaraCurrentContextConfig(KiaraBaseConfig):

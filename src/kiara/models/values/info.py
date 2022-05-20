@@ -4,7 +4,7 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
+import humanfriendly
 import orjson
 import uuid
 from pydantic import BaseModel, Field, PrivateAttr
@@ -77,6 +77,10 @@ RENDER_FIELDS: Dict[str, Dict[str, Any]] = {
         "render": {
             "terminal": lambda p: p.property_values.create_renderable(show_header=False)
         },
+    },
+    "size": {
+        "show_default": True,
+        "render": {"terminal": lambda v: humanfriendly.format_size(v.value_size)},
     },
 }
 
@@ -284,6 +288,8 @@ class ValuesInfo(BaseModel):
         for property in render_fields:
             if property == "aliases" and list_by_alias:
                 table.add_column("alias")
+            elif property == "size":
+                table.add_column("size", justify="right")
             else:
                 table.add_column(property)
 

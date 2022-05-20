@@ -25,20 +25,6 @@ def context(ctx):
     """Kiara context related sub-commands."""
 
 
-@context.command("print")
-@output_format_option()
-@click.pass_context
-def print_context(ctx, format: str):
-
-    kiara_obj: Kiara = ctx.obj["kiara"]
-
-    terminal_print_model(
-        kiara_obj.context_info,
-        format=format,
-        in_panel=f"Context info for kiara id: {kiara_obj.id}",
-    )
-
-
 @context.command("list")
 @click.pass_context
 def list_contexts(ctx):
@@ -172,10 +158,31 @@ def config_help(ctx):
     terminal_print(Panel(table))
 
 
+@context.group(name="runtime")
+@click.pass_context
+def runtime(ctx):
+    """Information about runtime models, etc."""
+
+
+@runtime.command("print")
+@output_format_option()
+@click.pass_context
+def print_context(ctx, format: str):
+    """Print all relevant models within the current runtime environment."""
+
+    kiara_obj: Kiara = ctx.obj["kiara"]
+
+    terminal_print_model(
+        kiara_obj.context_info,
+        format=format,
+        in_panel=f"Context info for kiara id: {kiara_obj.id}",
+    )
+
+
 @context.group(name="environment")
 @click.pass_context
 def env_group(ctx):
-    """Runtime environment-related sub-commands."""
+    """Environment-related sub-commands."""
 
 
 @env_group.command("list")

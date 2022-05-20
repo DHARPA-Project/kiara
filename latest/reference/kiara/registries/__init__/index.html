@@ -3431,6 +3431,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.registries.NON_ARCHIVE_DETAILS" class="md-nav__link">
+    NON_ARCHIVE_DETAILS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.registries.logger" class="md-nav__link">
     logger
   </a>
@@ -3453,6 +3460,13 @@
           <li class="md-nav__item">
   <a href="#kiara.registries.ArchiveConfig" class="md-nav__link">
     ArchiveConfig
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.registries.ArchiveDetails" class="md-nav__link">
+    ArchiveDetails
   </a>
   
 </li>
@@ -3620,6 +3634,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kiara.registries.data.data_store.filesystem_store.FileSystemDataArchive.get_archive_details" class="md-nav__link">
+    get_archive_details()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kiara.registries.data.data_store.filesystem_store.FileSystemDataArchive.get_path" class="md-nav__link">
     get_path()
   </a>
@@ -3749,6 +3770,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kiara.registries.jobs.job_store.filesystem_store.FileSystemJobArchive.get_archive_details" class="md-nav__link">
+    get_archive_details()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kiara.registries.jobs.job_store.filesystem_store.FileSystemJobArchive.is_writeable" class="md-nav__link">
     is_writeable()
   </a>
@@ -3852,6 +3880,24 @@
 
 
 <a href="#kiara.registries.ARCHIVE_CONFIG_CLS" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.registries.NON_ARCHIVE_DETAILS" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">NON_ARCHIVE_DETAILS</span></code>
+
+
+<a href="#kiara.registries.NON_ARCHIVE_DETAILS" class="headerlink" title="Permanent link">&para;</a></h3>
 
     <div class="doc doc-contents ">
 
@@ -4014,6 +4060,79 @@ Config        </code>
     </div>
 
   </div>
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="kiara.registries.ArchiveDetails" class="doc doc-heading">
+        <code>
+ArchiveDetails            (<span title="pydantic.main.BaseModel">BaseModel</span>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.registries.ArchiveDetails" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ArchiveDetails</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+
+    <span class="n">size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The size of the stored archive.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h4 id="kiara.registries.ArchiveDetails-attributes">Attributes<a href="#kiara.registries.ArchiveDetails-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.registries.ArchiveDetails.size" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">size</span><span class="p">:</span> <span class="nb">int</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.registries.ArchiveDetails.size" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The size of the stored archive.</p>
+    </div>
+
+  </div>
+
 
 
 
@@ -4458,8 +4577,8 @@ KiaraArchive            (<span title="abc.ABC">ABC</span>)
     <span class="k">def</span> <span class="nf">_get_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArchiveConfig</span><span class="p">:</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">get_archive_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">{}</span>
+    <span class="k">def</span> <span class="nf">get_archive_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArchiveDetails</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">NON_ARCHIVE_DETAILS</span>
 
     <span class="k">def</span> <span class="nf">delete_archive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">archive_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 
@@ -4750,8 +4869,8 @@ Config        </code>
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_archive_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-    <span class="k">return</span> <span class="p">{}</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_archive_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArchiveDetails</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">NON_ARCHIVE_DETAILS</span>
 </code></pre></div>
         </details>
     </div>
@@ -10017,6 +10136,13 @@ FileSystemDataArchive            (<a class="autorefs autorefs-internal" title="k
     <span class="c1"># def get_job_archive_id(self) -&gt; uuid.UUID:</span>
     <span class="c1">#     return self._kiara.id</span>
 
+    <span class="k">def</span> <span class="nf">get_archive_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArchiveDetails</span><span class="p">:</span>
+
+        <span class="n">size</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_store_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;**/*&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ArchiveDetails</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data_store_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 
@@ -10442,6 +10568,35 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.regis
         <span class="n">manifest_hash</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">inputs_manifest</span><span class="o">.</span><span class="n">instance_cid</span><span class="p">),</span>
         <span class="n">jobs_hash</span><span class="o">=</span><span class="n">inputs_manifest</span><span class="o">.</span><span class="n">job_hash</span><span class="p">,</span>
     <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h11 id="kiara.registries.data.data_store.filesystem_store.FileSystemDataArchive.get_archive_details" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_archive_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.data.data_store.filesystem_store.FileSystemDataArchive.get_archive_details" class="headerlink" title="Permanent link">&para;</a></h11>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/data/data_store/filesystem_store.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_archive_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArchiveDetails</span><span class="p">:</span>
+
+    <span class="n">size</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_store_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;**/*&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ArchiveDetails</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -11240,6 +11395,15 @@ FileSystemDestinyArchive            (<a class="autorefs autorefs-internal" title
         <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span>
 
+    <span class="k">def</span> <span class="nf">get_archive_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArchiveDetails</span><span class="p">:</span>
+
+        <span class="n">size</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">destiny_store_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;**/*&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ArchiveDetails</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">destinies_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">destiny_store_path</span> <span class="o">/</span> <span class="s2">&quot;destinies&quot;</span>
@@ -11506,6 +11670,37 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.regis
         <span class="n">result</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">value_id</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.registries.destinies.filesystem_store.FileSystemDestinyArchive.get_archive_details" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_archive_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.destinies.filesystem_store.FileSystemDestinyArchive.get_archive_details" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/destinies/filesystem_store.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_archive_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArchiveDetails</span><span class="p">:</span>
+
+    <span class="n">size</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">destiny_store_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;**/*&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ArchiveDetails</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -15277,6 +15472,13 @@ FileSystemJobArchive            (<a class="autorefs autorefs-internal" title="ki
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">archive_id</span><span class="o">=</span><span class="n">archive_id</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
+    <span class="k">def</span> <span class="nf">get_archive_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArchiveDetails</span><span class="p">:</span>
+
+        <span class="n">size</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_store_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;**/*&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ArchiveDetails</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">job_store_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 
@@ -15490,6 +15692,35 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.regis
     <span class="n">job_record</span> <span class="o">=</span> <span class="n">JobRecord</span><span class="p">(</span><span class="o">**</span><span class="n">details</span><span class="p">)</span>
     <span class="n">job_record</span><span class="o">.</span><span class="n">_is_stored</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">return</span> <span class="n">job_record</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h11 id="kiara.registries.jobs.job_store.filesystem_store.FileSystemJobArchive.get_archive_details" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_archive_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.jobs.job_store.filesystem_store.FileSystemJobArchive.get_archive_details" class="headerlink" title="Permanent link">&para;</a></h11>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/jobs/job_store/filesystem_store.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_archive_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArchiveDetails</span><span class="p">:</span>
+
+    <span class="n">size</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_store_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;**/*&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ArchiveDetails</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>

@@ -6327,6 +6327,17 @@ ArchiveGroupInfo            (<a class="autorefs autorefs-internal" title="kiara.
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The info for each archive.&quot;</span>
     <span class="p">)</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">combined_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+
+        <span class="n">combined</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">archive_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="n">archive_info</span><span class="o">.</span><span class="n">details</span><span class="o">.</span><span class="n">size</span>
+            <span class="k">if</span> <span class="n">size</span> <span class="ow">and</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">combined</span> <span class="o">=</span> <span class="n">combined</span> <span class="o">+</span> <span class="n">size</span>
+
+        <span class="k">return</span> <span class="n">combined</span>
+
     <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
         <span class="n">show_archive_id</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_archive_id&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
@@ -6384,6 +6395,28 @@ ArchiveGroupInfo            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 <h6 id="kiara.models.archives.ArchiveGroupInfo-attributes">Attributes<a href="#kiara.models.archives.ArchiveGroupInfo-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.archives.ArchiveGroupInfo.combined_size" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">combined_size</span><span class="p">:</span> <span class="nb">int</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.models.archives.ArchiveGroupInfo.combined_size" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
 
   <div class="doc doc-object doc-attribute">
 
@@ -6614,7 +6647,7 @@ ArchiveInfo            (<a class="autorefs autorefs-internal" title="kiara.model
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Information about this archives&#39; type.&quot;</span>
     <span class="p">)</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The configuration of this archive.&quot;</span><span class="p">)</span>
-    <span class="n">details</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">details</span><span class="p">:</span> <span class="n">ArchiveDetails</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Type dependent (runtime) details for this archive.&quot;</span>
     <span class="p">)</span>
     <span class="n">aliases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
@@ -6728,7 +6761,7 @@ ArchiveInfo            (<a class="autorefs autorefs-internal" title="kiara.model
 
 
 <h7 id="kiara.models.archives.ArchiveInfo.details" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">details</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
+<code class="highlight language-python"><span class="n">details</span><span class="p">:</span> <span class="n">ArchiveDetails</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
@@ -7353,10 +7386,12 @@ ContextSummaries            (<span title="pydantic.main.BaseModel">BaseModel</sp
             <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;context name&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;context id&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-            <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;size on disk&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;size of all values&quot;</span><span class="p">)</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;no. values&quot;</span><span class="p">)</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;no. aliaes&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">context_name</span><span class="p">,</span> <span class="n">context_summary</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">size_on_disk</span> <span class="o">=</span> <span class="n">context_summary</span><span class="o">.</span><span class="n">archives</span><span class="o">.</span><span class="n">combined_size</span>
                 <span class="n">value_summary</span> <span class="o">=</span> <span class="n">context_summary</span><span class="o">.</span><span class="n">value_summary</span><span class="p">()</span>
                 <span class="n">size</span> <span class="o">=</span> <span class="n">humanfriendly</span><span class="o">.</span><span class="n">format_size</span><span class="p">(</span><span class="n">value_summary</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">])</span>
                 <span class="n">no_values</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value_summary</span><span class="p">[</span><span class="s2">&quot;no_values&quot;</span><span class="p">])</span>
@@ -7364,6 +7399,7 @@ ContextSummaries            (<span title="pydantic.main.BaseModel">BaseModel</sp
                 <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
                     <span class="n">context_name</span><span class="p">,</span>
                     <span class="nb">str</span><span class="p">(</span><span class="n">context_summary</span><span class="o">.</span><span class="n">kiara_id</span><span class="p">),</span>
+                    <span class="n">humanfriendly</span><span class="o">.</span><span class="n">format_size</span><span class="p">(</span><span class="n">size_on_disk</span><span class="p">),</span>
                     <span class="n">size</span><span class="p">,</span>
                     <span class="n">no_values</span><span class="p">,</span>
                     <span class="n">no_aliases</span><span class="p">,</span>
@@ -7458,10 +7494,12 @@ ContextSummaries            (<span title="pydantic.main.BaseModel">BaseModel</sp
         <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;context name&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;context id&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;size on disk&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;size of all values&quot;</span><span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;no. values&quot;</span><span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;no. aliaes&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">context_name</span><span class="p">,</span> <span class="n">context_summary</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">size_on_disk</span> <span class="o">=</span> <span class="n">context_summary</span><span class="o">.</span><span class="n">archives</span><span class="o">.</span><span class="n">combined_size</span>
             <span class="n">value_summary</span> <span class="o">=</span> <span class="n">context_summary</span><span class="o">.</span><span class="n">value_summary</span><span class="p">()</span>
             <span class="n">size</span> <span class="o">=</span> <span class="n">humanfriendly</span><span class="o">.</span><span class="n">format_size</span><span class="p">(</span><span class="n">value_summary</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">])</span>
             <span class="n">no_values</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value_summary</span><span class="p">[</span><span class="s2">&quot;no_values&quot;</span><span class="p">])</span>
@@ -7469,6 +7507,7 @@ ContextSummaries            (<span title="pydantic.main.BaseModel">BaseModel</sp
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
                 <span class="n">context_name</span><span class="p">,</span>
                 <span class="nb">str</span><span class="p">(</span><span class="n">context_summary</span><span class="o">.</span><span class="n">kiara_id</span><span class="p">),</span>
+                <span class="n">humanfriendly</span><span class="o">.</span><span class="n">format_size</span><span class="p">(</span><span class="n">size_on_disk</span><span class="p">),</span>
                 <span class="n">size</span><span class="p">,</span>
                 <span class="n">no_values</span><span class="p">,</span>
                 <span class="n">no_aliases</span><span class="p">,</span>
@@ -7650,6 +7689,7 @@ ContextSummary            (<a class="autorefs autorefs-internal" title="kiara.mo
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">context_name</span><span class="p">:</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;context name&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context_name</span><span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;kiara_id&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kiara_id</span><span class="p">))</span>
+
         <span class="n">value_sum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_summary</span><span class="p">()</span>
         <span class="n">v_table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">v_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Property&quot;</span><span class="p">)</span>
@@ -8000,6 +8040,7 @@ ContextSummary            (<a class="autorefs autorefs-internal" title="kiara.mo
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">context_name</span><span class="p">:</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;context name&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context_name</span><span class="p">)</span>
     <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;kiara_id&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kiara_id</span><span class="p">))</span>
+
     <span class="n">value_sum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_summary</span><span class="p">()</span>
     <span class="n">v_table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">v_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Property&quot;</span><span class="p">)</span>

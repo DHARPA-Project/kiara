@@ -3624,6 +3624,17 @@ ArchiveGroupInfo            (<a class="autorefs autorefs-internal" title="kiara.
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The info for each archive.&quot;</span>
     <span class="p">)</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">combined_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+
+        <span class="n">combined</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">archive_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="n">archive_info</span><span class="o">.</span><span class="n">details</span><span class="o">.</span><span class="n">size</span>
+            <span class="k">if</span> <span class="n">size</span> <span class="ow">and</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">combined</span> <span class="o">=</span> <span class="n">combined</span> <span class="o">+</span> <span class="n">size</span>
+
+        <span class="k">return</span> <span class="n">combined</span>
+
     <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
         <span class="n">show_archive_id</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_archive_id&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
@@ -3681,6 +3692,28 @@ ArchiveGroupInfo            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 <h4 id="kiara.models.archives.ArchiveGroupInfo-attributes">Attributes<a href="#kiara.models.archives.ArchiveGroupInfo-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.archives.ArchiveGroupInfo.combined_size" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">combined_size</span><span class="p">:</span> <span class="nb">int</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.models.archives.ArchiveGroupInfo.combined_size" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
 
   <div class="doc doc-object doc-attribute">
 
@@ -3911,7 +3944,7 @@ ArchiveInfo            (<a class="autorefs autorefs-internal" title="kiara.model
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Information about this archives&#39; type.&quot;</span>
     <span class="p">)</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The configuration of this archive.&quot;</span><span class="p">)</span>
-    <span class="n">details</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">details</span><span class="p">:</span> <span class="n">ArchiveDetails</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Type dependent (runtime) details for this archive.&quot;</span>
     <span class="p">)</span>
     <span class="n">aliases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
@@ -4025,7 +4058,7 @@ ArchiveInfo            (<a class="autorefs autorefs-internal" title="kiara.model
 
 
 <h5 id="kiara.models.archives.ArchiveInfo.details" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">details</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
+<code class="highlight language-python"><span class="n">details</span><span class="p">:</span> <span class="n">ArchiveDetails</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>

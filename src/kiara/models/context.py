@@ -143,6 +143,7 @@ class ContextSummary(KiaraModel):
         if self.context_name:
             table.add_row("context name", self.context_name)
         table.add_row("kiara_id", str(self.kiara_id))
+
         value_sum = self.value_summary()
         v_table = Table(box=box.SIMPLE, show_header=False)
         v_table.add_column("Property")
@@ -210,10 +211,12 @@ class ContextSummaries(BaseModel):
             table = Table(box=box.SIMPLE, show_header=True, show_lines=False)
             table.add_column("context name", style="i")
             table.add_column("context id", style="i")
-            table.add_column("size")
+            table.add_column("size on disk")
+            table.add_column("size of all values")
             table.add_column("no. values")
             table.add_column("no. aliaes")
             for context_name, context_summary in self.__root__.items():
+                size_on_disk = context_summary.archives.combined_size
                 value_summary = context_summary.value_summary()
                 size = humanfriendly.format_size(value_summary["size"])
                 no_values = str(value_summary["no_values"])
@@ -221,6 +224,7 @@ class ContextSummaries(BaseModel):
                 table.add_row(
                     context_name,
                     str(context_summary.kiara_id),
+                    humanfriendly.format_size(size_on_disk),
                     size,
                     no_values,
                     no_aliases,

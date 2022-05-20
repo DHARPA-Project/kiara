@@ -10,17 +10,7 @@ import orjson
 import structlog
 import uuid
 from pydantic import BaseModel, Field
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    ClassVar,
-    Generic,
-    Iterable,
-    Mapping,
-    Optional,
-    Type,
-    TypeVar,
-)
+from typing import TYPE_CHECKING, ClassVar, Generic, Iterable, Optional, Type, TypeVar
 
 from kiara.utils import orjson_dumps
 
@@ -38,6 +28,16 @@ ARCHIVE_CONFIG_CLS = TypeVar("ARCHIVE_CONFIG_CLS", bound=ArchiveConfig)
 
 
 logger = structlog.getLogger()
+
+
+class ArchiveDetails(BaseModel):
+
+    size: Optional[int] = Field(
+        description="The size of the stored archive.", default=None
+    )
+
+
+NON_ARCHIVE_DETAILS = ArchiveDetails()
 
 
 class KiaraArchive(abc.ABC):
@@ -74,8 +74,8 @@ class KiaraArchive(abc.ABC):
     def _get_config(self) -> ArchiveConfig:
         pass
 
-    def get_archive_details(self) -> Mapping[str, Any]:
-        return {}
+    def get_archive_details(self) -> ArchiveDetails:
+        return NON_ARCHIVE_DETAILS
 
     def delete_archive(self, archive_id: Optional[uuid.UUID] = None):
 

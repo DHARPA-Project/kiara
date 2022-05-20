@@ -12,7 +12,7 @@ from typing import Any, Dict, Iterable, Optional
 
 from kiara.models.module.jobs import JobRecord
 from kiara.models.module.manifest import InputsManifest
-from kiara.registries import FileSystemArchiveConfig
+from kiara.registries import ArchiveDetails, FileSystemArchiveConfig
 from kiara.registries.jobs import MANIFEST_SUB_PATH, JobArchive, JobStore
 
 
@@ -33,6 +33,13 @@ class FileSystemJobArchive(JobArchive):
 
         super().__init__(archive_id=archive_id, config=config)
         self._base_path: Optional[Path] = None
+
+    def get_archive_details(self) -> ArchiveDetails:
+
+        size = sum(
+            f.stat().st_size for f in self.job_store_path.glob("**/*") if f.is_file()
+        )
+        return ArchiveDetails(size=size)
 
     @property
     def job_store_path(self) -> Path:

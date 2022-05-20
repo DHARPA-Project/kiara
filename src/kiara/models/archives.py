@@ -16,7 +16,7 @@ from kiara.models.documentation import (
 )
 from kiara.models.info import InfoModelGroup, ItemInfo, TypeInfo, TypeInfoModelGroup
 from kiara.models.python_class import PythonClass
-from kiara.registries import KiaraArchive
+from kiara.registries import ArchiveDetails, KiaraArchive
 from kiara.utils import orjson_dumps
 
 if TYPE_CHECKING:
@@ -135,7 +135,7 @@ class ArchiveInfo(ItemInfo):
         description="Information about this archives' type."
     )
     config: Mapping[str, Any] = Field(description="The configuration of this archive.")
-    details: Mapping[str, Any] = Field(
+    details: ArchiveDetails = Field(
         description="Type dependent (runtime) details for this archive."
     )
     aliases: List[str] = Field(
@@ -168,6 +168,17 @@ class ArchiveGroupInfo(InfoModelGroup):
     item_infos: Mapping[str, ArchiveInfo] = Field(
         description="The info for each archive."
     )
+
+    @property
+    def combined_size(self) -> int:
+
+        combined = 0
+        for archive_info in self.item_infos.values():
+            size = archive_info.details.size
+            if size and size > 0:
+                combined = combined + size
+
+        return combined
 
     def create_renderable(self, **config: Any) -> RenderableType:
 

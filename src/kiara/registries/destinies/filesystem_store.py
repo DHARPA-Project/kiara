@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Optional, Set, Tuple
 
 from kiara.models.module.destiniy import Destiny
-from kiara.registries import FileSystemArchiveConfig
+from kiara.registries import ArchiveDetails, FileSystemArchiveConfig
 from kiara.registries.destinies import DestinyArchive, DestinyStore
 
 logger = structlog.getLogger()
@@ -65,6 +65,15 @@ class FileSystemDestinyArchive(DestinyArchive):
         self._base_path = Path(self.config.archive_path).absolute()  # type: ignore
         self._base_path.mkdir(parents=True, exist_ok=True)
         return self._base_path
+
+    def get_archive_details(self) -> ArchiveDetails:
+
+        size = sum(
+            f.stat().st_size
+            for f in self.destiny_store_path.glob("**/*")
+            if f.is_file()
+        )
+        return ArchiveDetails(size=size)
 
     @property
     def destinies_path(self) -> Path:

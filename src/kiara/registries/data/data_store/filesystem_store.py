@@ -22,7 +22,7 @@ from kiara.models.values.value import (
     SerializedData,
     Value,
 )
-from kiara.registries import FileSystemArchiveConfig
+from kiara.registries import ArchiveDetails, FileSystemArchiveConfig
 from kiara.registries.data.data_store import BaseDataStore, DataArchive
 from kiara.registries.ids import ID_REGISTRY
 from kiara.registries.jobs import JobArchive
@@ -75,6 +75,13 @@ class FileSystemDataArchive(DataArchive, JobArchive):
 
     # def get_job_archive_id(self) -> uuid.UUID:
     #     return self._kiara.id
+
+    def get_archive_details(self) -> ArchiveDetails:
+
+        size = sum(
+            f.stat().st_size for f in self.data_store_path.glob("**/*") if f.is_file()
+        )
+        return ArchiveDetails(size=size)
 
     @property
     def data_store_path(self) -> Path:

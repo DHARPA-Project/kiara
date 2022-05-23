@@ -100,7 +100,7 @@ def list_pipelines(ctx, full_doc: bool, filter: typing.Iterable[str], format: st
 
 
 @pipeline.command()
-@click.argument("pipeline-id-or-path", nargs=1)
+@click.argument("pipeline-name-or-path", nargs=1)
 @output_format_option()
 @click.pass_context
 def explain(ctx, pipeline_name_or_path: str, format: str):
@@ -118,7 +118,7 @@ def explain(ctx, pipeline_name_or_path: str, format: str):
 
 
 @pipeline.command()
-@click.argument("pipeline-id-or-path", nargs=1)
+@click.argument("pipeline-name-or-path", nargs=1)
 @click.pass_context
 def execution_graph(ctx, pipeline_name_or_path: str):
     """Print the execution graph for a pipeline structure."""
@@ -134,7 +134,7 @@ def execution_graph(ctx, pipeline_name_or_path: str):
 
 
 @pipeline.command()
-@click.argument("pipeline-id-or-path", nargs=1)
+@click.argument("pipeline-name-or-path", nargs=1)
 @click.option(
     "--full",
     "-f",

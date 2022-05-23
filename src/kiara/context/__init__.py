@@ -27,7 +27,7 @@ from kiara.context.config import KiaraConfig, KiaraContextConfig
 from kiara.data_types import DataType
 from kiara.defaults import KIARA_DB_MIGRATIONS_CONFIG, KIARA_DB_MIGRATIONS_FOLDER
 from kiara.interfaces import get_console
-from kiara.interfaces.python_api import StoreValueResult, StoreValuesResult
+from kiara.interfaces.python_api.value import StoreValueResult, StoreValuesResult
 from kiara.models import KiaraModel
 from kiara.models.context import ContextSummary
 from kiara.models.info import InfoModelGroup, ItemInfo, KiaraModelClassesInfo

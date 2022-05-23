@@ -128,7 +128,7 @@ class DataRegistry(object):
             value_id=NONE_VALUE_ID,
             kiara_id=self._kiara.id,
             value_schema=ValueSchema(
-                type="special_type",
+                type="none",
                 default=SpecialValue.NO_VALUE,
                 is_constant=True,
                 doc="Special value, indicating a field is set with a 'none' value.",  # type: ignore
@@ -817,29 +817,6 @@ class DataRegistry(object):
         self._cached_data[value.value_id] = parsed
 
         return parsed
-
-        # op_type: DeSerializeOperationType = self._kiara.operation_registry.get_operation_type("deserialize")  # type: ignore
-        # ops = op_type.find_deserialzation_operation_for_type_and_profile(
-        #     serialized_data.data_type, serialized_data.serialization_profile
-        # )
-        #
-        # if len(ops) > 1:
-        #     raise Exception("No unique op.")
-        #
-        # if not ops:
-        #     raise Exception(
-        #         f"No deserialize operation found for data type: {value.data_type_name}"
-        #     )
-        #
-        # op = ops[0]
-        # inputs = {"value": serialized_data}
-        #
-        # result = op.run(kiara=self._kiara, inputs=inputs)
-        #
-        # python_object = result.get_value_data("python_object")
-        # self._cached_data[value.value_id] = python_object
-        #
-        # return python_object
 
     def load_values(self, values: Mapping[str, Optional[uuid.UUID]]) -> ValueMap:
 

@@ -11,8 +11,10 @@ from kiara.exceptions import (
     InvalidValuesException,
     NoSuchExecutionTargetException,
 )
-from kiara.interfaces.python_api import StoreValuesResult
 from kiara.interfaces.python_api.utils import create_save_config
+
+# from kiara.interfaces.python_api import KiaraContext
+from kiara.interfaces.python_api.value import StoreValuesResult
 from kiara.models.module.jobs import ExecutionContext, JobConfig, JobStatus
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation

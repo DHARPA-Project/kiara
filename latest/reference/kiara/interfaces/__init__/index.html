@@ -1428,6 +1428,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../python_api/value/" class="md-nav__link">
+        value
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -4273,247 +4287,6 @@
   </div>
 
 
-<h4 id="kiara.interfaces.python_api-classes">Classes<a href="#kiara.interfaces.python_api-classes" class="headerlink" title="Permanent link">&para;</a></h4>
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h5 id="kiara.interfaces.python_api.StoreValueResult" class="doc doc-heading">
-        <code>
-StoreValueResult            (<span title="pydantic.main.BaseModel">BaseModel</span>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.interfaces.python_api.StoreValueResult" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">StoreValueResult</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-
-    <span class="n">value</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The stored value.&quot;</span><span class="p">)</span>
-    <span class="n">aliases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The aliases that where assigned to the value when stored.&quot;</span>
-    <span class="p">)</span>
-    <span class="n">error</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;An error that occured while trying to store.&quot;</span>
-    <span class="p">)</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-<h6 id="kiara.interfaces.python_api.StoreValueResult-attributes">Attributes<a href="#kiara.interfaces.python_api.StoreValueResult-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.interfaces.python_api.StoreValueResult.aliases" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">aliases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.interfaces.python_api.StoreValueResult.aliases" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>The aliases that where assigned to the value when stored.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.interfaces.python_api.StoreValueResult.error" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">error</span><span class="p">:</span> <span class="nb">str</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-  </span>
-
-<a href="#kiara.interfaces.python_api.StoreValueResult.error" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>An error that occured while trying to store.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.interfaces.python_api.StoreValueResult.value" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">value</span><span class="p">:</span> <span class="n">Value</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.interfaces.python_api.StoreValueResult.value" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>The stored value.</p>
-    </div>
-
-  </div>
-
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h5 id="kiara.interfaces.python_api.StoreValuesResult" class="doc doc-heading">
-        <code>
-StoreValuesResult            (<span title="pydantic.main.BaseModel">BaseModel</span>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.interfaces.python_api.StoreValuesResult" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">StoreValuesResult</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-
-    <span class="n">__root__</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StoreValueResult</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
-
-        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;field&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;data type&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;stored id&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;alias(es)&quot;</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value_result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">row</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">field_name</span><span class="p">,</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">),</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">),</span>
-            <span class="p">]</span>
-            <span class="k">if</span> <span class="n">value_result</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
-                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">aliases</span><span class="p">))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">table</span>
-
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h7 id="kiara.interfaces.python_api.StoreValuesResult.create_renderable" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
-
-
-<a href="#kiara.interfaces.python_api.StoreValuesResult.create_renderable" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
-
-    <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;field&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;data type&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;stored id&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;alias(es)&quot;</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value_result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">row</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">field_name</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">),</span>
-            <span class="nb">str</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">),</span>
-        <span class="p">]</span>
-        <span class="k">if</span> <span class="n">value_result</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
-            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">aliases</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">table</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
 
 
 
@@ -6130,6 +5903,301 @@ KiaraOperation        </code>
     </div>
 
   </div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h5 id="kiara.interfaces.python_api.value" class="doc doc-heading">
+        <code>value</code>
+
+
+
+<a href="#kiara.interfaces.python_api.value" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.python_api.value.logger" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">logger</span></code>
+
+
+<a href="#kiara.interfaces.python_api.value.logger" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+<h6 id="kiara.interfaces.python_api.value-classes">Classes<a href="#kiara.interfaces.python_api.value-classes" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h7 id="kiara.interfaces.python_api.value.StoreValueResult" class="doc doc-heading">
+        <code>
+StoreValueResult            (<span title="pydantic.main.BaseModel">BaseModel</span>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.value.StoreValueResult" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/value.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">StoreValueResult</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+
+    <span class="n">value</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The stored value.&quot;</span><span class="p">)</span>
+    <span class="n">aliases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The aliases that where assigned to the value when stored.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">error</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;An error that occured while trying to store.&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h8 id="kiara.interfaces.python_api.value.StoreValueResult-attributes">Attributes<a href="#kiara.interfaces.python_api.value.StoreValueResult-attributes" class="headerlink" title="Permanent link">&para;</a></h8>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.interfaces.python_api.value.StoreValueResult.aliases" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">aliases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.value.StoreValueResult.aliases" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>The aliases that where assigned to the value when stored.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.interfaces.python_api.value.StoreValueResult.error" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">error</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.value.StoreValueResult.error" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>An error that occured while trying to store.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.interfaces.python_api.value.StoreValueResult.value" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">value</span><span class="p">:</span> <span class="n">Value</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.value.StoreValueResult.value" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>The stored value.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h7 id="kiara.interfaces.python_api.value.StoreValuesResult" class="doc doc-heading">
+        <code>
+StoreValuesResult            (<span title="pydantic.main.BaseModel">BaseModel</span>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.value.StoreValuesResult" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/value.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">StoreValuesResult</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+
+    <span class="n">__root__</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StoreValueResult</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;field&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;data type&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;stored id&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;alias(es)&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value_result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">field_name</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">),</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">),</span>
+            <span class="p">]</span>
+            <span class="k">if</span> <span class="n">value_result</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">aliases</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">table</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.interfaces.python_api.value.StoreValuesResult.create_renderable" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.python_api.value.StoreValuesResult.create_renderable" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/value.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;field&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;data type&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;stored id&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;alias(es)&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value_result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">field_name</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">),</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">value_result</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">value_result</span><span class="o">.</span><span class="n">aliases</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">table</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
 
 
 

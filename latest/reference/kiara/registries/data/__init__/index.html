@@ -1426,6 +1426,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/value/" class="md-nav__link">
+        value
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3624,7 +3638,7 @@ DataRegistry        </code>
             <span class="n">value_id</span><span class="o">=</span><span class="n">NONE_VALUE_ID</span><span class="p">,</span>
             <span class="n">kiara_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
             <span class="n">value_schema</span><span class="o">=</span><span class="n">ValueSchema</span><span class="p">(</span>
-                <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;special_type&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
                 <span class="n">default</span><span class="o">=</span><span class="n">SpecialValue</span><span class="o">.</span><span class="n">NO_VALUE</span><span class="p">,</span>
                 <span class="n">is_constant</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;Special value, indicating a field is set with a &#39;none&#39; value.&quot;</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
@@ -4305,32 +4319,14 @@ DataRegistry        </code>
 
         <span class="n">result</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">)</span>
         <span class="n">python_object</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="n">result_field_match</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_data</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">python_object</span>
 
-        <span class="k">return</span> <span class="n">python_object</span>
+        <span class="c1"># TODO: can we do without this?</span>
+        <span class="n">parsed</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data_type</span><span class="o">.</span><span class="n">parse_python_obj</span><span class="p">(</span><span class="n">python_object</span><span class="p">)</span>
+        <span class="n">value</span><span class="o">.</span><span class="n">data_type</span><span class="o">.</span><span class="n">_validate</span><span class="p">(</span><span class="n">parsed</span><span class="p">)</span>
 
-        <span class="c1"># op_type: DeSerializeOperationType = self._kiara.operation_registry.get_operation_type(&quot;deserialize&quot;)  # type: ignore</span>
-        <span class="c1"># ops = op_type.find_deserialzation_operation_for_type_and_profile(</span>
-        <span class="c1">#     serialized_data.data_type, serialized_data.serialization_profile</span>
-        <span class="c1"># )</span>
-        <span class="c1">#</span>
-        <span class="c1"># if len(ops) &gt; 1:</span>
-        <span class="c1">#     raise Exception(&quot;No unique op.&quot;)</span>
-        <span class="c1">#</span>
-        <span class="c1"># if not ops:</span>
-        <span class="c1">#     raise Exception(</span>
-        <span class="c1">#         f&quot;No deserialize operation found for data type: {value.data_type_name}&quot;</span>
-        <span class="c1">#     )</span>
-        <span class="c1">#</span>
-        <span class="c1"># op = ops[0]</span>
-        <span class="c1"># inputs = {&quot;value&quot;: serialized_data}</span>
-        <span class="c1">#</span>
-        <span class="c1"># result = op.run(kiara=self._kiara, inputs=inputs)</span>
-        <span class="c1">#</span>
-        <span class="c1"># python_object = result.get_value_data(&quot;python_object&quot;)</span>
-        <span class="c1"># self._cached_data[value.value_id] = python_object</span>
-        <span class="c1">#</span>
-        <span class="c1"># return python_object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_data</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">parsed</span>
+
+        <span class="k">return</span> <span class="n">parsed</span>
 
     <span class="k">def</span> <span class="nf">load_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
 
@@ -5437,32 +5433,14 @@ DataRegistry        </code>
 
     <span class="n">result</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">)</span>
     <span class="n">python_object</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="n">result_field_match</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_data</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">python_object</span>
 
-    <span class="k">return</span> <span class="n">python_object</span>
+    <span class="c1"># TODO: can we do without this?</span>
+    <span class="n">parsed</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data_type</span><span class="o">.</span><span class="n">parse_python_obj</span><span class="p">(</span><span class="n">python_object</span><span class="p">)</span>
+    <span class="n">value</span><span class="o">.</span><span class="n">data_type</span><span class="o">.</span><span class="n">_validate</span><span class="p">(</span><span class="n">parsed</span><span class="p">)</span>
 
-    <span class="c1"># op_type: DeSerializeOperationType = self._kiara.operation_registry.get_operation_type(&quot;deserialize&quot;)  # type: ignore</span>
-    <span class="c1"># ops = op_type.find_deserialzation_operation_for_type_and_profile(</span>
-    <span class="c1">#     serialized_data.data_type, serialized_data.serialization_profile</span>
-    <span class="c1"># )</span>
-    <span class="c1">#</span>
-    <span class="c1"># if len(ops) &gt; 1:</span>
-    <span class="c1">#     raise Exception(&quot;No unique op.&quot;)</span>
-    <span class="c1">#</span>
-    <span class="c1"># if not ops:</span>
-    <span class="c1">#     raise Exception(</span>
-    <span class="c1">#         f&quot;No deserialize operation found for data type: {value.data_type_name}&quot;</span>
-    <span class="c1">#     )</span>
-    <span class="c1">#</span>
-    <span class="c1"># op = ops[0]</span>
-    <span class="c1"># inputs = {&quot;value&quot;: serialized_data}</span>
-    <span class="c1">#</span>
-    <span class="c1"># result = op.run(kiara=self._kiara, inputs=inputs)</span>
-    <span class="c1">#</span>
-    <span class="c1"># python_object = result.get_value_data(&quot;python_object&quot;)</span>
-    <span class="c1"># self._cached_data[value.value_id] = python_object</span>
-    <span class="c1">#</span>
-    <span class="c1"># return python_object</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_data</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">parsed</span>
+
+    <span class="k">return</span> <span class="n">parsed</span>
 </code></pre></div>
         </details>
     </div>

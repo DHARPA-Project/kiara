@@ -7155,7 +7155,11 @@ ValueTypePrettyPrintModule            (<a class="autorefs autorefs-internal" tit
         <span class="k">assert</span> <span class="n">source_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="s2">&quot;base_name&quot;</span><span class="p">]</span>
 
         <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">source_type</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to render.&quot;</span><span class="p">},</span>
+            <span class="n">source_type</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span>
+                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to render.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;optional&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="p">},</span>
             <span class="s2">&quot;render_config&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;Value type dependent render configuration.&quot;</span><span class="p">,</span>
@@ -7183,6 +7187,10 @@ ValueTypePrettyPrintModule            (<a class="autorefs autorefs-internal" tit
 
         <span class="n">source_value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">source_type</span><span class="p">)</span>
         <span class="n">render_config</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="s2">&quot;render_config&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">source_value</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
+            <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;rendered_value&quot;</span><span class="p">,</span> <span class="s2">&quot;-- none/not set --&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
 
         <span class="n">data_type_cls</span> <span class="o">=</span> <span class="n">source_value</span><span class="o">.</span><span class="n">data_type_class</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>
         <span class="n">data_type</span> <span class="o">=</span> <span class="n">data_type_cls</span><span class="p">(</span><span class="o">**</span><span class="n">source_value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type_config</span><span class="p">)</span>
@@ -7370,7 +7378,11 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
     <span class="k">assert</span> <span class="n">source_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="s2">&quot;base_name&quot;</span><span class="p">]</span>
 
     <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">source_type</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to render.&quot;</span><span class="p">},</span>
+        <span class="n">source_type</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span>
+            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to render.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;optional&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="p">},</span>
         <span class="s2">&quot;render_config&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span>
             <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;Value type dependent render configuration.&quot;</span><span class="p">,</span>
@@ -7443,6 +7455,10 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
     <span class="n">source_value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">source_type</span><span class="p">)</span>
     <span class="n">render_config</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="s2">&quot;render_config&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">source_value</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
+        <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;rendered_value&quot;</span><span class="p">,</span> <span class="s2">&quot;-- none/not set --&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
 
     <span class="n">data_type_cls</span> <span class="o">=</span> <span class="n">source_value</span><span class="o">.</span><span class="n">data_type_class</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>
     <span class="n">data_type</span> <span class="o">=</span> <span class="n">data_type_cls</span><span class="p">(</span><span class="o">**</span><span class="n">source_value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type_config</span><span class="p">)</span>
@@ -7549,7 +7565,7 @@ RenderValueModule            (<a class="autorefs autorefs-internal" title="kiara
             <span class="n">data_type_name</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">data_type_name</span><span class="p">,</span>
                 <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;A value of type &#39;</span><span class="si">{</span><span class="n">data_type_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;optional&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">&quot;optional&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="s2">&quot;render_instruction&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;render_instruction&quot;</span><span class="p">,</span>
@@ -7807,7 +7823,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
         <span class="n">data_type_name</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">data_type_name</span><span class="p">,</span>
             <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;A value of type &#39;</span><span class="si">{</span><span class="n">data_type_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;optional&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;optional&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
         <span class="p">},</span>
         <span class="s2">&quot;render_instruction&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;render_instruction&quot;</span><span class="p">,</span>

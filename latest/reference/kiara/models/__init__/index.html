@@ -35461,7 +35461,8 @@ SerializedInlineJson            (<a class="autorefs autorefs-internal" title="ki
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">inline_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_cache</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_json_cache</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">inline_data</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_NON_STR_KEYS</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">inline_data</span><span class="p">,</span>
+                <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_NON_STR_KEYS</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_cache</span>
 
@@ -35559,7 +35560,8 @@ SerializedInlineJson            (<a class="autorefs autorefs-internal" title="ki
     <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">inline_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_cache</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_json_cache</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">inline_data</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_NON_STR_KEYS</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inline_data</span><span class="p">,</span>
+            <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_NON_STR_KEYS</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_cache</span>
 </code></pre></div>

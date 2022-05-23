@@ -116,7 +116,11 @@ class ValueTypePrettyPrintModule(KiaraModule):
         assert source_type not in ["target", "base_name"]
 
         schema = {
-            source_type: {"type": source_type, "doc": "The value to render."},
+            source_type: {
+                "type": source_type,
+                "doc": "The value to render.",
+                "optional": True,
+            },
             "render_config": {
                 "type": "any",
                 "doc": "Value type dependent render configuration.",
@@ -144,6 +148,10 @@ class ValueTypePrettyPrintModule(KiaraModule):
 
         source_value = inputs.get_value_obj(source_type)
         render_config = inputs.get_value_obj("render_config")
+
+        if not source_value.is_set:
+            outputs.set_value("rendered_value", "-- none/not set --")
+            return
 
         data_type_cls = source_value.data_type_class.get_class()
         data_type = data_type_cls(**source_value.value_schema.type_config)

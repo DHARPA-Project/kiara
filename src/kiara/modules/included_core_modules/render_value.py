@@ -62,7 +62,7 @@ class RenderValueModule(KiaraModule):
             data_type_name: {
                 "type": data_type_name,
                 "doc": f"A value of type '{data_type_name}'",
-                "optional": False,
+                "optional": True,
             },
             "render_instruction": {
                 "type": "render_instruction",

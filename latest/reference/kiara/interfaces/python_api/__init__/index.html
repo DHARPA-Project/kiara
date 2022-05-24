@@ -3154,10 +3154,49 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_12_2" type="checkbox" id="__nav_3_1_12_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../utils/cli/__init__/">cli</a>
+          
+            <label for="__nav_3_1_12_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="cli" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_12_2">
+          <span class="md-nav__icon md-icon"></span>
+          cli
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../../../utils/cli/" class="md-nav__link">
-        cli
+      <a href="../../../utils/cli/rich_click/" class="md-nav__link">
+        rich_click
       </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -4525,6 +4564,7 @@ KiaraOperation        </code>
         <span class="n">show_operation_doc</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_operation_doc&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="n">show_inputs</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_inputs&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">show_outputs_schema</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_outputs_schema&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">show_headers</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_headers&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
         <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -4535,7 +4575,8 @@ KiaraOperation        </code>
             <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">full_doc</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">show_inputs</span><span class="p">:</span>
-            <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Inputs:&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">show_headers</span><span class="p">:</span>
+                <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Inputs:&quot;</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">op_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_inputs</span>
                 <span class="n">inputs</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">create_value_map_status_renderable</span><span class="p">(</span><span class="n">op_inputs</span><span class="p">)</span>
@@ -4545,7 +4586,8 @@ KiaraOperation        </code>
                 <span class="n">inputs</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[red bold]</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">[/red bold]&quot;</span>
             <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">show_outputs_schema</span><span class="p">:</span>
-            <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Outputs:&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">show_headers</span><span class="p">:</span>
+                <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Outputs:&quot;</span><span class="p">)</span>
             <span class="n">outputs_schema</span> <span class="o">=</span> <span class="n">create_table_from_field_schemas</span><span class="p">(</span>
                 <span class="n">_add_default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="n">_add_required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -4702,6 +4744,7 @@ KiaraOperation        </code>
     <span class="n">show_operation_doc</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_operation_doc&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
     <span class="n">show_inputs</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_inputs&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">show_outputs_schema</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_outputs_schema&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">show_headers</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_headers&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
     <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -4712,7 +4755,8 @@ KiaraOperation        </code>
         <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">full_doc</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">show_inputs</span><span class="p">:</span>
-        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Inputs:&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">show_headers</span><span class="p">:</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Inputs:&quot;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">op_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_inputs</span>
             <span class="n">inputs</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">create_value_map_status_renderable</span><span class="p">(</span><span class="n">op_inputs</span><span class="p">)</span>
@@ -4722,7 +4766,8 @@ KiaraOperation        </code>
             <span class="n">inputs</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[red bold]</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">[/red bold]&quot;</span>
         <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">show_outputs_schema</span><span class="p">:</span>
-        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Outputs:&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">show_headers</span><span class="p">:</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Outputs:&quot;</span><span class="p">)</span>
         <span class="n">outputs_schema</span> <span class="o">=</span> <span class="n">create_table_from_field_schemas</span><span class="p">(</span>
             <span class="n">_add_default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">_add_required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>

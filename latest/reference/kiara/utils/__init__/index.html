@@ -3152,10 +3152,49 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_12_2" type="checkbox" id="__nav_3_1_12_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../cli/__init__/">cli</a>
+          
+            <label for="__nav_3_1_12_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="cli" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_12_2">
+          <span class="md-nav__icon md-icon"></span>
+          cli
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../cli/" class="md-nav__link">
-        cli
+      <a href="../cli/rich_click/" class="md-nav__link">
+        rich_click
       </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -5621,6 +5660,9 @@ StringYAML            (<span title="ruamel.yaml.main.YAML">YAML</span>)
         <code>cli</code>
 
 
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-special"><code>special</code></small>
+  </span>
 
 <a href="#kiara.utils.cli" class="headerlink" title="Permanent link">&para;</a></h3>
 
@@ -5691,7 +5733,7 @@ OutputFormat            (<span title="enum.Enum">Enum</span>)
       <p>An enumeration.</p>
 
         <details class="quote">
-          <summary>Source code in <code>kiara/utils/cli.py</code></summary>
+          <summary>Source code in <code>kiara/utils/cli/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OutputFormat</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
@@ -5847,7 +5889,7 @@ and attaching it to the :attr:<code>Command.params</code> list.</p>
             :class:<code>Option</code>.</p>
 
         <details class="quote">
-          <summary>Source code in <code>kiara/utils/cli.py</code></summary>
+          <summary>Source code in <code>kiara/utils/cli/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">output_format_option</span><span class="p">(</span><span class="o">*</span><span class="n">param_decls</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">FC</span><span class="p">],</span> <span class="n">FC</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Attaches an option to the command.  All positional arguments are</span>
 <span class="sd">    passed as parameter declarations to :class:`Option`; all keyword</span>
@@ -5897,7 +5939,7 @@ and attaching it to the :attr:<code>Command.params</code> list.</p>
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/utils/cli.py</code></summary>
+          <summary>Source code in <code>kiara/utils/cli/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">render_json_schema_str</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">):</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -5928,7 +5970,7 @@ and attaching it to the :attr:<code>Command.params</code> list.</p>
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/utils/cli.py</code></summary>
+          <summary>Source code in <code>kiara/utils/cli/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">render_json_str</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">):</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -5959,7 +6001,7 @@ and attaching it to the :attr:<code>Command.params</code> list.</p>
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/utils/cli.py</code></summary>
+          <summary>Source code in <code>kiara/utils/cli/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">terminal_print</span><span class="p">(</span>
     <span class="n">msg</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">in_panel</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -6007,7 +6049,7 @@ and attaching it to the :attr:<code>Command.params</code> list.</p>
 
 
         <details class="quote">
-          <summary>Source code in <code>kiara/utils/cli.py</code></summary>
+          <summary>Source code in <code>kiara/utils/cli/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">terminal_print_model</span><span class="p">(</span>
     <span class="o">*</span><span class="n">models</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span>
     <span class="nb">format</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">OutputFormat</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -6140,6 +6182,409 @@ and attaching it to the :attr:<code>Command.params</code> list.</p>
   </div>
 
 
+
+<h4 id="kiara.utils.cli-modules">Modules<a href="#kiara.utils.cli-modules" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h5 id="kiara.utils.cli.rich_click" class="doc doc-heading">
+        <code>rich_click</code>
+
+
+
+<a href="#kiara.utils.cli.rich_click" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+<h6 id="kiara.utils.cli.rich_click-functions">Functions<a href="#kiara.utils.cli.rich_click-functions" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h7 id="kiara.utils.cli.rich_click.rich_format_operation_help" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">rich_format_operation_help</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.cli.rich_click.rich_format_operation_help" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>Print nicely formatted help text using rich.</p>
+<p>Based on original code from rich-cli, by @willmcgugan.
+https://github.com/Textualize/rich-cli/blob/8a2767c7a340715fc6fbf4930ace717b9b2fc5e5/src/rich_cli/<strong>main</strong>.py#L162-L236</p>
+<p>Replacement for the click function format_help().
+Takes a command or group and builds the help text output.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>obj</code></td>
+        <td><code>click.Command or click.Group</code></td>
+        <td><p>Command or group to build help text for</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>ctx</code></td>
+        <td><code>click.Context</code></td>
+        <td><p>Click Context object</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>table</code></td>
+        <td></td>
+        <td><p>a rich table, including all the inputs of the current operation</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/cli/rich_click.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">rich_format_operation_help</span><span class="p">(</span>
+    <span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">click</span><span class="o">.</span><span class="n">Command</span><span class="p">,</span> <span class="n">click</span><span class="o">.</span><span class="n">Group</span><span class="p">],</span>
+    <span class="n">ctx</span><span class="p">:</span> <span class="n">click</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span>
+    <span class="n">operation</span><span class="p">:</span> <span class="n">KiaraOperation</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Print nicely formatted help text using rich.</span>
+
+<span class="sd">    Based on original code from rich-cli, by @willmcgugan.</span>
+<span class="sd">    https://github.com/Textualize/rich-cli/blob/8a2767c7a340715fc6fbf4930ace717b9b2fc5e5/src/rich_cli/__main__.py#L162-L236</span>
+
+<span class="sd">    Replacement for the click function format_help().</span>
+<span class="sd">    Takes a command or group and builds the help text output.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj (click.Command or click.Group): Command or group to build help text for</span>
+<span class="sd">        ctx (click.Context): Click Context object</span>
+<span class="sd">        table: a rich table, including all the inputs of the current operation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">renderables</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Header text if we have it</span>
+    <span class="k">if</span> <span class="n">HEADER_TEXT</span><span class="p">:</span>
+        <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">Padding</span><span class="p">(</span><span class="n">_make_rich_rext</span><span class="p">(</span><span class="n">HEADER_TEXT</span><span class="p">,</span> <span class="n">STYLE_HEADER_TEXT</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Print usage</span>
+    <span class="n">cmd_arg</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;module_or_operation&quot;</span><span class="p">]</span>
+    <span class="n">_cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[yellow bold]Usage: [/yellow bold][bold]kiara run [OPTIONS] [i]</span><span class="si">{</span><span class="n">cmd_arg</span><span class="si">}</span><span class="s2">[/i] [INPUTS][/bold]&quot;</span>
+    <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Padding</span><span class="p">(</span><span class="n">_cmd</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="c1"># renderables.append(obj.get_usage(ctx))</span>
+    <span class="c1"># renderables.append(Panel(Padding(highlighter(obj.get_usage(ctx)), 1), style=STYLE_USAGE_COMMAND, box=box.MINIMAL))</span>
+
+    <span class="c1"># Print command / group help if we have some</span>
+    <span class="n">desc</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">full_doc</span>
+    <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">Padding</span><span class="p">(</span>
+            <span class="n">Align</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">desc</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="n">MAX_WIDTH</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># if obj.help:</span>
+    <span class="c1">#</span>
+    <span class="c1">#     # Print with a max width and some padding</span>
+    <span class="c1">#     renderables.append(</span>
+    <span class="c1">#         Padding(</span>
+    <span class="c1">#             Align(_get_help_text(obj), width=MAX_WIDTH, pad=False),</span>
+    <span class="c1">#             (0, 1, 1, 1),</span>
+    <span class="c1">#         )</span>
+    <span class="c1">#     )</span>
+
+    <span class="c1"># Look through OPTION_GROUPS for this command</span>
+    <span class="c1"># stick anything unmatched into a default group at the end</span>
+    <span class="n">option_groups</span> <span class="o">=</span> <span class="n">OPTION_GROUPS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">command_path</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">option_groups</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="p">[]})</span>
+    <span class="n">argument_group_options</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+
+        <span class="c1"># Skip positional arguments - they don&#39;t have opts or helptext and are covered in usage</span>
+        <span class="c1"># See https://click.palletsprojects.com/en/8.0.x/documentation/#documenting-arguments</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">param</span><span class="p">)</span> <span class="ow">is</span> <span class="n">click</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Argument</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">SHOW_ARGUMENTS</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Skip if option is hidden</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="s2">&quot;hidden&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Already mentioned in a config option group</span>
+        <span class="k">for</span> <span class="n">option_group</span> <span class="ow">in</span> <span class="n">option_groups</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">opt</span> <span class="ow">in</span> <span class="n">option_group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;options&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="k">for</span> <span class="n">opt</span> <span class="ow">in</span> <span class="n">param</span><span class="o">.</span><span class="n">opts</span><span class="p">]):</span>
+                <span class="k">break</span>
+
+        <span class="c1"># No break, no mention - add to the default group</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">param</span><span class="p">)</span> <span class="ow">is</span> <span class="n">click</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Argument</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">GROUP_ARGUMENTS_OPTIONS</span><span class="p">:</span>
+                <span class="n">argument_group_options</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">list_of_option_groups</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="n">option_groups</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;options&quot;</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+                <span class="n">list_of_option_groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># If we&#39;re not grouping arguments and we got some, prepend before default options</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">argument_group_options</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">extra_option_group</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">ARGUMENTS_PANEL_TITLE</span><span class="p">,</span>
+            <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="n">argument_group_options</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">option_groups</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">option_groups</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">extra_option_group</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+    <span class="c1"># Print each option group panel</span>
+    <span class="k">for</span> <span class="n">option_group</span> <span class="ow">in</span> <span class="n">option_groups</span><span class="p">:</span>
+
+        <span class="n">options_rows</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">opt</span> <span class="ow">in</span> <span class="n">option_group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;options&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+
+            <span class="c1"># Get the param</span>
+            <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">opt</span> <span class="ow">in</span> <span class="n">param</span><span class="o">.</span><span class="n">opts</span><span class="p">]):</span>
+                    <span class="k">break</span>
+            <span class="c1"># Skip if option is not listed in this group</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Short and long form</span>
+            <span class="n">opt_long_strs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">opt_short_strs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">opt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">opts</span><span class="p">):</span>
+                <span class="n">opt_str</span> <span class="o">=</span> <span class="n">opt</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">opt_str</span> <span class="o">+=</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">param</span><span class="o">.</span><span class="n">secondary_opts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">if</span> <span class="s2">&quot;--&quot;</span> <span class="ow">in</span> <span class="n">opt</span><span class="p">:</span>
+                    <span class="n">opt_long_strs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">opt_str</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">opt_short_strs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">opt_str</span><span class="p">)</span>
+
+            <span class="c1"># Column for a metavar, if we have one</span>
+            <span class="n">metavar</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="n">STYLE_METAVAR</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="s2">&quot;fold&quot;</span><span class="p">)</span>
+            <span class="n">metavar_str</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">make_metavar</span><span class="p">()</span>
+
+            <span class="c1"># Do it ourselves if this is a positional argument</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">param</span><span class="p">)</span> <span class="ow">is</span> <span class="n">click</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Argument</span> <span class="ow">and</span> <span class="n">metavar_str</span> <span class="o">==</span> <span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">():</span>  <span class="c1"># type: ignore</span>
+                <span class="n">metavar_str</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+            <span class="c1"># Skip booleans and choices (handled above)</span>
+            <span class="k">if</span> <span class="n">metavar_str</span> <span class="o">!=</span> <span class="s2">&quot;BOOLEAN&quot;</span><span class="p">:</span>
+                <span class="n">metavar</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metavar_str</span><span class="p">)</span>
+
+            <span class="c1"># Range - from</span>
+            <span class="c1"># https://github.com/pallets/click/blob/c63c70dabd3f86ca68678b4f00951f78f52d0270/src/click/core.py#L2698-L2706  # noqa: E501</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># skip count with default range type</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">click</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">_NumberRangeBase</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span>
+                    <span class="n">param</span><span class="o">.</span><span class="n">count</span> <span class="ow">and</span> <span class="n">param</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">min</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">param</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">max</span> <span class="ow">is</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+                <span class="p">):</span>
+                    <span class="n">range_str</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">_describe_range</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">range_str</span><span class="p">:</span>
+                        <span class="n">metavar</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">RANGE_STRING</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">range_str</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="c1"># click.types._NumberRangeBase is only in Click 8x onwards</span>
+                <span class="k">pass</span>
+
+            <span class="c1"># Required asterisk</span>
+            <span class="n">required</span><span class="p">:</span> <span class="n">RenderableType</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">required</span><span class="p">:</span>
+                <span class="n">required</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="n">REQUIRED_SHORT_STRING</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">STYLE_REQUIRED_SHORT</span><span class="p">)</span>
+
+            <span class="c1"># Highlighter to make [ | ] and &lt;&gt; dim</span>
+            <span class="k">class</span> <span class="nc">MetavarHighlighter</span><span class="p">(</span><span class="n">RegexHighlighter</span><span class="p">):</span>
+                <span class="n">highlights</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="sa">r</span><span class="s2">&quot;^(?P&lt;metavar_sep&gt;(\[|&lt;))&quot;</span><span class="p">,</span>
+                    <span class="sa">r</span><span class="s2">&quot;(?P&lt;metavar_sep&gt;\|)&quot;</span><span class="p">,</span>
+                    <span class="sa">r</span><span class="s2">&quot;(?P&lt;metavar_sep&gt;(\]|&gt;)$)&quot;</span><span class="p">,</span>
+                <span class="p">]</span>
+
+            <span class="n">metavar_highlighter</span> <span class="o">=</span> <span class="n">MetavarHighlighter</span><span class="p">()</span>
+
+            <span class="n">rows</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">required</span><span class="p">,</span>
+                <span class="n">highlighter</span><span class="p">(</span><span class="n">highlighter</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">opt_long_strs</span><span class="p">))),</span>
+                <span class="n">highlighter</span><span class="p">(</span><span class="n">highlighter</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">opt_short_strs</span><span class="p">))),</span>
+                <span class="n">metavar_highlighter</span><span class="p">(</span><span class="n">metavar</span><span class="p">),</span>
+                <span class="n">_get_parameter_help</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">ctx</span><span class="p">),</span>
+            <span class="p">]</span>
+
+            <span class="c1"># Remove metavar if specified in config</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">SHOW_METAVARS_COLUMN</span><span class="p">:</span>
+                <span class="n">rows</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+            <span class="n">options_rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">options_rows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">t_styles</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;show_lines&quot;</span><span class="p">:</span> <span class="n">STYLE_OPTIONS_TABLE_SHOW_LINES</span><span class="p">,</span>
+                <span class="s2">&quot;leading&quot;</span><span class="p">:</span> <span class="n">STYLE_OPTIONS_TABLE_LEADING</span><span class="p">,</span>
+                <span class="s2">&quot;box&quot;</span><span class="p">:</span> <span class="n">STYLE_OPTIONS_TABLE_BOX</span><span class="p">,</span>
+                <span class="s2">&quot;border_style&quot;</span><span class="p">:</span> <span class="n">STYLE_OPTIONS_TABLE_BORDER_STYLE</span><span class="p">,</span>
+                <span class="s2">&quot;row_styles&quot;</span><span class="p">:</span> <span class="n">STYLE_OPTIONS_TABLE_ROW_STYLES</span><span class="p">,</span>
+                <span class="s2">&quot;pad_edge&quot;</span><span class="p">:</span> <span class="n">STYLE_OPTIONS_TABLE_PAD_EDGE</span><span class="p">,</span>
+                <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="n">STYLE_OPTIONS_TABLE_PADDING</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">t_styles</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">option_group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;table_styles&quot;</span><span class="p">,</span> <span class="p">{}))</span>  <span class="c1"># type: ignore</span>
+            <span class="n">box_style</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">box</span><span class="p">,</span> <span class="n">t_styles</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;box&quot;</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+            <span class="n">options_table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+                <span class="n">highlight</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">box</span><span class="o">=</span><span class="n">box_style</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">t_styles</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># Strip the required column if none are required</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">options_rows</span><span class="p">]):</span>
+                <span class="n">options_rows</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">options_rows</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">options_rows</span><span class="p">:</span>
+                <span class="n">options_table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+            <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">Panel</span><span class="p">(</span>
+                    <span class="n">options_table</span><span class="p">,</span>
+                    <span class="n">border_style</span><span class="o">=</span><span class="n">STYLE_OPTIONS_PANEL_BORDER</span><span class="p">,</span>
+                    <span class="n">title</span><span class="o">=</span><span class="n">option_group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">OPTIONS_PANEL_TITLE</span><span class="p">),</span>
+                    <span class="n">title_align</span><span class="o">=</span><span class="n">ALIGN_OPTIONS_PANEL</span><span class="p">,</span>
+                    <span class="n">width</span><span class="o">=</span><span class="n">MAX_WIDTH</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># Groups only:</span>
+    <span class="c1"># List click command groups</span>
+    <span class="c1">#</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">&quot;list_commands&quot;</span><span class="p">):</span>
+        <span class="c1"># Look through COMMAND_GROUPS for this command</span>
+        <span class="c1"># stick anything unmatched into a default group at the end</span>
+        <span class="n">cmd_groups</span> <span class="o">=</span> <span class="n">COMMAND_GROUPS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">command_path</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">cmd_groups</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;commands&quot;</span><span class="p">:</span> <span class="p">[]})</span>
+        <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">list_commands</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+            <span class="k">for</span> <span class="n">cmd_group</span> <span class="ow">in</span> <span class="n">cmd_groups</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">cmd_group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;commands&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">commands</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="n">cmd_groups</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;commands&quot;</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+                <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+
+        <span class="c1"># Print each command group panel</span>
+        <span class="k">for</span> <span class="n">cmd_group</span> <span class="ow">in</span> <span class="n">cmd_groups</span><span class="p">:</span>
+            <span class="n">t_styles</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;show_lines&quot;</span><span class="p">:</span> <span class="n">STYLE_COMMANDS_TABLE_SHOW_LINES</span><span class="p">,</span>
+                <span class="s2">&quot;leading&quot;</span><span class="p">:</span> <span class="n">STYLE_COMMANDS_TABLE_LEADING</span><span class="p">,</span>
+                <span class="s2">&quot;box&quot;</span><span class="p">:</span> <span class="n">STYLE_COMMANDS_TABLE_BOX</span><span class="p">,</span>
+                <span class="s2">&quot;border_style&quot;</span><span class="p">:</span> <span class="n">STYLE_COMMANDS_TABLE_BORDER_STYLE</span><span class="p">,</span>
+                <span class="s2">&quot;row_styles&quot;</span><span class="p">:</span> <span class="n">STYLE_COMMANDS_TABLE_ROW_STYLES</span><span class="p">,</span>
+                <span class="s2">&quot;pad_edge&quot;</span><span class="p">:</span> <span class="n">STYLE_COMMANDS_TABLE_PAD_EDGE</span><span class="p">,</span>
+                <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="n">STYLE_COMMANDS_TABLE_PADDING</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">t_styles</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cmd_group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;table_styles&quot;</span><span class="p">,</span> <span class="p">{}))</span>  <span class="c1"># type: ignore</span>
+            <span class="n">box_style</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">box</span><span class="p">,</span> <span class="n">t_styles</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;box&quot;</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+            <span class="n">commands_table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+                <span class="n">highlight</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">box</span><span class="o">=</span><span class="n">box_style</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">t_styles</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># Define formatting in first column, as commands don&#39;t match highlighter regex</span>
+            <span class="n">commands_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold cyan&quot;</span><span class="p">,</span> <span class="n">no_wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">cmd_group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;commands&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+                <span class="c1"># Skip if command does not exist</span>
+                <span class="k">if</span> <span class="n">command</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">list_commands</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+                    <span class="k">continue</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_command</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                <span class="k">assert</span> <span class="n">cmd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">hidden</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="c1"># Use the truncated short text as with vanilla text if requested</span>
+                <span class="k">if</span> <span class="n">USE_CLICK_SHORT_HELP</span><span class="p">:</span>
+                    <span class="n">helptext</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">get_short_help_str</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Use short_help function argument if used, or the full help</span>
+                    <span class="n">helptext</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">short_help</span> <span class="ow">or</span> <span class="n">cmd</span><span class="o">.</span><span class="n">help</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">commands_table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">_make_command_help</span><span class="p">(</span><span class="n">helptext</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">commands_table</span><span class="o">.</span><span class="n">row_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">Panel</span><span class="p">(</span>
+                        <span class="n">commands_table</span><span class="p">,</span>
+                        <span class="n">border_style</span><span class="o">=</span><span class="n">STYLE_COMMANDS_PANEL_BORDER</span><span class="p">,</span>
+                        <span class="n">title</span><span class="o">=</span><span class="n">cmd_group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">COMMANDS_PANEL_TITLE</span><span class="p">),</span>
+                        <span class="n">title_align</span><span class="o">=</span><span class="n">ALIGN_COMMANDS_PANEL</span><span class="p">,</span>
+                        <span class="n">width</span><span class="o">=</span><span class="n">MAX_WIDTH</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+    <span class="n">inputs_table</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span>
+        <span class="n">show_operation_name</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">show_operation_doc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">show_inputs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">show_outputs_schema</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">show_headers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">inputs_panel</span> <span class="o">=</span> <span class="n">Panel</span><span class="p">(</span>
+        <span class="n">inputs_table</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Inputs&quot;</span><span class="p">,</span>
+        <span class="n">border_style</span><span class="o">=</span><span class="n">STYLE_COMMANDS_PANEL_BORDER</span><span class="p">,</span>
+        <span class="n">title_align</span><span class="o">=</span><span class="n">ALIGN_COMMANDS_PANEL</span><span class="p">,</span>
+        <span class="n">width</span><span class="o">=</span><span class="n">MAX_WIDTH</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inputs_panel</span><span class="p">)</span>
+
+    <span class="c1"># Epilogue if we have it</span>
+    <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">epilog</span><span class="p">:</span>
+        <span class="c1"># Remove single linebreaks, replace double with single</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">epilog</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">epilogue</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">])</span>
+        <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">Padding</span><span class="p">(</span><span class="n">Align</span><span class="p">(</span><span class="n">highlighter</span><span class="p">(</span><span class="n">epilogue</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="n">MAX_WIDTH</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Footer text if we have it</span>
+    <span class="k">if</span> <span class="n">FOOTER_TEXT</span><span class="p">:</span>
+        <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">Padding</span><span class="p">(</span><span class="n">_make_rich_rext</span><span class="p">(</span><span class="n">FOOTER_TEXT</span><span class="p">,</span> <span class="n">STYLE_FOOTER_TEXT</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="p">)</span>
+
+    <span class="n">group</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="o">*</span><span class="n">renderables</span><span class="p">)</span>
+    <span class="n">terminal_print</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
 
 
 

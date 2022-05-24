@@ -3154,10 +3154,49 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_12_2" type="checkbox" id="__nav_3_1_12_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../utils/cli/__init__/">cli</a>
+          
+            <label for="__nav_3_1_12_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="cli" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_12_2">
+          <span class="md-nav__icon md-icon"></span>
+          cli
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../../../utils/cli/" class="md-nav__link">
-        cli
+      <a href="../../../utils/cli/rich_click/" class="md-nav__link">
+        rich_click
       </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -4633,9 +4672,12 @@ ValueInfo            (<a class="autorefs autorefs-internal" title="kiara.models.
         <span class="k">else</span><span class="p">:</span>
             <span class="n">persisted_details</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="n">is_internal</span> <span class="o">=</span> <span class="s2">&quot;internal&quot;</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span>
-            <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">data_type_profiles</span><span class="p">:</span>
+            <span class="n">is_internal</span> <span class="o">=</span> <span class="s2">&quot;internal&quot;</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span>
+                <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">is_internal</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">if</span> <span class="n">resolve_destinies</span><span class="p">:</span>
             <span class="n">destiny_links</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">find_destinies_for_value</span><span class="p">(</span>
@@ -4839,9 +4881,12 @@ ValueInfo            (<a class="autorefs autorefs-internal" title="kiara.models.
     <span class="k">else</span><span class="p">:</span>
         <span class="n">persisted_details</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="n">is_internal</span> <span class="o">=</span> <span class="s2">&quot;internal&quot;</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span>
-        <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span>
-    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">data_type_profiles</span><span class="p">:</span>
+        <span class="n">is_internal</span> <span class="o">=</span> <span class="s2">&quot;internal&quot;</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">is_internal</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">if</span> <span class="n">resolve_destinies</span><span class="p">:</span>
         <span class="n">destiny_links</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">find_destinies_for_value</span><span class="p">(</span>

@@ -25,6 +25,7 @@ from kiara.exceptions import (
 from kiara.interfaces.python_api.operation import KiaraOperation
 from kiara.utils import dict_from_cli_args, is_debug
 from kiara.utils.cli import terminal_print
+from kiara.utils.cli.rich_click import rich_format_operation_help
 from kiara.utils.output import OutputDetails, create_table_from_base_model_cls
 
 
@@ -41,7 +42,7 @@ from kiara.utils.output import OutputDetails, create_table_from_base_model_cls
 @click.option(
     "--explain",
     "-e",
-    help="Display additional runtime information.",
+    help="Display information about the selected operation and exit.",
     is_flag=True,
 )
 @click.option(
@@ -54,6 +55,7 @@ from kiara.utils.output import OutputDetails, create_table_from_base_model_cls
     required=False,
     multiple=True,
 )
+@click.option("--help", "-h", help="Show this message and exit.", is_flag=True)
 @click.pass_context
 def run(
     ctx,
@@ -63,11 +65,13 @@ def run(
     output: Iterable[str],
     explain: bool,
     save: Iterable[str],
+    help: bool,
 ):
     """Run a kiara operation."""
 
     # =========================================================================
     # initialize a few variables
+
     if module_config:
         module_config = dict_from_cli_args(*module_config)
     else:
@@ -203,6 +207,21 @@ def run(
     inputs_dict = dict_from_cli_args(*inputs, list_keys=list_keys)
 
     kiara_op.set_inputs(**inputs_dict)
+
+    if help:
+        rich_format_operation_help(obj=ctx.command, ctx=ctx, operation=kiara_op)
+        sys.exit(0)
+
+    if explain:
+        terminal_print()
+        rg = Group(
+            "",
+            kiara_op.create_renderable(
+                show_operation_name=True, show_inputs=True, show_outputs_schema=True
+            ),
+        )
+        terminal_print(rg, in_panel=f"Operation info: [b]{kiara_op.operation_name}[/b]")
+        sys.exit(0)
 
     try:
         operation_inputs = kiara_op.operation_inputs

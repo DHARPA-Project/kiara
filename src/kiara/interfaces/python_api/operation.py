@@ -330,6 +330,7 @@ class KiaraOperation(object):
         show_operation_doc = config.get("show_operation_doc", True)
         show_inputs = config.get("show_inputs", False)
         show_outputs_schema = config.get("show_outputs_schema", False)
+        show_headers = config.get("show_headers", True)
 
         items: List[Any] = []
 
@@ -340,7 +341,8 @@ class KiaraOperation(object):
             items.append(Markdown(self.operation.doc.full_doc, style="i"))
 
         if show_inputs:
-            items.append("\nInputs:")
+            if show_headers:
+                items.append("\nInputs:")
             try:
                 op_inputs = self.operation_inputs
                 inputs: Any = create_value_map_status_renderable(op_inputs)
@@ -350,7 +352,8 @@ class KiaraOperation(object):
                 inputs = f"[red bold]{e}[/red bold]"
             items.append(inputs)
         if show_outputs_schema:
-            items.append("\nOutputs:")
+            if show_headers:
+                items.append("\nOutputs:")
             outputs_schema = create_table_from_field_schemas(
                 _add_default=False,
                 _add_required=False,

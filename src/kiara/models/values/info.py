@@ -112,9 +112,12 @@ class ValueInfo(Value):
         else:
             persisted_details = None
 
-        is_internal = "internal" in kiara.type_registry.get_type_lineage(
-            value.data_type_name
-        )
+        if value.data_type_name in kiara.type_registry.data_type_profiles:
+            is_internal = "internal" in kiara.type_registry.get_type_lineage(
+                value.data_type_name
+            )
+        else:
+            is_internal = False
 
         if resolve_destinies:
             destiny_links = kiara.data_registry.find_destinies_for_value(

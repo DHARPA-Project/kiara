@@ -193,7 +193,7 @@ def rich_format_operation_help(
             metavar_str = param.make_metavar()
 
             # Do it ourselves if this is a positional argument
-            if type(param) is click.core.Argument and metavar_str == param.name.upper():
+            if type(param) is click.core.Argument and metavar_str == param.name.upper():  # type: ignore
                 metavar_str = param.type.name.upper()
 
             # Skip booleans and choices (handled above)
@@ -205,7 +205,7 @@ def rich_format_operation_help(
             try:
                 # skip count with default range type
                 if isinstance(param.type, click.types._NumberRangeBase) and not (
-                    param.count and param.type.min == 0 and param.type.max is None
+                    param.count and param.type.min == 0 and param.type.max is None  # type: ignore
                 ):
                     range_str = param.type._describe_range()
                     if range_str:
@@ -287,7 +287,7 @@ def rich_format_operation_help(
         # stick anything unmatched into a default group at the end
         cmd_groups = COMMAND_GROUPS.get(ctx.command_path, []).copy()
         cmd_groups.append({"commands": []})
-        for command in obj.list_commands(ctx):
+        for command in obj.list_commands(ctx):  # type: ignore
             for cmd_group in cmd_groups:
                 if command in cmd_group.get("commands", []):
                     break
@@ -320,9 +320,10 @@ def rich_format_operation_help(
             commands_table.add_column(style="bold cyan", no_wrap=True)
             for command in cmd_group.get("commands", []):
                 # Skip if command does not exist
-                if command not in obj.list_commands(ctx):
+                if command not in obj.list_commands(ctx):  # type: ignore
                     continue
-                cmd = obj.get_command(ctx, command)
+                cmd = obj.get_command(ctx, command)  # type: ignore
+                assert cmd is not None
                 if cmd.hidden:
                     continue
                 # Use the truncated short text as with vanilla text if requested

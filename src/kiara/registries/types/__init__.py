@@ -276,5 +276,8 @@ class TypeRegistry(object):
 
     def is_internal_type(self, data_type_name: str) -> bool:
 
+        if data_type_name not in self.data_type_profiles.keys():
+            return False
+
         lineage = self.get_type_lineage(data_type_name=data_type_name)
         return "any" not in lineage

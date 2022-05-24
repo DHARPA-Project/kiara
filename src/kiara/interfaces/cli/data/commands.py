@@ -153,13 +153,6 @@ def list_values(
 @data.command(name="explain")
 @click.argument("value_id", nargs=-1, required=True)
 @click.option(
-    "--metadata/--no-metadata",
-    "-m",
-    help="Display value metadata.",
-    is_flag=True,
-    default=True,
-)
-@click.option(
     "--pedigree", "-P", help="Display pedigree information for the value.", is_flag=True
 )
 @click.option(
@@ -195,7 +188,6 @@ def list_values(
 def explain_value(
     ctx,
     value_id: str,
-    metadata: bool,
     pedigree: bool,
     serialized: bool,
     format: str,
@@ -213,7 +205,6 @@ def explain_value(
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     render_config = {
-        "show_metadata": metadata,
         "show_pedigree": pedigree,
         "show_serialized": serialized,
         "show_data_preview": preview_data,

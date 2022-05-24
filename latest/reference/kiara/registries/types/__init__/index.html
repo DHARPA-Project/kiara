@@ -3884,6 +3884,9 @@ TypeRegistry        </code>
 
     <span class="k">def</span> <span class="nf">is_internal_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 
+        <span class="k">if</span> <span class="n">data_type_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type_profiles</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
         <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span><span class="n">data_type_name</span><span class="o">=</span><span class="n">data_type_name</span><span class="p">)</span>
         <span class="k">return</span> <span class="s2">&quot;any&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lineage</span>
 </code></pre></div>
@@ -4287,6 +4290,9 @@ TypeRegistry        </code>
         <details class="quote">
           <summary>Source code in <code>kiara/registries/types/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">is_internal_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="n">data_type_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type_profiles</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">return</span> <span class="kc">False</span>
 
     <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span><span class="n">data_type_name</span><span class="o">=</span><span class="n">data_type_name</span><span class="p">)</span>
     <span class="k">return</span> <span class="s2">&quot;any&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lineage</span>

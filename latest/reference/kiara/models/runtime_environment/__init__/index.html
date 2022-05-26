@@ -3644,6 +3644,8 @@ RuntimeEnvironment            (<a class="autorefs autorefs-internal" title="kiar
     <span class="k">def</span> <span class="nf">retrieve_environment_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="k">pass</span>
 
+    <span class="n">_env_hashes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">_create_renderable_for_field</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">for_summary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]:</span>
@@ -3653,6 +3655,31 @@ RuntimeEnvironment            (<a class="autorefs autorefs-internal" title="kiar
     <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">get_environment_type_name</span><span class="p">()</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">env_hashes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_hashes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_hashes</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_sub_profile_env_data</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">cid</span> <span class="o">=</span> <span class="n">compute_cid</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cid</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_hashes</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_hashes</span>
+
+    <span class="k">def</span> <span class="nf">_retrieve_sub_profile_env_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return a dictionary with data that identifies one hash profile per key.</span>
+
+<span class="sd">        In most cases, this will only return a single-key dictionary containing all the data in that environment. But</span>
+<span class="sd">        in some cases one might want to have several sub-hash profiles, for example a list of Python packages with and</span>
+<span class="sd">        without version information, to have more fine-grained control about when to consider two environments functionally</span>
+<span class="sd">        equal.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="n">DEFAULT_ENV_HASH_KEY</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_data_to_hash</span><span class="p">()}</span>
+
     <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
         <span class="n">summary</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;summary&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
@@ -3660,6 +3687,12 @@ RuntimeEnvironment            (<a class="autorefs autorefs-internal" title="kiar
         <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;field&quot;</span><span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;summary&quot;</span><span class="p">)</span>
+
+        <span class="n">hashes_str</span> <span class="o">=</span> <span class="n">orjson_dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_hashes</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
+            <span class="s2">&quot;environment hashes&quot;</span><span class="p">,</span> <span class="n">Syntax</span><span class="p">(</span><span class="n">hashes_str</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+
         <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">summary_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_renderable_for_field</span><span class="p">(</span>
                 <span class="n">field_name</span><span class="p">,</span> <span class="n">for_summary</span><span class="o">=</span><span class="n">summary</span>
@@ -3677,6 +3710,28 @@ RuntimeEnvironment            (<a class="autorefs autorefs-internal" title="kiar
 
 
 
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.runtime_environment.RuntimeEnvironment.env_hashes" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">env_hashes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.models.runtime_environment.RuntimeEnvironment.env_hashes" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
 
 
 
@@ -3827,6 +3882,12 @@ Config        </code>
     <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
     <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;field&quot;</span><span class="p">)</span>
     <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;summary&quot;</span><span class="p">)</span>
+
+    <span class="n">hashes_str</span> <span class="o">=</span> <span class="n">orjson_dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_hashes</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
+        <span class="s2">&quot;environment hashes&quot;</span><span class="p">,</span> <span class="n">Syntax</span><span class="p">(</span><span class="n">hashes_str</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+
     <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">summary_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_renderable_for_field</span><span class="p">(</span>
             <span class="n">field_name</span><span class="p">,</span> <span class="n">for_summary</span><span class="o">=</span><span class="n">summary</span>
@@ -4570,6 +4631,206 @@ OSRuntimeEnvironment            (<a class="autorefs autorefs-internal" title="ki
 
 
 
+<h5 id="kiara.models.runtime_environment.python.KiaraPluginsRuntimeEnvironment" class="doc doc-heading">
+        <code>
+KiaraPluginsRuntimeEnvironment            (<a class="autorefs autorefs-internal" title="kiara.models.runtime_environment.RuntimeEnvironment" href="#kiara.models.runtime_environment.RuntimeEnvironment">RuntimeEnvironment</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.models.runtime_environment.python.KiaraPluginsRuntimeEnvironment" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/runtime_environment/python.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraPluginsRuntimeEnvironment</span><span class="p">(</span><span class="n">RuntimeEnvironment</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;info.runtime.kiara_plugins&quot;</span>
+
+    <span class="n">environment_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;kiara_plugins&quot;</span><span class="p">]</span>
+    <span class="n">kiara_plugins</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PythonPackage</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The kiara plugin packages installed in the Python (virtual) environment.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_renderable_for_field</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">for_summary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]:</span>
+
+        <span class="k">if</span> <span class="n">field_name</span> <span class="o">!=</span> <span class="s2">&quot;packages&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">extract_renderable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">for_summary</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kiara_plugins</span><span class="p">)</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;package name&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;version&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">package</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kiara_plugins</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">package</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">package</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">table</span>
+
+    <span class="k">def</span> <span class="nf">_retrieve_sub_profile_env_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+
+        <span class="n">only_packages</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kiara_plugins</span><span class="p">]</span>
+        <span class="n">full</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">k</span><span class="o">.</span><span class="n">version</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kiara_plugins</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;package_names&quot;</span><span class="p">:</span> <span class="n">only_packages</span><span class="p">,</span> <span class="s2">&quot;packages&quot;</span><span class="p">:</span> <span class="n">full</span><span class="p">}</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_environment_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+
+        <span class="n">packages</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">all_packages</span> <span class="o">=</span> <span class="n">find_all_distributions</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">pkgs</span> <span class="ow">in</span> <span class="n">all_packages</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="k">for</span> <span class="n">pkg</span> <span class="ow">in</span> <span class="n">pkgs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">pkg</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;kiara_plugin.&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">pkg</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
+                    <span class="s2">&quot;kiara-plugin.&quot;</span>
+                <span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="n">dist</span> <span class="o">=</span> <span class="n">distribution</span><span class="p">(</span><span class="n">pkg</span><span class="p">)</span>
+                <span class="n">packages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">pkg</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">dist</span><span class="o">.</span><span class="n">version</span><span class="p">})</span>
+
+        <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;kiara_plugins&quot;</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">packages</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]),</span>
+        <span class="p">}</span>
+
+        <span class="c1"># if config.include_all_info:</span>
+        <span class="c1">#     import sysconfig</span>
+        <span class="c1">#     result[&quot;python_config&quot;] = sysconfig.get_config_vars()</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h6 id="kiara.models.runtime_environment.python.KiaraPluginsRuntimeEnvironment-attributes">Attributes<a href="#kiara.models.runtime_environment.python.KiaraPluginsRuntimeEnvironment-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.runtime_environment.python.KiaraPluginsRuntimeEnvironment.environment_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">environment_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;kiara_plugins&#39;</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.runtime_environment.python.KiaraPluginsRuntimeEnvironment.environment_type" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.runtime_environment.python.KiaraPluginsRuntimeEnvironment.kiara_plugins" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">kiara_plugins</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">runtime_environment</span><span class="o">.</span><span class="n">python</span><span class="o">.</span><span class="n">PythonPackage</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.runtime_environment.python.KiaraPluginsRuntimeEnvironment.kiara_plugins" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The kiara plugin packages installed in the Python (virtual) environment.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.models.runtime_environment.python.KiaraPluginsRuntimeEnvironment.retrieve_environment_data" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_environment_data</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.models.runtime_environment.python.KiaraPluginsRuntimeEnvironment.retrieve_environment_data" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/runtime_environment/python.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_environment_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+
+    <span class="n">packages</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">all_packages</span> <span class="o">=</span> <span class="n">find_all_distributions</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">pkgs</span> <span class="ow">in</span> <span class="n">all_packages</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="k">for</span> <span class="n">pkg</span> <span class="ow">in</span> <span class="n">pkgs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">pkg</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;kiara_plugin.&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">pkg</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
+                <span class="s2">&quot;kiara-plugin.&quot;</span>
+            <span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">distribution</span><span class="p">(</span><span class="n">pkg</span><span class="p">)</span>
+            <span class="n">packages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">pkg</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">dist</span><span class="o">.</span><span class="n">version</span><span class="p">})</span>
+
+    <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;kiara_plugins&quot;</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">packages</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]),</span>
+    <span class="p">}</span>
+
+    <span class="c1"># if config.include_all_info:</span>
+    <span class="c1">#     import sysconfig</span>
+    <span class="c1">#     result[&quot;python_config&quot;] = sysconfig.get_config_vars()</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
 <h5 id="kiara.models.runtime_environment.python.PythonPackage" class="doc doc-heading">
         <code>
 PythonPackage            (<span title="pydantic.main.BaseModel">BaseModel</span>)
@@ -4715,15 +4976,33 @@ PythonRuntimeEnvironment            (<a class="autorefs autorefs-internal" title
 
         <span class="k">return</span> <span class="n">table</span>
 
+    <span class="k">def</span> <span class="nf">_retrieve_sub_profile_env_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+
+        <span class="n">only_packages</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">packages</span><span class="p">]</span>
+        <span class="n">full</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">k</span><span class="o">.</span><span class="n">version</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">packages</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;package_names&quot;</span><span class="p">:</span> <span class="n">only_packages</span><span class="p">,</span>
+            <span class="s2">&quot;packages&quot;</span><span class="p">:</span> <span class="n">full</span><span class="p">,</span>
+            <span class="s2">&quot;package_names_incl_python_version&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;python_version&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">python_version</span><span class="p">,</span>
+                <span class="s2">&quot;packages&quot;</span><span class="p">:</span> <span class="n">only_packages</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;packages_incl_python_version&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;python_version&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">python_version</span><span class="p">,</span>
+                <span class="s2">&quot;packages&quot;</span><span class="p">:</span> <span class="n">full</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">retrieve_environment_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
         <span class="n">packages</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">all_packages</span> <span class="o">=</span> <span class="n">packages_distributions</span><span class="p">()</span>
+        <span class="n">all_packages</span> <span class="o">=</span> <span class="n">find_all_distributions</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">pkgs</span> <span class="ow">in</span> <span class="n">all_packages</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">for</span> <span class="n">pkg</span> <span class="ow">in</span> <span class="n">pkgs</span><span class="p">:</span>
                 <span class="n">dist</span> <span class="o">=</span> <span class="n">distribution</span><span class="p">(</span><span class="n">pkg</span><span class="p">)</span>
-                <span class="n">packages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">dist</span><span class="o">.</span><span class="n">version</span><span class="p">})</span>
+                <span class="n">packages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">pkg</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">dist</span><span class="o">.</span><span class="n">version</span><span class="p">})</span>
 
         <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;python_version&quot;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
@@ -4840,11 +5119,11 @@ PythonRuntimeEnvironment            (<a class="autorefs autorefs-internal" title
 <span class="k">def</span> <span class="nf">retrieve_environment_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
     <span class="n">packages</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">all_packages</span> <span class="o">=</span> <span class="n">packages_distributions</span><span class="p">()</span>
+    <span class="n">all_packages</span> <span class="o">=</span> <span class="n">find_all_distributions</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">pkgs</span> <span class="ow">in</span> <span class="n">all_packages</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">for</span> <span class="n">pkg</span> <span class="ow">in</span> <span class="n">pkgs</span><span class="p">:</span>
             <span class="n">dist</span> <span class="o">=</span> <span class="n">distribution</span><span class="p">(</span><span class="n">pkg</span><span class="p">)</span>
-            <span class="n">packages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">dist</span><span class="o">.</span><span class="n">version</span><span class="p">})</span>
+            <span class="n">packages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">pkg</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">dist</span><span class="o">.</span><span class="n">version</span><span class="p">})</span>
 
     <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;python_version&quot;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
@@ -4872,6 +5151,33 @@ PythonRuntimeEnvironment            (<a class="autorefs autorefs-internal" title
 
   </div>
 
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.models.runtime_environment.python.find_all_distributions" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">find_all_distributions</span><span class="p">()</span></code>
+
+
+<a href="#kiara.models.runtime_environment.python.find_all_distributions" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/runtime_environment/python.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@lru_cache</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">find_all_distributions</span><span class="p">():</span>
+    <span class="n">all_packages</span> <span class="o">=</span> <span class="n">packages_distributions</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">all_packages</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
 
 
 

@@ -168,6 +168,8 @@ KIARA_HASH_FUNCTION = mmh3.hash
 
 ANY_TYPE_NAME = "any"
 
+DEFAULT_ENV_HASH_KEY = "default"
+
 LOAD_CONFIG_PLACEHOLDER = "__placeholder__"
 
 DATA_TYPE_CATEGORY_ID = "metadata.type"

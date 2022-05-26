@@ -20,7 +20,7 @@ from kiara.utils.graphs import print_ascii_graph
 @click.group(name="data-type")
 @click.pass_context
 def type_group(ctx):
-    """Information about available value data_types, and details about them."""
+    """Information about available data types."""
 
 
 @type_group.command(name="list")
@@ -42,7 +42,7 @@ def type_group(ctx):
 def list_types(
     ctx, full_doc, include_internal: bool, filter: Iterable[str], format: str
 ):
-    """List available data_types (work in progress)."""
+    """List available data_types."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
@@ -87,7 +87,7 @@ def list_types(
 )
 @click.pass_context
 def hierarchy(ctx, include_internal):
-    """List available data_types (work in progress)."""
+    """Show the current runtime environments' type hierarchy."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
@@ -106,12 +106,7 @@ def hierarchy(ctx, include_internal):
 @output_format_option()
 @click.pass_context
 def explain_data_type(ctx, type_name: str, format: str):
-    """Print details of a module type.
-
-    This is different to the 'explain-instance' command, because module data_types need to be
-    instantiated with configuration, before we can query all their properties (like
-    input/output data_types).
-    """
+    """Print details of a data type."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 

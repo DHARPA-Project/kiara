@@ -3,16 +3,20 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
+import orjson
 import structlog
 from abc import abstractmethod
+from pydantic import PrivateAttr
 from rich import box
 from rich.console import RenderableType
+from rich.syntax import Syntax
 from rich.table import Table
-from typing import Any, Dict, Optional, get_args
+from typing import Any, Dict, Mapping, Optional, get_args
 
-from kiara.defaults import ENVIRONMENT_TYPE_CATEGORY_ID
+from kiara.defaults import DEFAULT_ENV_HASH_KEY, ENVIRONMENT_TYPE_CATEGORY_ID
 from kiara.models import KiaraModel
+from kiara.utils import orjson_dumps
+from kiara.utils.hashing import compute_cid
 from kiara.utils.output import extract_renderable
 
 logger = structlog.get_logger()
@@ -56,6 +60,8 @@ class RuntimeEnvironment(KiaraModel):
     def retrieve_environment_data(cls) -> Dict[str, Any]:
         pass
 
+    _env_hashes: Optional[Mapping[str, str]] = PrivateAttr(default=None)
+
     def _create_renderable_for_field(
         self, field_name: str, for_summary: bool = False
     ) -> Optional[RenderableType]:
@@ -65,6 +71,31 @@ class RuntimeEnvironment(KiaraModel):
     def _retrieve_id(self) -> str:
         return self.__class__.get_environment_type_name()
 
+    @property
+    def env_hashes(self) -> Mapping[str, str]:
+
+        if self._env_hashes is not None:
+            return self._env_hashes
+
+        result = {}
+        for k, v in self._retrieve_sub_profile_env_data().items():
+            _, cid = compute_cid(data=v)
+            result[k] = str(cid)
+
+        self._env_hashes = result
+        return self._env_hashes
+
+    def _retrieve_sub_profile_env_data(self) -> Mapping[str, Any]:
+        """Return a dictionary with data that identifies one hash profile per key.
+
+        In most cases, this will only return a single-key dictionary containing all the data in that environment. But
+        in some cases one might want to have several sub-hash profiles, for example a list of Python packages with and
+        without version information, to have more fine-grained control about when to consider two environments functionally
+        equal.
+        """
+
+        return {DEFAULT_ENV_HASH_KEY: self._retrieve_data_to_hash()}
+
     def create_renderable(self, **config: Any) -> RenderableType:
 
         summary = config.get("summary", False)
@@ -72,6 +103,12 @@ class RuntimeEnvironment(KiaraModel):
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("field")
         table.add_column("summary")
+
+        hashes_str = orjson_dumps(self.env_hashes, option=orjson.OPT_INDENT_2)
+        table.add_row(
+            "environment hashes", Syntax(hashes_str, "json", background_color="default")
+        )
+
         for field_name, field in self.__fields__.items():
             summary_item = self._create_renderable_for_field(
                 field_name, for_summary=summary

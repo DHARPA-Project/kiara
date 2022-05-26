@@ -71,7 +71,7 @@ class EnvironmentRegistry(object):
             name = sc.get_environment_type_name()
             envs[name] = sc.create_environment_model()
 
-        self._environments = envs
+        self._environments = {k: envs[k] for k in sorted(envs.keys())}
         return self._environments
 
     @property

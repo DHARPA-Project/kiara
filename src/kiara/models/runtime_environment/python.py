@@ -5,12 +5,13 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import sys
+from functools import lru_cache
 from importlib_metadata import distribution, packages_distributions
 from pydantic import BaseModel, Field
 from rich import box
 from rich.console import RenderableType
 from rich.table import Table
-from typing import Any, Dict, List, Literal, Optional
+from typing import Any, Dict, List, Literal, Mapping, Optional
 
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.utils.output import extract_renderable
@@ -20,6 +21,12 @@ class PythonPackage(BaseModel):
 
     name: str = Field(description="The name of the Python package.")
     version: str = Field(description="The version of the package.")
+
+
+@lru_cache()
+def find_all_distributions():
+    all_packages = packages_distributions()
+    return all_packages
 
 
 class PythonRuntimeEnvironment(RuntimeEnvironment):
@@ -54,19 +61,98 @@ class PythonRuntimeEnvironment(RuntimeEnvironment):
 
         return table
 
+    def _retrieve_sub_profile_env_data(self) -> Mapping[str, Any]:
+
+        only_packages = [p.name for p in self.packages]
+        full = {k.name: k.version for k in self.packages}
+
+        return {
+            "package_names": only_packages,
+            "packages": full,
+            "package_names_incl_python_version": {
+                "python_version": self.python_version,
+                "packages": only_packages,
+            },
+            "packages_incl_python_version": {
+                "python_version": self.python_version,
+                "packages": full,
+            },
+        }
+
     @classmethod
     def retrieve_environment_data(cls) -> Dict[str, Any]:
 
         packages = []
-        all_packages = packages_distributions()
+        all_packages = find_all_distributions()
         for name, pkgs in all_packages.items():
             for pkg in pkgs:
                 dist = distribution(pkg)
-                packages.append({"name": name, "version": dist.version})
+                packages.append({"name": pkg, "version": dist.version})
 
         result: Dict[str, Any] = {
             "python_version": sys.version,
             "packages": sorted(packages, key=lambda x: x["name"]),
+        }
+
+        # if config.include_all_info:
+        #     import sysconfig
+        #     result["python_config"] = sysconfig.get_config_vars()
+
+        return result
+
+
+class KiaraPluginsRuntimeEnvironment(RuntimeEnvironment):
+
+    _kiara_model_id = "info.runtime.kiara_plugins"
+
+    environment_type: Literal["kiara_plugins"]
+    kiara_plugins: List[PythonPackage] = Field(
+        description="The kiara plugin packages installed in the Python (virtual) environment."
+    )
+
+    def _create_renderable_for_field(
+        self, field_name: str, for_summary: bool = False
+    ) -> Optional[RenderableType]:
+
+        if field_name != "packages":
+            return extract_renderable(getattr(self, field_name))
+
+        if for_summary:
+            return ", ".join(p.name for p in self.kiara_plugins)
+
+        table = Table(show_header=True, box=box.SIMPLE)
+        table.add_column("package name")
+        table.add_column("version")
+
+        for package in self.kiara_plugins:
+            table.add_row(package.name, package.version)
+
+        return table
+
+    def _retrieve_sub_profile_env_data(self) -> Mapping[str, Any]:
+
+        only_packages = [p.name for p in self.kiara_plugins]
+        full = {k.name: k.version for k in self.kiara_plugins}
+
+        return {"package_names": only_packages, "packages": full}
+
+    @classmethod
+    def retrieve_environment_data(cls) -> Dict[str, Any]:
+
+        packages = []
+        all_packages = find_all_distributions()
+        for name, pkgs in all_packages.items():
+
+            for pkg in pkgs:
+                if not pkg.startswith("kiara_plugin.") and not pkg.startswith(
+                    "kiara-plugin."
+                ):
+                    continue
+                dist = distribution(pkg)
+                packages.append({"name": pkg, "version": dist.version})
+
+        result: Dict[str, Any] = {
+            "kiara_plugins": sorted(packages, key=lambda x: x["name"]),
         }
 
         # if config.include_all_info:

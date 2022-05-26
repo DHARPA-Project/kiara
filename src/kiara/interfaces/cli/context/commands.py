@@ -158,7 +158,7 @@ def config_help(ctx):
     terminal_print(Panel(table))
 
 
-@context.group(name="runtime")
+@context.group(name="runtime-info")
 @click.pass_context
 def runtime(ctx):
     """Information about runtime models, etc."""

@@ -55,11 +55,36 @@ class FileSystemJobArchive(JobArchive):
 
         shutil.rmtree(self.job_store_path)
 
+    def retrieve_all_job_record_ids(self) -> Iterable[str]:
+
+        base_path = self.job_store_path / MANIFEST_SUB_PATH
+        records = base_path.glob("*/*/details.json")
+        result = []
+        for record in records:
+            result.append(record.parent.name)
+        return result
+
+    def _retrieve_job_record(self, job_record_id: str) -> JobRecord:
+
+        base_path = self.job_store_path / MANIFEST_SUB_PATH
+        records = list(base_path.glob(f"*/{job_record_id}/details.json"))
+
+        assert len(records) == 1
+
+        details_file = records[0]
+
+        details_content = details_file.read_text()
+        details: Dict[str, Any] = orjson.loads(details_content)
+
+        job_record = JobRecord(**details)
+        job_record._is_stored = True
+        return job_record
+
     def find_matching_job_record(
         self, inputs_manifest: InputsManifest
     ) -> Optional[JobRecord]:
 
-        manifest_hash = inputs_manifest.instance_cid
+        manifest_hash = inputs_manifest.manifest_cid
         jobs_hash = inputs_manifest.job_hash
 
         base_path = self.job_store_path / MANIFEST_SUB_PATH
@@ -103,11 +128,11 @@ class FileSystemJobStore(FileSystemJobArchive, JobStore):
 
     def store_job_record(self, job_record: JobRecord):
 
-        manifest_hash = job_record.instance_cid
+        manifest_cid = job_record.manifest_cid
         jobs_hash = job_record.job_hash
 
         base_path = self.job_store_path / MANIFEST_SUB_PATH
-        manifest_folder = base_path / str(manifest_hash)
+        manifest_folder = base_path / str(manifest_cid)
 
         manifest_folder.mkdir(parents=True, exist_ok=True)
 

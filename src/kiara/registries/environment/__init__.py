@@ -32,6 +32,7 @@ class EnvironmentRegistry(object):
         self,
     ):
         self._environments: Optional[Dict[str, RuntimeEnvironment]] = None
+        self._environment_hashes: Optional[Dict[str, Mapping[str, str]]] = None
 
         self._full_env_model: Optional[BaseModel] = None
 
@@ -45,6 +46,19 @@ class EnvironmentRegistry(object):
                 f"Multipe environments with id '{env_cid}' available. This is most likely a bug."
             )
         return envs[0]
+
+    @property
+    def environment_hashes(self) -> Mapping[str, Mapping[str, str]]:
+
+        if self._environment_hashes is not None:
+            return self._environment_hashes
+
+        result = {}
+        for env_name, env in self.environments.items():
+            result[env_name] = env.env_hashes
+
+        self._environment_hashes = result
+        return self._environment_hashes
 
     @property
     def environments(self) -> Mapping[str, RuntimeEnvironment]:

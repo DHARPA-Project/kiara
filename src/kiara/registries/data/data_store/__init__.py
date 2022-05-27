@@ -85,6 +85,7 @@ class DataArchive(BaseArchive):
             value_status=value_data["value_status"],
             value_size=value_data["value_size"],
             value_hash=value_data["value_hash"],
+            environment_hashes=value_data.get("environment_hashes", {}),
             pedigree=pedigree,
             pedigree_output_name=value_data["pedigree_output_name"],
             data_type_class=value_data["data_type_class"],

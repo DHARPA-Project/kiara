@@ -11,12 +11,15 @@ from multiformats import CID
 from pydantic import Extra, Field, PrivateAttr, validator
 from rich.console import RenderableType
 from rich.syntax import Syntax
-from typing import Any, Mapping, Optional
+from typing import TYPE_CHECKING, Any, Mapping, Optional, Union
 
-from kiara.defaults import NONE_VALUE_ID
+from kiara.defaults import INVALID_HASH_MARKER, NONE_VALUE_ID
 from kiara.models import KiaraModel
 from kiara.utils import orjson_dumps
 from kiara.utils.hashing import compute_cid
+
+if TYPE_CHECKING:
+    from kiara.registries.data import DataRegistry
 
 
 class Manifest(KiaraModel):
@@ -101,6 +104,7 @@ class InputsManifest(Manifest):
     )
     _inputs_cid: Optional[CID] = PrivateAttr(default=None)
     _jobs_cid: Optional[CID] = PrivateAttr(default=None)
+    _inputs_data_cid: Union[bool, CID, None] = PrivateAttr(default=None)
 
     @validator("inputs")
     def replace_none_values(cls, value):
@@ -134,3 +138,28 @@ class InputsManifest(Manifest):
         _, cid = compute_cid(data={k: v.bytes for k, v in self.inputs.items()})
         self._inputs_cid = cid
         return self._inputs_cid
+
+    def calculate_inputs_data_cid(self, data_registry: "DataRegistry") -> Optional[CID]:
+
+        if self._inputs_data_cid is not None:
+            if self._inputs_data_cid is False:
+                return None
+            return self._inputs_data_cid  # type: ignore
+
+        data_hashes = {}
+        invalid = False
+
+        for k, v in self.inputs.items():
+            value = data_registry.get_value(v)
+            if value.value_hash == INVALID_HASH_MARKER:
+                invalid = True
+                break
+            data_hashes[k] = CID.decode(value.value_hash)
+
+        if invalid:
+            self._inputs_data_cid = False
+            return None
+
+        _, cid = compute_cid(data=data_hashes)
+        self._inputs_data_cid = cid
+        return cid

@@ -221,7 +221,7 @@ class ModuleProcessor(abc.ABC):
             value_ids = values.get_all_value_ids()
             job.results = value_ids
             job.job_log.percent_finished = 100
-            job_record = JobRecord.from_active_job(active_job=job)
+            job_record = JobRecord.from_active_job(active_job=job, kiara=self._kiara)
             self._job_records[job_id] = job_record
             self._finished_jobs[job_id] = job
         elif status == JobStatus.FAILED or isinstance(status, (str, Exception)):

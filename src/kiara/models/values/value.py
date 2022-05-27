@@ -804,6 +804,13 @@ class Value(ValueDetails):
     _is_stored: bool = PrivateAttr(default=False)
     _cached_properties: Optional["ValueMap"] = PrivateAttr(default=None)
 
+    environment_hashes: Mapping[str, Mapping[str, str]] = Field(
+        description="Hashes for the environments this value was created in."
+    )
+    enviroments: Optional[Mapping[str, Mapping[str, Any]]] = Field(
+        description="Information about the environments this value was created in.",
+        default=None,
+    )
     property_links: Mapping[str, uuid.UUID] = Field(
         description="Links to values that are properties of this value.",
         default_factory=dict,
@@ -1000,6 +1007,8 @@ class Value(ValueDetails):
         show_destiny_backlinks = render_config.get("show_destiny_backlinks", False)
         show_data = render_config.get("show_data_preview", False)
         show_serialized = render_config.get("show_serialized", False)
+        show_env_data_hashes = render_config.get("show_environment_hashes", False)
+        show_env_data = render_config.get("show_environment_data", False)
 
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("Key", style="i")
@@ -1017,7 +1026,14 @@ class Value(ValueDetails):
         table.add_row("", Rule())
         for k in sorted(self.__fields__.keys()):
 
-            if k in ["serialized", "value_id", "aliases", "kiara_id"]:
+            if k in [
+                "serialized",
+                "value_id",
+                "aliases",
+                "kiara_id",
+                "environments",
+                "environment_hashes",
+            ]:
                 continue
 
             attr = getattr(self, k)
@@ -1040,6 +1056,8 @@ class Value(ValueDetails):
             or show_properties
             or show_destinies
             or show_destiny_backlinks
+            or show_env_data_hashes
+            or show_env_data
         ):
             table.add_row("", "")
             table.add_row("", Rule())
@@ -1072,6 +1090,17 @@ class Value(ValueDetails):
                 self.value_id
             )
             table.add_row("serialized", serialized.create_renderable())
+
+        if show_env_data_hashes:
+            env_hashes = Syntax(
+                orjson_dumps(self.environment_hashes, option=orjson.OPT_INDENT_2),
+                "json",
+                background_color="default",
+            )
+            table.add_row("environment_hashes", env_hashes)
+
+        if show_env_data:
+            raise NotImplementedError()
 
         if show_properties:
             if not self.property_links:

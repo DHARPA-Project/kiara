@@ -9,7 +9,8 @@ import abc
 import structlog
 import uuid
 from bidict import bidict
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Type
+from multiformats import CID
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Type, Union
 
 from kiara.models.events import KiaraEvent
 from kiara.models.events.job_registry import (
@@ -40,6 +41,25 @@ class JobArchive(BaseArchive):
     ) -> Optional[JobRecord]:
         pass
 
+    def retrieve_all_job_record_ids(self) -> Optional[Iterable[str]]:
+        """Retrieve a list of all job record ids (cids).
+
+        If the job archive retrieves its jobs in a dynamic way, this will return 'None'.
+        """
+        return None
+
+    @abc.abstractmethod
+    def _retrieve_job_record(self, job_record_id: str) -> JobRecord:
+        pass
+
+    def retrieve_job_record(self, job_record_id: Union[str, CID]) -> JobRecord:
+
+        if isinstance(job_record_id, CID):
+            job_record_id = str(job_record_id)
+
+        job_record = self._retrieve_job_record(job_record_id=job_record_id)
+        return job_record
+
 
 class JobStore(JobArchive):
     @abc.abstractmethod
@@ -47,10 +67,52 @@ class JobStore(JobArchive):
         pass
 
 
+class JobMatcher(abc.ABC):
+    def __init__(self, kiara: "Kiara"):
+
+        self._kiara: Kiara = kiara
+
+    @abc.abstractmethod
+    def find_existing_job(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
+        pass
+
+
+class NoneJobMatcher(JobMatcher):
+    def find_existing_job(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
+        return None
+
+
+class ValueIdJobMatcher(JobMatcher):
+    def find_existing_job(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
+
+        matches = []
+
+        for store_id, archive in self._kiara.job_registry.job_archives.items():
+            match = archive.find_matching_job_record(inputs_manifest=inputs_manifest)
+            if match:
+                matches.append(match)
+
+        if len(matches) == 0:
+            return None
+        elif len(matches) > 1:
+            raise Exception(
+                f"Multiple stores have a record for inputs manifest '{inputs_manifest}', this is not supported (yet)."
+            )
+
+        job_record = matches[0]
+        job_record._is_stored = True
+
+        return job_record
+
+
 class JobRegistry(object):
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
+
+        # self._job_matcher: JobMatcher = NoneJobMatcher(kiara=self._kiara)
+        self._job_matcher: JobMatcher = ValueIdJobMatcher(kiara=self._kiara)
+
         self._active_jobs: bidict[str, uuid.UUID] = bidict()
         self._failed_jobs: Dict[str, uuid.UUID] = {}
         self._finished_jobs: Dict[str, uuid.UUID] = {}
@@ -177,6 +239,20 @@ class JobRegistry(object):
 
         return self._processor.get_job_record(job_id)
 
+    def retrieve_all_job_records(self) -> Mapping[str, JobRecord]:
+
+        all_records: Dict[str, JobRecord] = {}
+        for archive in self.job_archives.values():
+            all_record_ids = archive.retrieve_all_job_record_ids()
+            if all_record_ids is None:
+                return {}
+            for r in all_record_ids:
+                assert r not in all_records.keys()
+                job_record = archive.retrieve_job_record(r)
+                all_records[r] = job_record
+
+        return all_records
+
     def find_matching_job_record(
         self, inputs_manifest: InputsManifest
     ) -> Optional[uuid.UUID]:
@@ -189,34 +265,24 @@ class JobRegistry(object):
             'None' if no such job exists, a (uuid) job-id if the job is currently running or has run in the past
         """
 
+        log = logger.bind(module_type=inputs_manifest.module_type)
         if inputs_manifest.job_hash in self._active_jobs.keys():
-            logger.debug("job.use_running")
+            log.debug("job.use_running")
             return self._active_jobs[inputs_manifest.job_hash]
 
         if inputs_manifest.job_hash in self._finished_jobs.keys():
             job_id = self._finished_jobs[inputs_manifest.job_hash]
             return job_id
 
-        matches = []
-
-        for store_id, archive in self._job_archives.items():
-            match = archive.find_matching_job_record(inputs_manifest=inputs_manifest)
-            if match:
-                matches.append(match)
-
-        if len(matches) == 0:
+        job_record = self._job_matcher.find_existing_job(
+            inputs_manifest=inputs_manifest
+        )
+        if job_record is None:
             return None
-        elif len(matches) > 1:
-            raise Exception(
-                f"Multiple stores have a record for inputs manifest '{inputs_manifest}', this is not supported (yet)."
-            )
-
-        job_record = matches[0]
-        job_record._is_stored = True
 
         self._finished_jobs[inputs_manifest.job_hash] = job_record.job_id
         self._archived_records[job_record.job_id] = job_record
-        logger.debug("job.use_cached")
+        log.debug("job.use_cached")
         return job_record.job_id
 
     def prepare_job_config(

@@ -64,6 +64,7 @@ from kiara.registries.data.data_store import DataArchive, DataStore
 from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import log_exception, log_message
 from kiara.utils.data import pretty_print_data
+from kiara.utils.hashing import NONE_CID
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -112,6 +113,7 @@ class DataRegistry(object):
                 is_constant=True,
                 doc="Special value, indicating a field is not set.",  # type: ignore
             ),
+            environment_hashes={},
             value_status=ValueStatus.NOT_SET,
             value_size=0,
             value_hash=INVALID_HASH_MARKER,
@@ -133,9 +135,10 @@ class DataRegistry(object):
                 is_constant=True,
                 doc="Special value, indicating a field is set with a 'none' value.",  # type: ignore
             ),
+            environment_hashes={},
             value_status=ValueStatus.NONE,
             value_size=0,
-            value_hash=-2,
+            value_hash=str(NONE_CID),
             pedigree=ORPHAN,
             pedigree_output_name="__void__",
             data_type_class=special_value_cls,
@@ -666,6 +669,7 @@ class DataRegistry(object):
             value_id=v_id,
             data=data,
             schema=schema,
+            environment_hashes=self._kiara.environment_registry.environment_hashes,
             serialized=serialized,
             status=status,
             value_hash=value_hash,

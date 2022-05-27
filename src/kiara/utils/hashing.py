@@ -28,6 +28,9 @@ def compute_cid(
     return encoded, cid
 
 
+_, NONE_CID = compute_cid(data=None)
+
+
 def compute_cid_from_file(
     file: str, codec: Union[str, int, Multicodec] = "raw", hash_codec: str = "sha2-256"
 ):

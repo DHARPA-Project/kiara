@@ -10,7 +10,7 @@ import rich_click as click
 import shutil
 import structlog
 import sys
-from typing import Optional
+from typing import Optional, Tuple
 
 from kiara import Kiara
 from kiara.interfaces.tui.pager import PagerApp
@@ -183,11 +183,14 @@ def list_values(
     help="Resolve and display values this value is a destiny for.",
     is_flag=True,
 )
+@click.option(
+    "--environment", "-e", help="Show environment hashes and data.", is_flag=True
+)
 @output_format_option()
 @click.pass_context
 def explain_value(
     ctx,
-    value_id: str,
+    value_id: Tuple[str],
     pedigree: bool,
     serialized: bool,
     format: str,
@@ -196,6 +199,7 @@ def explain_value(
     destinies: bool,
     destiny_backlinks: bool,
     lineage: bool,
+    environment: bool,
 ):
     """Print the metadata of a stored value.
 
@@ -212,6 +216,8 @@ def explain_value(
         "show_destinies": destinies,
         "show_destiny_backlinks": destiny_backlinks,
         "show_lineage": lineage,
+        "show_environment_hashes": environment,
+        "show_environment_data": False,
     }
 
     all_values = []
@@ -223,7 +229,7 @@ def explain_value(
         all_values.append(value)
 
     if len(all_values) == 1:
-        title = f"Value details for: [b i]{v_id}[/b i]"
+        title = f"Value details for: [b i]{value_id[0]}[/b i]"
     else:
         title = "Value details"
 

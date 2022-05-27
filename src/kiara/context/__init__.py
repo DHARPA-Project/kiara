@@ -531,46 +531,46 @@ class KiaraContextInfo(KiaraModel):
         return result
 
 
-def delete_context(kiara_config: KiaraConfig, context_name: str):
-
-    kiara_context_config = kiara_config.get_context_config(context_name=context_name)
-    kiara = Kiara(config=kiara_context_config)
-
-    data_archives = kiara.data_registry.data_archives.values()
-    alias_archives = kiara.alias_registry.alias_archives.values()
-    job_archives = kiara.job_registry.job_archives.values()
-    destiny_archives = kiara.destiny_registry.destiny_archives.values()
-
-    clashes: Dict[str, List[KiaraArchive]] = {}
-    for context_name, context_config in kiara_config.context_configs.items():
-        k = Kiara(config=context_config)
-        for da in k.data_registry.data_archives.values():
-            if da in data_archives:
-                clashes.setdefault("data", []).append(da)
-        for aa in k.alias_registry.alias_archives.values():
-            if aa in alias_archives:
-                clashes.setdefault("alias", []).append(aa)
-        for ja in k.job_registry.job_archives.values():
-            if ja in job_archives:
-                clashes.setdefault("job", []).append(ja)
-        for dea in k.destiny_registry.destiny_archives.values():
-            if dea in destiny_archives:
-                clashes.setdefault("destiny", []).append(dea)
-
-    if clashes:
-        # TODO: only delete non-clash archives and don't throw exception
-        raise Exception(
-            f"Can't delete context '{context_name}', some archives are used in other contexts: {clashes}"
-        )
-
-    for da in data_archives:
-        da.delete_archive(archive_id=da.archive_id)
-
-    for aa in alias_archives:
-        aa.delete_archive(archive_id=aa.archive_id)
-
-    for ja in job_archives:
-        ja.delete_archive(archive_id=ja.archive_id)
-
-    for dea in destiny_archives:
-        dea.delete_archive(archive_id=dea.archive_id)
+# def delete_context(kiara_config: KiaraConfig, context_name: str):
+#
+#     kiara_context_config = kiara_config.get_context_config(context_name=context_name)
+#     kiara = Kiara(config=kiara_context_config)
+#
+#     data_archives = kiara.data_registry.data_archives.values()
+#     alias_archives = kiara.alias_registry.alias_archives.values()
+#     job_archives = kiara.job_registry.job_archives.values()
+#     destiny_archives = kiara.destiny_registry.destiny_archives.values()
+#
+#     clashes: Dict[str, List[KiaraArchive]] = {}
+#     for context_name, context_config in kiara_config.context_configs.items():
+#         k = Kiara(config=context_config)
+#         for da in k.data_registry.data_archives.values():
+#             if da in data_archives:
+#                 clashes.setdefault("data", []).append(da)
+#         for aa in k.alias_registry.alias_archives.values():
+#             if aa in alias_archives:
+#                 clashes.setdefault("alias", []).append(aa)
+#         for ja in k.job_registry.job_archives.values():
+#             if ja in job_archives:
+#                 clashes.setdefault("job", []).append(ja)
+#         for dea in k.destiny_registry.destiny_archives.values():
+#             if dea in destiny_archives:
+#                 clashes.setdefault("destiny", []).append(dea)
+#
+#     if clashes:
+#         # TODO: only delete non-clash archives and don't throw exception
+#         raise Exception(
+#             f"Can't delete context '{context_name}', some archives are used in other contexts: {clashes}"
+#         )
+#
+#     for da in data_archives:
+#         da.delete_archive(archive_id=da.archive_id)
+#
+#     for aa in alias_archives:
+#         aa.delete_archive(archive_id=aa.archive_id)
+#
+#     for ja in job_archives:
+#         ja.delete_archive(archive_id=ja.archive_id)
+#
+#     for dea in destiny_archives:
+#         dea.delete_archive(archive_id=dea.archive_id)

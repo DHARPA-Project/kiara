@@ -9,19 +9,20 @@ import logging
 import os
 import uuid
 from datetime import datetime
-from deepdiff import DeepHash
 from enum import Enum
 from pydantic.fields import Field, PrivateAttr
 from pydantic.main import BaseModel
+from rich import box
+from rich.console import RenderableType
+from rich.table import Table
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional
 
-from kiara.defaults import KIARA_HASH_FUNCTION
 from kiara.exceptions import InvalidValuesException
 from kiara.models import KiaraModel
 from kiara.models.module.manifest import InputsManifest
 
 if TYPE_CHECKING:
-    from kiara.context import DataRegistry
+    from kiara.context import DataRegistry, Kiara
     from kiara.modules import KiaraModule
 
 
@@ -175,7 +176,7 @@ class JobRecord(JobConfig):
     _kiara_model_id = "instance.job_record"
 
     @classmethod
-    def from_active_job(self, active_job: ActiveJob):
+    def from_active_job(self, kiara: "Kiara", active_job: ActiveJob):
 
         assert active_job.status == JobStatus.SUCCESS
         assert active_job.results is not None
@@ -188,17 +189,36 @@ class JobRecord(JobConfig):
             runtime=active_job.runtime,  # type: ignore
         )
 
-        job_record = JobRecord.construct(
+        inputs_data_cid = active_job.job_config.calculate_inputs_data_cid(
+            data_registry=kiara.data_registry
+        )
+
+        job_record = JobRecord(
             job_id=active_job.job_id,
             module_type=active_job.job_config.module_type,
             module_config=active_job.job_config.module_config,
             inputs=active_job.job_config.inputs,
             outputs=active_job.results,
             runtime_details=job_details,
+            environment_hashes=kiara.environment_registry.environment_hashes,
+            inputs_data_hash=str(inputs_data_cid)
+            if inputs_data_cid is not None
+            else None,
         )
         return job_record
 
     job_id: uuid.UUID = Field(description="The globally unique id for this job.")
+    environment_hashes: Mapping[str, Mapping[str, str]] = Field(
+        description="Hashes for the environments this value was created in."
+    )
+    enviroments: Optional[Mapping[str, Mapping[str, Any]]] = Field(
+        description="Information about the environments this value was created in.",
+        default=None,
+    )
+    inputs_data_hash: Optional[str] = Field(
+        description="A map of the hashes of this jobs inputs."
+    )
+
     outputs: Dict[str, uuid.UUID] = Field(description="References to the job outputs.")
     runtime_details: Optional[JobRuntimeDetails] = Field(
         description="Runtime details for the job."
@@ -214,13 +234,30 @@ class JobRecord(JobConfig):
             "outputs": {k: v.bytes for k, v in self.outputs.items()},
         }
 
-    @property
-    def outputs_hash(self) -> int:
+    def create_renderable(self, **config: Any) -> RenderableType:
 
-        if self._outputs_hash is not None:
-            return self._outputs_hash
+        from kiara.utils.output import extract_renderable
 
-        obj = self.outputs
-        h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
-        self._outputs_hash = h[obj]
-        return self._outputs_hash
+        include = config.get("include", None)
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("Key", style="i")
+        table.add_column("Value")
+        for k in self.__fields__.keys():
+            if include is not None and k not in include:
+                continue
+            attr = getattr(self, k)
+            v = extract_renderable(attr)
+            table.add_row(k, v)
+        return table
+
+    # @property
+    # def outputs_hash(self) -> int:
+    #
+    #     if self._outputs_hash is not None:
+    #         return self._outputs_hash
+    #
+    #     obj = self.outputs
+    #     h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
+    #     self._outputs_hash = h[obj]
+    #     return self._outputs_hash

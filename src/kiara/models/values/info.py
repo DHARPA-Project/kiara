@@ -139,6 +139,7 @@ class ValueInfo(Value):
             kiara_id=value.kiara_id,
             value_schema=value.value_schema,
             value_status=value.value_status,
+            environment_hashes=value.environment_hashes,
             value_size=value.value_size,
             value_hash=value.value_hash,
             pedigree=value.pedigree,

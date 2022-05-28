@@ -4403,7 +4403,7 @@ JobRecord            (<a class="autorefs autorefs-internal" title="kiara.models.
     <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.job_record&quot;</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_active_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">active_job</span><span class="p">:</span> <span class="n">ActiveJob</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_active_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">active_job</span><span class="p">:</span> <span class="n">ActiveJob</span><span class="p">):</span>
 
         <span class="k">assert</span> <span class="n">active_job</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">SUCCESS</span>
         <span class="k">assert</span> <span class="n">active_job</span><span class="o">.</span><span class="n">results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -4416,17 +4416,36 @@ JobRecord            (<a class="autorefs autorefs-internal" title="kiara.models.
             <span class="n">runtime</span><span class="o">=</span><span class="n">active_job</span><span class="o">.</span><span class="n">runtime</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
         <span class="p">)</span>
 
-        <span class="n">job_record</span> <span class="o">=</span> <span class="n">JobRecord</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
+        <span class="n">inputs_data_cid</span> <span class="o">=</span> <span class="n">active_job</span><span class="o">.</span><span class="n">job_config</span><span class="o">.</span><span class="n">calculate_inputs_data_cid</span><span class="p">(</span>
+            <span class="n">data_registry</span><span class="o">=</span><span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span>
+        <span class="p">)</span>
+
+        <span class="n">job_record</span> <span class="o">=</span> <span class="n">JobRecord</span><span class="p">(</span>
             <span class="n">job_id</span><span class="o">=</span><span class="n">active_job</span><span class="o">.</span><span class="n">job_id</span><span class="p">,</span>
             <span class="n">module_type</span><span class="o">=</span><span class="n">active_job</span><span class="o">.</span><span class="n">job_config</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
             <span class="n">module_config</span><span class="o">=</span><span class="n">active_job</span><span class="o">.</span><span class="n">job_config</span><span class="o">.</span><span class="n">module_config</span><span class="p">,</span>
             <span class="n">inputs</span><span class="o">=</span><span class="n">active_job</span><span class="o">.</span><span class="n">job_config</span><span class="o">.</span><span class="n">inputs</span><span class="p">,</span>
             <span class="n">outputs</span><span class="o">=</span><span class="n">active_job</span><span class="o">.</span><span class="n">results</span><span class="p">,</span>
             <span class="n">runtime_details</span><span class="o">=</span><span class="n">job_details</span><span class="p">,</span>
+            <span class="n">environment_hashes</span><span class="o">=</span><span class="n">kiara</span><span class="o">.</span><span class="n">environment_registry</span><span class="o">.</span><span class="n">environment_hashes</span><span class="p">,</span>
+            <span class="n">inputs_data_hash</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">inputs_data_cid</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">inputs_data_cid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">job_record</span>
 
     <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The globally unique id for this job.&quot;</span><span class="p">)</span>
+    <span class="n">environment_hashes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Hashes for the environments this value was created in.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">enviroments</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Information about the environments this value was created in.&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">inputs_data_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A map of the hashes of this jobs inputs.&quot;</span>
+    <span class="p">)</span>
+
     <span class="n">outputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;References to the job outputs.&quot;</span><span class="p">)</span>
     <span class="n">runtime_details</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRuntimeDetails</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Runtime details for the job.&quot;</span>
@@ -4442,16 +4461,33 @@ JobRecord            (<a class="autorefs autorefs-internal" title="kiara.models.
             <span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">bytes</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">items</span><span class="p">()},</span>
         <span class="p">}</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">outputs_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outputs_hash</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outputs_hash</span>
+        <span class="kn">from</span> <span class="nn">kiara.utils.output</span> <span class="kn">import</span> <span class="n">extract_renderable</span>
 
-        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span>
-        <span class="n">h</span> <span class="o">=</span> <span class="n">DeepHash</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">hasher</span><span class="o">=</span><span class="n">KIARA_HASH_FUNCTION</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_outputs_hash</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outputs_hash</span>
+        <span class="n">include</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Key&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields__</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">include</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">include</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">extract_renderable</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">table</span>
+
+    <span class="c1"># @property</span>
+    <span class="c1"># def outputs_hash(self) -&gt; int:</span>
+    <span class="c1">#</span>
+    <span class="c1">#     if self._outputs_hash is not None:</span>
+    <span class="c1">#         return self._outputs_hash</span>
+    <span class="c1">#</span>
+    <span class="c1">#     obj = self.outputs</span>
+    <span class="c1">#     h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)</span>
+    <span class="c1">#     self._outputs_hash = h[obj]</span>
+    <span class="c1">#     return self._outputs_hash</span>
 </code></pre></div>
         </details>
 
@@ -4463,6 +4499,73 @@ JobRecord            (<a class="autorefs autorefs-internal" title="kiara.models.
 
 
 <h4 id="kiara.models.module.jobs.JobRecord-attributes">Attributes<a href="#kiara.models.module.jobs.JobRecord-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.module.jobs.JobRecord.enviroments" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">enviroments</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.module.jobs.JobRecord.enviroments" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Information about the environments this value was created in.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.module.jobs.JobRecord.environment_hashes" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">environment_hashes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.module.jobs.JobRecord.environment_hashes" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Hashes for the environments this value was created in.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.module.jobs.JobRecord.inputs_data_hash" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">inputs_data_hash</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.module.jobs.JobRecord.inputs_data_hash" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>A map of the hashes of this jobs inputs.</p>
+    </div>
+
+  </div>
+
+
 
   <div class="doc doc-object doc-attribute">
 
@@ -4514,28 +4617,6 @@ JobRecord            (<a class="autorefs autorefs-internal" title="kiara.models.
 
 
 
-<h5 id="kiara.models.module.jobs.JobRecord.outputs_hash" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">outputs_hash</span><span class="p">:</span> <span class="nb">int</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-property"><code>property</code></small>
-      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
-  </span>
-
-<a href="#kiara.models.module.jobs.JobRecord.outputs_hash" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
 <h5 id="kiara.models.module.jobs.JobRecord.runtime_details" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">runtime_details</span><span class="p">:</span> <span class="n">JobRuntimeDetails</span></code>
 
@@ -4555,6 +4636,46 @@ JobRecord            (<a class="autorefs autorefs-internal" title="kiara.models.
 
 
 
+<h4 id="kiara.models.module.jobs.JobRecord-methods">Methods<a href="#kiara.models.module.jobs.JobRecord-methods" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.models.module.jobs.JobRecord.create_renderable" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
+
+
+<a href="#kiara.models.module.jobs.JobRecord.create_renderable" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Create a renderable for this module configuration.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/module/jobs.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+    <span class="kn">from</span> <span class="nn">kiara.utils.output</span> <span class="kn">import</span> <span class="n">extract_renderable</span>
+
+    <span class="n">include</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Key&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields__</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">include</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">include</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">extract_renderable</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">table</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
 
 
   <div class="doc doc-object doc-method">
@@ -4562,7 +4683,7 @@ JobRecord            (<a class="autorefs autorefs-internal" title="kiara.models.
 
 
 <h5 id="kiara.models.module.jobs.JobRecord.from_active_job" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">from_active_job</span><span class="p">(</span><span class="n">active_job</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">from_active_job</span><span class="p">(</span><span class="n">kiara</span><span class="p">,</span> <span class="n">active_job</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
@@ -4576,7 +4697,7 @@ JobRecord            (<a class="autorefs autorefs-internal" title="kiara.models.
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/jobs.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">from_active_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">active_job</span><span class="p">:</span> <span class="n">ActiveJob</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">from_active_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">active_job</span><span class="p">:</span> <span class="n">ActiveJob</span><span class="p">):</span>
 
     <span class="k">assert</span> <span class="n">active_job</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">SUCCESS</span>
     <span class="k">assert</span> <span class="n">active_job</span><span class="o">.</span><span class="n">results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -4589,13 +4710,21 @@ JobRecord            (<a class="autorefs autorefs-internal" title="kiara.models.
         <span class="n">runtime</span><span class="o">=</span><span class="n">active_job</span><span class="o">.</span><span class="n">runtime</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
     <span class="p">)</span>
 
-    <span class="n">job_record</span> <span class="o">=</span> <span class="n">JobRecord</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
+    <span class="n">inputs_data_cid</span> <span class="o">=</span> <span class="n">active_job</span><span class="o">.</span><span class="n">job_config</span><span class="o">.</span><span class="n">calculate_inputs_data_cid</span><span class="p">(</span>
+        <span class="n">data_registry</span><span class="o">=</span><span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span>
+    <span class="p">)</span>
+
+    <span class="n">job_record</span> <span class="o">=</span> <span class="n">JobRecord</span><span class="p">(</span>
         <span class="n">job_id</span><span class="o">=</span><span class="n">active_job</span><span class="o">.</span><span class="n">job_id</span><span class="p">,</span>
         <span class="n">module_type</span><span class="o">=</span><span class="n">active_job</span><span class="o">.</span><span class="n">job_config</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
         <span class="n">module_config</span><span class="o">=</span><span class="n">active_job</span><span class="o">.</span><span class="n">job_config</span><span class="o">.</span><span class="n">module_config</span><span class="p">,</span>
         <span class="n">inputs</span><span class="o">=</span><span class="n">active_job</span><span class="o">.</span><span class="n">job_config</span><span class="o">.</span><span class="n">inputs</span><span class="p">,</span>
         <span class="n">outputs</span><span class="o">=</span><span class="n">active_job</span><span class="o">.</span><span class="n">results</span><span class="p">,</span>
         <span class="n">runtime_details</span><span class="o">=</span><span class="n">job_details</span><span class="p">,</span>
+        <span class="n">environment_hashes</span><span class="o">=</span><span class="n">kiara</span><span class="o">.</span><span class="n">environment_registry</span><span class="o">.</span><span class="n">environment_hashes</span><span class="p">,</span>
+        <span class="n">inputs_data_hash</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">inputs_data_cid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">inputs_data_cid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">job_record</span>
 </code></pre></div>

@@ -3829,12 +3829,15 @@ ContextSummary            (<a class="autorefs autorefs-internal" title="kiara.mo
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ContextSummary</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_from_context_config</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="s2">&quot;KiaraContextConfig&quot;</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="n">KiaraContextConfig</span><span class="p">,</span>
+        <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">runtime_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KiaraRuntimeConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 
         <span class="kn">from</span> <span class="nn">kiara.context</span> <span class="kn">import</span> <span class="n">Kiara</span>
 
-        <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+        <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">runtime_config</span><span class="o">=</span><span class="n">runtime_config</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_from_context</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">context_name</span><span class="o">=</span><span class="n">context_name</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
@@ -4245,7 +4248,7 @@ ContextSummary            (<a class="autorefs autorefs-internal" title="kiara.mo
 
 
 <h5 id="kiara.models.context.ContextSummary.create_from_context_config" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_from_context_config</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">context_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_from_context_config</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">context_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">runtime_config</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
@@ -4260,12 +4263,15 @@ ContextSummary            (<a class="autorefs autorefs-internal" title="kiara.mo
           <summary>Source code in <code>kiara/models/context.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create_from_context_config</span><span class="p">(</span>
-    <span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="s2">&quot;KiaraContextConfig&quot;</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">cls</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">KiaraContextConfig</span><span class="p">,</span>
+    <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">runtime_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KiaraRuntimeConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 
     <span class="kn">from</span> <span class="nn">kiara.context</span> <span class="kn">import</span> <span class="n">Kiara</span>
 
-    <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">runtime_config</span><span class="o">=</span><span class="n">runtime_config</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_from_context</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">context_name</span><span class="o">=</span><span class="n">context_name</span><span class="p">)</span>
 </code></pre></div>
         </details>

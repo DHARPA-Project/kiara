@@ -3634,6 +3634,7 @@ InputsManifest            (<a class="autorefs autorefs-internal" title="kiara.mo
     <span class="p">)</span>
     <span class="n">_inputs_cid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CID</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">_jobs_cid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CID</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_inputs_data_cid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">CID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">replace_none_values</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -3667,6 +3668,35 @@ InputsManifest            (<a class="autorefs autorefs-internal" title="kiara.mo
         <span class="n">_</span><span class="p">,</span> <span class="n">cid</span> <span class="o">=</span> <span class="n">compute_cid</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">bytes</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_cid</span> <span class="o">=</span> <span class="n">cid</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_cid</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">inputs_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs_cid</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">calculate_inputs_data_cid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_registry</span><span class="p">:</span> <span class="s2">&quot;DataRegistry&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CID</span><span class="p">]:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_data_cid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_data_cid</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_data_cid</span>  <span class="c1"># type: ignore</span>
+
+        <span class="n">data_hashes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">invalid</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">data_registry</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">value_hash</span> <span class="o">==</span> <span class="n">INVALID_HASH_MARKER</span><span class="p">:</span>
+                <span class="n">invalid</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+            <span class="n">data_hashes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">CID</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">value_hash</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">invalid</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_data_cid</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">_</span><span class="p">,</span> <span class="n">cid</span> <span class="o">=</span> <span class="n">compute_cid</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data_hashes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_data_cid</span> <span class="o">=</span> <span class="n">cid</span>
+        <span class="k">return</span> <span class="n">cid</span>
 </code></pre></div>
         </details>
 
@@ -3728,6 +3758,28 @@ InputsManifest            (<a class="autorefs autorefs-internal" title="kiara.mo
 
 
 
+<h5 id="kiara.models.module.manifest.InputsManifest.inputs_hash" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">inputs_hash</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.models.module.manifest.InputsManifest.inputs_hash" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
 <h5 id="kiara.models.module.manifest.InputsManifest.job_cid" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">job_cid</span><span class="p">:</span> <span class="n">CID</span></code>
 
@@ -3768,6 +3820,53 @@ InputsManifest            (<a class="autorefs autorefs-internal" title="kiara.mo
 
 
 
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.models.module.manifest.InputsManifest.calculate_inputs_data_cid" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">calculate_inputs_data_cid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_registry</span><span class="p">)</span></code>
+
+
+<a href="#kiara.models.module.manifest.InputsManifest.calculate_inputs_data_cid" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/module/manifest.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">calculate_inputs_data_cid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_registry</span><span class="p">:</span> <span class="s2">&quot;DataRegistry&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CID</span><span class="p">]:</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_data_cid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_data_cid</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_data_cid</span>  <span class="c1"># type: ignore</span>
+
+    <span class="n">data_hashes</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">invalid</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">data_registry</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">value_hash</span> <span class="o">==</span> <span class="n">INVALID_HASH_MARKER</span><span class="p">:</span>
+            <span class="n">invalid</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">break</span>
+        <span class="n">data_hashes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">CID</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">value_hash</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">invalid</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_data_cid</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">cid</span> <span class="o">=</span> <span class="n">compute_cid</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data_hashes</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_data_cid</span> <span class="o">=</span> <span class="n">cid</span>
+    <span class="k">return</span> <span class="n">cid</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
 
 
 
@@ -3883,6 +3982,10 @@ Manifest            (<a class="autorefs autorefs-internal" title="kiara.models.K
         <span class="n">_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manifest_cid</span> <span class="o">=</span> <span class="n">compute_cid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manifest_data</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manifest_cid</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">manifest_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manifest_cid</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">manifest_data_as_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;module_type&quot;</span><span class="p">,</span> <span class="s2">&quot;module_config&quot;</span><span class="p">})</span>
@@ -3959,6 +4062,28 @@ Manifest            (<a class="autorefs autorefs-internal" title="kiara.models.K
     <div class="doc doc-contents ">
 
       <p>The configuration data for this module instance.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.module.manifest.Manifest.manifest_hash" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">manifest_hash</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.models.module.manifest.Manifest.manifest_hash" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
     </div>
 
   </div>

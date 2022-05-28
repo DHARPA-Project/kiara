@@ -6781,6 +6781,13 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
     <span class="n">_is_stored</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">_cached_properties</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;ValueMap&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
+    <span class="n">environment_hashes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Hashes for the environments this value was created in.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">enviroments</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Information about the environments this value was created in.&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">property_links</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Links to values that are properties of this value.&quot;</span><span class="p">,</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span>
@@ -6977,6 +6984,8 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
         <span class="n">show_destiny_backlinks</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_destiny_backlinks&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">show_data</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_data_preview&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">show_serialized</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_serialized&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">show_env_data_hashes</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_environment_hashes&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">show_env_data</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_environment_data&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
         <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Key&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
@@ -6994,7 +7003,14 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">Rule</span><span class="p">())</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__fields__</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
 
-            <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;serialized&quot;</span><span class="p">,</span> <span class="s2">&quot;value_id&quot;</span><span class="p">,</span> <span class="s2">&quot;aliases&quot;</span><span class="p">,</span> <span class="s2">&quot;kiara_id&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="s2">&quot;serialized&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;value_id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;aliases&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;kiara_id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;environments&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;environment_hashes&quot;</span><span class="p">,</span>
+            <span class="p">]:</span>
                 <span class="k">continue</span>
 
             <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
@@ -7017,6 +7033,8 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
             <span class="ow">or</span> <span class="n">show_properties</span>
             <span class="ow">or</span> <span class="n">show_destinies</span>
             <span class="ow">or</span> <span class="n">show_destiny_backlinks</span>
+            <span class="ow">or</span> <span class="n">show_env_data_hashes</span>
+            <span class="ow">or</span> <span class="n">show_env_data</span>
         <span class="p">):</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">Rule</span><span class="p">())</span>
@@ -7049,6 +7067,17 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
                 <span class="bp">self</span><span class="o">.</span><span class="n">value_id</span>
             <span class="p">)</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;serialized&quot;</span><span class="p">,</span> <span class="n">serialized</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">show_env_data_hashes</span><span class="p">:</span>
+            <span class="n">env_hashes</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span>
+                <span class="n">orjson_dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">environment_hashes</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">),</span>
+                <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+                <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;environment_hashes&quot;</span><span class="p">,</span> <span class="n">env_hashes</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">show_env_data</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">show_properties</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">property_links</span><span class="p">:</span>
@@ -7163,6 +7192,51 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
     <div class="doc doc-contents ">
 
       <p>Backlinks to values that this value acts as destiny/or property for.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.values.value.Value.enviroments" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">enviroments</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.values.value.Value.enviroments" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Information about the environments this value was created in.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.values.value.Value.environment_hashes" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">environment_hashes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.values.value.Value.environment_hashes" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Hashes for the environments this value was created in.</p>
     </div>
 
   </div>
@@ -7453,6 +7527,8 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
     <span class="n">show_destiny_backlinks</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_destiny_backlinks&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">show_data</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_data_preview&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">show_serialized</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_serialized&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">show_env_data_hashes</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_environment_hashes&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">show_env_data</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_environment_data&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
     <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
     <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Key&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
@@ -7470,7 +7546,14 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
     <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">Rule</span><span class="p">())</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__fields__</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
 
-        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;serialized&quot;</span><span class="p">,</span> <span class="s2">&quot;value_id&quot;</span><span class="p">,</span> <span class="s2">&quot;aliases&quot;</span><span class="p">,</span> <span class="s2">&quot;kiara_id&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s2">&quot;serialized&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;value_id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;aliases&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;kiara_id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;environments&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;environment_hashes&quot;</span><span class="p">,</span>
+        <span class="p">]:</span>
             <span class="k">continue</span>
 
         <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
@@ -7493,6 +7576,8 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
         <span class="ow">or</span> <span class="n">show_properties</span>
         <span class="ow">or</span> <span class="n">show_destinies</span>
         <span class="ow">or</span> <span class="n">show_destiny_backlinks</span>
+        <span class="ow">or</span> <span class="n">show_env_data_hashes</span>
+        <span class="ow">or</span> <span class="n">show_env_data</span>
     <span class="p">):</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">Rule</span><span class="p">())</span>
@@ -7525,6 +7610,17 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
             <span class="bp">self</span><span class="o">.</span><span class="n">value_id</span>
         <span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;serialized&quot;</span><span class="p">,</span> <span class="n">serialized</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="n">show_env_data_hashes</span><span class="p">:</span>
+        <span class="n">env_hashes</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span>
+            <span class="n">orjson_dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">environment_hashes</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">),</span>
+            <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;environment_hashes&quot;</span><span class="p">,</span> <span class="n">env_hashes</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_env_data</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">show_properties</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">property_links</span><span class="p">:</span>

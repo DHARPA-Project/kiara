@@ -3983,6 +3983,7 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
         <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
         <span class="n">schema</span><span class="p">:</span> <span class="n">ValueSchema</span><span class="p">,</span>
+        <span class="n">environment_hashes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
         <span class="n">serialized</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">],</span>
         <span class="n">status</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueStatus</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
         <span class="n">value_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -4008,6 +4009,7 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
                     <span class="n">value_size</span><span class="o">=</span><span class="n">value_size</span><span class="p">,</span>
                     <span class="n">value_hash</span><span class="o">=</span><span class="n">value_hash</span><span class="p">,</span>
                     <span class="n">value_schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span>
+                    <span class="n">environment_hashes</span><span class="o">=</span><span class="n">environment_hashes</span><span class="p">,</span>
                     <span class="n">pedigree</span><span class="o">=</span><span class="n">pedigree</span><span class="p">,</span>
                     <span class="n">pedigree_output_name</span><span class="o">=</span><span class="n">pedigree_output_name</span><span class="p">,</span>
                     <span class="n">data_type_class</span><span class="o">=</span><span class="n">this_cls</span><span class="p">,</span>
@@ -4025,6 +4027,7 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
                 <span class="n">value_size</span><span class="o">=</span><span class="n">value_size</span><span class="p">,</span>
                 <span class="n">value_hash</span><span class="o">=</span><span class="n">value_hash</span><span class="p">,</span>
                 <span class="n">value_schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span>
+                <span class="n">environment_hashes</span><span class="o">=</span><span class="n">environment_hashes</span><span class="p">,</span>
                 <span class="n">pedigree</span><span class="o">=</span><span class="n">pedigree</span><span class="p">,</span>
                 <span class="n">pedigree_output_name</span><span class="o">=</span><span class="n">pedigree_output_name</span><span class="p">,</span>
                 <span class="n">data_type_class</span><span class="o">=</span><span class="n">this_cls</span><span class="p">,</span>
@@ -4190,7 +4193,7 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
 
 
 <h5 id="kiara.data_types.DataType.assemble_value" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">assemble_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">serialized</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">value_hash</span><span class="p">,</span> <span class="n">value_size</span><span class="p">,</span> <span class="n">pedigree</span><span class="p">,</span> <span class="n">kiara_id</span><span class="p">,</span> <span class="n">pedigree_output_name</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">assemble_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">environment_hashes</span><span class="p">,</span> <span class="n">serialized</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">value_hash</span><span class="p">,</span> <span class="n">value_size</span><span class="p">,</span> <span class="n">pedigree</span><span class="p">,</span> <span class="n">kiara_id</span><span class="p">,</span> <span class="n">pedigree_output_name</span><span class="p">)</span></code>
 
 
 <a href="#kiara.data_types.DataType.assemble_value" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -4205,6 +4208,7 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
     <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="n">schema</span><span class="p">:</span> <span class="n">ValueSchema</span><span class="p">,</span>
+    <span class="n">environment_hashes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
     <span class="n">serialized</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">],</span>
     <span class="n">status</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueStatus</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
     <span class="n">value_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -4230,6 +4234,7 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
                 <span class="n">value_size</span><span class="o">=</span><span class="n">value_size</span><span class="p">,</span>
                 <span class="n">value_hash</span><span class="o">=</span><span class="n">value_hash</span><span class="p">,</span>
                 <span class="n">value_schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span>
+                <span class="n">environment_hashes</span><span class="o">=</span><span class="n">environment_hashes</span><span class="p">,</span>
                 <span class="n">pedigree</span><span class="o">=</span><span class="n">pedigree</span><span class="p">,</span>
                 <span class="n">pedigree_output_name</span><span class="o">=</span><span class="n">pedigree_output_name</span><span class="p">,</span>
                 <span class="n">data_type_class</span><span class="o">=</span><span class="n">this_cls</span><span class="p">,</span>
@@ -4247,6 +4252,7 @@ DataType            (<span title="abc.ABC">ABC</span>, <span title="typing.Gener
             <span class="n">value_size</span><span class="o">=</span><span class="n">value_size</span><span class="p">,</span>
             <span class="n">value_hash</span><span class="o">=</span><span class="n">value_hash</span><span class="p">,</span>
             <span class="n">value_schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span>
+            <span class="n">environment_hashes</span><span class="o">=</span><span class="n">environment_hashes</span><span class="p">,</span>
             <span class="n">pedigree</span><span class="o">=</span><span class="n">pedigree</span><span class="p">,</span>
             <span class="n">pedigree_output_name</span><span class="o">=</span><span class="n">pedigree_output_name</span><span class="p">,</span>
             <span class="n">data_type_class</span><span class="o">=</span><span class="n">this_cls</span><span class="p">,</span>

@@ -3621,6 +3621,7 @@ EnvironmentRegistry        </code>
         <span class="bp">self</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_environments</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">RuntimeEnvironment</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_environment_hashes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_full_env_model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -3634,6 +3635,19 @@ EnvironmentRegistry        </code>
                 <span class="sa">f</span><span class="s2">&quot;Multipe environments with id &#39;</span><span class="si">{</span><span class="n">env_cid</span><span class="si">}</span><span class="s2">&#39; available. This is most likely a bug.&quot;</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">envs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">environment_hashes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_environment_hashes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_environment_hashes</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">env_name</span><span class="p">,</span> <span class="n">env</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">environments</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">env_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">env_hashes</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_environment_hashes</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_environment_hashes</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">environments</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">RuntimeEnvironment</span><span class="p">]:</span>
@@ -3738,6 +3752,28 @@ EnvironmentRegistry        </code>
 
 
 <h4 id="kiara.registries.environment.EnvironmentRegistry-attributes">Attributes<a href="#kiara.registries.environment.EnvironmentRegistry-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.registries.environment.EnvironmentRegistry.environment_hashes" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">environment_hashes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.registries.environment.EnvironmentRegistry.environment_hashes" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
 
   <div class="doc doc-object doc-attribute">
 

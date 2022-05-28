@@ -518,6 +518,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#kiara.context.config.JobCacheStrategy" class="md-nav__link">
+    JobCacheStrategy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.context.config.KiaraArchiveConfig" class="md-nav__link">
     KiaraArchiveConfig
   </a>
@@ -534,6 +541,13 @@
           <li class="md-nav__item">
   <a href="#kiara.context.config.KiaraContextConfig" class="md-nav__link">
     KiaraContextConfig
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.context.config.KiaraRuntimeConfig" class="md-nav__link">
+    KiaraRuntimeConfig
   </a>
   
 </li>
@@ -3602,6 +3616,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#kiara.context.config.JobCacheStrategy" class="md-nav__link">
+    JobCacheStrategy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.context.config.KiaraArchiveConfig" class="md-nav__link">
     KiaraArchiveConfig
   </a>
@@ -3618,6 +3639,13 @@
           <li class="md-nav__item">
   <a href="#kiara.context.config.KiaraContextConfig" class="md-nav__link">
     KiaraContextConfig
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.context.config.KiaraRuntimeConfig" class="md-nav__link">
+    KiaraRuntimeConfig
   </a>
   
 </li>
@@ -3705,6 +3733,109 @@
 
 
 <h2 id="kiara.context.config-classes">Classes<a href="#kiara.context.config-classes" class="headerlink" title="Permanent link">&para;</a></h2>
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="kiara.context.config.JobCacheStrategy" class="doc doc-heading">
+        <code>
+JobCacheStrategy            (<span title="enum.Enum">Enum</span>)
+        </code>
+
+
+
+<a href="#kiara.context.config.JobCacheStrategy" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>An enumeration.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/context/config.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">JobCacheStrategy</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+
+    <span class="n">no_cache</span> <span class="o">=</span> <span class="s2">&quot;no_cache&quot;</span>
+    <span class="n">value_id</span> <span class="o">=</span> <span class="s2">&quot;value_id&quot;</span>
+    <span class="n">data_hash</span> <span class="o">=</span> <span class="s2">&quot;data_hash&quot;</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.context.config.JobCacheStrategy.data_hash" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">data_hash</span></code>
+
+
+<a href="#kiara.context.config.JobCacheStrategy.data_hash" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.context.config.JobCacheStrategy.no_cache" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">no_cache</span></code>
+
+
+<a href="#kiara.context.config.JobCacheStrategy.no_cache" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.context.config.JobCacheStrategy.value_id" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">value_id</span></code>
+
+
+<a href="#kiara.context.config.JobCacheStrategy.value_id" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
 
   <div class="doc doc-object doc-class">
 
@@ -3878,7 +4009,7 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
         <span class="n">env_prefix</span> <span class="o">=</span> <span class="s2">&quot;kiara_&quot;</span>
         <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
-
+        <span class="n">use_enum_values</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="c1"># @classmethod</span>
         <span class="c1"># def customise_sources(</span>
         <span class="c1">#     cls,</span>
@@ -3948,6 +4079,10 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether to auto-generate requested contexts if they don&#39;t exist yet.&quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
+    <span class="n">runtime_config</span><span class="p">:</span> <span class="n">KiaraRuntimeConfig</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The kiara runtime config.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="n">KiaraRuntimeConfig</span>
+    <span class="p">)</span>
+
     <span class="n">_contexts</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
     <span class="n">_available_context_files</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">_context_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraContextConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
@@ -4215,7 +4350,7 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
 
         <span class="kn">from</span> <span class="nn">kiara.context</span> <span class="kn">import</span> <span class="n">Kiara</span>
 
-        <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">context_config</span><span class="p">)</span>
+        <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">context_config</span><span class="p">,</span> <span class="n">runtime_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runtime_config</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">kiara</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="n">context_config</span><span class="o">.</span><span class="n">context_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_contexts</span><span class="p">[</span><span class="n">kiara</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">kiara</span>
 
@@ -4236,7 +4371,19 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
         <span class="n">path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;context&quot;</span><span class="p">}),</span> <span class="n">f</span><span class="p">)</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span>
+                    <span class="n">exclude</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s2">&quot;context&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;auto_generate_contexts&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;stores_base_path&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;context_search_paths&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;default_context&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;runtime_config&quot;</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">),</span>
+                <span class="n">f</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_config_path</span> <span class="o">=</span> <span class="n">path</span>
 
@@ -4253,7 +4400,7 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
         <span class="n">context_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_context_config</span><span class="p">(</span>
             <span class="n">context_name</span><span class="o">=</span><span class="n">context_name</span><span class="p">,</span> <span class="n">auto_generate</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span>
-        <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">context_config</span><span class="p">)</span>
+        <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">context_config</span><span class="p">,</span> <span class="n">runtime_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runtime_config</span><span class="p">)</span>
 
         <span class="n">context_summary</span> <span class="o">=</span> <span class="n">ContextSummary</span><span class="o">.</span><span class="n">create_from_context</span><span class="p">(</span>
             <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">context_name</span><span class="o">=</span><span class="n">context_name</span>
@@ -4417,6 +4564,28 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
 
 
 
+<h5 id="kiara.context.config.KiaraConfig.runtime_config" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">runtime_config</span><span class="p">:</span> <span class="n">KiaraRuntimeConfig</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.context.config.KiaraConfig.runtime_config" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The kiara runtime config.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
 <h5 id="kiara.context.config.KiaraConfig.stores_base_path" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">stores_base_path</span><span class="p">:</span> <span class="nb">str</span></code>
 
@@ -4457,7 +4626,7 @@ Config        </code>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
     <span class="n">env_prefix</span> <span class="o">=</span> <span class="s2">&quot;kiara_&quot;</span>
     <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
-
+    <span class="n">use_enum_values</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="c1"># @classmethod</span>
     <span class="c1"># def customise_sources(</span>
     <span class="c1">#     cls,</span>
@@ -4505,6 +4674,24 @@ Config        </code>
 
 
 <a href="#kiara.context.config.KiaraConfig.Config.extra" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.context.config.KiaraConfig.Config.use_enum_values" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">use_enum_values</span></code>
+
+
+<a href="#kiara.context.config.KiaraConfig.Config.use_enum_values" class="headerlink" title="Permanent link">&para;</a></h7>
 
     <div class="doc doc-contents ">
 
@@ -4576,7 +4763,7 @@ Config        </code>
 
     <span class="kn">from</span> <span class="nn">kiara.context</span> <span class="kn">import</span> <span class="n">Kiara</span>
 
-    <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">context_config</span><span class="p">)</span>
+    <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">context_config</span><span class="p">,</span> <span class="n">runtime_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runtime_config</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">kiara</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="n">context_config</span><span class="o">.</span><span class="n">context_id</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_contexts</span><span class="p">[</span><span class="n">kiara</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">kiara</span>
 
@@ -4725,7 +4912,7 @@ Config        </code>
     <span class="n">context_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_context_config</span><span class="p">(</span>
         <span class="n">context_name</span><span class="o">=</span><span class="n">context_name</span><span class="p">,</span> <span class="n">auto_generate</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span>
-    <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">context_config</span><span class="p">)</span>
+    <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">context_config</span><span class="p">,</span> <span class="n">runtime_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runtime_config</span><span class="p">)</span>
 
     <span class="n">context_summary</span> <span class="o">=</span> <span class="n">ContextSummary</span><span class="o">.</span><span class="n">create_from_context</span><span class="p">(</span>
         <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">context_name</span><span class="o">=</span><span class="n">context_name</span>
@@ -4914,7 +5101,19 @@ Config        </code>
     <span class="n">path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;context&quot;</span><span class="p">}),</span> <span class="n">f</span><span class="p">)</span>
+        <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span>
+                <span class="n">exclude</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;context&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;auto_generate_contexts&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;stores_base_path&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;context_search_paths&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;default_context&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;runtime_config&quot;</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">),</span>
+            <span class="n">f</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_config_path</span> <span class="o">=</span> <span class="n">path</span>
 </code></pre></div>
@@ -4974,7 +5173,7 @@ Config        </code>
 
 <h3 id="kiara.context.config.KiaraContextConfig" class="doc doc-heading">
         <code>
-KiaraContextConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSettings</span>)
+KiaraContextConfig            (<span title="pydantic.main.BaseModel">BaseModel</span>)
         </code>
 
 
@@ -4989,18 +5188,11 @@ KiaraContextConfig            (<span title="pydantic.env_settings.BaseSettings">
 
         <details class="quote">
           <summary>Source code in <code>kiara/context/config.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraContextConfig</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraContextConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
         <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
 
     <span class="n">context_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;A globally unique id for this kiara context.&quot;</span><span class="p">)</span>
-
-    <span class="c1"># context_alias: str = Field(</span>
-    <span class="c1">#     description=&quot;An alias for this kiara context, must be unique within all known contexts.&quot;</span>
-    <span class="c1"># )</span>
-    <span class="c1"># context_folder: str = Field(</span>
-    <span class="c1">#     description=&quot;The base folder where settings and data for this kiara context will be stored.&quot;</span>
-    <span class="c1"># )</span>
 
     <span class="n">archives</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraArchiveConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;All the archives this kiara context can use and the aliases they are registered with.&quot;</span>
@@ -5010,11 +5202,6 @@ KiaraContextConfig            (<span title="pydantic.env_settings.BaseSettings">
         <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">_context_config_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-
-    <span class="c1"># ignore_errors: bool = Field(</span>
-    <span class="c1">#     description=&quot;If set, kiara will try to ignore most errors (that can be ignored).&quot;,</span>
-    <span class="c1">#     default=False,</span>
-    <span class="c1"># )</span>
 
     <span class="c1"># @property</span>
     <span class="c1"># def db_url(self):</span>
@@ -5126,6 +5313,188 @@ Config        </code>
 </code></pre></div>
         </details>
 
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="kiara.context.config.KiaraRuntimeConfig" class="doc doc-heading">
+        <code>
+KiaraRuntimeConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSettings</span>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.context.config.KiaraRuntimeConfig" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/context/config.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraRuntimeConfig</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
+        <span class="n">validate_assignment</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">env_prefix</span> <span class="o">=</span> <span class="s2">&quot;kiara_runtime_&quot;</span>
+
+    <span class="n">job_cache</span><span class="p">:</span> <span class="n">JobCacheStrategy</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of the strategy that determines when to re-run jobs or use cached results.&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">JobCacheStrategy</span><span class="o">.</span><span class="n">data_hash</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># ignore_errors: bool = Field(</span>
+    <span class="c1">#     description=&quot;If set, kiara will try to ignore most errors (that can be ignored).&quot;,</span>
+    <span class="c1">#     default=False,</span>
+    <span class="c1"># )</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h4 id="kiara.context.config.KiaraRuntimeConfig-attributes">Attributes<a href="#kiara.context.config.KiaraRuntimeConfig-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.context.config.KiaraRuntimeConfig.job_cache" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">job_cache</span><span class="p">:</span> <span class="n">JobCacheStrategy</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.context.config.KiaraRuntimeConfig.job_cache" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Name of the strategy that determines when to re-run jobs or use cached results.</p>
+    </div>
+
+  </div>
+
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h5 id="kiara.context.config.KiaraRuntimeConfig.Config" class="doc doc-heading">
+        <code>
+Config        </code>
+
+
+
+<a href="#kiara.context.config.KiaraRuntimeConfig.Config" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/context/config.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+    <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
+    <span class="n">validate_assignment</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">env_prefix</span> <span class="o">=</span> <span class="s2">&quot;kiara_runtime_&quot;</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.context.config.KiaraRuntimeConfig.Config.env_prefix" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">env_prefix</span></code>
+
+
+<a href="#kiara.context.config.KiaraRuntimeConfig.Config.env_prefix" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.context.config.KiaraRuntimeConfig.Config.extra" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">extra</span></code>
+
+
+<a href="#kiara.context.config.KiaraRuntimeConfig.Config.extra" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.context.config.KiaraRuntimeConfig.Config.validate_assignment" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">validate_assignment</span></code>
+
+
+<a href="#kiara.context.config.KiaraRuntimeConfig.Config.validate_assignment" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  </div>
 
     </div>
 

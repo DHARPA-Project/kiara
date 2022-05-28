@@ -11,7 +11,6 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, Optional
 
 from kiara.models.module.jobs import JobRecord
-from kiara.models.module.manifest import InputsManifest
 from kiara.registries import ArchiveDetails, FileSystemArchiveConfig
 from kiara.registries.jobs import MANIFEST_SUB_PATH, JobArchive, JobStore
 
@@ -55,22 +54,36 @@ class FileSystemJobArchive(JobArchive):
 
         shutil.rmtree(self.job_store_path)
 
-    def retrieve_all_job_record_ids(self) -> Iterable[str]:
+    def retrieve_all_job_hashes(
+        self, manifest_hash: Optional[str] = None, inputs_hash: Optional[str] = None
+    ) -> Iterable[str]:
 
         base_path = self.job_store_path / MANIFEST_SUB_PATH
-        records = base_path.glob("*/*/details.json")
+        if not manifest_hash:
+            if not inputs_hash:
+                records = base_path.glob("*/*/*.job_record")
+            else:
+                records = base_path.glob(f"*/{inputs_hash}/*.job_record")
+        else:
+            if not inputs_hash:
+                records = base_path.glob(f"{manifest_hash}/*/*.job_record")
+            else:
+                records = base_path.glob(f"{manifest_hash}/{inputs_hash}/*.job_record")
+
         result = []
         for record in records:
-            result.append(record.parent.name)
+            result.append(record.name[0:-11])
         return result
 
-    def _retrieve_job_record(self, job_record_id: str) -> JobRecord:
+    def _retrieve_record_for_job_hash(self, job_hash: str) -> Optional[JobRecord]:
 
         base_path = self.job_store_path / MANIFEST_SUB_PATH
-        records = list(base_path.glob(f"*/{job_record_id}/details.json"))
+        records = list(base_path.glob(f"*/*/{job_hash}.job_record"))
+
+        if not records:
+            return None
 
         assert len(records) == 1
-
         details_file = records[0]
 
         details_content = details_file.read_text()
@@ -80,42 +93,42 @@ class FileSystemJobArchive(JobArchive):
         job_record._is_stored = True
         return job_record
 
-    def find_matching_job_record(
-        self, inputs_manifest: InputsManifest
-    ) -> Optional[JobRecord]:
-
-        manifest_hash = inputs_manifest.manifest_cid
-        jobs_hash = inputs_manifest.job_hash
-
-        base_path = self.job_store_path / MANIFEST_SUB_PATH
-        manifest_folder = base_path / str(manifest_hash)
-
-        if not manifest_folder.exists():
-            return None
-
-        manifest_file = manifest_folder / "manifest.json"
-
-        if not manifest_file.exists():
-            raise Exception(
-                f"No 'manifests.json' file for manifest with hash: {manifest_hash}"
-            )
-
-        details_folder = manifest_folder / str(jobs_hash)
-        if not details_folder.exists():
-            return None
-
-        details_file_name = details_folder / "details.json"
-        if not details_file_name.exists():
-            raise Exception(
-                f"No 'inputs.json' file for manifest/inputs hash-combo: {manifest_hash} / {jobs_hash}"
-            )
-
-        details_content = details_file_name.read_text()
-        details: Dict[str, Any] = orjson.loads(details_content)
-
-        job_record = JobRecord(**details)
-        job_record._is_stored = True
-        return job_record
+    # def find_matching_job_record(
+    #     self, inputs_manifest: InputsManifest
+    # ) -> Optional[JobRecord]:
+    #
+    #     manifest_hash = inputs_manifest.manifest_cid
+    #     jobs_hash = inputs_manifest.job_hash
+    #
+    #     base_path = self.job_store_path / MANIFEST_SUB_PATH
+    #     manifest_folder = base_path / str(manifest_hash)
+    #
+    #     if not manifest_folder.exists():
+    #         return None
+    #
+    #     manifest_file = manifest_folder / "manifest.json"
+    #
+    #     if not manifest_file.exists():
+    #         raise Exception(
+    #             f"No 'manifests.json' file for manifest with hash: {manifest_hash}"
+    #         )
+    #
+    #     details_folder = manifest_folder / str(jobs_hash)
+    #     if not details_folder.exists():
+    #         return None
+    #
+    #     details_file_name = details_folder / "details.json"
+    #     if not details_file_name.exists():
+    #         raise Exception(
+    #             f"No 'inputs.json' file for manifest/inputs hash-combo: {manifest_hash} / {jobs_hash}"
+    #         )
+    #
+    #     details_content = details_file_name.read_text()
+    #     details: Dict[str, Any] = orjson.loads(details_content)
+    #
+    #     job_record = JobRecord(**details)
+    #     job_record._is_stored = True
+    #     return job_record
 
 
 class FileSystemJobStore(FileSystemJobArchive, JobStore):
@@ -129,7 +142,7 @@ class FileSystemJobStore(FileSystemJobArchive, JobStore):
     def store_job_record(self, job_record: JobRecord):
 
         manifest_cid = job_record.manifest_cid
-        jobs_hash = job_record.job_hash
+        inputs_hash = job_record.inputs_hash
 
         base_path = self.job_store_path / MANIFEST_SUB_PATH
         manifest_folder = base_path / str(manifest_cid)
@@ -140,10 +153,10 @@ class FileSystemJobStore(FileSystemJobArchive, JobStore):
         if not manifest_info_file.exists():
             manifest_info_file.write_text(job_record.manifest_data_as_json())
 
-        job_folder = manifest_folder / str(jobs_hash)
+        job_folder = manifest_folder / inputs_hash
         job_folder.mkdir(parents=True, exist_ok=True)
 
-        job_details_file_name = job_folder / "details.json"
+        job_details_file_name = job_folder / f"{job_record.job_hash}.job_record"
         if job_details_file_name.exists():
             raise Exception(
                 f"Job record already exists: {job_details_file_name.as_posix()}"

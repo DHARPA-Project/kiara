@@ -14,7 +14,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Set, Union
 
 from kiara.models.module.jobs import JobRecord
-from kiara.models.module.manifest import InputsManifest
 from kiara.models.values.value import (
     SERIALIZE_TYPES,
     PersistedData,
@@ -24,7 +23,6 @@ from kiara.models.values.value import (
 )
 from kiara.registries import ArchiveDetails, FileSystemArchiveConfig
 from kiara.registries.data.data_store import BaseDataStore, DataArchive
-from kiara.registries.ids import ID_REGISTRY
 from kiara.registries.jobs import JobArchive
 from kiara.utils import log_message, orjson_dumps
 from kiara.utils.hashfs import HashAddress, HashFS
@@ -147,69 +145,73 @@ class FileSystemDataArchive(DataArchive, JobArchive):
         environment = orjson.loads(env_details_file.read_text())
         return environment
 
-    def find_matching_job_record(
-        self, inputs_manifest: InputsManifest
-    ) -> Optional[JobRecord]:
+    def retrieve_all_job_hashes(
+        self, manifest_hash: Optional[str] = None, inputs_hash: Optional[str] = None
+    ) -> Iterable[str]:
 
-        return self._retrieve_job_record_from_disk(
-            manifest_hash=str(inputs_manifest.instance_cid),
-            jobs_hash=inputs_manifest.job_hash,
-        )
+        raise NotImplementedError()
 
-    def _retrieve_job_record_from_disk(
-        self, manifest_hash: str, jobs_hash: str
-    ) -> Optional[JobRecord]:
+    def _retrieve_record_for_job_hash(self, job_hash: str) -> JobRecord:
 
-        base_path = self.get_path(entity_type=EntityType.MANIFEST)
-        manifest_folder = base_path / str(manifest_hash)
+        raise NotImplementedError()
 
-        if not manifest_folder.exists():
-            return None
-
-        manifest_file = manifest_folder / "manifest.json"
-
-        if not manifest_file.exists():
-            raise Exception(
-                f"No 'manifests.json' file for manifest with hash: {manifest_hash}"
-            )
-
-        manifest_data = orjson.loads(manifest_file.read_text())
-
-        job_folder = manifest_folder / jobs_hash
-
-        if not job_folder.exists():
-            return None
-
-        inputs_file_name = job_folder / "inputs.json"
-        if not inputs_file_name.exists():
-            raise Exception(
-                f"No 'inputs.json' file for manifest/inputs hash-combo: {manifest_hash} / {jobs_hash}"
-            )
-
-        inputs_data = {
-            k: uuid.UUID(v)
-            for k, v in orjson.loads(inputs_file_name.read_text()).items()
-        }
-
-        outputs = {}
-        for output_file in job_folder.glob("output__*.json"):
-            full_output_name = output_file.name[8:]
-            start_value_id = full_output_name.find("__value_id__")
-            output_name = full_output_name[0:start_value_id]
-            value_id_str = full_output_name[start_value_id + 12 : -5]  # noqa
-
-            value_id = uuid.UUID(value_id_str)
-            outputs[output_name] = value_id
-
-        job_id = ID_REGISTRY.generate(obj_type=JobRecord, desc="fake job id")
-        job_record = JobRecord(
-            job_id=job_id,
-            module_type=manifest_data["module_type"],
-            module_config=manifest_data["module_config"],
-            inputs=inputs_data,
-            outputs=outputs,
-        )
-        return job_record
+    # def find_matching_job_record(
+    #     self, inputs_manifest: InputsManifest
+    # ) -> Optional[JobRecord]:
+    #
+    #     manifest_hash = str(inputs_manifest.instance_cid)
+    #     jobs_hash = inputs_manifest.job_hash
+    #
+    #     base_path = self.get_path(entity_type=EntityType.MANIFEST)
+    #     manifest_folder = base_path / str(manifest_hash)
+    #
+    #     if not manifest_folder.exists():
+    #         return None
+    #
+    #     manifest_file = manifest_folder / "manifest.json"
+    #
+    #     if not manifest_file.exists():
+    #         raise Exception(
+    #             f"No 'manifests.json' file for manifest with hash: {manifest_hash}"
+    #         )
+    #
+    #     manifest_data = orjson.loads(manifest_file.read_text())
+    #
+    #     job_folder = manifest_folder / jobs_hash
+    #
+    #     if not job_folder.exists():
+    #         return None
+    #
+    #     inputs_file_name = job_folder / "inputs.json"
+    #     if not inputs_file_name.exists():
+    #         raise Exception(
+    #             f"No 'inputs.json' file for manifest/inputs hash-combo: {manifest_hash} / {jobs_hash}"
+    #         )
+    #
+    #     inputs_data = {
+    #         k: uuid.UUID(v)
+    #         for k, v in orjson.loads(inputs_file_name.read_text()).items()
+    #     }
+    #
+    #     outputs = {}
+    #     for output_file in job_folder.glob("output__*.json"):
+    #         full_output_name = output_file.name[8:]
+    #         start_value_id = full_output_name.find("__value_id__")
+    #         output_name = full_output_name[0:start_value_id]
+    #         value_id_str = full_output_name[start_value_id + 12 : -5]  # noqa
+    #
+    #         value_id = uuid.UUID(value_id_str)
+    #         outputs[output_name] = value_id
+    #
+    #     job_id = ID_REGISTRY.generate(obj_type=JobRecord, desc="fake job id")
+    #     job_record = JobRecord(
+    #         job_id=job_id,
+    #         module_type=manifest_data["module_type"],
+    #         module_config=manifest_data["module_config"],
+    #         inputs=inputs_data,
+    #         outputs=outputs,
+    #     )
+    #     return job_record
 
     def _find_values_with_hash(
         self,

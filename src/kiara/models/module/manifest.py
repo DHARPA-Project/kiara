@@ -68,6 +68,10 @@ class Manifest(KiaraModel):
         _, self._manifest_cid = compute_cid(self.manifest_data)
         return self._manifest_cid
 
+    @property
+    def manifest_hash(self) -> str:
+        return str(self.manifest_cid)
+
     def manifest_data_as_json(self):
 
         return self.json(include={"module_type", "module_config"})
@@ -138,6 +142,10 @@ class InputsManifest(Manifest):
         _, cid = compute_cid(data={k: v.bytes for k, v in self.inputs.items()})
         self._inputs_cid = cid
         return self._inputs_cid
+
+    @property
+    def inputs_hash(self) -> str:
+        return str(self.inputs_cid)
 
     def calculate_inputs_data_cid(self, data_registry: "DataRegistry") -> Optional[CID]:
 

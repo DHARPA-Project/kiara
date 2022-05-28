@@ -119,7 +119,6 @@ def cli(
 
         kiara_config = KiaraConfig()
         kiara_config.save(config_file_path)
-
     else:
         kiara_config = KiaraConfig.load_from_file(config_file_path)
 

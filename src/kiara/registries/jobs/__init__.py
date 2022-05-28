@@ -9,8 +9,7 @@ import abc
 import structlog
 import uuid
 from bidict import bidict
-from multiformats import CID
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Type, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Type
 
 from kiara.context.config import JobCacheStrategy
 from kiara.models.events import KiaraEvent
@@ -36,29 +35,30 @@ MANIFEST_SUB_PATH = "manifests"
 
 
 class JobArchive(BaseArchive):
-    @abc.abstractmethod
-    def find_matching_job_record(
-        self, inputs_manifest: InputsManifest
-    ) -> Optional[JobRecord]:
-        pass
+    # @abc.abstractmethod
+    # def find_matching_job_record(
+    #     self, inputs_manifest: InputsManifest
+    # ) -> Optional[JobRecord]:
+    #     pass
 
-    def retrieve_all_job_record_ids(self) -> Optional[Iterable[str]]:
-        """Retrieve a list of all job record ids (cids).
+    @abc.abstractmethod
+    def retrieve_all_job_hashes(
+        self, manifest_hash: Optional[str] = None, inputs_hash: Optional[str] = None
+    ) -> Iterable[str]:
+        """Retrieve a list of all job record hashes (cids) that match the given filter arguments.
+
+        A job record hash includes information about the module type used in the job, the module configuration, as well as input field names and value ids for the values used in those inputs.
 
         If the job archive retrieves its jobs in a dynamic way, this will return 'None'.
         """
-        return None
 
     @abc.abstractmethod
-    def _retrieve_job_record(self, job_record_id: str) -> JobRecord:
+    def _retrieve_record_for_job_hash(self, job_hash: str) -> Optional[JobRecord]:
         pass
 
-    def retrieve_job_record(self, job_record_id: Union[str, CID]) -> JobRecord:
+    def retrieve_record_for_job_hash(self, job_hash: str) -> Optional[JobRecord]:
 
-        if isinstance(job_record_id, CID):
-            job_record_id = str(job_record_id)
-
-        job_record = self._retrieve_job_record(job_record_id=job_record_id)
+        job_record = self._retrieve_record_for_job_hash(job_hash=job_hash)
         return job_record
 
 
@@ -69,9 +69,9 @@ class JobStore(JobArchive):
 
 
 class JobMatcher(abc.ABC):
-    def __init__(self, job_registry: "JobRegistry"):
+    def __init__(self, kiara: "Kiara"):
 
-        self._job_registry: JobRegistry = job_registry
+        self._kiara: Kiara = kiara
 
     @abc.abstractmethod
     def find_existing_job(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
@@ -88,8 +88,11 @@ class ValueIdJobMatcher(JobMatcher):
 
         matches = []
 
-        for store_id, archive in self._job_registry.job_archives.items():
-            match = archive.find_matching_job_record(inputs_manifest=inputs_manifest)
+        for store_id, archive in self._kiara.job_registry.job_archives.items():
+
+            match = archive.retrieve_record_for_job_hash(
+                job_hash=inputs_manifest.job_hash
+            )
             if match:
                 matches.append(match)
 
@@ -108,7 +111,56 @@ class ValueIdJobMatcher(JobMatcher):
 
 class DataHashJobMatcher(JobMatcher):
     def find_existing_job(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
-        raise NotImplementedError()
+
+        matches = []
+
+        for store_id, archive in self._kiara.job_registry.job_archives.items():
+
+            match = archive.retrieve_record_for_job_hash(
+                job_hash=inputs_manifest.job_hash
+            )
+            if match:
+                matches.append(match)
+
+        if len(matches) > 1:
+            raise Exception(
+                f"Multiple stores have a record for inputs manifest '{inputs_manifest}', this is not supported (yet)."
+            )
+
+        elif len(matches) == 1:
+
+            job_record = matches[0]
+            job_record._is_stored = True
+
+            return job_record
+
+        inputs_data_cid = inputs_manifest.calculate_inputs_data_cid(
+            data_registry=self._kiara.data_registry
+        )
+        if not inputs_data_cid:
+            return None
+
+        inputs_data_hash = str(inputs_data_cid)
+
+        matching_records = []
+        for store_id, archive in self._kiara.job_registry.job_archives.items():
+            _matches = archive.retrieve_all_job_hashes(
+                manifest_hash=inputs_manifest.manifest_hash
+            )
+            for _match in _matches:
+                _job_record = archive.retrieve_record_for_job_hash(_match)
+                assert _job_record is not None
+                if _job_record.inputs_data_hash == inputs_data_hash:
+                    matching_records.append(_job_record)
+
+        if not matching_records:
+            return None
+        elif len(matches) > 1:
+            raise Exception(
+                f"Multiple stores have a record for inputs manifest '{inputs_manifest}', this is not supported (yet)."
+            )
+        else:
+            return matching_records[0]
 
 
 class JobRegistry(object):
@@ -143,11 +195,11 @@ class JobRegistry(object):
         job_matcher = self._job_matcher_cache.get(strategy, None)
         if job_matcher is None:
             if strategy == JobCacheStrategy.no_cache:
-                job_matcher = NoneJobMatcher(job_registry=self)
+                job_matcher = NoneJobMatcher(kiara=self._kiara)
             elif strategy == JobCacheStrategy.value_id:
-                job_matcher = ValueIdJobMatcher(job_registry=self)
+                job_matcher = ValueIdJobMatcher(kiara=self._kiara)
             elif strategy == JobCacheStrategy.data_hash:
-                job_matcher = DataHashJobMatcher(job_registry=self)
+                job_matcher = DataHashJobMatcher(kiara=self._kiara)
             else:
                 raise Exception(f"Job cache strategy not implemented: {strategy}")
             self._job_matcher_cache[strategy] = job_matcher
@@ -241,13 +293,13 @@ class JobRegistry(object):
         if not isinstance(store, JobStore):
             raise Exception("Can't store job record to archive: not writable.")
 
-        if job_record.job_id in self._finished_jobs.values():
-            logger.debug(
-                "ignore.store.job_record",
-                reason="already stored in store",
-                job_id=str(job_id),
-            )
-            return
+        # if job_record.job_id in self._finished_jobs.values():
+        #     logger.debug(
+        #         "ignore.store.job_record",
+        #         reason="already stored in store",
+        #         job_id=str(job_id),
+        #     )
+        #     return
 
         logger.debug(
             "store.job_record",
@@ -275,12 +327,13 @@ class JobRegistry(object):
 
         all_records: Dict[str, JobRecord] = {}
         for archive in self.job_archives.values():
-            all_record_ids = archive.retrieve_all_job_record_ids()
+            all_record_ids = archive.retrieve_all_job_hashes()
             if all_record_ids is None:
                 return {}
             for r in all_record_ids:
                 assert r not in all_records.keys()
-                job_record = archive.retrieve_job_record(r)
+                job_record = archive.retrieve_record_for_job_hash(r)
+                assert job_record is not None
                 all_records[r] = job_record
 
         return all_records

@@ -151,12 +151,12 @@ class FileSystemDataArchive(DataArchive, JobArchive):
         self, inputs_manifest: InputsManifest
     ) -> Optional[JobRecord]:
 
-        return self._retrieve_job_record(
+        return self._retrieve_job_record_from_disk(
             manifest_hash=str(inputs_manifest.instance_cid),
             jobs_hash=inputs_manifest.job_hash,
         )
 
-    def _retrieve_job_record(
+    def _retrieve_job_record_from_disk(
         self, manifest_hash: str, jobs_hash: str
     ) -> Optional[JobRecord]:
 

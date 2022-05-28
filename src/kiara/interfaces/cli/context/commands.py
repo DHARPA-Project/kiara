@@ -65,7 +65,9 @@ def explain_context(
     if len(contexts) == 1:
 
         kcc = kiara_config.get_context_config(contexts[0])
-        cs = ContextSummary.create_from_context_config(kcc, context_name=contexts[0])
+        cs = ContextSummary.create_from_context_config(
+            kcc, context_name=contexts[0], runtime_config=kiara_config.runtime_config
+        )
         terminal_print_model(
             cs, format=format, full_details=True, show_value_ids=value_ids
         )
@@ -74,7 +76,9 @@ def explain_context(
         summaries = []
         for c in contexts:
             cc = kiara_config.get_context_config(c)
-            cs = ContextSummary.create_from_context_config(cc, context_name=c)
+            cs = ContextSummary.create_from_context_config(
+                cc, context_name=c, runtime_config=kiara_config.runtime_config
+            )
             summaries.append(cs)
         terminal_print_model(
             *summaries, format=format, full_details=True, show_value_ids=value_ids

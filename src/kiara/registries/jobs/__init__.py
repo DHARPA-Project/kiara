@@ -12,6 +12,7 @@ from bidict import bidict
 from multiformats import CID
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Type, Union
 
+from kiara.context.config import JobCacheStrategy
 from kiara.models.events import KiaraEvent
 from kiara.models.events.job_registry import (
     JobArchiveAddedEvent,
@@ -68,9 +69,9 @@ class JobStore(JobArchive):
 
 
 class JobMatcher(abc.ABC):
-    def __init__(self, kiara: "Kiara"):
+    def __init__(self, job_registry: "JobRegistry"):
 
-        self._kiara: Kiara = kiara
+        self._job_registry: JobRegistry = job_registry
 
     @abc.abstractmethod
     def find_existing_job(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
@@ -87,7 +88,7 @@ class ValueIdJobMatcher(JobMatcher):
 
         matches = []
 
-        for store_id, archive in self._kiara.job_registry.job_archives.items():
+        for store_id, archive in self._job_registry.job_archives.items():
             match = archive.find_matching_job_record(inputs_manifest=inputs_manifest)
             if match:
                 matches.append(match)
@@ -105,13 +106,17 @@ class ValueIdJobMatcher(JobMatcher):
         return job_record
 
 
+class DataHashJobMatcher(JobMatcher):
+    def find_existing_job(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
+        raise NotImplementedError()
+
+
 class JobRegistry(object):
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
 
-        # self._job_matcher: JobMatcher = NoneJobMatcher(kiara=self._kiara)
-        self._job_matcher: JobMatcher = ValueIdJobMatcher(kiara=self._kiara)
+        self._job_matcher_cache: Dict[JobCacheStrategy, JobMatcher] = {}
 
         self._active_jobs: bidict[str, uuid.UUID] = bidict()
         self._failed_jobs: Dict[str, uuid.UUID] = {}
@@ -130,6 +135,24 @@ class JobRegistry(object):
 
         # default_file_store = self._kiara.data_registry.get_archive(DEFAULT_STORE_MARKER)
         # self.register_job_archive(default_file_store, store_alias="default_data_store")  # type: ignore
+
+    @property
+    def job_matcher(self) -> JobMatcher:
+
+        strategy = self._kiara.runtime_config.job_cache
+        job_matcher = self._job_matcher_cache.get(strategy, None)
+        if job_matcher is None:
+            if strategy == JobCacheStrategy.no_cache:
+                job_matcher = NoneJobMatcher(job_registry=self)
+            elif strategy == JobCacheStrategy.value_id:
+                job_matcher = ValueIdJobMatcher(job_registry=self)
+            elif strategy == JobCacheStrategy.data_hash:
+                job_matcher = DataHashJobMatcher(job_registry=self)
+            else:
+                raise Exception(f"Job cache strategy not implemented: {strategy}")
+            self._job_matcher_cache[strategy] = job_matcher
+
+        return job_matcher
 
     def suppoerted_event_types(self) -> Iterable[Type[KiaraEvent]]:
 
@@ -214,14 +237,23 @@ class JobRegistry(object):
             )
             return
 
+        store: JobStore = self.get_archive()  # type: ignore
+        if not isinstance(store, JobStore):
+            raise Exception("Can't store job record to archive: not writable.")
+
+        if job_record.job_id in self._finished_jobs.values():
+            logger.debug(
+                "ignore.store.job_record",
+                reason="already stored in store",
+                job_id=str(job_id),
+            )
+            return
+
         logger.debug(
             "store.job_record",
             job_hash=job_record.job_hash,
             module_type=job_record.module_type,
         )
-        store: JobStore = self.get_archive()  # type: ignore
-        if not isinstance(store, JobStore):
-            raise Exception("Can't store job record to archive: not writable.")
 
         pre_store_event = JobRecordPreStoreEvent.construct(
             kiara_id=self._kiara.id, job_record=job_record
@@ -274,9 +306,7 @@ class JobRegistry(object):
             job_id = self._finished_jobs[inputs_manifest.job_hash]
             return job_id
 
-        job_record = self._job_matcher.find_existing_job(
-            inputs_manifest=inputs_manifest
-        )
+        job_record = self.job_matcher.find_existing_job(inputs_manifest=inputs_manifest)
         if job_record is None:
             return None
 

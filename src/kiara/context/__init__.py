@@ -23,7 +23,7 @@ from typing import (
     Union,
 )
 
-from kiara.context.config import KiaraConfig, KiaraContextConfig
+from kiara.context.config import KiaraConfig, KiaraContextConfig, KiaraRuntimeConfig
 from kiara.data_types import DataType
 from kiara.defaults import KIARA_DB_MIGRATIONS_CONFIG, KIARA_DB_MIGRATIONS_FOLDER
 from kiara.interfaces import get_console
@@ -100,7 +100,11 @@ class Kiara(object):
     _instance_kiara_config = KiaraConfig()
 
     @classmethod
-    def instance(cls, context_name: Optional[str] = None) -> "Kiara":
+    def instance(
+        cls,
+        context_name: Optional[str] = None,
+        runtime_config: Union[None, Mapping[str, Any], KiaraRuntimeConfig] = None,
+    ) -> "Kiara":
         """The default *kiara* context. In most cases, it's recommended you create and manage your own, though."""
 
         # TODO: make this thread-safe
@@ -113,38 +117,40 @@ class Kiara(object):
             _context_name = cls._instance_kiara_config.default_context
 
         if _context_name in cls._instances.keys():
-            return cls._instances[_context_name]
+            instance = cls._instances[_context_name]
+        else:
+            instance = cls._instance_kiara_config.create_context(context=context_name)
+            cls._instances[_context_name] = instance
 
-        kiara = cls._instance_kiara_config.create_context(context=context_name)
-        cls._instances[_context_name] = kiara
-        return kiara
+        if runtime_config:
+            if isinstance(runtime_config, KiaraRuntimeConfig):
+                runtime_config = runtime_config.dict()
+            instance.update_runtime_config(**runtime_config)
 
-    def __init__(self, config: Optional[KiaraContextConfig] = None):
+        return instance
 
+    def __init__(
+        self,
+        config: Optional[KiaraContextConfig] = None,
+        runtime_config: Optional[KiaraRuntimeConfig] = None,
+    ):
+
+        kc: Optional[KiaraConfig] = None
         if not config:
             kc = KiaraConfig()
             config = kc.get_context_config()
+
+        if not runtime_config:
+            if kc is None:
+                kc = KiaraConfig()
+            runtime_config = kc.runtime_config
 
         self._id: uuid.UUID = ID_REGISTRY.generate(
             id=uuid.UUID(config.context_id), obj=self
         )
         ID_REGISTRY.update_metadata(self._id, kiara_id=self._id)
         self._config: KiaraContextConfig = config
-
-        # if is_debug():
-        #     echo = True
-        # else:
-        #     echo = False
-        # self._engine: Engine = create_engine(
-        #     self._config.db_url,
-        #     echo=echo,
-        #     future=True,
-        #     json_serializer=orm_json_serialize,
-        #     json_deserializer=orm_json_deserialize,
-        # )
-
-        # self._run_alembic_migrations()
-        # self._envs: Optional[Mapping[str, EnvironmentOrm]] = None
+        self._runtime_config: KiaraRuntimeConfig = runtime_config
 
         self._event_registry: EventRegistry = EventRegistry(kiara=self)
         self._type_registry: TypeRegistry = TypeRegistry(self)
@@ -214,6 +220,17 @@ class Kiara(object):
     @property
     def context_config(self) -> KiaraContextConfig:
         return self._config
+
+    @property
+    def runtime_config(self) -> KiaraRuntimeConfig:
+        return self._runtime_config
+
+    def update_runtime_config(self, **settings) -> KiaraRuntimeConfig:
+
+        for k, v in settings.items():
+            setattr(self.runtime_config, k, v)
+
+        return self.runtime_config
 
     @property
     def context_info(self) -> "KiaraContextInfo":

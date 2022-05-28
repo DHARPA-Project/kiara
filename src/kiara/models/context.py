@@ -8,7 +8,7 @@ from rich.console import RenderableType
 from rich.table import Table
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional
 
-from kiara.context import KiaraConfig, KiaraContextConfig
+from kiara.context import KiaraConfig, KiaraContextConfig, KiaraRuntimeConfig
 from kiara.models import KiaraModel
 from kiara.models.archives import ArchiveGroupInfo
 
@@ -19,12 +19,15 @@ if TYPE_CHECKING:
 class ContextSummary(KiaraModel):
     @classmethod
     def create_from_context_config(
-        cls, config: "KiaraContextConfig", context_name: Optional[str] = None
+        cls,
+        config: KiaraContextConfig,
+        context_name: Optional[str] = None,
+        runtime_config: Optional[KiaraRuntimeConfig] = None,
     ):
 
         from kiara.context import Kiara
 
-        kiara = Kiara(config=config)
+        kiara = Kiara(config=config, runtime_config=runtime_config)
         return cls.create_from_context(kiara=kiara, context_name=context_name)
 
     @classmethod

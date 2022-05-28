@@ -7,7 +7,7 @@ import rich_click as click
 
 # from alembic import command  # type: ignore
 # from alembic.config import Config  # type: ignore
-from kiara.utils.class_loading import find_all_cli_subcommands
+from kiara import Kiara
 
 # noqa
 # type: ignore
@@ -23,7 +23,9 @@ def dev_group(ctx):
 @click.pass_context
 def test(ctx):
 
-    find_all_cli_subcommands()
+    kiara: Kiara = ctx.obj["kiara"]
+
+    print(kiara.runtime_config)
 
     # kiara: Kiara = ctx.obj["kiara"]
     #

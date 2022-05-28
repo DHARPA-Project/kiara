@@ -9,6 +9,7 @@
 import os
 import structlog
 import uuid
+from enum import Enum
 from pathlib import Path
 from pydantic import BaseModel, root_validator, validator
 from pydantic.config import Extra
@@ -67,93 +68,11 @@ class KiaraArchiveConfig(BaseModel):
         return uuid.UUID(self.archive_id)
 
 
-# def create_default_archives(kiara_config: "KiaraConfig"):
-#
-#     env_registry = EnvironmentRegistry.instance()
-#
-#     archives = env_registry.environments["kiara_types"].archive_types
-#     data_store_type = "filesystem_data_store"
-#
-#     assert data_store_type in archives.keys()
-#
-#     data_store_id = ID_REGISTRY.generate(comment="default data store id")
-#     data_archive_config = {
-#         "archive_path": os.path.abspath(
-#             os.path.join(
-#                 kiara_config.stores_base_path, data_store_type, str(data_store_id)
-#             )
-#         )
-#     }
-#     data_store = KiaraArchiveConfig.construct(
-#         archive_id=str(data_store_id),
-#         archive_type=data_store_type,
-#         config=data_archive_config,
-#     )
-#
-#     job_store_type = "filesystem_job_store"
-#     assert job_store_type in archives.keys()
-#     job_store_id = ID_REGISTRY.generate(comment="default job store id")
-#     job_archive_config = {
-#         "archive_path": os.path.abspath(
-#             os.path.join(
-#                 kiara_config.stores_base_path, job_store_type, str(job_store_id)
-#             )
-#         )
-#     }
-#     job_store = KiaraArchiveConfig.construct(
-#         archive_id=str(job_store_id),
-#         archive_type=job_store_type,
-#         config=job_archive_config,
-#     )
-#
-#     alias_store_type = "filesystem_alias_store"
-#     assert alias_store_type in archives.keys()
-#     alias_store_id = ID_REGISTRY.generate(comment="default alias store id")
-#     alias_store_config = {
-#         "archive_path": os.path.abspath(
-#             os.path.join(
-#                 kiara_config.stores_base_path, alias_store_type, str(alias_store_id)
-#             )
-#         )
-#     }
-#     alias_store = KiaraArchiveConfig.construct(
-#         archive_id=str(alias_store_id),
-#         archive_type=alias_store_type,
-#         config=alias_store_config,
-#     )
-#
-#     destiny_store_type = "filesystem_destiny_store"
-#     assert destiny_store_type in archives.keys()
-#     destiny_store_id = ID_REGISTRY.generate(comment="default destiny store id")
-#     destiny_store_config = {
-#         "archive_path": os.path.abspath(os.path.join(kiara_config.stores_base_path, alias_store_type, str(destiny_store_id)))
-#     }
-#     destiny_store = KiaraArchiveConfig.construct(
-#         archive_id=str(destiny_store_id),
-#         archive_type=destiny_store_type,
-#         config=destiny_store_config
-#     )
-#
-#     return {
-#         DEFAULT_DATA_STORE_MARKER: data_store,
-#         DEFAULT_JOB_STORE_MARKER: job_store,
-#         DEFAULT_ALIAS_STORE_MARKER: alias_store,
-#         METADATA_DESTINY_STORE_MARKER: destiny_store
-#     }
-
-
-class KiaraContextConfig(BaseSettings):
+class KiaraContextConfig(BaseModel):
     class Config:
         extra = Extra.forbid
 
     context_id: str = Field(description="A globally unique id for this kiara context.")
-
-    # context_alias: str = Field(
-    #     description="An alias for this kiara context, must be unique within all known contexts."
-    # )
-    # context_folder: str = Field(
-    #     description="The base folder where settings and data for this kiara context will be stored."
-    # )
 
     archives: Dict[str, KiaraArchiveConfig] = Field(
         description="All the archives this kiara context can use and the aliases they are registered with."
@@ -164,11 +83,6 @@ class KiaraContextConfig(BaseSettings):
     )
     _context_config_path: Optional[Path] = PrivateAttr(default=None)
 
-    # ignore_errors: bool = Field(
-    #     description="If set, kiara will try to ignore most errors (that can be ignored).",
-    #     default=False,
-    # )
-
     # @property
     # def db_url(self):
     #     return get_kiara_db_url(self.context_folder)
@@ -178,11 +92,34 @@ class KiaraContextConfig(BaseSettings):
     #     return os.path.join(self.context_folder, "data")
 
 
+class JobCacheStrategy(Enum):
+
+    no_cache = "no_cache"
+    value_id = "value_id"
+    data_hash = "data_hash"
+
+
+class KiaraRuntimeConfig(BaseSettings):
+    class Config:
+        extra = Extra.forbid
+        validate_assignment = True
+        env_prefix = "kiara_runtime_"
+
+    job_cache: JobCacheStrategy = Field(
+        description="Name of the strategy that determines when to re-run jobs or use cached results.",
+        default=JobCacheStrategy.data_hash,
+    )
+    # ignore_errors: bool = Field(
+    #     description="If set, kiara will try to ignore most errors (that can be ignored).",
+    #     default=False,
+    # )
+
+
 class KiaraConfig(BaseSettings):
     class Config:
         env_prefix = "kiara_"
         extra = Extra.forbid
-
+        use_enum_values = True
         # @classmethod
         # def customise_sources(
         #     cls,
@@ -252,6 +189,10 @@ class KiaraConfig(BaseSettings):
         description="Whether to auto-generate requested contexts if they don't exist yet.",
         default=True,
     )
+    runtime_config: KiaraRuntimeConfig = Field(
+        description="The kiara runtime config.", default_factory=KiaraRuntimeConfig
+    )
+
     _contexts: Dict[uuid.UUID, "Kiara"] = PrivateAttr(default_factory=dict)
     _available_context_files: Dict[str, Path] = PrivateAttr(default=None)
     _context_data: Dict[str, KiaraContextConfig] = PrivateAttr(default_factory=dict)
@@ -519,7 +460,7 @@ class KiaraConfig(BaseSettings):
 
         from kiara.context import Kiara
 
-        kiara = Kiara(config=context_config)
+        kiara = Kiara(config=context_config, runtime_config=self.runtime_config)
         assert kiara.id == uuid.UUID(context_config.context_id)
         self._contexts[kiara.id] = kiara
 
@@ -540,7 +481,19 @@ class KiaraConfig(BaseSettings):
         path.parent.mkdir(parents=True, exist_ok=True)
 
         with path.open("wt") as f:
-            yaml.dump(self.dict(exclude={"context"}), f)
+            yaml.dump(
+                self.dict(
+                    exclude={
+                        "context",
+                        "auto_generate_contexts",
+                        "stores_base_path",
+                        "context_search_paths",
+                        "default_context",
+                        "runtime_config",
+                    }
+                ),
+                f,
+            )
 
         self._config_path = path
 
@@ -557,7 +510,7 @@ class KiaraConfig(BaseSettings):
         context_config = self.get_context_config(
             context_name=context_name, auto_generate=False
         )
-        kiara = Kiara(config=context_config)
+        kiara = Kiara(config=context_config, runtime_config=self.runtime_config)
 
         context_summary = ContextSummary.create_from_context(
             kiara=kiara, context_name=context_name

@@ -158,6 +158,8 @@ def terminal_print_model(
             )
         else:
             rg = []
+            if not models:
+                return
             for model in models[0:-1]:
                 renderable = extract_renderable(model, render_config)
                 rg.append(renderable)

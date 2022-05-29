@@ -82,7 +82,6 @@ class DeserializeFileModule(DeserializeValueModule):
         fm = FileModel.load_file(
             source=file,
             file_name=file_metadata["file_name"],
-            import_time=file_metadata["import_time"],
         )
         return fm
 
@@ -148,7 +147,7 @@ class DeserializeFileBundleModule(DeserializeValueModule):
         metadata = orjson.loads(file_metadata_json[0])
         file_metadata = metadata["included_files"]
         bundle_name = metadata["bundle_name"]
-        bundle_import_time = metadata["import_time"]
+        # bundle_import_time = metadata["import_time"]
         sum_size = metadata["size"]
         number_of_files = metadata["number_of_files"]
 
@@ -163,16 +162,14 @@ class DeserializeFileBundleModule(DeserializeValueModule):
 
             file: str = files[0]  # type: ignore
             file_name = file_metadata[rel_path]["file_name"]
-            import_time = file_metadata[rel_path]["import_time"]
-            fm = FileModel.load_file(
-                source=file, file_name=file_name, import_time=import_time
-            )
+            # import_time = file_metadata[rel_path]["import_time"]
+            fm = FileModel.load_file(source=file, file_name=file_name)
             included_files[rel_path] = fm
 
         fb = FileBundle(
             included_files=included_files,
             bundle_name=bundle_name,
-            import_time=bundle_import_time,
+            # import_time=bundle_import_time,
             number_of_files=number_of_files,
             size=sum_size,
         )

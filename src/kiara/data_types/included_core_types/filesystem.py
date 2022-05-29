@@ -64,7 +64,7 @@ class FileValueType(KiaraModelValueType[FileModel, FileTypeConfig]):
                 "codec": "json",
                 "inline_data": {
                     "file_name": data.file_name,
-                    "import_time": data.import_time,
+                    # "import_time": data.import_time,
                 },
             },
         }
@@ -189,13 +189,13 @@ class FileBundleValueType(AnyType[FileBundle, FileTypeConfig]):
             file_data[rel_path] = {"type": "file", "codec": "raw", "file": file.path}
             file_metadata[rel_path] = {
                 "file_name": file.file_name,
-                "import_time": file.import_time,
+                # "import_time": file.import_time,
             }
 
         metadata: Dict[str, Any] = {
             "included_files": file_metadata,
             "bundle_name": data.bundle_name,
-            "import_time": data.import_time,
+            # "import_time": data.import_time,
             "size": data.size,
             "number_of_files": data.number_of_files,
         }

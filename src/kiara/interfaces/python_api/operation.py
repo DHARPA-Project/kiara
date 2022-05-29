@@ -319,8 +319,8 @@ class KiaraOperation(object):
         alias_map = create_save_config(field_names=result.field_names, aliases=aliases)
 
         store_result = self._kiara.save_values(values=result, alias_map=alias_map)
-        if self.operation.module.characteristics.is_idempotent:
-            self._kiara.job_registry.store_job_record(job_id=job_id)
+        # if self.operation.module.characteristics.is_idempotent:
+        self._kiara.job_registry.store_job_record(job_id=job_id)
 
         return store_result
 

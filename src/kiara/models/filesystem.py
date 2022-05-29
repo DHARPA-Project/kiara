@@ -5,7 +5,6 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-import datetime
 import os
 import shutil
 import structlog
@@ -27,7 +26,7 @@ logger = structlog.getLogger()
 FILE_BUNDLE_IMPORT_AVAILABLE_COLUMNS = [
     "id",
     "rel_path",
-    "import_time",
+    # "import_time",
     "mime_type",
     "size",
     "content",
@@ -45,7 +44,7 @@ class FileModel(KiaraModel):
         cls,
         source: str,
         file_name: Optional[str] = None,
-        import_time: Optional[datetime.datetime] = None,
+        # import_time: Optional[datetime.datetime] = None,
     ):
         """Utility method to read metadata of a file from disk and optionally move it into a data archive location."""
 
@@ -65,10 +64,10 @@ class FileModel(KiaraModel):
             file_name = os.path.basename(source)
 
         path: str = os.path.abspath(source)
-        if import_time:
-            file_import_time = import_time
-        else:
-            file_import_time = datetime.datetime.now()  # TODO: timezone
+        # if import_time:
+        #     file_import_time = import_time
+        # else:
+        #     file_import_time = datetime.datetime.now()  # TODO: timezone
 
         file_stats = os.stat(path)
         size = file_stats.st_size
@@ -84,7 +83,7 @@ class FileModel(KiaraModel):
                 mime_type = _mime_type.MIME
 
         m = FileModel(
-            import_time=file_import_time,
+            # import_time=file_import_time,
             mime_type=mime_type,
             size=size,
             file_name=file_name,
@@ -92,9 +91,9 @@ class FileModel(KiaraModel):
         m._path = path
         return m
 
-    import_time: datetime.datetime = Field(
-        description="The time when the file was imported."
-    )
+    # import_time: datetime.datetime = Field(
+    #     description="The time when the file was imported."
+    # )
     mime_type: str = Field(description="The mime type of the file.")
     file_name: str = Field("The name of the file.")
     size: int = Field(description="The size of the file.")
@@ -132,9 +131,7 @@ class FileModel(KiaraModel):
         os.makedirs(os.path.dirname(target_path), exist_ok=True)
 
         shutil.copy2(self.path, target_path)
-        fm = FileModel.load_file(
-            target, file_name=new_name, import_time=self.import_time
-        )
+        fm = FileModel.load_file(target, file_name=new_name)
 
         if self._file_hash is not None:
             fm._file_hash = self._file_hash
@@ -219,7 +216,7 @@ class FileBundle(KiaraModel):
         source: str,
         bundle_name: Optional[str] = None,
         import_config: Union[None, Mapping[str, Any], FolderImportConfig] = None,
-        import_time: Optional[datetime.datetime] = None,
+        # import_time: Optional[datetime.datetime] = None,
     ) -> "FileBundle":
 
         if not source:
@@ -253,10 +250,10 @@ class FileBundle(KiaraModel):
 
         valid_extensions = _import_config.include_files
 
-        if import_time:
-            bundle_import_time = import_time
-        else:
-            bundle_import_time = datetime.datetime.now()  # TODO: timezone
+        # if import_time:
+        #     bundle_import_time = import_time
+        # else:
+        #     bundle_import_time = datetime.datetime.now()  # TODO: timezone
 
         sum_size = 0
 
@@ -285,9 +282,7 @@ class FileBundle(KiaraModel):
                 full_path = os.path.join(root, filename)
                 rel_path = os.path.relpath(full_path, abs_path)
 
-                file_model = FileModel.load_file(
-                    full_path, import_time=bundle_import_time
-                )
+                file_model = FileModel.load_file(full_path)
                 sum_size = sum_size + file_model.size
                 included_files[rel_path] = file_model
 
@@ -299,7 +294,6 @@ class FileBundle(KiaraModel):
             path=abs_path,
             bundle_name=bundle_name,
             sum_size=sum_size,
-            import_time=bundle_import_time,
         )
         return bundle
 
@@ -310,22 +304,22 @@ class FileBundle(KiaraModel):
         bundle_name: str,
         path: Optional[str] = None,
         sum_size: Optional[int] = None,
-        import_time: Optional[datetime.datetime] = None,
+        # import_time: Optional[datetime.datetime] = None,
     ) -> "FileBundle":
 
-        if import_time:
-            bundle_import_time = import_time
-        else:
-            bundle_import_time = datetime.datetime.now()  # TODO: timezone
+        # if import_time:
+        #     bundle_import_time = import_time
+        # else:
+        #     bundle_import_time = datetime.datetime.now()  # TODO: timezone
 
         result: Dict[str, Any] = {}
 
         result["included_files"] = files
 
-        result["import_time"] = datetime.datetime.now().isoformat()
+        # result["import_time"] = datetime.datetime.now().isoformat()
         result["number_of_files"] = len(files)
         result["bundle_name"] = bundle_name
-        result["import_time"] = bundle_import_time
+        # result["import_time"] = bundle_import_time
 
         if sum_size is None:
             sum_size = 0
@@ -340,9 +334,9 @@ class FileBundle(KiaraModel):
     _file_bundle_hash: Optional[int] = PrivateAttr(default=None)
 
     bundle_name: str = Field(description="The name of this bundle.")
-    import_time: datetime.datetime = Field(
-        description="The time when the file bundle was imported."
-    )
+    # import_time: datetime.datetime = Field(
+    #     description="The time when the file bundle was imported."
+    # )
     number_of_files: int = Field(
         description="How many files are included in this bundle."
     )
@@ -440,7 +434,7 @@ class FileBundle(KiaraModel):
             bundle_name=bundle_name,
             path=target_path,
             sum_size=self.size,
-            import_time=self.import_time,
+            # import_time=self.import_time,
         )
         if self._file_bundle_hash is not None:
             fb._file_bundle_hash = self._file_bundle_hash
@@ -456,7 +450,7 @@ class FileBundle(KiaraModel):
         table.add_column("value", style="i")
 
         table.add_row("bundle name", self.bundle_name)
-        table.add_row("import_time", str(self.import_time))
+        # table.add_row("import_time", str(self.import_time))
         table.add_row("number_of_files", str(self.number_of_files))
         table.add_row("size", str(self.size))
         if show_bundle_hash:

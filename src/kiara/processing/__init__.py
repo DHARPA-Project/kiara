@@ -117,9 +117,13 @@ class ModuleProcessor(abc.ABC):
         )
 
         module = self._kiara.create_module(manifest=job_config)
+        unique_result_values = module.characteristics.unique_result_values
 
         outputs = ValueMapWritable.create_from_schema(
-            kiara=self._kiara, schema=module.outputs_schema, pedigree=result_pedigree
+            kiara=self._kiara,
+            schema=module.outputs_schema,
+            pedigree=result_pedigree,
+            unique_value_ids=unique_result_values,
         )
         job_id = ID_REGISTRY.generate(kiara_id=self._kiara.id)
         job_log = JobLog()

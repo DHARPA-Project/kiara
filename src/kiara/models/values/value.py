@@ -1370,10 +1370,16 @@ class ValueMapWritable(ValueMap):  # type: ignore
 
     @classmethod
     def create_from_schema(
-        cls, kiara: "Kiara", schema: Mapping[str, ValueSchema], pedigree: ValuePedigree
+        cls,
+        kiara: "Kiara",
+        schema: Mapping[str, ValueSchema],
+        pedigree: ValuePedigree,
+        unique_value_ids: bool = False,
     ) -> "ValueMapWritable":
 
-        v = ValueMapWritable(values_schema=schema, pedigree=pedigree)
+        v = ValueMapWritable(
+            values_schema=schema, pedigree=pedigree, unique_value_ids=unique_value_ids
+        )
         v._data_registry = kiara.data_registry
         return v
 
@@ -1382,6 +1388,10 @@ class ValueMapWritable(ValueMap):  # type: ignore
     )
     pedigree: ValuePedigree = Field(
         description="The pedigree to add to all of the result values."
+    )
+    unique_value_ids: bool = Field(
+        description="Whether this value map always creates new value(id)s, even when a dataset with matching hash is found.",
+        default=False,
     )
 
     _values_uncommitted: Dict[str, Any] = PrivateAttr(default_factory=dict)
@@ -1419,7 +1429,7 @@ class ValueMapWritable(ValueMap):  # type: ignore
                 schema=schema,
                 pedigree=self.pedigree,
                 pedigree_output_name=field_name,
-                reuse_existing=False,
+                reuse_existing=not self.unique_value_ids,
             )
 
         self._values_uncommitted.pop(field_name)

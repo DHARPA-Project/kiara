@@ -147,6 +147,9 @@ class ContextSummary(KiaraModel):
             table.add_row("context name", self.context_name)
         table.add_row("kiara_id", str(self.kiara_id))
 
+        size_on_disk = humanfriendly.format_size(self.archives.combined_size)
+        table.add_row("size on disk", size_on_disk)
+
         value_sum = self.value_summary()
         v_table = Table(box=box.SIMPLE, show_header=False)
         v_table.add_column("Property")

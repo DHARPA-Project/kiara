@@ -13,7 +13,7 @@ from kiara.models.module import KiaraModuleConfig
 from kiara.models.values.value import ValueMap
 from kiara.models.values.value_metadata import ValueMetadata
 from kiara.models.values.value_schema import ValueSchema
-from kiara.modules import KiaraModule
+from kiara.modules import KiaraModule, ModuleCharacteristics
 from kiara.registries.models import ModelRegistry
 
 
@@ -31,6 +31,12 @@ class ExtractMetadataModule(KiaraModule):
 
     _config_cls = MetadataModuleConfig
     _module_type_name: str = "value.extract_metadata"
+
+    def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
+
+        return ModuleCharacteristics(
+            is_idempotent=True, is_internal=True, unique_result_values=True
+        )
 
     def create_inputs_schema(
         self,

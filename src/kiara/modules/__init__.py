@@ -254,11 +254,13 @@ class ModuleCharacteristics(BaseModel):
         description="Hint for frontends whether this module is used predominantly internally, and users won't need to know of its existence.",
         default=False,
     )
+    unique_result_values: bool = Field(
+        description="Don't re-use existing values for outputs that have matching hashes in the data store.",
+        default=False,
+    )
 
 
-DEFAULT_IDEMPOTENT_MODULE_CHARACTERISTICS = ModuleCharacteristics(
-    is_idempotent=True, is_internal=False
-)
+DEFAULT_IDEMPOTENT_MODULE_CHARACTERISTICS = ModuleCharacteristics()
 
 
 class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):

@@ -104,7 +104,7 @@ def delete_context(ctx, context_name: Optional[str] = None, force: bool = False)
     context_summary = kiara_config.delete(context_name=context_name, dry_run=True)
 
     confirmed = False
-    if not force or not context_name:
+    if not force:
 
         terminal_print_model(
             context_summary,

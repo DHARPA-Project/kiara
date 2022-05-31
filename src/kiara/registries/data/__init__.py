@@ -635,6 +635,7 @@ class DataRegistry(object):
                 value_hash,
                 value_size,
             ) = self._find_existing_value(data=data, schema=schema)
+
             if _existing is not None:
                 # TODO: check pedigree
                 return (_existing, False)

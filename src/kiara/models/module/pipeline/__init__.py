@@ -155,7 +155,7 @@ class PipelineStep(Manifest):
         if "module_type" not in values:
             raise ValueError("No 'module_type' specified.")
         if "step_id" not in values or not values["step_id"]:
-            values["step_id"] = slugify(values["module_type"])
+            values["step_id"] = slugify(values["module_type"], separator="_")
 
         return values
 

@@ -9041,10 +9041,16 @@ ValueMapWritable            (<a class="autorefs autorefs-internal" title="kiara.
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_from_schema</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">schema</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">],</span> <span class="n">pedigree</span><span class="p">:</span> <span class="n">ValuePedigree</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
+        <span class="n">schema</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">],</span>
+        <span class="n">pedigree</span><span class="p">:</span> <span class="n">ValuePedigree</span><span class="p">,</span>
+        <span class="n">unique_value_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValueMapWritable&quot;</span><span class="p">:</span>
 
-        <span class="n">v</span> <span class="o">=</span> <span class="n">ValueMapWritable</span><span class="p">(</span><span class="n">values_schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span> <span class="n">pedigree</span><span class="o">=</span><span class="n">pedigree</span><span class="p">)</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">ValueMapWritable</span><span class="p">(</span>
+            <span class="n">values_schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span> <span class="n">pedigree</span><span class="o">=</span><span class="n">pedigree</span><span class="p">,</span> <span class="n">unique_value_ids</span><span class="o">=</span><span class="n">unique_value_ids</span>
+        <span class="p">)</span>
         <span class="n">v</span><span class="o">.</span><span class="n">_data_registry</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span>
         <span class="k">return</span> <span class="n">v</span>
 
@@ -9053,6 +9059,10 @@ ValueMapWritable            (<a class="autorefs autorefs-internal" title="kiara.
     <span class="p">)</span>
     <span class="n">pedigree</span><span class="p">:</span> <span class="n">ValuePedigree</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The pedigree to add to all of the result values.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">unique_value_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether this value map always creates new value(id)s, even when a dataset with matching hash is found.&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">_values_uncommitted</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
@@ -9090,7 +9100,7 @@ ValueMapWritable            (<a class="autorefs autorefs-internal" title="kiara.
                 <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span>
                 <span class="n">pedigree</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pedigree</span><span class="p">,</span>
                 <span class="n">pedigree_output_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
-                <span class="n">reuse_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">reuse_existing</span><span class="o">=</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_value_ids</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_values_uncommitted</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
@@ -9168,6 +9178,28 @@ ValueMapWritable            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 
+<h5 id="kiara.models.values.value.ValueMapWritable.unique_value_ids" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">unique_value_ids</span><span class="p">:</span> <span class="nb">bool</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.values.value.ValueMapWritable.unique_value_ids" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Whether this value map always creates new value(id)s, even when a dataset with matching hash is found.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
 <h5 id="kiara.models.values.value.ValueMapWritable.value_items" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">value_items</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">Value</span><span class="p">]</span></code>
 
@@ -9194,7 +9226,7 @@ ValueMapWritable            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 <h5 id="kiara.models.values.value.ValueMapWritable.create_from_schema" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_from_schema</span><span class="p">(</span><span class="n">kiara</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">pedigree</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_from_schema</span><span class="p">(</span><span class="n">kiara</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">pedigree</span><span class="p">,</span> <span class="n">unique_value_ids</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
@@ -9209,10 +9241,16 @@ ValueMapWritable            (<a class="autorefs autorefs-internal" title="kiara.
           <summary>Source code in <code>kiara/models/values/value.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create_from_schema</span><span class="p">(</span>
-    <span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">schema</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">],</span> <span class="n">pedigree</span><span class="p">:</span> <span class="n">ValuePedigree</span>
+    <span class="bp">cls</span><span class="p">,</span>
+    <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
+    <span class="n">schema</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">],</span>
+    <span class="n">pedigree</span><span class="p">:</span> <span class="n">ValuePedigree</span><span class="p">,</span>
+    <span class="n">unique_value_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValueMapWritable&quot;</span><span class="p">:</span>
 
-    <span class="n">v</span> <span class="o">=</span> <span class="n">ValueMapWritable</span><span class="p">(</span><span class="n">values_schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span> <span class="n">pedigree</span><span class="o">=</span><span class="n">pedigree</span><span class="p">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">ValueMapWritable</span><span class="p">(</span>
+        <span class="n">values_schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span> <span class="n">pedigree</span><span class="o">=</span><span class="n">pedigree</span><span class="p">,</span> <span class="n">unique_value_ids</span><span class="o">=</span><span class="n">unique_value_ids</span>
+    <span class="p">)</span>
     <span class="n">v</span><span class="o">.</span><span class="n">_data_registry</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span>
     <span class="k">return</span> <span class="n">v</span>
 </code></pre></div>
@@ -9272,7 +9310,7 @@ cost to assembling it, and it might not be needed ever.</p>
             <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span>
             <span class="n">pedigree</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pedigree</span><span class="p">,</span>
             <span class="n">pedigree_output_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
-            <span class="n">reuse_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">reuse_existing</span><span class="o">=</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_value_ids</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_values_uncommitted</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>

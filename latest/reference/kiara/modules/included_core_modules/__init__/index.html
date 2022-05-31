@@ -5084,6 +5084,12 @@ ExtractMetadataModule            (<a class="autorefs autorefs-internal" title="k
     <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">MetadataModuleConfig</span>
     <span class="n">_module_type_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;value.extract_metadata&quot;</span>
 
+    <span class="k">def</span> <span class="nf">_retrieve_module_characteristics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleCharacteristics</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="n">ModuleCharacteristics</span><span class="p">(</span>
+            <span class="n">is_idempotent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">is_internal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">unique_result_values</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>

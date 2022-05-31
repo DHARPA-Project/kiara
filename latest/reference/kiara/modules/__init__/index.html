@@ -5456,6 +5456,10 @@ ModuleCharacteristics            (<span title="pydantic.main.BaseModel">BaseMode
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Hint for frontends whether this module is used predominantly internally, and users won&#39;t need to know of its existence.&quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
+    <span class="n">unique_result_values</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Don&#39;t re-use existing values for outputs that have matching hashes in the data store.&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -5506,6 +5510,28 @@ ModuleCharacteristics            (<span title="pydantic.main.BaseModel">BaseMode
     <div class="doc doc-contents ">
 
       <p>Hint for frontends whether this module is used predominantly internally, and users won't need to know of its existence.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.modules.ModuleCharacteristics.unique_result_values" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">unique_result_values</span><span class="p">:</span> <span class="nb">bool</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.modules.ModuleCharacteristics.unique_result_values" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Don't re-use existing values for outputs that have matching hashes in the data store.</p>
     </div>
 
   </div>
@@ -7074,6 +7100,12 @@ ExtractMetadataModule            (<a class="autorefs autorefs-internal" title="k
 
     <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">MetadataModuleConfig</span>
     <span class="n">_module_type_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;value.extract_metadata&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_retrieve_module_characteristics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleCharacteristics</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="n">ModuleCharacteristics</span><span class="p">(</span>
+            <span class="n">is_idempotent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">is_internal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">unique_result_values</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>

@@ -3710,9 +3710,13 @@ ModuleProcessor            (<span title="abc.ABC">ABC</span>)
         <span class="p">)</span>
 
         <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">job_config</span><span class="p">)</span>
+        <span class="n">unique_result_values</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">characteristics</span><span class="o">.</span><span class="n">unique_result_values</span>
 
         <span class="n">outputs</span> <span class="o">=</span> <span class="n">ValueMapWritable</span><span class="o">.</span><span class="n">create_from_schema</span><span class="p">(</span>
-            <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">,</span> <span class="n">pedigree</span><span class="o">=</span><span class="n">result_pedigree</span>
+            <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span>
+            <span class="n">schema</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">,</span>
+            <span class="n">pedigree</span><span class="o">=</span><span class="n">result_pedigree</span><span class="p">,</span>
+            <span class="n">unique_value_ids</span><span class="o">=</span><span class="n">unique_result_values</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">job_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">kiara_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
         <span class="n">job_log</span> <span class="o">=</span> <span class="n">JobLog</span><span class="p">()</span>
@@ -3912,9 +3916,13 @@ ModuleProcessor            (<span title="abc.ABC">ABC</span>)
     <span class="p">)</span>
 
     <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">job_config</span><span class="p">)</span>
+    <span class="n">unique_result_values</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">characteristics</span><span class="o">.</span><span class="n">unique_result_values</span>
 
     <span class="n">outputs</span> <span class="o">=</span> <span class="n">ValueMapWritable</span><span class="o">.</span><span class="n">create_from_schema</span><span class="p">(</span>
-        <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">,</span> <span class="n">pedigree</span><span class="o">=</span><span class="n">result_pedigree</span>
+        <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span>
+        <span class="n">schema</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">,</span>
+        <span class="n">pedigree</span><span class="o">=</span><span class="n">result_pedigree</span><span class="p">,</span>
+        <span class="n">unique_value_ids</span><span class="o">=</span><span class="n">unique_result_values</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">job_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">kiara_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
     <span class="n">job_log</span> <span class="o">=</span> <span class="n">JobLog</span><span class="p">()</span>

@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/interfaces/__init__/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.16">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.0">
     
     
       
@@ -23,11 +23,12 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.1c3799f8.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.fd896c8a.min.css">
       
         
-        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.cc9b2e1e.min.css">
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.cbb835fc.min.css">
         
+      
       
     
     
@@ -1333,6 +1334,59 @@
   
     <li class="md-nav__item">
       <a href="../cli/type/commands/" class="md-nav__link">
+        commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_1_10" type="checkbox" id="__nav_3_1_6_1_10" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../cli/workflow/__init__/">workflow</a>
+          
+            <label for="__nav_3_1_6_1_10">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="workflow" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_1_10">
+          <span class="md-nav__icon md-icon"></span>
+          workflow
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/workflow/commands/" class="md-nav__link">
         commands
       </a>
     </li>
@@ -3094,6 +3148,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../registries/workflows/__init__/" class="md-nav__link">
+        workflows
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3426,6 +3494,20 @@
           
         </ul>
       </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflows/__init__/" class="md-nav__link">
+        workflows
+      </a>
     </li>
   
 
@@ -4292,6 +4374,118 @@
 
 
 
+  <div class="doc doc-object doc-module">
+
+
+
+<h5 id="kiara.interfaces.cli.workflow" class="doc doc-heading">
+        <code>workflow</code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-special"><code>special</code></small>
+  </span>
+
+<a href="#kiara.interfaces.cli.workflow" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<h6 id="kiara.interfaces.cli.workflow-modules">Modules<a href="#kiara.interfaces.cli.workflow-modules" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h7 id="kiara.interfaces.cli.workflow.commands" class="doc doc-heading">
+        <code>commands</code>
+
+
+
+<a href="#kiara.interfaces.cli.workflow.commands" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>Data-related sub-commands for the cli.</p>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.interfaces.cli.workflow.commands.logger" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">logger</span></code>
+
+
+<a href="#kiara.interfaces.cli.workflow.commands.logger" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.interfaces.cli.workflow.commands.yaml" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">yaml</span></code>
+
+
+<a href="#kiara.interfaces.cli.workflow.commands.yaml" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
 
   </div>
 
@@ -4516,7 +4710,7 @@ BatchOperation            (<span title="pydantic.main.BaseModel">BaseModel</span
 
         <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span>
             <span class="n">structure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span>
-            <span class="n">data_registry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="p">,</span>
+            <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">pipeline_controller</span> <span class="o">=</span> <span class="n">SinglePipelineBatchController</span><span class="p">(</span>
             <span class="n">pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">job_registry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">job_registry</span>
@@ -4888,7 +5082,7 @@ Config        </code>
 
     <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span>
         <span class="n">structure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span>
-        <span class="n">data_registry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="p">,</span>
+        <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">pipeline_controller</span> <span class="o">=</span> <span class="n">SinglePipelineBatchController</span><span class="p">(</span>
         <span class="n">pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">job_registry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">job_registry</span>
@@ -5075,7 +5269,7 @@ KiaraOperation        </code>
             <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inputs_raw</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">create_valueset</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">create_valuemap</span><span class="p">(</span>
             <span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">inputs_schema</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span>
@@ -6965,6 +7159,7 @@ ValuePager            (<span title="textual.widget.Widget">Widget</span>)
 
               
             </article>
+            
           </div>
         </div>
         
@@ -6972,7 +7167,8 @@ ValuePager            (<span title="textual.widget.Widget">Widget</span>)
       
         <footer class="md-footer">
   
-    <nav class="md-footer__inner md-grid" aria-label="Footer">
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
         <a href="../../exceptions/" class="md-footer__link md-footer__link--prev" aria-label="Previous: exceptions" rel="prev">
@@ -7031,10 +7227,10 @@ ValuePager            (<span title="textual.widget.Widget">Widget</span>)
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../assets/javascripts/workers/search.b028fd86.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.3a4b43e5.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.0f659f14.min.js"></script>
       
     
   </body>

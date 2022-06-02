@@ -23,16 +23,29 @@ class PipelineController(PipelineListener):
 
 
 class SinglePipelineController(PipelineController):
-    def __init__(self, pipeline: Pipeline, job_registry: JobRegistry):
+    def __init__(self, job_registry: JobRegistry, pipeline: Optional[Pipeline] = None):
 
-        self._pipeline: Pipeline = pipeline
+        self._pipeline: Optional[Pipeline] = None
         self._job_registry: JobRegistry = job_registry
-        self._pipeline.add_listener(self)
         self._pipeline_details: Optional[PipelineDetails] = None
+
+        if pipeline is not None:
+            self.pipeline = pipeline
 
     @property
     def pipeline(self) -> Pipeline:
+
+        if self._pipeline is None:
+            raise Exception("Pipeline not set (yet).")
         return self._pipeline
+
+    @pipeline.setter
+    def pipeline(self, pipeline: Pipeline):
+        # if self._pipeline is not None:
+        #     self._pipeline.remove_listener(self)
+        self._pipeline = pipeline
+        if self._pipeline is not None:
+            self._pipeline.add_listener(self)
 
     def current_pipeline_state(self) -> PipelineDetails:
 
@@ -57,6 +70,9 @@ class SinglePipelineController(PipelineController):
         return required
 
     def _pipeline_event_occurred(self, event: PipelineEvent):
+
+        if event.pipeline_id != self.pipeline.pipeline_id:
+            return
 
         self._pipeline_details = None
 

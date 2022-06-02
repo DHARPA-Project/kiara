@@ -85,7 +85,7 @@ class JobConfig(InputsManifest):
 
         augmented = module.augment_module_inputs(inputs=inputs)
 
-        values = data_registry.create_valueset(
+        values = data_registry.create_valuemap(
             data=augmented, schema=module.full_inputs_schema
         )
         invalid = values.check_invalid()

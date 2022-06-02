@@ -11,7 +11,6 @@ import structlog
 
 from kiara import Kiara
 from kiara.utils import StringYAML
-from kiara.utils.cli import terminal_print
 from kiara.workflows import Workflow
 
 logger = structlog.getLogger()
@@ -45,9 +44,17 @@ def create(ctx, workflow_alias):
     # kiara.workflow_registry.create(workflow_alias)
 
     workflow = Workflow(kiara=kiara, workflow_alias=workflow_alias)
-    add_step_id = workflow.add_step("logic.and")
+    and_step_id = workflow.add_step("logic.and")
     not_step_id = workflow.add_step("logic.not")
 
-    workflow.add_input_link(f"{not_step_id}.a", f"{add_step_id}.y")
+    workflow.add_input_link(f"{not_step_id}.a", f"{and_step_id}.y")
 
-    terminal_print(workflow)
+    workflow.set_inputs(logic_and__a=True, logic_and__b=True, x=22)
+    workflow.apply()
+    workflow.set_inputs(logic_and__a=True, logic_and__b=True, x=22)
+
+    # terminal_print(workflow)
+    # workflow.apply()
+    # workflow.apply()
+
+    # dbg(workflow.current_output_values)

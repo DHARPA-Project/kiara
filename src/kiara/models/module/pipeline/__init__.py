@@ -100,7 +100,7 @@ class PipelineStep(Manifest):
             for input_field, sources in step.get("input_links", {}).items():
                 if isinstance(sources, str):
                     sources = [sources]
-                    input_links[input_field] = sources
+                input_links[input_field] = sources
 
             # TODO: do we really need the deepcopy here?
             _s = PipelineStep(

@@ -609,7 +609,7 @@ class DataRegistry(object):
             )
 
         if schema.default in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
-            if data in [None, SpecialValue.NO_VALUE]:
+            if data is None or data is SpecialValue.NO_VALUE:
                 return (self.NONE_VALUE, False)
             elif data is SpecialValue.NOT_SET:
                 return (self.NOT_SET_VALUE, False)
@@ -842,7 +842,7 @@ class DataRegistry(object):
         result_values = self.load_values(values=values)
         return {k: v.data for k, v in result_values.items()}
 
-    def create_valueset(
+    def create_valuemap(
         self, data: Mapping[str, Any], schema: Mapping[str, ValueSchema]
     ) -> ValueMap:
         """Extract a set of [Value][kiara.data.values.Value] from Python data and ValueSchemas."""

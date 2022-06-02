@@ -142,7 +142,7 @@ class BatchOperation(BaseModel):
 
         pipeline = Pipeline(
             structure=self.pipeline_config.structure,
-            data_registry=self._kiara.data_registry,
+            kiara=self._kiara,
         )
         pipeline_controller = SinglePipelineBatchController(
             pipeline=pipeline, job_registry=self._kiara.job_registry

@@ -8,23 +8,38 @@
 import abc
 import dpath
 import uuid
-from typing import Any, Dict, Iterable, List, Mapping, Optional
+from pydantic import Field
+from rich import box
+from rich.console import RenderableType
+from rich.panel import Panel
+from rich.table import Table
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Optional
 
 from kiara.context import DataRegistry
 from kiara.defaults import NONE_VALUE_ID
 from kiara.exceptions import InvalidValuesException
 from kiara.models.aliases import AliasValueMap
+from kiara.models.documentation import (
+    AuthorsMetadataModel,
+    ContextMetadataModel,
+    DocumentationMetadataModel,
+)
 from kiara.models.events.pipeline import (
     ChangedValue,
     PipelineDetails,
     PipelineEvent,
     StepDetails,
 )
+from kiara.models.info import ItemInfo
 from kiara.models.module.jobs import JobConfig
 from kiara.models.module.pipeline import StepStatus
 from kiara.models.module.pipeline.structure import PipelineStep, PipelineStructure
 from kiara.models.module.pipeline.value_refs import ValueRef
 from kiara.models.values.value import ORPHAN
+from kiara.utils.output import create_table_from_model_object
+
+if TYPE_CHECKING:
+    from kiara.context import Kiara
 
 
 class PipelineListener(abc.ABC):
@@ -36,7 +51,7 @@ class PipelineListener(abc.ABC):
 class Pipeline(object):
     """An instance of a [PipelineStructure][kiara.pipeline.structure.PipelineStructure] that holds state for all of the inputs/outputs of the steps within."""
 
-    def __init__(self, structure: PipelineStructure, data_registry: DataRegistry):
+    def __init__(self, structure: PipelineStructure, kiara: "Kiara"):
 
         self._id: uuid.UUID = uuid.uuid4()
 
@@ -49,7 +64,8 @@ class Pipeline(object):
         self._inputs_by_stage: Dict[int, List[str]] = None  # type: ignore
         self._outputs_by_stage: Dict[int, List[str]] = None  # type: ignore
 
-        self._data_registry: DataRegistry = data_registry
+        self._kiara: Kiara = kiara
+        self._data_registry: DataRegistry = kiara.data_registry
 
         self._all_values: AliasValueMap = None  # type: ignore
 
@@ -65,7 +81,7 @@ class Pipeline(object):
 
     @property
     def kiara_id(self) -> uuid.UUID:
-        return self._data_registry.kiara_id
+        return self._kiara.id
 
     def _init_values(self):
         """Initialize this object. This should only be called once.
@@ -270,7 +286,8 @@ class Pipeline(object):
 
         if notify_listeners:
             event = PipelineEvent.create_event(pipeline=self, changed=changed_results)
-            self._notify_pipeline_listeners(event)
+            if event:
+                self._notify_pipeline_listeners(event)
 
         return changed_results
 
@@ -299,7 +316,8 @@ class Pipeline(object):
 
         if notify_listeners:
             event = PipelineEvent.create_event(pipeline=self, changed=results)
-            self._notify_pipeline_listeners(event)
+            if event:
+                self._notify_pipeline_listeners(event)
 
         return results
 
@@ -342,7 +360,8 @@ class Pipeline(object):
 
         if notify_listeners:
             event = PipelineEvent.create_event(pipeline=self, changed=results)
-            self._notify_pipeline_listeners(event)
+            if event:
+                self._notify_pipeline_listeners(event)
 
         return results
 
@@ -392,7 +411,8 @@ class Pipeline(object):
 
         if notify_listeners:
             event = PipelineEvent.create_event(pipeline=self, changed=result)
-            self._notify_pipeline_listeners(event)
+            if event:
+                self._notify_pipeline_listeners(event)
 
         return result
 
@@ -492,6 +512,75 @@ class Pipeline(object):
             data_registry=self._data_registry, module=step.module, inputs=step_inputs
         )
         return job_config
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        return PipelineInfo.create_from_pipeline(pipeline=self).create_renderable(
+            **config
+        )
+
+
+class PipelineInfo(ItemInfo):
+
+    _kiara_model_id = "info.pipeline"
+
+    @classmethod
+    def category_name(cls) -> str:
+        return "pipeline"
+
+    @classmethod
+    def create_from_pipeline(cls, pipeline: Pipeline):
+
+        doc = DocumentationMetadataModel.create(None)
+        authors = AuthorsMetadataModel()
+        context = ContextMetadataModel()
+
+        pipeline_info = PipelineInfo(
+            type_name=str(pipeline.pipeline_id),
+            documentation=doc,
+            authors=authors,
+            context=context,
+            pipeline_structure=pipeline.structure,
+            pipeline_details=pipeline.get_pipeline_details(),
+        )
+        return pipeline_info
+
+    pipeline_structure: PipelineStructure = Field(description="The pipeline structure.")
+    pipeline_details: PipelineDetails = Field(description="The current input details.")
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        include_doc = config.get("include_doc", False)
+        include_authors = config.get("include_authors", False)
+        include_context = config.get("include_context", False)
+        include_structure = config.get("include_structure", False)
+
+        table = Table(box=box.SIMPLE, show_header=False, padding=(0, 0, 0, 0))
+        table.add_column("property", style="i")
+        table.add_column("value")
+
+        details = create_table_from_model_object(
+            self.pipeline_details, render_config=config
+        )
+        table.add_row("input details", details)
+
+        if include_doc:
+            table.add_row(
+                "Documentation",
+                Panel(self.documentation.create_renderable(), box=box.SIMPLE),
+            )
+        if include_authors:
+            table.add_row("Author(s)", self.authors.create_renderable(**config))
+        if include_context:
+            table.add_row("Context", self.context.create_renderable(**config))
+
+        if include_structure:
+            table.add_row(
+                "Pipeline structure",
+                self.pipeline_structure.create_renderable(**config),
+            )
+
+        return table
 
 
 # class PipelineOld(object):

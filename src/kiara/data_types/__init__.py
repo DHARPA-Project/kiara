@@ -331,7 +331,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
         self, data: Any, schema: ValueSchema
     ) -> Tuple[Any, Union[str, "SerializedData"], ValueStatus, str, int]:
 
-        if data == SpecialValue.NOT_SET:
+        if data is SpecialValue.NOT_SET:
             status = ValueStatus.NOT_SET
             data = None
         else:
@@ -349,7 +349,11 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
             else:
                 data = copy.deepcopy(schema.default)
 
-        if data in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
+        if (
+            data is None
+            or data is SpecialValue.NO_VALUE
+            or data is SpecialValue.NOT_SET
+        ):
             if schema.default in [None, SpecialValue.NO_VALUE]:
                 data = SpecialValue.NO_VALUE
                 status = ValueStatus.NONE

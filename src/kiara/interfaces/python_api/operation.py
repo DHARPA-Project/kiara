@@ -80,7 +80,7 @@ class KiaraOperation(object):
             data = {}
         data.update(self._inputs_raw)
 
-        self._inputs = self._kiara.data_registry.create_valueset(
+        self._inputs = self._kiara.data_registry.create_valuemap(
             data, self.operation.inputs_schema
         )
         return self._inputs

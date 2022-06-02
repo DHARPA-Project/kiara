@@ -1349,7 +1349,10 @@ class ValueMapReadOnly(ValueMap):  # type: ignore
     def create_from_ids(cls, data_registry: "DataRegistry", **value_ids: uuid.UUID):
 
         values = {k: data_registry.get_value(v) for k, v in value_ids.items()}
-        return ValueMapReadOnly.construct(value_items=values)
+        values_schema = {k: v.value_schema for k, v in values.items()}
+        return ValueMapReadOnly.construct(
+            value_items=values, values_schema=values_schema
+        )
 
     value_items: Dict[str, Value] = Field(
         description="The values contained in this set."
@@ -1380,6 +1383,7 @@ class ValueMapWritable(ValueMap):  # type: ignore
         v = ValueMapWritable(
             values_schema=schema, pedigree=pedigree, unique_value_ids=unique_value_ids
         )
+        v._kiara = kiara
         v._data_registry = kiara.data_registry
         return v
 
@@ -1395,6 +1399,7 @@ class ValueMapWritable(ValueMap):  # type: ignore
     )
 
     _values_uncommitted: Dict[str, Any] = PrivateAttr(default_factory=dict)
+    _kiara: "Kiara" = PrivateAttr(default=None)
     _data_registry: "DataRegistry" = PrivateAttr(default=None)
     _auto_commit: bool = PrivateAttr(default=True)
 

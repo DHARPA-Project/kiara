@@ -55,9 +55,7 @@ class PipelineModule(KiaraModule):
 
         pipeline_structure: PipelineStructure = self.config.structure
 
-        pipeline = Pipeline(
-            structure=pipeline_structure, data_registry=outputs._data_registry
-        )
+        pipeline = Pipeline(structure=pipeline_structure, kiara=outputs._kiara)
 
         assert self._job_registry is not None
 

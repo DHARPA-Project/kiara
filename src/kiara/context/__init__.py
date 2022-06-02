@@ -50,6 +50,7 @@ from kiara.registries.models import ModelRegistry
 from kiara.registries.modules import ModuleRegistry
 from kiara.registries.operations import OperationRegistry
 from kiara.registries.types import TypeRegistry
+from kiara.registries.workflows import WorkflowRegistry
 from kiara.utils import is_debug, log_message
 from kiara.utils.class_loading import find_all_archive_types
 from kiara.utils.operations import filter_operations
@@ -163,6 +164,8 @@ class Kiara(object):
 
         self._alias_registry: AliasRegistry = AliasRegistry(kiara=self)
         self._destiny_registry: DestinyRegistry = DestinyRegistry(kiara=self)
+
+        self._workflow_registry: WorkflowRegistry = WorkflowRegistry(kiara=self)
 
         self._env_mgmt: Optional[EnvironmentRegistry] = None
 
@@ -282,6 +285,10 @@ class Kiara(object):
     @property
     def data_registry(self) -> DataRegistry:
         return self._data_registry
+
+    @property
+    def workflow_registry(self) -> WorkflowRegistry:
+        return self._workflow_registry
 
     @property
     def event_registry(self) -> EventRegistry:

@@ -127,7 +127,7 @@ class PipelineEvent(KiaraEvent):
         cls,
         pipeline: "Pipeline",
         changed: Mapping[str, Mapping[str, Mapping[str, ChangedValue]]],
-    ):
+    ) -> Optional["PipelineEvent"]:
 
         pipeline_inputs = changed.get("__pipeline__", {}).get("inputs", {})
         pipeline_outputs = changed.get("__pipeline__", {}).get("outputs", {})
@@ -148,6 +148,15 @@ class PipelineEvent(KiaraEvent):
             if outputs:
                 invalidated_steps.add(step_id)
                 step_outputs[step_id] = outputs
+
+        if (
+            not pipeline_inputs
+            and not pipeline_outputs
+            and not step_inputs
+            and not step_outputs
+            and not invalidated_steps
+        ):
+            return None
 
         event = PipelineEvent(
             kiara_id=pipeline.kiara_id,

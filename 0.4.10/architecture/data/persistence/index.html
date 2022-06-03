@@ -1,0 +1,3742 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Kiara project">
+      
+      
+        <meta name="author" content="Markus Binsteiner">
+      
+      
+        <link rel="canonical" href="https://dharpa.org/kiara/0.4.10/architecture/data/persistence/">
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.0">
+    
+    
+      
+        <title>Data persistence - Kiara</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.fd896c8a.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.cbb835fc.min.css">
+        
+      
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../../css/ansi-colours.css">
+    
+      <link rel="stylesheet" href="../../../css/jupyter-cells.css">
+    
+      <link rel="stylesheet" href="../../../css/pandas-dataframe.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#data-persistence" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-component="outdated" hidden>
+        <aside class="md-banner md-banner--warning">
+          
+        </aside>
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Kiara" class="md-header__button md-logo" aria-label="Kiara" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Kiara
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Data persistence
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/DHARPA-Project/kiara" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Kiara" class="md-nav__button md-logo" aria-label="Kiara" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Kiara
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/DHARPA-Project/kiara" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Included components
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Included components" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Included components
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../included_components/" class="md-nav__link">
+        Summary
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../included_components/data_types/" class="md-nav__link">
+        data_types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../included_components/module_types/" class="md-nav__link">
+        module_types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../included_components/kiara_model_types/" class="md-nav__link">
+        kiara_model_types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../included_components/operation_types/" class="md-nav__link">
+        operation_types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../included_components/operations/" class="md-nav__link">
+        operations
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          API reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="API reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          API reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/__init__/">kiara</a>
+          
+            <label for="__nav_3_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="kiara" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          kiara
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_1" type="checkbox" id="__nav_3_1_1" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/context/__init__/">context</a>
+          
+            <label for="__nav_3_1_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="context" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_1_1">
+          <span class="md-nav__icon md-icon"></span>
+          context
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/context/config/" class="md-nav__link">
+        config
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/context/orm/" class="md-nav__link">
+        orm
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_2" type="checkbox" id="__nav_3_1_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/data_types/__init__/">data_types</a>
+          
+            <label for="__nav_3_1_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="data_types" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_1_2">
+          <span class="md-nav__icon md-icon"></span>
+          data_types
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_2_1" type="checkbox" id="__nav_3_1_2_1" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/data_types/included_core_types/__init__/">included_core_types</a>
+          
+            <label for="__nav_3_1_2_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="included_core_types" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          included_core_types
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/data_types/included_core_types/filesystem/" class="md-nav__link">
+        filesystem
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_2_1_2" type="checkbox" id="__nav_3_1_2_1_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/data_types/included_core_types/internal/__init__/">internal</a>
+          
+            <label for="__nav_3_1_2_1_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="internal" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_2_1_2">
+          <span class="md-nav__icon md-icon"></span>
+          internal
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/data_types/included_core_types/internal/render_value/" class="md-nav__link">
+        render_value
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/data_types/included_core_types/serialization/" class="md-nav__link">
+        serialization
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/defaults/" class="md-nav__link">
+        defaults
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_4" type="checkbox" id="__nav_3_1_4" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/doc/__init__/">doc</a>
+          
+            <label for="__nav_3_1_4">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="doc" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_1_4">
+          <span class="md-nav__icon md-icon"></span>
+          doc
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/doc/gen_info_pages/" class="md-nav__link">
+        gen_info_pages
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/doc/generate_api_doc/" class="md-nav__link">
+        generate_api_doc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/doc/mkdocs_macros_cli/" class="md-nav__link">
+        mkdocs_macros_cli
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/doc/mkdocs_macros_kiara/" class="md-nav__link">
+        mkdocs_macros_kiara
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_4_5" type="checkbox" id="__nav_3_1_4_5" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/doc/mkdocstrings/__init__/">mkdocstrings</a>
+          
+            <label for="__nav_3_1_4_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="mkdocstrings" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_4_5">
+          <span class="md-nav__icon md-icon"></span>
+          mkdocstrings
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/doc/mkdocstrings/collector/" class="md-nav__link">
+        collector
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/doc/mkdocstrings/handler/" class="md-nav__link">
+        handler
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/doc/mkdocstrings/renderer/" class="md-nav__link">
+        renderer
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/exceptions/" class="md-nav__link">
+        exceptions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6" type="checkbox" id="__nav_3_1_6" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/interfaces/__init__/">interfaces</a>
+          
+            <label for="__nav_3_1_6">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="interfaces" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_1_6">
+          <span class="md-nav__icon md-icon"></span>
+          interfaces
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_1" type="checkbox" id="__nav_3_1_6_1" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/interfaces/cli/__init__/">cli</a>
+          
+            <label for="__nav_3_1_6_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="cli" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_6_1">
+          <span class="md-nav__icon md-icon"></span>
+          cli
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_1_1" type="checkbox" id="__nav_3_1_6_1_1" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/interfaces/cli/context/__init__/">context</a>
+          
+            <label for="__nav_3_1_6_1_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="context" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_1_1">
+          <span class="md-nav__icon md-icon"></span>
+          context
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/interfaces/cli/context/commands/" class="md-nav__link">
+        commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_1_2" type="checkbox" id="__nav_3_1_6_1_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/interfaces/cli/data/__init__/">data</a>
+          
+            <label for="__nav_3_1_6_1_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="data" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_1_2">
+          <span class="md-nav__icon md-icon"></span>
+          data
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/interfaces/cli/data/commands/" class="md-nav__link">
+        commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_1_3" type="checkbox" id="__nav_3_1_6_1_3" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/interfaces/cli/dev/__init__/">dev</a>
+          
+            <label for="__nav_3_1_6_1_3">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="dev" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_1_3">
+          <span class="md-nav__icon md-icon"></span>
+          dev
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/interfaces/cli/dev/commands/" class="md-nav__link">
+        commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_1_4" type="checkbox" id="__nav_3_1_6_1_4" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/interfaces/cli/module/__init__/">module</a>
+          
+            <label for="__nav_3_1_6_1_4">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="module" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_1_4">
+          <span class="md-nav__icon md-icon"></span>
+          module
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/interfaces/cli/module/commands/" class="md-nav__link">
+        commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_1_5" type="checkbox" id="__nav_3_1_6_1_5" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/interfaces/cli/operation/__init__/">operation</a>
+          
+            <label for="__nav_3_1_6_1_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="operation" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_1_5">
+          <span class="md-nav__icon md-icon"></span>
+          operation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/interfaces/cli/operation/commands/" class="md-nav__link">
+        commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_1_6" type="checkbox" id="__nav_3_1_6_1_6" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/interfaces/cli/pipeline/__init__/">pipeline</a>
+          
+            <label for="__nav_3_1_6_1_6">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="pipeline" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_1_6">
+          <span class="md-nav__icon md-icon"></span>
+          pipeline
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/interfaces/cli/pipeline/commands/" class="md-nav__link">
+        commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/interfaces/cli/run/" class="md-nav__link">
+        run
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_1_8" type="checkbox" id="__nav_3_1_6_1_8" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/interfaces/cli/service/__init__/">service</a>
+          
+            <label for="__nav_3_1_6_1_8">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="service" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_1_8">
+          <span class="md-nav__icon md-icon"></span>
+          service
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/interfaces/cli/service/commands/" class="md-nav__link">
+        commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_1_9" type="checkbox" id="__nav_3_1_6_1_9" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/interfaces/cli/type/__init__/">type</a>
+          
+            <label for="__nav_3_1_6_1_9">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="type" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_1_9">
+          <span class="md-nav__icon md-icon"></span>
+          type
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/interfaces/cli/type/commands/" class="md-nav__link">
+        commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_1_10" type="checkbox" id="__nav_3_1_6_1_10" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/interfaces/cli/workflow/__init__/">workflow</a>
+          
+            <label for="__nav_3_1_6_1_10">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="workflow" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_1_10">
+          <span class="md-nav__icon md-icon"></span>
+          workflow
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/interfaces/cli/workflow/commands/" class="md-nav__link">
+        commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_2" type="checkbox" id="__nav_3_1_6_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/interfaces/python_api/__init__/">python_api</a>
+          
+            <label for="__nav_3_1_6_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="python_api" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_6_2">
+          <span class="md-nav__icon md-icon"></span>
+          python_api
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/interfaces/python_api/batch/" class="md-nav__link">
+        batch
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/interfaces/python_api/operation/" class="md-nav__link">
+        operation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/interfaces/python_api/utils/" class="md-nav__link">
+        utils
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/interfaces/python_api/value/" class="md-nav__link">
+        value
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_3" type="checkbox" id="__nav_3_1_6_3" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/interfaces/tui/__init__/">tui</a>
+          
+            <label for="__nav_3_1_6_3">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="tui" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_6_3">
+          <span class="md-nav__icon md-icon"></span>
+          tui
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/interfaces/tui/pager/" class="md-nav__link">
+        pager
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_7" type="checkbox" id="__nav_3_1_7" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/models/__init__/">models</a>
+          
+            <label for="__nav_3_1_7">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="models" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_1_7">
+          <span class="md-nav__icon md-icon"></span>
+          models
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/aliases/__init__/" class="md-nav__link">
+        aliases
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/archives/" class="md-nav__link">
+        archives
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/context/" class="md-nav__link">
+        context
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/documentation/" class="md-nav__link">
+        documentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_7_5" type="checkbox" id="__nav_3_1_7_5" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/models/events/__init__/">events</a>
+          
+            <label for="__nav_3_1_7_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="events" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_7_5">
+          <span class="md-nav__icon md-icon"></span>
+          events
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/events/alias_registry/" class="md-nav__link">
+        alias_registry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/events/data_registry/" class="md-nav__link">
+        data_registry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/events/destiny_registry/" class="md-nav__link">
+        destiny_registry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/events/job_registry/" class="md-nav__link">
+        job_registry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/events/pipeline/" class="md-nav__link">
+        pipeline
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/filesystem/" class="md-nav__link">
+        filesystem
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/info/" class="md-nav__link">
+        info
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_7_8" type="checkbox" id="__nav_3_1_7_8" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/models/module/__init__/">module</a>
+          
+            <label for="__nav_3_1_7_8">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="module" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_7_8">
+          <span class="md-nav__icon md-icon"></span>
+          module
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/module/destiniy/" class="md-nav__link">
+        destiniy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/module/jobs/" class="md-nav__link">
+        jobs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/module/manifest/" class="md-nav__link">
+        manifest
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/module/operation/" class="md-nav__link">
+        operation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/module/persistence/" class="md-nav__link">
+        persistence
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_7_8_6" type="checkbox" id="__nav_3_1_7_8_6" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/models/module/pipeline/__init__/">pipeline</a>
+          
+            <label for="__nav_3_1_7_8_6">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="pipeline" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_7_8_6">
+          <span class="md-nav__icon md-icon"></span>
+          pipeline
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/module/pipeline/controller/" class="md-nav__link">
+        controller
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/module/pipeline/pipeline/" class="md-nav__link">
+        pipeline
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/module/pipeline/structure/" class="md-nav__link">
+        structure
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/module/pipeline/value_refs/" class="md-nav__link">
+        value_refs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/python_class/" class="md-nav__link">
+        python_class
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/render_value/__init__/" class="md-nav__link">
+        render_value
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_7_11" type="checkbox" id="__nav_3_1_7_11" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/models/runtime_environment/__init__/">runtime_environment</a>
+          
+            <label for="__nav_3_1_7_11">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="runtime_environment" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_7_11">
+          <span class="md-nav__icon md-icon"></span>
+          runtime_environment
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/runtime_environment/kiara/" class="md-nav__link">
+        kiara
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/runtime_environment/operating_system/" class="md-nav__link">
+        operating_system
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/runtime_environment/python/" class="md-nav__link">
+        python
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_7_12" type="checkbox" id="__nav_3_1_7_12" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/models/values/__init__/">values</a>
+          
+            <label for="__nav_3_1_7_12">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="values" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_7_12">
+          <span class="md-nav__icon md-icon"></span>
+          values
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/values/data_type/" class="md-nav__link">
+        data_type
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/values/info/" class="md-nav__link">
+        info
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/values/lineage/" class="md-nav__link">
+        lineage
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/values/value/" class="md-nav__link">
+        value
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_7_12_5" type="checkbox" id="__nav_3_1_7_12_5" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/models/values/value_metadata/__init__/">value_metadata</a>
+          
+            <label for="__nav_3_1_7_12_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="value_metadata" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_7_12_5">
+          <span class="md-nav__icon md-icon"></span>
+          value_metadata
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/values/value_metadata/included_metadata_types/__init__/" class="md-nav__link">
+        included_metadata_types
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/models/values/value_schema/" class="md-nav__link">
+        value_schema
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_8" type="checkbox" id="__nav_3_1_8" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/modules/__init__/">modules</a>
+          
+            <label for="__nav_3_1_8">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="modules" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_1_8">
+          <span class="md-nav__icon md-icon"></span>
+          modules
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_8_1" type="checkbox" id="__nav_3_1_8_1" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/modules/included_core_modules/__init__/">included_core_modules</a>
+          
+            <label for="__nav_3_1_8_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="included_core_modules" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_8_1">
+          <span class="md-nav__icon md-icon"></span>
+          included_core_modules
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/modules/included_core_modules/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/modules/included_core_modules/filesystem/" class="md-nav__link">
+        filesystem
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/modules/included_core_modules/metadata/" class="md-nav__link">
+        metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/modules/included_core_modules/pipeline/" class="md-nav__link">
+        pipeline
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/modules/included_core_modules/pretty_print/" class="md-nav__link">
+        pretty_print
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/modules/included_core_modules/render_value/" class="md-nav__link">
+        render_value
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/modules/included_core_modules/serialization/" class="md-nav__link">
+        serialization
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_9" type="checkbox" id="__nav_3_1_9" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/operations/__init__/">operations</a>
+          
+            <label for="__nav_3_1_9">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="operations" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_1_9">
+          <span class="md-nav__icon md-icon"></span>
+          operations
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_9_1" type="checkbox" id="__nav_3_1_9_1" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/operations/included_core_operations/__init__/">included_core_operations</a>
+          
+            <label for="__nav_3_1_9_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="included_core_operations" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_9_1">
+          <span class="md-nav__icon md-icon"></span>
+          included_core_operations
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/operations/included_core_operations/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/operations/included_core_operations/metadata/" class="md-nav__link">
+        metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/operations/included_core_operations/pipeline/" class="md-nav__link">
+        pipeline
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/operations/included_core_operations/pretty_print/" class="md-nav__link">
+        pretty_print
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/operations/included_core_operations/render_value/" class="md-nav__link">
+        render_value
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/operations/included_core_operations/serialize/" class="md-nav__link">
+        serialize
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_10" type="checkbox" id="__nav_3_1_10" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/processing/__init__/">processing</a>
+          
+            <label for="__nav_3_1_10">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="processing" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_1_10">
+          <span class="md-nav__icon md-icon"></span>
+          processing
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/processing/synchronous/" class="md-nav__link">
+        synchronous
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_11" type="checkbox" id="__nav_3_1_11" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/registries/__init__/">registries</a>
+          
+            <label for="__nav_3_1_11">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="registries" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_1_11">
+          <span class="md-nav__icon md-icon"></span>
+          registries
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_11_1" type="checkbox" id="__nav_3_1_11_1" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/registries/aliases/__init__/">aliases</a>
+          
+            <label for="__nav_3_1_11_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="aliases" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_11_1">
+          <span class="md-nav__icon md-icon"></span>
+          aliases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/registries/aliases/archives/" class="md-nav__link">
+        archives
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_11_2" type="checkbox" id="__nav_3_1_11_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/registries/data/__init__/">data</a>
+          
+            <label for="__nav_3_1_11_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="data" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_11_2">
+          <span class="md-nav__icon md-icon"></span>
+          data
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_11_2_1" type="checkbox" id="__nav_3_1_11_2_1" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/registries/data/data_store/__init__/">data_store</a>
+          
+            <label for="__nav_3_1_11_2_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="data_store" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_11_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          data_store
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/registries/data/data_store/filesystem_store/" class="md-nav__link">
+        filesystem_store
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_11_3" type="checkbox" id="__nav_3_1_11_3" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/registries/destinies/__init__/">destinies</a>
+          
+            <label for="__nav_3_1_11_3">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="destinies" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_11_3">
+          <span class="md-nav__icon md-icon"></span>
+          destinies
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/registries/destinies/filesystem_store/" class="md-nav__link">
+        filesystem_store
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/registries/destinies/registry/" class="md-nav__link">
+        registry
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/registries/environment/__init__/" class="md-nav__link">
+        environment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_11_5" type="checkbox" id="__nav_3_1_11_5" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/registries/events/__init__/">events</a>
+          
+            <label for="__nav_3_1_11_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="events" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_11_5">
+          <span class="md-nav__icon md-icon"></span>
+          events
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/registries/events/metadata/" class="md-nav__link">
+        metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/registries/events/registry/" class="md-nav__link">
+        registry
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/registries/ids/__init__/" class="md-nav__link">
+        ids
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_11_7" type="checkbox" id="__nav_3_1_11_7" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/registries/jobs/__init__/">jobs</a>
+          
+            <label for="__nav_3_1_11_7">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="jobs" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_11_7">
+          <span class="md-nav__icon md-icon"></span>
+          jobs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_11_7_1" type="checkbox" id="__nav_3_1_11_7_1" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/registries/jobs/job_store/__init__/">job_store</a>
+          
+            <label for="__nav_3_1_11_7_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="job_store" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_11_7_1">
+          <span class="md-nav__icon md-icon"></span>
+          job_store
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/registries/jobs/job_store/filesystem_store/" class="md-nav__link">
+        filesystem_store
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/registries/models/__init__/" class="md-nav__link">
+        models
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/registries/modules/__init__/" class="md-nav__link">
+        modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/registries/operations/__init__/" class="md-nav__link">
+        operations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/registries/types/__init__/" class="md-nav__link">
+        types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/registries/workflows/__init__/" class="md-nav__link">
+        workflows
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_12" type="checkbox" id="__nav_3_1_12" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/utils/__init__/">utils</a>
+          
+            <label for="__nav_3_1_12">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="utils" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_1_12">
+          <span class="md-nav__icon md-icon"></span>
+          utils
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/utils/class_loading/" class="md-nav__link">
+        class_loading
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_12_2" type="checkbox" id="__nav_3_1_12_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../reference/kiara/utils/cli/__init__/">cli</a>
+          
+            <label for="__nav_3_1_12_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="cli" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_12_2">
+          <span class="md-nav__icon md-icon"></span>
+          cli
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/utils/cli/rich_click/" class="md-nav__link">
+        rich_click
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/utils/concurrency/" class="md-nav__link">
+        concurrency
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/utils/data/" class="md-nav__link">
+        data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/utils/db/" class="md-nav__link">
+        db
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/utils/doc/" class="md-nav__link">
+        doc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/utils/global_metadata/" class="md-nav__link">
+        global_metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/utils/graphs/" class="md-nav__link">
+        graphs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/utils/hashfs/__init__/" class="md-nav__link">
+        hashfs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/utils/hashing/" class="md-nav__link">
+        hashing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/utils/jupyter/" class="md-nav__link">
+        jupyter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/utils/metadata/" class="md-nav__link">
+        metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/utils/models/" class="md-nav__link">
+        models
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/utils/operations/" class="md-nav__link">
+        operations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/utils/output/" class="md-nav__link">
+        output
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/utils/pipelines/" class="md-nav__link">
+        pipelines
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/utils/string_vars/" class="md-nav__link">
+        string_vars
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/utils/values/" class="md-nav__link">
+        values
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/kiara/workflows/__init__/" class="md-nav__link">
+        workflows
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-problem" class="md-nav__link">
+    The problem
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-solution" class="md-nav__link">
+    The solution
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-7-stages-of-data" class="md-nav__link">
+    The 7 stages of data
+  </a>
+  
+    <nav class="md-nav" aria-label="The 7 stages of data">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-unmanaged" class="md-nav__link">
+    1) Unmanaged
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-onboarded" class="md-nav__link">
+    2) Onboarded
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-augmented-with-more-basic-metadata" class="md-nav__link">
+    3) Augmented with more (basic) metadata
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-typed" class="md-nav__link">
+    3) Typed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-transformed" class="md-nav__link">
+    4) Transformed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+  <a href="https://github.com/DHARPA-Project/kiara/edit/master/docs/architecture/data/persistence.md" title="Edit this page" class="md-content__button md-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
+
+
+
+<h1 id="data-persistence">Data persistence<a class="headerlink" href="#data-persistence" title="Permanent link">&para;</a></h1>
+<p>This is a document to describe my plans for storing data (and metadata) in <em>kiara</em>. (Almost) nothing I describe here is inmplemented yet, so it only reflects my current thinking. I think the overall strategy will hold, but there might be changes here and there.</p>
+<h2 id="the-problem">The problem<a class="headerlink" href="#the-problem" title="Permanent link">&para;</a></h2>
+<p><em>kiara</em>s main functionality centers around transforming input data sets to output data sets. Those outputs need to be stored, to be of any use later on. Obviously. When deciding how to do this, we must take into account concerns about performance, disk- and memory-usage, data versioning, which metadata to attach, in what way, how to deal with metadata schemas (and versioning of both), etc.</p>
+<h2 id="the-solution">The solution<a class="headerlink" href="#the-solution" title="Permanent link">&para;</a></h2>
+<p>Well, solution. This is my current thinking of how to tackle the problem in a way that takes into account all of the aspects described above, while still being flexible enough to hopefully be able to incorporate solutions for future unforsseen issues.</p>
+<p>I am having trouble coming up with a good structure for this document, so I think I'll just try to tell the story from the point of view of data. Starting from a state where data exists outside of <em>kiara</em>, to when it is in a state to be ready to be published. As with everything I'm writing here as an explanation of generic and abstract concepts, some of the technical details I'm describing might be simplified to the point of being incorrect...</p>
+<h2 id="the-7-stages-of-data">The 7 stages of data<a class="headerlink" href="#the-7-stages-of-data" title="Permanent link">&para;</a></h2>
+<p>One thing I'd like to say before I start to describe those stages: the transformation of a dataset, from one stage to the next, <strong>always</strong> <strong>always</strong> <strong>always</strong> happens by piping the dataset through a <em>kiara</em> module. At <strong>absolutely</strong> <strong>no</strong> point is this done without <em>kiara</em>s involvement and knowledge. The dataset is used as input for a module, and the result (technically a new dataset) is a representation of the dataset in its next stage. This is important to keep in mind, as it is crucial for us so we can track data lineage. I'll write more on the specifics of this below, where it makes more sense.</p>
+<h3 id="1-unmanaged">1) Unmanaged<a class="headerlink" href="#1-unmanaged" title="Permanent link">&para;</a></h3>
+<p>At the beginning, there was csv. Whether I like it or not, csv is the most predominant form data comes in. Csv is bad in a lot of ways, but in my mind the worst thing about it is that it is schema-less. True, in some cases you have a header-line, which gives you column-names, but that's not a requirement. Also, in a lot of cases you can auto-determine the type of each column, and luckily libraries like Pandas or Apache Arrow solved that problem for us so we don't have to do it ourselves every time. But those auto-parsers are not fool-proof, and you end up with integers where you wanted floats (or doubles), or integers where you wanted strings, or vice versa.</p>
+<p>In some cases we get data in a form that includes at least a semi-schema. Like a sqlite database file (which is more 'strongly' typed). But it's a lucky day when we get data that contains metadata about authorship, how and when it was created, from what sources, etc.</p>
+<h3 id="2-onboarded">2) Onboarded<a class="headerlink" href="#2-onboarded" title="Permanent link">&para;</a></h3>
+<p>This is the first thing we need to do to unmanaged data: we need to 'onboard' it, so <em>kiara</em> knows the data exists, and what exact bytes it consists of. This last thing is very important: we have to be able to make sure the data we are talking about is not being changed externally, a lot of things in <em>kiara</em>s approach to data depend on this.</p>
+<p>Practically, in most cases this means <em>kiara</em> will copy one or several files into a protected area that no other application can/should access. That way we always have a reference version of the dataset (the bytes) we are talking about.</p>
+<p>One thing <em>kiara</em> does at this stage is give the dataset a uniuqe id, which can be used to reference it later (by users, or other objects/functions). Another thing is to collect some basic metadata: when the file/folder was imported, from what original path, what the filenames are, mime-type, size of files, original file attributes (creation data, permissions, etc.). This can all be captured automatically. We can also record who it was that imported the dataset, if we have some app-global configuration about the current user, like a full name and email-address. Note, that this might or might not be the person who created the dataset.</p>
+<p>So, at this stage all we did was copy a file(set) into a protected area to sort of 'freeze' it, and augment it with very basic metadata. We don't know anything about the nature of the dataset yet, all we know is the bytes the datasets consists of. It is important to point out that we would not have to store those chunks of bytes as files again, using the same structure as the original set of files. The dataset ceased to be 'files' here for us, we are only interested in the chunks of bytes (and their meaning) from here on out. We could store the data in an object store, zipped, tarred and feathered (pun intended). Or as byte-stream directly on block storage, if we were crazy enough.</p>
+<p>A side-note that makes things a bit more complicated, but it is probably necessary to address potential concerns: no, we don't actually need to copy the files, and can leave them in place and only generate the metadata and id for them. This might be necessary in cases where the source data is very big (photos, movies, audio-files, other large datasets). I don't think we need to figure out how exactly we deal with this scenario right now, but it basically comes down to making the user aware of what is happening, and what the implications are if the source data is changed externally (inconsistent metadata and potential incorrect result data-sets further down the line). There are strategies to help prevent some of those potential issues (checksums, for example), but overall we have to acknowledge that working with large-sized datasets is always a challenge, and in some cases we might just have to say: "sorry, this is too big for us right now".</p>
+<h3 id="3-augmented-with-more-basic-metadata">3) Augmented with more (basic) metadata<a class="headerlink" href="#3-augmented-with-more-basic-metadata" title="Permanent link">&para;</a></h3>
+<p>To recapitulate: at this stage we have data (chunks of bytes -- not files!!! hit yourself over the head twice with something semi-heavy if you are still think in terms of files from here on out!) in a protected area, some very basic metadata, and an id for each dataset. We might or might not have authorship metadata (arguably one of the most important pieces of metadata), depending on whether who 'onboarded' the dataset actually created it.</p>
+<p>So, as a first step and following good practice, at this stage we should try to get the user to tell us about authorship and other core metadata about our dataset (licensing, copyright, ...). I don't think we can make this step mandatory, in practice, but we should push fairly hard, even if that means a slight decrease in user experience. It is very important information to have...</p>
+<p>So, one thing we could do was to have a checkbox that lets the user confirm: I created the data (in which case we can just copy the 'imported-by' field).</p>
+<h3 id="3-typed">3) Typed<a class="headerlink" href="#3-typed" title="Permanent link">&para;</a></h3>
+<p>Chunks of bytes are not very useful by itself. They need to be interpreted to be of use. This means: determining in some way what the structure of the chunks of bytes is, and then applying common conventions for that particular structure (aka data type/format) when reading the chunks of bytes. Therefore 'interpreting' the chunks of bytes. This is a very obvious thing that happens all the time we use computers, but I think it makes sense to point it out here, because usually this is transparent to the user when they click an 'Open file' button in an application, and even some developers are ignorant to the underlying concept (and can afford to be, since they usually work several abstraction layers above where that is happening).</p>
+<p>To encapsulate this concept, we will create a 'data type' for each important group of datasets that share some important characteristics. Examples for very simple data types are strings, integers, booleans. I'll ignore those, because those are trivial to use, and that triviality actually makes it harder to explain the concept I'm talking about. More relevant data types are: 'table', 'network graph', 'text corpus', 'photo collection'. Every data type inherently contains a description of, well, the 'type' of data represented by it, and, with that, information about how a user or code caqn access the actual data, and/or some of its properties.</p>
+<p>From here on out, I'll focus on tabular data in some form or other, since I expect that this will be one of our most important (base-) data types. I expect the reader to 'translate' whatever I'm saying below to other types, and extrapolate the practical differences.</p>
+<p>So, to explain this step I decided to look at three different use-cases (mostly because we use them in 2 of our example workflows, so people should be familiar with them):</p>
+<ul>
+<li>a csv file with tabular data</li>
+<li>an imported folder of text files (a corpus)</li>
+<li>two imported csv files containing edge and node information to form a network graph</li>
+</ul>
+<h4 id="example-tabular-data">Example: tabular data<a class="headerlink" href="#example-tabular-data" title="Permanent link">&para;</a></h4>
+<p>This is the simplest case, and very common: we have a csv file, and need to have some sort of tabular data structure that we can use to query and analyze the data contained in it.</p>
+<p>Let's assume we have onboarded a csv file using <em>kiara</em>, so we have a dataset id that we use to point to it. Technically, this dataset is already 'typed': it has the type 'file'. This is not a very useful type, all it allows can tell us is a file name (which in a way is metadata), and the file content. We can ask <em>kiara</em> to interpret the content of this file as table, though, because we know it must be one. This means we 'overlay' a different, more specific data type on top of the same data.</p>
+<p>Under the hood, <em>kiara</em> will use the Apache Arrow <a href="TODO"><code>read_csv</code></a> helper method, which is very smart and fast, and it can create an Arrow Table object out of a csv file. It can figure out file encoding, column names (if present), column types, seperator characters. This detection is not fool-proof, but should work good enough in practice that we don't need to worry about it here. What really happens here is that the <code>read_csv</code> method is not just reading our data, but also, at the same time, is adding some important metadata to our dataset. Pandas can do the same with its csv import method. Even though this adding of metadata is more or less transparent to the user -- so they are not really aware of it -- it happens, and it is a very important thing that must happen to make our dataset useful. In our application, we might or might not want to ask users whether the extracted column names and types are correct, but this is a UI-specific implementation detail.</p>
+<p>So, considering all this, the important point here is that at this stage we have actual 'table' data, there is no need for the original csv file anymore (except as a reference for data lineage purposes). Our dataset is now of the data type 'table'. Which means we have an assurance that we can query it for table metadata properties (number of rows, number and name of columns, column types, size in bytes, etc.). And we can apply functions against it that are commonly applied against tabular data (sql queries, filters, etc.). That means, a 'data type' is really just a convention, a marker, that tells us how the bytes are organized for a particular set of bytes, and how to interact with it. This is all users and 3rd party-code needs to worry about. Implementation details about how this data is stored or loaded are irrelevant on this level of abstraction. This reduces complexity for <em>kiara</em>s external facing API, while, of course, introducing some extra complexity internally.</p>
+<h4 id="example-text-corpus">Example: text corpus<a class="headerlink" href="#example-text-corpus" title="Permanent link">&para;</a></h4>
+<p>The source data comes as a folder of files, each file contains (just) text (not structured like json, csv, etc.). When we do the 'onboarding' step for this data, all we do is copy the files verbatim into a new location. There could be some metadata implicit in the relative paths of each file (e.g. languages -- files for the same language live in a subfolder named after the language), and there can also be some metadata in the file names. We preserve all that metadata by copying the folder one-to-one, without changing anything. But it is important to note that this metadata, as of yet, is still uncaptured.</p>
+<p>The 'soul' of this dataset (meaning: the properties of the dataset we are interested in and we want to use in our investigation, and which will hopefully answer our research question) is in the content of each text file (aka the unicode encoded chunks of bytes). It is important to say again: at this stage the dataset ceased to be a set of files! It is a dataset within <em>kiara</em> that has an id (a single one! not one for every text!), and it has a basic set of metadata fields (the ones we could collect automatically). Yes, the dataset is backed by a set of files in the <em>kiara</em> data store, but that is an implementation detail nobody needs to know about, and I think we should try hard to hide from users. If you haven't noticed so far: I strongly believe the file metaphor is a distraction, and not necessary for us, except when import/export is concerned.</p>
+<p>Anyway, <em>kiara</em> does not know much about the dataset at this stage. To be of actual use, we need to interpret the data. In this case, we know we want to interpret the data as a text corpus.</p>
+<p>The most basic shape we can imagine a text corpus to look like is a list of strings (an array, or a single-column table). For making it easier to work with the text corpus in the future, let's make up a convention to save in tabular form, and the column containing the text items is always named <code>text_content</code>. If we use, for example Apache Arrow to store that table, it makes the stored chunks of data much smaller (in comparison to text files), and it also makes the whole thing easier (at least faster) to query. It also allows us to easily attach more (meta-)data to the dataset.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The distinction between data and metadata becomes a bit blurry here. In a lot of cases, when I say metadata, it is metadata from the point of view of the research proess, not metadata for <em>kiara</em>. I don't know how to make it clear which I'm talking about in each case without making this whole thing even more unreadable as it already is, so I will just have to ask you to figure it out yourself, in each case :-)</p>
+</div>
+<p>Because we didn't lose any of the implied metadata when onboarding our folder of text files, it would be a shame if we wouldn't actually capture it. In this case, let's assume we didn't have any subfolders (so no metadata in their name), but our files are named in a special way:</p>
+<div class="highlight"><pre><span></span><code>[publication_id]_[date_of_publishing]_[other_stuff_we_are_not_interested_in]
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The information about the format is important (in a way it is also an input) and we need to retrieve it somehow. This is a real problem that doesn't look like a big problem. But it is, for us. I'll ignore this here, because it would complicate things too much and is only of tangential relevance.</p>
+</div>
+<p>This means, we can extract the publication id and the date of publishing with a simple regular expression, and we can add a column for each one to our table that so far only contains the actual text for each item. The publication id will be of type string (even though some of the ids might be integers -- we don't care), and the publication date will be a time format. Now we have a table with 3 columns, and we can already filter the texts by date easily, which is pretty useful! We wouldn't, strictly speaking those two additional columns to have a dataset of type 'text corpus' but it's much more useful that way. As a general rule: if we have metadata like that, it should be extracted and attached to the data in this stage. It's cheap to do in a lot of cases, and we never know when it will be needed later.</p>
+<p>What we have at this stage is data that has the attributes of a table (columns with name and type info, as well as rows representing an item and it's metadata). This is basically the definition of our 'text corpus' data type: something that allows us to access text content items (the actual important data) using a mandatory column named <code>text_content</code>, and that has zero to N metadata properties for each of those text items. In addition, we can access other metadata that is inherited from the base type (table): number of rows, size in bytes, etc, as well as its lineage (via a reference to the original onboarded dataset).
+Internally, we'll store this data type as an Arrow table, but again, this is an implementation detail, and neither user nor frontend needs to know about this (exceptions apply, of course, but lets not get bogged down by those just now -- none of them are deal-breakers, as far as I can see).</p>
+<h4 id="example-network-graph-data">Example: network graph data<a class="headerlink" href="#example-network-graph-data" title="Permanent link">&para;</a></h4>
+<p>Similar to the text corpus case above, let's think about what a basic definition of a network graph data type would look like. It would have to include a list of nodes, and a list of edges (that tell us how those nodes are connected). Actually, the list of nodes is implied in the list of edges, so we don't need to provide that if we don't feel like it (although, that doesn't apply if we have nodes that are not part of any edge). In addition, both nodes and edges can have attributes, but those are optional. So, our network graph data type would, at a minimum, need to be able to give us this information about all this via its interface. <a href="TODO">networkx</a> is one of the most used Python libaries in this space, so let's decide that internally, for us, a network graph is represented as an object of the  <a href="TODO">Graph</a> class, or one of its subclasses.</p>
+<p>This class will give us a lot of useful methods and properties to access and query, one problem left is: how do we create an object of this class in a way that fits with our overall strategy? We can't save and load a networkx object directly (<a href="TODO">pickling</a> would be a bad idea for several reasons), so we need to create (and re-create) it via some other way.</p>
+<p>For this, lets look at the constructor arguments of this class, as well as what sort of data types we have available that we can use to feed those arguments. <a href="TODO">One option</a> apparently is to use a list of edges contained in a Pandas dataframe as input, along with a name of columns representing the names of source and target column name, something like:</p>
+<div class="highlight"><pre><span></span><code>        graph: nx.DiGraph = nx.from_pandas_edgelist(
+            pandas_table,
+            source_column,
+            target_column,
+        )
+</code></pre></div>
+<p>This could work for us: as in the other example, we can use a table as the 'backing' data type for our graph object. Considering a graph without any node attributes, we can have a table with a minimum of two columns, and via a convention that we just made up, we say that the source column should be called <code>edge_source</code>, and the target column <code>edge_target</code>. We wrap all this in an Arrow table again, and save it as such. And later load it again, assuming the same convention (which, basically, saves us from asking for 2 column names every time). If our graph also includes node attributes, all we do is extend the implementation of our network graph data type to create a second table with a required column <code>node_id</code>, and one or several more columns that hold node attributes, similar to the metadata in our 'text corpus' example from above.</p>
+<h3 id="4-transformed">4) Transformed<a class="headerlink" href="#4-transformed" title="Permanent link">&para;</a></h3>
+<p>With all that out of the way, we can finally do something interesting with the data. Everything up to this point was more or less housekeeping: importing, tagging, marking, organizing datasets. We still are operating on the same actual data as was contained in the original files (whatever type they were). But we now know exactly what we can do with it without having to ask questions.</p>
+<p>Using the 3 example from above, we now know we have 3 datasets: one table, one text corpus (which is also a table, but a more specific one), and a network graph. And each of those datasets also comes with metadata, and we know what metadata files are available for what data types, and what the metadata means in each context.</p>
+<p>A first thing we can do is automatically matching datasets to available workflows: we know what input types a workflow takes (that is included in each workflow metadata). So all we need to do is check the input types of each available workflow against the type of a dataset. This works even with different specificity: give me all workflows that take as input a generic graph. Or: give me all workflows that take a directed graph as input (this is information that is included in the metadata of each network graph dataset).</p>
+
+              
+            </article>
+            
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      DHARPA project
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../assets/javascripts/workers/search.b028fd86.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.0f659f14.min.js"></script>
+      
+    
+  </body>
+</html>

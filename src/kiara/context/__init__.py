@@ -190,7 +190,6 @@ class Kiara(object):
             config_cls = archive_cls._config_cls
             archive_config = config_cls(**archive.config)
             archive_obj = archive_cls(archive_id=archive.archive_uuid, config=archive_config)  # type: ignore
-
             for supported_type in archive_obj.supported_item_types():
                 if supported_type == "data":
                     self.data_registry.register_data_archive(
@@ -204,6 +203,9 @@ class Kiara(object):
 
                 if supported_type == "destiny":
                     self.destiny_registry.register_destiny_archive(archive_obj, alias=archive_alias)  # type: ignore
+
+                if supported_type == "workflow":
+                    self.workflow_registry.register_archive(archive_obj, alias=archive_alias)  # type: ignore
 
     def _run_alembic_migrations(self):
         script_location = os.path.abspath(KIARA_DB_MIGRATIONS_FOLDER)

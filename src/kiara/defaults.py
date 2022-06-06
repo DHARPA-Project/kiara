@@ -83,6 +83,9 @@ DEFAULT_JOB_STORE_MARKER = "default_job_store"
 DEFAULT_ALIAS_STORE_MARKER = "default_alias_store"
 """Name for the default context alias store."""
 
+DEFAULT_WORKFLOW_STORE_MARKER = "default_workflow_store"
+"""Name for the default context workflow store."""
+
 METADATA_DESTINY_STORE_MARKER = "metadata"
 """Name for the default context destiny store."""
 

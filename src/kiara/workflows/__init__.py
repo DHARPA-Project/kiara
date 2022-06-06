@@ -19,6 +19,7 @@ from kiara.models.module.pipeline.controller import SinglePipelineController
 from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.models.module.pipeline.structure import PipelineStructure
 from kiara.models.values.value import ValueMap, ValueMapReadOnly
+from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import find_free_id, is_debug
 
 logger = structlog.getLogger()
@@ -132,6 +133,7 @@ class Workflow(object):
     def __init__(self, workflow_alias: str, kiara: Kiara):
 
         self._kiara: Kiara = kiara
+        self._id = ID_REGISTRY.generate(comment="new workflow id")
         self._pipeline_controller: WorkflowPipelineController = (
             WorkflowPipelineController(kiara=self._kiara)
         )
@@ -151,6 +153,10 @@ class Workflow(object):
         self._execution_context: ExecutionContext = ExecutionContext()
 
         self._snapshots: List[WorkflowState] = []
+
+    @property
+    def workflow_id(self) -> uuid.UUID:
+        return self._id
 
     @property
     def workflow_alias(self) -> str:

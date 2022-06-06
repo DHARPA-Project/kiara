@@ -23,6 +23,7 @@ from kiara.defaults import (
     DEFAULT_CONTEXT_NAME,
     DEFAULT_DATA_STORE_MARKER,
     DEFAULT_JOB_STORE_MARKER,
+    DEFAULT_WORKFLOW_STORE_MARKER,
     KIARA_CONFIG_FILE_NAME,
     KIARA_MAIN_CONFIG_FILE,
     KIARA_MAIN_CONTEXTS_PATH,
@@ -378,6 +379,31 @@ class KiaraConfig(BaseSettings):
                 config=alias_store_config,
             )
             context_config.archives[DEFAULT_ALIAS_STORE_MARKER] = alias_store
+
+            changed = True
+
+        if DEFAULT_WORKFLOW_STORE_MARKER not in context_config.archives.keys():
+
+            workflow_store_type = "filesystem_workflow_store"
+            assert workflow_store_type in available_archives.keys()
+            workflow_store_id = ID_REGISTRY.generate(
+                comment="default workflow store id"
+            )
+            workflow_store_config = {
+                "archive_path": os.path.abspath(
+                    os.path.join(
+                        self.stores_base_path,
+                        workflow_store_type,
+                        str(workflow_store_id),
+                    )
+                )
+            }
+            workflow_store = KiaraArchiveConfig.construct(
+                archive_id=str(workflow_store_id),
+                archive_type=workflow_store_type,
+                config=workflow_store_config,
+            )
+            context_config.archives[DEFAULT_WORKFLOW_STORE_MARKER] = workflow_store
 
             changed = True
 

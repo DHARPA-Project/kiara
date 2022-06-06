@@ -1755,6 +1755,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow_registry/" class="md-nav__link">
+        workflow_registry
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -2260,6 +2274,20 @@
           
         </ul>
       </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflow/" class="md-nav__link">
+        workflow
+      </a>
     </li>
   
 
@@ -3155,10 +3183,49 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_11_12" type="checkbox" id="__nav_3_1_11_12" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../registries/workflows/__init__/">workflows</a>
+          
+            <label for="__nav_3_1_11_12">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="workflows" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_11_12">
+          <span class="md-nav__icon md-icon"></span>
+          workflows
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../../../registries/workflows/__init__/" class="md-nav__link">
-        workflows
+      <a href="../../../registries/workflows/archives/" class="md-nav__link">
+        archives
       </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -3625,6 +3692,13 @@
           <li class="md-nav__item">
   <a href="#kiara.models.events.pipeline" class="md-nav__link">
     pipeline
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.models.events.workflow_registry" class="md-nav__link">
+    workflow_registry
   </a>
   
 </li>
@@ -6721,6 +6795,216 @@ StepDetails            (<span title="pydantic.main.BaseModel">BaseModel</span>)
     </div>
 
   </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h3 id="kiara.models.events.workflow_registry" class="doc doc-heading">
+        <code>workflow_registry</code>
+
+
+
+<a href="#kiara.models.events.workflow_registry" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+<h4 id="kiara.models.events.workflow_registry-classes">Classes<a href="#kiara.models.events.workflow_registry-classes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h5 id="kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent" class="doc doc-heading">
+        <code>
+WorkflowArchiveAddedEvent            (<a class="autorefs autorefs-internal" title="kiara.models.events.RegistryEvent" href="#kiara.models.events.RegistryEvent">RegistryEvent</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/events/workflow_registry.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">WorkflowArchiveAddedEvent</span><span class="p">(</span><span class="n">RegistryEvent</span><span class="p">):</span>
+
+    <span class="n">event_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;workflow_archive_added&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;workflow_archive_added&quot;</span>
+    <span class="n">workflow_archive_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The unique id of this data archive.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">workflow_archive_alias</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The alias this workflow archive was added as.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">is_store</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether this archive supports write operations (aka implements the &#39;WorkflowStore&#39; interface).&quot;</span>
+    <span class="p">)</span>
+    <span class="n">is_default_store</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether this store acts as default store.&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h6 id="kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent-attributes">Attributes<a href="#kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent.event_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">event_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;workflow_archive_added&#39;</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent.event_type" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent.is_default_store" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">is_default_store</span><span class="p">:</span> <span class="nb">bool</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent.is_default_store" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>Whether this store acts as default store.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent.is_store" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">is_store</span><span class="p">:</span> <span class="nb">bool</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent.is_store" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>Whether this archive supports write operations (aka implements the 'WorkflowStore' interface).</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent.workflow_archive_alias" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">workflow_archive_alias</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent.workflow_archive_alias" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The alias this workflow archive was added as.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent.workflow_archive_id" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">workflow_archive_id</span><span class="p">:</span> <span class="n">UUID</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent.workflow_archive_id" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The unique id of this data archive.</p>
+    </div>
+
+  </div>
+
+
+
 
 
 

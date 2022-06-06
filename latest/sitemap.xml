@@ -401,6 +401,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://dharpa.org/kiara/latest/reference/kiara/models/workflow/</loc>
+         <lastmod>2022-06-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/aliases/__init__/</loc>
          <lastmod>2022-06-06</lastmod>
          <changefreq>daily</changefreq>
@@ -432,6 +437,11 @@
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/events/pipeline/</loc>
+         <lastmod>2022-06-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://dharpa.org/kiara/latest/reference/kiara/models/events/workflow_registry/</loc>
          <lastmod>2022-06-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -757,6 +767,11 @@
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/workflows/__init__/</loc>
+         <lastmod>2022-06-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/workflows/archives/</loc>
          <lastmod>2022-06-06</lastmod>
          <changefreq>daily</changefreq>
     </url>

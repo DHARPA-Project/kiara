@@ -1753,6 +1753,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../models/events/workflow_registry/" class="md-nav__link">
+        workflow_registry
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -2258,6 +2272,20 @@
           
         </ul>
       </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../models/workflow/" class="md-nav__link">
+        workflow
+      </a>
     </li>
   
 
@@ -3153,10 +3181,49 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_11_12" type="checkbox" id="__nav_3_1_11_12" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../registries/workflows/__init__/">workflows</a>
+          
+            <label for="__nav_3_1_11_12">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="workflows" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_11_12">
+          <span class="md-nav__icon md-icon"></span>
+          workflows
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../../registries/workflows/__init__/" class="md-nav__link">
-        workflows
+      <a href="../../registries/workflows/archives/" class="md-nav__link">
+        archives
       </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -3847,7 +3914,6 @@ how something was created, and in which environment.</p>
             <span class="n">config_cls</span> <span class="o">=</span> <span class="n">archive_cls</span><span class="o">.</span><span class="n">_config_cls</span>
             <span class="n">archive_config</span> <span class="o">=</span> <span class="n">config_cls</span><span class="p">(</span><span class="o">**</span><span class="n">archive</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
             <span class="n">archive_obj</span> <span class="o">=</span> <span class="n">archive_cls</span><span class="p">(</span><span class="n">archive_id</span><span class="o">=</span><span class="n">archive</span><span class="o">.</span><span class="n">archive_uuid</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">archive_config</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-
             <span class="k">for</span> <span class="n">supported_type</span> <span class="ow">in</span> <span class="n">archive_obj</span><span class="o">.</span><span class="n">supported_item_types</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">supported_type</span> <span class="o">==</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">register_data_archive</span><span class="p">(</span>
@@ -3861,6 +3927,9 @@ how something was created, and in which environment.</p>
 
                 <span class="k">if</span> <span class="n">supported_type</span> <span class="o">==</span> <span class="s2">&quot;destiny&quot;</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">destiny_registry</span><span class="o">.</span><span class="n">register_destiny_archive</span><span class="p">(</span><span class="n">archive_obj</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="n">archive_alias</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+                <span class="k">if</span> <span class="n">supported_type</span> <span class="o">==</span> <span class="s2">&quot;workflow&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">workflow_registry</span><span class="o">.</span><span class="n">register_archive</span><span class="p">(</span><span class="n">archive_obj</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="n">archive_alias</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
     <span class="k">def</span> <span class="nf">_run_alembic_migrations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">script_location</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">KIARA_DB_MIGRATIONS_FOLDER</span><span class="p">)</span>
@@ -6113,6 +6182,31 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
                 <span class="n">config</span><span class="o">=</span><span class="n">alias_store_config</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">context_config</span><span class="o">.</span><span class="n">archives</span><span class="p">[</span><span class="n">DEFAULT_ALIAS_STORE_MARKER</span><span class="p">]</span> <span class="o">=</span> <span class="n">alias_store</span>
+
+            <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">DEFAULT_WORKFLOW_STORE_MARKER</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">context_config</span><span class="o">.</span><span class="n">archives</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+
+            <span class="n">workflow_store_type</span> <span class="o">=</span> <span class="s2">&quot;filesystem_workflow_store&quot;</span>
+            <span class="k">assert</span> <span class="n">workflow_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="n">workflow_store_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;default workflow store id&quot;</span>
+            <span class="p">)</span>
+            <span class="n">workflow_store_config</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;archive_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">stores_base_path</span><span class="p">,</span>
+                        <span class="n">workflow_store_type</span><span class="p">,</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">workflow_store_id</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="p">}</span>
+            <span class="n">workflow_store</span> <span class="o">=</span> <span class="n">KiaraArchiveConfig</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
+                <span class="n">archive_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">workflow_store_id</span><span class="p">),</span>
+                <span class="n">archive_type</span><span class="o">=</span><span class="n">workflow_store_type</span><span class="p">,</span>
+                <span class="n">config</span><span class="o">=</span><span class="n">workflow_store_config</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">context_config</span><span class="o">.</span><span class="n">archives</span><span class="p">[</span><span class="n">DEFAULT_WORKFLOW_STORE_MARKER</span><span class="p">]</span> <span class="o">=</span> <span class="n">workflow_store</span>
 
             <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
 

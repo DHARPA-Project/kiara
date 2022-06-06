@@ -1753,6 +1753,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../events/workflow_registry/" class="md-nav__link">
+        workflow_registry
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -2258,6 +2272,20 @@
           
         </ul>
       </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/" class="md-nav__link">
+        workflow
+      </a>
     </li>
   
 
@@ -3153,10 +3181,49 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_11_12" type="checkbox" id="__nav_3_1_11_12" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../registries/workflows/__init__/">workflows</a>
+          
+            <label for="__nav_3_1_11_12">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="workflows" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_11_12">
+          <span class="md-nav__icon md-icon"></span>
+          workflows
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../../registries/workflows/__init__/" class="md-nav__link">
-        workflows
+      <a href="../../registries/workflows/archives/" class="md-nav__link">
+        archives
       </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -4460,6 +4527,19 @@
   <a href="#kiara.models.values.value_metadata.included_metadata_types.PythonClassMetadata.retrieve_supported_data_types" class="md-nav__link">
     retrieve_supported_data_types()
   </a>
+  
+    <nav class="md-nav" aria-label="retrieve_supported_data_types()">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.models.workflow" class="md-nav__link">
+    workflow
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -12674,6 +12754,216 @@ StepDetails            (<span title="pydantic.main.BaseModel">BaseModel</span>)
     </div>
 
   </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h5 id="kiara.models.events.workflow_registry" class="doc doc-heading">
+        <code>workflow_registry</code>
+
+
+
+<a href="#kiara.models.events.workflow_registry" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+<h6 id="kiara.models.events.workflow_registry-classes">Classes<a href="#kiara.models.events.workflow_registry-classes" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h7 id="kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent" class="doc doc-heading">
+        <code>
+WorkflowArchiveAddedEvent            (<a class="autorefs autorefs-internal" title="kiara.models.events.RegistryEvent" href="../events/__init__/#kiara.models.events.RegistryEvent">RegistryEvent</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/events/workflow_registry.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">WorkflowArchiveAddedEvent</span><span class="p">(</span><span class="n">RegistryEvent</span><span class="p">):</span>
+
+    <span class="n">event_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;workflow_archive_added&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;workflow_archive_added&quot;</span>
+    <span class="n">workflow_archive_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The unique id of this data archive.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">workflow_archive_alias</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The alias this workflow archive was added as.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">is_store</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether this archive supports write operations (aka implements the &#39;WorkflowStore&#39; interface).&quot;</span>
+    <span class="p">)</span>
+    <span class="n">is_default_store</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether this store acts as default store.&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h8 id="kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent-attributes">Attributes<a href="#kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent-attributes" class="headerlink" title="Permanent link">&para;</a></h8>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent.event_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">event_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;workflow_archive_added&#39;</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent.event_type" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent.is_default_store" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">is_default_store</span><span class="p">:</span> <span class="nb">bool</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent.is_default_store" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>Whether this store acts as default store.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent.is_store" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">is_store</span><span class="p">:</span> <span class="nb">bool</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent.is_store" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>Whether this archive supports write operations (aka implements the 'WorkflowStore' interface).</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent.workflow_archive_alias" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">workflow_archive_alias</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent.workflow_archive_alias" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>The alias this workflow archive was added as.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent.workflow_archive_id" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">workflow_archive_id</span><span class="p">:</span> <span class="n">UUID</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.events.workflow_registry.WorkflowArchiveAddedEvent.workflow_archive_id" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>The unique id of this data archive.</p>
+    </div>
+
+  </div>
+
+
+
 
 
 
@@ -41283,6 +41573,222 @@ Config        </code>
     </div>
 
   </div>
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h3 id="kiara.models.workflow" class="doc doc-heading">
+        <code>workflow</code>
+
+
+
+<a href="#kiara.models.workflow" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+<h4 id="kiara.models.workflow-classes">Classes<a href="#kiara.models.workflow-classes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h5 id="kiara.models.workflow.Workflow" class="doc doc-heading">
+        <code>
+Workflow            (<a class="autorefs autorefs-internal" title="kiara.models.KiaraModel" href="#kiara.models.KiaraModel">KiaraModel</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.models.workflow.Workflow" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Workflow</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.workflow&quot;</span>
+
+    <span class="n">full_alias</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The full alias for this workflow, within the current kiara context.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">rel_alias</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The relative alias for this workflow, within the current kiara context.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The globally unique uuid for this workflow.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">workflow_archive</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The alias for the workflow archive that contains this workflow, within the current kiara context.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">workflow_archive_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The globally unique id for the workflow archive that contains this workflow.&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h6 id="kiara.models.workflow.Workflow-attributes">Attributes<a href="#kiara.models.workflow.Workflow-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.workflow.Workflow.full_alias" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">full_alias</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.workflow.Workflow.full_alias" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The full alias for this workflow, within the current kiara context.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.workflow.Workflow.rel_alias" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">rel_alias</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.workflow.Workflow.rel_alias" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The relative alias for this workflow, within the current kiara context.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.workflow.Workflow.workflow_archive" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">workflow_archive</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.workflow.Workflow.workflow_archive" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The alias for the workflow archive that contains this workflow, within the current kiara context.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.workflow.Workflow.workflow_archive_id" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">workflow_archive_id</span><span class="p">:</span> <span class="n">UUID</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.workflow.Workflow.workflow_archive_id" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The globally unique id for the workflow archive that contains this workflow.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.workflow.Workflow.workflow_id" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">workflow_id</span><span class="p">:</span> <span class="n">UUID</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.workflow.Workflow.workflow_id" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The globally unique uuid for this workflow.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
 
 
 

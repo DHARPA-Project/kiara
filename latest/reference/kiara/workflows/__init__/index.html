@@ -1751,6 +1751,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../models/events/workflow_registry/" class="md-nav__link">
+        workflow_registry
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -2256,6 +2270,20 @@
           
         </ul>
       </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../models/workflow/" class="md-nav__link">
+        workflow
+      </a>
     </li>
   
 
@@ -3151,10 +3179,49 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_11_12" type="checkbox" id="__nav_3_1_11_12" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../registries/workflows/__init__/">workflows</a>
+          
+            <label for="__nav_3_1_11_12">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="workflows" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_1_11_12">
+          <span class="md-nav__icon md-icon"></span>
+          workflows
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../../registries/workflows/__init__/" class="md-nav__link">
-        workflows
+      <a href="../../registries/workflows/archives/" class="md-nav__link">
+        archives
       </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -3761,6 +3828,7 @@ Workflow        </code>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">kiara</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="s2">&quot;new workflow id&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_controller</span><span class="p">:</span> <span class="n">WorkflowPipelineController</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">WorkflowPipelineController</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)</span>
         <span class="p">)</span>
@@ -3780,6 +3848,10 @@ Workflow        </code>
         <span class="bp">self</span><span class="o">.</span><span class="n">_execution_context</span><span class="p">:</span> <span class="n">ExecutionContext</span> <span class="o">=</span> <span class="n">ExecutionContext</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_snapshots</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">WorkflowState</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">workflow_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">workflow_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -4155,6 +4227,28 @@ Workflow        </code>
   </span>
 
 <a href="#kiara.workflows.Workflow.workflow_alias" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.workflows.Workflow.workflow_id" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">workflow_id</span><span class="p">:</span> <span class="n">UUID</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.workflows.Workflow.workflow_id" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 

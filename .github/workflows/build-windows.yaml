@@ -23,8 +23,8 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*') }}
       - uses: actions/checkout@v2
       - name: install required plugin packages
-        run: pip install -U --pre --extra-index-url https://pypi.fury.io/dharpa/ kiara_plugin.core_types kiara_plugin.tabular
+        run: pip install  --prefer-binary -U --pre --extra-index-url https://pypi.fury.io/dharpa/ kiara_plugin.core_types kiara_plugin.tabular
       - name: install kiara
-        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]
+        run: pip install  --prefer-binary -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]
       - name: test with pytest
         run: make test

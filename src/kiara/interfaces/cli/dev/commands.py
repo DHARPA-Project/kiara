@@ -3,11 +3,14 @@
 #  Copyright (c) 2021, University of Luxembourg / DHARPA project
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
+import copy
+import os
 import rich_click as click
+from subprocess import PIPE, Popen
+from threading import Thread
 
 # from alembic import command  # type: ignore
 # from alembic.config import Config  # type: ignore
-from kiara import Kiara
 
 # noqa
 # type: ignore
@@ -23,9 +26,39 @@ def dev_group(ctx):
 @click.pass_context
 def test(ctx):
 
-    kiara: Kiara = ctx.obj["kiara"]
+    # kiara: Kiara = ctx.obj["kiara"]
+    def run():
+        command = ["kiara", "data", "list"]
+        command = [
+            "kiara",
+            "run",
+            "examples/pipelines/tutorial_3.yaml",
+            "csv_file_path=examples/data/journals/JournalNodes1902.csv",
+            "filter_string=Amsterdam",
+            "column_name=City",
+        ]
 
-    print(kiara.runtime_config)
+        extra_env = {}
+        os_env_vars = copy.deepcopy(os.environ)
+        _run_env = dict(os_env_vars)
+        if extra_env:
+            _run_env.update(extra_env)
+
+        print(f"RUNNING: {' '.join(command)}")
+        p = Popen(command, stdout=PIPE, stderr=PIPE, env=_run_env)
+        stdout, stderr = p.communicate()
+
+        stdout_str = stdout.decode("utf-8")
+        stderr_str = stderr.decode("utf-8")
+        print("stdout:")
+        print(stdout_str)
+        print("stderr:")
+        print(stderr_str)
+
+    thread = Thread(target=run, daemon=True)
+    thread.run()
+
+    # print(kiara.runtime_config)
 
     # kiara: Kiara = ctx.obj["kiara"]
     #

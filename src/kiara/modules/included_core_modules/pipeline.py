@@ -43,7 +43,8 @@ class PipelineModule(KiaraModule):
     ) -> ValueSetSchema:
 
         pipeline_structure: PipelineStructure = self.config.structure
-        return pipeline_structure.pipeline_inputs_schema
+        inputs_schema = pipeline_structure.pipeline_inputs_schema
+        return inputs_schema
 
     def create_outputs_schema(
         self,

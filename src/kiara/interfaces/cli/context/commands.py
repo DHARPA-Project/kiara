@@ -90,45 +90,93 @@ def explain_context(
 @click.option(
     "--force", "-f", help="Delete without prompt.", is_flag=True, default=False
 )
+@click.option(
+    "--all-contexts", "-a", help="Delete all contexts.", is_flag=True, default=False
+)
 @click.pass_context
-def delete_context(ctx, context_name: Optional[str] = None, force: bool = False):
+def delete_context(
+    ctx,
+    context_name: Optional[str] = None,
+    force: bool = False,
+    all_contexts: bool = False,
+):
     """Delete a context and all its stored values."""
 
     kiara_config: KiaraConfig = ctx.obj["kiara_config"]
 
     if not context_name:
-        _context_name = ctx.obj["kiara_context_name"]
+        if all_contexts:
+            _context_name = "ALL_CONTEXTS"
+        else:
+            _context_name = ctx.obj["kiara_context_name"]
     else:
+        if all_contexts:
+            if context_name != "ALL_CONTEXTS":
+                terminal_print()
+                terminal_print(
+                    f"Context name '{context_name}' specified, as well as '--all-contexts', this is not valid."
+                )
+                sys.exit(1)
         _context_name = context_name
 
-    context_summary = kiara_config.delete(context_name=context_name, dry_run=True)
-
     confirmed = False
-    if not force:
 
-        terminal_print_model(
-            context_summary,
-            full_details=True,
-            in_panel=f"Context details: {_context_name}",
-        )
-        terminal_print()
-        user_input = get_console().input(
-            f"Deleting context '[b i]{_context_name}[/b i]', are you sure? \[yes/no]: "  # noqa
-        )
+    if _context_name == "ALL_CONTEXTS":
+        if not force:
+            summaries = ContextSummaries.create_context_summaries(
+                contexts=kiara_config.context_configs
+            )
+            terminal_print_model(summaries, in_panel="All contexts:")
+            user_input = get_console().input(
+                f"Deleting all contexts, are you sure? \[yes/no]: "  # noqa
+            )
 
-        if user_input.lower() == "yes":
+            if user_input.lower() == "yes":
+                confirmed = True
+        else:
             confirmed = True
+
+        if not confirmed:
+            terminal_print("\nDoing nothing...")
+            sys.exit(0)
+
+        terminal_print("Deleting contexts...")
+        for _context_name in kiara_config.context_configs.keys():
+            terminal_print(f"  - {_context_name}")
+            kiara_config.delete(context_name=_context_name, dry_run=False)
+
+        terminal_print("Done.")
+
     else:
-        confirmed = True
 
-    if not confirmed:
-        terminal_print("\nDoing nothing...")
-        sys.exit(0)
+        if not force:
 
-    terminal_print("Deleting context...")
-    kiara_config.delete(context_name=context_name, dry_run=False)
+            context_summary = kiara_config.delete(
+                context_name=context_name, dry_run=True
+            )
+            terminal_print_model(
+                context_summary,
+                full_details=True,
+                in_panel=f"Context details: {_context_name}",
+            )
+            terminal_print()
+            user_input = get_console().input(
+                f"Deleting context '[b i]{_context_name}[/b i]', are you sure? \[yes/no]: "  # noqa
+            )
 
-    terminal_print("Done.")
+            if user_input.lower() == "yes":
+                confirmed = True
+        else:
+            confirmed = True
+
+        if not confirmed:
+            terminal_print("\nDoing nothing...")
+            sys.exit(0)
+
+        terminal_print("Deleting context...")
+        kiara_config.delete(context_name=context_name, dry_run=False)
+
+        terminal_print("Done.")
 
 
 @context.group("config")

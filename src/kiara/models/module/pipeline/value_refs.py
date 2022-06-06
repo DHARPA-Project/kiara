@@ -91,6 +91,15 @@ class ValueRef(BaseModel):
     value_schema: ValueSchema
     # pipeline_id: str
 
+    # @validator("value_schema")
+    # def validate_schema(cls, value):
+    #
+    #     from kiara.models.documentation import DocumentationMetadataModel
+    #     import traceback
+    #     traceback.print_stack()
+    #     print(cls)
+    #     assert isinstance(value.doc, DocumentationMetadataModel)
+
     def __eq__(self, other):
 
         if not isinstance(other, self.__class__):

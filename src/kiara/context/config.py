@@ -77,11 +77,21 @@ class KiaraContextConfig(BaseModel):
     archives: Dict[str, KiaraArchiveConfig] = Field(
         description="All the archives this kiara context can use and the aliases they are registered with."
     )
-    extra_pipeline_folders: List[str] = Field(
+    extra_pipelines: List[str] = Field(
         description="Paths to local folders that contain kiara pipelines.",
         default_factory=list,
     )
     _context_config_path: Optional[Path] = PrivateAttr(default=None)
+
+    def add_pipelines(self, *pipelines: str):
+
+        for pipeline in pipelines:
+            if os.path.exists(pipeline):
+                self.extra_pipelines.append(pipeline)
+            else:
+                logger.info(
+                    "ignore.pipeline", reason="path does not exist", path=pipeline
+                )
 
     # @property
     # def db_url(self):
@@ -274,9 +284,17 @@ class KiaraConfig(BaseSettings):
 
         context_file = self._available_context_files[context_name]
         context_data = get_data_from_file(context_file, content_type="yaml")
+
+        changed = False
+        if "extra_pipeline_folders" in context_data.keys():
+            epf = context_data.pop("extra_pipeline_folders")
+            context_data.setdefault("extra_pipelines", []).extend(epf)
+            changed = True
+
         context = KiaraContextConfig(**context_data)
 
-        changed = self._validate_context(context_config=context)
+        if not changed:
+            changed = self._validate_context(context_config=context)
 
         if changed:
             logger.debug(
@@ -412,7 +430,7 @@ class KiaraConfig(BaseSettings):
         )
 
         context_config = KiaraContextConfig(
-            context_id=str(context_id), archives=archives, extra_pipeline_folders=[]
+            context_id=str(context_id), archives=archives, extra_pipelines=[]
         )
 
         self._validate_context(context_config=context_config)
@@ -429,7 +447,9 @@ class KiaraConfig(BaseSettings):
         return context_config
 
     def create_context(
-        self, context: Union[None, str, uuid.UUID, Path] = None
+        self,
+        context: Union[None, str, uuid.UUID, Path] = None,
+        extra_pipelines: Union[None, str, Iterable[str]] = None,
     ) -> "Kiara":
 
         if not context:
@@ -457,6 +477,11 @@ class KiaraConfig(BaseSettings):
             )
 
         assert context_config.context_id not in self._contexts.keys()
+
+        if extra_pipelines:
+            if isinstance(extra_pipelines, str):
+                extra_pipelines = [extra_pipelines]
+            context_config.add_pipelines(*extra_pipelines)
 
         from kiara.context import Kiara
 

@@ -14,7 +14,7 @@ import rich_click as click
 import structlog
 import sys
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Optional, Tuple
 
 from kiara.context.config import KiaraConfig
 from kiara.defaults import KIARA_CONFIG_FILE_NAME, KIARA_MAIN_CONFIG_FILE
@@ -63,16 +63,14 @@ CLICK_CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
     required=False,
 )
 @click.option(
-    "--pipeline-folder",
+    "--pipelines",
     "-p",
-    help="Folder(s) that contain extra pipeline definitions.",
+    help="File(s) and folder(s) that contain extra pipeline definitions.",
     multiple=True,
     required=False,
 )
 @click.pass_context
-def cli(
-    ctx, config: Optional[str], context: Optional[str], pipeline_folder: Tuple[str]
-):
+def cli(ctx, config: Optional[str], context: Optional[str], pipelines: Tuple[str]):
     """[i b]kiara[/b i] ia a data-orchestration framework; this is the command-line frontend for it.
 
 
@@ -81,11 +79,6 @@ def cli(
     """
 
     ctx.obj = {}
-    extra_context_config: Dict[str, Any] = {}
-    if pipeline_folder:
-        extra_context_config["extra_pipeline_folders"] = list(pipeline_folder)
-
-    extra_context_config["create_context"] = False
 
     # kiara_config: Optional[KiaraConfig] = None
     exists = False
@@ -130,7 +123,7 @@ def cli(
     if not context:
         context = kiara_config.default_context
 
-    kiara = kiara_config.create_context(context=context)
+    kiara = kiara_config.create_context(context=context, extra_pipelines=pipelines)
     ctx.obj["kiara"] = kiara
     ctx.obj["kiara_config"] = kiara_config
     ctx.obj["kiara_context_name"] = context

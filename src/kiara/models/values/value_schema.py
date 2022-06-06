@@ -53,7 +53,8 @@ class ValueSchema(KiaraModel):
 
     @validator("doc", pre=True)
     def validate_doc(cls, value):
-        return DocumentationMetadataModel.create(value)
+        doc = DocumentationMetadataModel.create(value)
+        return doc
 
     def _retrieve_data_to_hash(self) -> typing.Any:
 

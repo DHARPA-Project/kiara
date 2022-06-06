@@ -90,6 +90,11 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
             str, Optional[Mapping[str, Any]]
         ] = find_all_kiara_pipeline_paths(skip_errors=ignore_errors)
 
+        for ep in self._kiara.context_config.extra_pipelines:
+            ep = os.path.realpath(ep)
+            if ep not in pipeline_paths.keys():
+                pipeline_paths[ep] = None
+
         all_pipelines = []
 
         for _path in pipeline_paths.keys():
@@ -121,28 +126,13 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
                             data = get_pipeline_details_from_path(path=full_path)
                             data = check_doc_sidecar(full_path, data)
                             existing_metadata = data.pop("metadata", {})
-                            md = dict(pipeline_paths[_path])
-                            if md is None:
+                            _md = pipeline_paths[_path]
+                            if _md is None:
                                 md = {}
+                            else:
+                                md = dict(_md)
                             md.update(existing_metadata)
                             data["metadata"] = md
-
-                            # rel_path = os.path.relpath(os.path.dirname(full_path), path)
-                            # if not rel_path or rel_path == ".":
-                            #     raise NotImplementedError()
-                            #     ns_name = name
-                            # else:
-                            #     _rel_path = rel_path.replace(os.path.sep, ".")
-                            #     ns_name = f"{_rel_path}.{name}"
-                            #
-                            # if not ns_name:
-                            #     raise Exception(
-                            #         f"Could not determine namespace for pipeline file '{filename}'."
-                            #     )
-                            # if ns_name in files.keys():
-                            #     raise Exception(
-                            #         f"Duplicate workflow name: {ns_name}"
-                            #     )
 
                             all_pipelines.append(data)
 
@@ -159,9 +149,11 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
                 data = get_pipeline_details_from_path(path=path)
                 data = check_doc_sidecar(path, data)
                 existing_metadata = data.pop("metadata", {})
-                md = dict(pipeline_paths[_path])
-                if md is None:
+                _md = pipeline_paths[_path]
+                if _md is None:
                     md = {}
+                else:
+                    md = dict(_md)
                 md.update(existing_metadata)
                 data["metadata"] = md
                 all_pipelines.append(data)
@@ -170,9 +162,11 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
         for pipeline in all_pipelines:
             name = pipeline["data"].get("pipeline_name", None)
             if name is None:
-                name = os.path.basename[pipeline["source"]]
+                source = pipeline["source"]
+                name = os.path.basename(source)
                 if "." in name:
                     name, _ = name.rsplit(".", maxsplit=1)
+                pipeline["data"]["pipeline_name"] = name
             pipelines[name] = pipeline
 
         return pipelines

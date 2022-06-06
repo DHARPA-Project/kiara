@@ -8,7 +8,7 @@
 import copy
 from typing import Any, Dict, Mapping, Optional, Union
 
-from kiara.defaults import INVALID_VALUE_NAMES, SpecialValue
+from kiara.defaults import DEFAULT_NO_DESC_VALUE, INVALID_VALUE_NAMES, SpecialValue
 from kiara.models.values.value_schema import ValueSchema
 from kiara.utils import check_valid_field_names
 
@@ -29,7 +29,11 @@ def create_schema_dict(
         if isinstance(v, ValueSchema):
             result[k] = v
         elif isinstance(v, Mapping):
-            schema = ValueSchema(**v)
+            _v = dict(v)
+            if "doc" not in _v.keys():
+                _v["doc"] = DEFAULT_NO_DESC_VALUE
+            schema = ValueSchema(**_v)
+
             result[k] = schema
         else:
             if v is None:

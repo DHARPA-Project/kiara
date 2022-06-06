@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/operations/included_core_operations/pipeline/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.0">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.2">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.fd896c8a.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.5d38496d.min.css">
       
         
         <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.cbb835fc.min.css">
@@ -3979,6 +3979,11 @@ PipelineOperationType            (<a class="autorefs autorefs-internal" title="k
             <span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
         <span class="p">]</span> <span class="o">=</span> <span class="n">find_all_kiara_pipeline_paths</span><span class="p">(</span><span class="n">skip_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">)</span>
 
+        <span class="k">for</span> <span class="n">ep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">context_config</span><span class="o">.</span><span class="n">extra_pipelines</span><span class="p">:</span>
+            <span class="n">ep</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">ep</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ep</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pipeline_paths</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">pipeline_paths</span><span class="p">[</span><span class="n">ep</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="n">all_pipelines</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">_path</span> <span class="ow">in</span> <span class="n">pipeline_paths</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -4010,28 +4015,13 @@ PipelineOperationType            (<a class="autorefs autorefs-internal" title="k
                             <span class="n">data</span> <span class="o">=</span> <span class="n">get_pipeline_details_from_path</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">full_path</span><span class="p">)</span>
                             <span class="n">data</span> <span class="o">=</span> <span class="n">check_doc_sidecar</span><span class="p">(</span><span class="n">full_path</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
                             <span class="n">existing_metadata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="p">{})</span>
-                            <span class="n">md</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">pipeline_paths</span><span class="p">[</span><span class="n">_path</span><span class="p">])</span>
-                            <span class="k">if</span> <span class="n">md</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">_md</span> <span class="o">=</span> <span class="n">pipeline_paths</span><span class="p">[</span><span class="n">_path</span><span class="p">]</span>
+                            <span class="k">if</span> <span class="n">_md</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                                 <span class="n">md</span> <span class="o">=</span> <span class="p">{}</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">md</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">_md</span><span class="p">)</span>
                             <span class="n">md</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">existing_metadata</span><span class="p">)</span>
                             <span class="n">data</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">md</span>
-
-                            <span class="c1"># rel_path = os.path.relpath(os.path.dirname(full_path), path)</span>
-                            <span class="c1"># if not rel_path or rel_path == &quot;.&quot;:</span>
-                            <span class="c1">#     raise NotImplementedError()</span>
-                            <span class="c1">#     ns_name = name</span>
-                            <span class="c1"># else:</span>
-                            <span class="c1">#     _rel_path = rel_path.replace(os.path.sep, &quot;.&quot;)</span>
-                            <span class="c1">#     ns_name = f&quot;{_rel_path}.{name}&quot;</span>
-                            <span class="c1">#</span>
-                            <span class="c1"># if not ns_name:</span>
-                            <span class="c1">#     raise Exception(</span>
-                            <span class="c1">#         f&quot;Could not determine namespace for pipeline file &#39;{filename}&#39;.&quot;</span>
-                            <span class="c1">#     )</span>
-                            <span class="c1"># if ns_name in files.keys():</span>
-                            <span class="c1">#     raise Exception(</span>
-                            <span class="c1">#         f&quot;Duplicate workflow name: {ns_name}&quot;</span>
-                            <span class="c1">#     )</span>
 
                             <span class="n">all_pipelines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
@@ -4048,9 +4038,11 @@ PipelineOperationType            (<a class="autorefs autorefs-internal" title="k
                 <span class="n">data</span> <span class="o">=</span> <span class="n">get_pipeline_details_from_path</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">check_doc_sidecar</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
                 <span class="n">existing_metadata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="p">{})</span>
-                <span class="n">md</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">pipeline_paths</span><span class="p">[</span><span class="n">_path</span><span class="p">])</span>
-                <span class="k">if</span> <span class="n">md</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">_md</span> <span class="o">=</span> <span class="n">pipeline_paths</span><span class="p">[</span><span class="n">_path</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">_md</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">md</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">md</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">_md</span><span class="p">)</span>
                 <span class="n">md</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">existing_metadata</span><span class="p">)</span>
                 <span class="n">data</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">md</span>
                 <span class="n">all_pipelines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -4059,9 +4051,11 @@ PipelineOperationType            (<a class="autorefs autorefs-internal" title="k
         <span class="k">for</span> <span class="n">pipeline</span> <span class="ow">in</span> <span class="n">all_pipelines</span><span class="p">:</span>
             <span class="n">name</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pipeline_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">[</span><span class="n">pipeline</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">]]</span>
+                <span class="n">source</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">]</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
                 <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
                     <span class="n">name</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">pipeline</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;pipeline_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
             <span class="n">pipelines</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pipeline</span>
 
         <span class="k">return</span> <span class="n">pipelines</span>
@@ -4310,7 +4304,7 @@ PipelineOperationType            (<a class="autorefs autorefs-internal" title="k
     <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.b028fd86.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.0f659f14.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.7f366e99.min.js"></script>
       
     
   </body>

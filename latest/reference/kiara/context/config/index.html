@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/context/config/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.0">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.2">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.fd896c8a.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.5d38496d.min.css">
       
         
         <link rel="stylesheet" href="../../../../assets/stylesheets/palette.cbb835fc.min.css">
@@ -4246,9 +4246,17 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
 
         <span class="n">context_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_available_context_files</span><span class="p">[</span><span class="n">context_name</span><span class="p">]</span>
         <span class="n">context_data</span> <span class="o">=</span> <span class="n">get_data_from_file</span><span class="p">(</span><span class="n">context_file</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;yaml&quot;</span><span class="p">)</span>
+
+        <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="s2">&quot;extra_pipeline_folders&quot;</span> <span class="ow">in</span> <span class="n">context_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">epf</span> <span class="o">=</span> <span class="n">context_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;extra_pipeline_folders&quot;</span><span class="p">)</span>
+            <span class="n">context_data</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;extra_pipelines&quot;</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">epf</span><span class="p">)</span>
+            <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+
         <span class="n">context</span> <span class="o">=</span> <span class="n">KiaraContextConfig</span><span class="p">(</span><span class="o">**</span><span class="n">context_data</span><span class="p">)</span>
 
-        <span class="n">changed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_context</span><span class="p">(</span><span class="n">context_config</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">changed</span><span class="p">:</span>
+            <span class="n">changed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_context</span><span class="p">(</span><span class="n">context_config</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">changed</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
@@ -4384,7 +4392,7 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
         <span class="p">)</span>
 
         <span class="n">context_config</span> <span class="o">=</span> <span class="n">KiaraContextConfig</span><span class="p">(</span>
-            <span class="n">context_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">context_id</span><span class="p">),</span> <span class="n">archives</span><span class="o">=</span><span class="n">archives</span><span class="p">,</span> <span class="n">extra_pipeline_folders</span><span class="o">=</span><span class="p">[]</span>
+            <span class="n">context_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">context_id</span><span class="p">),</span> <span class="n">archives</span><span class="o">=</span><span class="n">archives</span><span class="p">,</span> <span class="n">extra_pipelines</span><span class="o">=</span><span class="p">[]</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_validate_context</span><span class="p">(</span><span class="n">context_config</span><span class="o">=</span><span class="n">context_config</span><span class="p">)</span>
@@ -4401,7 +4409,9 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
         <span class="k">return</span> <span class="n">context_config</span>
 
     <span class="k">def</span> <span class="nf">create_context</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">extra_pipelines</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">:</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">context</span><span class="p">:</span>
@@ -4429,6 +4439,11 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
             <span class="p">)</span>
 
         <span class="k">assert</span> <span class="n">context_config</span><span class="o">.</span><span class="n">context_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contexts</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">extra_pipelines</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extra_pipelines</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">extra_pipelines</span> <span class="o">=</span> <span class="p">[</span><span class="n">extra_pipelines</span><span class="p">]</span>
+            <span class="n">context_config</span><span class="o">.</span><span class="n">add_pipelines</span><span class="p">(</span><span class="o">*</span><span class="n">extra_pipelines</span><span class="p">)</span>
 
         <span class="kn">from</span> <span class="nn">kiara.context</span> <span class="kn">import</span> <span class="n">Kiara</span>
 
@@ -4803,7 +4818,7 @@ Config        </code>
 
 
 <h5 id="kiara.context.config.KiaraConfig.create_context" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extra_pipelines</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 <a href="#kiara.context.config.KiaraConfig.create_context" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -4814,7 +4829,9 @@ Config        </code>
         <details class="quote">
           <summary>Source code in <code>kiara/context/config.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_context</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">context</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">extra_pipelines</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">context</span><span class="p">:</span>
@@ -4842,6 +4859,11 @@ Config        </code>
         <span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">context_config</span><span class="o">.</span><span class="n">context_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contexts</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">extra_pipelines</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extra_pipelines</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">extra_pipelines</span> <span class="o">=</span> <span class="p">[</span><span class="n">extra_pipelines</span><span class="p">]</span>
+        <span class="n">context_config</span><span class="o">.</span><span class="n">add_pipelines</span><span class="p">(</span><span class="o">*</span><span class="n">extra_pipelines</span><span class="p">)</span>
 
     <span class="kn">from</span> <span class="nn">kiara.context</span> <span class="kn">import</span> <span class="n">Kiara</span>
 
@@ -4900,7 +4922,7 @@ Config        </code>
     <span class="p">)</span>
 
     <span class="n">context_config</span> <span class="o">=</span> <span class="n">KiaraContextConfig</span><span class="p">(</span>
-        <span class="n">context_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">context_id</span><span class="p">),</span> <span class="n">archives</span><span class="o">=</span><span class="n">archives</span><span class="p">,</span> <span class="n">extra_pipeline_folders</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">context_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">context_id</span><span class="p">),</span> <span class="n">archives</span><span class="o">=</span><span class="n">archives</span><span class="p">,</span> <span class="n">extra_pipelines</span><span class="o">=</span><span class="p">[]</span>
     <span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_validate_context</span><span class="p">(</span><span class="n">context_config</span><span class="o">=</span><span class="n">context_config</span><span class="p">)</span>
@@ -5081,9 +5103,17 @@ Config        </code>
 
     <span class="n">context_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_available_context_files</span><span class="p">[</span><span class="n">context_name</span><span class="p">]</span>
     <span class="n">context_data</span> <span class="o">=</span> <span class="n">get_data_from_file</span><span class="p">(</span><span class="n">context_file</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;yaml&quot;</span><span class="p">)</span>
+
+    <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="s2">&quot;extra_pipeline_folders&quot;</span> <span class="ow">in</span> <span class="n">context_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">epf</span> <span class="o">=</span> <span class="n">context_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;extra_pipeline_folders&quot;</span><span class="p">)</span>
+        <span class="n">context_data</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;extra_pipelines&quot;</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">epf</span><span class="p">)</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+
     <span class="n">context</span> <span class="o">=</span> <span class="n">KiaraContextConfig</span><span class="p">(</span><span class="o">**</span><span class="n">context_data</span><span class="p">)</span>
 
-    <span class="n">changed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_context</span><span class="p">(</span><span class="n">context_config</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">changed</span><span class="p">:</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_context</span><span class="p">(</span><span class="n">context_config</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">changed</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
@@ -5279,11 +5309,21 @@ KiaraContextConfig            (<span title="pydantic.main.BaseModel">BaseModel</
     <span class="n">archives</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraArchiveConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;All the archives this kiara context can use and the aliases they are registered with.&quot;</span>
     <span class="p">)</span>
-    <span class="n">extra_pipeline_folders</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">extra_pipelines</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Paths to local folders that contain kiara pipelines.&quot;</span><span class="p">,</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">_context_config_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_pipelines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">pipelines</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+
+        <span class="k">for</span> <span class="n">pipeline</span> <span class="ow">in</span> <span class="n">pipelines</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">pipeline</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">extra_pipelines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pipeline</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;ignore.pipeline&quot;</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;path does not exist&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">pipeline</span>
+                <span class="p">)</span>
 
     <span class="c1"># @property</span>
     <span class="c1"># def db_url(self):</span>
@@ -5354,14 +5394,14 @@ KiaraContextConfig            (<span title="pydantic.main.BaseModel">BaseModel</
 
 
 
-<h5 id="kiara.context.config.KiaraContextConfig.extra_pipeline_folders" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">extra_pipeline_folders</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
+<h5 id="kiara.context.config.KiaraContextConfig.extra_pipelines" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">extra_pipelines</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
   </span>
 
-<a href="#kiara.context.config.KiaraContextConfig.extra_pipeline_folders" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.context.config.KiaraContextConfig.extra_pipelines" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -5401,6 +5441,38 @@ Config        </code>
   </div>
 
 
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.context.config.KiaraContextConfig.add_pipelines" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">add_pipelines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">pipelines</span><span class="p">)</span></code>
+
+
+<a href="#kiara.context.config.KiaraContextConfig.add_pipelines" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/context/config.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">add_pipelines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">pipelines</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+
+    <span class="k">for</span> <span class="n">pipeline</span> <span class="ow">in</span> <span class="n">pipelines</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">pipeline</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extra_pipelines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pipeline</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;ignore.pipeline&quot;</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;path does not exist&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">pipeline</span>
+            <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
 
 
 
@@ -5712,7 +5784,7 @@ Config        </code>
     <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../assets/javascripts/workers/search.b028fd86.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.0f659f14.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.7f366e99.min.js"></script>
       
     
   </body>

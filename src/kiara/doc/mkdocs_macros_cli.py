@@ -12,7 +12,7 @@ from deepdiff import DeepHash
 from pathlib import Path
 from subprocess import PIPE, Popen
 from timeit import default_timer as timer
-from typing import Dict, Optional
+from typing import Dict, Mapping, Optional
 
 from kiara.defaults import kiara_app_dirs
 
@@ -55,6 +55,7 @@ def define_env(env):
         extra_env: Optional[Dict[str, str]] = None,
         fake_command: Optional[str] = None,
         fail_ok: bool = False,
+        repl_dict: Optional[Mapping[str, str]] = None,
     ):
         """Execute the provided command, save the output and return it to be used in documentation modules."""
 
@@ -81,6 +82,9 @@ def define_env(env):
 
         if cache_file.is_file():
             stdout_str = cache_file.read_text()
+            if repl_dict:
+                for k, v in repl_dict.items():
+                    stdout_str = stdout_str.replace(k, v)
         else:
             start = timer()
 
@@ -91,6 +95,7 @@ def define_env(env):
                 "cache_key": cache_key,
                 "fail_ok": fail_ok,
                 "started": start,
+                "repl_dict": repl_dict,
             }
 
             print(f"RUNNING: {' '.join(command)}")
@@ -99,6 +104,12 @@ def define_env(env):
 
             stdout_str = stdout.decode("utf-8")
             stderr_str = stderr.decode("utf-8")
+
+            if repl_dict:
+                for k, v in repl_dict.items():
+                    stdout_str = stdout_str.replace(k, v)
+                    stderr_str = stderr_str.replace(k, v)
+
             print("stdout:")
             print(stdout_str)
             print("stderr:")

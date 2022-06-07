@@ -4440,6 +4440,7 @@ Python module in your package.</p>
         <span class="n">extra_env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fake_command</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fail_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">repl_dict</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Execute the provided command, save the output and return it to be used in documentation modules.&quot;&quot;&quot;</span>
 
@@ -4466,6 +4467,9 @@ Python module in your package.</p>
 
         <span class="k">if</span> <span class="n">cache_file</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
             <span class="n">stdout_str</span> <span class="o">=</span> <span class="n">cache_file</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">repl_dict</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">repl_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">stdout_str</span> <span class="o">=</span> <span class="n">stdout_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">start</span> <span class="o">=</span> <span class="n">timer</span><span class="p">()</span>
 
@@ -4476,6 +4480,7 @@ Python module in your package.</p>
                 <span class="s2">&quot;cache_key&quot;</span><span class="p">:</span> <span class="n">cache_key</span><span class="p">,</span>
                 <span class="s2">&quot;fail_ok&quot;</span><span class="p">:</span> <span class="n">fail_ok</span><span class="p">,</span>
                 <span class="s2">&quot;started&quot;</span><span class="p">:</span> <span class="n">start</span><span class="p">,</span>
+                <span class="s2">&quot;repl_dict&quot;</span><span class="p">:</span> <span class="n">repl_dict</span><span class="p">,</span>
             <span class="p">}</span>
 
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RUNNING: </span><span class="si">{</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">command</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -4484,6 +4489,12 @@ Python module in your package.</p>
 
             <span class="n">stdout_str</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
             <span class="n">stderr_str</span> <span class="o">=</span> <span class="n">stderr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">repl_dict</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">repl_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">stdout_str</span> <span class="o">=</span> <span class="n">stdout_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                    <span class="n">stderr_str</span> <span class="o">=</span> <span class="n">stderr_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;stdout:&quot;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">stdout_str</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;stderr:&quot;</span><span class="p">)</span>

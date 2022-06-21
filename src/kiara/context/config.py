@@ -16,7 +16,7 @@ from pydantic.config import Extra
 from pydantic.env_settings import BaseSettings
 from pydantic.fields import Field, PrivateAttr
 from ruamel import yaml as r_yaml
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union, Union
 
 from kiara.defaults import (
     DEFAULT_ALIAS_STORE_MARKER,
@@ -82,7 +82,7 @@ class KiaraContextConfig(BaseModel):
         description="Paths to local folders that contain kiara pipelines.",
         default_factory=list,
     )
-    _context_config_path: Optional[Path] = PrivateAttr(default=None)
+    _context_config_path: Union[Path, None] = PrivateAttr(default=None)
 
     def add_pipelines(self, *pipelines: str):
 
@@ -159,7 +159,7 @@ class KiaraConfig(BaseSettings):
         return config
 
     @classmethod
-    def load_from_file(cls, path: Optional[Path] = None) -> "KiaraConfig":
+    def load_from_file(cls, path: Union[Path, None] = None) -> "KiaraConfig":
 
         if path is None:
             path = Path(KIARA_MAIN_CONFIG_FILE)
@@ -207,7 +207,7 @@ class KiaraConfig(BaseSettings):
     _contexts: Dict[uuid.UUID, "Kiara"] = PrivateAttr(default_factory=dict)
     _available_context_files: Dict[str, Path] = PrivateAttr(default=None)
     _context_data: Dict[str, KiaraContextConfig] = PrivateAttr(default_factory=dict)
-    _config_path: Optional[Path] = PrivateAttr(default=None)
+    _config_path: Union[Path, None] = PrivateAttr(default=None)
 
     @validator("context_search_paths")
     def validate_context_search_paths(cls, v):
@@ -263,7 +263,7 @@ class KiaraConfig(BaseSettings):
         return {a: self.get_context_config(a) for a in self.available_context_names}
 
     def get_context_config(
-        self, context_name: Optional[str] = None, auto_generate: Optional[bool] = None
+        self, context_name: Union[str, None] = None, auto_generate: Union[bool, None] = None
     ) -> KiaraContextConfig:
 
         if auto_generate is None:
@@ -430,7 +430,7 @@ class KiaraConfig(BaseSettings):
         return changed
 
     def create_context_config(
-        self, context_alias: Optional[str] = None
+        self, context_alias: Union[str, None] = None
     ) -> KiaraContextConfig:
 
         if not context_alias:
@@ -520,7 +520,7 @@ class KiaraConfig(BaseSettings):
     def find_context_config(self, context_id: uuid.UUID) -> KiaraContextConfig:
         raise NotImplementedError()
 
-    def save(self, path: Optional[Path] = None):
+    def save(self, path: Union[Path, None] = None):
         if path is None:
             path = Path(KIARA_MAIN_CONFIG_FILE)
 
@@ -549,7 +549,7 @@ class KiaraConfig(BaseSettings):
         self._config_path = path
 
     def delete(
-        self, context_name: Optional[str] = None, dry_run: bool = True
+        self, context_name: Union[str, None] = None, dry_run: bool = True
     ) -> "ContextSummary":
 
         if context_name is None:

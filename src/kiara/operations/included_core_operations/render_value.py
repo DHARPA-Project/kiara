@@ -7,7 +7,7 @@
 
 import structlog
 from pydantic import Field
-from typing import Any, Dict, Iterable, Mapping, Optional, Type, Union
+from typing import Any, Dict, Iterable, Mapping, Union, Type, Union
 
 from kiara.models.module.operation import (
     BaseOperationDetails,
@@ -102,7 +102,7 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
 
     def check_matching_operation(
         self, module: "KiaraModule"
-    ) -> Optional[RenderValueDetails]:
+    ) -> Union[RenderValueDetails, None]:
 
         if len(module.inputs_schema) != 2:
             return None
@@ -206,7 +206,7 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
 
     def get_render_operation(
         self, source_type: str, target_type: str
-    ) -> Optional[Operation]:
+    ) -> Union[Operation, None]:
 
         all_ops = self.get_render_operations_for_source_type(source_type=source_type)
         return all_ops.get(target_type, None)

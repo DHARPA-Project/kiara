@@ -10,7 +10,7 @@ import rich_click as click
 import shutil
 import structlog
 import sys
-from typing import Optional, Tuple
+from typing import Union, Tuple
 
 from kiara import Kiara
 from kiara.interfaces.tui.pager import PagerApp
@@ -288,7 +288,7 @@ def load_value(ctx, value_id: str, single_page: bool):
 
     value = kiara_obj.data_registry.get_value(value_id=value_id)
 
-    render_op: Optional[Operation] = None
+    render_op: Union[Operation, None] = None
     if not single_page:
         render_value_op_type: RenderValueOperationType = kiara_obj.operation_registry.get_operation_type("render_value")  # type: ignore
         render_op = render_value_op_type.get_render_operation(

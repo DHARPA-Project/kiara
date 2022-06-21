@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from rich.console import RenderableType
 from rich.tree import Tree
-from typing import Any, Optional
+from typing import Any, Union
 
 from kiara.context import Kiara
 from kiara.models.values.value import ORPHAN, Value, ValuePedigree
@@ -23,7 +23,7 @@ COLOR_LIST = [
 def fill_lineage_tree(
     kiara: Kiara,
     pedigree: ValuePedigree,
-    node: Optional[Tree] = None,
+    node: Union[Tree, None] = None,
     include_ids: bool = False,
     level: int = 0,
 ):

@@ -9,7 +9,7 @@ import abc
 import structlog
 import uuid
 from rich.console import RenderableType
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Set, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Union, Set, Union
 
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.value import PersistedData, Value, ValuePedigree
@@ -43,7 +43,7 @@ class DataArchive(BaseArchive):
 
         if isinstance(value, Value):
             value_id: uuid.UUID = value.value_id
-            _value: Optional[Value] = value
+            _value: Union[Value, None] = value
         else:
             value_id = value
             _value = None
@@ -106,7 +106,7 @@ class DataArchive(BaseArchive):
 
     @abc.abstractmethod
     def _retrieve_all_value_ids(
-        self, data_type_name: Optional[str] = None
+        self, data_type_name: Union[str, None] = None
     ) -> Iterable[uuid.UUID]:
         pass
 
@@ -150,8 +150,8 @@ class DataArchive(BaseArchive):
     def find_values_with_hash(
         self,
         value_hash: str,
-        value_size: Optional[int] = None,
-        data_type_name: Optional[str] = None,
+        value_size: Union[int, None] = None,
+        data_type_name: Union[str, None] = None,
     ) -> Set[uuid.UUID]:
 
         if data_type_name is not None:
@@ -161,7 +161,7 @@ class DataArchive(BaseArchive):
             raise NotImplementedError()
 
         if value_hash in self._value_hash_index.keys():
-            value_ids: Optional[Set[uuid.UUID]] = self._value_hash_index[value_hash]
+            value_ids: Union[Set[uuid.UUID], None] = self._value_hash_index[value_hash]
         else:
             value_ids = self._find_values_with_hash(
                 value_hash=value_hash, data_type_name=data_type_name
@@ -177,14 +177,14 @@ class DataArchive(BaseArchive):
     def _find_values_with_hash(
         self,
         value_hash: str,
-        value_size: Optional[int] = None,
-        data_type_name: Optional[str] = None,
-    ) -> Optional[Set[uuid.UUID]]:
+        value_size: Union[int, None] = None,
+        data_type_name: Union[str, None] = None,
+    ) -> Union[Set[uuid.UUID], None]:
         pass
 
     def find_destinies_for_value(
-        self, value_id: uuid.UUID, alias_filter: Optional[str] = None
-    ) -> Optional[Mapping[str, uuid.UUID]]:
+        self, value_id: uuid.UUID, alias_filter: Union[str, None] = None
+    ) -> Union[Mapping[str, uuid.UUID], None]:
 
         return self._find_destinies_for_value(
             value_id=value_id, alias_filter=alias_filter
@@ -192,8 +192,8 @@ class DataArchive(BaseArchive):
 
     @abc.abstractmethod
     def _find_destinies_for_value(
-        self, value_id: uuid.UUID, alias_filter: Optional[str] = None
-    ) -> Optional[Mapping[str, uuid.UUID]]:
+        self, value_id: uuid.UUID, alias_filter: Union[str, None] = None
+    ) -> Union[Mapping[str, uuid.UUID], None]:
         pass
 
     @abc.abstractmethod

@@ -583,14 +583,17 @@ class PipelineStructure(KiaraModel):
             max_steps = max(paths, key=lambda x: len(x))
             path_lengths[step_id] = len(max_steps) - 1
 
-        max_length = max(path_lengths.values())
+        if path_lengths.values():
+            max_length = max(path_lengths.values())
 
-        for i in range(1, max_length + 1):
-            stage: List[str] = [m for m, length in path_lengths.items() if length == i]
-            processing_stages.append(stage)
-            for _step_id in stage:
-                steps_details[_step_id]["processing_stage"] = i
-                # steps_details[_step_id]["step"].processing_stage = i
+            for i in range(1, max_length + 1):
+                stage: List[str] = [
+                    m for m, length in path_lengths.items() if length == i
+                ]
+                processing_stages.append(stage)
+                for _step_id in stage:
+                    steps_details[_step_id]["processing_stage"] = i
+                    # steps_details[_step_id]["step"].processing_stage = i
 
         self._constants = constants
         self._defaults = structure_defaults

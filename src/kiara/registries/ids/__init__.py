@@ -7,7 +7,7 @@
 
 import structlog
 import uuid
-from typing import Any, Dict, Optional, Type
+from typing import Any, Dict, Union, Type
 from weakref import WeakValueDictionary
 
 from kiara.utils import is_debug, is_develop
@@ -26,9 +26,9 @@ class IdRegistry(object):
 
     def generate(
         self,
-        id: Optional[uuid.UUID] = None,
-        obj_type: Optional[Type] = None,
-        obj: Optional[Any] = None,
+        id: Union[uuid.UUID, None] = None,
+        obj_type: Union[Type, None] = None,
+        obj: Union[Any, None] = None,
         **metadata: Any
     ):
 
@@ -52,8 +52,8 @@ class IdRegistry(object):
     def update_metadata(
         self,
         id: uuid.UUID,
-        obj_type: Optional[Type] = None,
-        obj: Optional[Any] = None,
+        obj_type: Union[Type, None] = None,
+        obj: Union[Any, None] = None,
         **metadata
     ):
 

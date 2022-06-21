@@ -22,7 +22,7 @@ from rich.console import ConsoleRenderable, RichCast
 from ruamel.yaml import YAML
 from slugify import slugify
 from types import ModuleType
-from typing import Any, Dict, Iterable, List, Mapping, Optional, Type, TypeVar, Union
+from typing import Any, Dict, Iterable, List, Mapping, Union, Type, TypeVar, Union
 
 from kiara.defaults import INVALID_VALUE_NAMES
 
@@ -72,7 +72,7 @@ def is_rich_renderable(item: Any):
 
 
 def get_data_from_file(
-    path: Union[str, Path], content_type: Optional[str] = None
+    path: Union[str, Path], content_type: Union[str, None] = None
 ) -> Any:
 
     if isinstance(path, str):
@@ -126,7 +126,7 @@ def get_auto_workflow_alias(module_type: str, use_incremental_ids: bool = False)
 
 
 def dict_from_cli_args(
-    *args: str, list_keys: Optional[Iterable[str]] = None
+    *args: str, list_keys: Union[Iterable[str], None] = None
 ) -> Dict[str, Any]:
 
     if not args:

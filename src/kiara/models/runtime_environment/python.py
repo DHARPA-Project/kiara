@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 from rich import box
 from rich.console import RenderableType
 from rich.table import Table
-from typing import Any, Dict, List, Literal, Mapping, Optional
+from typing import Any, Dict, List, Literal, Mapping, Union
 
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.utils.output import extract_renderable
@@ -44,7 +44,7 @@ class PythonRuntimeEnvironment(RuntimeEnvironment):
 
     def _create_renderable_for_field(
         self, field_name: str, for_summary: bool = False
-    ) -> Optional[RenderableType]:
+    ) -> Union[RenderableType, None]:
 
         if field_name != "packages":
             return extract_renderable(getattr(self, field_name))
@@ -112,7 +112,7 @@ class KiaraPluginsRuntimeEnvironment(RuntimeEnvironment):
 
     def _create_renderable_for_field(
         self, field_name: str, for_summary: bool = False
-    ) -> Optional[RenderableType]:
+    ) -> Union[RenderableType, None]:
 
         if field_name != "packages":
             return extract_renderable(getattr(self, field_name))

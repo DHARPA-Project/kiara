@@ -15,7 +15,7 @@ from typing import (
     List,
     Mapping,
     MutableMapping,
-    Optional,
+    Union,
     Set,
 )
 
@@ -37,8 +37,8 @@ if TYPE_CHECKING:
 
 class ChangedValue(BaseModel):
 
-    old: Optional[uuid.UUID]
-    new: Optional[uuid.UUID]
+    old: Union[uuid.UUID, None]
+    new: Union[uuid.UUID, None]
 
 
 class StepDetails(BaseModel):
@@ -127,7 +127,7 @@ class PipelineEvent(KiaraEvent):
         cls,
         pipeline: "Pipeline",
         changed: Mapping[str, Mapping[str, Mapping[str, ChangedValue]]],
-    ) -> Optional["PipelineEvent"]:
+    ) -> Union["PipelineEvent", None]:
 
         pipeline_inputs = changed.get("__pipeline__", {}).get("inputs", {})
         pipeline_outputs = changed.get("__pipeline__", {}).get("outputs", {})

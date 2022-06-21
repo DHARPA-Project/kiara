@@ -19,7 +19,7 @@ from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.jupyter import JupyterMixin
 from rich.panel import Panel
 from rich.table import Table
-from typing import Any, ClassVar, Dict, Iterable, List, Optional
+from typing import Any, ClassVar, Dict, Iterable, List, Union
 
 from kiara.defaults import KIARA_HASH_FUNCTION
 from kiara.utils import orjson_dumps
@@ -58,15 +58,15 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         cls._schema_hash_cache = h[obj]
         return cls._schema_hash_cache
 
-    _graph_cache: Optional[nx.DiGraph] = PrivateAttr(default=None)
-    _subcomponent_names_cache: Optional[List[str]] = PrivateAttr(default=None)
+    _graph_cache: Union[nx.DiGraph, None] = PrivateAttr(default=None)
+    _subcomponent_names_cache: Union[List[str], None] = PrivateAttr(default=None)
     _dynamic_subcomponents: Dict[str, "KiaraModel"] = PrivateAttr(default_factory=dict)
-    _id_cache: Optional[str] = PrivateAttr(default=None)
-    _category_id_cache: Optional[str] = PrivateAttr(default=None)
+    _id_cache: Union[str, None] = PrivateAttr(default=None)
+    _category_id_cache: Union[str, None] = PrivateAttr(default=None)
     _schema_hash_cache: ClassVar = None
-    _cid_cache: Optional[CID] = PrivateAttr(default=None)
-    _dag_cache: Optional[bytes] = PrivateAttr(default=None)
-    _size_cache: Optional[int] = PrivateAttr(default=None)
+    _cid_cache: Union[CID, None] = PrivateAttr(default=None)
+    _dag_cache: Union[bytes, None] = PrivateAttr(default=None)
+    _size_cache: Union[int, None] = PrivateAttr(default=None)
 
     def _retrieve_data_to_hash(self) -> EncodableType:
         """Return data important for hashing this model instance. Implemented by sub-classes.
@@ -142,7 +142,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         return self._subcomponent_names_cache
 
     @property
-    def subcomponent_tree(self) -> Optional[nx.DiGraph]:
+    def subcomponent_tree(self) -> Union[nx.DiGraph, None]:
         """A tree structure, containing all sub-components (and their subcomponents) of this model."""
         if not self.subcomponent_keys:
             return None

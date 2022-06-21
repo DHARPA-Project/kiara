@@ -8,7 +8,7 @@
 import abc
 import orjson
 from pydantic import Field, validator
-from typing import Any, Mapping, Optional, Type, Union
+from typing import Any, Mapping, Union, Type, Union
 
 from kiara.models import KiaraModel
 from kiara.models.module import KiaraModuleConfig
@@ -226,7 +226,7 @@ class LoadInternalModel(DeserializeValueModule):
 
 class DeserializeJsonConfig(KiaraModuleConfig):
 
-    result_path: Optional[str] = Field(
+    result_path: Union[str, None] = Field(
         description="The path of the result dictionary to return.", default="data"
     )
 

@@ -9,7 +9,7 @@ import abc
 import structlog
 import uuid
 from bidict import bidict
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Type
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Union, Type
 
 from kiara.context.config import JobCacheStrategy
 from kiara.models.events import KiaraEvent
@@ -43,7 +43,7 @@ class JobArchive(BaseArchive):
 
     @abc.abstractmethod
     def retrieve_all_job_hashes(
-        self, manifest_hash: Optional[str] = None, inputs_hash: Optional[str] = None
+        self, manifest_hash: Union[str, None] = None, inputs_hash: Union[str, None] = None
     ) -> Iterable[str]:
         """Retrieve a list of all job record hashes (cids) that match the given filter arguments.
 
@@ -53,10 +53,10 @@ class JobArchive(BaseArchive):
         """
 
     @abc.abstractmethod
-    def _retrieve_record_for_job_hash(self, job_hash: str) -> Optional[JobRecord]:
+    def _retrieve_record_for_job_hash(self, job_hash: str) -> Union[JobRecord, None]:
         pass
 
-    def retrieve_record_for_job_hash(self, job_hash: str) -> Optional[JobRecord]:
+    def retrieve_record_for_job_hash(self, job_hash: str) -> Union[JobRecord, None]:
 
         job_record = self._retrieve_record_for_job_hash(job_hash=job_hash)
         return job_record
@@ -74,17 +74,17 @@ class JobMatcher(abc.ABC):
         self._kiara: Kiara = kiara
 
     @abc.abstractmethod
-    def find_existing_job(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
+    def find_existing_job(self, inputs_manifest: InputsManifest) -> Union[JobRecord, None]:
         pass
 
 
 class NoneJobMatcher(JobMatcher):
-    def find_existing_job(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
+    def find_existing_job(self, inputs_manifest: InputsManifest) -> Union[JobRecord, None]:
         return None
 
 
 class ValueIdJobMatcher(JobMatcher):
-    def find_existing_job(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
+    def find_existing_job(self, inputs_manifest: InputsManifest) -> Union[JobRecord, None]:
 
         matches = []
 
@@ -110,7 +110,7 @@ class ValueIdJobMatcher(JobMatcher):
 
 
 class DataHashJobMatcher(JobMatcher):
-    def find_existing_job(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
+    def find_existing_job(self, inputs_manifest: InputsManifest) -> Union[JobRecord, None]:
 
         matches = []
 
@@ -178,7 +178,7 @@ class JobRegistry(object):
         self._processor: ModuleProcessor = SynchronousProcessor(kiara=self._kiara)
         self._processor.register_job_status_listener(self)
         self._job_archives: Dict[str, JobArchive] = {}
-        self._default_job_store: Optional[str] = None
+        self._default_job_store: Union[str, None] = None
 
         self._event_callback = self._kiara.event_registry.add_producer(self)
 
@@ -210,7 +210,7 @@ class JobRegistry(object):
 
         return [JobArchiveAddedEvent, JobRecordPreStoreEvent, JobRecordStoredEvent]
 
-    def register_job_archive(self, archive: JobArchive, alias: Optional[str] = None):
+    def register_job_archive(self, archive: JobArchive, alias: Union[str, None] = None):
 
         if alias is None:
             alias = str(archive.archive_id)
@@ -245,7 +245,7 @@ class JobRegistry(object):
             raise Exception("No default job store set (yet).")
         return self._default_job_store  # type: ignore
 
-    def get_archive(self, store_id: Optional[str] = None) -> JobArchive:
+    def get_archive(self, store_id: Union[str, None] = None) -> JobArchive:
 
         if store_id is None:
             store_id = self.default_job_store
@@ -259,7 +259,7 @@ class JobRegistry(object):
         return self._job_archives
 
     def job_status_changed(
-        self, job_id: uuid.UUID, old_status: Optional[JobStatus], new_status: JobStatus
+        self, job_id: uuid.UUID, old_status: Union[JobStatus, None], new_status: JobStatus
     ):
 
         # print(f"JOB STATUS CHANGED: {job_id} - {old_status} - {new_status.value}")
@@ -340,7 +340,7 @@ class JobRegistry(object):
 
     def find_matching_job_record(
         self, inputs_manifest: InputsManifest
-    ) -> Optional[uuid.UUID]:
+    ) -> Union[uuid.UUID, None]:
         """Check if a job with same inputs manifest already ran some time before.
 
         Arguments:

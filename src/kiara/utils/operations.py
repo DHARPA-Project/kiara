@@ -5,7 +5,7 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Dict, Union
 
 from kiara.models.module.operation import Operation, OperationGroupInfo, OperationInfo
 
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 def filter_operations(
-    kiara: "Kiara", pkg_name: Optional[str] = None, **operations: "Operation"
+    kiara: "Kiara", pkg_name: Union[str, None] = None, **operations: "Operation"
 ) -> OperationGroupInfo:
 
     result: Dict[str, OperationInfo] = {}
@@ -31,7 +31,7 @@ def filter_operations(
                 )
                 continue
         else:
-            package: Optional[str] = op.metadata.get("labels", {}).get("package", None)
+            package: Union[str, None] = op.metadata.get("labels", {}).get("package", None)
             if not pkg_name or (package and package == pkg_name):
                 result[op_id] = OperationInfo.create_from_operation(
                     kiara=kiara, operation=op

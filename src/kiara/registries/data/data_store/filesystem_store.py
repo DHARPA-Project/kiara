@@ -11,7 +11,7 @@ import uuid
 from enum import Enum
 from io import BytesIO
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Set, Union
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Union, Set, Union
 
 from kiara.models.module.jobs import JobRecord
 from kiara.models.values.value import (
@@ -67,9 +67,9 @@ class FileSystemDataArchive(DataArchive, JobArchive):
     def __init__(self, archive_id: uuid.UUID, config: FileSystemArchiveConfig):
 
         DataArchive.__init__(self, archive_id=archive_id, config=config)
-        self._base_path: Optional[Path] = None
-        self._hashfs_path: Optional[Path] = None
-        self._hashfs: Optional[HashFS] = None
+        self._base_path: Union[Path, None] = None
+        self._hashfs_path: Union[Path, None] = None
+        self._hashfs: Union[HashFS, None] = None
 
     # def get_job_archive_id(self) -> uuid.UUID:
     #     return self._kiara.id
@@ -114,7 +114,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
         return self._hashfs
 
     def get_path(
-        self, entity_type: Optional[EntityType] = None, base_path: Optional[Path] = None
+        self, entity_type: Union[EntityType, None] = None, base_path: Union[Path, None] = None
     ) -> Path:
         if base_path is None:
             if entity_type is None:
@@ -146,7 +146,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
         return environment
 
     def retrieve_all_job_hashes(
-        self, manifest_hash: Optional[str] = None, inputs_hash: Optional[str] = None
+        self, manifest_hash: Union[str, None] = None, inputs_hash: Union[str, None] = None
     ) -> Iterable[str]:
 
         raise NotImplementedError()
@@ -216,8 +216,8 @@ class FileSystemDataArchive(DataArchive, JobArchive):
     def _find_values_with_hash(
         self,
         value_hash: str,
-        value_size: Optional[int] = None,
-        data_type_name: Optional[str] = None,
+        value_size: Union[int, None] = None,
+        data_type_name: Union[str, None] = None,
     ) -> Set[uuid.UUID]:
 
         value_data_folder = self.get_path(entity_type=EntityType.VALUE_DATA)
@@ -241,8 +241,8 @@ class FileSystemDataArchive(DataArchive, JobArchive):
         return result
 
     def _find_destinies_for_value(
-        self, value_id: uuid.UUID, alias_filter: Optional[str] = None
-    ) -> Optional[Mapping[str, uuid.UUID]]:
+        self, value_id: uuid.UUID, alias_filter: Union[str, None] = None
+    ) -> Union[Mapping[str, uuid.UUID], None]:
 
         destiny_dir = self.get_path(entity_type=EntityType.DESTINY_LINK)
         destiny_value_dir = destiny_dir / str(value_id)
@@ -264,7 +264,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
         return destinies
 
     def _retrieve_all_value_ids(
-        self, data_type_name: Optional[str] = None
+        self, data_type_name: Union[str, None] = None
     ) -> Iterable[uuid.UUID]:
 
         if data_type_name is not None:

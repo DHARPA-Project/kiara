@@ -7,7 +7,7 @@
 
 import networkx as nx
 from pydantic.main import BaseModel
-from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Type
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Union, Type
 
 from kiara.defaults import KIARA_DEFAULT_ROOT_NODE_ID, PYDANTIC_USE_CONSTRUCT
 from kiara.utils import log_message
@@ -91,7 +91,7 @@ def get_subcomponent_from_model(data: "KiaraModel", path: str) -> "KiaraModel":
             )
 
 
-def assemble_subcomponent_tree(data: "KiaraModel") -> Optional[nx.DiGraph]:
+def assemble_subcomponent_tree(data: "KiaraModel") -> Union[nx.DiGraph, None]:
 
     graph = nx.DiGraph()
 

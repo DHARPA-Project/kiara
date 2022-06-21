@@ -23,7 +23,7 @@ from typing import (
     List,
     Literal,
     Mapping,
-    Optional,
+    Union,
     Type,
     Union,
 )
@@ -279,7 +279,7 @@ class Operation(Manifest):
         description="Additional metadata for this operation.", default_factory=dict
     )
 
-    _module: Optional["KiaraModule"] = PrivateAttr(default=None)
+    _module: Union["KiaraModule", None] = PrivateAttr(default=None)
 
     def _retrieve_data_to_hash(self) -> Any:
         return {"operation_id": self.operation_id, "manifest": self.manifest_cid}
@@ -536,7 +536,7 @@ class OperationGroupInfo(InfoModelGroup):
 
     @classmethod
     def create_from_operations(
-        cls, kiara: "Kiara", group_alias: Optional[str] = None, **items: Operation
+        cls, kiara: "Kiara", group_alias: Union[str, None] = None, **items: Operation
     ) -> "OperationGroupInfo":
 
         op_infos = {

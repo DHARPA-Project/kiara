@@ -14,7 +14,7 @@ from pydantic import BaseModel, Field, PrivateAttr
 from rich import box
 from rich.console import RenderableType
 from rich.table import Table
-from typing import Any, Dict, List, Mapping, Optional, Union
+from typing import Any, Dict, List, Mapping, Union, Union
 
 from kiara.defaults import DEFAULT_EXCLUDE_FILES, KIARA_HASH_FUNCTION
 from kiara.models import KiaraModel
@@ -43,7 +43,7 @@ class FileModel(KiaraModel):
     def load_file(
         cls,
         source: str,
-        file_name: Optional[str] = None,
+        file_name: Union[str, None] = None,
         # import_time: Optional[datetime.datetime] = None,
     ):
         """Utility method to read metadata of a file from disk and optionally move it into a data archive location."""
@@ -98,9 +98,9 @@ class FileModel(KiaraModel):
     file_name: str = Field("The name of the file.")
     size: int = Field(description="The size of the file.")
 
-    _path: Optional[str] = PrivateAttr(default=None)
-    _file_hash: Optional[str] = PrivateAttr(default=None)
-    _file_cid: Optional[CID] = PrivateAttr(default=None)
+    _path: Union[str, None] = PrivateAttr(default=None)
+    _file_hash: Union[str, None] = PrivateAttr(default=None)
+    _file_cid: Union[CID, None] = PrivateAttr(default=None)
 
     # @validator("path")
     # def ensure_abs_path(cls, value):
@@ -125,7 +125,7 @@ class FileModel(KiaraModel):
     def get_category_alias(self) -> str:
         return "instance.file_model"
 
-    def copy_file(self, target: str, new_name: Optional[str] = None) -> "FileModel":
+    def copy_file(self, target: str, new_name: Union[str, None] = None) -> "FileModel":
 
         target_path: str = os.path.abspath(target)
         os.makedirs(os.path.dirname(target_path), exist_ok=True)
@@ -191,15 +191,15 @@ class FileModel(KiaraModel):
 
 class FolderImportConfig(BaseModel):
 
-    include_files: Optional[List[str]] = Field(
+    include_files: Union[List[str], None] = Field(
         description="A list of strings, include all files where the filename ends with that string.",
         default=None,
     )
-    exclude_dirs: Optional[List[str]] = Field(
+    exclude_dirs: Union[List[str], None] = Field(
         description="A list of strings, exclude all folders whose name ends with that string.",
         default=None,
     )
-    exclude_files: Optional[List[str]] = Field(
+    exclude_files: Union[List[str], None] = Field(
         description=f"A list of strings, exclude all files that match those (takes precedence over 'include_files'). Defaults to: {DEFAULT_EXCLUDE_FILES}.",
         default=DEFAULT_EXCLUDE_FILES,
     )
@@ -214,7 +214,7 @@ class FileBundle(KiaraModel):
     def import_folder(
         cls,
         source: str,
-        bundle_name: Optional[str] = None,
+        bundle_name: Union[str, None] = None,
         import_config: Union[None, Mapping[str, Any], FolderImportConfig] = None,
         # import_time: Optional[datetime.datetime] = None,
     ) -> "FileBundle":
@@ -302,8 +302,8 @@ class FileBundle(KiaraModel):
         cls,
         files: Mapping[str, FileModel],
         bundle_name: str,
-        path: Optional[str] = None,
-        sum_size: Optional[int] = None,
+        path: Union[str, None] = None,
+        sum_size: Union[int, None] = None,
         # import_time: Optional[datetime.datetime] = None,
     ) -> "FileBundle":
 
@@ -331,7 +331,7 @@ class FileBundle(KiaraModel):
         bundle._path = path
         return bundle
 
-    _file_bundle_hash: Optional[int] = PrivateAttr(default=None)
+    _file_bundle_hash: Union[int, None] = PrivateAttr(default=None)
 
     bundle_name: str = Field(description="The name of this bundle.")
     # import_time: datetime.datetime = Field(
@@ -344,7 +344,7 @@ class FileBundle(KiaraModel):
         description="A map of all the included files, incl. their properties. Uses the relative path of each file as key."
     )
     size: int = Field(description="The size of all files in this folder, combined.")
-    _path: Optional[str] = PrivateAttr(default=None)
+    _path: Union[str, None] = PrivateAttr(default=None)
 
     @property
     def path(self) -> str:
@@ -414,7 +414,7 @@ class FileBundle(KiaraModel):
         return self._file_bundle_hash
 
     def copy_bundle(
-        self, target_path: str, bundle_name: Optional[str] = None
+        self, target_path: str, bundle_name: Union[str, None] = None
     ) -> "FileBundle":
 
         if target_path == self.path:

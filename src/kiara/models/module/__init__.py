@@ -21,7 +21,7 @@ from rich.console import RenderableType
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Dict, Literal, Mapping, Optional, Type
+from typing import TYPE_CHECKING, Any, Dict, Literal, Mapping, Union, Type
 
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.models import KiaraModel
@@ -56,7 +56,7 @@ class KiaraModuleConfig(KiaraModel):
     _kiara_model_id = "instance.module_config"
 
     @classmethod
-    def requires_config(cls, config: Optional[Mapping[str, Any]] = None) -> bool:
+    def requires_config(cls, config: Union[Mapping[str, Any], None] = None) -> bool:
         """Return whether this class can be used as-is, or requires configuration before an instance can be created."""
 
         for field_name, field in cls.__fields__.items():

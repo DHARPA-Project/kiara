@@ -8,7 +8,7 @@ import orjson.orjson
 import structlog
 from pydantic import Field
 from rich.console import Group
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Type
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Union, Type
 
 from kiara.data_types import DataTypeConfig
 from kiara.data_types.included_core_types import AnyType, KiaraModelValueType
@@ -23,7 +23,7 @@ logger = structlog.getLogger()
 
 class FileTypeConfig(DataTypeConfig):
 
-    content_type: Optional[str] = Field(
+    content_type: Union[str, None] = Field(
         description="The content type of this file.", default=None
     )
 

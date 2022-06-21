@@ -6,7 +6,7 @@
 # Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 from pydantic import Field
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union, Union
 
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.operation import (
@@ -131,7 +131,7 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
 
     def check_matching_operation(
         self, module: "KiaraModule"
-    ) -> Optional[DeSerializeDetails]:
+    ) -> Union[DeSerializeDetails, None]:
 
         details = self.extract_details(module)
 
@@ -140,7 +140,7 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
         else:
             return details
 
-    def extract_details(self, module: "KiaraModule") -> Optional[DeSerializeDetails]:
+    def extract_details(self, module: "KiaraModule") -> Union[DeSerializeDetails, None]:
 
         result_field_name = None
         for field_name, schema in module.outputs_schema.items():

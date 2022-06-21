@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field, PrivateAttr
 from rich import box
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union, Union
 
 from kiara.models.values.value import ORPHAN, PersistedData, Value
 from kiara.models.values.value_schema import ValueSchema
@@ -162,13 +162,13 @@ class ValueInfo(Value):
 
     value_id: uuid.UUID = Field(description="The value id.")
     value_schema: ValueSchema = Field(description="The data schema of this value.")
-    aliases: Optional[List[str]] = Field(
+    aliases: Union[List[str], None] = Field(
         description="The aliases that are registered for this value."
     )
-    serialized: Optional[PersistedData] = Field(
+    serialized: Union[PersistedData, None] = Field(
         description="Details for the serialization process that was used for this value."
     )
-    destiny_links: Optional[Mapping[str, uuid.UUID]] = Field(
+    destiny_links: Union[Mapping[str, uuid.UUID], None] = Field(
         description="References to all the values that act as destiny for this value in this context."
     )
 

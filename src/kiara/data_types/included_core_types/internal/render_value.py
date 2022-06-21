@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from pydantic import Field
-from typing import Any, Mapping, Optional, Type
+from typing import Any, Mapping, Union, Type
 
 from kiara.data_types import DataTypeConfig
 from kiara.data_types.included_core_types.internal import InternalType
@@ -25,7 +25,7 @@ class RenderInstructionDataType(
 
     def __init__(self, **type_config: Any):
 
-        self._cls_cache: Optional[Type[RenderInstruction]] = None
+        self._cls_cache: Union[Type[RenderInstruction], None] = None
         super().__init__(**type_config)
 
     @classmethod
@@ -78,7 +78,7 @@ class RenderMetadataDataType(InternalType[RenderMetadata, DataTypeConfig]):
 
     def __init__(self, **type_config: Any):
 
-        self._cls_cache: Optional[Type[RenderMetadata]] = None
+        self._cls_cache: Union[Type[RenderMetadata], None] = None
         super().__init__(**type_config)
 
     @classmethod

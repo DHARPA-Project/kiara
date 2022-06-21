@@ -9,7 +9,7 @@ import os
 import shutil
 import uuid
 from pathlib import Path
-from typing import Mapping, Optional, Set
+from typing import Mapping, Union, Set
 
 from kiara.registries import ARCHIVE_CONFIG_CLS, FileSystemArchiveConfig
 from kiara.registries.aliases import AliasArchive, AliasStore
@@ -24,7 +24,7 @@ class FileSystemAliasArchive(AliasArchive):
 
         super().__init__(archive_id=archive_id, config=config)
 
-        self._base_path: Optional[Path] = None
+        self._base_path: Union[Path, None] = None
 
     @property
     def alias_store_path(self) -> Path:
@@ -107,13 +107,13 @@ class FileSystemAliasArchive(AliasArchive):
 
         return result
 
-    def find_value_id_for_alias(self, alias: str) -> Optional[uuid.UUID]:
+    def find_value_id_for_alias(self, alias: str) -> Union[uuid.UUID, None]:
         alias_path = self._translate_alias(alias)
         if not alias_path.exists():
             return None
         return self._find_value_id_for_alias_path(alias_path=alias_path)
 
-    def _find_value_id_for_alias_path(self, alias_path: Path) -> Optional[uuid.UUID]:
+    def _find_value_id_for_alias_path(self, alias_path: Path) -> Union[uuid.UUID, None]:
 
         resolved = alias_path.resolve()
 
@@ -122,7 +122,7 @@ class FileSystemAliasArchive(AliasArchive):
         value_id = self._translate_value_path(value_path=resolved)
         return value_id
 
-    def find_aliases_for_value_id(self, value_id: uuid.UUID) -> Optional[Set[str]]:
+    def find_aliases_for_value_id(self, value_id: uuid.UUID) -> Union[Set[str], None]:
         raise NotImplementedError()
 
 

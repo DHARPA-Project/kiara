@@ -7,7 +7,7 @@
 
 import uuid
 from pydantic import BaseModel, Extra, Field, PrivateAttr, root_validator
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Union
 
 from kiara.defaults import PIPELINE_PARENT_MARKER
 from kiara.models.values.value_schema import ValueSchema
@@ -28,7 +28,7 @@ class StepValueAddress(BaseModel):
     value_name: str = Field(
         description="The name of the value (output name or pipeline input name)."
     )
-    sub_value: Optional[Dict[str, Any]] = Field(
+    sub_value: Union[Dict[str, Any], None] = Field(
         default=None,
         description="A reference to a subitem of a value (e.g. column, list item)",
     )
@@ -128,11 +128,11 @@ class StepInputRef(ValueRef):
     """
 
     step_id: str = Field(description="The step id.")
-    connected_outputs: Optional[List[StepValueAddress]] = Field(
+    connected_outputs: Union[List[StepValueAddress], None] = Field(
         default=None,
         description="A potential connected list of one or several module outputs.",
     )
-    connected_pipeline_input: Optional[str] = Field(
+    connected_pipeline_input: Union[str, None] = Field(
         default=None, description="A potential pipeline input."
     )
     is_constant: bool = Field(
@@ -169,7 +169,7 @@ class StepOutputRef(ValueRef):
         allow_mutation = True
 
     step_id: str = Field(description="The step id.")
-    pipeline_output: Optional[str] = Field(description="The connected pipeline output.")
+    pipeline_output: Union[str, None] = Field(description="The connected pipeline output.")
     connected_inputs: List[StepValueAddress] = Field(
         description="The step inputs that are connected to this step output",
         default_factory=list,

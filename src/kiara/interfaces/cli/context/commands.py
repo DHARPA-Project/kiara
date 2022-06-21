@@ -8,7 +8,7 @@ import sys
 from rich import box
 from rich.panel import Panel
 from rich.table import Table
-from typing import Optional, Tuple
+from typing import Union, Tuple
 
 from kiara.context import Kiara, KiaraConfig, KiaraContextConfig
 from kiara.interfaces import get_console
@@ -50,7 +50,7 @@ def list_contexts(ctx):
 @output_format_option()
 @click.pass_context
 def explain_context(
-    ctx, format: str, value_ids: bool, context_name: Optional[Tuple[str]] = None
+    ctx, format: str, value_ids: bool, context_name: Union[Tuple[str], None] = None
 ):
     """Print details for one or several contexts."""
 
@@ -96,7 +96,7 @@ def explain_context(
 @click.pass_context
 def delete_context(
     ctx,
-    context_name: Optional[str] = None,
+    context_name: Union[str, None] = None,
     force: bool = False,
     all_contexts: bool = False,
 ):

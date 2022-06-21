@@ -14,7 +14,7 @@ from typing import (
     Iterable,
     List,
     Mapping,
-    Optional,
+    Union,
     Set,
     Type,
     Union,
@@ -43,22 +43,22 @@ class OperationRegistry(object):
     def __init__(
         self,
         kiara: "Kiara",
-        operation_type_classes: Optional[Mapping[str, Type[OperationType]]] = None,
+        operation_type_classes: Union[Mapping[str, Type[OperationType]], None] = None,
     ):
 
         self._kiara: "Kiara" = kiara
 
-        self._operation_type_classes: Optional[Dict[str, Type["OperationType"]]] = None
+        self._operation_type_classes: Union[Dict[str, Type["OperationType"]], None] = None
 
         if operation_type_classes is not None:
             self._operation_type_classes = dict(operation_type_classes)
 
         self._operation_type_metadata: Dict[str, OperationTypeInfo] = {}
 
-        self._operation_types: Optional[Dict[str, OperationType]] = None
+        self._operation_types: Union[Dict[str, OperationType], None] = None
 
-        self._operations: Optional[Dict[str, Operation]] = None
-        self._operations_by_type: Optional[Dict[str, Iterable[str]]] = None
+        self._operations: Union[Dict[str, Operation], None] = None
+        self._operations_by_type: Union[Dict[str, Iterable[str]], None] = None
 
     @property
     def is_initialized(self) -> bool:
@@ -108,7 +108,7 @@ class OperationRegistry(object):
         return self._operation_type_metadata[type_name]
 
     def get_context_metadata(
-        self, alias: Optional[str] = None, only_for_package: Optional[str] = None
+        self, alias: Union[str, None] = None, only_for_package: Union[str, None] = None
     ) -> OperationTypeClassesInfo:
 
         result = {}
@@ -364,7 +364,7 @@ class OperationRegistry(object):
         return self._operations
 
     def _create_operations(
-        self, manifest: Manifest, doc: Any, metadata: Optional[Mapping[str, Any]] = None
+        self, manifest: Manifest, doc: Any, metadata: Union[Mapping[str, Any], None] = None
     ) -> Dict[str, Operation]:
 
         module = self._kiara.create_module(manifest)

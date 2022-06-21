@@ -19,7 +19,7 @@ from typing import (
     Iterable,
     List,
     Mapping,
-    Optional,
+    Union,
     Set,
     Type,
 )
@@ -212,8 +212,8 @@ class OutputDetails(BaseModel):
 
 class TabularWrap(ABC):
     def __init__(self):
-        self._num_rows: Optional[int] = None
-        self._column_names: Optional[Iterable[str]] = None
+        self._num_rows: Union[int, None] = None
+        self._column_names: Union[Iterable[str], None] = None
 
     @property
     def num_rows(self) -> int:
@@ -236,7 +236,7 @@ class TabularWrap(ABC):
         pass
 
     @abstractmethod
-    def slice(self, offset: int = 0, length: Optional[int] = None) -> "TabularWrap":
+    def slice(self, offset: int = 0, length: Union[int, None] = None) -> "TabularWrap":
         pass
 
     @abstractmethod
@@ -245,10 +245,10 @@ class TabularWrap(ABC):
 
     def pretty_print(
         self,
-        rows_head: Optional[int] = None,
-        rows_tail: Optional[int] = None,
-        max_row_height: Optional[int] = None,
-        max_cell_length: Optional[int] = None,
+        rows_head: Union[int, None] = None,
+        rows_tail: Union[int, None] = None,
+        max_row_height: Union[int, None] = None,
+        max_cell_length: Union[int, None] = None,
         show_table_header: bool = True,
     ) -> RenderableType:
 
@@ -374,7 +374,7 @@ class ArrowTabularWrap(TabularWrap):
     def retrieve_number_of_rows(self) -> int:
         return self._table.num_rows
 
-    def slice(self, offset: int = 0, length: Optional[int] = None):
+    def slice(self, offset: int = 0, length: Union[int, None] = None):
         return self._table.slice(offset=offset, length=length)
 
     def to_pydict(self) -> Mapping:
@@ -395,7 +395,7 @@ class DictTabularWrap(TabularWrap):
     def to_pydict(self) -> Mapping:
         return self._data
 
-    def slice(self, offset: int = 0, length: Optional[int] = None) -> "TabularWrap":
+    def slice(self, offset: int = 0, length: Union[int, None] = None) -> "TabularWrap":
 
         result = {}
         start = None
@@ -441,7 +441,7 @@ class SqliteTabularWrap(TabularWrap):
         result = [column["name"] for column in columns]
         return result
 
-    def slice(self, offset: int = 0, length: Optional[int] = None) -> "TabularWrap":
+    def slice(self, offset: int = 0, length: Union[int, None] = None) -> "TabularWrap":
 
         from sqlalchemy import text
 
@@ -558,7 +558,7 @@ def create_table_from_field_schemas(
     _add_default: bool = True,
     _add_required: bool = True,
     _show_header: bool = False,
-    _constants: Optional[Mapping[str, Any]] = None,
+    _constants: Union[Mapping[str, Any], None] = None,
     **fields: "ValueSchema",
 ) -> RichTable:
 
@@ -614,7 +614,7 @@ def create_table_from_field_schemas(
 
 
 def create_value_map_status_renderable(
-    inputs: ValueMap, render_config: Optional[Mapping[str, Any]] = None
+    inputs: ValueMap, render_config: Union[Mapping[str, Any], None] = None
 ) -> RichTable:
 
     if render_config is None:
@@ -686,8 +686,8 @@ def create_value_map_status_renderable(
 
 def create_table_from_model_object(
     model: BaseModel,
-    render_config: Optional[Mapping[str, Any]] = None,
-    exclude_fields: Optional[Set[str]] = None,
+    render_config: Union[Mapping[str, Any], None] = None,
+    exclude_fields: Union[Set[str], None] = None,
 ):
 
     model_cls = model.__class__
@@ -725,7 +725,7 @@ def create_table_from_model_object(
     return table
 
 
-def extract_renderable(item: Any, render_config: Optional[Mapping[str, Any]] = None):
+def extract_renderable(item: Any, render_config: Union[Mapping[str, Any], None] = None):
     """Try to automatically find and extract or create an object that is renderable by the 'rich' library."""
 
     if render_config is None:
@@ -770,7 +770,7 @@ def extract_renderable(item: Any, render_config: Optional[Mapping[str, Any]] = N
 
 
 def create_renderable_from_values(
-    values: Mapping[str, "Value"], config: Optional[Mapping[str, Any]] = None
+    values: Mapping[str, "Value"], config: Union[Mapping[str, Any], None] = None
 ) -> RenderableType:
     """Create a renderable for this module configuration."""
 

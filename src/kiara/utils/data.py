@@ -7,7 +7,7 @@
 
 import structlog
 import uuid
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Union
 
 from kiara.models.module.operation import Operation
 from kiara.models.render_value import RenderInstruction, RenderValueResult
@@ -36,7 +36,7 @@ def pretty_print_data(
     op_type: PrettyPrintOperationType = kiara.operation_registry.get_operation_type("pretty_print")  # type: ignore
 
     try:
-        op: Optional[Operation] = op_type.get_operation_for_render_combination(
+        op: Union[Operation, None] = op_type.get_operation_for_render_combination(
             source_type=value.value_schema.type, target_type=target_type
         )
     except Exception as e:
@@ -71,7 +71,7 @@ def render_value(
     kiara: "Kiara",
     value_id: uuid.UUID,
     target_type="terminal_renderable",
-    render_instruction: Optional[RenderInstruction] = None,
+    render_instruction: Union[RenderInstruction, None] = None,
 ) -> RenderValueResult:
 
     value = kiara.data_registry.get_value(value_id=value_id)

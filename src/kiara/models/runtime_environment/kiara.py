@@ -5,7 +5,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 from pydantic import Field
-from typing import Any, Dict, Literal, Optional
+from typing import Any, Dict, Literal, Union
 
 from kiara.models.archives import ArchiveTypeClassesInfo
 from kiara.models.info import TypeInfo
@@ -16,7 +16,7 @@ from kiara.utils.metadata import find_metadata_models
 
 
 def find_archive_types(
-    alias: Optional[str] = None, only_for_package: Optional[str] = None
+    alias: Union[str, None] = None, only_for_package: Union[str, None] = None
 ) -> ArchiveTypeClassesInfo:
 
     archive_types = find_all_archive_types()

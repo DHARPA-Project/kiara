@@ -3,7 +3,7 @@ import os
 import uuid
 from rich.console import Group, RenderableType
 from rich.markdown import Markdown
-from typing import Any, Dict, List, Mapping, Optional, Union
+from typing import Any, Dict, List, Mapping, Union, Union
 
 from kiara import Kiara
 from kiara.exceptions import (
@@ -34,7 +34,7 @@ class KiaraOperation(object):
         self,
         kiara: "Kiara",
         operation_name: str,
-        operation_config: Optional[Mapping[str, Any]] = None,
+        operation_config: Union[Mapping[str, Any], None] = None,
     ):
 
         self._kiara: Kiara = kiara
@@ -47,16 +47,16 @@ class KiaraOperation(object):
 
         self._inputs_raw: Dict[str, Any] = {}
 
-        self._operation: Optional[Operation] = None
-        self._inputs: Optional[ValueMap] = None
+        self._operation: Union[Operation, None] = None
+        self._inputs: Union[ValueMap, None] = None
 
-        self._job_config: Optional[JobConfig] = None
+        self._job_config: Union[JobConfig, None] = None
 
         self._queued_jobs: Dict[uuid.UUID, Dict[str, Any]] = {}
-        self._last_job: Optional[uuid.UUID] = None
+        self._last_job: Union[uuid.UUID, None] = None
         self._results: Dict[uuid.UUID, ValueMap] = {}
 
-        self._defaults: Optional[Dict[str, Any]] = None
+        self._defaults: Union[Dict[str, Any], None] = None
 
     def validate(self):
 
@@ -85,7 +85,7 @@ class KiaraOperation(object):
         )
         return self._inputs
 
-    def set_input(self, field: Optional[str], value: Any = None):
+    def set_input(self, field: Union[str, None], value: Any = None):
 
         if field is None:
             if value is None:
@@ -143,7 +143,7 @@ class KiaraOperation(object):
         return self._operation_config
 
     def set_operation_config_value(
-        self, key: Optional[str], value: Any = None
+        self, key: Union[str, None], value: Any = None
     ) -> Mapping[str, Any]:
 
         if key is None:
@@ -179,7 +179,7 @@ class KiaraOperation(object):
         self._defaults = None
 
         module_or_operation = self._operation_name
-        operation: Optional[Operation]
+        operation: Union[Operation, None]
 
         if module_or_operation in self._kiara.operation_registry.operation_ids:
 
@@ -278,7 +278,7 @@ class KiaraOperation(object):
         self._last_job = job_id
         return job_id
 
-    def retrieve_result(self, job_id: Optional[uuid.UUID] = None) -> ValueMap:
+    def retrieve_result(self, job_id: Union[uuid.UUID, None] = None) -> ValueMap:
 
         if job_id in self._results.keys():
             assert job_id is not None
@@ -305,7 +305,7 @@ class KiaraOperation(object):
 
     def save_result(
         self,
-        job_id: Optional[uuid.UUID] = None,
+        job_id: Union[uuid.UUID, None] = None,
         aliases: Union[None, str, Mapping] = None,
     ) -> StoreValuesResult:
 

@@ -6,7 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 from pydantic import Field
-from typing import Any, Iterable, Mapping, Optional, Type, Union
+from typing import Any, Iterable, Mapping, Union, Type, Union
 
 from kiara.models.module.operation import (
     BaseOperationDetails,
@@ -91,7 +91,7 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
 
     def check_matching_operation(
         self, module: "KiaraModule"
-    ) -> Optional[ExtractMetadataDetails]:
+    ) -> Union[ExtractMetadataDetails, None]:
 
         if len(module.outputs_schema) != 1:
             return None

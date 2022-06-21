@@ -19,7 +19,7 @@ from typing import (
     Generic,
     Iterable,
     Mapping,
-    Optional,
+    Union,
     Type,
     TypeVar,
     Union,
@@ -337,12 +337,12 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
         else:
             raise TypeError(f"Invalid type for module config: {type(module_config)}")
 
-        self._module_cid: Optional[CID] = None
-        self._characteristics: Optional[ModuleCharacteristics] = None
+        self._module_cid: Union[CID, None] = None
+        self._characteristics: Union[ModuleCharacteristics, None] = None
 
         super().__init__(alias=self.__class__._module_type_name, config=self._config)  # type: ignore
 
-        self._operation: Optional[Operation] = None
+        self._operation: Union[Operation, None] = None
         # self._merged_input_schemas: typing.Mapping[str, ValueSchema] = None  # type: ignore
 
     @property

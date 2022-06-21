@@ -3,7 +3,7 @@ from rich.console import RenderableType
 from textual.app import App
 from textual.reactive import Reactive
 from textual.widget import Widget
-from typing import Any, Dict, Mapping, Optional
+from typing import Any, Dict, Mapping, Union
 
 from kiara import Kiara
 from kiara.models.module.operation import Operation
@@ -18,10 +18,10 @@ class ValuePager(Widget):
     _value: Value = None  # type: ignore
     _control_widget = None  # type: ignore
 
-    render_instruction: Optional[Mapping[str, Any]] = Reactive(None)  # type: ignore
+    render_instruction: Union[Mapping[str, Any], None] = Reactive(None)  # type: ignore
 
-    current_rendered_value: Optional[RenderableType] = None  # type: ignore
-    current_render_metadata: Optional[RenderMetadata] = None  # type: ignore
+    current_rendered_value: Union[RenderableType, None] = None  # type: ignore
+    current_render_metadata: Union[RenderMetadata, None] = None  # type: ignore
 
     def update_render_instruction(self, render_metadata: Mapping[str, Any]):
 

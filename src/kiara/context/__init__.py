@@ -17,7 +17,7 @@ from typing import (
     Iterable,
     List,
     Mapping,
-    Optional,
+    Union,
     Set,
     Type,
     Union,
@@ -103,7 +103,7 @@ class Kiara(object):
     @classmethod
     def instance(
         cls,
-        context_name: Optional[str] = None,
+        context_name: Union[str, None] = None,
         runtime_config: Union[None, Mapping[str, Any], KiaraRuntimeConfig] = None,
     ) -> "Kiara":
         """The default *kiara* context. In most cases, it's recommended you create and manage your own, though."""
@@ -132,11 +132,11 @@ class Kiara(object):
 
     def __init__(
         self,
-        config: Optional[KiaraContextConfig] = None,
-        runtime_config: Optional[KiaraRuntimeConfig] = None,
+        config: Union[KiaraContextConfig, None] = None,
+        runtime_config: Union[KiaraRuntimeConfig, None] = None,
     ):
 
-        kc: Optional[KiaraConfig] = None
+        kc: Union[KiaraConfig, None] = None
         if not config:
             kc = KiaraConfig()
             config = kc.get_context_config()
@@ -167,14 +167,14 @@ class Kiara(object):
 
         self._workflow_registry: WorkflowRegistry = WorkflowRegistry(kiara=self)
 
-        self._env_mgmt: Optional[EnvironmentRegistry] = None
+        self._env_mgmt: Union[EnvironmentRegistry, None] = None
 
         metadata_augmenter = CreateMetadataDestinies(kiara=self)
         self._event_registry.add_listener(
             metadata_augmenter, *metadata_augmenter.supported_event_types()
         )
 
-        self._context_info: Optional[KiaraContextInfo] = None
+        self._context_info: Union[KiaraContextInfo, None] = None
 
         # initialize stores
         self._archive_types = find_all_archive_types()
@@ -323,7 +323,7 @@ class Kiara(object):
     # kiara session API methods
 
     def create_manifest(
-        self, module_or_operation: str, config: Optional[Mapping[str, Any]] = None
+        self, module_or_operation: str, config: Union[Mapping[str, Any], None] = None
     ) -> Manifest:
 
         if config is None:
@@ -439,6 +439,8 @@ class Kiara(object):
             result.setdefault(archive, set()).add(alias)
         for alias, archive in self.job_registry.job_archives.items():
             result.setdefault(archive, set()).add(alias)
+        for alias, archive in self.workflow_registry.workflow_archives.items():
+            result.setdefault(archive, set()).add(alias)
 
         return result
 
@@ -446,7 +448,7 @@ class Kiara(object):
 class KiaraContextInfo(KiaraModel):
     @classmethod
     def create_from_kiara_instance(
-        cls, kiara: "Kiara", package_filter: Optional[str] = None
+        cls, kiara: "Kiara", package_filter: Union[str, None] = None
     ):
 
         data_types = kiara.type_registry.get_context_metadata(
@@ -484,7 +486,7 @@ class KiaraContextInfo(KiaraModel):
         )
 
     kiara_id: uuid.UUID = Field(description="The id of the kiara context.")
-    package_filter: Optional[str] = Field(
+    package_filter: Union[str, None] = Field(
         description="Whether this context is filtered to only include information included in a specific Python package."
     )
     data_types: DataTypeClassesInfo = Field(description="The included data types.")

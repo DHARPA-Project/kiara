@@ -7,7 +7,7 @@ import orjson
 import structlog
 from pydantic import Field, PrivateAttr
 from rich.syntax import Syntax
-from typing import Any, Generic, Mapping, Optional, Type, Union
+from typing import Any, Generic, Mapping, Union, Type, Union
 
 from kiara.data_types import TYPE_CONFIG_CLS, TYPE_PYTHON_CLS, DataType, DataTypeConfig
 from kiara.defaults import NO_SERIALIZATION_MARKER
@@ -54,7 +54,7 @@ class TerminalRenderable(InternalType[object, DataTypeConfig]):
 
 class InternalModelTypeConfig(DataTypeConfig):
 
-    kiara_model_id: Optional[str] = Field(
+    kiara_model_id: Union[str, None] = Field(
         description="The Python class backing this model (must sub-class 'KiaraModel')."
     )
 
@@ -66,7 +66,7 @@ class InternalModelValueType(InternalType[KiaraModel, InternalModelTypeConfig]):
     """
 
     _data_type_name = "internal_model"
-    _cls_cache: Optional[Type[KiaraModel]] = PrivateAttr(default=None)
+    _cls_cache: Union[Type[KiaraModel], None] = PrivateAttr(default=None)
 
     @classmethod
     def data_type_config_class(cls) -> Type[InternalModelTypeConfig]:

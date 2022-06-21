@@ -5,7 +5,7 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-from typing import TYPE_CHECKING, Any, Mapping, Optional, Union
+from typing import TYPE_CHECKING, Any, Mapping, Union, Union
 
 from kiara.models.module.jobs import JobLog
 from kiara.models.module.pipeline import PipelineConfig
@@ -28,7 +28,7 @@ class PipelineModule(KiaraModule):
         self,
         module_config: Union[None, KIARA_CONFIG, Mapping[str, Any]] = None,
     ):
-        self._job_registry: Optional[JobRegistry] = None
+        self._job_registry: Union[JobRegistry, None] = None
         super().__init__(module_config=module_config)
 
     @classmethod

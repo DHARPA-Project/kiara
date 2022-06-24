@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/utils/__init__/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.2">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.5d38496d.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.1d29e8d0.min.css">
       
         
         <link rel="stylesheet" href="../../../../assets/stylesheets/palette.cbb835fc.min.css">
@@ -2380,6 +2380,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../modules/included_core_modules/export_as/" class="md-nav__link">
+        export_as
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../modules/included_core_modules/filesystem/" class="md-nav__link">
         filesystem
       </a>
@@ -2544,6 +2558,20 @@
     <li class="md-nav__item">
       <a href="../../operations/included_core_operations/create_from/" class="md-nav__link">
         create_from
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/included_core_operations/export_as/" class="md-nav__link">
+        export_as
       </a>
     </li>
   
@@ -3383,6 +3411,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../debug/" class="md-nav__link">
+        debug
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../doc/" class="md-nav__link">
         doc
       </a>
@@ -3843,6 +3885,13 @@
           <li class="md-nav__item">
   <a href="#kiara.utils.db" class="md-nav__link">
     db
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.utils.debug" class="md-nav__link">
+    debug
   </a>
   
 </li>
@@ -6576,7 +6625,7 @@ Takes a command or group and builds the help text output.</p>
                 <span class="n">highlighter</span><span class="p">(</span><span class="n">highlighter</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">opt_long_strs</span><span class="p">))),</span>
                 <span class="n">highlighter</span><span class="p">(</span><span class="n">highlighter</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">opt_short_strs</span><span class="p">))),</span>
                 <span class="n">metavar_highlighter</span><span class="p">(</span><span class="n">metavar</span><span class="p">),</span>
-                <span class="n">_get_parameter_help</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">ctx</span><span class="p">),</span>
+                <span class="n">_get_parameter_help</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">ctx</span><span class="p">),</span>  <span class="c1"># type: ignore</span>
             <span class="p">]</span>
 
             <span class="c1"># Remove metavar if specified in config</span>
@@ -6603,7 +6652,7 @@ Takes a command or group and builds the help text output.</p>
                 <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="n">box</span><span class="o">=</span><span class="n">box_style</span><span class="p">,</span>
-                <span class="o">**</span><span class="n">t_styles</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">t_styles</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
             <span class="p">)</span>
             <span class="c1"># Strip the required column if none are required</span>
             <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">options_rows</span><span class="p">]):</span>
@@ -6613,10 +6662,10 @@ Takes a command or group and builds the help text output.</p>
             <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">Panel</span><span class="p">(</span>
                     <span class="n">options_table</span><span class="p">,</span>
-                    <span class="n">border_style</span><span class="o">=</span><span class="n">STYLE_OPTIONS_PANEL_BORDER</span><span class="p">,</span>
-                    <span class="n">title</span><span class="o">=</span><span class="n">option_group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">OPTIONS_PANEL_TITLE</span><span class="p">),</span>
-                    <span class="n">title_align</span><span class="o">=</span><span class="n">ALIGN_OPTIONS_PANEL</span><span class="p">,</span>
-                    <span class="n">width</span><span class="o">=</span><span class="n">MAX_WIDTH</span><span class="p">,</span>
+                    <span class="n">border_style</span><span class="o">=</span><span class="n">STYLE_OPTIONS_PANEL_BORDER</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+                    <span class="n">title</span><span class="o">=</span><span class="n">option_group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">OPTIONS_PANEL_TITLE</span><span class="p">),</span>  <span class="c1"># type: ignore</span>
+                    <span class="n">title_align</span><span class="o">=</span><span class="n">ALIGN_OPTIONS_PANEL</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+                    <span class="n">width</span><span class="o">=</span><span class="n">MAX_WIDTH</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
                 <span class="p">)</span>
             <span class="p">)</span>
 
@@ -6655,8 +6704,8 @@ Takes a command or group and builds the help text output.</p>
                 <span class="n">highlight</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">box</span><span class="o">=</span><span class="n">box_style</span><span class="p">,</span>
-                <span class="o">**</span><span class="n">t_styles</span><span class="p">,</span>
+                <span class="n">box</span><span class="o">=</span><span class="n">box_style</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+                <span class="o">**</span><span class="n">t_styles</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
             <span class="p">)</span>
             <span class="c1"># Define formatting in first column, as commands don&#39;t match highlighter regex</span>
             <span class="n">commands_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold cyan&quot;</span><span class="p">,</span> <span class="n">no_wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -6679,10 +6728,10 @@ Takes a command or group and builds the help text output.</p>
                 <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">Panel</span><span class="p">(</span>
                         <span class="n">commands_table</span><span class="p">,</span>
-                        <span class="n">border_style</span><span class="o">=</span><span class="n">STYLE_COMMANDS_PANEL_BORDER</span><span class="p">,</span>
-                        <span class="n">title</span><span class="o">=</span><span class="n">cmd_group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">COMMANDS_PANEL_TITLE</span><span class="p">),</span>
-                        <span class="n">title_align</span><span class="o">=</span><span class="n">ALIGN_COMMANDS_PANEL</span><span class="p">,</span>
-                        <span class="n">width</span><span class="o">=</span><span class="n">MAX_WIDTH</span><span class="p">,</span>
+                        <span class="n">border_style</span><span class="o">=</span><span class="n">STYLE_COMMANDS_PANEL_BORDER</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+                        <span class="n">title</span><span class="o">=</span><span class="n">cmd_group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">COMMANDS_PANEL_TITLE</span><span class="p">),</span>  <span class="c1"># type: ignore</span>
+                        <span class="n">title_align</span><span class="o">=</span><span class="n">ALIGN_COMMANDS_PANEL</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+                        <span class="n">width</span><span class="o">=</span><span class="n">MAX_WIDTH</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
 
@@ -6697,9 +6746,9 @@ Takes a command or group and builds the help text output.</p>
     <span class="n">inputs_panel</span> <span class="o">=</span> <span class="n">Panel</span><span class="p">(</span>
         <span class="n">inputs_table</span><span class="p">,</span>
         <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Inputs&quot;</span><span class="p">,</span>
-        <span class="n">border_style</span><span class="o">=</span><span class="n">STYLE_COMMANDS_PANEL_BORDER</span><span class="p">,</span>
-        <span class="n">title_align</span><span class="o">=</span><span class="n">ALIGN_COMMANDS_PANEL</span><span class="p">,</span>
-        <span class="n">width</span><span class="o">=</span><span class="n">MAX_WIDTH</span><span class="p">,</span>
+        <span class="n">border_style</span><span class="o">=</span><span class="n">STYLE_COMMANDS_PANEL_BORDER</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">title_align</span><span class="o">=</span><span class="n">ALIGN_COMMANDS_PANEL</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">width</span><span class="o">=</span><span class="n">MAX_WIDTH</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
     <span class="p">)</span>
     <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inputs_panel</span><span class="p">)</span>
 
@@ -7232,6 +7281,177 @@ ThreadSaveCounter        </code>
         <span class="k">return</span> <span class="n">orjson_dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported type for json serialization: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h3 id="kiara.utils.debug" class="doc doc-heading">
+        <code>debug</code>
+
+
+
+<a href="#kiara.utils.debug" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.utils.debug.DEFAULT_VALUE_MAP_RENDER_CONFIG" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">DEFAULT_VALUE_MAP_RENDER_CONFIG</span></code>
+
+
+<a href="#kiara.utils.debug.DEFAULT_VALUE_MAP_RENDER_CONFIG" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.utils.debug.create_module_preparation_table" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_module_preparation_table</span><span class="p">(</span><span class="n">manifest</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">render_config</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.debug.create_module_preparation_table" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/debug.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_module_preparation_table</span><span class="p">(</span>
+    <span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">render_config</span>
+<span class="p">):</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;module&quot;</span><span class="p">,</span> <span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">manifest</span><span class="o">.</span><span class="n">module_config</span><span class="p">:</span>
+        <span class="n">mc</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span>
+            <span class="n">orjson_dumps</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_config</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">),</span>
+            <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;module config&quot;</span><span class="p">,</span> <span class="n">mc</span><span class="p">)</span>
+    <span class="n">value_map_rend</span> <span class="o">=</span> <span class="n">create_value_map_renderable</span><span class="p">(</span><span class="n">value_map</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">render_config</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="n">value_map_rend</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">table</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.utils.debug.create_value_map_renderable" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_value_map_renderable</span><span class="p">(</span><span class="n">value_map</span><span class="p">,</span> <span class="o">**</span><span class="n">render_config</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.debug.create_value_map_renderable" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/debug.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_value_map_renderable</span><span class="p">(</span><span class="n">value_map</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">render_config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+
+    <span class="n">rc</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">DEFAULT_VALUE_MAP_RENDER_CONFIG</span><span class="p">)</span>
+    <span class="n">rc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">render_config</span><span class="p">)</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;field name&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">row</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Value</span><span class="p">):</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;value object&quot;</span><span class="p">)</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="o">**</span><span class="n">rc</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;value id&quot;</span><span class="p">)</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;raw data&quot;</span><span class="p">)</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">table</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.utils.debug.terminal_print_manifest" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">terminal_print_manifest</span><span class="p">(</span><span class="n">manifest</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.debug.terminal_print_manifest" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/debug.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">terminal_print_manifest</span><span class="p">(</span><span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span><span class="p">):</span>
+
+    <span class="n">terminal_print</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">())</span>
 </code></pre></div>
         </details>
     </div>
@@ -12642,10 +12862,10 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../assets/javascripts/workers/search.b028fd86.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../assets/javascripts/workers/search.b97dbffb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.7f366e99.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.0238f547.min.js"></script>
       
     
   </body>

@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/modules/included_core_modules/pretty_print/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.2">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.5d38496d.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.1d29e8d0.min.css">
       
         
         <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.cbb835fc.min.css">
@@ -2384,6 +2384,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../export_as/" class="md-nav__link">
+        export_as
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../filesystem/" class="md-nav__link">
         filesystem
       </a>
@@ -2626,6 +2640,20 @@
     <li class="md-nav__item">
       <a href="../../../operations/included_core_operations/create_from/" class="md-nav__link">
         create_from
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/included_core_operations/export_as/" class="md-nav__link">
+        export_as
       </a>
     </li>
   
@@ -3463,6 +3491,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../utils/debug/" class="md-nav__link">
+        debug
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../utils/doc/" class="md-nav__link">
         doc
       </a>
@@ -4097,6 +4139,9 @@ PrettyPrintModule            (<a class="autorefs autorefs-internal" title="kiara
     <span class="c1"># def create_persistence_config_schema(self) -&gt; Optional[Mapping[str, Mapping[str, Any]]]:</span>
     <span class="c1">#     return None</span>
 
+    <span class="k">def</span> <span class="nf">_retrieve_module_characteristics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleCharacteristics</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS</span>
+
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
@@ -4479,6 +4524,9 @@ ValueTypePrettyPrintModule            (<a class="autorefs autorefs-internal" tit
 
     <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;pretty_print.value&quot;</span>
     <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">PrettyPrintConfig</span>
+
+    <span class="k">def</span> <span class="nf">_retrieve_module_characteristics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleCharacteristics</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS</span>
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -4904,10 +4952,10 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.b028fd86.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.b97dbffb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.7f366e99.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.0238f547.min.js"></script>
       
     
   </body>

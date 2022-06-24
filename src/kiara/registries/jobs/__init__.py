@@ -24,6 +24,9 @@ from kiara.models.values.value import ValueMap
 from kiara.processing import ModuleProcessor
 from kiara.processing.synchronous import SynchronousProcessor
 from kiara.registries import BaseArchive
+from kiara.utils import is_develop
+from kiara.utils.cli import terminal_print
+from kiara.utils.debug import create_module_preparation_table
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -373,6 +376,12 @@ class JobRegistry(object):
     ) -> JobConfig:
 
         module = self._kiara.create_module(manifest=manifest)
+
+        if is_develop() and not module.characteristics.is_internal:
+            table = create_module_preparation_table(manifest=manifest, inputs=inputs)
+            terminal_print()
+            terminal_print(table, in_panel="Module run preparation data")
+
         job_config = JobConfig.create_from_module(
             data_registry=self._kiara.data_registry, module=module, inputs=inputs
         )

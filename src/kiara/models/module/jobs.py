@@ -211,7 +211,7 @@ class JobRecord(JobConfig):
     environment_hashes: Mapping[str, Mapping[str, str]] = Field(
         description="Hashes for the environments this value was created in."
     )
-    enviroments: Optional[Mapping[str, Mapping[str, Any]]] = Field(
+    environments: Optional[Mapping[str, Mapping[str, Any]]] = Field(
         description="Information about the environments this value was created in.",
         default=None,
     )

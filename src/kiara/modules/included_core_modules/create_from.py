@@ -53,7 +53,7 @@ class CreateFromModule(KiaraModule):
         return result
 
     def create_optional_inputs(
-        self, source_type: str, target_type
+        self, source_type: str, target_type: str
     ) -> Optional[Mapping[str, Mapping[str, Any]]]:
         return None
 

@@ -35,6 +35,7 @@ from typing import (
     MutableMapping,
     Optional,
     Sequence,
+    Set,
     Union,
 )
 
@@ -59,6 +60,7 @@ yaml = StringYAML()
 if TYPE_CHECKING:
     from kiara.context import Kiara
     from kiara.data_types import DataType
+    from kiara.models.values.info import ValueInfo
     from kiara.registries.data import DataRegistry
 
 
@@ -807,7 +809,7 @@ class Value(ValueDetails):
     environment_hashes: Mapping[str, Mapping[str, str]] = Field(
         description="Hashes for the environments this value was created in."
     )
-    enviroments: Optional[Mapping[str, Mapping[str, Any]]] = Field(
+    environments: Optional[Mapping[str, Mapping[str, Any]]] = Field(
         description="Information about the environments this value was created in.",
         default=None,
     )
@@ -996,6 +998,24 @@ class Value(ValueDetails):
 
         return self.get_property_value(property_key=property_key).data
 
+    def lookup_self_aliases(self) -> Set[str]:
+
+        if not self._data_registry:
+            raise Exception(
+                f"Can't lookup aliases for value '{self.value_id}': data registry not set (yet)."
+            )
+
+        return self._data_registry.lookup_aliases(self)
+
+    def create_info(self) -> "ValueInfo":
+
+        if not self._data_registry:
+            raise Exception(
+                f"Can't create info object for value '{self.value_id}': data registry not set (yet)."
+            )
+
+        return self._data_registry.create_value_info(value=self.value_id)
+
     def create_renderable(self, **render_config: Any) -> RenderableType:
 
         from kiara.utils.output import extract_renderable
@@ -1010,30 +1030,39 @@ class Value(ValueDetails):
         show_env_data_hashes = render_config.get("show_environment_hashes", False)
         show_env_data = render_config.get("show_environment_data", False)
 
+        ignore_fields = render_config.get("ignore_fields", [])
+
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("Key", style="i")
         table.add_column("Value")
 
-        table.add_row("value_id", str(self.value_id))
-        if hasattr(self, "aliases"):
-            if not self.aliases:  # type: ignore
-                aliases_str = "-- n/a --"
-            else:
-                aliases_str = ", ".join(self.aliases)  # type: ignore
-            table.add_row("aliases", aliases_str)
-        table.add_row("kiara_id", str(self.kiara_id))
+        if "value_id" not in ignore_fields:
+            table.add_row("value_id", str(self.value_id))
+        if "aliases" not in ignore_fields:
+            if hasattr(self, "aliases"):
+                if not self.aliases:  # type: ignore
+                    aliases_str = "-- n/a --"
+                else:
+                    aliases_str = ", ".join(self.aliases)  # type: ignore
+                table.add_row("aliases", aliases_str)
+        if "kiara_id" not in ignore_fields:
+            table.add_row("kiara_id", str(self.kiara_id))
         table.add_row("", "")
         table.add_row("", Rule())
         for k in sorted(self.__fields__.keys()):
 
-            if k in [
-                "serialized",
-                "value_id",
-                "aliases",
-                "kiara_id",
-                "environments",
-                "environment_hashes",
-            ]:
+            if (
+                k
+                in [
+                    "serialized",
+                    "value_id",
+                    "aliases",
+                    "kiara_id",
+                    "environments",
+                    "environment_hashes",
+                ]
+                or k in ignore_fields
+            ):
                 continue
 
             attr = getattr(self, k)

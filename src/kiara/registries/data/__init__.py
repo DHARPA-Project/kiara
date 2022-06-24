@@ -49,6 +49,7 @@ from kiara.models.events.data_registry import (
 from kiara.models.module.operation import Operation
 from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
+from kiara.models.values.info import ValueInfo
 from kiara.models.values.value import (
     ORPHAN,
     PersistedData,
@@ -393,6 +394,21 @@ class DataRegistry(object):
         self._event_callback(store_event)
 
         return persisted_value
+
+    def lookup_aliases(self, value: Union[Value, uuid.UUID]) -> Set[str]:
+
+        if isinstance(value, Value):
+            value = value.value_id
+
+        return self._kiara.alias_registry.find_aliases_for_value_id(value_id=value)
+
+    def create_value_info(self, value: Union[Value, uuid.UUID]) -> ValueInfo:
+
+        if isinstance(value, uuid.UUID):
+            value = self.get_value(value_id=value)
+
+        value_info = ValueInfo.create_from_value(kiara=self._kiara, value=value)
+        return value_info
 
     def find_values_for_hash(
         self, value_hash: str, data_type_name: Optional[str] = None

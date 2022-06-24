@@ -4,6 +4,7 @@
 # Copyright (c) 2022 Phil Ewels
 # adapted from: https://github.com/ewels/rich-click
 
+# type: ignore
 
 import click
 from rich import box

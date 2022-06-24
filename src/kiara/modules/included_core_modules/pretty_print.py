@@ -14,7 +14,11 @@ from kiara.models import KiaraModel
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
-from kiara.modules import KiaraModule
+from kiara.modules import (
+    DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS,
+    KiaraModule,
+    ModuleCharacteristics,
+)
 from kiara.utils.output import create_table_from_model_object
 
 
@@ -56,6 +60,9 @@ class PrettyPrintModule(KiaraModule):
 
     # def create_persistence_config_schema(self) -> Optional[Mapping[str, Mapping[str, Any]]]:
     #     return None
+
+    def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
+        return DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS
 
     def create_inputs_schema(
         self,
@@ -107,6 +114,9 @@ class ValueTypePrettyPrintModule(KiaraModule):
 
     _module_type_name = "pretty_print.value"
     _config_cls = PrettyPrintConfig
+
+    def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
+        return DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS
 
     def create_inputs_schema(
         self,

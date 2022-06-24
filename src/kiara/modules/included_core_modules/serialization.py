@@ -14,7 +14,12 @@ from kiara.models import KiaraModel
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.values.value import SerializedData, Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
-from kiara.modules import KiaraModule, ValueSetSchema
+from kiara.modules import (
+    DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS,
+    KiaraModule,
+    ModuleCharacteristics,
+    ValueSetSchema,
+)
 from kiara.registries.models import ModelRegistry
 
 
@@ -83,6 +88,9 @@ class DeserializeValueModule(KiaraModule):
                 "doc": "The deserialized python object instance.",
             },
         }
+
+    def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
+        return DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS
 
     def process(self, inputs: ValueMap, outputs: ValueMap) -> None:
 
@@ -235,6 +243,9 @@ class DeserializeFromJsonModule(KiaraModule):
 
     _module_type_name: str = "deserialize.from_json"
     _config_cls = DeserializeJsonConfig
+
+    def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
+        return DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS
 
     def create_inputs_schema(
         self,

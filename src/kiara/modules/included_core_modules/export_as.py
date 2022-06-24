@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 from pathlib import Path
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from typing import Any, Dict, Iterable, List, Mapping, Union
 
 from kiara import KiaraModule
@@ -14,6 +14,16 @@ from kiara.modules import ValueSetSchema
 class DataExportResult(BaseModel):
 
     files: List[str] = Field(description="A list of exported files.")
+
+    @validator("files", pre=True)
+    def validate_files(cls, value):
+
+        if isinstance(value, str):
+            value = [value]
+
+        # TODO: make sure file exists
+
+        return value
 
 
 class DataExportModuleConfig(KiaraModuleConfig):
@@ -59,7 +69,7 @@ class DataExportModule(KiaraModule):
         return result
 
     def create_optional_inputs(
-        self, source_type: str, target_type
+        self, source_type: str, target_profile: str
     ) -> Union[None, Mapping[str, Mapping[str, Any]]]:
         return None
 
@@ -68,7 +78,8 @@ class DataExportModule(KiaraModule):
     ) -> ValueSetSchema:
 
         source_type = self.get_config_value("source_type")
-        # target_profile = self.get_config_value("target_profile")
+        target_profile = self.get_config_value("target_profile")
+
         inputs: Dict[str, Any] = {
             source_type: {
                 "type": source_type,
@@ -90,6 +101,29 @@ class DataExportModule(KiaraModule):
                 "default": False,
             },
         }
+
+        optional = self.create_optional_inputs(
+            source_type=source_type, target_profile=target_profile
+        )
+        if optional:
+            for field, field_schema in optional.items():
+                field_schema = dict(field_schema)
+                if field in inputs.keys():
+                    raise Exception(
+                        f"Can't create inputs schema for '{self.module_type_name}': duplicate field '{field}'."
+                    )
+                if field == source_type:
+                    raise Exception(
+                        f"Can't create inputs schema for '{self.module_type_name}': invalid field name '{field}'."
+                    )
+
+                optional = field_schema.get("optional", True)
+                if not optional:
+                    raise Exception(
+                        f"Can't create inputs schema for '{self.module_type_name}': non-optional field '{field}' specified."
+                    )
+                field_schema["optional"] = True
+                inputs[field] = field_schema
 
         return inputs
 
@@ -137,6 +171,8 @@ class DataExportModule(KiaraModule):
 
         if isinstance(result, Mapping):
             result = DataExportResult(**result)
+        elif isinstance(result, str):
+            result = DataExportResult(files=[result])
 
         if not isinstance(result, DataExportResult):
             raise KiaraProcessingException(

@@ -261,6 +261,9 @@ class ModuleCharacteristics(BaseModel):
 
 
 DEFAULT_IDEMPOTENT_MODULE_CHARACTERISTICS = ModuleCharacteristics()
+DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS = ModuleCharacteristics(
+    is_internal=True
+)
 
 
 class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):

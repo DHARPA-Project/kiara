@@ -155,7 +155,7 @@ class ExportAsOperationType(OperationType[ExportAsOperationDetails]):
 
         optional = {}
         for field, schema in module.inputs_schema.items():
-            if field in [source_type, "base_path", "name"]:
+            if field in [source_type]:
                 continue
             optional[field] = schema
 

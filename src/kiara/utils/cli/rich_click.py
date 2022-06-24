@@ -4,8 +4,6 @@
 # Copyright (c) 2022 Phil Ewels
 # adapted from: https://github.com/ewels/rich-click
 
-# type: ignore
-
 import click
 from rich import box
 from rich.align import Align
@@ -235,7 +233,7 @@ def rich_format_operation_help(
                 highlighter(highlighter(",".join(opt_long_strs))),
                 highlighter(highlighter(",".join(opt_short_strs))),
                 metavar_highlighter(metavar),
-                _get_parameter_help(param, ctx),
+                _get_parameter_help(param, ctx),  # type: ignore
             ]
 
             # Remove metavar if specified in config
@@ -262,7 +260,7 @@ def rich_format_operation_help(
                 show_header=False,
                 expand=True,
                 box=box_style,
-                **t_styles,
+                **t_styles,  # type: ignore
             )
             # Strip the required column if none are required
             if all([x[0] == "" for x in options_rows]):
@@ -272,10 +270,10 @@ def rich_format_operation_help(
             renderables.append(
                 Panel(
                     options_table,
-                    border_style=STYLE_OPTIONS_PANEL_BORDER,
-                    title=option_group.get("name", OPTIONS_PANEL_TITLE),
-                    title_align=ALIGN_OPTIONS_PANEL,
-                    width=MAX_WIDTH,
+                    border_style=STYLE_OPTIONS_PANEL_BORDER,  # type: ignore
+                    title=option_group.get("name", OPTIONS_PANEL_TITLE),  # type: ignore
+                    title_align=ALIGN_OPTIONS_PANEL,  # type: ignore
+                    width=MAX_WIDTH,  # type: ignore
                 )
             )
 
@@ -314,8 +312,8 @@ def rich_format_operation_help(
                 highlight=False,
                 show_header=False,
                 expand=True,
-                box=box_style,
-                **t_styles,
+                box=box_style,  # type: ignore
+                **t_styles,  # type: ignore
             )
             # Define formatting in first column, as commands don't match highlighter regex
             commands_table.add_column(style="bold cyan", no_wrap=True)
@@ -338,10 +336,10 @@ def rich_format_operation_help(
                 renderables.append(
                     Panel(
                         commands_table,
-                        border_style=STYLE_COMMANDS_PANEL_BORDER,
-                        title=cmd_group.get("name", COMMANDS_PANEL_TITLE),
-                        title_align=ALIGN_COMMANDS_PANEL,
-                        width=MAX_WIDTH,
+                        border_style=STYLE_COMMANDS_PANEL_BORDER,  # type: ignore
+                        title=cmd_group.get("name", COMMANDS_PANEL_TITLE),  # type: ignore
+                        title_align=ALIGN_COMMANDS_PANEL,  # type: ignore
+                        width=MAX_WIDTH,  # type: ignore
                     )
                 )
 
@@ -356,9 +354,9 @@ def rich_format_operation_help(
     inputs_panel = Panel(
         inputs_table,
         title="Inputs",
-        border_style=STYLE_COMMANDS_PANEL_BORDER,
-        title_align=ALIGN_COMMANDS_PANEL,
-        width=MAX_WIDTH,
+        border_style=STYLE_COMMANDS_PANEL_BORDER,  # type: ignore
+        title_align=ALIGN_COMMANDS_PANEL,  # type: ignore
+        width=MAX_WIDTH,  # type: ignore
     )
     renderables.append(inputs_panel)
 

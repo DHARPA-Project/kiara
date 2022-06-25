@@ -13,7 +13,7 @@ from typing import (
     Iterable,
     List,
     Mapping,
-    Optional,
+    Union,
     Set,
     Tuple,
     Union,
@@ -37,14 +37,14 @@ class DestinyRegistry(object):
         self._event_callback: Callable = self._kiara.event_registry.add_producer(self)
 
         self._destiny_archives: Dict[str, DestinyArchive] = {}
-        self._default_destiny_store: Optional[str] = None
+        self._default_destiny_store: Union[str, None] = None
         # default_metadata_archive = FileSystemDestinyStore.create_from_kiara_context(
         #     self._kiara
         # )
         # self.register_destiny_archive("metadata", default_metadata_archive)
 
-        self._all_values: Optional[Dict[uuid.UUID, Set[str]]] = None
-        self._cached_value_aliases: Dict[uuid.UUID, Dict[str, Optional[Destiny]]] = {}
+        self._all_values: Union[Dict[uuid.UUID, Set[str]], None] = None
+        self._cached_value_aliases: Dict[uuid.UUID, Dict[str, Union[Destiny, None]]] = {}
 
         self._destinies: Dict[uuid.UUID, Destiny] = {}
         self._destinies_by_value: Dict[uuid.UUID, Dict[str, Destiny]] = {}
@@ -66,7 +66,7 @@ class DestinyRegistry(object):
         self,
         archive: DestinyArchive,
         alias: str = None,
-        set_as_default_store: Optional[bool] = None,
+        set_as_default_store: Union[bool, None] = None,
     ):
 
         destiny_store_id = archive.archive_id
@@ -141,7 +141,7 @@ class DestinyRegistry(object):
         destiny_alias: str,
         values: Dict[str, uuid.UUID],
         manifest: Manifest,
-        result_field_name: Optional[str] = None,
+        result_field_name: Union[str, None] = None,
     ) -> Destiny:
         """Add a destiny for one (or in some rare cases several) values.
 
@@ -205,7 +205,7 @@ class DestinyRegistry(object):
         return all_stored_values
 
     def get_destiny_aliases_for_value(
-        self, value_id: uuid.UUID, alias_filter: Optional[str] = None
+        self, value_id: uuid.UUID, alias_filter: Union[str, None] = None
     ) -> Iterable[str]:
 
         # TODO: cache the result of this
@@ -253,7 +253,7 @@ class DestinyRegistry(object):
     def attach_as_property(
         self,
         destiny: Union[uuid.UUID, Destiny],
-        field_names: Optional[Iterable[str]] = None,
+        field_names: Union[Iterable[str], None] = None,
     ):
 
         if field_names:

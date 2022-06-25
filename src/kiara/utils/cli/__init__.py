@@ -8,7 +8,7 @@ from rich.console import Group
 from rich.panel import Panel
 from rich.rule import Rule
 from rich.syntax import Syntax
-from typing import Any, Callable, Mapping, Optional, TypeVar, Union
+from typing import Any, Callable, Mapping, Union, TypeVar, Union
 
 from kiara.interfaces import get_console
 
@@ -34,8 +34,8 @@ def _param_memo(f: FC, param: Parameter) -> None:
 # ======================================================================================================================
 def terminal_print(
     msg: Any = None,
-    in_panel: Optional[str] = None,
-    rich_config: Optional[Mapping[str, Any]] = None,
+    in_panel: Union[str, None] = None,
+    rich_config: Union[Mapping[str, Any], None] = None,
     empty_line_before: bool = False,
     **config: Any,
 ) -> None:
@@ -131,8 +131,8 @@ def render_json_schema_str(model: BaseModel):
 def terminal_print_model(
     *models: BaseModel,
     format: Union[None, OutputFormat, str] = None,
-    empty_line_before: Optional[bool] = None,
-    in_panel: Optional[str] = None,
+    empty_line_before: Union[bool, None] = None,
+    in_panel: Union[str, None] = None,
     **render_config: Any,
 ):
 

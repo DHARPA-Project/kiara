@@ -8,10 +8,10 @@
 
 import os
 from rich.console import Console
-from typing import Optional
+from typing import Union
 
 # Global console used by alternative print
-_console: Optional[Console] = None
+_console: Union[Console, None] = None
 
 
 def get_console() -> Console:

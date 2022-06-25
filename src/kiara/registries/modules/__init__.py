@@ -9,7 +9,7 @@
 
 import structlog
 from multiformats import CID
-from typing import TYPE_CHECKING, Dict, Iterable, Mapping, Optional, Type, Union
+from typing import TYPE_CHECKING, Dict, Iterable, Mapping, Union, Type, Union
 
 from kiara.models.module import KiaraModuleTypeInfo, ModuleTypeClassesInfo
 from kiara.models.module.manifest import Manifest
@@ -60,7 +60,7 @@ class ModuleRegistry(object):
         return self._module_class_metadata[type_name]
 
     def get_context_metadata(
-        self, alias: Optional[str] = None, only_for_package: Optional[str] = None
+        self, alias: Union[str, None] = None, only_for_package: Union[str, None] = None
     ) -> ModuleTypeClassesInfo:
 
         result = {}

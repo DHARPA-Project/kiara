@@ -11,7 +11,7 @@ from rich import box
 from rich.console import RenderableType
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import Any, Dict, Mapping, Optional, get_args
+from typing import Any, Dict, Mapping, Union, get_args
 
 from kiara.defaults import DEFAULT_ENV_HASH_KEY, ENVIRONMENT_TYPE_CATEGORY_ID
 from kiara.models import KiaraModel
@@ -60,11 +60,11 @@ class RuntimeEnvironment(KiaraModel):
     def retrieve_environment_data(cls) -> Dict[str, Any]:
         pass
 
-    _env_hashes: Optional[Mapping[str, str]] = PrivateAttr(default=None)
+    _env_hashes: Union[Mapping[str, str], None] = PrivateAttr(default=None)
 
     def _create_renderable_for_field(
         self, field_name: str, for_summary: bool = False
-    ) -> Optional[RenderableType]:
+    ) -> Union[RenderableType, None]:
 
         return extract_renderable(getattr(self, field_name))
 

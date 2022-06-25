@@ -7,10 +7,10 @@
 import abc
 import structlog
 import uuid
-from typing import TYPE_CHECKING, Callable, Dict, Iterable, Mapping, Optional
+from typing import TYPE_CHECKING, Callable, Dict, Iterable, Mapping, Union
 
 from kiara.models.events.workflow_registry import WorkflowArchiveAddedEvent
-from kiara.models.workflow import Workflow
+from kiara.models.workflow import WorkflowDetails, WorkflowState, WorkflowStateFilter
 from kiara.registries import BaseArchive
 
 if TYPE_CHECKING:
@@ -33,8 +33,25 @@ class WorkflowArchive(BaseArchive):
         pass
 
     @abc.abstractmethod
-    def retrieve_workflow(self, workflow: uuid.UUID):
+    def retrieve_workflow_details(self, workflow_id: uuid.UUID):
         pass
+
+    @abc.abstractmethod
+    def retrieve_workflow_states(
+        self, workflow_id: uuid.UUID, filter: Union[WorkflowStateFilter, None] = None
+    ) -> Dict[uuid.UUID, WorkflowState]:
+        pass
+
+    @abc.abstractmethod
+    def retrieve_workflow_state(
+        self, workflow_id: uuid.UUID, workflow_state_id: uuid.UUID
+    ) -> WorkflowState:
+        """Retrieve workflow state details for the provided state id.
+
+        Arguments:
+            workflow_id: id of the workflow
+            workflow_state_id: the id of the workflow state
+        """
 
 
 class WorkflowStore(WorkflowArchive):
@@ -42,15 +59,34 @@ class WorkflowStore(WorkflowArchive):
     def is_writeable(cls) -> bool:
         return True
 
-    def register_workflow(self, *workflow_aliases: str) -> uuid.UUID:
+    def register_workflow(
+        self, workflow_details: WorkflowDetails, workflow_aliases: Iterable[str] = None
+    ):
 
-        workflow_id = self.create_workflow()
-        for workflow_alias in workflow_aliases:
-            self.register_alias(workflow_id=workflow_id, alias=workflow_alias)
-        return workflow_id
+        self._register_workflow_details(workflow_details=workflow_details)
+        if workflow_aliases:
+            if isinstance(workflow_aliases, str):
+                workflow_aliases = [workflow_aliases]
+            for workflow_alias in workflow_aliases:
+                self.register_alias(
+                    workflow_id=workflow_details.workflow_id, alias=workflow_alias
+                )
+        return workflow_details
+
+    def update_workflow(self, workflow_details: WorkflowDetails):
+
+        self._update_workflow_details(workflow_details=workflow_details)
 
     @abc.abstractmethod
-    def create_workflow(self) -> uuid.UUID:
+    def _register_workflow_details(self, workflow_details: WorkflowDetails):
+        pass
+
+    @abc.abstractmethod
+    def _update_workflow_details(self, workflow_details: WorkflowDetails):
+        pass
+
+    @abc.abstractmethod
+    def add_workflow_state(self, workflow_id: uuid.UUID, workflow_state: WorkflowState):
         pass
 
     @abc.abstractmethod
@@ -67,17 +103,20 @@ class WorkflowRegistry(object):
         self._workflow_archives: Dict[str, WorkflowArchive] = {}
         """All registered archives/stores."""
 
-        self._default_alias_store: Optional[str] = None
+        self._default_alias_store: Union[str, None] = None
         """The alias of the store where new aliases are stored by default."""
 
-        self._cached_workflows: Optional[Dict[str, Workflow]] = None
-        self._cached_workflows_by_id: Optional[Dict[uuid.UUID, Workflow]] = None
+        self._all_aliases: Union[Dict[str, uuid.UUID], None] = None
+        """All workflow aliases."""
+
+        self._cached_workflows: Dict[uuid.UUID, WorkflowDetails] = {}
+        self._workflow_locations: Dict[uuid.UUID, str] = None  # type: ignore
 
     def register_archive(
         self,
         archive: WorkflowArchive,
         alias: str = None,
-        set_as_default_store: Optional[bool] = None,
+        set_as_default_store: Union[bool, None] = None,
     ):
 
         workflow_archive_id = archive.archive_id
@@ -131,8 +170,8 @@ class WorkflowRegistry(object):
         return self._workflow_archives
 
     def get_archive(
-        self, archive_id: Optional[str] = None
-    ) -> Optional[WorkflowArchive]:
+        self, archive_id: Union[str, None] = None
+    ) -> Union[WorkflowArchive, None]:
         if archive_id is None:
             archive_id = self.default_alias_store
             if archive_id is None:
@@ -142,13 +181,13 @@ class WorkflowRegistry(object):
         return archive
 
     @property
-    def workflows(self) -> Dict[str, Workflow]:
+    def workflow_aliases(self) -> Dict[str, uuid.UUID]:
 
-        if self._cached_workflows is not None:
-            return self._cached_workflows
+        if self._all_aliases is not None:
+            return self._all_aliases
 
-        all_workflows: Dict[str, Workflow] = {}
-        all_workflows_by_id: Dict[uuid.UUID, Workflow] = {}
+        all_workflows: Dict[str, uuid.UUID] = {}
+        workflow_locations: Dict[uuid.UUID, str] = {}
         for archive_alias, archive in self._workflow_archives.items():
             workflow_map = archive.retrieve_all_workflow_aliases()
             for alias, w_id in workflow_map.items():
@@ -161,50 +200,180 @@ class WorkflowRegistry(object):
                     raise Exception(
                         f"Inconsistent alias registry: alias '{final_alias}' available more than once."
                     )
-                item = Workflow(
-                    full_alias=final_alias,
-                    rel_alias=alias,
-                    workflow_id=w_id,
-                    workflow_archive=archive_alias,
-                    workflow_archive_id=archive.archive_id,
-                )
-                all_workflows[final_alias] = item
-                all_workflows_by_id[w_id] = item
-        self._cached_workflows = all_workflows
-        self._cached_workflows_by_id = all_workflows_by_id
-        return self._cached_workflows
+                all_workflows[final_alias] = w_id
+                workflow_locations[w_id] = archive_alias
 
-    def register_workflow(self, *workflow_aliases: str) -> uuid.UUID:
+        self._all_aliases = all_workflows
+        self._workflow_locations = workflow_locations
+        return self._all_aliases
 
-        for workflow_alias in workflow_aliases:
-            if workflow_alias in self.workflows.keys():
-                raise Exception(
-                    f"Can't register workflow with alias '{workflow_alias}': alias already registered."
-                )
+    def get_workflow_details(self, workflow: Union[str, uuid.UUID]) -> WorkflowDetails:
+
+        if isinstance(workflow, str):
+            workflow_id: Union[uuid.UUID, None] = self.workflow_aliases.get(
+                workflow, None
+            )
+            if workflow_id is None:
+                try:
+                    workflow_id = uuid.UUID(workflow)
+                except Exception:
+                    pass
+                if workflow_id is None:
+                    raise Exception(
+                        f"Can't retrieve workflow with alias '{workflow}': alias not registered."
+                    )
+        else:
+            workflow_id = workflow
+
+        if workflow_id in self._cached_workflows.keys():
+            return self._cached_workflows[workflow_id]
+
+        if self._workflow_locations is None:
+            self.workflow_aliases  # noqa
+
+        store_alias = self._workflow_locations[workflow_id]
+        store = self._workflow_archives[store_alias]
+
+        workflow_details = store.retrieve_workflow_details(workflow_id=workflow_id)
+        workflow_details._kiara = self._kiara
+        # workflow = Workflow(kiara=self._kiara, workflow_details=workflow_details)
+        self._cached_workflows[workflow_id] = workflow_details
+
+        # states = store.retrieve_workflow_states(workflow_id=workflow_id)
+        # workflow._snapshots = states
+        # workflow.load_state()
+
+        return workflow_details
+
+    def register_workflow(
+        self,
+        workflow_details: Union[None, WorkflowDetails, str] = None,
+        workflow_aliases: Union[Iterable[str], None] = None,
+    ) -> WorkflowDetails:
+
+        if workflow_aliases:
+            for workflow_alias in workflow_aliases:
+                if workflow_alias in self.workflow_aliases.keys():
+                    raise Exception(
+                        f"Can't register workflow with alias '{workflow_alias}': alias already registered."
+                    )
 
         store_name = self.default_alias_store
         store: WorkflowStore = self.get_archive(archive_id=store_name)  # type: ignore
 
-        workflow_id = store.register_workflow(*workflow_aliases)
-        return workflow_id
-
-        # workflow_item = Workflow(
-        #     full_alias=workflow_alias,
-        #     rel_alias=workflow_alias,
+        # if not init_pipeline:
+        #     steps: List[PipelineStep] = []
+        # elif isinstance(init_pipeline, str):
+        #     operation = self._kiara.operation_registry.operations.get(init_pipeline, None)
+        #     if not operation:
+        #         raise Exception(f"Can't initialize workflow, init pipeline value '{init_pipeline}' not an operation id.")
+        #
+        #     module_config = operation.module.config
+        #     if isinstance(module_config, PipelineConfig):
+        #         steps = module_config.steps
+        #     else:
+        #         raise NotImplementedError()
+        # else:
+        #     raise Exception("'init_pipeline' must be of on of the following types: string")
+        #
+        # workflow_details = WorkflowDetails(
         #     workflow_id=workflow_id,
-        #     workflow_archive=store_name,
-        #     workflow_archive_id=store.archive_id,
+        #     documentation=documentation,  # type: ignore
         # )
-        # self._cached_workflows[workflow_alias] = workflow_item
-        # self._cached_workflows_by_id[workflow_id] = workflow_item
-        # return workflow_item
 
-        # workflow = Workflow(kiara=self._kiara, workflow_alias=workflow_alias)
-        # and_step_id = workflow.add_step("logic.and")
-        # not_step_id = workflow.add_step("logic.not")
-        #
-        # workflow.add_input_link(f"{not_step_id}.a", f"{and_step_id}.y")
-        #
-        # workflow.set_inputs(logic_and__a=True, logic_and__b=True, x=22)
-        # workflow.apply()
-        # workflow.set_inputs(logic_and__a=True, logic_and__b=True, x=22)
+        if workflow_details is None:
+            workflow_details = WorkflowDetails()
+        elif isinstance(workflow_details, str):
+            workflow_details = WorkflowDetails(documentation=workflow_details)  # type: ignore
+
+        workflow_details._kiara = self._kiara
+
+        store.register_workflow(
+            workflow_details=workflow_details, workflow_aliases=workflow_aliases
+        )
+        # workflow = Workflow(kiara=self._kiara, workflow_details=workflow_details)
+        self._cached_workflows[workflow_details.workflow_id] = workflow_details
+
+        if workflow_aliases:
+            for workflow_alias in workflow_aliases:
+                self._workflow_locations[workflow_details.workflow_id] = store_name
+                self.workflow_aliases[workflow_alias] = workflow_details.workflow_id
+
+        # if steps:
+        #     workflow.add_steps(*steps)
+        #     self.save_workflow_state(workflow=workflow.workflow_id)
+
+        return workflow_details
+
+    def get_workflow_states(
+        self, workflow: Union[uuid.UUID, str]
+    ) -> Dict[uuid.UUID, WorkflowState]:
+
+        workflow_details = self.get_workflow_details(workflow=workflow)
+        archive_alias = self._workflow_locations[workflow_details.workflow_id]
+
+        archive = self.get_archive(archive_alias)
+        if archive is None:
+            raise Exception(
+                f"Can't retrieve workflow archive '{archive_alias}', this is most likely a bug."
+            )
+        states = archive.retrieve_workflow_states(
+            workflow_id=workflow_details.workflow_id
+        )
+
+        return states
+
+    def get_workflow_state(
+        self,
+        workflow: Union[uuid.UUID, str],
+        workflow_state_id: Union[uuid.UUID, None] = None,
+    ) -> WorkflowState:
+
+        workflow_details = self.get_workflow_details(workflow=workflow)
+        if workflow_state_id is None:
+            workflow_state_id = workflow_details.current_state
+
+        if workflow_state_id is None:
+            raise Exception(
+                f"Can't retrieve current workflow state, no state exists yet for workflow '{workflow}'."
+            )
+
+        archive_alias = self._workflow_locations[workflow_details.workflow_id]
+
+        archive = self.get_archive(archive_alias)
+        if archive is None:
+            raise Exception(
+                f"Can't retrieve workflow archive '{archive_alias}', this is most likely a bug."
+            )
+        state = archive.retrieve_workflow_state(
+            workflow_id=workflow_details.workflow_id,
+            workflow_state_id=workflow_state_id,
+        )
+
+        return state
+
+    def add_workflow_state(
+        self, workflow_state: WorkflowState, set_current: bool = True
+    ):
+
+        # make sure the workflow is registed
+        workflow_details = self.get_workflow_details(
+            workflow=workflow_state.workflow_id
+        )
+
+        for field_name, value_id in workflow_state.inputs.items():
+            self._kiara.data_registry.store_value(value=value_id)
+
+        # for field_name, value_id in workflow_state.outputs.items():
+        #     self._kiara.data_registry.store_value(value=value_id)
+
+        store_name = self.default_alias_store
+        store: WorkflowStore = self.get_archive(archive_id=store_name)  # type: ignore
+
+        store.add_workflow_state(
+            workflow_id=workflow_state.workflow_id, workflow_state=workflow_state
+        )
+
+        if set_current:
+            workflow_details.current_state = workflow_state.workflow_state_id
+            store.update_workflow(workflow_details)

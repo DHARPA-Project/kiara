@@ -9,13 +9,13 @@ import regex as re
 import structlog
 import typing
 from regex.regex import Pattern
-from typing import Any, Mapping, Optional, Sequence, Set, Union
+from typing import Any, Mapping, Union, Sequence, Set, Union
 
 log = structlog.getLogger()
 
 
 def create_var_regex(
-    delimiter_start: Optional[str] = None, delimiter_end: Optional[str] = None
+    delimiter_start: Union[str, None] = None, delimiter_end: Union[str, None] = None
 ) -> Pattern:
 
     if delimiter_start is None:
@@ -31,8 +31,8 @@ def create_var_regex(
 
 def find_var_names_in_obj(
     template_obj: Any,
-    delimiter: Optional[Union[Pattern, str]] = None,
-    delimiter_end: Optional[str] = None,
+    delimiter: Union[Pattern, str, None] = None,
+    delimiter_end: Union[str, None] = None,
 ) -> Set[str]:
 
     if isinstance(delimiter, Pattern):
@@ -48,8 +48,8 @@ def find_var_names_in_obj(
 def replace_var_names_in_obj(
     template_obj: Any,
     repl_dict: typing.Mapping[str, Any],
-    delimiter: Optional[Union[Pattern, str]] = None,
-    delimiter_end: Optional[str] = None,
+    delimiter: Union[Pattern, str, None] = None,
+    delimiter_end: Union[str, None] = None,
     ignore_missing_keys: bool = False,
 ) -> Any:
 
@@ -127,7 +127,7 @@ def replace_var_names_in_string(
 
 
 def find_regex_matches_in_obj(
-    source_obj: Any, regex: Pattern, current: Optional[Set[str]] = None
+    source_obj: Any, regex: Pattern, current: Union[Set[str], None] = None
 ) -> Set[str]:
 
     if current is None:

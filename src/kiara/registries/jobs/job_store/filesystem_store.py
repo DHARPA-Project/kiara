@@ -8,7 +8,7 @@ import orjson
 import shutil
 import uuid
 from pathlib import Path
-from typing import Any, Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, Union
 
 from kiara.models.module.jobs import JobRecord
 from kiara.registries import ArchiveDetails, FileSystemArchiveConfig
@@ -31,7 +31,7 @@ class FileSystemJobArchive(JobArchive):
     def __init__(self, archive_id: uuid.UUID, config: FileSystemArchiveConfig):
 
         super().__init__(archive_id=archive_id, config=config)
-        self._base_path: Optional[Path] = None
+        self._base_path: Union[Path, None] = None
 
     def get_archive_details(self) -> ArchiveDetails:
 
@@ -55,7 +55,7 @@ class FileSystemJobArchive(JobArchive):
         shutil.rmtree(self.job_store_path)
 
     def retrieve_all_job_hashes(
-        self, manifest_hash: Optional[str] = None, inputs_hash: Optional[str] = None
+        self, manifest_hash: Union[str, None] = None, inputs_hash: Union[str, None] = None
     ) -> Iterable[str]:
 
         base_path = self.job_store_path / MANIFEST_SUB_PATH
@@ -75,7 +75,7 @@ class FileSystemJobArchive(JobArchive):
             result.append(record.name[0:-11])
         return result
 
-    def _retrieve_record_for_job_hash(self, job_hash: str) -> Optional[JobRecord]:
+    def _retrieve_record_for_job_hash(self, job_hash: str) -> Union[JobRecord, None]:
 
         base_path = self.job_store_path / MANIFEST_SUB_PATH
         records = list(base_path.glob(f"*/*/{job_hash}.job_record"))

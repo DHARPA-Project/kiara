@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field, PrivateAttr
 from rich import box
 from rich.console import RenderableType
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
 
 from kiara.context import KiaraConfig, KiaraContextConfig, KiaraRuntimeConfig
 from kiara.models import KiaraModel
@@ -21,8 +21,8 @@ class ContextSummary(KiaraModel):
     def create_from_context_config(
         cls,
         config: KiaraContextConfig,
-        context_name: Optional[str] = None,
-        runtime_config: Optional[KiaraRuntimeConfig] = None,
+        context_name: Union[str, None] = None,
+        runtime_config: Union[KiaraRuntimeConfig, None] = None,
     ):
 
         from kiara.context import Kiara
@@ -31,7 +31,7 @@ class ContextSummary(KiaraModel):
         return cls.create_from_context(kiara=kiara, context_name=context_name)
 
     @classmethod
-    def create_from_context(cls, kiara: "Kiara", context_name: Optional[str] = None):
+    def create_from_context(cls, kiara: "Kiara", context_name: Union[str, None] = None):
 
         value_ids = list(kiara.data_registry.retrieve_all_available_value_ids())
         aliases = {
@@ -53,7 +53,7 @@ class ContextSummary(KiaraModel):
     kiara_id: uuid.UUID = Field(
         description="The (globally unique) id of the kiara context."
     )
-    context_name: Optional[str] = Field(description="The local alias for this context.")
+    context_name: Union[str, None] = Field(description="The local alias for this context.")
     value_ids: List[uuid.UUID] = Field(
         description="The ids of all stored values in this context."
     )
@@ -64,7 +64,7 @@ class ContextSummary(KiaraModel):
         description="The archives registered in this context."
     )
 
-    _kiara: Optional["Kiara"] = PrivateAttr()
+    _kiara: Union["Kiara", None] = PrivateAttr()
 
     @property
     def kiara_context(self) -> "Kiara":
@@ -195,7 +195,7 @@ class ContextSummaries(BaseModel):
 
     @classmethod
     def create_context_summaries(
-        cls, contexts: Optional[Mapping[str, "KiaraContextConfig"]] = None
+        cls, contexts: Union[Mapping[str, "KiaraContextConfig"], None] = None
     ):
 
         if not contexts:

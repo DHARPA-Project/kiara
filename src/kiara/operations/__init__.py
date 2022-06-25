@@ -6,7 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
-from typing import TYPE_CHECKING, Generic, Iterable, Mapping, Optional, TypeVar, Union
+from typing import TYPE_CHECKING, Generic, Iterable, Mapping, Union, TypeVar, Union
 
 from kiara.models.module.operation import Operation, OperationConfig, OperationDetails
 
@@ -39,7 +39,7 @@ class OperationType(abc.ABC, Generic[OPERATION_TYPE_DETAILS]):
     @abc.abstractmethod
     def check_matching_operation(
         self, module: "KiaraModule"
-    ) -> Optional[OPERATION_TYPE_DETAILS]:
+    ) -> Union[OPERATION_TYPE_DETAILS, None]:
         """Check whether the provided module is a valid operation for this type."""
 
     def retrieve_operation_details(

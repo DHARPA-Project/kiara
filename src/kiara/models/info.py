@@ -22,7 +22,7 @@ from typing import (
     Iterable,
     Literal,
     Mapping,
-    Optional,
+    Union,
     Type,
     TypeVar,
 )
@@ -123,7 +123,7 @@ class InfoModelGroup(KiaraModel, Mapping[str, ItemInfo]):
     # group_id: uuid.UUID = Field(
     #     description="The unique group id.", default_factory=ID_REGISTRY.generate
     # )
-    group_alias: Optional[str] = Field(description="The group alias.", default=None)
+    group_alias: Union[str, None] = Field(description="The group alias.", default=None)
 
     # def _retrieve_id(self) -> str:
     #     return str(self.group_id)
@@ -174,7 +174,7 @@ class TypeInfoModelGroup(InfoModelGroup, Mapping[str, TypeInfo]):
 
     @classmethod
     def create_from_type_items(
-        cls, group_alias: Optional[str] = None, **items: Type
+        cls, group_alias: Union[str, None] = None, **items: Type
     ) -> "TypeInfoModelGroup":
 
         type_infos = {
@@ -280,7 +280,7 @@ class KiaraModelClassesInfo(TypeInfoModelGroup):
 
 
 def find_kiara_models(
-    alias: Optional[str] = None, only_for_package: Optional[str] = None
+    alias: Union[str, None] = None, only_for_package: Union[str, None] = None
 ) -> KiaraModelClassesInfo:
 
     models = find_all_kiara_model_classes()

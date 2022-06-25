@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 from rich import box
 from rich.console import RenderableType
 from rich.table import Table
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Union
 
 from kiara.models.values.value import Value
 
@@ -17,7 +17,7 @@ class StoreValueResult(BaseModel):
     aliases: List[str] = Field(
         description="The aliases that where assigned to the value when stored."
     )
-    error: Optional[str] = Field(
+    error: Union[str, None] = Field(
         description="An error that occured while trying to store."
     )
 

@@ -33,7 +33,6 @@ from typing import (
     Literal,
     Mapping,
     MutableMapping,
-    Optional,
     Sequence,
     Set,
     Union,
@@ -70,7 +69,7 @@ class SerializedChunks(BaseModel, abc.ABC):
         json_dumps = orjson_dumps
         extra = Extra.forbid
 
-    _size_cache: Optional[int] = PrivateAttr(default=None)
+    _size_cache: Union[int, None] = PrivateAttr(default=None)
     _hashes_cache: Dict[str, Sequence[CID]] = PrivateAttr(default_factory=dict)
 
     @abc.abstractmethod
@@ -110,7 +109,7 @@ class SerializedChunks(BaseModel, abc.ABC):
         return self._hashes_cache[hash_codec]
 
     def _store_bytes_to_file(
-        self, chunks: Iterable[bytes], file: Optional[str] = None
+        self, chunks: Iterable[bytes], file: Union[str, None] = None
     ) -> str:
         "Utility method to store bytes to a file."
 
@@ -352,7 +351,7 @@ class SerializedInlineJson(SerializedPreStoreChunks):
     inline_data: Any = Field(
         description="Data that will not be stored externally, but inline in the containing model. This should only contain data types that can be serialized reliably using json (scalars, etc.)."
     )
-    _json_cache: Optional[bytes] = PrivateAttr(default=None)
+    _json_cache: Union[bytes, None] = PrivateAttr(default=None)
 
     def as_json(self) -> bytes:
         assert self.inline_data is not None
@@ -388,7 +387,7 @@ class SerializedChunkIDs(SerializedChunks):
     chunk_id_list: List[str] = Field(
         description="A list of chunk ids, which will be resolved via the attached data registry."
     )
-    archive_id: Optional[uuid.UUID] = Field(
+    archive_id: Union[uuid.UUID, None] = Field(
         description="The preferred data archive to get the chunks from."
     )
     size: int = Field(description="The size of all chunks combined.")
@@ -483,8 +482,8 @@ class SerializedData(KiaraModel):
     )
     _cids_cache: Dict[str, Sequence[CID]] = PrivateAttr(default_factory=dict)
 
-    _cached_data_size: Optional[int] = PrivateAttr(default=None)
-    _cached_dag: Optional[Dict[str, Sequence[CID]]] = PrivateAttr(default=None)
+    _cached_data_size: Union[int, None] = PrivateAttr(default=None)
+    _cached_dag: Union[Dict[str, Sequence[CID]], None] = PrivateAttr(default=None)
     # _cached_cid: Optional[CID] = PrivateAttr(default=None)
 
     def _retrieve_data_to_hash(self) -> Any:
@@ -804,12 +803,12 @@ class Value(ValueDetails):
     _data_registry: "DataRegistry" = PrivateAttr(default=None)
     _data_type: "DataType" = PrivateAttr(default=None)
     _is_stored: bool = PrivateAttr(default=False)
-    _cached_properties: Optional["ValueMap"] = PrivateAttr(default=None)
+    _cached_properties: Union["ValueMap", None] = PrivateAttr(default=None)
 
     environment_hashes: Mapping[str, Mapping[str, str]] = Field(
         description="Hashes for the environments this value was created in."
     )
-    environments: Optional[Mapping[str, Mapping[str, Any]]] = Field(
+    enviroments: Union[Mapping[str, Mapping[str, Any]], None] = Field(
         description="Information about the environments this value was created in.",
         default=None,
     )
@@ -1097,7 +1096,7 @@ class Value(ValueDetails):
 
             if pedigree == ORPHAN:
                 v = "[i]-- external data --[/i]"
-                pedigree_output_name: Optional[Any] = None
+                pedigree_output_name: Union[Any, None] = None
             else:
                 v = extract_renderable(pedigree)
                 pedigree_output_name = getattr(self, "pedigree_output_name")
@@ -1225,7 +1224,7 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
             item = self.get_value_obj(field_name)
             field_schema = self.values_schema[field_name]
             if not field_schema.optional:
-                msg: Optional[str] = None
+                msg: Union[str, None] = None
                 if not item.value_status == ValueStatus.SET:
 
                     item_schema = self.values_schema[field_name]
@@ -1323,7 +1322,7 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
     def __str__(self):
         return self.__repr__()
 
-    def create_invalid_renderable(self, **config) -> Optional[RenderableType]:
+    def create_invalid_renderable(self, **config) -> Union[RenderableType, None]:
 
         inv = self.check_invalid()
         if not inv:

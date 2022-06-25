@@ -8,18 +8,7 @@ import copy
 import structlog
 import uuid
 from rich.console import RenderableType
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Callable,
-    Dict,
-    List,
-    Mapping,
-    Optional,
-    Set,
-    Tuple,
-    Union,
-)
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Mapping, Set, Tuple, Union
 
 from kiara.data_types import DataType
 from kiara.data_types.included_core_types import NoneType
@@ -93,7 +82,7 @@ class DataRegistry(object):
 
         self._data_archives: Dict[str, DataArchive] = {}
 
-        self._default_data_store: Optional[str] = None
+        self._default_data_store: Union[str, None] = None
         self._registered_values: Dict[uuid.UUID, Value] = {}
 
         self._value_archive_lookup_map: Dict[uuid.UUID, str] = {}
@@ -101,7 +90,7 @@ class DataRegistry(object):
         self._values_by_hash: Dict[str, Set[uuid.UUID]] = {}
 
         self._cached_data: Dict[uuid.UUID, Any] = {}
-        self._persisted_value_descs: Dict[uuid.UUID, Optional[PersistedData]] = {}
+        self._persisted_value_descs: Dict[uuid.UUID, Union[PersistedData, None]] = {}
 
         # initialize special values
         special_value_cls = PythonClass.from_class(NoneType)
@@ -174,7 +163,7 @@ class DataRegistry(object):
         self,
         archive: DataArchive,
         alias: str = None,
-        set_as_default_store: Optional[bool] = None,
+        set_as_default_store: Union[bool, None] = None,
     ):
 
         data_store_id = archive.archive_id
@@ -256,7 +245,7 @@ class DataRegistry(object):
             f"Can't retrieve archive with id '{archive_id}': no archive with that id registered."
         )
 
-    def find_store_id_for_value(self, value_id: uuid.UUID) -> Optional[str]:
+    def find_store_id_for_value(self, value_id: uuid.UUID) -> Union[str, None]:
 
         if value_id in self._value_archive_lookup_map.keys():
             return self._value_archive_lookup_map[value_id]
@@ -283,7 +272,7 @@ class DataRegistry(object):
         if not isinstance(value_id, uuid.UUID):
             # fallbacks for common mistakes, this should error out if not a Value or string.
             if hasattr(value_id, "value_id"):
-                _value_id: Optional[uuid.UUID] = value_id.value_id  # type: ignore
+                _value_id: Union[uuid.UUID, None] = value_id.value_id  # type: ignore
             else:
 
                 try:
@@ -358,8 +347,8 @@ class DataRegistry(object):
     def store_value(
         self,
         value: Union[Value, uuid.UUID],
-        store_id: Optional[str] = None,
-    ) -> Optional[PersistedData]:
+        store_id: Union[str, None] = None,
+    ) -> Union[PersistedData, None]:
 
         if store_id is None:
             store_id = self.default_data_store
@@ -411,7 +400,7 @@ class DataRegistry(object):
         return value_info
 
     def find_values_for_hash(
-        self, value_hash: str, data_type_name: Optional[str] = None
+        self, value_hash: str, data_type_name: Union[str, None] = None
     ) -> Set[Value]:
 
         if data_type_name:
@@ -450,8 +439,8 @@ class DataRegistry(object):
 
         all_destinies: Dict[str, uuid.UUID] = {}
         for archive_id, archive in self._data_archives.items():
-            destinies: Optional[
-                Mapping[str, uuid.UUID]
+            destinies: Union[
+                Mapping[str, uuid.UUID], None
             ] = archive.find_destinies_for_value(
                 value_id=value_id, alias_filter=alias_filter
             )
@@ -468,7 +457,7 @@ class DataRegistry(object):
         self,
         data: Any,
         schema: Union[ValueSchema, str] = None,
-        pedigree: Optional[ValuePedigree] = None,
+        pedigree: Union[ValuePedigree, None] = None,
         pedigree_output_name: str = None,
         reuse_existing: bool = True,
     ) -> Value:
@@ -492,11 +481,11 @@ class DataRegistry(object):
         return value
 
     def _find_existing_value(
-        self, data: Any, schema: Optional[ValueSchema]
+        self, data: Any, schema: Union[ValueSchema, None]
     ) -> Tuple[
-        Optional[Value],
+        Union[Value, None],
         DataType,
-        Optional[Any],
+        Union[Any, None],
         Union[str, SerializedData],
         ValueStatus,
         str,
@@ -559,7 +548,7 @@ class DataRegistry(object):
             data=data, schema=schema
         )
 
-        existing_value: Optional[Value] = None
+        existing_value: Union[Value, None] = None
         if value_hash != INVALID_HASH_MARKER:
             existing = self.find_values_for_hash(value_hash=value_hash)
             if existing:
@@ -600,7 +589,7 @@ class DataRegistry(object):
         self,
         data: Any,
         schema: Union[None, str, ValueSchema] = None,
-        pedigree: Optional[ValuePedigree] = None,
+        pedigree: Union[ValuePedigree, None] = None,
         pedigree_output_name: str = None,
         reuse_existing: bool = True,
     ) -> Tuple[Value, bool]:
@@ -738,7 +727,7 @@ class DataRegistry(object):
 
     def retrieve_serialized_value(
         self, value_id: uuid.UUID
-    ) -> Optional[SerializedData]:
+    ) -> Union[SerializedData, None]:
         """Create a LoadConfig object from the details of the persisted version of this value."""
 
         pv = self.retrieve_persisted_value_details(value_id=value_id)
@@ -750,7 +739,7 @@ class DataRegistry(object):
     def retrieve_chunk(
         self,
         chunk_id: str,
-        archive_id: Optional[uuid.UUID] = None,
+        archive_id: Union[uuid.UUID, None] = None,
         as_file: Union[None, bool, str] = None,
         symlink_ok: bool = True,
     ) -> Union[str, bytes]:
@@ -764,7 +753,7 @@ class DataRegistry(object):
         return chunk
 
     def retrieve_value_data(
-        self, value: Union[uuid.UUID, Value], target_profile: Optional[str] = None
+        self, value: Union[uuid.UUID, Value], target_profile: Union[str, None] = None
     ) -> Any:
 
         if isinstance(value, uuid.UUID):
@@ -795,7 +784,7 @@ class DataRegistry(object):
         module = self._kiara.create_module(manifest=manifest)
         op = Operation.create_from_module(module=module)
 
-        input_field_match: Optional[str] = None
+        input_field_match: Union[str, None] = None
         if len(op.inputs_schema) == 1:
             input_field_match = next(iter(op.inputs_schema.keys()))
         else:
@@ -812,7 +801,7 @@ class DataRegistry(object):
                 f"Can't determine input field for deserialization operation '{module.module_type_name}'."
             )
 
-        result_field_match: Optional[str] = None
+        result_field_match: Union[str, None] = None
         for result_field, schema in op.outputs_schema.items():
             if schema.type == "python_object":
                 if result_field_match is not None:
@@ -839,7 +828,7 @@ class DataRegistry(object):
 
         return parsed
 
-    def load_values(self, values: Mapping[str, Optional[uuid.UUID]]) -> ValueMap:
+    def load_values(self, values: Mapping[str, Union[uuid.UUID, None]]) -> ValueMap:
 
         value_items = {}
         schemas = {}
@@ -853,7 +842,9 @@ class DataRegistry(object):
 
         return ValueMapReadOnly(value_items=value_items, values_schema=schemas)
 
-    def load_data(self, values: Mapping[str, Optional[uuid.UUID]]) -> Mapping[str, Any]:
+    def load_data(
+        self, values: Mapping[str, Union[uuid.UUID, None]]
+    ) -> Mapping[str, Any]:
 
         result_values = self.load_values(values=values)
         return {k: v.data for k, v in result_values.items()}

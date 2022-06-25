@@ -12,7 +12,7 @@ from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, List, Literal, Mapping, Optional, Type
+from typing import TYPE_CHECKING, Any, List, Literal, Mapping, Union, Type
 
 from kiara.data_types import DataType
 from kiara.models.documentation import (
@@ -34,7 +34,7 @@ class DataTypeClassInfo(TypeInfo[DataType]):
 
     @classmethod
     def create_from_type_class(
-        self, type_cls: Type[DataType], kiara: Optional["Kiara"] = None
+        self, type_cls: Type[DataType], kiara: Union["Kiara", None] = None
     ) -> "DataTypeClassInfo":
 
         authors = AuthorsMetadataModel.from_class(type_cls)
@@ -86,11 +86,11 @@ class DataTypeClassInfo(TypeInfo[DataType]):
     data_type_config_cls: PythonClass = Field(
         description="The python class holding the schema for configuring this type."
     )
-    lineage: Optional[List[str]] = Field(description="This types lineage.")
-    qualifier_profiles: Optional[Mapping[str, Mapping[str, Any]]] = Field(
+    lineage: Union[List[str], None] = Field(description="This types lineage.")
+    qualifier_profiles: Union[Mapping[str, Mapping[str, Any]], None] = Field(
         description="A map of qualifier profiles for this data types."
     )
-    _kiara: Optional["Kiara"] = PrivateAttr(default=None)
+    _kiara: Union["Kiara", None] = PrivateAttr(default=None)
 
     def _retrieve_id(self) -> str:
         return self.type_name
@@ -147,7 +147,7 @@ class DataTypeClassesInfo(TypeInfoModelGroup):
     @classmethod
     def create_from_type_items(
         cls,
-        group_alias: Optional[str] = None,
+        group_alias: Union[str, None] = None,
         **items: Type,
     ) -> "TypeInfoModelGroup":
 
@@ -160,8 +160,8 @@ class DataTypeClassesInfo(TypeInfoModelGroup):
     @classmethod
     def create_augmented_from_type_items(
         cls,
-        kiara: Optional["Kiara"] = None,
-        group_alias: Optional[str] = None,
+        kiara: Union["Kiara", None] = None,
+        group_alias: Union[str, None] = None,
         **items: Type,
     ) -> "TypeInfoModelGroup":
 
@@ -180,7 +180,7 @@ class DataTypeClassesInfo(TypeInfoModelGroup):
     item_infos: Mapping[str, DataTypeClassInfo] = Field(
         description="The data_type info instances for each type."
     )
-    _kiara: Optional["Kiara"] = PrivateAttr(default=None)
+    _kiara: Union["Kiara", None] = PrivateAttr(default=None)
 
     def create_renderable(self, **config: Any) -> RenderableType:
 

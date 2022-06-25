@@ -15,7 +15,7 @@ from pydantic.main import BaseModel
 from rich import box
 from rich.console import RenderableType
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
 
 from kiara.exceptions import InvalidValuesException
 from kiara.models import KiaraModel
@@ -33,7 +33,7 @@ class ExecutionContext(KiaraModel):
     working_dir: str = Field(
         description="The path of the working directory.", default_factory=os.getcwd
     )
-    pipeline_dir: Optional[str] = Field(
+    pipeline_dir: Union[str, None] = Field(
         description="The path of the pipeline file that is being executed (if applicable)."
     )
 
@@ -117,15 +117,15 @@ class ActiveJob(KiaraModel):
     submitted: datetime = Field(
         description="When the job was submitted.", default_factory=datetime.now
     )
-    started: Optional[datetime] = Field(
+    started: Union[datetime, None] = Field(
         description="When the job was started.", default=None
     )
-    finished: Optional[datetime] = Field(
+    finished: Union[datetime, None] = Field(
         description="When the job was finished.", default=None
     )
-    results: Optional[Dict[str, uuid.UUID]] = Field(description="The result(s).")
-    error: Optional[str] = Field(description="Potential error message.")
-    _exception: Optional[Exception] = PrivateAttr(default=None)
+    results: Union[Dict[str, uuid.UUID], None] = Field(description="The result(s).")
+    error: Union[str, None] = Field(description="Potential error message.")
+    _exception: Union[Exception, None] = PrivateAttr(default=None)
 
     def _retrieve_id(self) -> str:
         return str(self.job_id)
@@ -134,11 +134,11 @@ class ActiveJob(KiaraModel):
         return self.job_id.bytes
 
     @property
-    def exception(self) -> Optional[Exception]:
+    def exception(self) -> Union[Exception, None]:
         return self._exception
 
     @property
-    def runtime(self) -> Optional[float]:
+    def runtime(self) -> Union[float, None]:
 
         if self.started is None or self.finished is None:
             return None
@@ -211,21 +211,21 @@ class JobRecord(JobConfig):
     environment_hashes: Mapping[str, Mapping[str, str]] = Field(
         description="Hashes for the environments this value was created in."
     )
-    environments: Optional[Mapping[str, Mapping[str, Any]]] = Field(
+    enviroments: Union[Mapping[str, Mapping[str, Any]], None] = Field(
         description="Information about the environments this value was created in.",
         default=None,
     )
-    inputs_data_hash: Optional[str] = Field(
+    inputs_data_hash: Union[str, None] = Field(
         description="A map of the hashes of this jobs inputs."
     )
 
     outputs: Dict[str, uuid.UUID] = Field(description="References to the job outputs.")
-    runtime_details: Optional[JobRuntimeDetails] = Field(
+    runtime_details: Union[JobRuntimeDetails, None] = Field(
         description="Runtime details for the job."
     )
 
     _is_stored: bool = PrivateAttr(default=None)
-    _outputs_hash: Optional[int] = PrivateAttr(default=None)
+    _outputs_hash: Union[int, None] = PrivateAttr(default=None)
 
     def _retrieve_data_to_hash(self) -> Any:
         return {

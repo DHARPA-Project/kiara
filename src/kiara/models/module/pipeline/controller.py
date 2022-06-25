@@ -7,7 +7,7 @@
 
 import structlog
 import uuid
-from typing import Mapping, Optional
+from typing import Mapping, Union
 
 from kiara.context import JobRegistry
 from kiara.models.events.pipeline import PipelineDetails, PipelineEvent
@@ -23,11 +23,11 @@ class PipelineController(PipelineListener):
 
 
 class SinglePipelineController(PipelineController):
-    def __init__(self, job_registry: JobRegistry, pipeline: Optional[Pipeline] = None):
+    def __init__(self, job_registry: JobRegistry, pipeline: Union[Pipeline, None] = None):
 
-        self._pipeline: Optional[Pipeline] = None
+        self._pipeline: Union[Pipeline, None] = None
         self._job_registry: JobRegistry = job_registry
-        self._pipeline_details: Optional[PipelineDetails] = None
+        self._pipeline_details: Union[PipelineDetails, None] = None
 
         if pipeline is not None:
             self.pipeline = pipeline

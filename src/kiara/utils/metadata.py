@@ -5,14 +5,14 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-from typing import Dict, Optional, Type
+from typing import Dict, Union, Type
 
 from kiara.models.values.value_metadata import MetadataTypeClassesInfo, ValueMetadata
 from kiara.registries.models import ModelRegistry
 
 
 def find_metadata_models(
-    alias: Optional[str] = None, only_for_package: Optional[str] = None
+    alias: Union[str, None] = None, only_for_package: Union[str, None] = None
 ) -> MetadataTypeClassesInfo:
 
     model_registry = ModelRegistry.instance()

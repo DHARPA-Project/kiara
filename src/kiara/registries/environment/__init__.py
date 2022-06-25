@@ -10,7 +10,7 @@ import inspect
 from pydantic import BaseModel, Field, create_model
 from rich import box
 from rich.table import Table
-from typing import Any, Dict, Iterable, Mapping, Optional, Type
+from typing import Any, Dict, Iterable, Mapping, Union, Type
 
 from kiara.models.runtime_environment import RuntimeEnvironment, logger
 from kiara.utils import _get_all_subclasses, is_debug, to_camel_case
@@ -31,10 +31,10 @@ class EnvironmentRegistry(object):
     def __init__(
         self,
     ):
-        self._environments: Optional[Dict[str, RuntimeEnvironment]] = None
-        self._environment_hashes: Optional[Dict[str, Mapping[str, str]]] = None
+        self._environments: Union[Dict[str, RuntimeEnvironment], None] = None
+        self._environment_hashes: Union[Dict[str, Mapping[str, str]], None] = None
 
-        self._full_env_model: Optional[BaseModel] = None
+        self._full_env_model: Union[BaseModel, None] = None
 
     def get_environment_for_cid(self, env_cid: str) -> RuntimeEnvironment:
 

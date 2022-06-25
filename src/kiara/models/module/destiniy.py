@@ -7,7 +7,7 @@
 import copy
 import uuid
 from pydantic import Field, PrivateAttr
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
 
 from kiara.defaults import SpecialValue
 from kiara.models.module import KiaraModuleClass
@@ -36,7 +36,7 @@ class Destiny(Manifest):
         destiny_alias: str,
         values: Mapping[str, uuid.UUID],
         manifest: Manifest,
-        result_field_name: Optional[str] = None,
+        result_field_name: Union[str, None] = None,
     ):
 
         module = kiara.create_module(manifest=manifest)
@@ -95,21 +95,21 @@ class Destiny(Manifest):
     inputs_schema: Dict[str, ValueSchema] = Field(
         description="The schemas of all deferred input fields."
     )
-    deferred_inputs: Dict[str, Optional[uuid.UUID]] = Field(
+    deferred_inputs: Dict[str, Union[uuid.UUID, None]] = Field(
         description="Potentially required external inputs that are needed for this destiny to materialize."
     )
     result_field_name: str = Field(description="The name of the result field.")
     result_schema: ValueSchema = Field(description="The value schema of the result.")
-    result_value_id: Optional[uuid.UUID] = Field(
+    result_value_id: Union[uuid.UUID, None] = Field(
         description="The value id of the result."
     )
 
     _is_stored: bool = PrivateAttr(default=False)
-    _job_id: Optional[uuid.UUID] = PrivateAttr(default=None)
+    _job_id: Union[uuid.UUID, None] = PrivateAttr(default=None)
 
-    _merged_inputs: Optional[Dict[str, uuid.UUID]] = PrivateAttr(default=None)
+    _merged_inputs: Union[Dict[str, uuid.UUID], None] = PrivateAttr(default=None)
     # _job_config_hash: Optional[int] = PrivateAttr(default=None)
-    _module: Optional["KiaraModule"] = PrivateAttr(default=None)
+    _module: Union["KiaraModule", None] = PrivateAttr(default=None)
 
     def _retrieve_id(self) -> str:
         return str(self.destiny_id)

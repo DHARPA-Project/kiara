@@ -61,7 +61,7 @@ class KiaraHandler(BaseHandler):
 
 def get_handler(
     theme: str,  # noqa: W0613 (unused argument config)
-    custom_templates: typing.Optional[str] = None,
+    custom_templates: typing.Union[str, None] = None,
     **config: typing.Any,
 ) -> KiaraHandler:
     """Simply return an instance of `PythonHandler`.

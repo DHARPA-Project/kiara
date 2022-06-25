@@ -13,7 +13,7 @@ from rich import box
 from rich.console import RenderableType
 from rich.panel import Panel
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Optional
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
 
 from kiara.context import DataRegistry
 from kiara.defaults import NONE_VALUE_ID
@@ -297,7 +297,7 @@ class Pipeline(object):
 
         pipeline_inputs = self.get_current_pipeline_inputs()
 
-        values_to_sync: Dict[str, Dict[str, Optional[uuid.UUID]]] = {}
+        values_to_sync: Dict[str, Dict[str, Union[uuid.UUID, None]]] = {}
 
         for field_name, ref in self._structure.pipeline_input_refs.items():
             for step_input in ref.connected_inputs:
@@ -322,7 +322,7 @@ class Pipeline(object):
         return results
 
     def _set_step_inputs(
-        self, step_id: str, inputs: Mapping[str, Optional[uuid.UUID]]
+        self, step_id: str, inputs: Mapping[str, Union[uuid.UUID, None]]
     ) -> Mapping[str, Mapping[str, Mapping[str, ChangedValue]]]:
 
         changed_step_inputs = self._set_values(f"steps.{step_id}.inputs", **inputs)
@@ -347,7 +347,7 @@ class Pipeline(object):
 
     def set_multiple_step_outputs(
         self,
-        changed_outputs: Mapping[str, Mapping[str, Optional[uuid.UUID]]],
+        changed_outputs: Mapping[str, Mapping[str, Union[uuid.UUID, None]]],
         notify_listeners: bool = True,
     ) -> Mapping[str, Mapping[str, Mapping[str, ChangedValue]]]:
 
@@ -368,7 +368,7 @@ class Pipeline(object):
     def set_step_outputs(
         self,
         step_id: str,
-        outputs: Mapping[str, Optional[uuid.UUID]],
+        outputs: Mapping[str, Union[uuid.UUID, None]],
         notify_listeners: bool = True,
     ) -> Mapping[str, Mapping[str, Mapping[str, ChangedValue]]]:
 
@@ -384,9 +384,9 @@ class Pipeline(object):
 
         output_refs = self._structure.get_step_output_refs(step_id=step_id)
 
-        pipeline_outputs: Dict[str, Optional[uuid.UUID]] = {}
+        pipeline_outputs: Dict[str, Union[uuid.UUID, None]] = {}
 
-        inputs_to_set: Dict[str, Dict[str, Optional[uuid.UUID]]] = {}
+        inputs_to_set: Dict[str, Dict[str, Union[uuid.UUID, None]]] = {}
 
         for field_name, ref in output_refs.items():
             if ref.pipeline_output:
@@ -417,14 +417,14 @@ class Pipeline(object):
         return result
 
     def _set_pipeline_outputs(
-        self, **outputs: Optional[uuid.UUID]
+        self, **outputs: Union[uuid.UUID, None]
     ) -> Mapping[str, ChangedValue]:
 
         changed_pipeline_outputs = self._set_values("pipeline.outputs", **outputs)
         return changed_pipeline_outputs
 
     def _set_values(
-        self, alias: str, **values: Optional[uuid.UUID]
+        self, alias: str, **values: Union[uuid.UUID, None]
     ) -> Dict[str, ChangedValue]:
         """Set values (value-ids) for the sub-alias-map with the specified alias path."""
 
@@ -440,11 +440,11 @@ class Pipeline(object):
         if invalid:
             raise InvalidValuesException(invalid_values=invalid)
 
-        alias_map: Optional[AliasValueMap] = self._all_values.get_alias(alias)
+        alias_map: Union[AliasValueMap, None] = self._all_values.get_alias(alias)
         assert alias_map is not None
 
-        values_to_set: Dict[str, Optional[uuid.UUID]] = {}
-        current: Dict[str, Optional[uuid.UUID]] = {}
+        values_to_set: Dict[str, Union[uuid.UUID, None]] = {}
+        current: Dict[str, Union[uuid.UUID, None]] = {}
         changed: Dict[str, ChangedValue] = {}
 
         for field_name, new_value in values.items():
@@ -495,7 +495,7 @@ class Pipeline(object):
 
     def create_job_config_for_step(self, step_id: str) -> JobConfig:
 
-        step_inputs: Mapping[str, Optional[uuid.UUID]] = self.get_current_step_inputs(
+        step_inputs: Mapping[str, Union[uuid.UUID, None]] = self.get_current_step_inputs(
             step_id
         )
         step_details: StepDetails = self.get_step_details(step_id=step_id)

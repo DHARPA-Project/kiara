@@ -7,7 +7,7 @@
 
 import os
 from pathlib import Path
-from typing import Any, Iterable, List, Mapping, Optional, Union
+from typing import Any, Iterable, List, Mapping, Union, Union
 
 from kiara.defaults import MODULE_TYPE_NAME_KEY
 from kiara.models.module.pipeline.value_refs import StepValueAddress
@@ -22,7 +22,7 @@ def create_step_value_address(
     if isinstance(value_address_config, StepValueAddress):
         return value_address_config
 
-    sub_value: Optional[Mapping[str, Any]] = None
+    sub_value: Union[Mapping[str, Any], None] = None
 
     if isinstance(value_address_config, str):
 
@@ -87,8 +87,8 @@ def ensure_step_value_addresses(
 
 def get_pipeline_details_from_path(
     path: Union[str, Path],
-    module_type_name: Optional[str] = None,
-    base_module: Optional[str] = None,
+    module_type_name: Union[str, None] = None,
+    base_module: Union[str, None] = None,
 ) -> Mapping[str, Any]:
     """Load a pipeline description, save it's content, and determine it the pipeline base name.
 

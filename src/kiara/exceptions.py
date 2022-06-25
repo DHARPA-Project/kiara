@@ -8,7 +8,7 @@ import uuid
 from rich import box
 from rich.console import RenderableType
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Optional, Type, Union
+from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Union, Type, Union
 
 if TYPE_CHECKING:
     from kiara import KiaraModule
@@ -28,13 +28,13 @@ class KiaraModuleConfigException(Exception):
         msg: str,
         module_cls: Type["KiaraModule"],
         config: Mapping[str, Any],
-        parent: Optional[Exception] = None,
+        parent: Union[Exception, None] = None,
     ):
 
         self._module_cls = module_cls
         self._config = config
 
-        self._parent: Optional[Exception] = parent
+        self._parent: Union[Exception, None] = parent
 
         if not msg.endswith("."):
             _msg = msg + "."
@@ -50,13 +50,13 @@ class ValueTypeConfigException(Exception):
         msg: str,
         type_cls: Type["DataType"],
         config: Mapping[str, Any],
-        parent: Optional[Exception] = None,
+        parent: Union[Exception, None] = None,
     ):
 
         self._type_cls = type_cls
         self._config = config
 
-        self._parent: Optional[Exception] = parent
+        self._parent: Union[Exception, None] = parent
 
         if not msg.endswith("."):
             _msg = msg + "."
@@ -89,7 +89,7 @@ class NoSuchExecutionTargetException(Exception):
         self,
         selected_target: str,
         available_targets: Iterable[str],
-        msg: Optional[str] = None,
+        msg: Union[str, None] = None,
     ):
 
         if msg is None:
@@ -103,13 +103,13 @@ class KiaraProcessingException(Exception):
     def __init__(
         self,
         msg: Union[str, Exception],
-        module: Optional["KiaraModule"] = None,
-        inputs: Optional[Mapping[str, "Value"]] = None,
+        module: Union["KiaraModule", None] = None,
+        inputs: Union[Mapping[str, "Value"], None] = None,
     ):
-        self._module: Optional["KiaraModule"] = module
-        self._inputs: Optional[Mapping[str, Value]] = inputs
+        self._module: Union["KiaraModule", None] = module
+        self._inputs: Union[Mapping[str, Value], None] = inputs
         if isinstance(msg, Exception):
-            self._parent: Optional[Exception] = msg
+            self._parent: Union[Exception, None] = msg
             _msg = str(msg)
         else:
             self._parent = None
@@ -125,7 +125,7 @@ class KiaraProcessingException(Exception):
         return self._inputs  # type: ignore
 
     @property
-    def parent_exception(self) -> Optional[Exception]:
+    def parent_exception(self) -> Union[Exception, None]:
         return self._parent
 
 
@@ -150,7 +150,7 @@ class InvalidValuesException(Exception):
                     msg_parts.append(f"{k}: {v}")
                 _msg = f"Invalid values: {', '.join(msg_parts)}"
         elif isinstance(msg, Exception):
-            self._parent: Optional[Exception] = msg
+            self._parent: Union[Exception, None] = msg
             _msg = str(msg)
         else:
             self._parent = None
@@ -186,7 +186,7 @@ class JobConfigException(Exception):
         self._inputs: Mapping[str, Any] = inputs
 
         if isinstance(msg, Exception):
-            self._parent: Optional[Exception] = msg
+            self._parent: Union[Exception, None] = msg
             _msg = str(msg)
         else:
             self._parent = None
@@ -204,7 +204,7 @@ class JobConfigException(Exception):
 
 
 class FailedJobException(Exception):
-    def __init__(self, job: "ActiveJob", msg: Optional[str] = None):
+    def __init__(self, job: "ActiveJob", msg: Union[str, None] = None):
 
         self.job: ActiveJob = job
         if msg is None:
@@ -218,7 +218,7 @@ class NoSuchValueException(Exception):
 
 
 class NoSuchValueIdException(NoSuchValueException):
-    def __init__(self, value_id: uuid.UUID, msg: Optional[str] = None):
+    def __init__(self, value_id: uuid.UUID, msg: Union[str, None] = None):
         self.value_id: uuid.UUID
         if not msg:
             msg = f"No value with id: {value_id}."
@@ -226,7 +226,7 @@ class NoSuchValueIdException(NoSuchValueException):
 
 
 class NoSuchValueAliasException(NoSuchValueException):
-    def __init__(self, alias: str, msg: Optional[str] = None):
+    def __init__(self, alias: str, msg: Union[str, None] = None):
         self.value_id: uuid.UUID
         if not msg:
             msg = f"No value with alias: {alias}."

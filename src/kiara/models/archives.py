@@ -7,7 +7,7 @@ from rich.console import RenderableType
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Iterable, List, Literal, Mapping, Optional, Type
+from typing import TYPE_CHECKING, Any, Iterable, List, Literal, Mapping, Union, Type
 
 from kiara.models.documentation import (
     AuthorsMetadataModel,
@@ -106,7 +106,7 @@ class ArchiveInfo(ItemInfo):
         cls,
         kiara: "Kiara",
         archive: KiaraArchive,
-        archive_aliases: Optional[Iterable[str]] = None,
+        archive_aliases: Union[Iterable[str], None] = None,
     ):
 
         archive_type_info = ArchiveTypeInfo.create_from_type_class(archive.__class__)
@@ -153,7 +153,7 @@ class ArchiveGroupInfo(InfoModelGroup):
 
     @classmethod
     def create_from_context(
-        cls, kiara: "Kiara", group_alias: Optional[str] = None
+        cls, kiara: "Kiara", group_alias: Union[str, None] = None
     ) -> "ArchiveGroupInfo":
 
         archives = {}

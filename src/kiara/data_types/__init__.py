@@ -40,7 +40,7 @@ from typing import (
     Any,
     Generic,
     Mapping,
-    Optional,
+    Union,
     Tuple,
     Type,
     TypeVar,
@@ -97,7 +97,7 @@ class DataTypeConfig(BaseModel):
                 return True
         return False
 
-    _config_hash: Optional[int] = PrivateAttr(default=None)
+    _config_hash: Union[int, None] = PrivateAttr(default=None)
 
     def get(self, key: str) -> Any:
         """Get the value for the specified configuation key."""
@@ -216,8 +216,8 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
                 ve,
             )
 
-        self._data_type_hash: Optional[int] = None
-        self._characteristics: Optional[DataTypeCharacteristics] = None
+        self._data_type_hash: Union[int, None] = None
+        self._characteristics: Union[DataTypeCharacteristics, None] = None
 
     @property
     def data_type_name(self) -> str:

@@ -9,7 +9,7 @@ import os
 import structlog
 from pathlib import Path
 from pydantic import Field, PrivateAttr
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Union, Union
 
 from kiara.defaults import DEFAULT_EXCLUDE_DIRS, VALID_PIPELINE_FILE_EXTENSIONS
 from kiara.models.module.operation import (
@@ -87,7 +87,7 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
 
         ignore_errors = False
         pipeline_paths: Dict[
-            str, Optional[Mapping[str, Any]]
+            str, Union[Mapping[str, Any], None]
         ] = find_all_kiara_pipeline_paths(skip_errors=ignore_errors)
 
         for ep in self._kiara.context_config.extra_pipelines:
@@ -193,7 +193,7 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
 
     def check_matching_operation(
         self, module: "KiaraModule"
-    ) -> Optional[PipelineOperationDetails]:
+    ) -> Union[PipelineOperationDetails, None]:
 
         if isinstance(module, PipelineModule):
 

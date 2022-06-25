@@ -6,7 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import inspect
 from pydantic import Field
-from typing import Any, Dict, Iterable, Mapping, Optional, Union
+from typing import Any, Dict, Iterable, Mapping, Union
 
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.values.value import Value, ValueMap, ValueMapReadOnly
@@ -53,8 +53,8 @@ class CreateFromModule(KiaraModule):
         return result
 
     def create_optional_inputs(
-        self, source_type: str, target_type: str
-    ) -> Optional[Mapping[str, Mapping[str, Any]]]:
+        self, source_type: str, target_type
+    ) -> Union[Mapping[str, Mapping[str, Any]], None]:
         return None
 
     def create_inputs_schema(

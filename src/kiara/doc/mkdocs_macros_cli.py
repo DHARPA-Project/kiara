@@ -12,7 +12,7 @@ from deepdiff import DeepHash
 from pathlib import Path
 from subprocess import PIPE, Popen
 from timeit import default_timer as timer
-from typing import Dict, Mapping, Optional
+from typing import Dict, Mapping, Union
 
 from kiara.defaults import kiara_app_dirs
 
@@ -50,12 +50,12 @@ def define_env(env):
         print_command: bool = True,
         code_block: bool = True,
         split_command_and_output: bool = True,
-        max_height: Optional[int] = None,
-        cache_key: Optional[str] = None,
-        extra_env: Optional[Dict[str, str]] = None,
-        fake_command: Optional[str] = None,
+        max_height: Union[int, None] = None,
+        cache_key: Union[str, None] = None,
+        extra_env: Union[Dict[str, str], None] = None,
+        fake_command: Union[str, None] = None,
         fail_ok: bool = False,
-        repl_dict: Optional[Mapping[str, str]] = None,
+        repl_dict: Union[Mapping[str, str], None] = None,
     ):
         """Execute the provided command, save the output and return it to be used in documentation modules."""
 

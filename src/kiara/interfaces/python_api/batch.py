@@ -6,7 +6,7 @@
 import os
 import uuid
 from pydantic import BaseModel, Field, PrivateAttr, root_validator, validator
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union, Union
 
 from kiara import Kiara
 from kiara.interfaces.python_api.utils import create_save_config
@@ -28,7 +28,7 @@ class BatchOperation(BaseModel):
     def from_file(
         cls,
         path: str,
-        kiara: Optional["Kiara"] = None,
+        kiara: Union["Kiara", None] = None,
     ):
 
         data = get_data_from_file(path)
@@ -47,7 +47,7 @@ class BatchOperation(BaseModel):
     def from_config(
         cls,
         data: Mapping[str, Any],
-        kiara: Optional["Kiara"],
+        kiara: Union["Kiara", None],
     ):
 
         data = dict(data)
@@ -136,7 +136,7 @@ class BatchOperation(BaseModel):
 
     def run(
         self,
-        inputs: Optional[Mapping[str, Any]] = None,
+        inputs: Union[Mapping[str, Any], None] = None,
         save: Union[None, bool, str, Mapping[str, Any]] = None,
     ) -> ValueMap:
 

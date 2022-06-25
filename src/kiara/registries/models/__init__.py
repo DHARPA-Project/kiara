@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import Dict, Optional, Type
+from typing import Dict, Union, Type
 
 from kiara.models import KiaraModel
 from kiara.models.info import KiaraModelClassesInfo, find_kiara_models
@@ -19,7 +19,7 @@ class ModelRegistry(object):
 
     def __init__(self):
 
-        self._all_models: Optional[KiaraModelClassesInfo] = None
+        self._all_models: Union[KiaraModelClassesInfo, None] = None
         self._models_per_package: Dict[str, KiaraModelClassesInfo] = {}
         self._sub_models: Dict[Type[KiaraModel], KiaraModelClassesInfo] = {}
 
@@ -33,7 +33,7 @@ class ModelRegistry(object):
         return self._all_models
 
     def get_model_cls(
-        self, kiara_model_id: str, required_subclass: Optional[Type[KiaraModel]] = None
+        self, kiara_model_id: str, required_subclass: Union[Type[KiaraModel], None] = None
     ) -> Type[KiaraModel]:
 
         model_info = self.all_models.get(kiara_model_id, None)

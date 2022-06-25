@@ -13,7 +13,7 @@ from typing import (
     Iterable,
     List,
     Mapping,
-    Optional,
+    Union,
     Set,
     Type,
 )
@@ -45,14 +45,14 @@ class TypeRegistry(object):
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
-        self._data_types: Optional[bidict[str, Type[DataType]]] = None
+        self._data_types: Union[bidict[str, Type[DataType]], None] = None
         self._data_type_metadata: Dict[str, DataTypeClassInfo] = {}
         self._cached_data_type_objects: Dict[int, DataType] = {}
         # self._registered_python_classes: Dict[Type, typing.List[str]] = None  # type: ignore
-        self._type_hierarchy: Optional[nx.DiGraph] = None
+        self._type_hierarchy: Union[nx.DiGraph, None] = None
         self._lineages_cache: Dict[str, List[str]] = {}
 
-        self._type_profiles: Optional[Dict[str, Mapping[str, Any]]] = None
+        self._type_profiles: Union[Dict[str, Mapping[str, Any]], None] = None
 
     def invalidate_types(self):
 
@@ -60,7 +60,7 @@ class TypeRegistry(object):
         # self._registered_python_classes = None
 
     def retrieve_data_type(
-        self, data_type_name: str, data_type_config: Optional[Mapping[str, Any]] = None
+        self, data_type_name: str, data_type_config: Union[Mapping[str, Any], None] = None
     ) -> DataType:
 
         if data_type_config is None:
@@ -124,7 +124,7 @@ class TypeRegistry(object):
         if self._type_hierarchy is not None:
             return self._type_hierarchy
 
-        def recursive_base_find(cls: Type, current: Optional[List[str]] = None):
+        def recursive_base_find(cls: Type, current: Union[List[str], None] = None):
 
             if current is None:
                 current = []
@@ -258,7 +258,7 @@ class TypeRegistry(object):
         return self._data_type_metadata[type_name]
 
     def get_context_metadata(
-        self, alias: Optional[str] = None, only_for_package: Optional[str] = None
+        self, alias: Union[str, None] = None, only_for_package: Union[str, None] = None
     ) -> DataTypeClassesInfo:
 
         result = {}

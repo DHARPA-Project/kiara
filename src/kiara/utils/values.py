@@ -6,7 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import copy
-from typing import Any, Dict, Mapping, Optional, Union
+from typing import Any, Dict, Mapping, Union, Union
 
 from kiara.defaults import DEFAULT_NO_DESC_VALUE, INVALID_VALUE_NAMES, SpecialValue
 from kiara.models.values.value_schema import ValueSchema
@@ -87,7 +87,7 @@ def overlay_constants_and_defaults(
 def augment_values(
     values: Mapping[str, Any],
     schemas: Mapping[str, ValueSchema],
-    constants: Optional[Mapping[str, ValueSchema]] = None,
+    constants: Union[Mapping[str, ValueSchema], None] = None,
 ) -> Dict[str, Any]:
 
     # TODO: check if extra fields were provided

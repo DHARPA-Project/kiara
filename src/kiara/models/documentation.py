@@ -14,7 +14,7 @@ from rich import box
 from rich.console import RenderableType
 from rich.markdown import Markdown
 from rich.table import Table
-from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Type, Union
+from typing import Any, Callable, Dict, List, Mapping, Union, Tuple, Type, Union
 
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.models import KiaraModel
@@ -25,7 +25,7 @@ from kiara.utils.global_metadata import get_metadata_for_python_module_or_class
 class AuthorModel(BaseModel):
 
     name: str = Field(description="The full name of the author.")
-    email: Optional[EmailStr] = Field(
+    email: Union[EmailStr, None] = Field(
         description="The email address of the author", default=None
     )
 
@@ -33,7 +33,7 @@ class AuthorModel(BaseModel):
 class LinkModel(BaseModel):
 
     url: AnyUrl = Field(description="The url.")
-    desc: Optional[str] = Field(
+    desc: Union[str, None] = Field(
         description="A short description of the link content.",
         default=DEFAULT_NO_DESC_VALUE,
     )
@@ -128,7 +128,7 @@ class ContextMetadataModel(KiaraModel):
         self,
         ref_type: str,
         url: str,
-        desc: Optional[str] = None,
+        desc: Union[str, None] = None,
         force: bool = False,
     ):
 
@@ -137,7 +137,7 @@ class ContextMetadataModel(KiaraModel):
         link = LinkModel(url=url, desc=desc)
         self.references[ref_type] = link
 
-    def get_url_for_reference(self, ref: str) -> Optional[str]:
+    def get_url_for_reference(self, ref: str) -> Union[str, None]:
 
         link = self.references.get(ref, None)
         if not link:
@@ -175,7 +175,7 @@ class DocumentationMetadataModel(KiaraModel):
         return cls.from_string(doc)
 
     @classmethod
-    def from_string(cls, doc: Optional[str]):
+    def from_string(cls, doc: Union[str, None]):
 
         if not doc:
             doc = DEFAULT_NO_DESC_VALUE
@@ -209,7 +209,7 @@ class DocumentationMetadataModel(KiaraModel):
             return cls(description=desc, doc=doc)
 
     @classmethod
-    def create(cls, item: Any):
+    def create(cls, item: Any = None):
 
         if not item:
             return cls.from_string(DEFAULT_NO_DESC_VALUE)
@@ -227,7 +227,7 @@ class DocumentationMetadataModel(KiaraModel):
     description: str = Field(
         description="Short description of the item.", default=DEFAULT_NO_DESC_VALUE
     )
-    doc: Optional[str] = Field(
+    doc: Union[str, None] = Field(
         description="Detailed documentation of the item (in markdown).", default=None
     )
 

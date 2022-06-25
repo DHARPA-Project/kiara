@@ -7,7 +7,7 @@
 
 import structlog
 from pydantic import Field, PrivateAttr
-from typing import TYPE_CHECKING, Any, Iterable, Mapping, Optional, Union
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Union, Union
 
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.operation import (
@@ -90,7 +90,7 @@ class CustomModuleOperationType(OperationType[CustomModuleOperationDetails]):
 
     def check_matching_operation(
         self, module: "KiaraModule"
-    ) -> Optional[CustomModuleOperationDetails]:
+    ) -> Union[CustomModuleOperationDetails, None]:
         mod_conf = module.__class__._config_cls
 
         if not mod_conf.requires_config():

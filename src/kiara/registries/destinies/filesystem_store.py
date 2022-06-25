@@ -10,7 +10,7 @@ import os
 import structlog
 import uuid
 from pathlib import Path
-from typing import Optional, Set, Tuple
+from typing import Union, Set, Tuple
 
 from kiara.models.module.destiniy import Destiny
 from kiara.registries import ArchiveDetails, FileSystemArchiveConfig
@@ -43,7 +43,7 @@ class FileSystemDestinyArchive(DestinyArchive):
     def __init__(self, archive_id: uuid.UUID, config: FileSystemArchiveConfig):
 
         super().__init__(archive_id=archive_id, config=config)
-        self._base_path: Optional[Path] = None
+        self._base_path: Union[Path, None] = None
 
         # base_path = config.archive_path
         # if not base_path.is_dir():

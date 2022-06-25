@@ -9,7 +9,7 @@ import structlog
 import uuid
 from pydantic import Field, PrivateAttr
 from rich.tree import Tree
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
 
 from kiara.defaults import NONE_VALUE_ID
 from kiara.models.values.value import Value, ValueMap
@@ -29,15 +29,15 @@ class AliasValueMap(ValueMap):
 
     _kiara_model_id = "instance.value_map.aliases"
 
-    alias: Optional[str] = Field(description="This maps own (full) alias.")
+    alias: Union[str, None] = Field(description="This maps own (full) alias.")
     version: int = Field(description="The version of this map (in this maps parent).")
-    created: Optional[datetime.datetime] = Field(
+    created: Union[datetime.datetime, None] = Field(
         description="The time this map was created."
     )
-    assoc_schema: Optional[ValueSchema] = Field(
+    assoc_schema: Union[ValueSchema, None] = Field(
         description="The schema for this maps associated value."
     )
-    assoc_value: Optional[uuid.UUID] = Field(
+    assoc_value: Union[uuid.UUID, None] = Field(
         description="The value that is associated with this map."
     )
 
@@ -58,8 +58,8 @@ class AliasValueMap(ValueMap):
         return self._is_stored
 
     def get_child_map(
-        self, field_name: str, version: Optional[str] = None
-    ) -> Optional["AliasValueMap"]:
+        self, field_name: str, version: Union[str, None] = None
+    ) -> Union["AliasValueMap", None]:
         """Get the child map for the specified field / version combination.
 
         Raises an error if the child field does not exist. Returns 'None' if not value is set yet (but schema is).
@@ -179,7 +179,7 @@ class AliasValueMap(ValueMap):
         self.values_schema[field_name] = schema
         self.value_items[field_name] = {}
 
-    def get_alias(self, alias: str) -> Optional["AliasValueMap"]:
+    def get_alias(self, alias: str) -> Union["AliasValueMap", None]:
 
         if VALUE_ALIAS_SEPARATOR not in alias:
             if "@" in alias:
@@ -212,11 +212,11 @@ class AliasValueMap(ValueMap):
 
         return result
 
-    def set_alias(self, alias: str, value_id: Optional[uuid.UUID]) -> "AliasValueMap":
+    def set_alias(self, alias: str, value_id: Union[uuid.UUID, None]) -> "AliasValueMap":
 
         if VALUE_ALIAS_SEPARATOR not in alias:
             child = None
-            field_name: Optional[str] = alias
+            field_name: Union[str, None] = alias
             rest = None
         else:
             child, rest = alias.split(VALUE_ALIAS_SEPARATOR, maxsplit=1)
@@ -242,7 +242,7 @@ class AliasValueMap(ValueMap):
                 else:
                     self.set_alias_schema(alias=child, schema=ValueSchema(type="any"))
 
-            field_item: Optional[AliasValueMap] = None
+            field_item: Union[AliasValueMap, None] = None
             try:
                 field_item = self.get_child_map(field_name=child)
             except KeyError:
@@ -279,12 +279,12 @@ class AliasValueMap(ValueMap):
         return new_map
 
     def _set_local_value_item(
-        self, field_name: str, value_id: Optional[uuid.UUID] = None
+        self, field_name: str, value_id: Union[uuid.UUID, None] = None
     ) -> "AliasValueMap":
 
         assert VALUE_ALIAS_SEPARATOR not in field_name
 
-        value: Optional[Value] = None
+        value: Union[Value, None] = None
         if value_id is not None:
             value = self._data_registry.get_value(value_id=value_id)
             assert value is not None

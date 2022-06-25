@@ -14,7 +14,7 @@ from typing import (
     Iterable,
     Mapping,
     NamedTuple,
-    Optional,
+    Union,
     Set,
 )
 
@@ -33,7 +33,7 @@ class AliasArchive(BaseArchive):
         return ["alias"]
 
     @abc.abstractmethod
-    def retrieve_all_aliases(self) -> Optional[Mapping[str, uuid.UUID]]:
+    def retrieve_all_aliases(self) -> Union[Mapping[str, uuid.UUID], None]:
         """Retrieve a list of all aliases registered in this archive.
 
         The result of this method can be 'None', for cases where the aliases are determined dynamically.
@@ -44,11 +44,11 @@ class AliasArchive(BaseArchive):
         """
 
     @abc.abstractmethod
-    def find_value_id_for_alias(self, alias: str) -> Optional[uuid.UUID]:
+    def find_value_id_for_alias(self, alias: str) -> Union[uuid.UUID, None]:
         pass
 
     @abc.abstractmethod
-    def find_aliases_for_value_id(self, value_id: uuid.UUID) -> Optional[Set[str]]:
+    def find_aliases_for_value_id(self, value_id: uuid.UUID) -> Union[Set[str], None]:
         pass
 
     @classmethod
@@ -80,17 +80,17 @@ class AliasRegistry(object):
         self._alias_archives: Dict[str, AliasArchive] = {}
         """All registered archives/stores."""
 
-        self._default_alias_store: Optional[str] = None
+        self._default_alias_store: Union[str, None] = None
         """The alias of the store where new aliases are stored by default."""
 
-        self._cached_aliases: Optional[Dict[str, AliasItem]] = None
-        self._cached_aliases_by_id: Optional[Dict[uuid.UUID, Set[AliasItem]]] = None
+        self._cached_aliases: Union[Dict[str, AliasItem], None] = None
+        self._cached_aliases_by_id: Union[Dict[uuid.UUID, Set[AliasItem]], None] = None
 
     def register_archive(
         self,
         archive: AliasArchive,
         alias: str = None,
-        set_as_default_store: Optional[bool] = None,
+        set_as_default_store: Union[bool, None] = None,
     ):
 
         alias_archive_id = archive.archive_id
@@ -141,7 +141,7 @@ class AliasRegistry(object):
     def alias_archives(self) -> Mapping[str, AliasArchive]:
         return self._alias_archives
 
-    def get_archive(self, archive_id: Optional[str] = None) -> Optional[AliasArchive]:
+    def get_archive(self, archive_id: Union[str, None] = None) -> Union[AliasArchive, None]:
         if archive_id is None:
             archive_id = self.default_alias_store
             if archive_id is None:
@@ -200,7 +200,7 @@ class AliasRegistry(object):
         self._cached_aliases_by_id = all_aliases_by_id
         return self._cached_aliases
 
-    def find_value_id_for_alias(self, alias: str) -> Optional[uuid.UUID]:
+    def find_value_id_for_alias(self, alias: str) -> Union[uuid.UUID, None]:
 
         alias_item = self.aliases.get(alias, None)
         if alias_item is not None:

@@ -19,7 +19,7 @@ from typing import (
     Iterable,
     List,
     Mapping,
-    Optional,
+    Union,
     Tuple,
     Type,
     TypeVar,
@@ -123,13 +123,13 @@ def find_subclasses_under(
 def _process_subclass(
     sub_class: Type,
     base_class: Type,
-    type_id_key: Optional[str],
-    type_id_func: Optional[Callable],
+    type_id_key: Union[str, None],
+    type_id_func: Union[Callable, None],
     type_id_no_attach: bool,
     attach_python_metadata: Union[bool, str] = False,
     ignore_abstract_classes: bool = True,
     ignore_modules_with_null_module_name: bool = True,
-) -> Optional[str]:
+) -> Union[str, None]:
     """Process subclasses of a base class that live under a module (recursively).
 
     Arguments:
@@ -199,7 +199,7 @@ def load_all_subclasses_for_entry_point(
     entry_point_name: str,
     base_class: Type[SUBCLASS_TYPE],
     ignore_abstract_classes: bool = True,
-    type_id_key: Optional[str] = None,
+    type_id_key: Union[str, None] = None,
     type_id_func: Callable = None,
     type_id_no_attach: bool = False,
     attach_python_metadata: Union[bool, str] = False,
@@ -504,7 +504,7 @@ def find_operations_under(
     )
 
 
-def find_pipeline_base_path_for_module(module: Union[str, ModuleType]) -> Optional[str]:
+def find_pipeline_base_path_for_module(module: Union[str, ModuleType]) -> Union[str, None]:
 
     if hasattr(sys, "frozen"):
         raise NotImplementedError("Pyinstaller bundling not supported yet.")
@@ -525,7 +525,7 @@ def find_pipeline_base_path_for_module(module: Union[str, ModuleType]) -> Option
 
 def find_all_kiara_pipeline_paths(
     skip_errors: bool = False,
-) -> Dict[str, Optional[Mapping[str, Any]]]:
+) -> Dict[str, Union[Mapping[str, Any], None]]:
 
     import logging
 
@@ -544,7 +544,7 @@ def find_all_kiara_pipeline_paths(
         namespace="kiara.pipelines", invoke_on_load=False, propagate_map_exceptions=True
     )
 
-    paths: Dict[str, Optional[Mapping[str, Any]]] = {}
+    paths: Dict[str, Union[Mapping[str, Any], None]] = {}
     # TODO: make sure we load 'core' first?
     for plugin in mgr:
 
@@ -563,7 +563,7 @@ def find_all_kiara_pipeline_paths(
                     args = plugin.plugin[1:]
 
                 f_args = []
-                metadata: Optional[Mapping[str, Any]] = None
+                metadata: Union[Mapping[str, Any], None] = None
                 if len(args) >= 1:
                     f_args.append(args[0])
                 if len(args) >= 2:

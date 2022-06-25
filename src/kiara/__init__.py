@@ -41,7 +41,7 @@ try:
         *objects: typing.Any,
         sep: str = " ",
         end: str = "\n",
-        file: typing.Optional[typing.IO[str]] = None,
+        file: typing.Union[typing.IO[str], None] = None,
         flush: bool = False,
     ):
 
@@ -59,7 +59,7 @@ try:
         *objects: typing.Any,
         sep: str = " ",
         end: str = "\n",
-        file: typing.Optional[typing.IO[str]] = None,
+        file: typing.Union[typing.IO[str], None] = None,
         flush: bool = False,
     ):
 

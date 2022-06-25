@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field, PrivateAttr
 from rich import box
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
 
 from kiara.models.values.value import ORPHAN, PersistedData, Value
 from kiara.models.values.value_schema import ValueSchema

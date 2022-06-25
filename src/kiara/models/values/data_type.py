@@ -12,7 +12,7 @@ from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, List, Literal, Mapping, Union, Type
+from typing import TYPE_CHECKING, Any, List, Literal, Mapping, Type, Union
 
 from kiara.data_types import DataType
 from kiara.models.documentation import (

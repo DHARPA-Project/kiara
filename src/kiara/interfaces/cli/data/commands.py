@@ -10,7 +10,7 @@ import rich_click as click
 import shutil
 import structlog
 import sys
-from typing import Union, Tuple
+from typing import Tuple, Union
 
 from kiara import Kiara
 from kiara.interfaces.tui.pager import PagerApp

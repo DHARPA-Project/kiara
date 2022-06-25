@@ -6,7 +6,7 @@
 
 import abc
 import uuid
-from typing import Iterable, Union, Set
+from typing import Iterable, Set, Union
 
 from kiara.models.module.destiniy import Destiny
 from kiara.registries import ARCHIVE_CONFIG_CLS, BaseArchive
@@ -26,7 +26,9 @@ class DestinyArchive(BaseArchive):
         """Retrun a list of all value ids that have destinies stored in this archive."""
 
     @abc.abstractmethod
-    def get_destiny_aliases_for_value(self, value_id: uuid.UUID) -> Union[Set[str], None]:
+    def get_destiny_aliases_for_value(
+        self, value_id: uuid.UUID
+    ) -> Union[Set[str], None]:
         """Retrieve all the destinies for the specified value within this archive.
 
         In case this archive discovers its value destinies dynamically, this can return 'None'.

@@ -495,9 +495,9 @@ class Pipeline(object):
 
     def create_job_config_for_step(self, step_id: str) -> JobConfig:
 
-        step_inputs: Mapping[str, Union[uuid.UUID, None]] = self.get_current_step_inputs(
-            step_id
-        )
+        step_inputs: Mapping[
+            str, Union[uuid.UUID, None]
+        ] = self.get_current_step_inputs(step_id)
         step_details: StepDetails = self.get_step_details(step_id=step_id)
         step: PipelineStep = self.get_step(step_id=step_id)
 

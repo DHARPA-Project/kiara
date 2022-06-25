@@ -16,7 +16,7 @@ from pydantic.config import Extra
 from pydantic.env_settings import BaseSettings
 from pydantic.fields import Field, PrivateAttr
 from ruamel import yaml as r_yaml
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
 
 from kiara.defaults import (
     DEFAULT_ALIAS_STORE_MARKER,
@@ -263,7 +263,9 @@ class KiaraConfig(BaseSettings):
         return {a: self.get_context_config(a) for a in self.available_context_names}
 
     def get_context_config(
-        self, context_name: Union[str, None] = None, auto_generate: Union[bool, None] = None
+        self,
+        context_name: Union[str, None] = None,
+        auto_generate: Union[bool, None] = None,
     ) -> KiaraContextConfig:
 
         if auto_generate is None:

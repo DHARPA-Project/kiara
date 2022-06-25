@@ -9,7 +9,7 @@ import abc
 import uuid
 from datetime import datetime
 from pydantic import BaseModel
-from typing import Any, Dict, List, Union, Protocol, Union
+from typing import Any, Dict, List, Protocol, Union
 
 from kiara.exceptions import KiaraProcessingException
 from kiara.models.module.jobs import ActiveJob, JobConfig, JobLog, JobRecord, JobStatus
@@ -42,7 +42,10 @@ except Exception:
 
 class JobStatusListener(Protocol):
     def job_status_changed(
-        self, job_id: uuid.UUID, old_status: Union[JobStatus, None], new_status: JobStatus
+        self,
+        job_id: uuid.UUID,
+        old_status: Union[JobStatus, None],
+        new_status: JobStatus,
     ):
         pass
 
@@ -66,7 +69,10 @@ class ModuleProcessor(abc.ABC):
         self._listeners: List[JobStatusListener] = []
 
     def _send_job_event(
-        self, job_id: uuid.UUID, old_status: Union[JobStatus, None], new_status: JobStatus
+        self,
+        job_id: uuid.UUID,
+        old_status: Union[JobStatus, None],
+        new_status: JobStatus,
     ):
 
         for listener in self._listeners:

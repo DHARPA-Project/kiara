@@ -14,7 +14,7 @@ import rich_click as click
 import structlog
 import sys
 from pathlib import Path
-from typing import Union, Tuple
+from typing import Tuple, Union
 
 from kiara.context.config import KiaraConfig
 from kiara.defaults import KIARA_CONFIG_FILE_NAME, KIARA_MAIN_CONFIG_FILE
@@ -70,7 +70,9 @@ CLICK_CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
     required=False,
 )
 @click.pass_context
-def cli(ctx, config: Union[str, None], context: Union[str, None], pipelines: Tuple[str]):
+def cli(
+    ctx, config: Union[str, None], context: Union[str, None], pipelines: Tuple[str]
+):
     """[i b]kiara[/b i] ia a data-orchestration framework; this is the command-line frontend for it.
 
 

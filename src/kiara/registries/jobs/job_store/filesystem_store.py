@@ -55,7 +55,9 @@ class FileSystemJobArchive(JobArchive):
         shutil.rmtree(self.job_store_path)
 
     def retrieve_all_job_hashes(
-        self, manifest_hash: Union[str, None] = None, inputs_hash: Union[str, None] = None
+        self,
+        manifest_hash: Union[str, None] = None,
+        inputs_hash: Union[str, None] = None,
     ) -> Iterable[str]:
 
         base_path = self.job_store_path / MANIFEST_SUB_PATH

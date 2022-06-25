@@ -19,7 +19,6 @@ from typing import (
     Iterable,
     List,
     Mapping,
-    Union,
     Tuple,
     Type,
     TypeVar,
@@ -504,7 +503,9 @@ def find_operations_under(
     )
 
 
-def find_pipeline_base_path_for_module(module: Union[str, ModuleType]) -> Union[str, None]:
+def find_pipeline_base_path_for_module(
+    module: Union[str, ModuleType]
+) -> Union[str, None]:
 
     if hasattr(sys, "frozen"):
         raise NotImplementedError("Pyinstaller bundling not supported yet.")

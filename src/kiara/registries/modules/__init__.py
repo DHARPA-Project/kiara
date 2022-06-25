@@ -9,7 +9,7 @@
 
 import structlog
 from multiformats import CID
-from typing import TYPE_CHECKING, Dict, Iterable, Mapping, Union, Type, Union
+from typing import TYPE_CHECKING, Dict, Iterable, Mapping, Type, Union
 
 from kiara.models.module import KiaraModuleTypeInfo, ModuleTypeClassesInfo
 from kiara.models.module.manifest import Manifest

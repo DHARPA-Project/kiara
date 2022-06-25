@@ -8,7 +8,7 @@
 """Data-related sub-commands for the cli."""
 import rich_click as click
 import structlog
-from typing import Union, Tuple
+from typing import Tuple, Union
 
 from kiara import Kiara
 from kiara.interfaces.python_api.workflow import Workflow
@@ -38,7 +38,7 @@ def list(ctx):
 
     workflow_aliases = kiara.workflow_registry.workflow_aliases
 
-    dbg(workflow_aliases)
+    print(workflow_aliases)
 
 
 @workflow.command()
@@ -88,8 +88,8 @@ def explain(ctx, workflow: str):
     # dbg(state)
     workflow_details = kiara.workflow_registry.get_workflow_details(workflow=workflow)
 
-    workflow = Workflow(kiara=kiara, workflow_id=workflow_details.workflow_id)
-    terminal_print(workflow)
+    workflow_obj = Workflow(kiara=kiara, workflow_id=workflow_details.workflow_id)
+    terminal_print(workflow_obj)
 
 
 @workflow.command()

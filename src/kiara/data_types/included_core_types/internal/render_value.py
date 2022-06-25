@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from pydantic import Field
-from typing import Any, Mapping, Union, Type
+from typing import Any, Mapping, Type, Union
 
 from kiara.data_types import DataTypeConfig
 from kiara.data_types.included_core_types.internal import InternalType

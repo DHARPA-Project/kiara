@@ -9,7 +9,7 @@ import regex as re
 import structlog
 import typing
 from regex.regex import Pattern
-from typing import Any, Mapping, Union, Sequence, Set, Union
+from typing import Any, Mapping, Sequence, Set, Union
 
 log = structlog.getLogger()
 

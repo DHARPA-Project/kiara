@@ -7,7 +7,7 @@ import orjson
 import structlog
 from pydantic import Field, PrivateAttr
 from rich.syntax import Syntax
-from typing import Any, Generic, Mapping, Union, Type, Union
+from typing import Any, Generic, Mapping, Type, Union
 
 from kiara.data_types import TYPE_CONFIG_CLS, TYPE_PYTHON_CLS, DataType, DataTypeConfig
 from kiara.defaults import NO_SERIALIZATION_MARKER

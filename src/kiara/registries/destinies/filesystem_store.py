@@ -10,7 +10,7 @@ import os
 import structlog
 import uuid
 from pathlib import Path
-from typing import Union, Set, Tuple
+from typing import Set, Tuple, Union
 
 from kiara.models.module.destiniy import Destiny
 from kiara.registries import ArchiveDetails, FileSystemArchiveConfig

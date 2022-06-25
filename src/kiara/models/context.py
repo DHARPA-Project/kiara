@@ -53,7 +53,9 @@ class ContextSummary(KiaraModel):
     kiara_id: uuid.UUID = Field(
         description="The (globally unique) id of the kiara context."
     )
-    context_name: Union[str, None] = Field(description="The local alias for this context.")
+    context_name: Union[str, None] = Field(
+        description="The local alias for this context."
+    )
     value_ids: List[uuid.UUID] = Field(
         description="The ids of all stored values in this context."
     )

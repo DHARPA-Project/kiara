@@ -169,7 +169,9 @@ class StepOutputRef(ValueRef):
         allow_mutation = True
 
     step_id: str = Field(description="The step id.")
-    pipeline_output: Union[str, None] = Field(description="The connected pipeline output.")
+    pipeline_output: Union[str, None] = Field(
+        description="The connected pipeline output."
+    )
     connected_inputs: List[StepValueAddress] = Field(
         description="The step inputs that are connected to this step output",
         default_factory=list,

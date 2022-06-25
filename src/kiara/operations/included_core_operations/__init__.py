@@ -7,7 +7,7 @@
 
 import structlog
 from pydantic import Field, PrivateAttr
-from typing import TYPE_CHECKING, Any, Iterable, Mapping, Union, Union
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Union
 
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.operation import (

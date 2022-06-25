@@ -6,17 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 from bidict import bidict
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    Iterable,
-    List,
-    Mapping,
-    Union,
-    Set,
-    Type,
-)
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Set, Type, Union
 
 from kiara.data_types import DataType
 from kiara.defaults import KIARA_ROOT_TYPE_NAME
@@ -60,7 +50,9 @@ class TypeRegistry(object):
         # self._registered_python_classes = None
 
     def retrieve_data_type(
-        self, data_type_name: str, data_type_config: Union[Mapping[str, Any], None] = None
+        self,
+        data_type_name: str,
+        data_type_config: Union[Mapping[str, Any], None] = None,
     ) -> DataType:
 
         if data_type_config is None:

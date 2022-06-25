@@ -212,7 +212,9 @@ class AliasValueMap(ValueMap):
 
         return result
 
-    def set_alias(self, alias: str, value_id: Union[uuid.UUID, None]) -> "AliasValueMap":
+    def set_alias(
+        self, alias: str, value_id: Union[uuid.UUID, None]
+    ) -> "AliasValueMap":
 
         if VALUE_ALIAS_SEPARATOR not in alias:
             child = None

@@ -35,17 +35,7 @@ from rich.console import Console, ConsoleOptions, RenderResult
 from rich.rule import Rule
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Generic,
-    Mapping,
-    Union,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
-)
+from typing import TYPE_CHECKING, Any, Generic, Mapping, Tuple, Type, TypeVar, Union
 
 from kiara.defaults import (
     INVALID_HASH_MARKER,

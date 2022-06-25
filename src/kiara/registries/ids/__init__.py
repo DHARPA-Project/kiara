@@ -7,7 +7,7 @@
 
 import structlog
 import uuid
-from typing import Any, Dict, Union, Type
+from typing import Any, Dict, Type, Union
 from weakref import WeakValueDictionary
 
 from kiara.utils import is_debug, is_develop

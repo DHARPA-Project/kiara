@@ -21,7 +21,7 @@ from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy_utc import UtcDateTime, utcnow
 from sqlalchemy_utils import UUIDType
-from typing import Any, Dict, List, Union, Union
+from typing import Any, Dict, List, Union
 
 Base: DeclarativeMeta = declarative_base()
 
@@ -168,6 +168,8 @@ class AliasOrm(Base):
     alias: Column[str] = Column(String, index=True, nullable=False)
     created: Column[datetime] = Column(UtcDateTime(), nullable=False, index=True)
     version: Column[int] = Column(Integer, nullable=False, index=True)
-    value_id: Column[Union[uuid.UUID, None]] = Column(UUIDType(binary=True), nullable=True)
+    value_id: Column[Union[uuid.UUID, None]] = Column(
+        UUIDType(binary=True), nullable=True
+    )
 
     UniqueConstraint(alias, version)

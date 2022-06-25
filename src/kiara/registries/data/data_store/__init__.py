@@ -9,7 +9,7 @@ import abc
 import structlog
 import uuid
 from rich.console import RenderableType
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Union, Set, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Set, Union
 
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.value import PersistedData, Value, ValuePedigree

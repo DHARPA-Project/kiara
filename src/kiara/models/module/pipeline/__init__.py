@@ -9,7 +9,7 @@ from enum import Enum
 from pydantic import Extra, Field, PrivateAttr, root_validator, validator
 from rich.console import RenderableType
 from slugify import slugify
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
 
 from kiara.models.module import KiaraModuleClass, KiaraModuleConfig
 from kiara.models.module.jobs import ExecutionContext

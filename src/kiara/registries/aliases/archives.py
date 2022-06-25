@@ -9,7 +9,7 @@ import os
 import shutil
 import uuid
 from pathlib import Path
-from typing import Mapping, Union, Set
+from typing import Mapping, Set, Union
 
 from kiara.registries import ARCHIVE_CONFIG_CLS, FileSystemArchiveConfig
 from kiara.registries.aliases import AliasArchive, AliasStore

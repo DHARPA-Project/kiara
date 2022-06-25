@@ -11,7 +11,7 @@ import uuid
 from enum import Enum
 from io import BytesIO
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Iterable, Mapping, Union, Set, Union
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Set, Union
 
 from kiara.models.module.jobs import JobRecord
 from kiara.models.values.value import (
@@ -114,7 +114,9 @@ class FileSystemDataArchive(DataArchive, JobArchive):
         return self._hashfs
 
     def get_path(
-        self, entity_type: Union[EntityType, None] = None, base_path: Union[Path, None] = None
+        self,
+        entity_type: Union[EntityType, None] = None,
+        base_path: Union[Path, None] = None,
     ) -> Path:
         if base_path is None:
             if entity_type is None:
@@ -146,7 +148,9 @@ class FileSystemDataArchive(DataArchive, JobArchive):
         return environment
 
     def retrieve_all_job_hashes(
-        self, manifest_hash: Union[str, None] = None, inputs_hash: Union[str, None] = None
+        self,
+        manifest_hash: Union[str, None] = None,
+        inputs_hash: Union[str, None] = None,
     ) -> Iterable[str]:
 
         raise NotImplementedError()

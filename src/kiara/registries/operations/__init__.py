@@ -7,18 +7,7 @@
 
 import structlog
 import sys
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    Iterable,
-    List,
-    Mapping,
-    Union,
-    Set,
-    Type,
-    Union,
-)
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Set, Type, Union
 
 from kiara.models.module import KiaraModuleClass
 from kiara.models.module.manifest import Manifest
@@ -48,7 +37,9 @@ class OperationRegistry(object):
 
         self._kiara: "Kiara" = kiara
 
-        self._operation_type_classes: Union[Dict[str, Type["OperationType"]], None] = None
+        self._operation_type_classes: Union[
+            Dict[str, Type["OperationType"]], None
+        ] = None
 
         if operation_type_classes is not None:
             self._operation_type_classes = dict(operation_type_classes)
@@ -364,7 +355,10 @@ class OperationRegistry(object):
         return self._operations
 
     def _create_operations(
-        self, manifest: Manifest, doc: Any, metadata: Union[Mapping[str, Any], None] = None
+        self,
+        manifest: Manifest,
+        doc: Any,
+        metadata: Union[Mapping[str, Any], None] = None,
     ) -> Dict[str, Operation]:
 
         module = self._kiara.create_module(manifest)

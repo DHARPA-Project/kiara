@@ -23,7 +23,6 @@ from typing import (
     List,
     Literal,
     Mapping,
-    Union,
     Type,
     Union,
 )

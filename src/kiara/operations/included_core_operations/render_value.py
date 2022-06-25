@@ -7,7 +7,7 @@
 
 import structlog
 from pydantic import Field
-from typing import Any, Dict, Iterable, Mapping, Union, Type, Union
+from typing import Any, Dict, Iterable, Mapping, Type, Union
 
 from kiara.models.module.operation import (
     BaseOperationDetails,

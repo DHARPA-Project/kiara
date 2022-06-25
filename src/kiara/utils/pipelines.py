@@ -7,7 +7,7 @@
 
 import os
 from pathlib import Path
-from typing import Any, Iterable, List, Mapping, Union, Union
+from typing import Any, Iterable, List, Mapping, Union
 
 from kiara.defaults import MODULE_TYPE_NAME_KEY
 from kiara.models.module.pipeline.value_refs import StepValueAddress

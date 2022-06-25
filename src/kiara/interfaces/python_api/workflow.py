@@ -123,8 +123,8 @@ class Workflow(object):
 
         self._all_inputs: Dict[str, Any] = {}
 
-        self._steps: Union[Dict[str, Manifest], None] = None
-        self._input_links: Union[Dict[str, List[str]], None] = None
+        self._steps: Union[Dict[str, Manifest]] = {}
+        self._input_links: Dict[str, List[str]] = {}
         self._current_inputs: Union[Dict[str, Any], None] = None
         self._pipeline_config: Union[PipelineConfig, None] = None
         self._last_outputs: Dict[str, uuid.UUID] = {}
@@ -134,7 +134,7 @@ class Workflow(object):
         self._pipeline_details: Union[PipelineDetails, None] = None
         self._pipeline: Union[Pipeline, None] = None
 
-        self._snapshots: Dict[uuid.UUID, WorkflowState] = None
+        self._snapshots: Dict[uuid.UUID, WorkflowState] = {}
 
     @property
     def workflow_id(self) -> uuid.UUID:
@@ -181,7 +181,7 @@ class Workflow(object):
             if field_name in self._all_inputs.keys():
                 to_change[field_name] = self._all_inputs[field_name]
 
-        changed = self.pipeline.set_pipeline_inputs(inputs=to_change)
+        self.pipeline.set_pipeline_inputs(inputs=to_change)
         self._current_inputs = self.pipeline.get_current_pipeline_inputs()
         return self._current_inputs
 
@@ -206,7 +206,7 @@ class Workflow(object):
             workflow_state_id=workflow_state_id,
             steps=self.pipeline_config.steps,
             inputs=self.current_inputs,
-            outputs=self.current_outputs,
+            # outputs=self.current_outputs,
         )
         self._snapshots[snap.workflow_state_id] = snap
 

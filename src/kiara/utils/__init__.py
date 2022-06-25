@@ -22,7 +22,7 @@ from rich.console import ConsoleRenderable, RichCast
 from ruamel.yaml import YAML
 from slugify import slugify
 from types import ModuleType
-from typing import Any, Dict, Iterable, List, Mapping, Union, Type, TypeVar, Union
+from typing import Any, Dict, Iterable, List, Mapping, Type, TypeVar, Union
 
 from kiara.defaults import INVALID_VALUE_NAMES
 

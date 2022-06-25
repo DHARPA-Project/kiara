@@ -8,7 +8,7 @@ from rich.console import Group
 from rich.panel import Panel
 from rich.rule import Rule
 from rich.syntax import Syntax
-from typing import Any, Callable, Mapping, Union, TypeVar, Union
+from typing import Any, Callable, Mapping, TypeVar, Union
 
 from kiara.interfaces import get_console
 

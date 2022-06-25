@@ -8,7 +8,7 @@ import orjson.orjson
 import structlog
 from pydantic import Field
 from rich.console import Group
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Union, Type
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Type, Union
 
 from kiara.data_types import DataTypeConfig
 from kiara.data_types.included_core_types import AnyType, KiaraModelValueType

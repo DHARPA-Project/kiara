@@ -31,7 +31,9 @@ def filter_operations(
                 )
                 continue
         else:
-            package: Union[str, None] = op.metadata.get("labels", {}).get("package", None)
+            package: Union[str, None] = op.metadata.get("labels", {}).get(
+                "package", None
+            )
             if not pkg_name or (package and package == pkg_name):
                 result[op_id] = OperationInfo.create_from_operation(
                     kiara=kiara, operation=op

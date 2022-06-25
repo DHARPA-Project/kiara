@@ -8,16 +8,7 @@
 import orjson
 import uuid
 from sortedcontainers import SortedDict
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    List,
-    Mapping,
-    MutableMapping,
-    Union,
-    Set,
-)
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, MutableMapping, Set, Union
 
 from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID
 from kiara.models.events import KiaraEvent

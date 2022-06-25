@@ -14,8 +14,8 @@ from typing import (
     Iterable,
     Mapping,
     NamedTuple,
-    Union,
     Set,
+    Union,
 )
 
 from kiara.models.events.alias_registry import AliasArchiveAddedEvent
@@ -141,7 +141,9 @@ class AliasRegistry(object):
     def alias_archives(self) -> Mapping[str, AliasArchive]:
         return self._alias_archives
 
-    def get_archive(self, archive_id: Union[str, None] = None) -> Union[AliasArchive, None]:
+    def get_archive(
+        self, archive_id: Union[str, None] = None
+    ) -> Union[AliasArchive, None]:
         if archive_id is None:
             archive_id = self.default_alias_store
             if archive_id is None:

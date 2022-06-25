@@ -5,7 +5,7 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-from typing import Dict, Union, Type
+from typing import Dict, Type, Union
 
 from kiara.models.values.value_metadata import MetadataTypeClassesInfo, ValueMetadata
 from kiara.registries.models import ModelRegistry

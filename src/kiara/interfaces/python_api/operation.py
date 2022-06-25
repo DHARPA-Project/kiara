@@ -3,7 +3,7 @@ import os
 import uuid
 from rich.console import Group, RenderableType
 from rich.markdown import Markdown
-from typing import Any, Dict, List, Mapping, Union, Union
+from typing import Any, Dict, List, Mapping, Union
 
 from kiara import Kiara
 from kiara.exceptions import (

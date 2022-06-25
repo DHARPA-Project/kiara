@@ -12,17 +12,7 @@ from pydantic import BaseModel, Field, root_validator
 from rich import box
 from rich.console import ConsoleRenderable, Group, RenderableType, RichCast
 from rich.table import Table as RichTable
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    Iterable,
-    List,
-    Mapping,
-    Union,
-    Set,
-    Type,
-)
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Set, Type, Union
 
 from kiara.defaults import SpecialValue
 from kiara.models.values.value import ORPHAN, Value, ValueMap

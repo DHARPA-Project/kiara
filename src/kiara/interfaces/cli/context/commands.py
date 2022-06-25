@@ -8,7 +8,7 @@ import sys
 from rich import box
 from rich.panel import Panel
 from rich.table import Table
-from typing import Union, Tuple
+from typing import Tuple, Union
 
 from kiara.context import Kiara, KiaraConfig, KiaraContextConfig
 from kiara.interfaces import get_console

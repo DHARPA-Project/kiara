@@ -10,7 +10,7 @@ import orjson
 import structlog
 import uuid
 from pydantic import BaseModel, Field
-from typing import TYPE_CHECKING, ClassVar, Generic, Iterable, Union, Type, TypeVar
+from typing import TYPE_CHECKING, ClassVar, Generic, Iterable, Type, TypeVar, Union
 
 from kiara.utils import orjson_dumps
 

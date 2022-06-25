@@ -5,7 +5,7 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-from typing import TYPE_CHECKING, Any, Mapping, Union, Union
+from typing import TYPE_CHECKING, Any, Mapping, Union
 
 from kiara.models.module.jobs import JobLog
 from kiara.models.module.pipeline import PipelineConfig

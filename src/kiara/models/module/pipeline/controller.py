@@ -23,7 +23,9 @@ class PipelineController(PipelineListener):
 
 
 class SinglePipelineController(PipelineController):
-    def __init__(self, job_registry: JobRegistry, pipeline: Union[Pipeline, None] = None):
+    def __init__(
+        self, job_registry: JobRegistry, pipeline: Union[Pipeline, None] = None
+    ):
 
         self._pipeline: Union[Pipeline, None] = None
         self._job_registry: JobRegistry = job_registry

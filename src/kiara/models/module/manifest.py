@@ -11,7 +11,7 @@ from multiformats import CID
 from pydantic import Extra, Field, PrivateAttr, validator
 from rich.console import RenderableType
 from rich.syntax import Syntax
-from typing import TYPE_CHECKING, Any, Mapping, Union, Union
+from typing import TYPE_CHECKING, Any, Mapping, Union
 
 from kiara.defaults import INVALID_HASH_MARKER, NONE_VALUE_ID
 from kiara.models import KiaraModel
@@ -147,7 +147,9 @@ class InputsManifest(Manifest):
     def inputs_hash(self) -> str:
         return str(self.inputs_cid)
 
-    def calculate_inputs_data_cid(self, data_registry: "DataRegistry") -> Union[CID, None]:
+    def calculate_inputs_data_cid(
+        self, data_registry: "DataRegistry"
+    ) -> Union[CID, None]:
 
         if self._inputs_data_cid is not None:
             if self._inputs_data_cid is False:

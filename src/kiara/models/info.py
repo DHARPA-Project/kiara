@@ -22,9 +22,9 @@ from typing import (
     Iterable,
     Literal,
     Mapping,
-    Union,
     Type,
     TypeVar,
+    Union,
 )
 
 from kiara.models import KiaraModel

@@ -8,7 +8,7 @@ import uuid
 from rich import box
 from rich.console import RenderableType
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Union, Type, Union
+from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Type, Union
 
 if TYPE_CHECKING:
     from kiara import KiaraModule

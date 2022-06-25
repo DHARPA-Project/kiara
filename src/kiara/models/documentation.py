@@ -14,7 +14,7 @@ from rich import box
 from rich.console import RenderableType
 from rich.markdown import Markdown
 from rich.table import Table
-from typing import Any, Callable, Dict, List, Mapping, Union, Tuple, Type, Union
+from typing import Any, Callable, Dict, List, Mapping, Tuple, Type, Union
 
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.models import KiaraModel

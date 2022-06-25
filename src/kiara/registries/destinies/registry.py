@@ -13,7 +13,6 @@ from typing import (
     Iterable,
     List,
     Mapping,
-    Union,
     Set,
     Tuple,
     Union,
@@ -44,7 +43,9 @@ class DestinyRegistry(object):
         # self.register_destiny_archive("metadata", default_metadata_archive)
 
         self._all_values: Union[Dict[uuid.UUID, Set[str]], None] = None
-        self._cached_value_aliases: Dict[uuid.UUID, Dict[str, Union[Destiny, None]]] = {}
+        self._cached_value_aliases: Dict[
+            uuid.UUID, Dict[str, Union[Destiny, None]]
+        ] = {}
 
         self._destinies: Dict[uuid.UUID, Destiny] = {}
         self._destinies_by_value: Dict[uuid.UUID, Dict[str, Destiny]] = {}

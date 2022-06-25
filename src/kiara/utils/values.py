@@ -6,7 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import copy
-from typing import Any, Dict, Mapping, Union, Union
+from typing import Any, Dict, Mapping, Union
 
 from kiara.defaults import DEFAULT_NO_DESC_VALUE, INVALID_VALUE_NAMES, SpecialValue
 from kiara.models.values.value_schema import ValueSchema

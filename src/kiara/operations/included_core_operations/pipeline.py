@@ -9,7 +9,7 @@ import os
 import structlog
 from pathlib import Path
 from pydantic import Field, PrivateAttr
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Union, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Union
 
 from kiara.defaults import DEFAULT_EXCLUDE_DIRS, VALID_PIPELINE_FILE_EXTENSIONS
 from kiara.models.module.operation import (

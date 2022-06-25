@@ -14,7 +14,7 @@ from pydantic import BaseModel, Field, PrivateAttr
 from rich import box
 from rich.console import RenderableType
 from rich.table import Table
-from typing import Any, Dict, List, Mapping, Union, Union
+from typing import Any, Dict, List, Mapping, Union
 
 from kiara.defaults import DEFAULT_EXCLUDE_FILES, KIARA_HASH_FUNCTION
 from kiara.models import KiaraModel

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import structlog
 from pydantic import Field
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Union
 
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.operation import (
@@ -127,7 +127,7 @@ class ExportAsOperationType(OperationType[ExportAsOperationDetails]):
 
     def check_matching_operation(
         self, module: "KiaraModule"
-    ) -> Optional[ExportAsOperationDetails]:
+    ) -> Union[ExportAsOperationDetails, None]:
 
         if not isinstance(module, DataExportModule):
             return None

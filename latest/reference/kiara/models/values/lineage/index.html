@@ -1494,6 +1494,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/workflow/" class="md-nav__link">
+        workflow
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3674,20 +3688,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../workflows/__init__/" class="md-nav__link">
-        workflows
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -3952,7 +3952,7 @@ ValueLineage        </code>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">fill_lineage_tree</span><span class="p">(</span>
     <span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span>
     <span class="n">pedigree</span><span class="p">:</span> <span class="n">ValuePedigree</span><span class="p">,</span>
-    <span class="n">node</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tree</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">node</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tree</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">include_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
 <span class="p">):</span>

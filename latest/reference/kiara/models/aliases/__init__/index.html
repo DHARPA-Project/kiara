@@ -1494,6 +1494,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/workflow/" class="md-nav__link">
+        workflow
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3685,20 +3699,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../workflows/__init__/" class="md-nav__link">
-        workflows
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -3880,15 +3880,15 @@ AliasValueMap            (<a class="autorefs autorefs-internal" title="kiara.mod
 
     <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.value_map.aliases&quot;</span>
 
-    <span class="n">alias</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;This maps own (full) alias.&quot;</span><span class="p">)</span>
+    <span class="n">alias</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;This maps own (full) alias.&quot;</span><span class="p">)</span>
     <span class="n">version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The version of this map (in this maps parent).&quot;</span><span class="p">)</span>
-    <span class="n">created</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">created</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The time this map was created.&quot;</span>
     <span class="p">)</span>
-    <span class="n">assoc_schema</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">assoc_schema</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The schema for this maps associated value.&quot;</span>
     <span class="p">)</span>
-    <span class="n">assoc_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">assoc_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value that is associated with this map.&quot;</span>
     <span class="p">)</span>
 
@@ -3909,8 +3909,8 @@ AliasValueMap            (<a class="autorefs autorefs-internal" title="kiara.mod
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_stored</span>
 
     <span class="k">def</span> <span class="nf">get_child_map</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;AliasValueMap&quot;</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;AliasValueMap&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Get the child map for the specified field / version combination.</span>
 
 <span class="sd">        Raises an error if the child field does not exist. Returns &#39;None&#39; if not value is set yet (but schema is).</span>
@@ -4030,7 +4030,7 @@ AliasValueMap            (<a class="autorefs autorefs-internal" title="kiara.mod
         <span class="bp">self</span><span class="o">.</span><span class="n">values_schema</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value_items</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">def</span> <span class="nf">get_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;AliasValueMap&quot;</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">get_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;AliasValueMap&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="n">VALUE_ALIAS_SEPARATOR</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">alias</span><span class="p">:</span>
             <span class="k">if</span> <span class="s2">&quot;@&quot;</span> <span class="ow">in</span> <span class="n">alias</span><span class="p">:</span>
@@ -4063,11 +4063,13 @@ AliasValueMap            (<a class="autorefs autorefs-internal" title="kiara.mod
 
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="nf">set_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;AliasValueMap&quot;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">set_alias</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AliasValueMap&quot;</span><span class="p">:</span>
 
         <span class="k">if</span> <span class="n">VALUE_ALIAS_SEPARATOR</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">alias</span><span class="p">:</span>
             <span class="n">child</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="n">field_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">alias</span>
+            <span class="n">field_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">alias</span>
             <span class="n">rest</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">child</span><span class="p">,</span> <span class="n">rest</span> <span class="o">=</span> <span class="n">alias</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">VALUE_ALIAS_SEPARATOR</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -4093,7 +4095,7 @@ AliasValueMap            (<a class="autorefs autorefs-internal" title="kiara.mod
                 <span class="k">else</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">set_alias_schema</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="n">child</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">ValueSchema</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;any&quot;</span><span class="p">))</span>
 
-            <span class="n">field_item</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AliasValueMap</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">field_item</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">AliasValueMap</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">field_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_child_map</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="n">child</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
@@ -4130,12 +4132,12 @@ AliasValueMap            (<a class="autorefs autorefs-internal" title="kiara.mod
         <span class="k">return</span> <span class="n">new_map</span>
 
     <span class="k">def</span> <span class="nf">_set_local_value_item</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AliasValueMap&quot;</span><span class="p">:</span>
 
         <span class="k">assert</span> <span class="n">VALUE_ALIAS_SEPARATOR</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">field_name</span>
 
-        <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Value</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Value</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">value_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>
             <span class="k">assert</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -4418,7 +4420,7 @@ AliasValueMap            (<a class="autorefs autorefs-internal" title="kiara.mod
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/aliases/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;AliasValueMap&quot;</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;AliasValueMap&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="n">VALUE_ALIAS_SEPARATOR</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">alias</span><span class="p">:</span>
         <span class="k">if</span> <span class="s2">&quot;@&quot;</span> <span class="ow">in</span> <span class="n">alias</span><span class="p">:</span>
@@ -4501,8 +4503,8 @@ AliasValueMap            (<a class="autorefs autorefs-internal" title="kiara.mod
         <details class="quote">
           <summary>Source code in <code>kiara/models/aliases/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_child_map</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;AliasValueMap&quot;</span><span class="p">]:</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;AliasValueMap&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Get the child map for the specified field / version combination.</span>
 
 <span class="sd">    Raises an error if the child field does not exist. Returns &#39;None&#39; if not value is set yet (but schema is).</span>
@@ -4703,11 +4705,13 @@ AliasValueMap            (<a class="autorefs autorefs-internal" title="kiara.mod
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/aliases/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;AliasValueMap&quot;</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_alias</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AliasValueMap&quot;</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="n">VALUE_ALIAS_SEPARATOR</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">alias</span><span class="p">:</span>
         <span class="n">child</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">field_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">alias</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">alias</span>
         <span class="n">rest</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">child</span><span class="p">,</span> <span class="n">rest</span> <span class="o">=</span> <span class="n">alias</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">VALUE_ALIAS_SEPARATOR</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -4733,7 +4737,7 @@ AliasValueMap            (<a class="autorefs autorefs-internal" title="kiara.mod
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">set_alias_schema</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="n">child</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">ValueSchema</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;any&quot;</span><span class="p">))</span>
 
-        <span class="n">field_item</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AliasValueMap</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">field_item</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">AliasValueMap</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">field_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_child_map</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="n">child</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>

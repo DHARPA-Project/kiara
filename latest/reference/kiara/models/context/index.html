@@ -1494,6 +1494,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interfaces/python_api/workflow/" class="md-nav__link">
+        workflow
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3672,20 +3686,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../workflows/__init__/" class="md-nav__link">
-        workflows
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -3819,7 +3819,7 @@ ContextSummaries            (<span title="pydantic.main.BaseModel">BaseModel</sp
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_context_summaries</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">contexts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;KiaraContextConfig&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">contexts</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;KiaraContextConfig&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">):</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">contexts</span><span class="p">:</span>
@@ -3905,7 +3905,7 @@ ContextSummaries            (<span title="pydantic.main.BaseModel">BaseModel</sp
           <summary>Source code in <code>kiara/models/context.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create_context_summaries</span><span class="p">(</span>
-    <span class="bp">cls</span><span class="p">,</span> <span class="n">contexts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;KiaraContextConfig&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">cls</span><span class="p">,</span> <span class="n">contexts</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;KiaraContextConfig&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">):</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">contexts</span><span class="p">:</span>
@@ -4022,8 +4022,8 @@ ContextSummary            (<a class="autorefs autorefs-internal" title="kiara.mo
     <span class="k">def</span> <span class="nf">create_from_context_config</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">config</span><span class="p">:</span> <span class="n">KiaraContextConfig</span><span class="p">,</span>
-        <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">runtime_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KiaraRuntimeConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">context_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">runtime_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">KiaraRuntimeConfig</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 
         <span class="kn">from</span> <span class="nn">kiara.context</span> <span class="kn">import</span> <span class="n">Kiara</span>
@@ -4032,7 +4032,7 @@ ContextSummary            (<a class="autorefs autorefs-internal" title="kiara.mo
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_from_context</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">context_name</span><span class="o">=</span><span class="n">context_name</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_from_context</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_from_context</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 
         <span class="n">value_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">retrieve_all_available_value_ids</span><span class="p">())</span>
         <span class="n">aliases</span> <span class="o">=</span> <span class="p">{</span>
@@ -4054,7 +4054,9 @@ ContextSummary            (<a class="autorefs autorefs-internal" title="kiara.mo
     <span class="n">kiara_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The (globally unique) id of the kiara context.&quot;</span>
     <span class="p">)</span>
-    <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The local alias for this context.&quot;</span><span class="p">)</span>
+    <span class="n">context_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The local alias for this context.&quot;</span>
+    <span class="p">)</span>
     <span class="n">value_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The ids of all stored values in this context.&quot;</span>
     <span class="p">)</span>
@@ -4065,7 +4067,7 @@ ContextSummary            (<a class="autorefs autorefs-internal" title="kiara.mo
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The archives registered in this context.&quot;</span>
     <span class="p">)</span>
 
-    <span class="n">_kiara</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">()</span>
+    <span class="n">_kiara</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">kiara_context</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">:</span>
@@ -4411,7 +4413,7 @@ ContextSummary            (<a class="autorefs autorefs-internal" title="kiara.mo
         <details class="quote">
           <summary>Source code in <code>kiara/models/context.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">create_from_context</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">create_from_context</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 
     <span class="n">value_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">retrieve_all_available_value_ids</span><span class="p">())</span>
     <span class="n">aliases</span> <span class="o">=</span> <span class="p">{</span>
@@ -4459,8 +4461,8 @@ ContextSummary            (<a class="autorefs autorefs-internal" title="kiara.mo
 <span class="k">def</span> <span class="nf">create_from_context_config</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">KiaraContextConfig</span><span class="p">,</span>
-    <span class="n">context_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">runtime_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KiaraRuntimeConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">context_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">runtime_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">KiaraRuntimeConfig</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 
     <span class="kn">from</span> <span class="nn">kiara.context</span> <span class="kn">import</span> <span class="n">Kiara</span>

@@ -1494,6 +1494,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/workflow/" class="md-nav__link">
+        workflow
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3610,20 +3624,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../workflows/__init__/" class="md-nav__link">
-        workflows
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -5688,8 +5688,8 @@ ChangedValue            (<span title="pydantic.main.BaseModel">BaseModel</span>)
           <summary>Source code in <code>kiara/models/events/pipeline.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ChangedValue</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 
-    <span class="n">old</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span>
-    <span class="n">new</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span>
+    <span class="n">old</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="n">new</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 </code></pre></div>
         </details>
 
@@ -6151,7 +6151,7 @@ PipelineEvent            (<a class="autorefs autorefs-internal" title="kiara.mod
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">pipeline</span><span class="p">:</span> <span class="s2">&quot;Pipeline&quot;</span><span class="p">,</span>
         <span class="n">changed</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ChangedValue</span><span class="p">]]],</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;PipelineEvent&quot;</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;PipelineEvent&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="n">pipeline_inputs</span> <span class="o">=</span> <span class="n">changed</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;__pipeline__&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="n">pipeline_outputs</span> <span class="o">=</span> <span class="n">changed</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;__pipeline__&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">,</span> <span class="p">{})</span>
@@ -6449,7 +6449,7 @@ Config        </code>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">pipeline</span><span class="p">:</span> <span class="s2">&quot;Pipeline&quot;</span><span class="p">,</span>
     <span class="n">changed</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ChangedValue</span><span class="p">]]],</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;PipelineEvent&quot;</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;PipelineEvent&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="n">pipeline_inputs</span> <span class="o">=</span> <span class="n">changed</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;__pipeline__&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="p">{})</span>
     <span class="n">pipeline_outputs</span> <span class="o">=</span> <span class="n">changed</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;__pipeline__&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">,</span> <span class="p">{})</span>

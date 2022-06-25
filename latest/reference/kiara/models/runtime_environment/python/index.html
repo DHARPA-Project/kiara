@@ -1494,6 +1494,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/workflow/" class="md-nav__link">
+        workflow
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3688,20 +3702,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../workflows/__init__/" class="md-nav__link">
-        workflows
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -3855,7 +3855,7 @@ KiaraPluginsRuntimeEnvironment            (<a class="autorefs autorefs-internal"
 
     <span class="k">def</span> <span class="nf">_create_renderable_for_field</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">for_summary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="n">field_name</span> <span class="o">!=</span> <span class="s2">&quot;packages&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">extract_renderable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">))</span>
@@ -4155,7 +4155,7 @@ PythonRuntimeEnvironment            (<a class="autorefs autorefs-internal" title
 
     <span class="k">def</span> <span class="nf">_create_renderable_for_field</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">for_summary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="n">field_name</span> <span class="o">!=</span> <span class="s2">&quot;packages&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">extract_renderable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">))</span>

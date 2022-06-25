@@ -1494,6 +1494,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interfaces/python_api/workflow/" class="md-nav__link">
+        workflow
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -2328,8 +2342,22 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.models.workflow.Workflow" class="md-nav__link">
-    Workflow
+  <a href="#kiara.models.workflow.WorkflowDetails" class="md-nav__link">
+    WorkflowDetails
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.models.workflow.WorkflowState" class="md-nav__link">
+    WorkflowState
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.models.workflow.WorkflowStateFilter" class="md-nav__link">
+    WorkflowStateFilter
   </a>
   
 </li>
@@ -3665,20 +3693,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../workflows/__init__/" class="md-nav__link">
-        workflows
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -3732,8 +3746,22 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.models.workflow.Workflow" class="md-nav__link">
-    Workflow
+  <a href="#kiara.models.workflow.WorkflowDetails" class="md-nav__link">
+    WorkflowDetails
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.models.workflow.WorkflowState" class="md-nav__link">
+    WorkflowState
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.models.workflow.WorkflowStateFilter" class="md-nav__link">
+    WorkflowStateFilter
   </a>
   
 </li>
@@ -3783,9 +3811,9 @@
 
 
 
-<h3 id="kiara.models.workflow.Workflow" class="doc doc-heading">
+<h3 id="kiara.models.workflow.WorkflowDetails" class="doc doc-heading">
         <code>
-Workflow            (<a class="autorefs autorefs-internal" title="kiara.models.KiaraModel" href="../__init__/#kiara.models.KiaraModel">KiaraModel</a>)
+WorkflowDetails            (<a class="autorefs autorefs-internal" title="kiara.models.KiaraModel" href="../__init__/#kiara.models.KiaraModel">KiaraModel</a>)
         </code>
 
 
@@ -3793,31 +3821,623 @@ Workflow            (<a class="autorefs autorefs-internal" title="kiara.models.K
       <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
   </span>
 
-<a href="#kiara.models.workflow.Workflow" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#kiara.models.workflow.WorkflowDetails" class="headerlink" title="Permanent link">&para;</a></h3>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/workflow.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Workflow</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
-
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">WorkflowDetails</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
     <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.workflow&quot;</span>
 
-    <span class="n">full_alias</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The full alias for this workflow, within the current kiara context.&quot;</span>
+    <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The globally unique uuid for this workflow.&quot;</span><span class="p">,</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">rel_alias</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The relative alias for this workflow, within the current kiara context.&quot;</span>
+    <span class="n">documentation</span><span class="p">:</span> <span class="n">DocumentationMetadataModel</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A description for this workflow.&quot;</span><span class="p">,</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">create</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">current_state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A reference to the current state of this workflow.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+
+    <span class="n">_kiara</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;documentation&quot;</span><span class="p">,</span> <span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">validate_doc</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_workflow_state</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">steps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">PipelineStep</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;WorkflowState&quot;</span><span class="p">:</span>
+
+        <span class="n">workflow_state_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
+            <span class="n">comment</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;new workflow state for workflow: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">workflow_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">steps</span><span class="p">:</span>
+            <span class="n">steps</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">steps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">inputs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+
+        <span class="n">state</span> <span class="o">=</span> <span class="n">WorkflowState</span><span class="p">(</span>
+            <span class="n">workflow_state_id</span><span class="o">=</span><span class="n">workflow_state_id</span><span class="p">,</span>
+            <span class="n">workflow_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">,</span>
+            <span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">,</span>
+            <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">state</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h4 id="kiara.models.workflow.WorkflowDetails-attributes">Attributes<a href="#kiara.models.workflow.WorkflowDetails-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.workflow.WorkflowDetails.current_state" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">current_state</span><span class="p">:</span> <span class="n">UUID</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.workflow.WorkflowDetails.current_state" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>A reference to the current state of this workflow.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.workflow.WorkflowDetails.documentation" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">documentation</span><span class="p">:</span> <span class="n">DocumentationMetadataModel</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.workflow.WorkflowDetails.documentation" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>A description for this workflow.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.workflow.WorkflowDetails.workflow_id" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">workflow_id</span><span class="p">:</span> <span class="n">UUID</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.workflow.WorkflowDetails.workflow_id" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The globally unique uuid for this workflow.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.models.workflow.WorkflowDetails.create_workflow_state" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_workflow_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+<a href="#kiara.models.workflow.WorkflowDetails.create_workflow_state" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_workflow_state</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">steps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">PipelineStep</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;WorkflowState&quot;</span><span class="p">:</span>
+
+    <span class="n">workflow_state_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
+        <span class="n">comment</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;new workflow state for workflow: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">workflow_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">steps</span><span class="p">:</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">inputs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+
+    <span class="n">state</span> <span class="o">=</span> <span class="n">WorkflowState</span><span class="p">(</span>
+        <span class="n">workflow_state_id</span><span class="o">=</span><span class="n">workflow_state_id</span><span class="p">,</span>
+        <span class="n">workflow_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">,</span>
+        <span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">,</span>
+        <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">state</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.models.workflow.WorkflowDetails.validate_doc" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">validate_doc</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.models.workflow.WorkflowDetails.validate_doc" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;documentation&quot;</span><span class="p">,</span> <span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">validate_doc</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="kiara.models.workflow.WorkflowState" class="doc doc-heading">
+        <code>
+WorkflowState            (<a class="autorefs autorefs-internal" title="kiara.models.KiaraModel" href="../__init__/#kiara.models.KiaraModel">KiaraModel</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.models.workflow.WorkflowState" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">WorkflowState</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+    <span class="c1"># @classmethod</span>
+    <span class="c1"># def create_snapshot(cls, workflow: &quot;Workflow&quot;) -&gt; &quot;WorkflowState&quot;:</span>
+    <span class="c1">#</span>
+    <span class="c1">#     raise NotImplementedError()</span>
+
+    <span class="n">workflow_state_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The globally unique uuid for this workflow state.&quot;</span>
     <span class="p">)</span>
     <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The globally unique uuid for this workflow.&quot;</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of the workflow this state is connected to.&quot;</span>
     <span class="p">)</span>
-    <span class="n">workflow_archive</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The alias for the workflow archive that contains this workflow, within the current kiara context.&quot;</span>
+    <span class="n">steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PipelineStep</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The current steps in the workflow.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span>
     <span class="p">)</span>
-    <span class="n">workflow_archive_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The globally unique id for the workflow archive that contains this workflow.&quot;</span>
+    <span class="n">inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The current (pipeline) input values.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span>
+    <span class="p">)</span>
+    <span class="c1"># outputs: Dict[str, uuid.UUID] = Field(description=&quot;The current (pipeline) output values.&quot;, default_factory=dict)</span>
+    <span class="n">created</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The time this snapshot was created.&quot;</span><span class="p">,</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parent</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of the state that preceeded this one (if applicable).&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">_pipeline_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PipelineConfig</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EncodableType</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">instance_cid</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pipeline_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_config</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span>
+            <span class="n">pipeline_name</span><span class="o">=</span><span class="s2">&quot;__workflow__&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;steps&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_config</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">structure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineStructure</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">structure</span>
+
+    <span class="k">def</span> <span class="nf">create_workflow_state</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">steps</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">PipelineStep</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;WorkflowState&quot;</span><span class="p">:</span>
+
+        <span class="n">workflow_state_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
+            <span class="n">comment</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;new workflow state for workflow: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">workflow_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">steps</span><span class="p">:</span>
+            <span class="n">steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># TODO: augment steps instead of replace?</span>
+            <span class="n">steps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">inputs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">inputs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="n">state</span> <span class="o">=</span> <span class="n">WorkflowState</span><span class="p">(</span>
+            <span class="n">workflow_state_id</span><span class="o">=</span><span class="n">workflow_state_id</span><span class="p">,</span>
+            <span class="n">workflow_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">,</span>
+            <span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">,</span>
+            <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">state</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h4 id="kiara.models.workflow.WorkflowState-attributes">Attributes<a href="#kiara.models.workflow.WorkflowState-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.workflow.WorkflowState.created" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">created</span><span class="p">:</span> <span class="n">datetime</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.workflow.WorkflowState.created" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The time this snapshot was created.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.workflow.WorkflowState.inputs" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.workflow.WorkflowState.inputs" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The current (pipeline) input values.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.workflow.WorkflowState.parent" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">parent</span><span class="p">:</span> <span class="n">UUID</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.workflow.WorkflowState.parent" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The id of the state that preceeded this one (if applicable).</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.workflow.WorkflowState.pipeline_config" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pipeline_config</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.models.workflow.WorkflowState.pipeline_config" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.workflow.WorkflowState.steps" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">PipelineStep</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.workflow.WorkflowState.steps" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The current steps in the workflow.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.workflow.WorkflowState.structure" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">structure</span><span class="p">:</span> <span class="n">PipelineStructure</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.models.workflow.WorkflowState.structure" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.workflow.WorkflowState.workflow_id" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">workflow_id</span><span class="p">:</span> <span class="n">UUID</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.workflow.WorkflowState.workflow_id" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The id of the workflow this state is connected to.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.models.workflow.WorkflowState.workflow_state_id" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">workflow_state_id</span><span class="p">:</span> <span class="n">UUID</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.workflow.WorkflowState.workflow_state_id" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The globally unique uuid for this workflow state.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.models.workflow.WorkflowState.create_workflow_state" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_workflow_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+<a href="#kiara.models.workflow.WorkflowState.create_workflow_state" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_workflow_state</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">steps</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">PipelineStep</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;WorkflowState&quot;</span><span class="p">:</span>
+
+    <span class="n">workflow_state_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
+        <span class="n">comment</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;new workflow state for workflow: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">workflow_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">steps</span><span class="p">:</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># TODO: augment steps instead of replace?</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">inputs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">inputs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+    <span class="n">state</span> <span class="o">=</span> <span class="n">WorkflowState</span><span class="p">(</span>
+        <span class="n">workflow_state_id</span><span class="o">=</span><span class="n">workflow_state_id</span><span class="p">,</span>
+        <span class="n">workflow_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">,</span>
+        <span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">,</span>
+        <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">state</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="kiara.models.workflow.WorkflowStateFilter" class="doc doc-heading">
+        <code>
+WorkflowStateFilter            (<span title="pydantic.main.BaseModel">BaseModel</span>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.models.workflow.WorkflowStateFilter" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">WorkflowStateFilter</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+
+    <span class="n">earliest</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The earliest state to be considered.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="n">latest</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The latest state to be considered.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="n">max_states</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Max amount of states to return (using X oldest states).&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -3829,25 +4449,24 @@ Workflow            (<a class="autorefs autorefs-internal" title="kiara.models.K
 
 
 
-<h4 id="kiara.models.workflow.Workflow-attributes">Attributes<a href="#kiara.models.workflow.Workflow-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+<h4 id="kiara.models.workflow.WorkflowStateFilter-attributes">Attributes<a href="#kiara.models.workflow.WorkflowStateFilter-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
 
   <div class="doc doc-object doc-attribute">
 
 
 
-<h5 id="kiara.models.workflow.Workflow.full_alias" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">full_alias</span><span class="p">:</span> <span class="nb">str</span></code>
+<h5 id="kiara.models.workflow.WorkflowStateFilter.earliest" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">earliest</span><span class="p">:</span> <span class="n">datetime</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
-<a href="#kiara.models.workflow.Workflow.full_alias" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.workflow.WorkflowStateFilter.earliest" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
-      <p>The full alias for this workflow, within the current kiara context.</p>
+      <p>The earliest state to be considered.</p>
     </div>
 
   </div>
@@ -3858,19 +4477,18 @@ Workflow            (<a class="autorefs autorefs-internal" title="kiara.models.K
 
 
 
-<h5 id="kiara.models.workflow.Workflow.rel_alias" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">rel_alias</span><span class="p">:</span> <span class="nb">str</span></code>
+<h5 id="kiara.models.workflow.WorkflowStateFilter.latest" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">latest</span><span class="p">:</span> <span class="n">datetime</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
-<a href="#kiara.models.workflow.Workflow.rel_alias" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.workflow.WorkflowStateFilter.latest" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
-      <p>The relative alias for this workflow, within the current kiara context.</p>
+      <p>The latest state to be considered.</p>
     </div>
 
   </div>
@@ -3881,65 +4499,18 @@ Workflow            (<a class="autorefs autorefs-internal" title="kiara.models.K
 
 
 
-<h5 id="kiara.models.workflow.Workflow.workflow_archive" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">workflow_archive</span><span class="p">:</span> <span class="nb">str</span></code>
+<h5 id="kiara.models.workflow.WorkflowStateFilter.max_states" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">max_states</span><span class="p">:</span> <span class="nb">int</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
-<a href="#kiara.models.workflow.Workflow.workflow_archive" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.workflow.WorkflowStateFilter.max_states" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
-      <p>The alias for the workflow archive that contains this workflow, within the current kiara context.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.models.workflow.Workflow.workflow_archive_id" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">workflow_archive_id</span><span class="p">:</span> <span class="n">UUID</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.workflow.Workflow.workflow_archive_id" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>The globally unique id for the workflow archive that contains this workflow.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.models.workflow.Workflow.workflow_id" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">workflow_id</span><span class="p">:</span> <span class="n">UUID</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.workflow.Workflow.workflow_id" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>The globally unique uuid for this workflow.</p>
+      <p>Max amount of states to return (using X oldest states).</p>
     </div>
 
   </div>

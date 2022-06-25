@@ -1494,6 +1494,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interfaces/python_api/workflow/" class="md-nav__link">
+        workflow
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3608,20 +3622,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../workflows/__init__/" class="md-nav__link">
-        workflows
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -3763,7 +3763,10 @@ JobStatusListener            (<span title="typing.Protocol">Protocol</span>)
           <summary>Source code in <code>kiara/processing/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">JobStatusListener</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">job_status_changed</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">old_status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobStatus</span><span class="p">],</span> <span class="n">new_status</span><span class="p">:</span> <span class="n">JobStatus</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span>
+        <span class="n">old_status</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobStatus</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">new_status</span><span class="p">:</span> <span class="n">JobStatus</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">pass</span>
 </code></pre></div>
@@ -3797,7 +3800,10 @@ JobStatusListener            (<span title="typing.Protocol">Protocol</span>)
         <details class="quote">
           <summary>Source code in <code>kiara/processing/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">job_status_changed</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">old_status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobStatus</span><span class="p">],</span> <span class="n">new_status</span><span class="p">:</span> <span class="n">JobStatus</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span>
+    <span class="n">old_status</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobStatus</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+    <span class="n">new_status</span><span class="p">:</span> <span class="n">JobStatus</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="k">pass</span>
 </code></pre></div>
@@ -3850,7 +3856,10 @@ ModuleProcessor            (<span title="abc.ABC">ABC</span>)
         <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">JobStatusListener</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">def</span> <span class="nf">_send_job_event</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">old_status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobStatus</span><span class="p">],</span> <span class="n">new_status</span><span class="p">:</span> <span class="n">JobStatus</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span>
+        <span class="n">old_status</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobStatus</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">new_status</span><span class="p">:</span> <span class="n">JobStatus</span><span class="p">,</span>
     <span class="p">):</span>
 
         <span class="k">for</span> <span class="n">listener</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">:</span>

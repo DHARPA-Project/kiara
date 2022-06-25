@@ -1494,6 +1494,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/workflow/" class="md-nav__link">
+        workflow
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3610,20 +3624,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../workflows/__init__/" class="md-nav__link">
-        workflows
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -3831,7 +3831,7 @@ DataRegistry        </code>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_archives</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DataArchive</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_default_data_store</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_data_store</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_registered_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Value</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_value_archive_lookup_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -3839,7 +3839,7 @@ DataRegistry        </code>
         <span class="bp">self</span><span class="o">.</span><span class="n">_values_by_hash</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_persisted_value_descs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PersistedData</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_persisted_value_descs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">PersistedData</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="c1"># initialize special values</span>
         <span class="n">special_value_cls</span> <span class="o">=</span> <span class="n">PythonClass</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">NoneType</span><span class="p">)</span>
@@ -3912,7 +3912,7 @@ DataRegistry        </code>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">archive</span><span class="p">:</span> <span class="n">DataArchive</span><span class="p">,</span>
         <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">set_as_default_store</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">set_as_default_store</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 
         <span class="n">data_store_id</span> <span class="o">=</span> <span class="n">archive</span><span class="o">.</span><span class="n">archive_id</span>
@@ -3994,7 +3994,7 @@ DataRegistry        </code>
             <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve archive with id &#39;</span><span class="si">{</span><span class="n">archive_id</span><span class="si">}</span><span class="s2">&#39;: no archive with that id registered.&quot;</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">find_store_id_for_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">find_store_id_for_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_archive_lookup_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_archive_lookup_map</span><span class="p">[</span><span class="n">value_id</span><span class="p">]</span>
@@ -4021,7 +4021,7 @@ DataRegistry        </code>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value_id</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
             <span class="c1"># fallbacks for common mistakes, this should error out if not a Value or string.</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value_id</span><span class="p">,</span> <span class="s2">&quot;value_id&quot;</span><span class="p">):</span>
-                <span class="n">_value_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_id</span><span class="o">.</span><span class="n">value_id</span>  <span class="c1"># type: ignore</span>
+                <span class="n">_value_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_id</span><span class="o">.</span><span class="n">value_id</span>  <span class="c1"># type: ignore</span>
             <span class="k">else</span><span class="p">:</span>
 
                 <span class="k">try</span><span class="p">:</span>
@@ -4096,8 +4096,8 @@ DataRegistry        </code>
     <span class="k">def</span> <span class="nf">store_value</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Value</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span>
-        <span class="n">store_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PersistedData</span><span class="p">]:</span>
+        <span class="n">store_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">PersistedData</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="n">store_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">store_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_data_store</span>
@@ -4149,7 +4149,7 @@ DataRegistry        </code>
         <span class="k">return</span> <span class="n">value_info</span>
 
     <span class="k">def</span> <span class="nf">find_values_for_hash</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">value_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">value_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Value</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="n">data_type_name</span><span class="p">:</span>
@@ -4188,8 +4188,8 @@ DataRegistry        </code>
 
         <span class="n">all_destinies</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">archive_id</span><span class="p">,</span> <span class="n">archive</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_archives</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">destinies</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
-                <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span>
+            <span class="n">destinies</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+                <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="kc">None</span>
             <span class="p">]</span> <span class="o">=</span> <span class="n">archive</span><span class="o">.</span><span class="n">find_destinies_for_value</span><span class="p">(</span>
                 <span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">,</span> <span class="n">alias_filter</span><span class="o">=</span><span class="n">alias_filter</span>
             <span class="p">)</span>
@@ -4206,7 +4206,7 @@ DataRegistry        </code>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
         <span class="n">schema</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">pedigree</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ValuePedigree</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">pedigree</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValuePedigree</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">pedigree_output_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">reuse_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Value</span><span class="p">:</span>
@@ -4230,11 +4230,11 @@ DataRegistry        </code>
         <span class="k">return</span> <span class="n">value</span>
 
     <span class="k">def</span> <span class="nf">_find_existing_value</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">schema</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">]</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">schema</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>
-        <span class="n">Optional</span><span class="p">[</span><span class="n">Value</span><span class="p">],</span>
+        <span class="n">Union</span><span class="p">[</span><span class="n">Value</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">DataType</span><span class="p">,</span>
-        <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SerializedData</span><span class="p">],</span>
         <span class="n">ValueStatus</span><span class="p">,</span>
         <span class="nb">str</span><span class="p">,</span>
@@ -4297,7 +4297,7 @@ DataRegistry        </code>
             <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span>
         <span class="p">)</span>
 
-        <span class="n">existing_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Value</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">existing_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Value</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">value_hash</span> <span class="o">!=</span> <span class="n">INVALID_HASH_MARKER</span><span class="p">:</span>
             <span class="n">existing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_values_for_hash</span><span class="p">(</span><span class="n">value_hash</span><span class="o">=</span><span class="n">value_hash</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">existing</span><span class="p">:</span>
@@ -4338,7 +4338,7 @@ DataRegistry        </code>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
         <span class="n">schema</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">pedigree</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ValuePedigree</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">pedigree</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValuePedigree</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">pedigree_output_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">reuse_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
@@ -4476,7 +4476,7 @@ DataRegistry        </code>
 
     <span class="k">def</span> <span class="nf">retrieve_serialized_value</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SerializedData</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">SerializedData</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Create a LoadConfig object from the details of the persisted version of this value.&quot;&quot;&quot;</span>
 
         <span class="n">pv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_persisted_value_details</span><span class="p">(</span><span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>
@@ -4488,7 +4488,7 @@ DataRegistry        </code>
     <span class="k">def</span> <span class="nf">retrieve_chunk</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">chunk_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">archive_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">archive_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">as_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">symlink_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]:</span>
@@ -4502,7 +4502,7 @@ DataRegistry        </code>
         <span class="k">return</span> <span class="n">chunk</span>
 
     <span class="k">def</span> <span class="nf">retrieve_value_data</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Value</span><span class="p">],</span> <span class="n">target_profile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Value</span><span class="p">],</span> <span class="n">target_profile</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
@@ -4533,7 +4533,7 @@ DataRegistry        </code>
         <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
         <span class="n">op</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">create_from_module</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">)</span>
 
-        <span class="n">input_field_match</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">input_field_match</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">input_field_match</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
         <span class="k">else</span><span class="p">:</span>
@@ -4550,7 +4550,7 @@ DataRegistry        </code>
                 <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine input field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
             <span class="p">)</span>
 
-        <span class="n">result_field_match</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">result_field_match</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">result_field</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;python_object&quot;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">result_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -4577,7 +4577,7 @@ DataRegistry        </code>
 
         <span class="k">return</span> <span class="n">parsed</span>
 
-    <span class="k">def</span> <span class="nf">load_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">load_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
 
         <span class="n">value_items</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">schemas</span> <span class="o">=</span> <span class="p">{}</span>
@@ -4591,7 +4591,9 @@ DataRegistry        </code>
 
         <span class="k">return</span> <span class="n">ValueMapReadOnly</span><span class="p">(</span><span class="n">value_items</span><span class="o">=</span><span class="n">value_items</span><span class="p">,</span> <span class="n">values_schema</span><span class="o">=</span><span class="n">schemas</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
         <span class="n">result_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_values</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">values</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">data</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">result_values</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
@@ -4992,8 +4994,8 @@ DataRegistry        </code>
 
     <span class="n">all_destinies</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">archive_id</span><span class="p">,</span> <span class="n">archive</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_archives</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">destinies</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
-            <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span>
+        <span class="n">destinies</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+            <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="kc">None</span>
         <span class="p">]</span> <span class="o">=</span> <span class="n">archive</span><span class="o">.</span><span class="n">find_destinies_for_value</span><span class="p">(</span>
             <span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">,</span> <span class="n">alias_filter</span><span class="o">=</span><span class="n">alias_filter</span>
         <span class="p">)</span>
@@ -5028,7 +5030,7 @@ DataRegistry        </code>
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/data/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_store_id_for_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_store_id_for_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_archive_lookup_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_archive_lookup_map</span><span class="p">[</span><span class="n">value_id</span><span class="p">]</span>
@@ -5072,7 +5074,7 @@ DataRegistry        </code>
         <details class="quote">
           <summary>Source code in <code>kiara/registries/data/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_values_for_hash</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">value_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">value_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Value</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="n">data_type_name</span><span class="p">:</span>
@@ -5188,7 +5190,7 @@ DataRegistry        </code>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value_id</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
         <span class="c1"># fallbacks for common mistakes, this should error out if not a Value or string.</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value_id</span><span class="p">,</span> <span class="s2">&quot;value_id&quot;</span><span class="p">):</span>
-            <span class="n">_value_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_id</span><span class="o">.</span><span class="n">value_id</span>  <span class="c1"># type: ignore</span>
+            <span class="n">_value_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_id</span><span class="o">.</span><span class="n">value_id</span>  <span class="c1"># type: ignore</span>
         <span class="k">else</span><span class="p">:</span>
 
             <span class="k">try</span><span class="p">:</span>
@@ -5282,7 +5284,9 @@ DataRegistry        </code>
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/data/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
     <span class="n">result_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_values</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">values</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">data</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">result_values</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
@@ -5309,7 +5313,7 @@ DataRegistry        </code>
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/data/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">load_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">load_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
 
     <span class="n">value_items</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">schemas</span> <span class="o">=</span> <span class="p">{}</span>
@@ -5416,7 +5420,7 @@ DataRegistry        </code>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="n">schema</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">pedigree</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ValuePedigree</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">pedigree</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValuePedigree</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">pedigree_output_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">reuse_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Value</span><span class="p">:</span>
@@ -5465,7 +5469,7 @@ DataRegistry        </code>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">archive</span><span class="p">:</span> <span class="n">DataArchive</span><span class="p">,</span>
     <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">set_as_default_store</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">set_as_default_store</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 
     <span class="n">data_store_id</span> <span class="o">=</span> <span class="n">archive</span><span class="o">.</span><span class="n">archive_id</span>
@@ -5557,7 +5561,7 @@ DataRegistry        </code>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_chunk</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">chunk_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">archive_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">archive_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">as_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">symlink_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]:</span>
@@ -5643,7 +5647,7 @@ DataRegistry        </code>
           <summary>Source code in <code>kiara/registries/data/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_serialized_value</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SerializedData</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">SerializedData</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Create a LoadConfig object from the details of the persisted version of this value.&quot;&quot;&quot;</span>
 
     <span class="n">pv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_persisted_value_details</span><span class="p">(</span><span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>
@@ -5675,7 +5679,7 @@ DataRegistry        </code>
         <details class="quote">
           <summary>Source code in <code>kiara/registries/data/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_value_data</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Value</span><span class="p">],</span> <span class="n">target_profile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Value</span><span class="p">],</span> <span class="n">target_profile</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
@@ -5706,7 +5710,7 @@ DataRegistry        </code>
     <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
     <span class="n">op</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">create_from_module</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">)</span>
 
-    <span class="n">input_field_match</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">input_field_match</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">input_field_match</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
     <span class="k">else</span><span class="p">:</span>
@@ -5723,7 +5727,7 @@ DataRegistry        </code>
             <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine input field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
         <span class="p">)</span>
 
-    <span class="n">result_field_match</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">result_field_match</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">for</span> <span class="n">result_field</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;python_object&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">result_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -5775,8 +5779,8 @@ DataRegistry        </code>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">store_value</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Value</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span>
-    <span class="n">store_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PersistedData</span><span class="p">]:</span>
+    <span class="n">store_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">PersistedData</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="n">store_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">store_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_data_store</span>
@@ -6252,7 +6256,7 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Value</span><span class="p">):</span>
             <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">value_id</span>
-            <span class="n">_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Value</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="n">_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Value</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">value_id</span> <span class="o">=</span> <span class="n">value</span>
             <span class="n">_value</span> <span class="o">=</span> <span class="kc">None</span>
@@ -6315,7 +6319,7 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">_retrieve_all_value_ids</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
         <span class="k">pass</span>
 
@@ -6359,8 +6363,8 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
     <span class="k">def</span> <span class="nf">find_values_with_hash</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">value_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">value_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">value_size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="n">data_type_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -6370,7 +6374,7 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">value_hash</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_hash_index</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">value_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_hash_index</span><span class="p">[</span><span class="n">value_hash</span><span class="p">]</span>
+            <span class="n">value_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_hash_index</span><span class="p">[</span><span class="n">value_hash</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">value_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_values_with_hash</span><span class="p">(</span>
                 <span class="n">value_hash</span><span class="o">=</span><span class="n">value_hash</span><span class="p">,</span> <span class="n">data_type_name</span><span class="o">=</span><span class="n">data_type_name</span>
@@ -6386,14 +6390,14 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
     <span class="k">def</span> <span class="nf">_find_values_with_hash</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">value_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">value_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]:</span>
+        <span class="n">value_size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">find_destinies_for_value</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">alias_filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]:</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">alias_filter</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_destinies_for_value</span><span class="p">(</span>
             <span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">,</span> <span class="n">alias_filter</span><span class="o">=</span><span class="n">alias_filter</span>
@@ -6401,8 +6405,8 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">_find_destinies_for_value</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">alias_filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]:</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">alias_filter</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="k">pass</span>
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
@@ -6477,8 +6481,8 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
         <details class="quote">
           <summary>Source code in <code>kiara/registries/data/data_store/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_destinies_for_value</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">alias_filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]:</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">alias_filter</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_destinies_for_value</span><span class="p">(</span>
         <span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">,</span> <span class="n">alias_filter</span><span class="o">=</span><span class="n">alias_filter</span>
@@ -6509,8 +6513,8 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_values_with_hash</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">value_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">value_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">value_size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="n">data_type_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -6520,7 +6524,7 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">value_hash</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_hash_index</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">value_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_hash_index</span><span class="p">[</span><span class="n">value_hash</span><span class="p">]</span>
+        <span class="n">value_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_hash_index</span><span class="p">[</span><span class="n">value_hash</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">value_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_values_with_hash</span><span class="p">(</span>
             <span class="n">value_hash</span><span class="o">=</span><span class="n">value_hash</span><span class="p">,</span> <span class="n">data_type_name</span><span class="o">=</span><span class="n">data_type_name</span>
@@ -6706,7 +6710,7 @@ This is to make sure it can still be loaded later on, in case the Python model h
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Value</span><span class="p">):</span>
         <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">value_id</span>
-        <span class="n">_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Value</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Value</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">value_id</span> <span class="o">=</span> <span class="n">value</span>
         <span class="n">_value</span> <span class="o">=</span> <span class="kc">None</span>
@@ -7274,9 +7278,9 @@ FileSystemDataArchive            (<a class="autorefs autorefs-internal" title="k
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">archive_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">FileSystemArchiveConfig</span><span class="p">):</span>
 
         <span class="n">DataArchive</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">archive_id</span><span class="o">=</span><span class="n">archive_id</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_hashfs_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_hashfs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HashFS</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hashfs_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hashfs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">HashFS</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="c1"># def get_job_archive_id(self) -&gt; uuid.UUID:</span>
     <span class="c1">#     return self._kiara.id</span>
@@ -7321,7 +7325,9 @@ FileSystemDataArchive            (<a class="autorefs autorefs-internal" title="k
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hashfs</span>
 
     <span class="k">def</span> <span class="nf">get_path</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EntityType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">base_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">entity_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">EntityType</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">base_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">base_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">entity_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -7353,7 +7359,9 @@ FileSystemDataArchive            (<a class="autorefs autorefs-internal" title="k
         <span class="k">return</span> <span class="n">environment</span>
 
     <span class="k">def</span> <span class="nf">retrieve_all_job_hashes</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">manifest_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">inputs_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">manifest_hash</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">inputs_hash</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
@@ -7423,8 +7431,8 @@ FileSystemDataArchive            (<a class="autorefs autorefs-internal" title="k
     <span class="k">def</span> <span class="nf">_find_values_with_hash</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">value_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">value_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">value_size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
 
         <span class="n">value_data_folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">entity_type</span><span class="o">=</span><span class="n">EntityType</span><span class="o">.</span><span class="n">VALUE_DATA</span><span class="p">)</span>
@@ -7448,8 +7456,8 @@ FileSystemDataArchive            (<a class="autorefs autorefs-internal" title="k
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="nf">_find_destinies_for_value</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">alias_filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]:</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">alias_filter</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="n">destiny_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">entity_type</span><span class="o">=</span><span class="n">EntityType</span><span class="o">.</span><span class="n">DESTINY_LINK</span><span class="p">)</span>
         <span class="n">destiny_value_dir</span> <span class="o">=</span> <span class="n">destiny_dir</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span><span class="n">value_id</span><span class="p">)</span>
@@ -7471,7 +7479,7 @@ FileSystemDataArchive            (<a class="autorefs autorefs-internal" title="k
         <span class="k">return</span> <span class="n">destinies</span>
 
     <span class="k">def</span> <span class="nf">_retrieve_all_value_ids</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="n">data_type_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -7739,7 +7747,9 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.regis
         <details class="quote">
           <summary>Source code in <code>kiara/registries/data/data_store/filesystem_store.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_path</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EntityType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">base_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">entity_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">EntityType</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">base_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">base_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">entity_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -7885,7 +7895,9 @@ way to quickly determine whether a value id is valid for this data store.</p>
         <details class="quote">
           <summary>Source code in <code>kiara/registries/data/data_store/filesystem_store.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_all_job_hashes</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">manifest_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">inputs_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">manifest_hash</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">inputs_hash</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 
     <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>

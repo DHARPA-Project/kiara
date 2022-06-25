@@ -1498,6 +1498,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/" class="md-nav__link">
+        workflow
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3610,20 +3624,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../workflows/__init__/" class="md-nav__link">
-        workflows
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -3713,6 +3713,13 @@
           <li class="md-nav__item">
   <a href="#kiara.interfaces.python_api.value" class="md-nav__link">
     value
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.interfaces.python_api.workflow" class="md-nav__link">
+    workflow
   </a>
   
 </li>
@@ -3832,7 +3839,7 @@ BatchOperation            (<span title="pydantic.main.BaseModel">BaseModel</span
     <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">kiara</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">get_data_from_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -3851,7 +3858,7 @@ BatchOperation            (<span title="pydantic.main.BaseModel">BaseModel</span
     <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
-        <span class="n">kiara</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">],</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
     <span class="p">):</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -3940,7 +3947,7 @@ BatchOperation            (<span title="pydantic.main.BaseModel">BaseModel</span
 
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">inputs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">save</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
 
@@ -4223,7 +4230,7 @@ Config        </code>
 <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
-    <span class="n">kiara</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">],</span>
+    <span class="n">kiara</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
 <span class="p">):</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -4273,7 +4280,7 @@ Config        </code>
 <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">kiara</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">kiara</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="n">get_data_from_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -4312,7 +4319,7 @@ Config        </code>
           <summary>Source code in <code>kiara/interfaces/python_api/batch.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">inputs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">save</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
 
@@ -4459,7 +4466,7 @@ KiaraOperation        </code>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
         <span class="n">operation_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">operation_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">operation_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">kiara</span>
@@ -4472,16 +4479,16 @@ KiaraOperation        </code>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_raw</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_operation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ValueMap</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_operation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Operation</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueMap</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_job_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_job_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobConfig</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_queued_jobs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_last_job</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_job</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">ValueMap</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_defaults</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_defaults</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
@@ -4510,7 +4517,7 @@ KiaraOperation        </code>
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span>
 
-    <span class="k">def</span> <span class="nf">set_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">set_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="n">field</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -4568,7 +4575,7 @@ KiaraOperation        </code>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operation_config</span>
 
     <span class="k">def</span> <span class="nf">set_operation_config_value</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -4604,7 +4611,7 @@ KiaraOperation        </code>
         <span class="bp">self</span><span class="o">.</span><span class="n">_defaults</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">module_or_operation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operation_name</span>
-        <span class="n">operation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Operation</span><span class="p">]</span>
+        <span class="n">operation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Operation</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">module_or_operation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operation_ids</span><span class="p">:</span>
 
@@ -4703,7 +4710,7 @@ KiaraOperation        </code>
         <span class="bp">self</span><span class="o">.</span><span class="n">_last_job</span> <span class="o">=</span> <span class="n">job_id</span>
         <span class="k">return</span> <span class="n">job_id</span>
 
-    <span class="k">def</span> <span class="nf">retrieve_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">retrieve_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
 
         <span class="k">if</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">assert</span> <span class="n">job_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -4730,7 +4737,7 @@ KiaraOperation        </code>
 
     <span class="k">def</span> <span class="nf">save_result</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">job_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">job_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">aliases</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StoreValuesResult</span><span class="p">:</span>
 
@@ -5033,7 +5040,7 @@ KiaraOperation        </code>
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/operation.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="k">assert</span> <span class="n">job_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -5110,7 +5117,7 @@ KiaraOperation        </code>
           <summary>Source code in <code>kiara/interfaces/python_api/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">save_result</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">job_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">job_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">aliases</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StoreValuesResult</span><span class="p">:</span>
 
@@ -5151,7 +5158,7 @@ KiaraOperation        </code>
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/operation.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="n">field</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -5234,7 +5241,7 @@ KiaraOperation        </code>
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_operation_config_value</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -5479,7 +5486,7 @@ StoreValueResult            (<span title="pydantic.main.BaseModel">BaseModel</sp
     <span class="n">aliases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The aliases that where assigned to the value when stored.&quot;</span>
     <span class="p">)</span>
-    <span class="n">error</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">error</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;An error that occured while trying to store.&quot;</span>
     <span class="p">)</span>
 </code></pre></div>
@@ -5675,6 +5682,1138 @@ StoreValuesResult            (<span title="pydantic.main.BaseModel">BaseModel</s
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">table</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h3 id="kiara.interfaces.python_api.workflow" class="doc doc-heading">
+        <code>workflow</code>
+
+
+
+<a href="#kiara.interfaces.python_api.workflow" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.python_api.workflow.logger" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">logger</span></code>
+
+
+<a href="#kiara.interfaces.python_api.workflow.logger" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+<h4 id="kiara.interfaces.python_api.workflow-classes">Classes<a href="#kiara.interfaces.python_api.workflow-classes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h5 id="kiara.interfaces.python_api.workflow.Workflow" class="doc doc-heading">
+        <code>
+Workflow        </code>
+
+
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Workflow</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">kiara</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">workflow_id</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_execution_context</span><span class="p">:</span> <span class="n">ExecutionContext</span> <span class="o">=</span> <span class="n">ExecutionContext</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_controller</span><span class="p">:</span> <span class="n">WorkflowPipelineController</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">WorkflowPipelineController</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_details</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WorkflowDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_all_inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Manifest</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_input_links</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PipelineConfig</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_outputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_outputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_manifest</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Manifest</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_details</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PipelineDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Pipeline</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_snapshots</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">WorkflowState</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">workflow_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowDetails</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_details</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">workflow_registry</span><span class="o">.</span><span class="n">get_workflow_details</span><span class="p">(</span>
+                <span class="n">workflow</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_workflow_id</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_details</span>
+
+    <span class="k">def</span> <span class="nf">set_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">inputs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_all_inputs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_inputs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_outputs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_details</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_invalidate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_config</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_manifest</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_details</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_controller</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_inputs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_outputs</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_inputs</span>  <span class="c1"># noqa</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">current_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_inputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_inputs</span>
+
+        <span class="n">to_change</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="p">(</span>
+            <span class="n">field_name</span><span class="p">,</span>
+            <span class="n">schema</span><span class="p">,</span>
+        <span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">pipeline_inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">to_change</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_inputs</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">set_pipeline_inputs</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">to_change</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">get_current_pipeline_inputs</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_inputs</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">current_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_outputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_outputs</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">get_current_pipeline_outputs</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_outputs</span>
+
+    <span class="k">def</span> <span class="nf">snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowState</span><span class="p">:</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">()</span>
+
+        <span class="n">workflow_state_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="s2">&quot;new workflow state&quot;</span><span class="p">)</span>
+
+        <span class="n">snap</span> <span class="o">=</span> <span class="n">WorkflowState</span><span class="p">(</span>
+            <span class="n">workflow_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">,</span>
+            <span class="n">workflow_state_id</span><span class="o">=</span><span class="n">workflow_state_id</span><span class="p">,</span>
+            <span class="n">steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">steps</span><span class="p">,</span>
+            <span class="n">inputs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">current_inputs</span><span class="p">,</span>
+            <span class="c1"># outputs=self.current_outputs,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_snapshots</span><span class="p">[</span><span class="n">snap</span><span class="o">.</span><span class="n">workflow_state_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">snap</span>
+
+        <span class="k">return</span> <span class="n">snap</span>
+
+    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineDetails</span><span class="p">:</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">set_pipeline_inputs</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">current_inputs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_controller</span><span class="o">.</span><span class="n">process_pipeline</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_details</span>
+
+    <span class="k">def</span> <span class="nf">load_state</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">workflow_state_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowState</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">workflow_state_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">workflow_state_id</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_snapshots</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_snapshots</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">created</span>
+            <span class="p">)</span>
+
+        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_snapshots</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">workflow_state_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t load state with id &#39;</span><span class="si">{</span><span class="n">workflow_state_id</span><span class="si">}</span><span class="s2">&#39;: no state with that id registered.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_invalidate</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_steps</span><span class="p">(</span><span class="o">*</span><span class="n">state</span><span class="o">.</span><span class="n">steps</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_inputs</span><span class="p">(</span><span class="o">**</span><span class="n">state</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">state</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">current_output_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="n">ValueMapReadOnly</span><span class="o">.</span><span class="n">create_from_ids</span><span class="p">(</span>
+            <span class="n">data_registry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">current_outputs</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
+
+        <span class="k">if</span> <span class="n">step_id</span> <span class="o">==</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span>
+            <span class="n">pipeline_outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">get_current_pipeline_outputs</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">pipeline_outputs</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">step_outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">get_current_step_outputs</span><span class="p">(</span><span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">step_outputs</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pipeline_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineConfig</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_config</span>
+
+        <span class="n">all_steps</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">step_id</span><span class="p">,</span> <span class="n">manifest</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">_step_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">manifest_data</span><span class="p">)</span>
+            <span class="n">_step_data</span><span class="p">[</span><span class="s2">&quot;step_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">step_id</span>
+            <span class="n">input_links</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_links</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">):</span>
+                    <span class="n">_</span><span class="p">,</span> <span class="n">field_name</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">input_links</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">target</span>
+            <span class="n">_step_data</span><span class="p">[</span><span class="s2">&quot;input_links&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_links</span>
+            <span class="n">all_steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_step_data</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span>
+            <span class="n">pipeline_name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">),</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;steps&quot;</span><span class="p">:</span> <span class="n">all_steps</span><span class="p">},</span>
+            <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span>
+            <span class="n">execution_context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_execution_context</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_config</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pipeline_manifest</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Manifest</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_manifest</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_manifest</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_manifest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
+            <span class="n">module_or_operation</span><span class="o">=</span><span class="s2">&quot;pipeline&quot;</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_manifest</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Pipeline</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span>
+            <span class="n">structure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_controller</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pipeline_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineDetails</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_details</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_details</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">get_pipeline_details</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_details</span>
+
+    <span class="c1"># @property</span>
+    <span class="c1"># def pipeline_module(self) -&gt; KiaraModule:</span>
+    <span class="c1">#</span>
+    <span class="c1">#     if self._pipeline_module is not None:</span>
+    <span class="c1">#         return self._pipeline_module</span>
+    <span class="c1">#</span>
+    <span class="c1">#     self._pipeline_module = self._kiara.create_module(  # type: ignore</span>
+    <span class="c1">#         manifest=self.pipeline_manifest</span>
+    <span class="c1">#     )</span>
+    <span class="c1">#     return self._pipeline_module  # type: ignore</span>
+
+    <span class="k">def</span> <span class="nf">add_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">pipeline_steps</span><span class="p">:</span> <span class="n">PipelineStep</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">pipeline_steps</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_step</span><span class="p">(</span>
+                <span class="n">module_type</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
+                <span class="n">module_config</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">module_config</span><span class="p">,</span>
+                <span class="n">step_id</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span>
+                <span class="n">replace_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">pipeline_steps</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">input_links</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_input_link</span><span class="p">(</span><span class="n">input_field</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">alias</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">module_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">module_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">replace_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">step_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">step_id</span> <span class="o">=</span> <span class="n">find_free_id</span><span class="p">(</span>
+                <span class="n">slugify</span><span class="p">(</span><span class="n">module_type</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">),</span> <span class="n">current_ids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">step_id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid step id &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39;: id can&#39;t contain &#39;.&#39;.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">replace_existing</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t add step with id &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39;: step already exists and &#39;replace_existing&#39; not set.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+        <span class="n">manifest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
+            <span class="n">module_or_operation</span><span class="o">=</span><span class="n">module_type</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">module_config</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">manifest</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_invalidate</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">step_id</span>
+
+    <span class="k">def</span> <span class="nf">add_input_link</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_field</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_input_links</span><span class="p">[</span><span class="n">input_field</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">source</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_invalidate</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;workflow id&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;pipeline&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;pipeline&quot;</span><span class="p">,</span> <span class="s2">&quot;-- no steps (yet) --&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">table</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.python_api.workflow.Workflow.current_inputs" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">current_inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.current_inputs" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.python_api.workflow.Workflow.current_output_values" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">current_output_values</span><span class="p">:</span> <span class="n">ValueMap</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.current_output_values" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.python_api.workflow.Workflow.current_outputs" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">current_outputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.current_outputs" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.python_api.workflow.Workflow.details" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">details</span><span class="p">:</span> <span class="n">WorkflowDetails</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.details" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.python_api.workflow.Workflow.pipeline" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pipeline</span><span class="p">:</span> <span class="n">Pipeline</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.pipeline" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.python_api.workflow.Workflow.pipeline_config" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pipeline_config</span><span class="p">:</span> <span class="n">PipelineConfig</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.pipeline_config" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.python_api.workflow.Workflow.pipeline_details" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pipeline_details</span><span class="p">:</span> <span class="n">PipelineDetails</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.pipeline_details" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.python_api.workflow.Workflow.pipeline_manifest" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pipeline_manifest</span><span class="p">:</span> <span class="n">Manifest</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.pipeline_manifest" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.python_api.workflow.Workflow.workflow_id" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">workflow_id</span><span class="p">:</span> <span class="n">UUID</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.workflow_id" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.interfaces.python_api.workflow.Workflow.add_input_link" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">add_input_link</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_field</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.add_input_link" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">add_input_link</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_field</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_input_links</span><span class="p">[</span><span class="n">input_field</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">source</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_invalidate</span><span class="p">()</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.interfaces.python_api.workflow.Workflow.add_step" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">add_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_type</span><span class="p">,</span> <span class="n">step_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">replace_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.add_step" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">add_step</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">module_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">step_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">module_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">replace_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="n">step_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">step_id</span> <span class="o">=</span> <span class="n">find_free_id</span><span class="p">(</span>
+            <span class="n">slugify</span><span class="p">(</span><span class="n">module_type</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">),</span> <span class="n">current_ids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">step_id</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid step id &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39;: id can&#39;t contain &#39;.&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">replace_existing</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t add step with id &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39;: step already exists and &#39;replace_existing&#39; not set.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+    <span class="n">manifest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
+        <span class="n">module_or_operation</span><span class="o">=</span><span class="n">module_type</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">module_config</span>
+    <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">manifest</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_invalidate</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">step_id</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.interfaces.python_api.workflow.Workflow.add_steps" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">add_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">pipeline_steps</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.add_steps" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">add_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">pipeline_steps</span><span class="p">:</span> <span class="n">PipelineStep</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">pipeline_steps</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_step</span><span class="p">(</span>
+            <span class="n">module_type</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
+            <span class="n">module_config</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">module_config</span><span class="p">,</span>
+            <span class="n">step_id</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span>
+            <span class="n">replace_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">pipeline_steps</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">input_links</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_input_link</span><span class="p">(</span><span class="n">input_field</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">alias</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.interfaces.python_api.workflow.Workflow.apply" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.apply" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineDetails</span><span class="p">:</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">set_pipeline_inputs</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">current_inputs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_controller</span><span class="o">.</span><span class="n">process_pipeline</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_details</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.interfaces.python_api.workflow.Workflow.create_renderable" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.create_renderable" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;workflow id&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">))</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="p">:</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;pipeline&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;pipeline&quot;</span><span class="p">,</span> <span class="s2">&quot;-- no steps (yet) --&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">table</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.interfaces.python_api.workflow.Workflow.get_outputs" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="o">=</span><span class="s1">&#39;pipeline&#39;</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.get_outputs" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
+
+    <span class="k">if</span> <span class="n">step_id</span> <span class="o">==</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span>
+        <span class="n">pipeline_outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">get_current_pipeline_outputs</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">pipeline_outputs</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">step_outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">get_current_step_outputs</span><span class="p">(</span><span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">step_outputs</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.interfaces.python_api.workflow.Workflow.load_state" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_state_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.load_state" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">load_state</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">workflow_state_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowState</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="n">workflow_state_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">workflow_state_id</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_snapshots</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_snapshots</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">created</span>
+        <span class="p">)</span>
+
+    <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_snapshots</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">workflow_state_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t load state with id &#39;</span><span class="si">{</span><span class="n">workflow_state_id</span><span class="si">}</span><span class="s2">&#39;: no state with that id registered.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_invalidate</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">add_steps</span><span class="p">(</span><span class="o">*</span><span class="n">state</span><span class="o">.</span><span class="n">steps</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">set_inputs</span><span class="p">(</span><span class="o">**</span><span class="n">state</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">apply</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">state</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.interfaces.python_api.workflow.Workflow.set_inputs" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">set_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">inputs</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.set_inputs" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">inputs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_all_inputs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">inputs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_current_inputs</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_current_outputs</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_details</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.interfaces.python_api.workflow.Workflow.snapshot" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.snapshot" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowState</span><span class="p">:</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">()</span>
+
+    <span class="n">workflow_state_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="s2">&quot;new workflow state&quot;</span><span class="p">)</span>
+
+    <span class="n">snap</span> <span class="o">=</span> <span class="n">WorkflowState</span><span class="p">(</span>
+        <span class="n">workflow_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">,</span>
+        <span class="n">workflow_state_id</span><span class="o">=</span><span class="n">workflow_state_id</span><span class="p">,</span>
+        <span class="n">steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">steps</span><span class="p">,</span>
+        <span class="n">inputs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">current_inputs</span><span class="p">,</span>
+        <span class="c1"># outputs=self.current_outputs,</span>
+    <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_snapshots</span><span class="p">[</span><span class="n">snap</span><span class="o">.</span><span class="n">workflow_state_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">snap</span>
+
+    <span class="k">return</span> <span class="n">snap</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h5 id="kiara.interfaces.python_api.workflow.WorkflowPipelineController" class="doc doc-heading">
+        <code>
+WorkflowPipelineController            (<a class="autorefs autorefs-internal" title="kiara.models.module.pipeline.controller.SinglePipelineController" href="../../../models/module/pipeline/controller/#kiara.models.module.pipeline.controller.SinglePipelineController">SinglePipelineController</a>)
+        </code>
+
+
+
+<a href="#kiara.interfaces.python_api.workflow.WorkflowPipelineController" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>A [PipelineController][kiara.models.modules.pipeline.controller.PipelineController] that executes all pipeline steps non-interactively.</p>
+<p>This is the default implementation of a <code>PipelineController</code>, and probably the most simple implementation of one.
+It waits until all inputs are set, after which it executes all pipeline steps in the required order.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>pipeline</code></td>
+        <td></td>
+        <td><p>the pipeline to control</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>auto_process</code></td>
+        <td></td>
+        <td><p>whether to automatically start processing the pipeline as soon as the input set is valid</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">WorkflowPipelineController</span><span class="p">(</span><span class="n">SinglePipelineController</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A [PipelineController][kiara.models.modules.pipeline.controller.PipelineController] that executes all pipeline steps non-interactively.</span>
+
+<span class="sd">    This is the default implementation of a ``PipelineController``, and probably the most simple implementation of one.</span>
+<span class="sd">    It waits until all inputs are set, after which it executes all pipeline steps in the required order.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        pipeline: the pipeline to control</span>
+<span class="sd">        auto_process: whether to automatically start processing the pipeline as soon as the input set is valid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">job_registry</span><span class="o">=</span><span class="n">kiara</span><span class="o">.</span><span class="n">job_registry</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_pipeline_event_occurred</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">PipelineEvent</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">pipeline_id</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">pipeline_id</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_details</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># dbg(event.dict())</span>
+
+    <span class="k">def</span> <span class="nf">process_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">log</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">pipeline_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">pipeline_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;ignore.pipeline_process&quot;</span><span class="p">,</span>
+                <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Pipeline already running.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Pipeline already running.&quot;</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;execute.pipeline&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">stage</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span>
+            <span class="p">):</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="s2">&quot;execute.pipeline.stage&quot;</span><span class="p">,</span>
+                    <span class="n">stage</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="n">job_ids</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">stage</span><span class="p">:</span>
+
+                    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                        <span class="s2">&quot;execute.pipeline.step&quot;</span><span class="p">,</span>
+                        <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">job_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_step</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
+                        <span class="n">job_ids</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_id</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="c1"># TODO: cancel running jobs?</span>
+                        <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
+                            <span class="kn">import</span> <span class="nn">traceback</span>
+
+                            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                            <span class="s2">&quot;error.processing.pipeline&quot;</span><span class="p">,</span>
+                            <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
+                            <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_processing_results</span><span class="p">(</span><span class="n">job_ids</span><span class="o">=</span><span class="n">job_ids</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="s2">&quot;execute_finished.pipeline.stage&quot;</span><span class="p">,</span>
+                    <span class="n">stage</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;execute_finished.pipeline&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.interfaces.python_api.workflow.WorkflowPipelineController.process_pipeline" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">process_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.python_api.workflow.WorkflowPipelineController.process_pipeline" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="n">log</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">pipeline_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">pipeline_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;ignore.pipeline_process&quot;</span><span class="p">,</span>
+            <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Pipeline already running.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Pipeline already running.&quot;</span><span class="p">)</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;execute.pipeline&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">stage</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">):</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;execute.pipeline.stage&quot;</span><span class="p">,</span>
+                <span class="n">stage</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">job_ids</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">stage</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="s2">&quot;execute.pipeline.step&quot;</span><span class="p">,</span>
+                    <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">job_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_step</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
+                    <span class="n">job_ids</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_id</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="c1"># TODO: cancel running jobs?</span>
+                    <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
+                        <span class="kn">import</span> <span class="nn">traceback</span>
+
+                        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                        <span class="s2">&quot;error.processing.pipeline&quot;</span><span class="p">,</span>
+                        <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
+                        <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_processing_results</span><span class="p">(</span><span class="n">job_ids</span><span class="o">=</span><span class="n">job_ids</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;execute_finished.pipeline.stage&quot;</span><span class="p">,</span>
+                <span class="n">stage</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;execute_finished.pipeline&quot;</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>

@@ -1494,6 +1494,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interfaces/python_api/workflow/" class="md-nav__link">
+        workflow
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3608,20 +3622,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../workflows/__init__/" class="md-nav__link">
-        workflows
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -3813,7 +3813,7 @@ OperationType            (<span title="abc.ABC">ABC</span>, <span title="typing.
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">OPERATION_TYPE_DETAILS</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">OPERATION_TYPE_DETAILS</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Check whether the provided module is a valid operation for this type.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">retrieve_operation_details</span><span class="p">(</span>
@@ -3884,7 +3884,7 @@ OperationType            (<span title="abc.ABC">ABC</span>, <span title="typing.
           <div class="highlight"><pre><span></span><code><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
 <span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">OPERATION_TYPE_DETAILS</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">OPERATION_TYPE_DETAILS</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Check whether the provided module is a valid operation for this type.&quot;&quot;&quot;</span>
 </code></pre></div>
         </details>
@@ -4304,7 +4304,7 @@ CustomModuleOperationType            (<a class="autorefs autorefs-internal" titl
 
     <span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CustomModuleOperationDetails</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">CustomModuleOperationDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="n">mod_conf</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_config_cls</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">mod_conf</span><span class="o">.</span><span class="n">requires_config</span><span class="p">():</span>
@@ -4351,7 +4351,7 @@ CustomModuleOperationType            (<a class="autorefs autorefs-internal" titl
           <summary>Source code in <code>kiara/operations/included_core_operations/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CustomModuleOperationDetails</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">CustomModuleOperationDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
     <span class="n">mod_conf</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_config_cls</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">mod_conf</span><span class="o">.</span><span class="n">requires_config</span><span class="p">():</span>
@@ -4564,7 +4564,7 @@ CreateFromOperationType            (<a class="autorefs autorefs-internal" title=
 
     <span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CreateValueFromDetails</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">CreateValueFromDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">CreateFromModule</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -4658,7 +4658,7 @@ CreateFromOperationType            (<a class="autorefs autorefs-internal" title=
           <summary>Source code in <code>kiara/operations/included_core_operations/create_from.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CreateValueFromDetails</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">CreateValueFromDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">CreateFromModule</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">None</span>
@@ -5491,7 +5491,7 @@ ExportAsOperationType            (<a class="autorefs autorefs-internal" title="k
 
     <span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExportAsOperationDetails</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ExportAsOperationDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">DataExportModule</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -5566,7 +5566,7 @@ ExportAsOperationType            (<a class="autorefs autorefs-internal" title="k
           <summary>Source code in <code>kiara/operations/included_core_operations/export_as.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExportAsOperationDetails</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ExportAsOperationDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">DataExportModule</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">None</span>
@@ -6075,7 +6075,7 @@ ExtractMetadataOperationType            (<a class="autorefs autorefs-internal" t
 
     <span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExtractMetadataDetails</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ExtractMetadataDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -6182,7 +6182,7 @@ ExtractMetadataOperationType            (<a class="autorefs autorefs-internal" t
           <summary>Source code in <code>kiara/operations/included_core_operations/metadata.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExtractMetadataDetails</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ExtractMetadataDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
@@ -6681,7 +6681,7 @@ PipelineOperationType            (<a class="autorefs autorefs-internal" title="k
 
         <span class="n">ignore_errors</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">pipeline_paths</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span>
-            <span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+            <span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span>
         <span class="p">]</span> <span class="o">=</span> <span class="n">find_all_kiara_pipeline_paths</span><span class="p">(</span><span class="n">skip_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">ep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">context_config</span><span class="o">.</span><span class="n">extra_pipelines</span><span class="p">:</span>
@@ -6787,7 +6787,7 @@ PipelineOperationType            (<a class="autorefs autorefs-internal" title="k
 
     <span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PipelineOperationDetails</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">PipelineOperationDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">PipelineModule</span><span class="p">):</span>
 
@@ -6854,7 +6854,7 @@ PipelineOperationType            (<a class="autorefs autorefs-internal" title="k
           <summary>Source code in <code>kiara/operations/included_core_operations/pipeline.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PipelineOperationDetails</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">PipelineOperationDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">PipelineModule</span><span class="p">):</span>
 
@@ -7318,7 +7318,7 @@ PrettyPrintOperationType            (<a class="autorefs autorefs-internal" title
 
     <span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PrettyPrintDetails</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">PrettyPrintDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_details</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
 
@@ -7327,7 +7327,7 @@ PrettyPrintOperationType            (<a class="autorefs autorefs-internal" title
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">details</span>
 
-    <span class="k">def</span> <span class="nf">extract_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PrettyPrintDetails</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">extract_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">PrettyPrintDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -7452,7 +7452,7 @@ PrettyPrintOperationType            (<a class="autorefs autorefs-internal" title
           <summary>Source code in <code>kiara/operations/included_core_operations/pretty_print.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PrettyPrintDetails</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">PrettyPrintDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_details</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
 
@@ -7483,7 +7483,7 @@ PrettyPrintOperationType            (<a class="autorefs autorefs-internal" title
 
         <details class="quote">
           <summary>Source code in <code>kiara/operations/included_core_operations/pretty_print.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">extract_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PrettyPrintDetails</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">extract_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">PrettyPrintDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
@@ -8139,7 +8139,7 @@ RenderValueOperationType            (<a class="autorefs autorefs-internal" title
 
     <span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RenderValueDetails</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">RenderValueDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -8243,7 +8243,7 @@ RenderValueOperationType            (<a class="autorefs autorefs-internal" title
 
     <span class="k">def</span> <span class="nf">get_render_operation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Operation</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="n">all_ops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_render_operations_for_source_type</span><span class="p">(</span><span class="n">source_type</span><span class="o">=</span><span class="n">source_type</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">all_ops</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">target_type</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -8280,7 +8280,7 @@ RenderValueOperationType            (<a class="autorefs autorefs-internal" title
           <summary>Source code in <code>kiara/operations/included_core_operations/render_value.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RenderValueDetails</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">RenderValueDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
@@ -8374,7 +8374,7 @@ RenderValueOperationType            (<a class="autorefs autorefs-internal" title
           <summary>Source code in <code>kiara/operations/included_core_operations/render_value.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_render_operation</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Operation</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="n">all_ops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_render_operations_for_source_type</span><span class="p">(</span><span class="n">source_type</span><span class="o">=</span><span class="n">source_type</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">all_ops</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">target_type</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -8967,7 +8967,7 @@ DeSerializeOperationType            (<a class="autorefs autorefs-internal" title
 
     <span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_details</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
 
@@ -8976,7 +8976,7 @@ DeSerializeOperationType            (<a class="autorefs autorefs-internal" title
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">details</span>
 
-    <span class="k">def</span> <span class="nf">extract_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">extract_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="n">result_field_name</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -9129,7 +9129,7 @@ DeSerializeOperationType            (<a class="autorefs autorefs-internal" title
           <summary>Source code in <code>kiara/operations/included_core_operations/serialize.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_details</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
 
@@ -9160,7 +9160,7 @@ DeSerializeOperationType            (<a class="autorefs autorefs-internal" title
 
         <details class="quote">
           <summary>Source code in <code>kiara/operations/included_core_operations/serialize.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">extract_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">extract_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="n">result_field_name</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>

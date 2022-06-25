@@ -1494,6 +1494,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/workflow/" class="md-nav__link">
+        workflow
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3674,20 +3688,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../workflows/__init__/" class="md-nav__link">
-        workflows
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -4192,7 +4192,7 @@ DeSerializeOperationType            (<a class="autorefs autorefs-internal" title
 
     <span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_details</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
 
@@ -4201,7 +4201,7 @@ DeSerializeOperationType            (<a class="autorefs autorefs-internal" title
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">details</span>
 
-    <span class="k">def</span> <span class="nf">extract_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">extract_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="n">result_field_name</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -4354,7 +4354,7 @@ DeSerializeOperationType            (<a class="autorefs autorefs-internal" title
           <summary>Source code in <code>kiara/operations/included_core_operations/serialize.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">check_matching_operation</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_details</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
 
@@ -4385,7 +4385,7 @@ DeSerializeOperationType            (<a class="autorefs autorefs-internal" title
 
         <details class="quote">
           <summary>Source code in <code>kiara/operations/included_core_operations/serialize.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">extract_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">extract_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">DeSerializeDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="n">result_field_name</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>

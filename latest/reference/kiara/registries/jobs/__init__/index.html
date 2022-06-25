@@ -1494,6 +1494,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/workflow/" class="md-nav__link">
+        workflow
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3610,20 +3624,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../workflows/__init__/" class="md-nav__link">
-        workflows
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -3866,7 +3866,9 @@ DataHashJobMatcher            (<a class="autorefs autorefs-internal" title="kiar
         <details class="quote">
           <summary>Source code in <code>kiara/registries/jobs/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">DataHashJobMatcher</span><span class="p">(</span><span class="n">JobMatcher</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">find_existing_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs_manifest</span><span class="p">:</span> <span class="n">InputsManifest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">find_existing_job</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">inputs_manifest</span><span class="p">:</span> <span class="n">InputsManifest</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -3947,7 +3949,9 @@ DataHashJobMatcher            (<a class="autorefs autorefs-internal" title="kiar
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/jobs/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_existing_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs_manifest</span><span class="p">:</span> <span class="n">InputsManifest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_existing_job</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">inputs_manifest</span><span class="p">:</span> <span class="n">InputsManifest</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -4043,7 +4047,9 @@ JobArchive            (<a class="autorefs autorefs-internal" title="kiara.regist
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">retrieve_all_job_hashes</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">manifest_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">inputs_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">manifest_hash</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">inputs_hash</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Retrieve a list of all job record hashes (cids) that match the given filter arguments.</span>
 
@@ -4053,10 +4059,10 @@ JobArchive            (<a class="autorefs autorefs-internal" title="kiara.regist
 <span class="sd">        &quot;&quot;&quot;</span>
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_retrieve_record_for_job_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">_retrieve_record_for_job_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">retrieve_record_for_job_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">retrieve_record_for_job_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="n">job_record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_record_for_job_hash</span><span class="p">(</span><span class="n">job_hash</span><span class="o">=</span><span class="n">job_hash</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">job_record</span>
@@ -4095,7 +4101,9 @@ JobArchive            (<a class="autorefs autorefs-internal" title="kiara.regist
           <summary>Source code in <code>kiara/registries/jobs/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
 <span class="k">def</span> <span class="nf">retrieve_all_job_hashes</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">manifest_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">inputs_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">manifest_hash</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">inputs_hash</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Retrieve a list of all job record hashes (cids) that match the given filter arguments.</span>
 
@@ -4126,7 +4134,7 @@ JobArchive            (<a class="autorefs autorefs-internal" title="kiara.regist
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/jobs/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_record_for_job_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_record_for_job_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="n">job_record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_record_for_job_hash</span><span class="p">(</span><span class="n">job_hash</span><span class="o">=</span><span class="n">job_hash</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">job_record</span>
@@ -4172,7 +4180,9 @@ JobMatcher            (<span title="abc.ABC">ABC</span>)
         <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">kiara</span>
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">find_existing_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs_manifest</span><span class="p">:</span> <span class="n">InputsManifest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">find_existing_job</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">inputs_manifest</span><span class="p">:</span> <span class="n">InputsManifest</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="k">pass</span>
 </code></pre></div>
         </details>
@@ -4205,7 +4215,9 @@ JobMatcher            (<span title="abc.ABC">ABC</span>)
         <details class="quote">
           <summary>Source code in <code>kiara/registries/jobs/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-<span class="k">def</span> <span class="nf">find_existing_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs_manifest</span><span class="p">:</span> <span class="n">InputsManifest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">find_existing_job</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">inputs_manifest</span><span class="p">:</span> <span class="n">InputsManifest</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
     <span class="k">pass</span>
 </code></pre></div>
         </details>
@@ -4257,7 +4269,7 @@ JobRegistry        </code>
         <span class="bp">self</span><span class="o">.</span><span class="n">_processor</span><span class="p">:</span> <span class="n">ModuleProcessor</span> <span class="o">=</span> <span class="n">SynchronousProcessor</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_processor</span><span class="o">.</span><span class="n">register_job_status_listener</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_job_archives</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">JobArchive</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_default_job_store</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_job_store</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_event_callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">event_registry</span><span class="o">.</span><span class="n">add_producer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
@@ -4289,7 +4301,7 @@ JobRegistry        </code>
 
         <span class="k">return</span> <span class="p">[</span><span class="n">JobArchiveAddedEvent</span><span class="p">,</span> <span class="n">JobRecordPreStoreEvent</span><span class="p">,</span> <span class="n">JobRecordStoredEvent</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">register_job_archive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">archive</span><span class="p">:</span> <span class="n">JobArchive</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">register_job_archive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">archive</span><span class="p">:</span> <span class="n">JobArchive</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="n">alias</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">alias</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">archive_id</span><span class="p">)</span>
@@ -4324,7 +4336,7 @@ JobRegistry        </code>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No default job store set (yet).&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_job_store</span>  <span class="c1"># type: ignore</span>
 
-    <span class="k">def</span> <span class="nf">get_archive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">store_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JobArchive</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_archive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">store_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JobArchive</span><span class="p">:</span>
 
         <span class="k">if</span> <span class="n">store_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">store_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_job_store</span>
@@ -4338,7 +4350,10 @@ JobRegistry        </code>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job_archives</span>
 
     <span class="k">def</span> <span class="nf">job_status_changed</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">old_status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobStatus</span><span class="p">],</span> <span class="n">new_status</span><span class="p">:</span> <span class="n">JobStatus</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span>
+        <span class="n">old_status</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobStatus</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">new_status</span><span class="p">:</span> <span class="n">JobStatus</span><span class="p">,</span>
     <span class="p">):</span>
 
         <span class="c1"># print(f&quot;JOB STATUS CHANGED: {job_id} - {old_status} - {new_status.value}&quot;)</span>
@@ -4419,7 +4434,7 @@ JobRegistry        </code>
 
     <span class="k">def</span> <span class="nf">find_matching_job_record</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">inputs_manifest</span><span class="p">:</span> <span class="n">InputsManifest</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Check if a job with same inputs manifest already ran some time before.</span>
 
 <span class="sd">        Arguments:</span>
@@ -4799,7 +4814,7 @@ JobRegistry        </code>
           <summary>Source code in <code>kiara/registries/jobs/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_matching_job_record</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">inputs_manifest</span><span class="p">:</span> <span class="n">InputsManifest</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Check if a job with same inputs manifest already ran some time before.</span>
 
 <span class="sd">    Arguments:</span>
@@ -4891,7 +4906,7 @@ JobRegistry        </code>
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/jobs/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_archive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">store_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JobArchive</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_archive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">store_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JobArchive</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="n">store_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">store_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_job_store</span>
@@ -4980,7 +4995,10 @@ JobRegistry        </code>
         <details class="quote">
           <summary>Source code in <code>kiara/registries/jobs/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">job_status_changed</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">old_status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobStatus</span><span class="p">],</span> <span class="n">new_status</span><span class="p">:</span> <span class="n">JobStatus</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span>
+    <span class="n">old_status</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobStatus</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+    <span class="n">new_status</span><span class="p">:</span> <span class="n">JobStatus</span><span class="p">,</span>
 <span class="p">):</span>
 
     <span class="c1"># print(f&quot;JOB STATUS CHANGED: {job_id} - {old_status} - {new_status.value}&quot;)</span>
@@ -5056,7 +5074,7 @@ JobRegistry        </code>
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/jobs/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">register_job_archive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">archive</span><span class="p">:</span> <span class="n">JobArchive</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">register_job_archive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">archive</span><span class="p">:</span> <span class="n">JobArchive</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="n">alias</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">alias</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">archive_id</span><span class="p">)</span>
@@ -5387,7 +5405,9 @@ NoneJobMatcher            (<a class="autorefs autorefs-internal" title="kiara.re
         <details class="quote">
           <summary>Source code in <code>kiara/registries/jobs/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">NoneJobMatcher</span><span class="p">(</span><span class="n">JobMatcher</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">find_existing_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs_manifest</span><span class="p">:</span> <span class="n">InputsManifest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">find_existing_job</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">inputs_manifest</span><span class="p">:</span> <span class="n">InputsManifest</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="k">return</span> <span class="kc">None</span>
 </code></pre></div>
         </details>
@@ -5419,7 +5439,9 @@ NoneJobMatcher            (<a class="autorefs autorefs-internal" title="kiara.re
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/jobs/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_existing_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs_manifest</span><span class="p">:</span> <span class="n">InputsManifest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_existing_job</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">inputs_manifest</span><span class="p">:</span> <span class="n">InputsManifest</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
     <span class="k">return</span> <span class="kc">None</span>
 </code></pre></div>
         </details>
@@ -5458,7 +5480,9 @@ ValueIdJobMatcher            (<a class="autorefs autorefs-internal" title="kiara
         <details class="quote">
           <summary>Source code in <code>kiara/registries/jobs/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueIdJobMatcher</span><span class="p">(</span><span class="n">JobMatcher</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">find_existing_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs_manifest</span><span class="p">:</span> <span class="n">InputsManifest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">find_existing_job</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">inputs_manifest</span><span class="p">:</span> <span class="n">InputsManifest</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -5511,7 +5535,9 @@ ValueIdJobMatcher            (<a class="autorefs autorefs-internal" title="kiara
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/jobs/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_existing_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs_manifest</span><span class="p">:</span> <span class="n">InputsManifest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_existing_job</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">inputs_manifest</span><span class="p">:</span> <span class="n">InputsManifest</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -5643,7 +5669,7 @@ FileSystemJobArchive            (<a class="autorefs autorefs-internal" title="ki
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">archive_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">FileSystemArchiveConfig</span><span class="p">):</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">archive_id</span><span class="o">=</span><span class="n">archive_id</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">get_archive_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArchiveDetails</span><span class="p">:</span>
 
@@ -5667,7 +5693,9 @@ FileSystemJobArchive            (<a class="autorefs autorefs-internal" title="ki
         <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">job_store_path</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">retrieve_all_job_hashes</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">manifest_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">inputs_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">manifest_hash</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">inputs_hash</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 
         <span class="n">base_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_store_path</span> <span class="o">/</span> <span class="n">MANIFEST_SUB_PATH</span>
@@ -5687,7 +5715,7 @@ FileSystemJobArchive            (<a class="autorefs autorefs-internal" title="ki
             <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">11</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="nf">_retrieve_record_for_job_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">_retrieve_record_for_job_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobRecord</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="n">base_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_store_path</span> <span class="o">/</span> <span class="n">MANIFEST_SUB_PATH</span>
         <span class="n">records</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">base_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;*/*/</span><span class="si">{</span><span class="n">job_hash</span><span class="si">}</span><span class="s2">.job_record&quot;</span><span class="p">))</span>
@@ -5930,7 +5958,9 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.regis
         <details class="quote">
           <summary>Source code in <code>kiara/registries/jobs/job_store/filesystem_store.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_all_job_hashes</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">manifest_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">inputs_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">manifest_hash</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">inputs_hash</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 
     <span class="n">base_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_store_path</span> <span class="o">/</span> <span class="n">MANIFEST_SUB_PATH</span>

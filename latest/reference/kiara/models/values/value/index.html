@@ -1494,6 +1494,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/workflow/" class="md-nav__link">
+        workflow
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3827,20 +3841,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../workflows/__init__/" class="md-nav__link">
-        workflows
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -4958,7 +4958,7 @@ SerializedChunkIDs            (<a class="autorefs autorefs-internal" title="kiar
     <span class="n">chunk_id_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A list of chunk ids, which will be resolved via the attached data registry.&quot;</span>
     <span class="p">)</span>
-    <span class="n">archive_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">archive_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The preferred data archive to get the chunks from.&quot;</span>
     <span class="p">)</span>
     <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The size of all chunks combined.&quot;</span><span class="p">)</span>
@@ -5225,7 +5225,7 @@ SerializedChunks            (<span title="pydantic.main.BaseModel">BaseModel</sp
         <span class="n">json_dumps</span> <span class="o">=</span> <span class="n">orjson_dumps</span>
         <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
 
-    <span class="n">_size_cache</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_size_cache</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">_hashes_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">CID</span><span class="p">]]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
@@ -5265,7 +5265,7 @@ SerializedChunks            (<span title="pydantic.main.BaseModel">BaseModel</sp
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hashes_cache</span><span class="p">[</span><span class="n">hash_codec</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_store_bytes_to_file</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">chunks</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">chunks</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="s2">&quot;Utility method to store bytes to a file.&quot;</span>
 
@@ -5635,8 +5635,8 @@ SerializedData            (<a class="autorefs autorefs-internal" title="kiara.mo
     <span class="p">)</span>
     <span class="n">_cids_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">CID</span><span class="p">]]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
 
-    <span class="n">_cached_data_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">_cached_dag</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">CID</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_cached_data_size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_cached_dag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">CID</span><span class="p">]],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="c1"># _cached_cid: Optional[CID] = PrivateAttr(default=None)</span>
 
     <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
@@ -6368,7 +6368,7 @@ SerializedInlineJson            (<a class="autorefs autorefs-internal" title="ki
     <span class="n">inline_data</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Data that will not be stored externally, but inline in the containing model. This should only contain data types that can be serialized reliably using json (scalars, etc.).&quot;</span>
     <span class="p">)</span>
-    <span class="n">_json_cache</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_json_cache</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">as_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">inline_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -6970,12 +6970,12 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
     <span class="n">_data_registry</span><span class="p">:</span> <span class="s2">&quot;DataRegistry&quot;</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">_data_type</span><span class="p">:</span> <span class="s2">&quot;DataType&quot;</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">_is_stored</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">_cached_properties</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;ValueMap&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_cached_properties</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;ValueMap&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="n">environment_hashes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Hashes for the environments this value was created in.&quot;</span>
     <span class="p">)</span>
-    <span class="n">environments</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">enviroments</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Information about the environments this value was created in.&quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span>
@@ -7263,7 +7263,7 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
 
             <span class="k">if</span> <span class="n">pedigree</span> <span class="o">==</span> <span class="n">ORPHAN</span><span class="p">:</span>
                 <span class="n">v</span> <span class="o">=</span> <span class="s2">&quot;[i]-- external data --[/i]&quot;</span>
-                <span class="n">pedigree_output_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">pedigree_output_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">v</span> <span class="o">=</span> <span class="n">extract_renderable</span><span class="p">(</span><span class="n">pedigree</span><span class="p">)</span>
                 <span class="n">pedigree_output_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;pedigree_output_name&quot;</span><span class="p">)</span>
@@ -7420,6 +7420,28 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
 
 
 
+<h5 id="kiara.models.values.value.Value.enviroments" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">enviroments</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.values.value.Value.enviroments" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Information about the environments this value was created in.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
 <h5 id="kiara.models.values.value.Value.environment_hashes" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">environment_hashes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span></code>
 
@@ -7433,28 +7455,6 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
     <div class="doc doc-contents ">
 
       <p>Hashes for the environments this value was created in.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.models.values.value.Value.environments" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">environments</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-  </span>
-
-<a href="#kiara.models.values.value.Value.environments" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>Information about the environments this value was created in.</p>
     </div>
 
   </div>
@@ -7846,7 +7846,7 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
 
         <span class="k">if</span> <span class="n">pedigree</span> <span class="o">==</span> <span class="n">ORPHAN</span><span class="p">:</span>
             <span class="n">v</span> <span class="o">=</span> <span class="s2">&quot;[i]-- external data --[/i]&quot;</span>
-            <span class="n">pedigree_output_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">pedigree_output_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">v</span> <span class="o">=</span> <span class="n">extract_renderable</span><span class="p">(</span><span class="n">pedigree</span><span class="p">)</span>
             <span class="n">pedigree_output_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;pedigree_output_name&quot;</span><span class="p">)</span>
@@ -8562,7 +8562,7 @@ ValueMap            (<a class="autorefs autorefs-internal" title="kiara.models.K
             <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
             <span class="n">field_schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_schema</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">field_schema</span><span class="o">.</span><span class="n">optional</span><span class="p">:</span>
-                <span class="n">msg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">msg</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">value_status</span> <span class="o">==</span> <span class="n">ValueStatus</span><span class="o">.</span><span class="n">SET</span><span class="p">:</span>
 
                     <span class="n">item_schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_schema</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
@@ -8660,7 +8660,7 @@ ValueMap            (<a class="autorefs autorefs-internal" title="kiara.models.K
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">create_invalid_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">create_invalid_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
         <span class="n">inv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_invalid</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">inv</span><span class="p">:</span>
@@ -8811,7 +8811,7 @@ ValueMap            (<a class="autorefs autorefs-internal" title="kiara.models.K
         <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
         <span class="n">field_schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_schema</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">field_schema</span><span class="o">.</span><span class="n">optional</span><span class="p">:</span>
-            <span class="n">msg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">msg</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">value_status</span> <span class="o">==</span> <span class="n">ValueStatus</span><span class="o">.</span><span class="n">SET</span><span class="p">:</span>
 
                 <span class="n">item_schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_schema</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
@@ -8848,7 +8848,7 @@ ValueMap            (<a class="autorefs autorefs-internal" title="kiara.models.K
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_invalid_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_invalid_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="n">inv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_invalid</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">inv</span><span class="p">:</span>

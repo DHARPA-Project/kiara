@@ -1494,6 +1494,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interfaces/python_api/workflow/" class="md-nav__link">
+        workflow
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3672,20 +3686,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../workflows/__init__/" class="md-nav__link">
-        workflows
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -3839,7 +3839,7 @@
     <span class="n">op_type</span><span class="p">:</span> <span class="n">PrettyPrintOperationType</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation_type</span><span class="p">(</span><span class="s2">&quot;pretty_print&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">op</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="n">op_type</span><span class="o">.</span><span class="n">get_operation_for_render_combination</span><span class="p">(</span>
+        <span class="n">op</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Operation</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">op_type</span><span class="o">.</span><span class="n">get_operation_for_render_combination</span><span class="p">(</span>
             <span class="n">source_type</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="n">target_type</span>
         <span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -3895,7 +3895,7 @@
     <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
     <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span>
     <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;terminal_renderable&quot;</span><span class="p">,</span>
-    <span class="n">render_instruction</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RenderInstruction</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">render_instruction</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">RenderInstruction</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderValueResult</span><span class="p">:</span>
 
     <span class="n">value</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>

@@ -1494,6 +1494,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/workflow/" class="md-nav__link">
+        workflow
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3665,20 +3679,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../workflows/__init__/" class="md-nav__link">
-        workflows
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -3810,7 +3810,7 @@ ModelRegistry        </code>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_all_models</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KiaraModelClassesInfo</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_all_models</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">KiaraModelClassesInfo</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_models_per_package</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraModelClassesInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sub_models</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">KiaraModel</span><span class="p">],</span> <span class="n">KiaraModelClassesInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -3824,7 +3824,9 @@ ModelRegistry        </code>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_models</span>
 
     <span class="k">def</span> <span class="nf">get_model_cls</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">kiara_model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">required_subclass</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">KiaraModel</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">kiara_model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">required_subclass</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">KiaraModel</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">KiaraModel</span><span class="p">]:</span>
 
         <span class="n">model_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_models</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">kiara_model_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -3929,7 +3931,9 @@ ModelRegistry        </code>
         <details class="quote">
           <summary>Source code in <code>kiara/registries/models/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_model_cls</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">kiara_model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">required_subclass</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">KiaraModel</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">kiara_model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">required_subclass</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">KiaraModel</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">KiaraModel</span><span class="p">]:</span>
 
     <span class="n">model_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_models</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">kiara_model_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>

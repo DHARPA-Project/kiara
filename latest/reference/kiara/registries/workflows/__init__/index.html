@@ -1494,6 +1494,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/workflow/" class="md-nav__link">
+        workflow
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3610,20 +3624,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../workflows/__init__/" class="md-nav__link">
-        workflows
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -3675,6 +3675,19 @@
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.registries.workflows-classes" class="md-nav__link">
+    Classes
+  </a>
+  
+    <nav class="md-nav" aria-label="Classes">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#kiara.registries.workflows.WorkflowArchive" class="md-nav__link">
@@ -3774,7 +3787,7 @@
   </div>
 
 
-
+<h2 id="kiara.registries.workflows-classes">Classes<a href="#kiara.registries.workflows-classes" class="headerlink" title="Permanent link">&para;</a></h2>
 
   <div class="doc doc-object doc-class">
 
@@ -3808,8 +3821,25 @@ WorkflowArchive            (<a class="autorefs autorefs-internal" title="kiara.r
         <span class="k">pass</span>
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">retrieve_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">retrieve_workflow_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
         <span class="k">pass</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_workflow_states</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WorkflowStateFilter</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">WorkflowState</span><span class="p">]:</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_workflow_state</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">workflow_state_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowState</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Retrieve workflow state details for the provided state id.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            workflow_id: id of the workflow</span>
+<span class="sd">            workflow_state_id: the id of the workflow state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 </code></pre></div>
         </details>
 
@@ -3823,7 +3853,7 @@ WorkflowArchive            (<a class="autorefs autorefs-internal" title="kiara.r
 
 
 
-
+<h4 id="kiara.registries.workflows.WorkflowArchive-methods">Methods<a href="#kiara.registries.workflows.WorkflowArchive-methods" class="headerlink" title="Permanent link">&para;</a></h4>
 
   <div class="doc doc-object doc-method">
 
@@ -3884,11 +3914,11 @@ WorkflowArchive            (<a class="autorefs autorefs-internal" title="kiara.r
 
 
 
-<h5 id="kiara.registries.workflows.WorkflowArchive.retrieve_workflow" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">retrieve_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow</span><span class="p">)</span></code>
+<h5 id="kiara.registries.workflows.WorkflowArchive.retrieve_workflow_details" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_workflow_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">)</span></code>
 
 
-<a href="#kiara.registries.workflows.WorkflowArchive.retrieve_workflow" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.registries.workflows.WorkflowArchive.retrieve_workflow_details" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -3896,7 +3926,94 @@ WorkflowArchive            (<a class="autorefs autorefs-internal" title="kiara.r
         <details class="quote">
           <summary>Source code in <code>kiara/registries/workflows/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-<span class="k">def</span> <span class="nf">retrieve_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">retrieve_workflow_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
+    <span class="k">pass</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.registries.workflows.WorkflowArchive.retrieve_workflow_state" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_workflow_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">,</span> <span class="n">workflow_state_id</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.workflows.WorkflowArchive.retrieve_workflow_state" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Retrieve workflow state details for the provided state id.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>workflow_id</code></td>
+        <td><code>UUID</code></td>
+        <td><p>id of the workflow</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>workflow_state_id</code></td>
+        <td><code>UUID</code></td>
+        <td><p>the id of the workflow state</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/workflows/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_workflow_state</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">workflow_state_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowState</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Retrieve workflow state details for the provided state id.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        workflow_id: id of the workflow</span>
+<span class="sd">        workflow_state_id: the id of the workflow state</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.registries.workflows.WorkflowArchive.retrieve_workflow_states" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_workflow_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.workflows.WorkflowArchive.retrieve_workflow_states" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/workflows/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_workflow_states</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WorkflowStateFilter</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">WorkflowState</span><span class="p">]:</span>
     <span class="k">pass</span>
 </code></pre></div>
         </details>
@@ -3971,17 +4088,20 @@ WorkflowRegistry        </code>
         <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_archives</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">WorkflowArchive</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="sd">&quot;&quot;&quot;All registered archives/stores.&quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_default_alias_store</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_alias_store</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="sd">&quot;&quot;&quot;The alias of the store where new aliases are stored by default.&quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_workflows</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Workflow</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_workflows_by_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Workflow</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_all_aliases</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="sd">&quot;&quot;&quot;All workflow aliases.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_workflows</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">WorkflowDetails</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_locations</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
 
     <span class="k">def</span> <span class="nf">register_archive</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">archive</span><span class="p">:</span> <span class="n">WorkflowArchive</span><span class="p">,</span>
         <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">set_as_default_store</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">set_as_default_store</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 
         <span class="n">workflow_archive_id</span> <span class="o">=</span> <span class="n">archive</span><span class="o">.</span><span class="n">archive_id</span>
@@ -4035,8 +4155,8 @@ WorkflowRegistry        </code>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_archives</span>
 
     <span class="k">def</span> <span class="nf">get_archive</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">archive_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">WorkflowArchive</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">archive_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">WorkflowArchive</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">archive_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">archive_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_alias_store</span>
             <span class="k">if</span> <span class="n">archive_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -4046,13 +4166,13 @@ WorkflowRegistry        </code>
         <span class="k">return</span> <span class="n">archive</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">workflows</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Workflow</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">workflow_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_workflows</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_workflows</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_aliases</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_aliases</span>
 
-        <span class="n">all_workflows</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Workflow</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">all_workflows_by_id</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Workflow</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">all_workflows</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">workflow_locations</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">archive_alias</span><span class="p">,</span> <span class="n">archive</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_archives</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">workflow_map</span> <span class="o">=</span> <span class="n">archive</span><span class="o">.</span><span class="n">retrieve_all_workflow_aliases</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">alias</span><span class="p">,</span> <span class="n">w_id</span> <span class="ow">in</span> <span class="n">workflow_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -4065,53 +4185,183 @@ WorkflowRegistry        </code>
                     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;Inconsistent alias registry: alias &#39;</span><span class="si">{</span><span class="n">final_alias</span><span class="si">}</span><span class="s2">&#39; available more than once.&quot;</span>
                     <span class="p">)</span>
-                <span class="n">item</span> <span class="o">=</span> <span class="n">Workflow</span><span class="p">(</span>
-                    <span class="n">full_alias</span><span class="o">=</span><span class="n">final_alias</span><span class="p">,</span>
-                    <span class="n">rel_alias</span><span class="o">=</span><span class="n">alias</span><span class="p">,</span>
-                    <span class="n">workflow_id</span><span class="o">=</span><span class="n">w_id</span><span class="p">,</span>
-                    <span class="n">workflow_archive</span><span class="o">=</span><span class="n">archive_alias</span><span class="p">,</span>
-                    <span class="n">workflow_archive_id</span><span class="o">=</span><span class="n">archive</span><span class="o">.</span><span class="n">archive_id</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="n">all_workflows</span><span class="p">[</span><span class="n">final_alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
-                <span class="n">all_workflows_by_id</span><span class="p">[</span><span class="n">w_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_workflows</span> <span class="o">=</span> <span class="n">all_workflows</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_workflows_by_id</span> <span class="o">=</span> <span class="n">all_workflows_by_id</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_workflows</span>
+                <span class="n">all_workflows</span><span class="p">[</span><span class="n">final_alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">w_id</span>
+                <span class="n">workflow_locations</span><span class="p">[</span><span class="n">w_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">archive_alias</span>
 
-    <span class="k">def</span> <span class="nf">register_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">workflow_aliases</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_all_aliases</span> <span class="o">=</span> <span class="n">all_workflows</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_locations</span> <span class="o">=</span> <span class="n">workflow_locations</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_aliases</span>
 
-        <span class="k">for</span> <span class="n">workflow_alias</span> <span class="ow">in</span> <span class="n">workflow_aliases</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">workflow_alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflows</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t register workflow with alias &#39;</span><span class="si">{</span><span class="n">workflow_alias</span><span class="si">}</span><span class="s2">&#39;: alias already registered.&quot;</span>
-                <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">get_workflow_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">WorkflowDetails</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">workflow_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflow_aliases</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="n">workflow</span><span class="p">,</span> <span class="kc">None</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">workflow_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">workflow_id</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="n">workflow</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">if</span> <span class="n">workflow_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve workflow with alias &#39;</span><span class="si">{</span><span class="n">workflow</span><span class="si">}</span><span class="s2">&#39;: alias not registered.&quot;</span>
+                    <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">workflow_id</span> <span class="o">=</span> <span class="n">workflow</span>
+
+        <span class="k">if</span> <span class="n">workflow_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_workflows</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_workflows</span><span class="p">[</span><span class="n">workflow_id</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_locations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">workflow_aliases</span>  <span class="c1"># noqa</span>
+
+        <span class="n">store_alias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_locations</span><span class="p">[</span><span class="n">workflow_id</span><span class="p">]</span>
+        <span class="n">store</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_archives</span><span class="p">[</span><span class="n">store_alias</span><span class="p">]</span>
+
+        <span class="n">workflow_details</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">retrieve_workflow_details</span><span class="p">(</span><span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_id</span><span class="p">)</span>
+        <span class="n">workflow_details</span><span class="o">.</span><span class="n">_kiara</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span>
+        <span class="c1"># workflow = Workflow(kiara=self._kiara, workflow_details=workflow_details)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_workflows</span><span class="p">[</span><span class="n">workflow_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">workflow_details</span>
+
+        <span class="c1"># states = store.retrieve_workflow_states(workflow_id=workflow_id)</span>
+        <span class="c1"># workflow._snapshots = states</span>
+        <span class="c1"># workflow.load_state()</span>
+
+        <span class="k">return</span> <span class="n">workflow_details</span>
+
+    <span class="k">def</span> <span class="nf">register_workflow</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">workflow_details</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">WorkflowDetails</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">workflow_aliases</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowDetails</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">workflow_aliases</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">workflow_alias</span> <span class="ow">in</span> <span class="n">workflow_aliases</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">workflow_alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflow_aliases</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Can&#39;t register workflow with alias &#39;</span><span class="si">{</span><span class="n">workflow_alias</span><span class="si">}</span><span class="s2">&#39;: alias already registered.&quot;</span>
+                    <span class="p">)</span>
 
         <span class="n">store_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_alias_store</span>
         <span class="n">store</span><span class="p">:</span> <span class="n">WorkflowStore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_archive</span><span class="p">(</span><span class="n">archive_id</span><span class="o">=</span><span class="n">store_name</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
-        <span class="n">workflow_id</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">register_workflow</span><span class="p">(</span><span class="o">*</span><span class="n">workflow_aliases</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">workflow_id</span>
-
-        <span class="c1"># workflow_item = Workflow(</span>
-        <span class="c1">#     full_alias=workflow_alias,</span>
-        <span class="c1">#     rel_alias=workflow_alias,</span>
+        <span class="c1"># if not init_pipeline:</span>
+        <span class="c1">#     steps: List[PipelineStep] = []</span>
+        <span class="c1"># elif isinstance(init_pipeline, str):</span>
+        <span class="c1">#     operation = self._kiara.operation_registry.operations.get(init_pipeline, None)</span>
+        <span class="c1">#     if not operation:</span>
+        <span class="c1">#         raise Exception(f&quot;Can&#39;t initialize workflow, init pipeline value &#39;{init_pipeline}&#39; not an operation id.&quot;)</span>
+        <span class="c1">#</span>
+        <span class="c1">#     module_config = operation.module.config</span>
+        <span class="c1">#     if isinstance(module_config, PipelineConfig):</span>
+        <span class="c1">#         steps = module_config.steps</span>
+        <span class="c1">#     else:</span>
+        <span class="c1">#         raise NotImplementedError()</span>
+        <span class="c1"># else:</span>
+        <span class="c1">#     raise Exception(&quot;&#39;init_pipeline&#39; must be of on of the following types: string&quot;)</span>
+        <span class="c1">#</span>
+        <span class="c1"># workflow_details = WorkflowDetails(</span>
         <span class="c1">#     workflow_id=workflow_id,</span>
-        <span class="c1">#     workflow_archive=store_name,</span>
-        <span class="c1">#     workflow_archive_id=store.archive_id,</span>
+        <span class="c1">#     documentation=documentation,  # type: ignore</span>
         <span class="c1"># )</span>
-        <span class="c1"># self._cached_workflows[workflow_alias] = workflow_item</span>
-        <span class="c1"># self._cached_workflows_by_id[workflow_id] = workflow_item</span>
-        <span class="c1"># return workflow_item</span>
 
-        <span class="c1"># workflow = Workflow(kiara=self._kiara, workflow_alias=workflow_alias)</span>
-        <span class="c1"># and_step_id = workflow.add_step(&quot;logic.and&quot;)</span>
-        <span class="c1"># not_step_id = workflow.add_step(&quot;logic.not&quot;)</span>
-        <span class="c1">#</span>
-        <span class="c1"># workflow.add_input_link(f&quot;{not_step_id}.a&quot;, f&quot;{and_step_id}.y&quot;)</span>
-        <span class="c1">#</span>
-        <span class="c1"># workflow.set_inputs(logic_and__a=True, logic_and__b=True, x=22)</span>
-        <span class="c1"># workflow.apply()</span>
-        <span class="c1"># workflow.set_inputs(logic_and__a=True, logic_and__b=True, x=22)</span>
+        <span class="k">if</span> <span class="n">workflow_details</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">workflow_details</span> <span class="o">=</span> <span class="n">WorkflowDetails</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">workflow_details</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">workflow_details</span> <span class="o">=</span> <span class="n">WorkflowDetails</span><span class="p">(</span><span class="n">documentation</span><span class="o">=</span><span class="n">workflow_details</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+        <span class="n">workflow_details</span><span class="o">.</span><span class="n">_kiara</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span>
+
+        <span class="n">store</span><span class="o">.</span><span class="n">register_workflow</span><span class="p">(</span>
+            <span class="n">workflow_details</span><span class="o">=</span><span class="n">workflow_details</span><span class="p">,</span> <span class="n">workflow_aliases</span><span class="o">=</span><span class="n">workflow_aliases</span>
+        <span class="p">)</span>
+        <span class="c1"># workflow = Workflow(kiara=self._kiara, workflow_details=workflow_details)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_workflows</span><span class="p">[</span><span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">workflow_details</span>
+
+        <span class="k">if</span> <span class="n">workflow_aliases</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">workflow_alias</span> <span class="ow">in</span> <span class="n">workflow_aliases</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_locations</span><span class="p">[</span><span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">store_name</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">workflow_aliases</span><span class="p">[</span><span class="n">workflow_alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_id</span>
+
+        <span class="c1"># if steps:</span>
+        <span class="c1">#     workflow.add_steps(*steps)</span>
+        <span class="c1">#     self.save_workflow_state(workflow=workflow.workflow_id)</span>
+
+        <span class="k">return</span> <span class="n">workflow_details</span>
+
+    <span class="k">def</span> <span class="nf">get_workflow_states</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">workflow</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">WorkflowState</span><span class="p">]:</span>
+
+        <span class="n">workflow_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_workflow_details</span><span class="p">(</span><span class="n">workflow</span><span class="o">=</span><span class="n">workflow</span><span class="p">)</span>
+        <span class="n">archive_alias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_locations</span><span class="p">[</span><span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">]</span>
+
+        <span class="n">archive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_archive</span><span class="p">(</span><span class="n">archive_alias</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">archive</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve workflow archive &#39;</span><span class="si">{</span><span class="n">archive_alias</span><span class="si">}</span><span class="s2">&#39;, this is most likely a bug.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">states</span> <span class="o">=</span> <span class="n">archive</span><span class="o">.</span><span class="n">retrieve_workflow_states</span><span class="p">(</span>
+            <span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_id</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">states</span>
+
+    <span class="k">def</span> <span class="nf">get_workflow_state</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">workflow</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">workflow_state_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowState</span><span class="p">:</span>
+
+        <span class="n">workflow_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_workflow_details</span><span class="p">(</span><span class="n">workflow</span><span class="o">=</span><span class="n">workflow</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">workflow_state_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">workflow_state_id</span> <span class="o">=</span> <span class="n">workflow_details</span><span class="o">.</span><span class="n">current_state</span>
+
+        <span class="k">if</span> <span class="n">workflow_state_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve current workflow state, no state exists yet for workflow &#39;</span><span class="si">{</span><span class="n">workflow</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">archive_alias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_locations</span><span class="p">[</span><span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">]</span>
+
+        <span class="n">archive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_archive</span><span class="p">(</span><span class="n">archive_alias</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">archive</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve workflow archive &#39;</span><span class="si">{</span><span class="n">archive_alias</span><span class="si">}</span><span class="s2">&#39;, this is most likely a bug.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">archive</span><span class="o">.</span><span class="n">retrieve_workflow_state</span><span class="p">(</span>
+            <span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">,</span>
+            <span class="n">workflow_state_id</span><span class="o">=</span><span class="n">workflow_state_id</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">state</span>
+
+    <span class="k">def</span> <span class="nf">add_workflow_state</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">workflow_state</span><span class="p">:</span> <span class="n">WorkflowState</span><span class="p">,</span> <span class="n">set_current</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">):</span>
+
+        <span class="c1"># make sure the workflow is registed</span>
+        <span class="n">workflow_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_workflow_details</span><span class="p">(</span>
+            <span class="n">workflow</span><span class="o">=</span><span class="n">workflow_state</span><span class="o">.</span><span class="n">workflow_id</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="n">workflow_state</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">store_value</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>
+
+        <span class="c1"># for field_name, value_id in workflow_state.outputs.items():</span>
+        <span class="c1">#     self._kiara.data_registry.store_value(value=value_id)</span>
+
+        <span class="n">store_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_alias_store</span>
+        <span class="n">store</span><span class="p">:</span> <span class="n">WorkflowStore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_archive</span><span class="p">(</span><span class="n">archive_id</span><span class="o">=</span><span class="n">store_name</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+        <span class="n">store</span><span class="o">.</span><span class="n">add_workflow_state</span><span class="p">(</span>
+            <span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_state</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">,</span> <span class="n">workflow_state</span><span class="o">=</span><span class="n">workflow_state</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">set_current</span><span class="p">:</span>
+            <span class="n">workflow_details</span><span class="o">.</span><span class="n">current_state</span> <span class="o">=</span> <span class="n">workflow_state</span><span class="o">.</span><span class="n">workflow_state_id</span>
+            <span class="n">store</span><span class="o">.</span><span class="n">update_workflow</span><span class="p">(</span><span class="n">workflow_details</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -4150,6 +4400,28 @@ WorkflowRegistry        </code>
 
 
 
+<h5 id="kiara.registries.workflows.WorkflowRegistry.workflow_aliases" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">workflow_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.registries.workflows.WorkflowRegistry.workflow_aliases" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
 <h5 id="kiara.registries.workflows.WorkflowRegistry.workflow_archives" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">workflow_archives</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">registries</span><span class="o">.</span><span class="n">workflows</span><span class="o">.</span><span class="n">WorkflowArchive</span><span class="p">]</span></code>
 
@@ -4168,28 +4440,54 @@ WorkflowRegistry        </code>
 
 
 
-  <div class="doc doc-object doc-attribute">
 
 
 
-<h5 id="kiara.registries.workflows.WorkflowRegistry.workflows" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">workflows</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">Workflow</span><span class="p">]</span></code>
+  <div class="doc doc-object doc-method">
 
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-property"><code>property</code></small>
-      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
-  </span>
 
-<a href="#kiara.registries.workflows.WorkflowRegistry.workflows" class="headerlink" title="Permanent link">&para;</a></h5>
+
+<h5 id="kiara.registries.workflows.WorkflowRegistry.add_workflow_state" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">add_workflow_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_state</span><span class="p">,</span> <span class="n">set_current</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.workflows.WorkflowRegistry.add_workflow_state" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/workflows/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">add_workflow_state</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">workflow_state</span><span class="p">:</span> <span class="n">WorkflowState</span><span class="p">,</span> <span class="n">set_current</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">):</span>
+
+    <span class="c1"># make sure the workflow is registed</span>
+    <span class="n">workflow_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_workflow_details</span><span class="p">(</span>
+        <span class="n">workflow</span><span class="o">=</span><span class="n">workflow_state</span><span class="o">.</span><span class="n">workflow_id</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="n">workflow_state</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">store_value</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>
+
+    <span class="c1"># for field_name, value_id in workflow_state.outputs.items():</span>
+    <span class="c1">#     self._kiara.data_registry.store_value(value=value_id)</span>
+
+    <span class="n">store_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_alias_store</span>
+    <span class="n">store</span><span class="p">:</span> <span class="n">WorkflowStore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_archive</span><span class="p">(</span><span class="n">archive_id</span><span class="o">=</span><span class="n">store_name</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+    <span class="n">store</span><span class="o">.</span><span class="n">add_workflow_state</span><span class="p">(</span>
+        <span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_state</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">,</span> <span class="n">workflow_state</span><span class="o">=</span><span class="n">workflow_state</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">set_current</span><span class="p">:</span>
+        <span class="n">workflow_details</span><span class="o">.</span><span class="n">current_state</span> <span class="o">=</span> <span class="n">workflow_state</span><span class="o">.</span><span class="n">workflow_state_id</span>
+        <span class="n">store</span><span class="o">.</span><span class="n">update_workflow</span><span class="p">(</span><span class="n">workflow_details</span><span class="p">)</span>
+</code></pre></div>
+        </details>
     </div>
 
   </div>
-
-
-
 
 
 
@@ -4209,8 +4507,8 @@ WorkflowRegistry        </code>
         <details class="quote">
           <summary>Source code in <code>kiara/registries/workflows/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_archive</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">archive_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">WorkflowArchive</span><span class="p">]:</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">archive_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">WorkflowArchive</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
     <span class="k">if</span> <span class="n">archive_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">archive_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_alias_store</span>
         <span class="k">if</span> <span class="n">archive_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -4218,6 +4516,157 @@ WorkflowRegistry        </code>
 
     <span class="n">archive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_archives</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">archive_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">archive</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.registries.workflows.WorkflowRegistry.get_workflow_details" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_workflow_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.workflows.WorkflowRegistry.get_workflow_details" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/workflows/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_workflow_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">WorkflowDetails</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">workflow_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflow_aliases</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="n">workflow</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">workflow_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">workflow_id</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="n">workflow</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">if</span> <span class="n">workflow_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve workflow with alias &#39;</span><span class="si">{</span><span class="n">workflow</span><span class="si">}</span><span class="s2">&#39;: alias not registered.&quot;</span>
+                <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">workflow_id</span> <span class="o">=</span> <span class="n">workflow</span>
+
+    <span class="k">if</span> <span class="n">workflow_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_workflows</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_workflows</span><span class="p">[</span><span class="n">workflow_id</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_locations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">workflow_aliases</span>  <span class="c1"># noqa</span>
+
+    <span class="n">store_alias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_locations</span><span class="p">[</span><span class="n">workflow_id</span><span class="p">]</span>
+    <span class="n">store</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_archives</span><span class="p">[</span><span class="n">store_alias</span><span class="p">]</span>
+
+    <span class="n">workflow_details</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">retrieve_workflow_details</span><span class="p">(</span><span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_id</span><span class="p">)</span>
+    <span class="n">workflow_details</span><span class="o">.</span><span class="n">_kiara</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span>
+    <span class="c1"># workflow = Workflow(kiara=self._kiara, workflow_details=workflow_details)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_workflows</span><span class="p">[</span><span class="n">workflow_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">workflow_details</span>
+
+    <span class="c1"># states = store.retrieve_workflow_states(workflow_id=workflow_id)</span>
+    <span class="c1"># workflow._snapshots = states</span>
+    <span class="c1"># workflow.load_state()</span>
+
+    <span class="k">return</span> <span class="n">workflow_details</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.registries.workflows.WorkflowRegistry.get_workflow_state" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_workflow_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow</span><span class="p">,</span> <span class="n">workflow_state_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.workflows.WorkflowRegistry.get_workflow_state" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/workflows/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_workflow_state</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">workflow</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="n">workflow_state_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowState</span><span class="p">:</span>
+
+    <span class="n">workflow_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_workflow_details</span><span class="p">(</span><span class="n">workflow</span><span class="o">=</span><span class="n">workflow</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">workflow_state_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">workflow_state_id</span> <span class="o">=</span> <span class="n">workflow_details</span><span class="o">.</span><span class="n">current_state</span>
+
+    <span class="k">if</span> <span class="n">workflow_state_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve current workflow state, no state exists yet for workflow &#39;</span><span class="si">{</span><span class="n">workflow</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">archive_alias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_locations</span><span class="p">[</span><span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">]</span>
+
+    <span class="n">archive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_archive</span><span class="p">(</span><span class="n">archive_alias</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">archive</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve workflow archive &#39;</span><span class="si">{</span><span class="n">archive_alias</span><span class="si">}</span><span class="s2">&#39;, this is most likely a bug.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">archive</span><span class="o">.</span><span class="n">retrieve_workflow_state</span><span class="p">(</span>
+        <span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">,</span>
+        <span class="n">workflow_state_id</span><span class="o">=</span><span class="n">workflow_state_id</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">state</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.registries.workflows.WorkflowRegistry.get_workflow_states" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_workflow_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.workflows.WorkflowRegistry.get_workflow_states" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/workflows/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_workflow_states</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">workflow</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">WorkflowState</span><span class="p">]:</span>
+
+    <span class="n">workflow_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_workflow_details</span><span class="p">(</span><span class="n">workflow</span><span class="o">=</span><span class="n">workflow</span><span class="p">)</span>
+    <span class="n">archive_alias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_locations</span><span class="p">[</span><span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">]</span>
+
+    <span class="n">archive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_archive</span><span class="p">(</span><span class="n">archive_alias</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">archive</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve workflow archive &#39;</span><span class="si">{</span><span class="n">archive_alias</span><span class="si">}</span><span class="s2">&#39;, this is most likely a bug.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="n">archive</span><span class="o">.</span><span class="n">retrieve_workflow_states</span><span class="p">(</span>
+        <span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_id</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">states</span>
 </code></pre></div>
         </details>
     </div>
@@ -4245,7 +4694,7 @@ WorkflowRegistry        </code>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">archive</span><span class="p">:</span> <span class="n">WorkflowArchive</span><span class="p">,</span>
     <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">set_as_default_store</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">set_as_default_store</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 
     <span class="n">workflow_archive_id</span> <span class="o">=</span> <span class="n">archive</span><span class="o">.</span><span class="n">archive_id</span>
@@ -4299,7 +4748,7 @@ WorkflowRegistry        </code>
 
 
 <h5 id="kiara.registries.workflows.WorkflowRegistry.register_workflow" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">register_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">workflow_aliases</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">register_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_details</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">workflow_aliases</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 <a href="#kiara.registries.workflows.WorkflowRegistry.register_workflow" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -4309,40 +4758,65 @@ WorkflowRegistry        </code>
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/workflows/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">register_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">workflow_aliases</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">register_workflow</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">workflow_details</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">WorkflowDetails</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">workflow_aliases</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowDetails</span><span class="p">:</span>
 
-    <span class="k">for</span> <span class="n">workflow_alias</span> <span class="ow">in</span> <span class="n">workflow_aliases</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">workflow_alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflows</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Can&#39;t register workflow with alias &#39;</span><span class="si">{</span><span class="n">workflow_alias</span><span class="si">}</span><span class="s2">&#39;: alias already registered.&quot;</span>
-            <span class="p">)</span>
+    <span class="k">if</span> <span class="n">workflow_aliases</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">workflow_alias</span> <span class="ow">in</span> <span class="n">workflow_aliases</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">workflow_alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflow_aliases</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t register workflow with alias &#39;</span><span class="si">{</span><span class="n">workflow_alias</span><span class="si">}</span><span class="s2">&#39;: alias already registered.&quot;</span>
+                <span class="p">)</span>
 
     <span class="n">store_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_alias_store</span>
     <span class="n">store</span><span class="p">:</span> <span class="n">WorkflowStore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_archive</span><span class="p">(</span><span class="n">archive_id</span><span class="o">=</span><span class="n">store_name</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
-    <span class="n">workflow_id</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">register_workflow</span><span class="p">(</span><span class="o">*</span><span class="n">workflow_aliases</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">workflow_id</span>
-
-    <span class="c1"># workflow_item = Workflow(</span>
-    <span class="c1">#     full_alias=workflow_alias,</span>
-    <span class="c1">#     rel_alias=workflow_alias,</span>
+    <span class="c1"># if not init_pipeline:</span>
+    <span class="c1">#     steps: List[PipelineStep] = []</span>
+    <span class="c1"># elif isinstance(init_pipeline, str):</span>
+    <span class="c1">#     operation = self._kiara.operation_registry.operations.get(init_pipeline, None)</span>
+    <span class="c1">#     if not operation:</span>
+    <span class="c1">#         raise Exception(f&quot;Can&#39;t initialize workflow, init pipeline value &#39;{init_pipeline}&#39; not an operation id.&quot;)</span>
+    <span class="c1">#</span>
+    <span class="c1">#     module_config = operation.module.config</span>
+    <span class="c1">#     if isinstance(module_config, PipelineConfig):</span>
+    <span class="c1">#         steps = module_config.steps</span>
+    <span class="c1">#     else:</span>
+    <span class="c1">#         raise NotImplementedError()</span>
+    <span class="c1"># else:</span>
+    <span class="c1">#     raise Exception(&quot;&#39;init_pipeline&#39; must be of on of the following types: string&quot;)</span>
+    <span class="c1">#</span>
+    <span class="c1"># workflow_details = WorkflowDetails(</span>
     <span class="c1">#     workflow_id=workflow_id,</span>
-    <span class="c1">#     workflow_archive=store_name,</span>
-    <span class="c1">#     workflow_archive_id=store.archive_id,</span>
+    <span class="c1">#     documentation=documentation,  # type: ignore</span>
     <span class="c1"># )</span>
-    <span class="c1"># self._cached_workflows[workflow_alias] = workflow_item</span>
-    <span class="c1"># self._cached_workflows_by_id[workflow_id] = workflow_item</span>
-    <span class="c1"># return workflow_item</span>
 
-    <span class="c1"># workflow = Workflow(kiara=self._kiara, workflow_alias=workflow_alias)</span>
-    <span class="c1"># and_step_id = workflow.add_step(&quot;logic.and&quot;)</span>
-    <span class="c1"># not_step_id = workflow.add_step(&quot;logic.not&quot;)</span>
-    <span class="c1">#</span>
-    <span class="c1"># workflow.add_input_link(f&quot;{not_step_id}.a&quot;, f&quot;{and_step_id}.y&quot;)</span>
-    <span class="c1">#</span>
-    <span class="c1"># workflow.set_inputs(logic_and__a=True, logic_and__b=True, x=22)</span>
-    <span class="c1"># workflow.apply()</span>
-    <span class="c1"># workflow.set_inputs(logic_and__a=True, logic_and__b=True, x=22)</span>
+    <span class="k">if</span> <span class="n">workflow_details</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">workflow_details</span> <span class="o">=</span> <span class="n">WorkflowDetails</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">workflow_details</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">workflow_details</span> <span class="o">=</span> <span class="n">WorkflowDetails</span><span class="p">(</span><span class="n">documentation</span><span class="o">=</span><span class="n">workflow_details</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+    <span class="n">workflow_details</span><span class="o">.</span><span class="n">_kiara</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span>
+
+    <span class="n">store</span><span class="o">.</span><span class="n">register_workflow</span><span class="p">(</span>
+        <span class="n">workflow_details</span><span class="o">=</span><span class="n">workflow_details</span><span class="p">,</span> <span class="n">workflow_aliases</span><span class="o">=</span><span class="n">workflow_aliases</span>
+    <span class="p">)</span>
+    <span class="c1"># workflow = Workflow(kiara=self._kiara, workflow_details=workflow_details)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_workflows</span><span class="p">[</span><span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">workflow_details</span>
+
+    <span class="k">if</span> <span class="n">workflow_aliases</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">workflow_alias</span> <span class="ow">in</span> <span class="n">workflow_aliases</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_locations</span><span class="p">[</span><span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">store_name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">workflow_aliases</span><span class="p">[</span><span class="n">workflow_alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_id</span>
+
+    <span class="c1"># if steps:</span>
+    <span class="c1">#     workflow.add_steps(*steps)</span>
+    <span class="c1">#     self.save_workflow_state(workflow=workflow.workflow_id)</span>
+
+    <span class="k">return</span> <span class="n">workflow_details</span>
 </code></pre></div>
         </details>
     </div>
@@ -4384,15 +4858,34 @@ WorkflowStore            (<a class="autorefs autorefs-internal" title="kiara.reg
     <span class="k">def</span> <span class="nf">is_writeable</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">register_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">workflow_aliases</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">register_workflow</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">workflow_details</span><span class="p">:</span> <span class="n">WorkflowDetails</span><span class="p">,</span> <span class="n">workflow_aliases</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
 
-        <span class="n">workflow_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_workflow</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">workflow_alias</span> <span class="ow">in</span> <span class="n">workflow_aliases</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">register_alias</span><span class="p">(</span><span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_id</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="n">workflow_alias</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">workflow_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_workflow_details</span><span class="p">(</span><span class="n">workflow_details</span><span class="o">=</span><span class="n">workflow_details</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">workflow_aliases</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">workflow_aliases</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">workflow_aliases</span> <span class="o">=</span> <span class="p">[</span><span class="n">workflow_aliases</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">workflow_alias</span> <span class="ow">in</span> <span class="n">workflow_aliases</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">register_alias</span><span class="p">(</span>
+                    <span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="n">workflow_alias</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">workflow_details</span>
+
+    <span class="k">def</span> <span class="nf">update_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_details</span><span class="p">:</span> <span class="n">WorkflowDetails</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_workflow_details</span><span class="p">(</span><span class="n">workflow_details</span><span class="o">=</span><span class="n">workflow_details</span><span class="p">)</span>
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">create_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_register_workflow_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_details</span><span class="p">:</span> <span class="n">WorkflowDetails</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_update_workflow_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_details</span><span class="p">:</span> <span class="n">WorkflowDetails</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">add_workflow_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">workflow_state</span><span class="p">:</span> <span class="n">WorkflowState</span><span class="p">):</span>
         <span class="k">pass</span>
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
@@ -4417,11 +4910,11 @@ WorkflowStore            (<a class="autorefs autorefs-internal" title="kiara.reg
 
 
 
-<h5 id="kiara.registries.workflows.WorkflowStore.create_workflow" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+<h5 id="kiara.registries.workflows.WorkflowStore.add_workflow_state" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">add_workflow_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">,</span> <span class="n">workflow_state</span><span class="p">)</span></code>
 
 
-<a href="#kiara.registries.workflows.WorkflowStore.create_workflow" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.registries.workflows.WorkflowStore.add_workflow_state" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -4429,7 +4922,7 @@ WorkflowStore            (<a class="autorefs autorefs-internal" title="kiara.reg
         <details class="quote">
           <summary>Source code in <code>kiara/registries/workflows/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-<span class="k">def</span> <span class="nf">create_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">add_workflow_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">workflow_state</span><span class="p">:</span> <span class="n">WorkflowState</span><span class="p">):</span>
     <span class="k">pass</span>
 </code></pre></div>
         </details>
@@ -4499,7 +4992,7 @@ WorkflowStore            (<a class="autorefs autorefs-internal" title="kiara.reg
 
 
 <h5 id="kiara.registries.workflows.WorkflowStore.register_workflow" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">register_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">workflow_aliases</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">register_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_details</span><span class="p">,</span> <span class="n">workflow_aliases</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 <a href="#kiara.registries.workflows.WorkflowStore.register_workflow" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -4509,12 +5002,45 @@ WorkflowStore            (<a class="autorefs autorefs-internal" title="kiara.reg
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/workflows/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">register_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">workflow_aliases</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">register_workflow</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">workflow_details</span><span class="p">:</span> <span class="n">WorkflowDetails</span><span class="p">,</span> <span class="n">workflow_aliases</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">):</span>
 
-    <span class="n">workflow_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_workflow</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">workflow_alias</span> <span class="ow">in</span> <span class="n">workflow_aliases</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">register_alias</span><span class="p">(</span><span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_id</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="n">workflow_alias</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">workflow_id</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_register_workflow_details</span><span class="p">(</span><span class="n">workflow_details</span><span class="o">=</span><span class="n">workflow_details</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">workflow_aliases</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">workflow_aliases</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">workflow_aliases</span> <span class="o">=</span> <span class="p">[</span><span class="n">workflow_aliases</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">workflow_alias</span> <span class="ow">in</span> <span class="n">workflow_aliases</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">register_alias</span><span class="p">(</span>
+                <span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="n">workflow_alias</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">workflow_details</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.registries.workflows.WorkflowStore.update_workflow" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">update_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_details</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.workflows.WorkflowStore.update_workflow" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/workflows/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">update_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_details</span><span class="p">:</span> <span class="n">WorkflowDetails</span><span class="p">):</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_update_workflow_details</span><span class="p">(</span><span class="n">workflow_details</span><span class="o">=</span><span class="n">workflow_details</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -4587,7 +5113,8 @@ FileSystemWorkflowArchive            (<a class="autorefs autorefs-internal" titl
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">archive_id</span><span class="o">=</span><span class="n">archive_id</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_base_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alias_store_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">workflow_store_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
@@ -4604,10 +5131,21 @@ FileSystemWorkflowArchive            (<a class="autorefs autorefs-internal" titl
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflow_store_path</span> <span class="o">/</span> <span class="s2">&quot;aliases&quot;</span>
 
+    <span class="k">def</span> <span class="nf">_delete_archive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workflow_store_path</span><span class="p">)</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">workflow_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflow_store_path</span> <span class="o">/</span> <span class="s2">&quot;workflows&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get_workflow_details_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflow_path</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span><span class="n">workflow_id</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;workflow.json&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get_alias_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">alias_store_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">alias</span><span class="si">}</span><span class="s2">.alias&quot;</span>
 
     <span class="k">def</span> <span class="nf">retrieve_all_workflow_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
 
@@ -4625,8 +5163,55 @@ FileSystemWorkflowArchive            (<a class="autorefs autorefs-internal" titl
 
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="nf">retrieve_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">retrieve_workflow_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowDetails</span><span class="p">:</span>
+
+        <span class="n">workflow_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_workflow_details_path</span><span class="p">(</span><span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">workflow_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve workflow with id &#39;</span><span class="si">{</span><span class="n">workflow_id</span><span class="si">}</span><span class="s2">&#39;: id does not exist.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">workflow_json</span> <span class="o">=</span> <span class="n">workflow_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+
+        <span class="n">workflow_data</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">workflow_json</span><span class="p">)</span>
+        <span class="n">workflow</span> <span class="o">=</span> <span class="n">WorkflowDetails</span><span class="p">(</span><span class="o">**</span><span class="n">workflow_data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">workflow</span>
+
+    <span class="k">def</span> <span class="nf">retrieve_workflow_states</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WorkflowStateFilter</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">WorkflowState</span><span class="p">]:</span>
+
+        <span class="n">workflow_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_workflow_details_path</span><span class="p">(</span><span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_id</span><span class="p">)</span>
+        <span class="n">workflow_state_paths</span> <span class="o">=</span> <span class="n">workflow_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.state&quot;</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">filter</span> <span class="ow">is</span> <span class="kc">None</span>
+
+        <span class="n">states</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">workflow_state_paths</span><span class="p">:</span>
+            <span class="n">_data</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+            <span class="n">_json</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">_data</span><span class="p">)</span>
+            <span class="n">_state</span> <span class="o">=</span> <span class="n">WorkflowState</span><span class="p">(</span><span class="o">**</span><span class="n">_json</span><span class="p">)</span>
+            <span class="n">states</span><span class="p">[</span><span class="n">_state</span><span class="o">.</span><span class="n">workflow_state_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">_state</span>
+
+        <span class="k">return</span> <span class="n">states</span>
+
+    <span class="k">def</span> <span class="nf">retrieve_workflow_state</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">workflow_state_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowState</span><span class="p">:</span>
+
+        <span class="n">workflow_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_workflow_details_path</span><span class="p">(</span><span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_id</span><span class="p">)</span>
+        <span class="n">workflow_state_path</span> <span class="o">=</span> <span class="n">workflow_path</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">workflow_state_id</span><span class="si">}</span><span class="s2">.state&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">workflow_state_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No workflow state with id &#39;</span><span class="si">{</span><span class="n">workflow_state_id</span><span class="si">}</span><span class="s2">&#39; exists for workflow &#39;</span><span class="si">{</span><span class="n">workflow_id</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">_data</span> <span class="o">=</span> <span class="n">workflow_state_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+        <span class="n">_json</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">_data</span><span class="p">)</span>
+        <span class="n">_state</span> <span class="o">=</span> <span class="n">WorkflowState</span><span class="p">(</span><span class="o">**</span><span class="n">_json</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_state</span>
 </code></pre></div>
         </details>
 
@@ -4781,6 +5366,58 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.regis
 
 
 
+<h6 id="kiara.registries.workflows.archives.FileSystemWorkflowArchive-methods">Methods<a href="#kiara.registries.workflows.archives.FileSystemWorkflowArchive-methods" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.registries.workflows.archives.FileSystemWorkflowArchive.get_alias_path" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_alias_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.workflows.archives.FileSystemWorkflowArchive.get_alias_path" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/workflows/archives.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_alias_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">alias_store_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">alias</span><span class="si">}</span><span class="s2">.alias&quot;</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.registries.workflows.archives.FileSystemWorkflowArchive.get_workflow_details_path" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_workflow_details_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.workflows.archives.FileSystemWorkflowArchive.get_workflow_details_path" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/workflows/archives.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_workflow_details_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflow_path</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span><span class="n">workflow_id</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;workflow.json&quot;</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
 
 
   <div class="doc doc-object doc-method">
@@ -4825,19 +5462,136 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.regis
 
 
 
-<h7 id="kiara.registries.workflows.archives.FileSystemWorkflowArchive.retrieve_workflow" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">retrieve_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">)</span></code>
+<h7 id="kiara.registries.workflows.archives.FileSystemWorkflowArchive.retrieve_workflow_details" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_workflow_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">)</span></code>
 
 
-<a href="#kiara.registries.workflows.archives.FileSystemWorkflowArchive.retrieve_workflow" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.registries.workflows.archives.FileSystemWorkflowArchive.retrieve_workflow_details" class="headerlink" title="Permanent link">&para;</a></h7>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/workflows/archives.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
-    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_workflow_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowDetails</span><span class="p">:</span>
+
+    <span class="n">workflow_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_workflow_details_path</span><span class="p">(</span><span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">workflow_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve workflow with id &#39;</span><span class="si">{</span><span class="n">workflow_id</span><span class="si">}</span><span class="s2">&#39;: id does not exist.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">workflow_json</span> <span class="o">=</span> <span class="n">workflow_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+
+    <span class="n">workflow_data</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">workflow_json</span><span class="p">)</span>
+    <span class="n">workflow</span> <span class="o">=</span> <span class="n">WorkflowDetails</span><span class="p">(</span><span class="o">**</span><span class="n">workflow_data</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">workflow</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.registries.workflows.archives.FileSystemWorkflowArchive.retrieve_workflow_state" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_workflow_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">,</span> <span class="n">workflow_state_id</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.workflows.archives.FileSystemWorkflowArchive.retrieve_workflow_state" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>Retrieve workflow state details for the provided state id.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>workflow_id</code></td>
+        <td><code>UUID</code></td>
+        <td><p>id of the workflow</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>workflow_state_id</code></td>
+        <td><code>UUID</code></td>
+        <td><p>the id of the workflow state</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/workflows/archives.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_workflow_state</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">workflow_state_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowState</span><span class="p">:</span>
+
+    <span class="n">workflow_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_workflow_details_path</span><span class="p">(</span><span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_id</span><span class="p">)</span>
+    <span class="n">workflow_state_path</span> <span class="o">=</span> <span class="n">workflow_path</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">workflow_state_id</span><span class="si">}</span><span class="s2">.state&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">workflow_state_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;No workflow state with id &#39;</span><span class="si">{</span><span class="n">workflow_state_id</span><span class="si">}</span><span class="s2">&#39; exists for workflow &#39;</span><span class="si">{</span><span class="n">workflow_id</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">_data</span> <span class="o">=</span> <span class="n">workflow_state_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+    <span class="n">_json</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">_data</span><span class="p">)</span>
+    <span class="n">_state</span> <span class="o">=</span> <span class="n">WorkflowState</span><span class="p">(</span><span class="o">**</span><span class="n">_json</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_state</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.registries.workflows.archives.FileSystemWorkflowArchive.retrieve_workflow_states" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_workflow_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.workflows.archives.FileSystemWorkflowArchive.retrieve_workflow_states" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/workflows/archives.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_workflow_states</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WorkflowStateFilter</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">WorkflowState</span><span class="p">]:</span>
+
+    <span class="n">workflow_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_workflow_details_path</span><span class="p">(</span><span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_id</span><span class="p">)</span>
+    <span class="n">workflow_state_paths</span> <span class="o">=</span> <span class="n">workflow_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.state&quot;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">filter</span> <span class="ow">is</span> <span class="kc">None</span>
+
+    <span class="n">states</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">workflow_state_paths</span><span class="p">:</span>
+        <span class="n">_data</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+        <span class="n">_json</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">_data</span><span class="p">)</span>
+        <span class="n">_state</span> <span class="o">=</span> <span class="n">WorkflowState</span><span class="p">(</span><span class="o">**</span><span class="n">_json</span><span class="p">)</span>
+        <span class="n">states</span><span class="p">[</span><span class="n">_state</span><span class="o">.</span><span class="n">workflow_state_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">_state</span>
+
+    <span class="k">return</span> <span class="n">states</span>
 </code></pre></div>
         </details>
     </div>
@@ -4878,19 +5632,64 @@ FileSystemWorkflowStore            (<a class="autorefs autorefs-internal" title=
 
     <span class="n">_archive_type_name</span> <span class="o">=</span> <span class="s2">&quot;filesystem_workflow_store&quot;</span>
 
-    <span class="k">def</span> <span class="nf">create_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_register_workflow_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_details</span><span class="p">:</span> <span class="n">WorkflowDetails</span><span class="p">):</span>
 
-        <span class="n">workflow_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="s2">&quot;new workflow&quot;</span><span class="p">)</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflow_store_path</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span><span class="n">workflow_id</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;workflow.json&quot;</span>
+        <span class="n">workflow_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_workflow_details_path</span><span class="p">(</span>
+            <span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_id</span>
+        <span class="p">)</span>
 
-        <span class="n">path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">path</span><span class="o">.</span><span class="n">touch</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">workflow_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t register workflow with id &#39;</span><span class="si">{</span><span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_id</span><span class="si">}</span><span class="s2">&#39;: id already registered.&quot;</span>
+            <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">workflow_id</span>
+        <span class="n">workflow_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">register_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">workflow_json</span> <span class="o">=</span> <span class="n">workflow_details</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="n">workflow_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">workflow_json</span><span class="p">)</span>
 
-        <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">_update_workflow_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_details</span><span class="p">:</span> <span class="n">WorkflowDetails</span><span class="p">):</span>
+
+        <span class="n">workflow_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_workflow_details_path</span><span class="p">(</span>
+            <span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_id</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">workflow_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t update workflow with id &#39;</span><span class="si">{</span><span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_id</span><span class="si">}</span><span class="s2">&#39;: id not registered.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">workflow_json</span> <span class="o">=</span> <span class="n">workflow_details</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="n">workflow_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">workflow_json</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">register_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+
+        <span class="n">alias_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_alias_path</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="n">alias</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">force</span> <span class="ow">and</span> <span class="n">alias_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t register workflow alias &#39;</span><span class="si">{</span><span class="n">alias</span><span class="si">}</span><span class="s2">&#39;: alias already registered.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">alias_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">alias_path</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
+
+        <span class="n">workflow_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_workflow_details_path</span><span class="p">(</span><span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">workflow_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t register workflow alias &#39;</span><span class="si">{</span><span class="n">alias</span><span class="si">}</span><span class="s2">&#39;: target id &#39;</span><span class="si">{</span><span class="n">workflow_id</span><span class="si">}</span><span class="s2">&#39; not registered.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">alias_path</span><span class="o">.</span><span class="n">symlink_to</span><span class="p">(</span><span class="n">workflow_path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_workflow_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">workflow_state</span><span class="p">:</span> <span class="n">WorkflowState</span><span class="p">):</span>
+
+        <span class="n">workflow_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_workflow_details_path</span><span class="p">(</span><span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_id</span><span class="p">)</span>
+
+        <span class="n">workflow_state_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">workflow_path</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">workflow_state</span><span class="o">.</span><span class="n">workflow_state_id</span><span class="si">}</span><span class="s2">.state&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">workflow_state_json</span> <span class="o">=</span> <span class="n">workflow_state</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="n">workflow_state_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">workflow_state_json</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -4910,26 +5709,27 @@ FileSystemWorkflowStore            (<a class="autorefs autorefs-internal" title=
 
 
 
-<h7 id="kiara.registries.workflows.archives.FileSystemWorkflowStore.create_workflow" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+<h7 id="kiara.registries.workflows.archives.FileSystemWorkflowStore.add_workflow_state" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">add_workflow_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">,</span> <span class="n">workflow_state</span><span class="p">)</span></code>
 
 
-<a href="#kiara.registries.workflows.archives.FileSystemWorkflowStore.create_workflow" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.registries.workflows.archives.FileSystemWorkflowStore.add_workflow_state" class="headerlink" title="Permanent link">&para;</a></h7>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/workflows/archives.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">add_workflow_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">workflow_state</span><span class="p">:</span> <span class="n">WorkflowState</span><span class="p">):</span>
 
-    <span class="n">workflow_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="s2">&quot;new workflow&quot;</span><span class="p">)</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflow_store_path</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span><span class="n">workflow_id</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;workflow.json&quot;</span>
+    <span class="n">workflow_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_workflow_details_path</span><span class="p">(</span><span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_id</span><span class="p">)</span>
 
-    <span class="n">path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">path</span><span class="o">.</span><span class="n">touch</span><span class="p">()</span>
+    <span class="n">workflow_state_path</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">workflow_path</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">workflow_state</span><span class="o">.</span><span class="n">workflow_state_id</span><span class="si">}</span><span class="s2">.state&quot;</span>
+    <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">workflow_id</span>
+    <span class="n">workflow_state_json</span> <span class="o">=</span> <span class="n">workflow_state</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="n">workflow_state_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">workflow_state_json</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -4943,7 +5743,7 @@ FileSystemWorkflowStore            (<a class="autorefs autorefs-internal" title=
 
 
 <h7 id="kiara.registries.workflows.archives.FileSystemWorkflowStore.register_alias" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">register_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">,</span> <span class="n">alias</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">register_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">,</span> <span class="n">alias</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 <a href="#kiara.registries.workflows.archives.FileSystemWorkflowStore.register_alias" class="headerlink" title="Permanent link">&para;</a></h7>
@@ -4953,9 +5753,23 @@ FileSystemWorkflowStore            (<a class="autorefs autorefs-internal" title=
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/workflows/archives.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">register_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">register_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 
-    <span class="k">pass</span>
+    <span class="n">alias_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_alias_path</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="n">alias</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">force</span> <span class="ow">and</span> <span class="n">alias_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t register workflow alias &#39;</span><span class="si">{</span><span class="n">alias</span><span class="si">}</span><span class="s2">&#39;: alias already registered.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">alias_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">alias_path</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
+
+    <span class="n">workflow_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_workflow_details_path</span><span class="p">(</span><span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">workflow_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t register workflow alias &#39;</span><span class="si">{</span><span class="n">alias</span><span class="si">}</span><span class="s2">&#39;: target id &#39;</span><span class="si">{</span><span class="n">workflow_id</span><span class="si">}</span><span class="s2">&#39; not registered.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">alias_path</span><span class="o">.</span><span class="n">symlink_to</span><span class="p">(</span><span class="n">workflow_path</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>

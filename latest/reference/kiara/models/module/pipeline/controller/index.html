@@ -1494,6 +1494,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../interfaces/python_api/workflow/" class="md-nav__link">
+        workflow
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -3696,20 +3710,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../../workflows/__init__/" class="md-nav__link">
-        workflows
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -4163,11 +4163,13 @@ SinglePipelineController            (<a class="autorefs autorefs-internal" title
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/pipeline/controller.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SinglePipelineController</span><span class="p">(</span><span class="n">PipelineController</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_registry</span><span class="p">:</span> <span class="n">JobRegistry</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Pipeline</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">job_registry</span><span class="p">:</span> <span class="n">JobRegistry</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Pipeline</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Pipeline</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Pipeline</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_job_registry</span><span class="p">:</span> <span class="n">JobRegistry</span> <span class="o">=</span> <span class="n">job_registry</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_details</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PipelineDetails</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_details</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PipelineDetails</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">pipeline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">pipeline</span>

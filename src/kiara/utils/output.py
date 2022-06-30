@@ -12,6 +12,7 @@ from pydantic import BaseModel, Field, root_validator
 from rich import box
 from rich.console import ConsoleRenderable, Group, RenderableType, RichCast
 from rich.table import Table as RichTable
+from rich.tree import Tree
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Set, Type, Union
 
 from kiara.defaults import SpecialValue
@@ -22,6 +23,8 @@ if TYPE_CHECKING:
     from pyarrow import Table as ArrowTable
     from sqlalchemy.engine import Engine
 
+    from kiara.models.events.pipeline import PipelineDetails
+    from kiara.models.module.pipeline import PipelineStructure
     from kiara.models.values.value_schema import ValueSchema
 
 
@@ -812,3 +815,30 @@ def create_renderable_from_values(
         table.add_row(*row)
 
     return table
+
+
+def create_pipeline_steps_tree(
+    pipeline_structure: "PipelineStructure", pipeline_details: "PipelineDetails"
+) -> Tree:
+
+    from kiara.models.module.pipeline import StepStatus
+
+    steps = Tree("steps")
+
+    for idx, stage in enumerate(pipeline_structure.processing_stages, start=1):
+        stage_node = steps.add(f"stage: [i]{idx}[/i]")
+        for step_id in stage:
+            step_node = stage_node.add(f"step: [i]{step_id}[/i]")
+            step_details = pipeline_details.step_states[step_id]
+            status = step_details.status
+            if status is StepStatus.INPUTS_READY:
+                step_node.add("status: [yellow]inputs ready[/yellow]")
+            elif status is StepStatus.RESULTS_READY:
+                step_node.add("status: [green]results ready[/green]")
+            else:
+                invalid_node = step_node.add("status: [red]inputs invalid[/red]")
+                invalid = step_details.invalid_details
+                for k, v in invalid.items():
+                    invalid_node.add(f"[i]{k}[/i]: {v}")
+
+    return steps

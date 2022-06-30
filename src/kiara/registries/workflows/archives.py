@@ -5,7 +5,7 @@ import uuid
 from pathlib import Path
 from typing import Dict, Mapping, Union
 
-from kiara.models.workflow import WorkflowDetails, WorkflowState, WorkflowStateFilter
+from kiara.models.workflow import WorkflowDetails, WorkflowState
 from kiara.registries import ARCHIVE_CONFIG_CLS, FileSystemArchiveConfig
 from kiara.registries.workflows import WorkflowArchive, WorkflowStore
 
@@ -42,8 +42,11 @@ class FileSystemWorkflowArchive(WorkflowArchive):
 
     @property
     def workflow_path(self) -> Path:
-
         return self.workflow_store_path / "workflows"
+
+    @property
+    def workflow_states_path(self) -> Path:
+        return self.workflow_store_path / "states"
 
     def get_workflow_details_path(self, workflow_id: uuid.UUID) -> Path:
 
@@ -84,40 +87,46 @@ class FileSystemWorkflowArchive(WorkflowArchive):
 
         return workflow
 
-    def retrieve_workflow_states(
-        self, workflow_id: uuid.UUID, filter: Union[WorkflowStateFilter, None] = None
-    ) -> Dict[uuid.UUID, WorkflowState]:
+    # def retrieve_workflow_states(
+    #     self, workflow_id: uuid.UUID, filter: Union[WorkflowStateFilter, None] = None
+    # ) -> Dict[str, WorkflowState]:
+    #
+    #     workflow_
+    #     assert filter is None
+    #
+    #     states = {}
+    #     for path in workflow_state_paths:
+    #         _data = path.read_text()
+    #         _json = orjson.loads(_data)
+    #         _state = WorkflowState(**_json)
+    #         states[_state.instance_id] = _state
+    #
+    #     return states
 
-        workflow_path = self.get_workflow_details_path(workflow_id=workflow_id)
-        workflow_state_paths = workflow_path.parent.glob("*.state")
+    def retrieve_workflow_state(self, workflow_state_id: str) -> WorkflowState:
 
-        assert filter is None
-
-        states = {}
-        for path in workflow_state_paths:
-            _data = path.read_text()
-            _json = orjson.loads(_data)
-            _state = WorkflowState(**_json)
-            states[_state.workflow_state_id] = _state
-
-        return states
-
-    def retrieve_workflow_state(
-        self, workflow_id: uuid.UUID, workflow_state_id: uuid.UUID
-    ) -> WorkflowState:
-
-        workflow_path = self.get_workflow_details_path(workflow_id=workflow_id)
-        workflow_state_path = workflow_path.parent / f"{workflow_state_id}.state"
+        workflow_state_path = self.workflow_states_path / f"{workflow_state_id}.state"
 
         if not workflow_state_path.exists():
-            raise Exception(
-                f"No workflow state with id '{workflow_state_id}' exists for workflow '{workflow_id}'."
-            )
+            raise Exception(f"No workflow state with id '{workflow_state_id}' exists.")
 
         _data = workflow_state_path.read_text()
         _json = orjson.loads(_data)
         _state = WorkflowState(**_json)
         return _state
+
+    def retrieve_all_states_for_workflow(
+        self, workflow_id: uuid.UUID
+    ) -> Mapping[str, WorkflowState]:
+
+        details = self.retrieve_workflow_details(workflow_id=workflow_id)
+
+        result = {}
+        for ws_id in details.workflow_states.values():
+            ws_state = self.retrieve_workflow_state(workflow_state_id=ws_id)
+            result[ws_id] = ws_state
+
+        return result
 
 
 class FileSystemWorkflowStore(FileSystemWorkflowArchive, WorkflowStore):
@@ -151,7 +160,7 @@ class FileSystemWorkflowStore(FileSystemWorkflowArchive, WorkflowStore):
                 f"Can't update workflow with id '{workflow_details.workflow_id}': id not registered."
             )
 
-        workflow_json = workflow_details.json()
+        workflow_json = workflow_details.json(option=orjson.OPT_NON_STR_KEYS)
         workflow_path.write_text(workflow_json)
 
     def register_alias(self, workflow_id: uuid.UUID, alias: str, force: bool = False):
@@ -172,12 +181,11 @@ class FileSystemWorkflowStore(FileSystemWorkflowArchive, WorkflowStore):
 
         alias_path.symlink_to(workflow_path)
 
-    def add_workflow_state(self, workflow_id: uuid.UUID, workflow_state: WorkflowState):
+    def add_workflow_state(self, workflow_state: WorkflowState):
 
-        workflow_path = self.get_workflow_details_path(workflow_id=workflow_id)
-
+        self.workflow_states_path.mkdir(exist_ok=True, parents=True)
         workflow_state_path = (
-            workflow_path.parent / f"{workflow_state.workflow_state_id}.state"
+            self.workflow_states_path / f"{workflow_state.instance_id}.state"
         )
 
         workflow_state_json = workflow_state.json()

@@ -7,7 +7,7 @@
 
 import structlog
 import uuid
-from typing import Mapping, Union
+from typing import Dict, Mapping, Union
 
 from kiara.context import JobRegistry
 from kiara.models.events.pipeline import PipelineDetails, PipelineEvent
@@ -43,8 +43,11 @@ class SinglePipelineController(PipelineController):
 
     @pipeline.setter
     def pipeline(self, pipeline: Pipeline):
-        # if self._pipeline is not None:
-        #     self._pipeline.remove_listener(self)
+
+        if self._pipeline is not None:
+            # TODO: destroy object?
+            self._pipeline._listeners.clear()
+
         self._pipeline = pipeline
         if self._pipeline is not None:
             self._pipeline.add_listener(self)
@@ -78,18 +81,31 @@ class SinglePipelineController(PipelineController):
 
         self._pipeline_details = None
 
-    def set_processing_results(self, job_ids: Mapping[str, uuid.UUID]):
+    def set_processing_results(
+        self, job_ids: Mapping[str, uuid.UUID]
+    ) -> Mapping[uuid.UUID, uuid.UUID]:
+        """Set the processing results as values of the approrpiate step outputs.
+
+        Returns:
+            a dict with the result value id as key, and the id of the job that produced it as value
+        """
 
         self._job_registry.wait_for(*job_ids.values())
 
+        result: Dict[uuid.UUID, uuid.UUID] = {}
         combined_outputs = {}
         for step_id, job_id in job_ids.items():
-            record = self._job_registry.get_job_record_in_session(job_id=job_id)
+            record = self._job_registry.get_job_record(job_id=job_id)
             combined_outputs[step_id] = record.outputs
+            for output_id in record.outputs.values():
+                assert output_id not in result.keys()
+                result[output_id] = job_id
 
         self.pipeline.set_multiple_step_outputs(
             changed_outputs=combined_outputs, notify_listeners=True
         )
+
+        return result
 
     def pipeline_is_ready(self) -> bool:
         """Return whether the pipeline is ready to be processed.

@@ -147,7 +147,7 @@ class PipelineStep(Manifest):
     #     description="The stage number this step is executed within the pipeline.",
     # )
     input_links: Mapping[str, List[StepValueAddress]] = Field(
-        description="The links that connect to inputs of the module.",
+        description="The links that connect to inputs of the module. Keys are field names, value(s) are connected outputs.",
         default_factory=list,
     )
     module_details: KiaraModuleClass = Field(

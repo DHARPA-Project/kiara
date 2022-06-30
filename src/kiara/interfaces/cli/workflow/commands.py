@@ -11,9 +11,10 @@ import structlog
 from typing import Tuple, Union
 
 from kiara import Kiara
+from kiara.interfaces.python_api.operation import KiaraOperation
 from kiara.interfaces.python_api.workflow import Workflow
-from kiara.models.module.operation import Operation
 from kiara.models.module.pipeline import PipelineConfig
+from kiara.models.workflow import WorkflowInfo
 from kiara.modules.included_core_modules.pipeline import PipelineModule
 from kiara.utils import StringYAML, dict_from_cli_args
 from kiara.utils.cli import terminal_print, terminal_print_model
@@ -53,26 +54,32 @@ def create(ctx, workflow_alias: str, blueprint: str, desc: Union[str, None] = No
 
     kiara: Kiara = ctx.obj["kiara"]
 
+    operation: Union[None, KiaraOperation] = None
+    if blueprint:
+        operation = KiaraOperation(kiara=kiara, operation_name=blueprint)
+
     workflow_details = kiara.workflow_registry.register_workflow(
         workflow_aliases=[workflow_alias], workflow_details=desc
     )
 
-    terminal_print_model(workflow_details)
-
     workflow_details.create_workflow_state()
 
     if blueprint:
-        operation: Operation = kiara.operation_registry.get_operation(blueprint)
-        module = operation.module
+        assert operation
+
+        module = operation.operation.module
         if isinstance(module, PipelineModule):
             config: PipelineConfig = module.config
         else:
             raise NotImplementedError()
 
         state = workflow_details.create_workflow_state(steps=config.steps)
-        kiara.workflow_registry.add_workflow_state(
-            workflow_state=state, set_current=True
+
+        workflow_details = kiara.workflow_registry.add_workflow_state(
+            workflow=workflow_details, workflow_state=state, set_current=True
         )
+
+    terminal_print_model(workflow_details)
 
 
 @workflow.command()
@@ -88,47 +95,59 @@ def explain(ctx, workflow: str):
     # dbg(state)
     workflow_details = kiara.workflow_registry.get_workflow_details(workflow=workflow)
 
-    workflow_obj = Workflow(kiara=kiara, workflow_id=workflow_details.workflow_id)
-    terminal_print(workflow_obj)
+    workflow_obj = Workflow(kiara=kiara, workflow=workflow_details.workflow_id)
+
+    workflow_info = WorkflowInfo.create_from_workflow(workflow=workflow_obj)
+    terminal_print_model(workflow_info)
 
 
 @workflow.command()
 @click.argument("workflow", nargs=1)
 @click.argument("inputs", nargs=-1, required=False)
 @click.option(
-    "--apply/--no-apply",
+    "--process/--no-process",
     "-a/-n",
-    help="Start processing all possible intermediate and end-results.",
+    help="Process all possible intermediate and end-results.",
     is_flag=True,
     default=True,
 )
 @click.pass_context
-def set_input(ctx, workflow: str, inputs: Tuple[str], apply: bool):
+def set_input(ctx, workflow: str, inputs: Tuple[str], process: bool):
     """Set one or several inputs on the specified workflow."""
 
     kiara: Kiara = ctx.obj["kiara"]
-    workflow_details = kiara.workflow_registry.get_workflow_details(workflow=workflow)
 
-    state = kiara.workflow_registry.get_workflow_state(
-        workflow=workflow_details.workflow_id
-    )
+    workflow_obj = Workflow(kiara=kiara, workflow=workflow)
 
-    inputs_schema = state.pipeline_config.structure.pipeline_inputs_schema
+    inputs_schema = workflow_obj.current_inputs_schema
     list_keys = []
     for name, value_schema in inputs_schema.items():
         if value_schema.type in ["list"]:
             list_keys.append(name)
     inputs_dict = dict_from_cli_args(*inputs, list_keys=list_keys)
 
-    registered = kiara.data_registry.create_valuemap(
-        data=inputs_dict, schema=inputs_schema
-    )
-    for k, v in registered.items():
-        kiara.data_registry.store_value(v)
+    workflow_obj.set_inputs(**inputs_dict)
 
-    value_ids = registered.get_all_value_ids()
+    if process:
+        try:
+            workflow_obj.process_steps()
+        except Exception as e:
+            print(e)
 
-    new_state = state.create_workflow_state(inputs=value_ids)
-    kiara.workflow_registry.add_workflow_state(
-        workflow_state=new_state, set_current=True
-    )
+    workflow_obj.snapshot(save=True)
+    terminal_print(workflow_obj)
+
+    # workflow_obj.save_state()
+
+    # registered = kiara.data_registry.create_valuemap(
+    #     data=inputs_dict, schema=inputs_schema
+    # )
+    # for k, v in registered.items():
+    #     kiara.data_registry.store_value(v)
+    #
+    # value_ids = registered.get_all_value_ids()
+    #
+    # new_state = state.create_workflow_state(inputs=value_ids)
+    # kiara.workflow_registry.add_workflow_state(
+    #     workflow_state=new_state, set_current=True
+    # )

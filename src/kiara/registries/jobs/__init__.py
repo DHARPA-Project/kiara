@@ -339,6 +339,19 @@ class JobRegistry(object):
 
         return self._processor.get_job_record(job_id)
 
+    def get_job_record(self, job_id: uuid.UUID) -> JobRecord:
+
+        if job_id in self._archived_records.keys():
+            return self._archived_records[job_id]
+
+        try:
+            job_record = self._processor.get_job_record(job_id=job_id)
+            return job_record
+        except Exception:
+            pass
+
+        raise NotImplementedError()
+
     def retrieve_all_job_records(self) -> Mapping[str, JobRecord]:
 
         all_records: Dict[str, JobRecord] = {}

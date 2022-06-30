@@ -162,6 +162,7 @@ def dict_from_cli_args(
                 if k in config.keys():
                     logger.warning("duplicate.key", old_value=k, new_value=v)
                 config[k] = v
+
     return config
 
 

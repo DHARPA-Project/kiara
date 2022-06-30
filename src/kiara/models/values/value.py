@@ -1423,7 +1423,7 @@ class ValueMapWritable(ValueMap):  # type: ignore
     )
     unique_value_ids: bool = Field(
         description="Whether this value map always creates new value(id)s, even when a dataset with matching hash is found.",
-        default=False,
+        default=True,
     )
 
     _values_uncommitted: Dict[str, Any] = PrivateAttr(default_factory=dict)

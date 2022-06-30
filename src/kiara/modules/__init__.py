@@ -255,7 +255,7 @@ class ModuleCharacteristics(BaseModel):
     )
     unique_result_values: bool = Field(
         description="Don't re-use existing values for outputs that have matching hashes in the data store.",
-        default=False,
+        default=True,
     )
 
 

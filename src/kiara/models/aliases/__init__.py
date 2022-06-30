@@ -71,9 +71,11 @@ class AliasValueMap(ValueMap):
         if VALUE_ALIAS_SEPARATOR not in field_name:
 
             if self.values_schema.get(field_name, None) is None:
-                raise KeyError(
-                    f"No field name '{field_name}'. Available fields: {', '.join(self.values_schema.keys())}"
-                )
+                if not self.values_schema:
+                    msg = "No available fields"
+                else:
+                    msg = "Available fields: " + ", ".join(self.values_schema.keys())
+                raise KeyError(f"No field name '{field_name}'. {msg}")
 
             field_items = self.value_items[field_name]
             if not field_items:

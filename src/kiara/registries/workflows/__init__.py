@@ -5,12 +5,13 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import abc
+import datetime
 import structlog
 import uuid
 from typing import TYPE_CHECKING, Callable, Dict, Iterable, Mapping, Union
 
 from kiara.models.events.workflow_registry import WorkflowArchiveAddedEvent
-from kiara.models.workflow import WorkflowDetails, WorkflowState, WorkflowStateFilter
+from kiara.models.workflow import WorkflowDetails, WorkflowState
 from kiara.registries import BaseArchive
 
 if TYPE_CHECKING:
@@ -36,16 +37,25 @@ class WorkflowArchive(BaseArchive):
     def retrieve_workflow_details(self, workflow_id: uuid.UUID):
         pass
 
-    @abc.abstractmethod
-    def retrieve_workflow_states(
-        self, workflow_id: uuid.UUID, filter: Union[WorkflowStateFilter, None] = None
-    ) -> Dict[uuid.UUID, WorkflowState]:
-        pass
+    # @abc.abstractmethod
+    # def retrieve_workflow_states(
+    #     self, workflow_id: uuid.UUID, filter: Union[WorkflowStateFilter, None] = None
+    # ) -> Dict[str, WorkflowState]:
+    #     pass
 
     @abc.abstractmethod
-    def retrieve_workflow_state(
-        self, workflow_id: uuid.UUID, workflow_state_id: uuid.UUID
-    ) -> WorkflowState:
+    def retrieve_workflow_state(self, workflow_state_id: str) -> WorkflowState:
+        """Retrieve workflow state details for the provided state id.
+
+        Arguments:
+            workflow_id: id of the workflow
+            workflow_state_id: the id of the workflow state
+        """
+
+    @abc.abstractmethod
+    def retrieve_all_states_for_workflow(
+        self, workflow_id: uuid.UUID
+    ) -> Mapping[str, WorkflowState]:
         """Retrieve workflow state details for the provided state id.
 
         Arguments:
@@ -86,7 +96,7 @@ class WorkflowStore(WorkflowArchive):
         pass
 
     @abc.abstractmethod
-    def add_workflow_state(self, workflow_id: uuid.UUID, workflow_state: WorkflowState):
+    def add_workflow_state(self, workflow_state: WorkflowState):
         pass
 
     @abc.abstractmethod
@@ -235,7 +245,7 @@ class WorkflowRegistry(object):
         store = self._workflow_archives[store_alias]
 
         workflow_details = store.retrieve_workflow_details(workflow_id=workflow_id)
-        workflow_details._kiara = self._kiara
+        # workflow_details._kiara = self._kiara
         # workflow = Workflow(kiara=self._kiara, workflow_details=workflow_details)
         self._cached_workflows[workflow_id] = workflow_details
 
@@ -286,7 +296,7 @@ class WorkflowRegistry(object):
         elif isinstance(workflow_details, str):
             workflow_details = WorkflowDetails(documentation=workflow_details)  # type: ignore
 
-        workflow_details._kiara = self._kiara
+        # workflow_details._kiara = self._kiara
 
         store.register_workflow(
             workflow_details=workflow_details, workflow_aliases=workflow_aliases
@@ -305,33 +315,46 @@ class WorkflowRegistry(object):
 
         return workflow_details
 
-    def get_workflow_states(
-        self, workflow: Union[uuid.UUID, str]
-    ) -> Dict[uuid.UUID, WorkflowState]:
-
-        workflow_details = self.get_workflow_details(workflow=workflow)
-        archive_alias = self._workflow_locations[workflow_details.workflow_id]
-
-        archive = self.get_archive(archive_alias)
-        if archive is None:
-            raise Exception(
-                f"Can't retrieve workflow archive '{archive_alias}', this is most likely a bug."
-            )
-        states = archive.retrieve_workflow_states(
-            workflow_id=workflow_details.workflow_id
-        )
-
-        return states
+    # def get_workflow_states(
+    #     self, workflow: Union[uuid.UUID, str]
+    # ) -> Dict[uuid.UUID, WorkflowState]:
+    #
+    #     workflow_details = self.get_workflow_details(workflow=workflow)
+    #     archive_alias = self._workflow_locations[workflow_details.workflow_id]
+    #
+    #     archive = self.get_archive(archive_alias)
+    #     if archive is None:
+    #         raise Exception(
+    #             f"Can't retrieve workflow archive '{archive_alias}', this is most likely a bug."
+    #         )
+    #     states = archive.retrieve_workflow_states(
+    #         workflow_id=workflow_details.workflow_id
+    #     )
+    #
+    #     return states
 
     def get_workflow_state(
         self,
-        workflow: Union[uuid.UUID, str],
-        workflow_state_id: Union[uuid.UUID, None] = None,
+        workflow_state_id: Union[str, None] = None,
+        workflow: Union[None, uuid.UUID, str] = None,
     ) -> WorkflowState:
 
-        workflow_details = self.get_workflow_details(workflow=workflow)
-        if workflow_state_id is None:
-            workflow_state_id = workflow_details.current_state
+        if workflow is None and workflow_state_id is None:
+            raise Exception(
+                "Can't retrieve workflow state, neither workflow nor workflow state id specified."
+            )
+
+        if workflow:
+            workflow_details = self.get_workflow_details(workflow=workflow)
+            if workflow_state_id is None:
+                workflow_state_id = workflow_details.current_state
+            else:
+                if workflow_state_id not in workflow_details.workflow_states.values():
+                    raise Exception(
+                        f"Can't retrieve workflow state '{workflow_state_id}' for workflow '{workflow}': state not registered for workflow."
+                    )
+        else:
+            raise NotImplementedError()
 
         if workflow_state_id is None:
             raise Exception(
@@ -346,20 +369,45 @@ class WorkflowRegistry(object):
                 f"Can't retrieve workflow archive '{archive_alias}', this is most likely a bug."
             )
         state = archive.retrieve_workflow_state(
-            workflow_id=workflow_details.workflow_id,
             workflow_state_id=workflow_state_id,
         )
 
         return state
 
+    def get_all_states_for_workflow(
+        self, workflow: Union[uuid.UUID, str]
+    ) -> Mapping[str, WorkflowState]:
+
+        workflow_details = self.get_workflow_details(workflow=workflow)
+
+        archive_alias = self._workflow_locations[workflow_details.workflow_id]
+
+        archive = self.get_archive(archive_alias)
+        if archive is None:
+            raise Exception(
+                f"Can't retrieve workflow archive '{archive_alias}', this is most likely a bug."
+            )
+
+        states = archive.retrieve_all_states_for_workflow(
+            workflow_id=workflow_details.workflow_id
+        )
+        return states
+
     def add_workflow_state(
-        self, workflow_state: WorkflowState, set_current: bool = True
-    ):
+        self,
+        workflow: Union[str, uuid.UUID, WorkflowDetails],
+        workflow_state: WorkflowState,
+        set_current: bool = True,
+    ) -> WorkflowDetails:
 
         # make sure the workflow is registed
-        workflow_details = self.get_workflow_details(
-            workflow=workflow_state.workflow_id
-        )
+        created = datetime.datetime.now()
+        if not isinstance(workflow, WorkflowDetails):
+            workflow_details = self.get_workflow_details(workflow=workflow)
+        else:
+            workflow_details = workflow
+
+        workflow_details.workflow_states[created] = workflow_state.instance_id
 
         for field_name, value_id in workflow_state.inputs.items():
             self._kiara.data_registry.store_value(value=value_id)
@@ -370,10 +418,10 @@ class WorkflowRegistry(object):
         store_name = self.default_alias_store
         store: WorkflowStore = self.get_archive(archive_id=store_name)  # type: ignore
 
-        store.add_workflow_state(
-            workflow_id=workflow_state.workflow_id, workflow_state=workflow_state
-        )
-
+        store.add_workflow_state(workflow_state=workflow_state)
         if set_current:
-            workflow_details.current_state = workflow_state.workflow_state_id
-            store.update_workflow(workflow_details)
+            workflow_details.current_state = workflow_state.instance_id
+
+        store.update_workflow(workflow_details)
+
+        return workflow_details

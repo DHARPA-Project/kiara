@@ -249,6 +249,8 @@ class JobRecord(JobConfig):
             attr = getattr(self, k)
             v = extract_renderable(attr)
             table.add_row(k, v)
+        table.add_row("job hash", self.job_hash)
+        table.add_row("inputs hash", self.inputs_hash)
         return table
 
     # @property

@@ -219,7 +219,7 @@ class PipelineStructure(KiaraModel):
 
         d = self.steps_details.get(step_id, None)
         if d is None:
-            raise Exception(f"No module with id: {step_id}")
+            raise Exception(f"No step with id: {step_id}")
 
         return d["step"]
 
@@ -227,7 +227,7 @@ class PipelineStructure(KiaraModel):
 
         d = self.steps_details.get(step_id, None)
         if d is None:
-            raise Exception(f"No module with id: {step_id}")
+            raise Exception(f"No step with id: {step_id}")
 
         return d["inputs"]
 
@@ -235,7 +235,7 @@ class PipelineStructure(KiaraModel):
 
         d = self.steps_details.get(step_id, None)
         if d is None:
-            raise Exception(f"No module with id: {step_id}")
+            raise Exception(f"No step with id: {step_id}")
 
         return d["outputs"]
 
@@ -243,7 +243,7 @@ class PipelineStructure(KiaraModel):
 
         d = self.steps_details.get(step_id, None)
         if d is None:
-            raise Exception(f"No module with id: {step_id}")
+            raise Exception(f"No step with id: {step_id}")
 
         return d
 

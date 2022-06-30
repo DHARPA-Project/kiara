@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Mapping, MutableMapping, Set,
 
 from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID
 from kiara.models.events import KiaraEvent
-from kiara.models.module.pipeline import StepStatus
+from kiara.models.module.pipeline import PipelineStep, StepStatus
 from kiara.utils import orjson_dumps
 
 try:
@@ -36,6 +36,7 @@ class StepDetails(BaseModel):
 
     kiara_id: uuid.UUID = Field(description="The id of the kiara context.")
     pipeline_id: uuid.UUID = Field(description="The id of the pipeline.")
+    step: PipelineStep = Field(description="The pipeline step details.")
     step_id: str = Field(description="The id of the step.")
     processing_stage: int = Field(
         description="The execution stage where this step is executed."

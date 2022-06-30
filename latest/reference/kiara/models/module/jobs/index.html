@@ -4667,6 +4667,8 @@ JobRecord            (<a class="autorefs autorefs-internal" title="kiara.models.
             <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
             <span class="n">v</span> <span class="o">=</span> <span class="n">extract_renderable</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;job hash&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_hash</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;inputs hash&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs_hash</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">table</span>
 
     <span class="c1"># @property</span>
@@ -4860,6 +4862,8 @@ JobRecord            (<a class="autorefs autorefs-internal" title="kiara.models.
         <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
         <span class="n">v</span> <span class="o">=</span> <span class="n">extract_renderable</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;job hash&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_hash</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;inputs hash&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs_hash</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">table</span>
 </code></pre></div>
         </details>

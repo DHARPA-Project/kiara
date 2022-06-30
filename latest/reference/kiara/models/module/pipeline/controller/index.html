@@ -4183,8 +4183,11 @@ SinglePipelineController            (<a class="autorefs autorefs-internal" title
 
     <span class="nd">@pipeline</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">:</span> <span class="n">Pipeline</span><span class="p">):</span>
-        <span class="c1"># if self._pipeline is not None:</span>
-        <span class="c1">#     self._pipeline.remove_listener(self)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># TODO: destroy object?</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span><span class="o">.</span><span class="n">_listeners</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span> <span class="o">=</span> <span class="n">pipeline</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span><span class="o">.</span><span class="n">add_listener</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -4218,18 +4221,31 @@ SinglePipelineController            (<a class="autorefs autorefs-internal" title
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_details</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">set_processing_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_ids</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]):</span>
+    <span class="k">def</span> <span class="nf">set_processing_results</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">job_ids</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Set the processing results as values of the approrpiate step outputs.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            a dict with the result value id as key, and the id of the job that produced it as value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_job_registry</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="o">*</span><span class="n">job_ids</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
+        <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">combined_outputs</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">step_id</span><span class="p">,</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="n">job_ids</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job_registry</span><span class="o">.</span><span class="n">get_job_record_in_session</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
+            <span class="n">record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job_registry</span><span class="o">.</span><span class="n">get_job_record</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
             <span class="n">combined_outputs</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">outputs</span>
+            <span class="k">for</span> <span class="n">output_id</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">assert</span> <span class="n">output_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">output_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_id</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">set_multiple_step_outputs</span><span class="p">(</span>
             <span class="n">changed_outputs</span><span class="o">=</span><span class="n">combined_outputs</span><span class="p">,</span> <span class="n">notify_listeners</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="nf">pipeline_is_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return whether the pipeline is ready to be processed.</span>
@@ -4515,21 +4531,50 @@ pipeline can be processed.</p>
 
     <div class="doc doc-contents ">
 
+      <p>Set the processing results as values of the approrpiate step outputs.</p>
 
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Mapping[uuid.UUID, uuid.UUID]</code></td>
+      <td><p>a dict with the result value id as key, and the id of the job that produced it as value</p></td>
+    </tr>
+  </tbody>
+</table>
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/pipeline/controller.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_processing_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_ids</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_processing_results</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">job_ids</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Set the processing results as values of the approrpiate step outputs.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a dict with the result value id as key, and the id of the job that produced it as value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_job_registry</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="o">*</span><span class="n">job_ids</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
+    <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">combined_outputs</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">step_id</span><span class="p">,</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="n">job_ids</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job_registry</span><span class="o">.</span><span class="n">get_job_record_in_session</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job_registry</span><span class="o">.</span><span class="n">get_job_record</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
         <span class="n">combined_outputs</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">outputs</span>
+        <span class="k">for</span> <span class="n">output_id</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">assert</span> <span class="n">output_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">output_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_id</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">set_multiple_step_outputs</span><span class="p">(</span>
         <span class="n">changed_outputs</span><span class="o">=</span><span class="n">combined_outputs</span><span class="p">,</span> <span class="n">notify_listeners</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
         </details>
     </div>

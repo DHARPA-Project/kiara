@@ -4370,6 +4370,7 @@ StringYAML            (<span title="ruamel.yaml.main.YAML">YAML</span>)
                 <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;duplicate.key&quot;</span><span class="p">,</span> <span class="n">old_value</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">new_value</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
                 <span class="n">config</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
     <span class="k">return</span> <span class="n">config</span>
 </code></pre></div>
         </details>
@@ -11534,6 +11535,54 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
 
 
 <h4 id="kiara.utils.output-functions">Functions<a href="#kiara.utils.output-functions" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.utils.output.create_pipeline_steps_tree" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_pipeline_steps_tree</span><span class="p">(</span><span class="n">pipeline_structure</span><span class="p">,</span> <span class="n">pipeline_details</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.output.create_pipeline_steps_tree" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/output.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_pipeline_steps_tree</span><span class="p">(</span>
+    <span class="n">pipeline_structure</span><span class="p">:</span> <span class="s2">&quot;PipelineStructure&quot;</span><span class="p">,</span> <span class="n">pipeline_details</span><span class="p">:</span> <span class="s2">&quot;PipelineDetails&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tree</span><span class="p">:</span>
+
+    <span class="kn">from</span> <span class="nn">kiara.models.module.pipeline</span> <span class="kn">import</span> <span class="n">StepStatus</span>
+
+    <span class="n">steps</span> <span class="o">=</span> <span class="n">Tree</span><span class="p">(</span><span class="s2">&quot;steps&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">stage</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pipeline_structure</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">stage_node</span> <span class="o">=</span> <span class="n">steps</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;stage: [i]</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">[/i]&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">stage</span><span class="p">:</span>
+            <span class="n">step_node</span> <span class="o">=</span> <span class="n">stage_node</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;step: [i]</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">[/i]&quot;</span><span class="p">)</span>
+            <span class="n">step_details</span> <span class="o">=</span> <span class="n">pipeline_details</span><span class="o">.</span><span class="n">step_states</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="n">step_details</span><span class="o">.</span><span class="n">status</span>
+            <span class="k">if</span> <span class="n">status</span> <span class="ow">is</span> <span class="n">StepStatus</span><span class="o">.</span><span class="n">INPUTS_READY</span><span class="p">:</span>
+                <span class="n">step_node</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;status: [yellow]inputs ready[/yellow]&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">status</span> <span class="ow">is</span> <span class="n">StepStatus</span><span class="o">.</span><span class="n">RESULTS_READY</span><span class="p">:</span>
+                <span class="n">step_node</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;status: [green]results ready[/green]&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">invalid_node</span> <span class="o">=</span> <span class="n">step_node</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;status: [red]inputs invalid[/red]&quot;</span><span class="p">)</span>
+                <span class="n">invalid</span> <span class="o">=</span> <span class="n">step_details</span><span class="o">.</span><span class="n">invalid_details</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">invalid</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">invalid_node</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[i]</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">[/i]: </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">steps</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
 
   <div class="doc doc-object doc-function">
 

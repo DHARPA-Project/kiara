@@ -6533,6 +6533,7 @@ StepDetails            (<span title="pydantic.main.BaseModel">BaseModel</span>)
 
     <span class="n">kiara_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of the kiara context.&quot;</span><span class="p">)</span>
     <span class="n">pipeline_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of the pipeline.&quot;</span><span class="p">)</span>
+    <span class="n">step</span><span class="p">:</span> <span class="n">PipelineStep</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The pipeline step details.&quot;</span><span class="p">)</span>
     <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of the step.&quot;</span><span class="p">)</span>
     <span class="n">processing_stage</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The execution stage where this step is executed.&quot;</span>
@@ -6738,6 +6739,29 @@ StepDetails            (<span title="pydantic.main.BaseModel">BaseModel</span>)
     <div class="doc doc-contents ">
 
       <p>The current status of this step.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.events.pipeline.StepDetails.step" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">step</span><span class="p">:</span> <span class="n">PipelineStep</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.events.pipeline.StepDetails.step" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The pipeline step details.</p>
     </div>
 
   </div>

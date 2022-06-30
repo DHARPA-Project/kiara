@@ -4022,7 +4022,6 @@ Workflow        </code>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">step_ids</span><span class="p">:</span>
             <span class="n">output_job_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_controller</span><span class="o">.</span><span class="n">process_pipeline</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_job_id_cache</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">output_job_map</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">job_ids</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">for</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">step_ids</span><span class="p">:</span>
@@ -4030,7 +4029,11 @@ Workflow        </code>
                     <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="kc">True</span>
                 <span class="p">)</span>
                 <span class="n">job_ids</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_id</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_controller</span><span class="o">.</span><span class="n">set_processing_results</span><span class="p">(</span><span class="n">job_ids</span><span class="o">=</span><span class="n">job_ids</span><span class="p">)</span>
+            <span class="n">output_job_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_controller</span><span class="o">.</span><span class="n">set_processing_results</span><span class="p">(</span>
+                <span class="n">job_ids</span><span class="o">=</span><span class="n">job_ids</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_job_id_cache</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">output_job_map</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">get_current_pipeline_outputs</span><span class="p">()</span>
 
@@ -4236,6 +4239,8 @@ Workflow        </code>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">store_value</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_outputs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">[</span><span class="n">NOT_SET_VALUE_ID</span><span class="p">,</span> <span class="n">NONE_VALUE_ID</span><span class="p">]:</span>
+                    <span class="k">continue</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">store_value</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
                 <span class="n">job_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job_id_cache</span><span class="p">[</span><span class="n">value</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">job_registry</span><span class="o">.</span><span class="n">store_job_record</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
@@ -4792,7 +4797,6 @@ Workflow        </code>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">step_ids</span><span class="p">:</span>
         <span class="n">output_job_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_controller</span><span class="o">.</span><span class="n">process_pipeline</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_job_id_cache</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">output_job_map</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">job_ids</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">step_ids</span><span class="p">:</span>
@@ -4800,7 +4804,11 @@ Workflow        </code>
                 <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">)</span>
             <span class="n">job_ids</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_id</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_controller</span><span class="o">.</span><span class="n">set_processing_results</span><span class="p">(</span><span class="n">job_ids</span><span class="o">=</span><span class="n">job_ids</span><span class="p">)</span>
+        <span class="n">output_job_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_controller</span><span class="o">.</span><span class="n">set_processing_results</span><span class="p">(</span>
+            <span class="n">job_ids</span><span class="o">=</span><span class="n">job_ids</span>
+        <span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_job_id_cache</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">output_job_map</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_current_outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">get_current_pipeline_outputs</span><span class="p">()</span>
 </code></pre></div>
@@ -4873,6 +4881,8 @@ Workflow        </code>
             <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">store_value</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_outputs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">[</span><span class="n">NOT_SET_VALUE_ID</span><span class="p">,</span> <span class="n">NONE_VALUE_ID</span><span class="p">]:</span>
+                <span class="k">continue</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">store_value</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
             <span class="n">job_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job_id_cache</span><span class="p">[</span><span class="n">value</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">job_registry</span><span class="o">.</span><span class="n">store_job_record</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
@@ -5034,12 +5044,16 @@ It waits until all inputs are set, after which it executes all pipeline steps in
                         <span class="n">stage</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="k">break</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
+                <span class="kn">import</span> <span class="nn">traceback</span>
+
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
 
         <span class="k">finally</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;execute_finished.pipeline&quot;</span><span class="p">)</span>
-
         <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
         </details>
@@ -5133,12 +5147,16 @@ It waits until all inputs are set, after which it executes all pipeline steps in
                     <span class="n">stage</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="k">break</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
+            <span class="kn">import</span> <span class="nn">traceback</span>
+
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
 
     <span class="k">finally</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;execute_finished.pipeline&quot;</span><span class="p">)</span>
-
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
         </details>

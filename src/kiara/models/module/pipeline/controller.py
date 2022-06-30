@@ -96,6 +96,8 @@ class SinglePipelineController(PipelineController):
         combined_outputs = {}
         for step_id, job_id in job_ids.items():
             record = self._job_registry.get_job_record(job_id=job_id)
+            if record is None:
+                continue
             combined_outputs[step_id] = record.outputs
             for output_id in record.outputs.values():
                 assert output_id not in result.keys()

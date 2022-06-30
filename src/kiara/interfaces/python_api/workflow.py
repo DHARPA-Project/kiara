@@ -6,6 +6,7 @@ from rich.table import Table
 from slugify import slugify
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
 
+from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID
 from kiara.models import KiaraModel
 from kiara.models.events.pipeline import ChangedValue, PipelineEvent
 from kiara.models.module import KiaraModuleClass
@@ -116,12 +117,16 @@ class WorkflowPipelineController(SinglePipelineController):
                         stage=idx,
                     )
                     break
+        except Exception:
+            if is_debug():
+                import traceback
+
+                traceback.print_exc()
 
         finally:
             self._is_running = False
 
         log.debug("execute_finished.pipeline")
-
         return result
 
 
@@ -281,7 +286,6 @@ class Workflow(object):
 
         if not step_ids:
             output_job_map = self._pipeline_controller.process_pipeline()
-            self._job_id_cache.update(output_job_map)
         else:
             job_ids = {}
             for step_id in step_ids:
@@ -289,7 +293,11 @@ class Workflow(object):
                     step_id=step_id, wait=True
                 )
                 job_ids[step_id] = job_id
-            self._pipeline_controller.set_processing_results(job_ids=job_ids)
+            output_job_map = self._pipeline_controller.set_processing_results(
+                job_ids=job_ids
+            )
+
+        self._job_id_cache.update(output_job_map)
 
         self._current_outputs = self.pipeline.get_current_pipeline_outputs()
 
@@ -495,6 +503,8 @@ class Workflow(object):
                 self._kiara.data_registry.store_value(value=value)
 
             for value in self.current_outputs.values():
+                if value in [NOT_SET_VALUE_ID, NONE_VALUE_ID]:
+                    continue
                 self._kiara.data_registry.store_value(value=value)
                 job_id = self._job_id_cache[value]
                 self._kiara.job_registry.store_job_record(job_id=job_id)

@@ -339,7 +339,7 @@ class JobRegistry(object):
 
         return self._processor.get_job_record(job_id)
 
-    def get_job_record(self, job_id: uuid.UUID) -> JobRecord:
+    def get_job_record(self, job_id: uuid.UUID) -> Union[JobRecord, None]:
 
         if job_id in self._archived_records.keys():
             return self._archived_records[job_id]
@@ -349,6 +349,11 @@ class JobRegistry(object):
             return job_record
         except Exception:
             pass
+
+        job = self._processor.get_job(job_id=job_id)
+        if job is not None:
+            if job.status == JobStatus.FAILED:
+                return None
 
         raise NotImplementedError()
 

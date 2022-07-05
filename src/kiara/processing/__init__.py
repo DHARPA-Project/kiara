@@ -6,6 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
+import structlog
 import uuid
 from datetime import datetime
 from pydantic import BaseModel
@@ -22,14 +23,6 @@ from kiara.models.values.value import (
 from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import is_debug
 
-# -*- coding: utf-8 -*-
-
-#  Copyright (c) 2021, University of Luxembourg / DHARPA project
-#  Copyright (c) 2021, Markus Binsteiner
-#
-#  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
-
 try:
     from typing import Literal
 
@@ -38,6 +31,9 @@ try:
 
 except Exception:
     from typing_extensions import Literal  # type: ignore
+
+
+log = structlog.getLogger()
 
 
 class JobStatusListener(Protocol):
@@ -246,12 +242,26 @@ class ModuleProcessor(abc.ABC):
                 job.error = msg
                 job._exception = status
             self._failed_jobs[job_id] = job
+            log.debug(
+                "job.failed",
+                job_id=str(job.job_id),
+                msg=job.error,
+                module_type=job.job_config.module_type,
+            )
         elif status == JobStatus.STARTED:
             job.job_log.add_log("job started")
             job.status = JobStatus.STARTED
             job.started = datetime.now()
         else:
             raise ValueError(f"Invalid value for status: {status}")
+
+        log.debug(
+            "job.status_updated",
+            old_status=old_status.value,
+            new_status=job.status.value,
+            job_id=str(job.job_id),
+            module_type=job.job_config.module_type,
+        )
 
         self._send_job_event(
             job_id=job_id, old_status=old_status, new_status=job.status

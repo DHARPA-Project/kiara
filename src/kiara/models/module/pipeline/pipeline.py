@@ -12,12 +12,11 @@ from pydantic import Field, PrivateAttr
 from rich import box
 from rich.console import RenderableType
 from rich.panel import Panel
-from rich.syntax import Syntax
 from rich.table import Table
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
 
 from kiara.context import DataRegistry
-from kiara.defaults import NONE_VALUE_ID
+from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID, SpecialValue
 from kiara.exceptions import InvalidValuesException
 from kiara.models.aliases import AliasValueMap
 from kiara.models.documentation import (
@@ -41,6 +40,7 @@ from kiara.utils import StringYAML
 from kiara.utils.output import (
     create_pipeline_steps_tree,
     create_table_from_model_object,
+    create_value_map_status_renderable,
 )
 
 if TYPE_CHECKING:
@@ -76,9 +76,9 @@ class Pipeline(object):
 
         self._all_values: AliasValueMap = None  # type: ignore
 
-        self._init_values()
-
         self._listeners: List[PipelineListener] = []
+
+        self._init_values()
 
         # self._update_status()
 
@@ -118,6 +118,12 @@ class Pipeline(object):
                 )
 
         self._all_values = values
+
+        initial_inputs = {
+            k: SpecialValue.NOT_SET
+            for k in self._structure.pipeline_inputs_schema.keys()
+        }
+        self.set_pipeline_inputs(inputs=initial_inputs)
 
     def __eq__(self, other):
 
@@ -342,12 +348,12 @@ class Pipeline(object):
         }
 
         step_outputs = self._structure.get_step_output_refs(step_id=step_id)
-        null_outputs = {k: None for k in step_outputs.keys()}
+        null_outputs = {k: NOT_SET_VALUE_ID for k in step_outputs.keys()}
 
         changed_outputs = self.set_step_outputs(
             step_id=step_id, outputs=null_outputs, notify_listeners=False
         )
-        assert step_id not in changed_outputs.keys()
+        # assert step_id in changed_outputs.keys()
 
         result.update(changed_outputs)  # type: ignore
 
@@ -470,7 +476,7 @@ class Pipeline(object):
 
         _alias = self._all_values.get_alias(alias)
         assert _alias is not None
-        _alias.set_aliases(**values_to_set)
+        _alias._set_aliases(**values_to_set)
 
         return changed
 
@@ -562,8 +568,6 @@ class PipelineInfo(ItemInfo):
 
         include_pipeline_inputs = config.get("include_pipeline_inputs", True)
         include_pipeline_outputs = config.get("include_pipeline_outputs", True)
-        resolve_inputs = config.get("resolve_inputs", False)
-        resolve_outputs = config.get("resolve_outputs", False)
         include_steps = config.get("include_steps", True)
         include_details = config.get("include_details", False)
         include_doc = config.get("include_doc", False)
@@ -576,19 +580,38 @@ class PipelineInfo(ItemInfo):
         table.add_column("value")
 
         if include_pipeline_inputs:
-            if resolve_inputs:
-                input_values = self._kiara.data_registry.load_values(
-                    values=self.pipeline_details.pipeline_inputs
-                )
-                inputs = input_values.create_renderable(show_header=False)
-            else:
-                yaml_inputs = yaml.dump(
-                    {
-                        k: str(v)
-                        for k, v in self.pipeline_details.pipeline_inputs.items()
-                    }
-                )
-                inputs = Syntax(yaml_inputs, "yaml")
+            input_values = self._kiara.data_registry.create_valuemap(
+                data=self.pipeline_details.pipeline_inputs,
+                schema=self.pipeline_structure.pipeline_inputs_schema,
+            )
+
+            ordered_fields: Dict[str, List[str]] = {}
+            for field_name, ref in self.pipeline_structure.pipeline_input_refs.items():
+                for con_input in ref.connected_inputs:
+                    details = self.pipeline_structure.get_step_details(
+                        step_id=con_input.step_id
+                    )
+                    stage = details["processing_stage"]
+                    ordered_fields.setdefault(stage, []).append(field_name)
+
+            fields = []
+            for stage in sorted(ordered_fields.keys()):
+
+                for f in sorted(ordered_fields[stage]):
+                    if f not in fields:
+                        fields.append(f)
+
+            inputs = create_value_map_status_renderable(
+                input_values,
+                render_config={
+                    "show_description": False,
+                    "show_type": False,
+                    "show_default": True,
+                    "show_value_ids": True,
+                },
+                fields=fields,
+            )
+
             table.add_row("pipeline inputs", inputs)
         if include_steps:
             steps = create_pipeline_steps_tree(
@@ -598,26 +621,43 @@ class PipelineInfo(ItemInfo):
             table.add_row("steps", steps)
 
         if include_pipeline_outputs:
-            if resolve_outputs:
-                output_values = self._kiara.data_registry.load_values(
-                    values=self.pipeline_details.pipeline_outputs
-                )
-                outputs = output_values.create_renderable(show_header=False)
-            else:
-                yaml_outputs = yaml.dump(
-                    {
-                        k: str(v)
-                        for k, v in self.pipeline_details.pipeline_outputs.items()
-                    }
-                )
-                outputs = Syntax(yaml_outputs, "yaml")
-            table.add_row("pipeline outputs", outputs)
+            output_values = self._kiara.data_registry.load_values(
+                values=self.pipeline_details.pipeline_outputs
+            )
+            ordered_fields = {}
+            for (
+                field_name,
+                o_ref,
+            ) in self.pipeline_structure.pipeline_output_refs.items():
+                con_step_id = o_ref.connected_output.step_id
+                details = self.pipeline_structure.get_step_details(step_id=con_step_id)
+                stage = details["processing_stage"]
+                ordered_fields.setdefault(stage, []).append(field_name)
+
+            fields = []
+            for stage in sorted(ordered_fields.keys()):
+                for f in sorted(ordered_fields[stage]):
+                    fields.append(f)
+
+            t_outputs = create_value_map_status_renderable(
+                output_values,
+                render_config={
+                    "show_description": False,
+                    "show_type": True,
+                    "show_default": False,
+                    "show_required": False,
+                    "show_value_ids": True,
+                },
+                fields=fields,
+            )
+
+            table.add_row("pipeline outputs", t_outputs)
 
         if include_details:
-            details = create_table_from_model_object(
+            t_details = create_table_from_model_object(
                 self.pipeline_details, render_config=config
             )
-            table.add_row("details", details)
+            table.add_row("details", t_details)
 
         if include_doc:
             table.add_row(

@@ -7,6 +7,7 @@
 
 import json
 import orjson
+import structlog
 from abc import ABC, abstractmethod
 from pydantic import BaseModel, Field, root_validator
 from rich import box
@@ -26,6 +27,9 @@ if TYPE_CHECKING:
     from kiara.models.events.pipeline import PipelineDetails
     from kiara.models.module.pipeline import PipelineStructure
     from kiara.models.values.value_schema import ValueSchema
+
+
+log = structlog.getLogger()
 
 
 class RenderConfig(BaseModel):
@@ -607,20 +611,27 @@ def create_table_from_field_schemas(
 
 
 def create_value_map_status_renderable(
-    inputs: ValueMap, render_config: Union[Mapping[str, Any], None] = None
+    inputs: ValueMap,
+    render_config: Union[Mapping[str, Any], None] = None,
+    fields: Union[None, Iterable[str]] = None,
 ) -> RichTable:
 
     if render_config is None:
         render_config = {}
 
+    show_description: bool = render_config.get("show_description", True)
+    show_type: bool = render_config.get("show_type", True)
     show_required: bool = render_config.get("show_required", True)
     show_default: bool = render_config.get("show_default", True)
+    show_value_ids: bool = render_config.get("show_value_ids", False)
 
     table = RichTable(box=box.SIMPLE, show_header=True)
     table.add_column("field name", style="i")
     table.add_column("status", style="b")
-    table.add_column("type")
-    table.add_column("description")
+    if show_type:
+        table.add_column("type")
+    if show_description:
+        table.add_column("description")
 
     if show_required:
         table.add_column("required")
@@ -628,9 +639,24 @@ def create_value_map_status_renderable(
     if show_default:
         table.add_column("default")
 
+    if show_value_ids:
+        table.add_column("value id")
+
     invalid = inputs.check_invalid()
 
-    for field_name, value in inputs.items():
+    if fields:
+        field_order = fields
+    else:
+        field_order = sorted(inputs.keys())
+
+    for field_name in field_order:
+
+        value = inputs.get(field_name, None)
+        if value is None:
+            log.debug(
+                "ignore.field", field_name=field_name, available_fields=inputs.keys()
+            )
+            continue
 
         row: List[RenderableType] = [field_name]
 
@@ -641,7 +667,11 @@ def create_value_map_status_renderable(
 
         value_schema = inputs.values_schema[field_name]
 
-        row.extend([value_schema.type, value_schema.doc.description])
+        if show_type:
+            row.append(value_schema.type)
+
+        if show_description:
+            row.append(value_schema.doc.description)
 
         if show_required:
             req = value_schema.is_required()
@@ -671,6 +701,9 @@ def create_value_map_status_renderable(
                 default_str = str(default_val)
 
             row.append(default_str)
+
+        if show_value_ids:
+            row.append(str(inputs.get_value_obj(field_name=field_name).value_id))
 
         table.add_row(*row)
 
@@ -827,7 +860,7 @@ def create_pipeline_steps_tree(
 
     for idx, stage in enumerate(pipeline_structure.processing_stages, start=1):
         stage_node = steps.add(f"stage: [i]{idx}[/i]")
-        for step_id in stage:
+        for step_id in sorted(stage):
             step_node = stage_node.add(f"step: [i]{step_id}[/i]")
             step_details = pipeline_details.step_states[step_id]
             status = step_details.status

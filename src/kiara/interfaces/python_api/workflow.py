@@ -237,6 +237,8 @@ class Workflow(object):
 
         inputs_to_set = {}
         for field_name, value in self._all_inputs.items():
+            if value in [NONE_VALUE_ID, NOT_SET_VALUE_ID]:
+                continue
             if field_name in self.pipeline.structure.pipeline_inputs_schema.keys():
                 inputs_to_set[field_name] = value
 
@@ -252,6 +254,7 @@ class Workflow(object):
             str, Mapping[str, Mapping[str, ChangedValue]]
         ] = self.pipeline.set_pipeline_inputs(inputs=inputs_to_set)
         self._current_inputs = pipeline.get_current_pipeline_inputs()
+
         for field_name, value_id in self._current_inputs.items():
             self._all_inputs[field_name] = value_id
         self._current_outputs = None
@@ -507,7 +510,10 @@ class Workflow(object):
                     continue
                 self._kiara.data_registry.store_value(value=value)
                 job_id = self._job_id_cache[value]
-                self._kiara.job_registry.store_job_record(job_id=job_id)
+                try:
+                    self._kiara.job_registry.store_job_record(job_id=job_id)
+                except Exception as e:
+                    print(e)
 
             self._workflow_details = self._kiara.workflow_registry.add_workflow_state(
                 workflow=self._workflow_details, workflow_state=state

@@ -3,7 +3,7 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
+import copy
 import datetime
 import structlog
 import uuid
@@ -11,7 +11,7 @@ from pydantic import Field, PrivateAttr
 from rich.tree import Tree
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
 
-from kiara.defaults import NONE_VALUE_ID
+from kiara.defaults import NONE_VALUE_ID, SpecialValue
 from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.utils.cli import terminal_print
@@ -26,6 +26,7 @@ VALUE_ALIAS_SEPARATOR = "."
 
 
 class AliasValueMap(ValueMap):
+    """A model class that holds a tree of values and their schemas."""
 
     _kiara_model_id = "instance.value_map.aliases"
 
@@ -110,9 +111,11 @@ class AliasValueMap(ValueMap):
 
         item = self.get_child_map(field_name=field_name)
         if item is None:
-            return NONE_VALUE_ID
+            result = NONE_VALUE_ID
         else:
-            return item.assoc_value if item.assoc_value is not None else NONE_VALUE_ID
+            result = item.assoc_value if item.assoc_value is not None else NONE_VALUE_ID
+
+        return result
 
     def get_all_value_ids(
         self,
@@ -125,13 +128,6 @@ class AliasValueMap(ValueMap):
                 v_id = NONE_VALUE_ID
             result[k] = v_id
         return result
-
-    def set_value(self, field_name: str, data: Any) -> None:
-
-        assert VALUE_ALIAS_SEPARATOR not in field_name
-
-        value = self._data_registry.register_data(data)
-        self.set_alias(alias=field_name, value_id=value.value_id)
 
     def set_alias_schema(self, alias: str, schema: ValueSchema):
 
@@ -150,7 +146,7 @@ class AliasValueMap(ValueMap):
                 self._set_local_field_schema(
                     field_name=child, schema=ValueSchema(type="none")
                 )
-                child_map = self.set_alias(alias=child, value_id=None)
+                child_map = self._set_alias(alias=child, data=None)
 
             assert child_map is not None
 
@@ -205,35 +201,54 @@ class AliasValueMap(ValueMap):
 
             return child_map.get_alias(rest)
 
-    def set_aliases(self, **aliases) -> Mapping[str, "AliasValueMap"]:
+    def set_value(self, field_name: str, data: Any) -> None:
+
+        assert VALUE_ALIAS_SEPARATOR not in field_name
+
+        self._set_alias(alias=field_name, data=data)
+
+    def _set_aliases(self, **aliases: Any) -> Mapping[str, "AliasValueMap"]:
 
         result = {}
         for k, v in aliases.items():
-            r = self.set_alias(alias=k, value_id=v)
+            r = self._set_alias(alias=k, data=v)
             result[k] = r
 
         return result
 
-    def set_alias(
-        self, alias: str, value_id: Union[uuid.UUID, None]
-    ) -> "AliasValueMap":
+    def _set_alias(self, alias: str, data: Any) -> "AliasValueMap":
 
         if VALUE_ALIAS_SEPARATOR not in alias:
-            child = None
             field_name: Union[str, None] = alias
-            rest = None
-        else:
-            child, rest = alias.split(VALUE_ALIAS_SEPARATOR, maxsplit=1)
-            field_name = None
 
-        if child is None:
             # means we are setting the alias in this map
             assert field_name is not None
+
+            vs = self.values_schema[alias]
+            if vs.type == "none":
+                assert data is None
+                value_id = None
+            else:
+
+                if data in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
+                    if vs.default:
+                        if callable(vs.default):
+                            data = vs.default()
+                        else:
+                            data = copy.deepcopy(vs.default)
+
+                value = self._data_registry.register_data(data=data, schema=vs)
+                value_id = value.value_id
+
             new_map = self._set_local_value_item(
                 field_name=field_name, value_id=value_id
             )
             return new_map
+
         else:
+            child, rest = alias.split(VALUE_ALIAS_SEPARATOR, maxsplit=1)
+            field_name = None
+
             # means we are dealing with an intermediate alias map
             assert rest is not None
             assert child is not None
@@ -278,7 +293,7 @@ class AliasValueMap(ValueMap):
             new_map._data_registry = self._data_registry
             self.value_items[child][new_version] = new_map
 
-            new_map.set_alias(alias=rest, value_id=value_id)
+            new_map._set_alias(alias=rest, data=data)
 
         return new_map
 

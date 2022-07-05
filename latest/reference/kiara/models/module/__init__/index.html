@@ -9666,8 +9666,8 @@ OperationGroupInfo            (<a class="autorefs autorefs-internal" title="kiar
             <span class="n">k</span><span class="p">:</span> <span class="n">OperationInfo</span><span class="o">.</span><span class="n">create_from_operation</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
         <span class="p">}</span>
-        <span class="n">data_types_info</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">group_alias</span><span class="o">=</span><span class="n">group_alias</span><span class="p">,</span> <span class="n">item_infos</span><span class="o">=</span><span class="n">op_infos</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">data_types_info</span>
+        <span class="n">op_group_info</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">group_alias</span><span class="o">=</span><span class="n">group_alias</span><span class="p">,</span> <span class="n">item_infos</span><span class="o">=</span><span class="n">op_infos</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">op_group_info</span>
 
     <span class="c1"># type_name: Literal[&quot;operation_type&quot;] = &quot;operation_type&quot;</span>
     <span class="n">item_infos</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OperationInfo</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
@@ -9889,8 +9889,8 @@ OperationGroupInfo            (<a class="autorefs autorefs-internal" title="kiar
         <span class="n">k</span><span class="p">:</span> <span class="n">OperationInfo</span><span class="o">.</span><span class="n">create_from_operation</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
     <span class="p">}</span>
-    <span class="n">data_types_info</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">group_alias</span><span class="o">=</span><span class="n">group_alias</span><span class="p">,</span> <span class="n">item_infos</span><span class="o">=</span><span class="n">op_infos</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">data_types_info</span>
+    <span class="n">op_group_info</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">group_alias</span><span class="o">=</span><span class="n">group_alias</span><span class="p">,</span> <span class="n">item_infos</span><span class="o">=</span><span class="n">op_infos</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">op_group_info</span>
 </code></pre></div>
         </details>
     </div>

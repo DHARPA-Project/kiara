@@ -542,8 +542,8 @@ class OperationGroupInfo(InfoModelGroup):
             k: OperationInfo.create_from_operation(kiara=kiara, operation=v)
             for k, v in items.items()
         }
-        data_types_info = cls.construct(group_alias=group_alias, item_infos=op_infos)
-        return data_types_info
+        op_group_info = cls.construct(group_alias=group_alias, item_infos=op_infos)
+        return op_group_info
 
     # type_name: Literal["operation_type"] = "operation_type"
     item_infos: Mapping[str, OperationInfo] = Field(

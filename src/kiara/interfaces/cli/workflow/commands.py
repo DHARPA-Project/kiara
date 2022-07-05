@@ -14,7 +14,7 @@ from kiara import Kiara
 from kiara.interfaces.python_api.operation import KiaraOperation
 from kiara.interfaces.python_api.workflow import Workflow
 from kiara.models.module.pipeline import PipelineConfig
-from kiara.models.workflow import WorkflowInfo
+from kiara.models.workflow import WorkflowGroupInfo, WorkflowInfo
 from kiara.modules.included_core_modules.pipeline import PipelineModule
 from kiara.utils import StringYAML, dict_from_cli_args
 from kiara.utils.cli import terminal_print, terminal_print_model
@@ -37,9 +37,16 @@ def list(ctx):
 
     kiara: Kiara = ctx.obj["kiara"]
 
-    workflow_aliases = kiara.workflow_registry.workflow_aliases
+    workflows = {}
+    for alias, workflow_id in kiara.workflow_registry.workflow_aliases.items():
+        workflow = Workflow(kiara=kiara, workflow=workflow_id)
+        workflows[alias] = workflow
 
-    print(workflow_aliases)
+    workflow_aliases = WorkflowGroupInfo.create_from_workflows(
+        group_alias=None, **workflows
+    )
+
+    terminal_print_model(workflow_aliases)
 
 
 @workflow.command()

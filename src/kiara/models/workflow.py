@@ -7,7 +7,7 @@ from rich import box
 from rich.console import RenderableType
 from rich.panel import Panel
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Type, Union
 
 from kiara.models import KiaraModel
 from kiara.models.documentation import (
@@ -15,7 +15,7 @@ from kiara.models.documentation import (
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
-from kiara.models.info import ItemInfo
+from kiara.models.info import InfoModelGroup, ItemInfo
 from kiara.models.module.pipeline import PipelineConfig, PipelineStep
 from kiara.models.module.pipeline.pipeline import PipelineInfo
 from kiara.models.module.pipeline.structure import PipelineStructure
@@ -239,4 +239,56 @@ class WorkflowInfo(ItemInfo):
             table.add_row(
                 "Current state", self.pipeline_info.create_renderable(**config)
             )
+        return table
+
+
+class WorkflowGroupInfo(InfoModelGroup):
+
+    _kiara_model_id = "info.workflows"
+
+    @classmethod
+    def base_info_class(cls) -> Type[ItemInfo]:
+        return WorkflowInfo
+
+    @classmethod
+    def create_from_workflows(
+        cls, group_alias: Union[str, None] = None, **items: "Workflow"
+    ) -> "WorkflowGroupInfo":
+
+        workflow_infos = {
+            alias: WorkflowInfo.create_from_workflow(workflow=w)
+            for alias, w in items.items()
+        }
+        workflow_group_info = cls.construct(
+            group_alias=group_alias, item_infos=workflow_infos
+        )
+        return workflow_group_info
+
+    item_infos: Mapping[str, WorkflowInfo] = Field(
+        description="The workflow infos objects for each workflow."
+    )
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        table = Table(box=box.SIMPLE, show_header=True)
+        table.add_column("alias", "i")
+        table.add_column("workflow_id")
+        table.add_column("# steps")
+        table.add_column("# stages")
+        table.add_column("# states")
+        table.add_column("description")
+
+        for alias, wf in self.item_infos.items():
+            steps = len(wf.pipeline_info.pipeline_structure.steps)
+            stages = len(wf.pipeline_info.pipeline_structure.processing_stages)
+            states = len(wf.workflow_states)
+            table.add_row(
+                alias,
+                str(wf.workflow_details.workflow_id),
+                str(steps),
+                str(stages),
+                str(states),
+                wf.documentation.description,
+            )
+
         return table

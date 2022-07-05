@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/utils/__init__/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.9">
     
     
       
@@ -10165,6 +10165,24 @@ original position.</p>
 
 
 
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.utils.output.log" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">log</span></code>
+
+
+<a href="#kiara.utils.output.log" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
 <h4 id="kiara.utils.output-classes">Classes<a href="#kiara.utils.output-classes" class="headerlink" title="Permanent link">&para;</a></h4>
 
   <div class="doc doc-object doc-class">
@@ -11561,7 +11579,7 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
 
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">stage</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pipeline_structure</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="n">stage_node</span> <span class="o">=</span> <span class="n">steps</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;stage: [i]</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">[/i]&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">stage</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">stage</span><span class="p">):</span>
             <span class="n">step_node</span> <span class="o">=</span> <span class="n">stage_node</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;step: [i]</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">[/i]&quot;</span><span class="p">)</span>
             <span class="n">step_details</span> <span class="o">=</span> <span class="n">pipeline_details</span><span class="o">.</span><span class="n">step_states</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span>
             <span class="n">status</span> <span class="o">=</span> <span class="n">step_details</span><span class="o">.</span><span class="n">status</span>
@@ -11871,7 +11889,7 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
 
 
 <h5 id="kiara.utils.output.create_value_map_status_renderable" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_value_map_status_renderable</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">render_config</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_value_map_status_renderable</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">render_config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 <a href="#kiara.utils.output.create_value_map_status_renderable" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11882,20 +11900,27 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
         <details class="quote">
           <summary>Source code in <code>kiara/utils/output.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_value_map_status_renderable</span><span class="p">(</span>
-    <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span>
+    <span class="n">render_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">fields</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RichTable</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="n">render_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">render_config</span> <span class="o">=</span> <span class="p">{}</span>
 
+    <span class="n">show_description</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_description&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">show_type</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_type&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
     <span class="n">show_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_required&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
     <span class="n">show_default</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_default&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">show_value_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_value_ids&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
     <span class="n">table</span> <span class="o">=</span> <span class="n">RichTable</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;field name&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
     <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show_type</span><span class="p">:</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show_description</span><span class="p">:</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">show_required</span><span class="p">:</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;required&quot;</span><span class="p">)</span>
@@ -11903,9 +11928,24 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
     <span class="k">if</span> <span class="n">show_default</span><span class="p">:</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">show_value_ids</span><span class="p">:</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;value id&quot;</span><span class="p">)</span>
+
     <span class="n">invalid</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">check_invalid</span><span class="p">()</span>
 
-    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">fields</span><span class="p">:</span>
+        <span class="n">field_order</span> <span class="o">=</span> <span class="n">fields</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">field_order</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">field_order</span><span class="p">:</span>
+
+        <span class="n">value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;ignore.field&quot;</span><span class="p">,</span> <span class="n">field_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span> <span class="n">available_fields</span><span class="o">=</span><span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="k">continue</span>
 
         <span class="n">row</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
 
@@ -11916,7 +11956,11 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
 
         <span class="n">value_schema</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">values_schema</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
 
-        <span class="n">row</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">value_schema</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">description</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">show_type</span><span class="p">:</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">show_description</span><span class="p">:</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value_schema</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">show_required</span><span class="p">:</span>
             <span class="n">req</span> <span class="o">=</span> <span class="n">value_schema</span><span class="o">.</span><span class="n">is_required</span><span class="p">()</span>
@@ -11946,6 +11990,9 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
                 <span class="n">default_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">default_val</span><span class="p">)</span>
 
             <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">default_str</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">show_value_ids</span><span class="p">:</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">)</span><span class="o">.</span><span class="n">value_id</span><span class="p">))</span>
 
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
 
@@ -12918,7 +12965,7 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
     <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../assets/javascripts/workers/search.b97dbffb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.0238f547.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.6c7ad80a.min.js"></script>
       
     
   </body>

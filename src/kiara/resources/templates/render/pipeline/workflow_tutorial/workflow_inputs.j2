@@ -1,0 +1,16 @@
+# %% [markdown]
+# # Workflow inputs <a class="anchor" id="pipeline_inputs"></a>
+
+Once a workflow has an assembled pipeline, we can set it's inputs. We use the input field
+names that we got from the result of the `workflow.current_state` call.
+
+# %%
+{% for field_name, input in pipeline.get_current_pipeline_inputs().items()  -%}
+    workflow.set_input("{{ field_name }}", {{ input | extract_raw_data }})
+{% endfor %}
+
+# process all workflow steps that can be processed
+workflow.process_steps()
+
+# print the current state, after we set our inputs
+workflow.current_state

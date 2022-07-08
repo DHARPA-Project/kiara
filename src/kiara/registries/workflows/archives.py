@@ -3,7 +3,7 @@ import orjson
 import shutil
 import uuid
 from pathlib import Path
-from typing import Dict, Mapping, Union
+from typing import Dict, Iterable, Mapping, Union
 
 from kiara.models.workflow import WorkflowDetails, WorkflowState
 from kiara.registries import ARCHIVE_CONFIG_CLS, FileSystemArchiveConfig
@@ -72,6 +72,15 @@ class FileSystemWorkflowArchive(WorkflowArchive):
 
         return result
 
+    def retrieve_all_workflow_ids(self) -> Iterable[uuid.UUID]:
+
+        all_ids = self.workflow_path.glob("*")
+        result = []
+        for path in all_ids:
+            workflow_id = uuid.UUID(path.name)
+            result.append(workflow_id)
+        return result
+
     def retrieve_workflow_details(self, workflow_id: uuid.UUID) -> WorkflowDetails:
 
         workflow_path = self.get_workflow_details_path(workflow_id=workflow_id)
@@ -84,24 +93,9 @@ class FileSystemWorkflowArchive(WorkflowArchive):
 
         workflow_data = orjson.loads(workflow_json)
         workflow = WorkflowDetails(**workflow_data)
+        workflow._kiara = self.kiara_context
 
         return workflow
-
-    # def retrieve_workflow_states(
-    #     self, workflow_id: uuid.UUID, filter: Union[WorkflowStateFilter, None] = None
-    # ) -> Dict[str, WorkflowState]:
-    #
-    #     workflow_
-    #     assert filter is None
-    #
-    #     states = {}
-    #     for path in workflow_state_paths:
-    #         _data = path.read_text()
-    #         _json = orjson.loads(_data)
-    #         _state = WorkflowState(**_json)
-    #         states[_state.instance_id] = _state
-    #
-    #     return states
 
     def retrieve_workflow_state(self, workflow_state_id: str) -> WorkflowState:
 
@@ -112,7 +106,14 @@ class FileSystemWorkflowArchive(WorkflowArchive):
 
         _data = workflow_state_path.read_text()
         _json = orjson.loads(_data)
+        _json["pipeline_info"]["pipeline_structure"] = {
+            "pipeline_config": _json["pipeline_info"]["pipeline_structure"][
+                "pipeline_config"
+            ]
+        }
         _state = WorkflowState(**_json)
+        _state.pipeline_info._kiara = self.kiara_context
+        _state._kiara = self.kiara_context
         return _state
 
     def retrieve_all_states_for_workflow(

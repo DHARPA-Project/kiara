@@ -4,13 +4,18 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
+import os
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
 
-from typing import TYPE_CHECKING, Dict, Union
-
+from kiara.exceptions import NoSuchExecutionTargetException
+from kiara.models.module.jobs import ExecutionContext
+from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation, OperationGroupInfo, OperationInfo
+from kiara.models.module.pipeline import PipelineConfig
+from kiara.utils import get_data_from_file
 
 if TYPE_CHECKING:
-    from kiara import Kiara
+    from kiara.context import Kiara
 
 
 def filter_operations(
@@ -52,3 +57,77 @@ def filter_operations(
         #     )
 
     return OperationGroupInfo.construct(item_infos=result)  # type: ignore
+
+
+def create_operation(
+    module_or_operation: str,
+    operation_config: Union[None, Mapping[str, Any]] = None,
+    kiara: Union[None, "Kiara"] = None,
+) -> Operation:
+
+    operation: Union[Operation, None]
+
+    if kiara is None:
+        from kiara.context import Kiara
+
+        kiara = Kiara.instance()
+
+    if module_or_operation in kiara.operation_registry.operation_ids:
+
+        operation = kiara.operation_registry.get_operation(module_or_operation)
+        if operation_config:
+            raise Exception(
+                f"Specified run target '{module_or_operation}' is an operation, additional module configuration is not allowed."
+            )
+
+    elif module_or_operation in kiara.module_type_names:
+
+        manifest = Manifest(
+            module_type=module_or_operation, module_config=operation_config
+        )
+        module = kiara.create_module(manifest=manifest)
+        operation = Operation.create_from_module(module)
+
+    elif os.path.isfile(module_or_operation):
+        data = get_data_from_file(module_or_operation)
+        pipeline_name = data.pop("pipeline_name", None)
+        if pipeline_name is None:
+            pipeline_name = os.path.basename(module_or_operation)
+
+        # self._defaults = data.pop("inputs", {})
+
+        execution_context = ExecutionContext(
+            pipeline_dir=os.path.abspath(os.path.dirname(module_or_operation))
+        )
+        pipeline_config = PipelineConfig.from_config(
+            pipeline_name=pipeline_name,
+            data=data,
+            kiara=kiara,
+            execution_context=execution_context,
+        )
+
+        manifest = kiara.create_manifest("pipeline", config=pipeline_config.dict())
+        module = kiara.create_module(manifest=manifest)
+        operation = Operation.create_from_module(module, doc=pipeline_config.doc)
+
+    else:
+        raise Exception(
+            f"Can't assemble operation, invalid operation/module name: {module_or_operation}. Must be registered module or operation name, or file."
+        )
+        # manifest = Manifest(
+        #     module_type=module_or_operation,
+        #     module_config=self._operation_config,
+        # )
+        # module = self._kiara.create_module(manifest=manifest)
+        # operation = Operation.create_from_module(module=module)
+
+    if operation is None:
+
+        merged = set(kiara.module_type_names)
+        merged.update(kiara.operation_registry.operation_ids)
+        raise NoSuchExecutionTargetException(
+            selected_target=module_or_operation,
+            msg=f"Invalid run target name '{module_or_operation}'. Must be a path to a pipeline file, or one of the available modules/operations.",
+            available_targets=sorted(merged),
+        )
+    return operation

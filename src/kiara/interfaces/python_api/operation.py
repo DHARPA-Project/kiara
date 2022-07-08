@@ -6,21 +6,16 @@ from rich.markdown import Markdown
 from typing import Any, Dict, List, Mapping, Union
 
 from kiara import Kiara
-from kiara.exceptions import (
-    FailedJobException,
-    InvalidValuesException,
-    NoSuchExecutionTargetException,
-)
+from kiara.exceptions import FailedJobException, InvalidValuesException
 from kiara.interfaces.python_api.utils import create_save_config
 
 # from kiara.interfaces.python_api import KiaraContext
 from kiara.interfaces.python_api.value import StoreValuesResult
-from kiara.models.module.jobs import ExecutionContext, JobConfig, JobStatus
-from kiara.models.module.manifest import Manifest
+from kiara.models.module.jobs import JobConfig, JobStatus
 from kiara.models.module.operation import Operation
-from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.values.value import ValueMap
 from kiara.utils import get_data_from_file
+from kiara.utils.operations import create_operation
 from kiara.utils.output import (
     create_table_from_field_schemas,
     create_value_map_status_renderable,
@@ -178,72 +173,15 @@ class KiaraOperation(object):
         self._invalidate()
         self._defaults = None
 
-        module_or_operation = self._operation_name
-        operation: Union[Operation, None]
+        operation = create_operation(
+            module_or_operation=self._operation_name,
+            operation_config=self.operation_config,
+            kiara=self._kiara,
+        )
 
-        if module_or_operation in self._kiara.operation_registry.operation_ids:
-
-            operation = self._kiara.operation_registry.get_operation(
-                module_or_operation
-            )
-            if self._operation_config:
-                raise Exception(
-                    f"Specified run target '{module_or_operation}' is an operation, additional module configuration is not allowed."
-                )
-
-        elif module_or_operation in self._kiara.module_type_names:
-
-            manifest = Manifest(
-                module_type=module_or_operation, module_config=self._operation_config
-            )
-            module = self._kiara.create_module(manifest=manifest)
-            operation = Operation.create_from_module(module)
-
-        elif os.path.isfile(module_or_operation):
-            data = get_data_from_file(module_or_operation)
-            pipeline_name = data.pop("pipeline_name", None)
-            if pipeline_name is None:
-                pipeline_name = os.path.basename(module_or_operation)
-
-            self._defaults = data.pop("inputs", {})
-
-            execution_context = ExecutionContext(
-                pipeline_dir=os.path.abspath(os.path.dirname(module_or_operation))
-            )
-
-            pipeline_config = PipelineConfig.from_config(
-                pipeline_name=pipeline_name,
-                data=data,
-                kiara=self._kiara,
-                execution_context=execution_context,
-            )
-
-            manifest = self._kiara.create_manifest(
-                "pipeline", config=pipeline_config.dict()
-            )
-            module = self._kiara.create_module(manifest=manifest)
-            operation = Operation.create_from_module(module, doc=pipeline_config.doc)
-
-        else:
-            raise Exception(
-                f"Can't assemble operation, invalid operation/module name: {module_or_operation}. Must be registered module or operation name, or file."
-            )
-            # manifest = Manifest(
-            #     module_type=module_or_operation,
-            #     module_config=self._operation_config,
-            # )
-            # module = self._kiara.create_module(manifest=manifest)
-            # operation = Operation.create_from_module(module=module)
-
-        if operation is None:
-
-            merged = set(self._kiara.module_type_names)
-            merged.update(self._kiara.operation_registry.operation_ids)
-            raise NoSuchExecutionTargetException(
-                selected_target=self.operation_name,
-                msg=f"Invalid run target name '{module_or_operation}'. Must be a path to a pipeline file, or one of the available modules/operations.",
-                available_targets=sorted(merged),
-            )
+        if os.path.isfile(self._operation_name):
+            data = get_data_from_file(self._operation_name)
+            self._defaults = data.get("inputs", {})
 
         self._operation = operation
         return self._operation
@@ -359,7 +297,7 @@ class KiaraOperation(object):
                 _add_required=False,
                 _show_header=True,
                 _constants=None,
-                **self.operation.outputs_schema,
+                fields=self.operation.outputs_schema,
             )
             items.append(outputs_schema)
 

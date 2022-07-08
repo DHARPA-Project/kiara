@@ -11,13 +11,10 @@ import structlog
 from typing import Tuple, Union
 
 from kiara import Kiara
-from kiara.interfaces.python_api.operation import KiaraOperation
 from kiara.interfaces.python_api.workflow import Workflow
-from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.workflow import WorkflowGroupInfo, WorkflowInfo
-from kiara.modules.included_core_modules.pipeline import PipelineModule
 from kiara.utils import StringYAML, dict_from_cli_args
-from kiara.utils.cli import terminal_print, terminal_print_model
+from kiara.utils.cli import terminal_print_model
 
 logger = structlog.getLogger()
 
@@ -31,22 +28,27 @@ def workflow(ctx):
 
 
 @workflow.command()
+@click.option("--all", "-a", help="Also displays workflows without alias.")
 @click.pass_context
-def list(ctx):
+def list(ctx, all):
     """List existing workflows."""
 
     kiara: Kiara = ctx.obj["kiara"]
 
-    workflows = {}
-    for alias, workflow_id in kiara.workflow_registry.workflow_aliases.items():
-        workflow = Workflow(kiara=kiara, workflow=workflow_id)
-        workflows[alias] = workflow
+    workflows = []
 
-    workflow_aliases = WorkflowGroupInfo.create_from_workflows(
-        group_alias=None, **workflows
+    for workflow_id in kiara.workflow_registry.all_workflow_ids:
+
+        workflow = Workflow(kiara=kiara, workflow=workflow_id)
+        workflows.append(workflow)
+
+    all_aliases = kiara.workflow_registry.workflow_aliases
+
+    workflow_infos = WorkflowGroupInfo.create_from_workflows(
+        *workflows, group_alias=None, alias_map=all_aliases
     )
 
-    terminal_print_model(workflow_aliases)
+    terminal_print_model(workflow_infos)
 
 
 @workflow.command()
@@ -56,37 +58,22 @@ def list(ctx):
     "--desc", "-d", help="Description string for the workflow.", required=False
 )
 @click.pass_context
-def create(ctx, workflow_alias: str, blueprint: str, desc: Union[str, None] = None):
+def create(
+    ctx, workflow_alias: str, blueprint: Union[str, None], desc: Union[str, None] = None
+):
     """Create a new workflow."""
 
     kiara: Kiara = ctx.obj["kiara"]
 
-    operation: Union[None, KiaraOperation] = None
-    if blueprint:
-        operation = KiaraOperation(kiara=kiara, operation_name=blueprint)
-
-    workflow_details = kiara.workflow_registry.register_workflow(
-        workflow_aliases=[workflow_alias], workflow_details=desc
+    workflow_obj = Workflow.create(
+        alias=workflow_alias, blueprint=blueprint, kiara=kiara
     )
 
-    workflow_details.create_workflow_state()
-
-    if blueprint:
-        assert operation
-
-        module = operation.operation.module
-        if isinstance(module, PipelineModule):
-            config: PipelineConfig = module.config
-        else:
-            raise NotImplementedError()
-
-        state = workflow_details.create_workflow_state(steps=config.steps)
-
-        workflow_details = kiara.workflow_registry.add_workflow_state(
-            workflow=workflow_details, workflow_state=state, set_current=True
-        )
-
-    terminal_print_model(workflow_details)
+    workflow_obj.snapshot()
+    workflow_info = WorkflowInfo.create_from_workflow(workflow=workflow_obj)
+    terminal_print_model(
+        workflow_info, in_panel=f"Workflow: [b i]{workflow_alias}[/b i]"
+    )
 
 
 @workflow.command()
@@ -103,9 +90,8 @@ def explain(ctx, workflow: str):
     workflow_details = kiara.workflow_registry.get_workflow_details(workflow=workflow)
 
     workflow_obj = Workflow(kiara=kiara, workflow=workflow_details.workflow_id)
-
     workflow_info = WorkflowInfo.create_from_workflow(workflow=workflow_obj)
-    terminal_print_model(workflow_info)
+    terminal_print_model(workflow_info, in_panel=f"Workflow: [b i]{workflow}[/b i]")
 
 
 @workflow.command()
@@ -142,7 +128,8 @@ def set_input(ctx, workflow: str, inputs: Tuple[str], process: bool):
             print(e)
 
     workflow_obj.snapshot(save=True)
-    terminal_print(workflow_obj)
+    workflow_info = WorkflowInfo.create_from_workflow(workflow=workflow_obj)
+    terminal_print_model(workflow_info, in_panel=f"Workflow: [b i]{workflow}[/b i]")
 
     # workflow_obj.save_state()
 

@@ -58,13 +58,13 @@ class ItemInfo(KiaraModel):
 
     type_name: str = Field(description="The registered name for this item type.")
     documentation: DocumentationMetadataModel = Field(
-        description="Documentation for the module."
+        description="Documentation for the item."
     )
     authors: AuthorsMetadataModel = Field(
-        description="Information about authorship for the module type."
+        description="Information about authorship for the item."
     )
     context: ContextMetadataModel = Field(
-        description="Generic properties of this module (description, tags, labels, references, ...)."
+        description="Generic properties of this item (description, tags, labels, references, ...)."
     )
 
     def _retrieve_id(self) -> str:

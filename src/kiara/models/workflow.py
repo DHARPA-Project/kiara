@@ -7,7 +7,7 @@ from rich import box
 from rich.console import RenderableType
 from rich.panel import Panel
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Type, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Type, Union
 
 from kiara.models import KiaraModel
 from kiara.models.documentation import (
@@ -17,46 +17,48 @@ from kiara.models.documentation import (
 )
 from kiara.models.info import InfoModelGroup, ItemInfo
 from kiara.models.module.pipeline import PipelineConfig, PipelineStep
-from kiara.models.module.pipeline.pipeline import PipelineInfo
+from kiara.models.module.pipeline.pipeline import Pipeline, PipelineInfo
 from kiara.models.module.pipeline.structure import PipelineStructure
 from kiara.registries.ids import ID_REGISTRY
+from kiara.utils import is_jupyter
 
 if TYPE_CHECKING:
+    from kiara.context import Kiara
     from kiara.interfaces.python_api.workflow import Workflow
 
 
 class WorkflowState(KiaraModel):
-    # @classmethod
-    # def create_snapshot(cls, workflow: "Workflow") -> "WorkflowState":
-    #
-    #     raise NotImplementedError()
+    @classmethod
+    def create_from_workflow(self, workflow: "Workflow"):
 
-    # workflow_state_id: uuid.UUID = Field(
-    #     description="The globally unique uuid for this workflow state."
-    # )
-    # workflow_id: uuid.UUID = Field(
-    #     description="The id of the workflow this state is connected to."
-    # )
+        steps = list(workflow._steps.values())
+        inputs = dict(workflow.current_inputs)
+        info = PipelineInfo.create_from_pipeline(
+            kiara=workflow._kiara, pipeline=workflow.pipeline
+        )
+        info._kiara = workflow._kiara
+
+        ws = WorkflowState(steps=steps, inputs=inputs, pipeline_info=info)
+        ws._kiara = workflow._kiara
+        ws.pipeline_info._kiara = workflow._kiara
+        return ws
+
     steps: List[PipelineStep] = Field(
         description="The current steps in the workflow.", default_factory=list
     )
     inputs: Dict[str, uuid.UUID] = Field(
         description="The current (pipeline) input values.", default_factory=dict
     )
-    # outputs: Dict[str, uuid.UUID] = Field(description="The current (pipeline) output values.", default_factory=dict)
-    # created: datetime.datetime = Field(
-    #     description="The time this snapshot was created.",
-    #     default_factory=datetime.datetime.now,
-    # )
-    # parent: Union[uuid.UUID, None] = Field(
-    #     description="The id of the state that preceeded this one (if applicable).",
-    #     default=None,
-    # )
-    _pipeline_config: Union[PipelineConfig, None] = PrivateAttr(default=None)
+    pipeline_info: PipelineInfo = Field(
+        description="Details about the pipeline and its state."
+    )
+
+    _pipeline: Union[Pipeline, None] = PrivateAttr(default=None)
+    _kiara: "Kiara" = PrivateAttr(default=None)
 
     def _retrieve_data_to_hash(self) -> EncodableType:
         return {
-            "structure": self.structure.instance_cid,
+            "pipeline_info": self.pipeline_info.instance_cid,
             "inputs": {k: str(v) for k, v in self.inputs.items()},
         }
 
@@ -69,48 +71,31 @@ class WorkflowState(KiaraModel):
     @property
     def pipeline_config(self) -> PipelineConfig:
 
-        if self._pipeline_config is not None:
-            return self._pipeline_config
-
-        self._pipeline_config = PipelineConfig.from_config(
-            pipeline_name="__workflow__", data={"steps": self.steps}
-        )
-        return self._pipeline_config
+        return self.pipeline_info.pipeline_structure.pipeline_config
 
     @property
-    def structure(self) -> PipelineStructure:
-        return self.pipeline_config.structure
+    def pipeline_structure(self) -> PipelineStructure:
+        return self.pipeline_info.pipeline_structure
 
-    def create_workflow_state(
-        self,
-        steps: Iterable[PipelineStep] = None,
-        inputs: Union[Mapping[str, uuid.UUID], None] = None,
-    ) -> "WorkflowState":
+    def create_renderable(self, **config: Any) -> RenderableType:
 
-        # workflow_state_id = ID_REGISTRY.generate(
-        #     comment=f"new workflow state for workflow: {self.instance_id}"
-        # )
+        in_panel = config.get("in_panel", None)
+        if in_panel is None:
+            if is_jupyter():
+                in_panel = True
+            else:
+                in_panel = False
+        table = Table(box=box.SIMPLE, show_header=False, padding=(0, 0, 0, 0))
+        table.add_column("property", style="i")
+        table.add_column("value")
+        table.add_row("state id", self.instance_id)
 
-        if not steps:
-            steps = self.steps
+        self.pipeline_info._fill_table(table=table, config=config)
+
+        if in_panel:
+            return Panel(table)
         else:
-            # TODO: augment steps instead of replace?
-            steps = list(steps)
-
-        if inputs is None:
-            inputs = {}
-        else:
-            inputs = dict(inputs)
-
-        for k, v in self.inputs.items():
-            if k not in inputs.keys():
-                inputs[k] = v
-
-        state = WorkflowState(
-            steps=steps,
-            inputs=inputs,
-        )
-        return state
+            return table
 
 
 class WorkflowDetails(KiaraModel):
@@ -139,7 +124,7 @@ class WorkflowDetails(KiaraModel):
         default_factory=dict,
     )
 
-    # _kiara: Union["Kiara", None] = PrivateAttr(default=None)
+    _kiara: Union["Kiara", None] = PrivateAttr(default=None)
     # _last_update: datetime.datetime = PrivateAttr(default_factory=datetime.datetime.now)
 
     @validator("documentation", pre=True)
@@ -155,28 +140,6 @@ class WorkflowDetails(KiaraModel):
         workflow_state_id = self.workflow_states[last_date]
         return workflow_state_id
 
-    def create_workflow_state(
-        self,
-        steps: Union[Iterable[PipelineStep], None] = None,
-        inputs: Union[Mapping[str, uuid.UUID], None] = None,
-    ) -> "WorkflowState":
-
-        if not steps:
-            steps = []
-        else:
-            steps = list(steps)
-
-        if inputs is None:
-            inputs = {}
-        else:
-            inputs = dict(inputs)
-
-        state = WorkflowState(
-            steps=steps,
-            inputs=inputs,
-        )
-        return state
-
 
 class WorkflowInfo(ItemInfo):
 
@@ -185,14 +148,11 @@ class WorkflowInfo(ItemInfo):
     @classmethod
     def create_from_workflow(cls, workflow: "Workflow"):
 
-        pipeline_info = PipelineInfo.create_from_pipeline(
-            kiara=workflow._kiara, pipeline=workflow.pipeline
-        )
         wf_info = WorkflowInfo.construct(
             type_name=str(workflow.workflow_id),
             workflow_details=workflow.details,
             workflow_states=workflow.all_states,
-            pipeline_info=pipeline_info,
+            pipeline_info=workflow.pipeline_info,
             documentation=workflow.details.documentation,
             authors=workflow.details.authors,
             context=workflow.details.context,
@@ -212,6 +172,13 @@ class WorkflowInfo(ItemInfo):
     )
 
     def create_renderable(self, **config: Any) -> RenderableType:
+
+        in_panel = config.get("in_panel", None)
+        if in_panel is None:
+            if is_jupyter():
+                in_panel = True
+            else:
+                in_panel = False
 
         include_doc = config.get("include_doc", True)
         include_authors = config.get("include_authors", True)
@@ -239,7 +206,11 @@ class WorkflowInfo(ItemInfo):
             table.add_row(
                 "Current state", self.pipeline_info.create_renderable(**config)
             )
-        return table
+
+        if in_panel:
+            return Panel(table)
+        else:
+            return table
 
 
 class WorkflowGroupInfo(InfoModelGroup):
@@ -252,39 +223,54 @@ class WorkflowGroupInfo(InfoModelGroup):
 
     @classmethod
     def create_from_workflows(
-        cls, group_alias: Union[str, None] = None, **items: "Workflow"
+        cls,
+        *items: "Workflow",
+        group_alias: Union[str, None] = None,
+        alias_map: Union[None, Mapping[str, uuid.UUID]] = None
     ) -> "WorkflowGroupInfo":
 
         workflow_infos = {
-            alias: WorkflowInfo.create_from_workflow(workflow=w)
-            for alias, w in items.items()
+            str(w.workflow_id): WorkflowInfo.create_from_workflow(workflow=w)
+            for w in items
         }
+        if alias_map is None:
+            alias_map = {}
         workflow_group_info = cls.construct(
-            group_alias=group_alias, item_infos=workflow_infos
+            group_alias=group_alias, item_infos=workflow_infos, aliases=alias_map
         )
         return workflow_group_info
 
     item_infos: Mapping[str, WorkflowInfo] = Field(
         description="The workflow infos objects for each workflow."
     )
+    aliases: Mapping[str, uuid.UUID] = Field(
+        description="The available aliases.", default_factory=dict
+    )
 
     def create_renderable(self, **config: Any) -> RenderableType:
 
         table = Table(box=box.SIMPLE, show_header=True)
-        table.add_column("alias", "i")
+        table.add_column("alias(es)", style="i")
         table.add_column("workflow_id")
         table.add_column("# steps")
         table.add_column("# stages")
         table.add_column("# states")
         table.add_column("description")
 
-        for alias, wf in self.item_infos.items():
+        for workflow_id, wf in self.item_infos.items():
+
+            aliases = [k for k, v in self.aliases.items() if str(v) == workflow_id]
             steps = len(wf.pipeline_info.pipeline_structure.steps)
             stages = len(wf.pipeline_info.pipeline_structure.processing_stages)
             states = len(wf.workflow_states)
+
+            if not aliases:
+                alias_str = ""
+            else:
+                alias_str = ", ".join(aliases)
             table.add_row(
-                alias,
-                str(wf.workflow_details.workflow_id),
+                alias_str,
+                workflow_id,
                 str(steps),
                 str(stages),
                 str(states),

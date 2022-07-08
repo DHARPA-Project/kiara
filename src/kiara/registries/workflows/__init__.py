@@ -34,6 +34,10 @@ class WorkflowArchive(BaseArchive):
         pass
 
     @abc.abstractmethod
+    def retrieve_all_workflow_ids(self) -> Iterable[uuid.UUID]:
+        pass
+
+    @abc.abstractmethod
     def retrieve_workflow_details(self, workflow_id: uuid.UUID):
         pass
 
@@ -119,8 +123,10 @@ class WorkflowRegistry(object):
         self._all_aliases: Union[Dict[str, uuid.UUID], None] = None
         """All workflow aliases."""
 
+        self._all_workflow_ids: Union[Dict[uuid.UUID, str], None] = None
+        """All workflow ids, with store alias as values"""
+
         self._cached_workflows: Dict[uuid.UUID, WorkflowDetails] = {}
-        self._workflow_locations: Dict[uuid.UUID, str] = None  # type: ignore
 
     def register_archive(
         self,
@@ -192,12 +198,12 @@ class WorkflowRegistry(object):
 
     @property
     def workflow_aliases(self) -> Dict[str, uuid.UUID]:
+        """Retrieve all registered workflow aliases."""
 
         if self._all_aliases is not None:
             return self._all_aliases
 
         all_workflows: Dict[str, uuid.UUID] = {}
-        workflow_locations: Dict[uuid.UUID, str] = {}
         for archive_alias, archive in self._workflow_archives.items():
             workflow_map = archive.retrieve_all_workflow_aliases()
             for alias, w_id in workflow_map.items():
@@ -211,11 +217,25 @@ class WorkflowRegistry(object):
                         f"Inconsistent alias registry: alias '{final_alias}' available more than once."
                     )
                 all_workflows[final_alias] = w_id
-                workflow_locations[w_id] = archive_alias
-
         self._all_aliases = all_workflows
-        self._workflow_locations = workflow_locations
         return self._all_aliases
+
+    @property
+    def all_workflow_ids(self) -> Iterable[uuid.UUID]:
+
+        if self._all_workflow_ids is not None:
+            return self._all_workflow_ids.keys()
+
+        all_ids: Dict[uuid.UUID, str] = {}
+        for archive_alias, archive in self._workflow_archives.items():
+            ids = archive.retrieve_all_workflow_ids()
+
+            for _id in ids:
+                assert _id not in all_ids.keys()
+                all_ids[_id] = archive_alias
+
+        self._all_workflow_ids = all_ids
+        return self._all_workflow_ids.keys()
 
     def get_workflow_details(self, workflow: Union[str, uuid.UUID]) -> WorkflowDetails:
 
@@ -238,10 +258,10 @@ class WorkflowRegistry(object):
         if workflow_id in self._cached_workflows.keys():
             return self._cached_workflows[workflow_id]
 
-        if self._workflow_locations is None:
-            self.workflow_aliases  # noqa
+        if self._all_workflow_ids is None:
+            self.all_workflow_ids  # noqa
 
-        store_alias = self._workflow_locations[workflow_id]
+        store_alias = self._all_workflow_ids[workflow_id]  # type: ignore
         store = self._workflow_archives[store_alias]
 
         workflow_details = store.retrieve_workflow_details(workflow_id=workflow_id)
@@ -271,30 +291,12 @@ class WorkflowRegistry(object):
         store_name = self.default_alias_store
         store: WorkflowStore = self.get_archive(archive_id=store_name)  # type: ignore
 
-        # if not init_pipeline:
-        #     steps: List[PipelineStep] = []
-        # elif isinstance(init_pipeline, str):
-        #     operation = self._kiara.operation_registry.operations.get(init_pipeline, None)
-        #     if not operation:
-        #         raise Exception(f"Can't initialize workflow, init pipeline value '{init_pipeline}' not an operation id.")
-        #
-        #     module_config = operation.module.config
-        #     if isinstance(module_config, PipelineConfig):
-        #         steps = module_config.steps
-        #     else:
-        #         raise NotImplementedError()
-        # else:
-        #     raise Exception("'init_pipeline' must be of on of the following types: string")
-        #
-        # workflow_details = WorkflowDetails(
-        #     workflow_id=workflow_id,
-        #     documentation=documentation,  # type: ignore
-        # )
-
         if workflow_details is None:
             workflow_details = WorkflowDetails()
+            workflow_details._kiara = self._kiara
         elif isinstance(workflow_details, str):
             workflow_details = WorkflowDetails(documentation=workflow_details)  # type: ignore
+            workflow_details._kiara = self._kiara
 
         # workflow_details._kiara = self._kiara
 
@@ -302,11 +304,14 @@ class WorkflowRegistry(object):
             workflow_details=workflow_details, workflow_aliases=workflow_aliases
         )
         # workflow = Workflow(kiara=self._kiara, workflow_details=workflow_details)
+        if self._all_workflow_ids is None:
+            self.all_workflow_ids  # noqa
+        self._all_workflow_ids[workflow_details.workflow_id] = store_name  # type: ignore
         self._cached_workflows[workflow_details.workflow_id] = workflow_details
 
         if workflow_aliases:
             for workflow_alias in workflow_aliases:
-                self._workflow_locations[workflow_details.workflow_id] = store_name
+                self._all_workflow_ids[workflow_details.workflow_id] = store_name  # type: ignore
                 self.workflow_aliases[workflow_alias] = workflow_details.workflow_id
 
         # if steps:
@@ -361,7 +366,9 @@ class WorkflowRegistry(object):
                 f"Can't retrieve current workflow state, no state exists yet for workflow '{workflow}'."
             )
 
-        archive_alias = self._workflow_locations[workflow_details.workflow_id]
+        if self._all_workflow_ids is None:
+            self.all_workflow_ids  # noqa
+        archive_alias = self._all_workflow_ids[workflow_details.workflow_id]  # type: ignore
 
         archive = self.get_archive(archive_alias)
         if archive is None:
@@ -371,6 +378,7 @@ class WorkflowRegistry(object):
         state = archive.retrieve_workflow_state(
             workflow_state_id=workflow_state_id,
         )
+        state._kiara = self._kiara
 
         return state
 
@@ -380,7 +388,9 @@ class WorkflowRegistry(object):
 
         workflow_details = self.get_workflow_details(workflow=workflow)
 
-        archive_alias = self._workflow_locations[workflow_details.workflow_id]
+        if self._all_workflow_ids is None:
+            self.all_workflow_ids  # noqa
+        archive_alias = self._all_workflow_ids[workflow_details.workflow_id]  # type: ignore
 
         archive = self.get_archive(archive_alias)
         if archive is None:

@@ -8,6 +8,8 @@
 import networkx as nx
 from functools import lru_cache
 from pydantic import Field, PrivateAttr, root_validator
+from rich.console import RenderableType
+from rich.tree import Tree
 from typing import Any, Dict, Iterable, List, Mapping, Set
 
 from kiara.models import KiaraModel
@@ -119,6 +121,8 @@ class PipelineStructure(KiaraModel):
                 "Only 'pipeline_config' key allowed when creating a pipeline structure object."
             )
 
+        if isinstance(pipeline_config, Mapping):
+            pipeline_config = PipelineConfig(**pipeline_config)
         _config: PipelineConfig = pipeline_config
         _steps: List[PipelineStep] = list(_config.steps)
 
@@ -604,3 +608,26 @@ class PipelineStructure(KiaraModel):
         self._processing_stages = processing_stages
 
         self._get_node_of_type.cache_clear()
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        tree = Tree("pipeline")
+        inputs = tree.add("inputs")
+        for field_name, schema in self.pipeline_inputs_schema.items():
+            inputs.add(f"[i]{field_name}[i] (type: {schema.type})")
+
+        steps = tree.add("steps")
+        for idx, stage in enumerate(self.processing_stages, start=1):
+            stage_node = steps.add(f"stage {idx}")
+            for step_id in stage:
+                step_node = stage_node.add(f"step: {step_id}")
+                step = self.get_step(step_id=step_id)
+                if step.doc.is_set:
+                    step_node.add(f"desc: {step.doc.description}")
+                step_node.add(f"module: {step.module_type}")
+
+        outputs = tree.add("outputs")
+        for field_name, schema in self.pipeline_outputs_schema.items():
+            outputs.add(f"[i]{field_name}[i] (type: {schema.type})")
+
+        return tree

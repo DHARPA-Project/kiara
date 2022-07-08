@@ -4,7 +4,6 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
 import networkx as nx
 from pydantic.main import BaseModel
 from typing import TYPE_CHECKING, Any, Iterable, Mapping, Type, Union
@@ -108,3 +107,16 @@ def assemble_subcomponent_tree(data: "KiaraModel") -> Union[nx.DiGraph, None]:
 
     assemble_tree(data, KIARA_DEFAULT_ROOT_NODE_ID)
     return graph
+
+
+def module_config_is_empty(config: Mapping[str, Any]):
+
+    c = dict(config)
+    d = c.pop("defaults", None)
+    if d:
+        return False
+    constants = c.pop("constants", None)
+    if constants:
+        return False
+
+    return False if c else True

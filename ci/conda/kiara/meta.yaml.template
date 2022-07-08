@@ -25,6 +25,7 @@ requirements:
     - Deprecated>=1.2.0
     - alembic>=1.7.0
     - appdirs>=1.4.4,<2.0.0
+    - black>=22.3.0
     - bidict>=0.21.0
     - click>=7.0.0
     - dag-cbor>=0.2.2

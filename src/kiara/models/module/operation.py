@@ -372,7 +372,7 @@ class Operation(Manifest):
                 _add_default=True,
                 _show_header=True,
                 _constants=None,
-                **self.operation_details.inputs_schema,
+                fields=self.operation_details.inputs_schema,
             )
             table.add_row("Inputs", inputs_table)
         if include_outputs:
@@ -381,7 +381,7 @@ class Operation(Manifest):
                 _add_default=False,
                 _show_header=True,
                 _constants=None,
-                **self.operation_details.outputs_schema,
+                fields=self.operation_details.outputs_schema,
             )
             table.add_row("Outputs", outputs_table)
 

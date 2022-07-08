@@ -7,11 +7,16 @@
 """Implementation of interfaces for *Kiara*."""
 
 import os
+import rich
+import structlog
+import sys
 from rich.console import Console
 from typing import Union
 
 # Global console used by alternative print
 _console: Union[Console, None] = None
+
+log = structlog.getLogger()
 
 
 def get_console() -> Console:
@@ -34,3 +39,32 @@ def get_console() -> Console:
         _console = Console(width=width)
 
     return _console
+
+
+def set_console_width(width: Union[int, None] = None, prefer_env: bool = True):
+
+    global _console
+    if prefer_env or not width:
+        _width: Union[None, int] = None
+        try:
+            _width = int(os.environ.get("CONSOLE_WIDTH", None))  # type: ignore
+        except Exception:
+            pass
+        if _width:
+            width = _width
+
+    if width:
+        try:
+            width = int(width)
+        except Exception as e:
+            log.debug("invalid.console_width", error=str(e))
+
+    _console = Console(width=width)
+
+    if not width:
+        if "google.colab" in sys.modules or "jupyter_client" in sys.modules:
+            width = 140
+
+    if width:
+        con = rich.get_console()
+        con.width = width

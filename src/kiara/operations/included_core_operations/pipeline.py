@@ -179,7 +179,7 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
         for pipeline_name, pipeline_data in self.pipeline_data.items():
             pipeline_config = dict(pipeline_data["data"])
             pipeline_id = pipeline_config.pop("pipeline_name", None)
-            doc = pipeline_config.pop("doc", None)
+            doc = pipeline_config.get("doc", None)
             pipeline_metadata = pipeline_data["metadata"]
 
             op_details = PipelineOperationConfig(

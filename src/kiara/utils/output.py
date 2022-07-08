@@ -552,15 +552,15 @@ def create_table_from_base_model_cls(model_cls: Type[BaseModel]):
 
 
 def create_table_from_field_schemas(
+    fields: Mapping[str, "ValueSchema"],
     _add_default: bool = True,
     _add_required: bool = True,
     _show_header: bool = False,
     _constants: Union[Mapping[str, Any], None] = None,
-    **fields: "ValueSchema",
 ) -> RichTable:
 
     table = RichTable(box=box.SIMPLE, show_header=_show_header)
-    table.add_column("field name", style="i")
+    table.add_column("field name", style="i", overflow="fold")
     table.add_column("type")
     table.add_column("description")
 
@@ -571,7 +571,6 @@ def create_table_from_field_schemas(
             table.add_column("Default / Constant")
         else:
             table.add_column("Default")
-
     for field_name, schema in fields.items():
 
         row: List[RenderableType] = [field_name, schema.type, schema.doc]
@@ -640,7 +639,7 @@ def create_value_map_status_renderable(
         table.add_column("default")
 
     if show_value_ids:
-        table.add_column("value id")
+        table.add_column("value id", overflow="fold")
 
     invalid = inputs.check_invalid()
 

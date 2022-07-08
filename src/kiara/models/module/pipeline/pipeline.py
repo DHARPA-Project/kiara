@@ -7,6 +7,7 @@
 
 import abc
 import dpath
+import networkx as nx
 import uuid
 from pydantic import Field, PrivateAttr
 from rich import box
@@ -32,11 +33,13 @@ from kiara.models.events.pipeline import (
 )
 from kiara.models.info import ItemInfo
 from kiara.models.module.jobs import JobConfig
-from kiara.models.module.pipeline import StepStatus
+from kiara.models.module.pipeline import PipelineConfig, StepStatus
 from kiara.models.module.pipeline.structure import PipelineStep, PipelineStructure
 from kiara.models.module.pipeline.value_refs import ValueRef
 from kiara.models.values.value import ORPHAN
+from kiara.models.values.value_schema import ValueSchema
 from kiara.utils import StringYAML
+from kiara.utils.operations import create_operation
 from kiara.utils.output import (
     create_pipeline_steps_tree,
     create_table_from_model_object,
@@ -57,6 +60,35 @@ class PipelineListener(abc.ABC):
 
 class Pipeline(object):
     """An instance of a [PipelineStructure][kiara.pipeline.structure.PipelineStructure] that holds state for all of the inputs/outputs of the steps within."""
+
+    @classmethod
+    def create_pipeline(
+        cls,
+        kiara: "Kiara",
+        pipeline: Union[PipelineConfig, PipelineStructure, Mapping, str],
+    ) -> "Pipeline":
+
+        if isinstance(pipeline, Mapping):
+            pipeline_structure: PipelineStructure = PipelineConfig.from_config(
+                pipeline_name="__pipeline__", data=pipeline, kiara=kiara
+            ).structure
+        elif isinstance(pipeline, PipelineConfig):
+            pipeline_structure = pipeline.structure
+        elif isinstance(pipeline, PipelineStructure):
+            pipeline_structure = pipeline
+        elif isinstance(pipeline, str):
+            operation = create_operation(module_or_operation=pipeline, kiara=kiara)
+            module = operation.module
+            if isinstance(module.config, PipelineConfig):
+                config: PipelineConfig = module.config
+            else:
+                raise NotImplementedError()
+            pipeline_structure = config.structure
+        else:
+            raise Exception(f"Invalid type for argument 'pipeline': {type(pipeline)}")
+
+        pipeline_obj = Pipeline(kiara=kiara, structure=pipeline_structure)
+        return pipeline_obj
 
     def __init__(self, structure: PipelineStructure, kiara: "Kiara"):
 
@@ -102,10 +134,18 @@ class Pipeline(object):
             alias=str(self.id), version=0, assoc_value=None, values_schema={}
         )
         values._data_registry = self._data_registry
-        for field_name, schema in self._structure.pipeline_inputs_schema.items():
-            values.set_alias_schema(f"pipeline.inputs.{field_name}", schema=schema)
-        for field_name, schema in self._structure.pipeline_outputs_schema.items():
-            values.set_alias_schema(f"pipeline.outputs.{field_name}", schema=schema)
+        inputs_schema = self._structure.pipeline_inputs_schema
+        outputs_schema = self._structure.pipeline_outputs_schema
+        if inputs_schema:
+            for field_name, schema in inputs_schema.items():
+                values.set_alias_schema(f"pipeline.inputs.{field_name}", schema=schema)
+        else:
+            values.set_alias_schema("pipeline.inputs", schema=ValueSchema(type="none"))
+        if outputs_schema:
+            for field_name, schema in outputs_schema.items():
+                values.set_alias_schema(f"pipeline.outputs.{field_name}", schema=schema)
+        else:
+            values.set_alias_schema("pipeline.outputs", schema=ValueSchema(type="none"))
         for step_id in self.step_ids:
             step = self.get_step(step_id)
             for field_name, value_schema in step.module.inputs_schema.items():
@@ -147,6 +187,10 @@ class Pipeline(object):
     @property
     def structure(self) -> PipelineStructure:
         return self._structure
+
+    @property
+    def doc(self) -> DocumentationMetadataModel:
+        return self.structure.pipeline_config.doc
 
     def get_current_pipeline_inputs(self) -> Dict[str, uuid.UUID]:
         """All (pipeline) input values of this pipeline."""
@@ -201,20 +245,29 @@ class Pipeline(object):
 
         pipeline_inputs = self._all_values.get_alias("pipeline.inputs")
         pipeline_outputs = self._all_values.get_alias("pipeline.outputs")
-        assert pipeline_inputs is not None
-        assert pipeline_outputs is not None
 
-        invalid = pipeline_inputs.check_invalid()
-        if not invalid:
-            status = StepStatus.INPUTS_READY
-            step_outputs = self._all_values.get_alias("pipeline.outputs")
-            assert step_outputs is not None
-            invalid_outputs = step_outputs.check_invalid()
-            # TODO: also check that all the pedigrees match up with current inputs
-            if not invalid_outputs:
-                status = StepStatus.RESULTS_READY
+        if pipeline_inputs:
+            invalid = pipeline_inputs.check_invalid()
+            if not invalid:
+                status = StepStatus.INPUTS_READY
+                step_outputs = self._all_values.get_alias("pipeline.outputs")
+                assert step_outputs is not None
+                invalid_outputs = step_outputs.check_invalid()
+                # TODO: also check that all the pedigrees match up with current inputs
+                if not invalid_outputs:
+                    status = StepStatus.RESULTS_READY
+            else:
+                status = StepStatus.INPUTS_INVALID
+            _pipeline_inputs = pipeline_inputs.get_all_value_ids()
         else:
-            status = StepStatus.INPUTS_INVALID
+            _pipeline_inputs = {}
+            invalid = {}
+            status = StepStatus.INPUTS_READY
+
+        if pipeline_outputs:
+            _pipeline_outputs = pipeline_outputs.get_all_value_ids()
+        else:
+            _pipeline_outputs = {}
 
         step_states = {}
         for step_id in self._structure.step_ids:
@@ -225,8 +278,8 @@ class Pipeline(object):
             kiara_id=self._data_registry.kiara_id,
             pipeline_id=self.pipeline_id,
             pipeline_status=status,
-            pipeline_inputs=pipeline_inputs.get_all_value_ids(),
-            pipeline_outputs=pipeline_outputs.get_all_value_ids(),
+            pipeline_inputs=_pipeline_inputs,
+            pipeline_outputs=_pipeline_outputs,
             invalid_details=invalid,
             step_states=step_states,
         )
@@ -290,6 +343,8 @@ class Pipeline(object):
                 )
                 values_to_set[k] = value.value_id
 
+        if not values_to_set:
+            return {}
         changed_pipeline_inputs = self._set_values("pipeline.inputs", **values_to_set)
 
         changed_results = {"__pipeline__": {"inputs": changed_pipeline_inputs}}
@@ -485,6 +540,18 @@ class Pipeline(object):
         """Return all ids of the steps of this pipeline."""
         return self._structure.step_ids
 
+    @property
+    def execution_graph(self) -> nx.DiGraph:
+        return self._structure.execution_graph
+
+    @property
+    def data_flow_graph(self) -> nx.DiGraph:
+        return self._structure.data_flow_graph
+
+    @property
+    def data_flow_graph_simple(self) -> nx.DiGraph:
+        return self._structure.data_flow_graph_simple
+
     def get_step(self, step_id: str) -> PipelineStep:
         """Return the object representing a step in this workflow, identified by the step id."""
         return self._structure.get_step(step_id)
@@ -562,22 +629,22 @@ class PipelineInfo(ItemInfo):
 
     pipeline_structure: PipelineStructure = Field(description="The pipeline structure.")
     pipeline_details: PipelineDetails = Field(description="The current input details.")
-    _kiara: "Kiara" = PrivateAttr()
+    _kiara: "Kiara" = PrivateAttr(default=None)
 
-    def create_renderable(self, **config: Any) -> RenderableType:
-
-        include_pipeline_inputs = config.get("include_pipeline_inputs", True)
-        include_pipeline_outputs = config.get("include_pipeline_outputs", True)
-        include_steps = config.get("include_steps", True)
-        include_details = config.get("include_details", False)
-        include_doc = config.get("include_doc", False)
-        include_authors = config.get("include_authors", False)
-        include_context = config.get("include_context", False)
-        include_structure = config.get("include_structure", False)
+    def create_pipeline_table(self, **config: Any) -> Table:
 
         table = Table(box=box.SIMPLE, show_header=False, padding=(0, 0, 0, 0))
         table.add_column("property", style="i")
         table.add_column("value")
+
+        self._fill_table(table=table, config=config)
+        return table
+
+    def _fill_table(self, table: Table, config: Mapping[str, Any]):
+
+        include_pipeline_inputs = config.get("include_pipeline_inputs", True)
+        include_pipeline_outputs = config.get("include_pipeline_outputs", True)
+        include_steps = config.get("include_steps", True)
 
         if include_pipeline_inputs:
             input_values = self._kiara.data_registry.create_valuemap(
@@ -652,6 +719,16 @@ class PipelineInfo(ItemInfo):
             )
 
             table.add_row("pipeline outputs", t_outputs)
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        include_details = config.get("include_details", False)
+        include_doc = config.get("include_doc", False)
+        include_authors = config.get("include_authors", False)
+        include_context = config.get("include_context", False)
+        include_structure = config.get("include_structure", False)
+
+        table = self.create_pipeline_table(**config)
 
         if include_details:
             t_details = create_table_from_model_object(

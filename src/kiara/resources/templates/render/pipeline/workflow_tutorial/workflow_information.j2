@@ -1,0 +1,22 @@
+# %% [markdown]
+# # Workflow information <a class="anchor" id="pipeline_info"></a>
+
+After our workflow is wired up, we look can look at its structure, and other properties.
+
+# %% [markdown]
+
+# ## Workflow status
+
+A workflow consists of a series of 'states', the most relevant is always the most recent one. We can investigate
+that latest states details like so:
+
+# %%
+workflow.current_state
+
+# %% [markdown]
+# ## Pipeline execution graph
+
+Let's look at the current execution graph for the current workflow pipeline:
+
+# %%
+graph_to_image(workflow.pipeline.execution_graph)

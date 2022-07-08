@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import structlog
 import uuid
-from rich import box
-from rich.table import Table
 from slugify import slugify
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Tuple, Union
 
 from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID
+from kiara.interfaces.python_api.operation import KiaraOperation
 from kiara.models import KiaraModel
+from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.events.pipeline import ChangedValue, PipelineEvent
 from kiara.models.module import KiaraModuleClass
 from kiara.models.module.jobs import ExecutionContext, JobConfig
@@ -16,11 +16,14 @@ from kiara.models.module.pipeline import (
     PipelineStep,
     StepStatus,
     StepValueAddress,
+    create_input_alias_map,
+    create_output_alias_map,
 )
 from kiara.models.module.pipeline.controller import SinglePipelineController
-from kiara.models.module.pipeline.pipeline import Pipeline
+from kiara.models.module.pipeline.pipeline import Pipeline, PipelineInfo
+from kiara.models.values.value import ValueMap
 from kiara.models.values.value_schema import ValueSchema
-from kiara.models.workflow import WorkflowDetails, WorkflowState
+from kiara.models.workflow import WorkflowDetails, WorkflowInfo, WorkflowState
 from kiara.utils import find_free_id, is_debug
 
 if TYPE_CHECKING:
@@ -135,7 +138,53 @@ class WorkflowStatus(KiaraModel):
 
 
 class Workflow(object):
-    def __init__(self, kiara: "Kiara", workflow: Union[uuid.UUID, str]):
+    @classmethod
+    def load(cls, workflow: Union[uuid.UUID, str]):
+
+        pass
+
+    @classmethod
+    def create(
+        cls,
+        alias: Union[None, str] = None,
+        blueprint: Union[str, None] = None,
+        doc: Union[None, str, DocumentationMetadataModel] = None,
+        kiara: Union[None, "Kiara"] = None,
+        overwrite_existing: bool = False,
+    ):
+
+        if kiara is None:
+            from kiara.context import Kiara
+
+            kiara = Kiara.instance()
+
+        operation: Union[None, KiaraOperation] = None
+        if blueprint:
+            operation = KiaraOperation(kiara=kiara, operation_name=blueprint)
+            if doc is None:
+                doc = operation.operation.doc
+
+        details = WorkflowDetails(documentation=doc)
+
+        workflow_obj = Workflow(kiara=kiara, workflow=details)
+        if alias:
+            workflow_obj.workflow_alias = alias
+        if blueprint:
+            assert operation
+
+            module = operation.operation.module
+            if isinstance(module.config, PipelineConfig):
+                config: PipelineConfig = module.config
+            else:
+                raise NotImplementedError()
+
+            workflow_obj.add_steps(*config.steps)
+
+        return workflow_obj
+
+    def __init__(
+        self, kiara: "Kiara", workflow: Union[uuid.UUID, WorkflowDetails, str, None]
+    ):
 
         self._kiara: Kiara = kiara
 
@@ -144,16 +193,55 @@ class Workflow(object):
             WorkflowPipelineController(kiara=self._kiara)
         )
 
-        # TODO: create if not exists?
-        self._workflow_details: WorkflowDetails = (
-            self._kiara.workflow_registry.get_workflow_details(workflow=workflow)
-        )
+        workflow_id = None
+        self._workflow_alias: Union[None, str] = None
+        self._is_stored: bool = False
+        self._workflow_details: WorkflowDetails = None  # type: ignore
+
+        if workflow is None:
+            workflow_id = None
+        if isinstance(workflow, WorkflowDetails):
+            workflow_id = workflow.workflow_id
+        elif isinstance(workflow, uuid.UUID):
+            workflow_id = workflow
+        elif isinstance(workflow, str):
+            try:
+                workflow_id = uuid.UUID(workflow)
+            except Exception:
+                # means it is meant to be an alias
+                self._workflow_alias = workflow
+                try:
+                    self._workflow_details = (
+                        self._kiara.workflow_registry.get_workflow_details(workflow)
+                    )
+                    self._is_stored = True
+                    workflow_id = self._workflow_details.workflow_id
+                except Exception:
+                    pass
+
+        if workflow_id:
+            if self._workflow_details is None:
+                try:
+                    self._workflow_details = (
+                        self._kiara.workflow_registry.get_workflow_details(
+                            workflow=workflow_id
+                        )
+                    )
+                    self._is_stored = True
+                except Exception:
+                    pass
+
+        if self._workflow_details is None:
+            self._workflow_details = WorkflowDetails()
 
         self._all_inputs: Dict[str, Any] = {}
         self._current_inputs: Union[Dict[str, uuid.UUID], None] = None
         self._current_outputs: Union[Dict[str, uuid.UUID], None] = None
 
         self._steps: Dict[str, PipelineStep] = {}
+
+        self._pipeline_input_aliases: Dict[str, str] = {}
+        self._pipeline_output_aliasess: Dict[str, str] = {}
 
         # self._current_state_cid: Union[None, CID] = None
         self._state_cache: Dict[str, WorkflowState] = {}
@@ -162,6 +250,9 @@ class Workflow(object):
         """Cache to save job ids per output value(s), in order to save jobs if output values are saved."""
 
         self._pipeline: Union[Pipeline, None] = None
+        self._pipeline_info: Union[PipelineInfo, None] = None
+        self._current_info: Union[WorkflowInfo, None] = None
+        self._current_state: Union[WorkflowState, None] = None
 
         if self._workflow_details.workflow_states:
             self.load_state()
@@ -170,21 +261,14 @@ class Workflow(object):
     def workflow_id(self) -> uuid.UUID:
         return self._workflow_details.workflow_id
 
-    # @property
-    # def current_state(self) -> WorkflowState:
-    #
-    #     if self._current_state_cid is not None:
-    #         return self._state_cache[self._current_state_cid]
-    #
-    #     workflow_state_id = ID_REGISTRY.generate(comment="new workflow state")
-    #     if self._steps is None:
-    #         self._steps = {}
-    #
-    #     state = WorkflowState(workflow_state_id=workflow_state_id, workflow_id=self.workflow_id, steps=list(self._steps.values()))
-    #     assert state.instance_cid not in self._state_cache.keys()
-    #     self._state_cache[state.instance_cid] = state
-    #     self._current_state_cid = state.instance_cid
-    #     return state
+    @property
+    def workflow_alias(self) -> Union[None, str]:
+        return self._workflow_alias
+
+    @workflow_alias.setter
+    def workflow_alias(self, alias: str):
+        self._workflow_alias = alias
+        # TODO: register in registry
 
     @property
     def details(self) -> WorkflowDetails:
@@ -201,6 +285,8 @@ class Workflow(object):
     @property
     def current_inputs(self) -> Mapping[str, uuid.UUID]:
 
+        if self._current_inputs is None:
+            self._apply_inputs()
         assert self._current_inputs is not None
         return self._current_inputs
 
@@ -217,16 +303,48 @@ class Workflow(object):
         return self._current_outputs
 
     @property
+    def current_output_values(self) -> ValueMap:
+        return self._kiara.data_registry.load_values(values=self.current_outputs)
+
+    @property
+    def current_state(self) -> WorkflowState:
+
+        if self._current_state is not None:
+            return self._current_state
+
+        self._current_state = WorkflowState.create_from_workflow(self)
+        return self._current_state
+
+    @property
     def pipeline(self) -> Pipeline:
 
         if self._pipeline is not None:
             return self._pipeline
 
-        if not self._steps:
-            raise Exception("Can't assemble pipeline, no steps set (yet).")
+        # if not self._steps:
+        #     raise Exception("Can't assemble pipeline, no steps set (yet).")
+        steps = list(self._steps.values())
+        input_aliases_temp = create_input_alias_map(steps=steps)
+        input_aliases = {}
+        for k, v in input_aliases_temp.items():
+            if k in self._pipeline_input_aliases.keys():
+                input_aliases[k] = self._pipeline_input_aliases[k]
+            else:
+                input_aliases[k] = v
+
+        if not self._pipeline_output_aliasess:
+            output_aliases = create_output_alias_map(steps=steps)
+        else:
+            output_aliases = self._pipeline_output_aliasess
 
         pipeline_config = PipelineConfig.from_config(
-            pipeline_name="__workflow__", data={"steps": self._steps.values()}
+            pipeline_name="__workflow__",
+            data={
+                "steps": steps,
+                "doc": self.details.documentation,
+                "input_aliases": input_aliases,
+                "output_aliases": output_aliases,
+            },
         )
         structure = pipeline_config.structure
         self._pipeline = Pipeline(structure=structure, kiara=self._kiara)
@@ -303,16 +421,33 @@ class Workflow(object):
         self._job_id_cache.update(output_job_map)
 
         self._current_outputs = self.pipeline.get_current_pipeline_outputs()
+        self._current_state = None
+        self._current_info = None
 
     def _invalidate_pipeline(self):
 
         self._pipeline_controller.pipeline = None
         self._pipeline = None
+        self._pipeline_info = None
+        self._current_info = None
+        self._current_state = None
+
+    def set_input(self, field_name: str, value: Any):
+
+        self.set_inputs(**{field_name: value})
 
     def set_inputs(self, **inputs: Any):
 
-        changed = False
+        invalid = []
+        for k, v in inputs.items():
+            if k not in self.pipeline.structure.pipeline_inputs_schema.keys():
+                invalid.append(k)
+        if invalid:
+            raise Exception(
+                f"Can't set pipeline inputs, invalid field(s): '{', '.join(invalid)}'. Available inputs: '{', '.join(self.pipeline.structure.pipeline_inputs_schema.keys())}'"
+            )
 
+        changed = False
         for k, v in inputs.items():
             # TODO: better equality test?
             if k == self._all_inputs.get(k, None):
@@ -321,9 +456,19 @@ class Workflow(object):
             changed = True
 
         if changed:
+            self._current_info = None
+            self._current_state = None
             self._apply_inputs()
 
-    def add_steps(self, *pipeline_steps: PipelineStep, replace_existing: bool = False):
+    def add_steps(
+        self,
+        *pipeline_steps: PipelineStep,
+        replace_existing: bool = False,
+        clear_existing: bool = False,
+    ):
+
+        if clear_existing:
+            self.clear_steps()
 
         for step in pipeline_steps:
             if step.step_id in self._steps.keys() and not replace_existing:
@@ -345,18 +490,38 @@ class Workflow(object):
 
         self._invalidate_pipeline()
 
-    def create_step(
+    def set_input_alias(self, input_field: str, alias: str):
+
+        self._pipeline_input_aliases[input_field] = alias
+        self._invalidate_pipeline()
+
+    def set_output_alias(self, output_field: str, alias: str):
+        self._pipeline_output_aliasess[output_field] = alias
+
+    def add_step(
         self,
-        module_type: str,
+        operation: str,
         step_id: Union[str, None] = None,
         module_config: Union[None, Mapping[str, Any]] = None,
-        input_links: Union[None, Mapping[str, str]] = None,
+        input_connections: Union[None, Mapping[str, str]] = None,
+        doc: Union[str, DocumentationMetadataModel, None] = None,
         replace_existing: bool = False,
-    ) -> str:
+    ) -> PipelineStep:
+        """Add a step to the workflows current pipeline structure.
+
+        If no 'step_id' is provided, a unque one will automatically be generated based on the 'module_type' argument.
+
+        Arguments:
+            operation: the module or operation name
+            step_id: the id of the new step
+            module_config: (optional) configuration for the kiara module this step uses
+            input_connections: a map with this steps input field name(s) as keys and output field links (format: <step_id>.<output_field_name>) as value(s).
+            replace_existing: if set to 'True', this replaces a step with the same id that already exists, otherwise an exception will be thrown
+        """
 
         if step_id is None:
             step_id = find_free_id(
-                slugify(module_type, separator="_"), current_ids=self._steps.keys()
+                slugify(operation, separator="_"), current_ids=self._steps.keys()
             )
 
         if "." in step_id:
@@ -370,7 +535,7 @@ class Workflow(object):
             raise NotImplementedError()
 
         manifest = self._kiara.create_manifest(
-            module_or_operation=module_type, config=module_config
+            module_or_operation=operation, config=module_config
         )
         module = self._kiara.create_module(manifest=manifest)
         step = PipelineStep(
@@ -378,19 +543,118 @@ class Workflow(object):
             module_type=module.module_type_name,
             module_config=module.config.dict(),
             module_details=KiaraModuleClass.from_module(module=module),
+            doc=doc,
         )
         step._module = module
         self._steps[step_id] = step
 
-        if input_links:
-            for k, v in input_links.items():
-                self.add_input_link(v, k)
+        if input_connections:
+            for k, v in input_connections.items():
+                self.connect_to_inputs(v, f"{step_id}.{k}")
 
         self._invalidate_pipeline()
 
-        return step_id
+        return step
 
-    def add_input_link(self, source_field: str, *input_fields: str):
+    def connect_fields(self, *fields: Union[Tuple[str, str], str]):
+
+        pairs = []
+        current_pair = None
+        for field in fields:
+            if isinstance(field, str):
+                tokens = field.split(".")
+                if not len(tokens) == 2:
+                    raise Exception(
+                        f"Can't connect field '{field}', field name must be in format: <step_id>.<field_name>."
+                    )
+                if not current_pair:
+                    current_pair = [tokens]
+                else:
+                    if not len(current_pair) == 1:
+                        raise Exception(
+                            f"Can't connect fields, invalid input(s): {fields}"
+                        )
+                    current_pair.append(tokens)
+                    pairs.append(current_pair)
+                    current_pair = None
+            else:
+                if not len(field) == 2:
+                    raise Exception(
+                        f"Can't connect fields, field tuples must have length 2: {field}"
+                    )
+                if current_pair:
+                    raise Exception(
+                        f"Can't connect fields, dangling single field: {current_pair}"
+                    )
+                pair = []
+                for f in field:
+                    tokens = f.split(".")
+                    if not len(tokens) == 2:
+                        raise Exception(
+                            f"Can't connect field '{f}', field name must be in format: <step_id>.<field_name>."
+                        )
+                    pair.append(tokens)
+                pairs.append(pair)
+
+        for pair in pairs:
+            self.connect_steps(pair[0][0], pair[0][1], pair[1][0], pair[1][1])
+
+    def connect_steps(
+        self,
+        source_step: Union[PipelineStep, str],
+        source_field: str,
+        target_step: Union[PipelineStep, str],
+        target_field: str,
+    ):
+
+        if isinstance(source_step, str):
+            output_step_obj = self.get_step(source_step)
+        else:
+            output_step_obj = source_step
+        if isinstance(target_step, str):
+            input_step_obj = self.get_step(target_step)
+        else:
+            input_step_obj = target_step
+
+        output_step_id = output_step_obj.step_id
+        input_step_id = input_step_obj.step_id
+
+        reversed = False
+
+        if source_field not in output_step_obj.module.outputs_schema.keys():
+            if source_field in output_step_obj.module.inputs_schema.keys():
+                reversed = True
+            else:
+                raise Exception(
+                    f"Can't connect steps '{output_step_id}.{source_field}' -> '{input_step_id}.{target_field}': step '{output_step_id}' does not have an output field '{source_field}'. Available fields: {', '.join(output_step_obj.module.outputs_schema.keys())}."
+                )
+
+        if not reversed:
+            if target_field not in input_step_obj.module.inputs_schema.keys():
+                raise Exception(
+                    f"Can't connect steps '{output_step_id}.{source_field}' -> '{input_step_id}.{target_field}': step '{input_step_id}' does not have an input field '{target_field}'. Available fields: {', '.join(input_step_obj.module.inputs_schema.keys())}."
+                )
+        else:
+            if target_field not in input_step_obj.module.outputs_schema.keys():
+                raise Exception(
+                    f"Can't connect steps '{output_step_id}.{source_field}' -> '{input_step_id}.{target_field}': step '{input_step_id}' does not have an output field '{target_field}'. Available fields: {', '.join(input_step_obj.module.outputs_schema.keys())}."
+                )
+
+        # we rely on the value of input links to always be a dict here
+        if not reversed:
+            source_addr = StepValueAddress(
+                step_id=output_step_id, value_name=source_field
+            )
+            input_step_obj.input_links.setdefault(target_field, []).append(source_addr)  # type: ignore
+        else:
+            source_addr = StepValueAddress(
+                step_id=input_step_id, value_name=target_field
+            )
+            output_step_obj.input_links.setdefault(source_field, []).append(source_addr)  # type: ignore
+
+        self._invalidate_pipeline()
+
+    def connect_to_inputs(self, source_field: str, *input_fields: str):
 
         source_tokens = source_field.split(".")
         if len(source_tokens) != 2:
@@ -442,13 +706,27 @@ class Workflow(object):
 
         self._invalidate_pipeline()
 
-    def get_step(self, step_id: str) -> Union[None, PipelineStep]:
+    def get_step(self, step_id: str) -> PipelineStep:
 
-        return self._steps.get(step_id, None)
+        step = self._steps.get(step_id, None)
+        if step is None:
+            if self._steps:
+                msg = f"Available step ids: {', '.join(self._steps.keys())}"
+            else:
+                msg = "Workflow does not have any steps (yet)."
+            raise Exception(f"No step with id '{step_id}' registered. {msg}")
+        return step
 
     def load_state(
         self, workflow_state_id: Union[str, None] = None
     ) -> Union[None, WorkflowState]:
+        """Load a past state.
+
+        If no state id is specified, the latest one that was saved will be used.
+
+        Returns:
+            'None' if no state was loaded, otherwise the relevant 'WorkflowState' instance
+        """
 
         if workflow_state_id is None:
             if not self._workflow_details.workflow_states:
@@ -473,8 +751,17 @@ class Workflow(object):
         self._state_cache[workflow_state_id] = state
 
         self.clear_steps()
+        self._invalidate_pipeline()
+
+        self._pipeline_input_aliases = dict(state.pipeline_config.input_aliases)
+        self._pipeline_output_aliasess = dict(state.pipeline_config.output_aliases)
         self.add_steps(*state.steps)
+
         self.set_inputs(**state.inputs)
+
+        self._current_outputs = state.pipeline_info.pipeline_details.pipeline_outputs
+        self._pipeline_info = state.pipeline_info
+        self._current_state = state
 
         return state
 
@@ -495,11 +782,37 @@ class Workflow(object):
 
         return self._state_cache
 
-    def snapshot(self, save: bool = False) -> WorkflowState:
+    @property
+    def info(self) -> WorkflowInfo:
 
-        state = WorkflowState(
-            steps=list(self._steps.values()), inputs=dict(self.current_inputs)
+        if self._current_info is not None:
+            return self._current_info
+
+        self._current_info = WorkflowInfo.create_from_workflow(workflow=self)
+        return self._current_info
+
+    @property
+    def pipeline_info(self) -> PipelineInfo:
+
+        if self._pipeline_info is not None:
+            return self._pipeline_info
+
+        self._pipeline_info = PipelineInfo.create_from_pipeline(
+            kiara=self._kiara, pipeline=self.pipeline
         )
+        return self._pipeline_info
+
+    def snapshot(self, save: bool = True) -> WorkflowState:
+
+        state = self.current_state
+
+        if not self._is_stored:
+            aliases = []
+            if self._workflow_alias:
+                aliases.append(self._workflow_alias)
+            self._kiara.workflow_registry.register_workflow(
+                workflow_details=self._workflow_details, workflow_aliases=aliases
+            )
 
         if save:
             for value in state.inputs.values():
@@ -523,14 +836,7 @@ class Workflow(object):
 
     def create_renderable(self, **config: Any):
 
-        table = Table(box=box.SIMPLE, show_header=False)
-        table.add_column("key", style="i")
-        table.add_column("value")
+        if not self._steps:
+            return "Invalid workflow: no steps set yet."
 
-        table.add_row("workflow id", str(self.workflow_id))
-        if self._steps:
-            table.add_row("pipeline", self.pipeline.create_renderable(**config))
-        else:
-            table.add_row("pipeline", "-- no steps (yet) --")
-
-        return table
+        return self.info.create_renderable(**config)

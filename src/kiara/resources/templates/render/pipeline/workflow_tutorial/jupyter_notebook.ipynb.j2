@@ -1,0 +1,75 @@
+# %%
+from kiara.interfaces.python_api.workflow import Workflow
+from kiara.utils.jupyter import graph_to_image
+from kiara.utils.cli import terminal_print_model
+
+
+# %% [markdown]
+# # Workflow description
+
+{{ pipeline.doc.full_doc }}
+
+# # Creating the workflow object <a class="anchor" id="create_workflow_obj"></a>
+
+# %%
+workflow = Workflow.create("network_analysis")
+
+# %% [markdown]
+# # Assembling the workflow <a class="anchor" id="assembly"></a>
+
+The first step in the creation of our workflow is to create the individual steps from the available *kiara* modules.
+
+A list of available modules and their aliases can be found here: TODO
+
+# ## Creating the steps of the workflow <a class="anchor" id="creating_steps"></a>
+
+# %%
+{%  for idx, steps in pipeline.get_steps_by_stage().items() -%}
+{% for step_id, step in steps.items() -%}
+# Creating step: {{ step.step_id }}
+{%  if step.module_config -%}
+step_{{ step.step_id }}_config = {{ step.module_config }}
+workflow.add_step(
+    operation="{{ step.module_type }}",
+    module_config=step_{{ step.step_id }}_config,
+    step_id="{{ step.step_id }}")
+{%  else -%}
+workflow.add_step(operation="{{ step.module_type }}", step_id="{{ step.step_id }}")
+{%  endif -%}
+# %%
+{% if step.input_links -%}
+{% for field_name, connections in step.input_links.items() -%}
+# Connecting input(s) of step '{{ step_id }}'
+{% for connection in connections -%}
+workflow.connect_fields("{{ step_id }}.{{ field_name }}", "{{ connection.step_id }}.{{ connection.value_name }}")
+{% endfor -%}
+{% endfor -%}
+# %%
+{% endif -%}
+{% endfor -%}
+{%  endfor -%}
+
+{% if pipeline.structure.pipeline_config.input_aliases  or pipeline.structure.pipeline_config.output_aliases -%}
+# %% [markdown]
+# ## Setting pipeline input/output names (optional)
+
+To make our workflow nicer to use, we can set aliases for its inputs and outputs.
+# %%
+{%  if pipeline.structure.pipeline_config.input_aliases -%}
+{% for key, value in pipeline.structure.pipeline_config.input_aliases.items() -%}
+workflow.set_input_alias(input_field="{{ key }}", alias="{{ value }}")
+{% endfor -%}
+{% endif -%}
+
+{%  if pipeline.structure.pipeline_config.output_aliases -%}
+{% for key, value in pipeline.structure.pipeline_config.output_aliases.items() -%}
+workflow.set_output_alias(output_field="{{ key }}", alias="{{ value }}")
+{% endfor -%}
+{% endif -%}
+{% endif -%}
+
+{% include 'workflow_information.j2' %}
+
+{% include 'workflow_inputs.j2' %}
+
+{% include 'workflow_outputs.j2' %}

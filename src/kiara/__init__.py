@@ -18,7 +18,11 @@ __all__ = [
     # "DataRegistry",
     "get_version",
 ]
+import logging
 import os
+import sys
+
+import structlog
 import typing
 
 from .context import Kiara, explain  # noqa
@@ -29,6 +33,20 @@ try:
     builtins = __import__("__builtin__")
 except ImportError:
     builtins = __import__("builtins")
+
+
+# =================================================================
+# global init stuff
+
+# default logging, unless set somewhere else
+structlog.configure(
+    wrapper_class=structlog.make_filtering_bound_logger(logging.WARNING),
+)
+# check if run in Jupyter
+if "google.colab" in sys.modules or "jupyter_client" in sys.modules:
+    from kiara.interfaces import set_console_width
+
+    set_console_width()
 
 
 try:

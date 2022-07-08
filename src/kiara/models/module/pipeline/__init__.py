@@ -4,19 +4,30 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
+import orjson
 import os
 from enum import Enum
 from pydantic import Extra, Field, PrivateAttr, root_validator, validator
+from rich import box
 from rich.console import RenderableType
+from rich.markdown import Markdown
+from rich.panel import Panel
+from rich.syntax import Syntax
+from rich.table import Table
 from slugify import slugify
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
 
+from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module import KiaraModuleClass, KiaraModuleConfig
 from kiara.models.module.jobs import ExecutionContext
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.pipeline.value_refs import StepValueAddress
-from kiara.utils import get_data_from_file
-from kiara.utils.output import create_table_from_model_object
+from kiara.utils import get_data_from_file, is_jupyter, orjson_dumps
+from kiara.utils.models import module_config_is_empty
+from kiara.utils.output import (
+    create_table_from_field_schemas,
+    create_table_from_model_object,
+)
 from kiara.utils.pipelines import ensure_step_value_addresses
 from kiara.utils.string_vars import replace_var_names_in_obj
 
@@ -106,12 +117,15 @@ class PipelineStep(Manifest):
                         sources = [sources]
                     input_links[input_field] = sources
 
+                doc = step.get("doc", None)
+
                 # TODO: do we really need the deepcopy here?
                 _s = PipelineStep(
                     step_id=step_id,
                     module_type=resolved_module_type,
                     module_config=dict(resolved_module_config),
                     input_links=input_links,  # type: ignore
+                    doc=doc,
                     module_details=KiaraModuleClass.from_module(module=module),
                 )
                 _s._module = module
@@ -148,10 +162,13 @@ class PipelineStep(Manifest):
     # )
     input_links: Mapping[str, List[StepValueAddress]] = Field(
         description="The links that connect to inputs of the module. Keys are field names, value(s) are connected outputs.",
-        default_factory=list,
+        default_factory=dict,
     )
     module_details: KiaraModuleClass = Field(
         description="The class of the underlying module."
+    )
+    doc: DocumentationMetadataModel = Field(
+        description="A description what this step does."
     )
     _module: Union["KiaraModule", None] = PrivateAttr(default=None)
 
@@ -164,6 +181,11 @@ class PipelineStep(Manifest):
             values["step_id"] = slugify(values["module_type"], separator="_")
 
         return values
+
+    @validator("doc", pre=True)
+    def validate_doc(cls, value):
+        doc = DocumentationMetadataModel.create(value)
+        return doc
 
     @validator("step_id")
     def ensure_valid_id(cls, v):
@@ -212,6 +234,60 @@ class PipelineStep(Manifest):
 
     def __str__(self):
         return f"step: {self.step_id} (module: {self.module_type})"
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        in_panel = config.get("in_panel", None)
+        if in_panel is None:
+            if is_jupyter():
+                in_panel = True
+            else:
+                in_panel = False
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("key", style="i")
+        table.add_column("value")
+
+        if self.doc.is_set:
+            table.add_row("", Markdown(self.doc.full_doc))
+        table.add_row("step_id", self.step_id)
+        table.add_row("module type", self.module_type)
+        if not module_config_is_empty(self.module_config):
+            mc = dict(self.module_config)
+            if not mc.get("defaults", None):
+                mc.pop("defaults", None)
+            if not mc.get("constants", None):
+                mc.pop("constants", None)
+            config_str = orjson_dumps(mc, option=orjson.OPT_INDENT_2)
+            table.add_row(
+                "module_config",
+                Syntax(config_str, "json", background_color="default", theme="default"),
+            )
+        module_doc = DocumentationMetadataModel.from_class_doc(self.module.__class__)
+        table.add_row("module doc", Markdown(module_doc.full_doc))
+        inputs = create_table_from_field_schemas(
+            _add_default=True,
+            _add_required=True,
+            _show_header=True,
+            fields={
+                f"{self.step_id}.{k}": v for k, v in self.module.inputs_schema.items()
+            },
+        )
+        table.add_row("inputs", inputs)
+        outputs = create_table_from_field_schemas(
+            _add_default=False,
+            _add_required=False,
+            _show_header=True,
+            fields={
+                f"{self.step_id}.{k}": v for k, v in self.module.outputs_schema.items()
+            },
+        )
+        table.add_row("outputs", outputs)
+
+        if in_panel:
+            return Panel(table, title=f"Step: {self.step_id}", title_align="left")
+        else:
+            return table
 
 
 def create_input_alias_map(steps: Iterable[PipelineStep]) -> Dict[str, str]:
@@ -420,13 +496,17 @@ class PipelineConfig(KiaraModuleConfig):
     output_aliases: Dict[str, str] = Field(
         description="A map of output aliases, with the calculated (<step_id>__<output_name> -- double underscore!) name as key, and a string (the resulting workflow output alias) as value.  Check the documentation for the config class for which marker strings can be used to automatically create this map if possible.",
     )
-    doc: str = Field(
+    doc: DocumentationMetadataModel = Field(
         default="-- n/a --", description="Documentation about what the pipeline does."
     )
     context: Dict[str, Any] = Field(
         default_factory=dict, description="Metadata for this workflow."
     )
     _structure: Union["PipelineStructure", None] = PrivateAttr(default=None)
+
+    @validator("doc", pre=True)
+    def validate_doc(cls, value):
+        return DocumentationMetadataModel.create(value)
 
     @validator("steps", pre=True)
     def _validate_steps(cls, v):
@@ -459,7 +539,17 @@ class PipelineConfig(KiaraModuleConfig):
 
     def create_renderable(self, **config: Any) -> RenderableType:
 
-        return create_table_from_model_object(self, exclude_fields={"steps"})
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("key", style="i")
+        table.add_column("value")
+
+        table.add_row("doc", self.doc.full_doc)
+        table.add_row("structure", self.structure)
+        return table
+
+        # return create_table_from_model_object(self, exclude_fields={"steps"})
+
+        return create_table_from_model_object(self)
 
     # def create_input_alias_map(self) -> Dict[str, str]:
     #

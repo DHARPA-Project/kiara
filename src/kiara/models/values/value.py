@@ -21,6 +21,7 @@ from pydantic import BaseModel, Extra, PrivateAttr, root_validator
 from pydantic.fields import Field
 from rich import box
 from rich.console import Group, RenderableType
+from rich.panel import Panel
 from rich.rule import Rule
 from rich.syntax import Syntax
 from rich.table import Table
@@ -50,7 +51,7 @@ from kiara.models.module.manifest import InputsManifest, Manifest
 from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
 from kiara.models.values.value_schema import ValueSchema
-from kiara.utils import StringYAML, is_debug, orjson_dumps
+from kiara.utils import StringYAML, is_debug, is_jupyter, orjson_dumps
 from kiara.utils.hashing import create_cid_digest
 
 log = logging.getLogger("kiara")
@@ -1339,6 +1340,13 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
 
     def create_renderable(self, **config: Any) -> RenderableType:
 
+        in_panel = config.get("in_panel", None)
+        if in_panel is None:
+            if is_jupyter():
+                in_panel = True
+            else:
+                in_panel = False
+
         render_value_data = config.get("render_value_data", True)
         field_title = config.get("field_title", "field")
         value_title = config.get("value_title", "value")
@@ -1366,7 +1374,10 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
             else:
                 table.add_row(field_name, rendered)
 
-        return table
+        if in_panel:
+            return Panel(table)
+        else:
+            return table
 
 
 class ValueMapReadOnly(ValueMap):  # type: ignore

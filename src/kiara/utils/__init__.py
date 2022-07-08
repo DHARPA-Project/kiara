@@ -14,6 +14,7 @@ import orjson
 import os
 import re
 import structlog
+import sys
 import traceback
 from io import StringIO
 from pathlib import Path
@@ -51,6 +52,11 @@ def is_develop() -> bool:
         return True
     else:
         return False
+
+
+def is_jupyter() -> bool:
+
+    return "google.colab" in sys.modules or "jupyter_client" in sys.modules
 
 
 def log_exception(exc: Exception):

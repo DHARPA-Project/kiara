@@ -219,14 +219,8 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
 
     def create_html(self, **config) -> str:
 
-        r = self.create_renderable()
-        if hasattr(r, "_repr_mimebundle_"):
-            mime_bundle = r._repr_mimebundle_(include=[], exclude=[])  # type: ignore
-        else:
-            raise NotImplementedError(
-                f"Type '{self.__class__}' can't be rendered as html (yet)."
-            )
-
+        r = self.create_renderable(**config)
+        mime_bundle = r._repr_mimebundle_(include=[], exclude=[])  # type: ignore
         return mime_bundle["text/html"]
 
     def as_dict_with_schema(self) -> Dict[str, Dict[str, Any]]:
@@ -268,3 +262,20 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
     ) -> RenderResult:
 
         yield self.create_renderable()
+
+    # def _repr_mimebundle_(
+    #     self: "ConsoleRenderable",
+    #     include: Sequence[str],
+    #     exclude: Sequence[str],
+    #     **kwargs: Any,
+    # ) -> Dict[str, str]:
+    #     console = get_console()
+    #     segments = list(console.render(self, console.options))
+    #     html = _render_segments(segments)
+    #     text = console._render_buffer(segments)
+    #     data = {"text/plain": text, "text/html": html}
+    #     if include:
+    #         data = {k: v for (k, v) in data.items() if k in include}
+    #     if exclude:
+    #         data = {k: v for (k, v) in data.items() if k not in exclude}
+    #     return data

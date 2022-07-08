@@ -161,5 +161,7 @@ def extract_raw_value(kiara: "Kiara", value_id: uuid.UUID):
     else:
         if value.value_schema.type == "string":
             return f'"{value.data}"'
+        elif value.value_schema.type == "list":
+            return value.data.list_data
         else:
             return value.data

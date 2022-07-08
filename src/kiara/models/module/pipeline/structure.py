@@ -584,6 +584,7 @@ class PipelineStructure(KiaraModel):
             step_id = step.step_id
 
             paths = list(nx.all_simple_paths(execution_graph, "__root__", step_id))
+
             max_steps = max(paths, key=lambda x: len(x))
             path_lengths[step_id] = len(max_steps) - 1
 

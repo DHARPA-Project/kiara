@@ -12,7 +12,7 @@ from kiara.utils.cli import terminal_print_model
 # # Creating the workflow object <a class="anchor" id="create_workflow_obj"></a>
 
 # %%
-workflow = Workflow.create("network_analysis")
+workflow = Workflow.create("{{ pipeline.pipeline_name }}")
 
 # %% [markdown]
 # # Assembling the workflow <a class="anchor" id="assembly"></a>
@@ -23,9 +23,9 @@ A list of available modules and their aliases can be found here: TODO
 
 # ## Creating the steps of the workflow <a class="anchor" id="creating_steps"></a>
 
-# %%
 {%  for idx, steps in pipeline.get_steps_by_stage().items() -%}
 {% for step_id, step in steps.items() -%}
+# %%
 # Creating step: {{ step.step_id }}
 {%  if step.module_config -%}
 step_{{ step.step_id }}_config = {{ step.module_config }}
@@ -36,15 +36,14 @@ workflow.add_step(
 {%  else -%}
 workflow.add_step(operation="{{ step.module_type }}", step_id="{{ step.step_id }}")
 {%  endif -%}
-# %%
 {% if step.input_links -%}
+# %%
 {% for field_name, connections in step.input_links.items() -%}
 # Connecting input(s) of step '{{ step_id }}'
 {% for connection in connections -%}
 workflow.connect_fields("{{ step_id }}.{{ field_name }}", "{{ connection.step_id }}.{{ connection.value_name }}")
 {% endfor -%}
 {% endfor -%}
-# %%
 {% endif -%}
 {% endfor -%}
 {%  endfor -%}
@@ -59,7 +58,7 @@ To make our workflow nicer to use, we can set aliases for its inputs and outputs
 {% for key, value in pipeline.structure.pipeline_config.input_aliases.items() -%}
 workflow.set_input_alias(input_field="{{ key }}", alias="{{ value }}")
 {% endfor -%}
-{% endif -%}
+{% endif %}
 
 {%  if pipeline.structure.pipeline_config.output_aliases -%}
 {% for key, value in pipeline.structure.pipeline_config.output_aliases.items() -%}

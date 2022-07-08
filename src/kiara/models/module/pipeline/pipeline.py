@@ -119,6 +119,10 @@ class Pipeline(object):
         return self._id
 
     @property
+    def pipeline_name(self) -> str:
+        return self.structure.pipeline_config.pipeline_name
+
+    @property
     def kiara_id(self) -> uuid.UUID:
         return self._kiara.id
 

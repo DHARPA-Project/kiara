@@ -2,7 +2,7 @@
 import structlog
 import uuid
 from slugify import slugify
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Tuple, Union
 
 from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID
 from kiara.interfaces.python_api.operation import KiaraOperation
@@ -279,8 +279,16 @@ class Workflow(object):
         return self.pipeline.structure.pipeline_inputs_schema
 
     @property
+    def current_input_names(self) -> List[str]:
+        return sorted(self.current_inputs_schema.keys())
+
+    @property
     def current_outputs_schema(self) -> Mapping[str, ValueSchema]:
         return self.pipeline.structure.pipeline_outputs_schema
+
+    @property
+    def current_output_names(self) -> List[str]:
+        return sorted(self.current_outputs_schema.keys())
 
     @property
     def current_inputs(self) -> Mapping[str, uuid.UUID]:
@@ -621,49 +629,54 @@ class Workflow(object):
     ):
 
         if isinstance(source_step, str):
-            output_step_obj = self.get_step(source_step)
+            source_step_obj = self.get_step(source_step)
         else:
-            output_step_obj = source_step
+            source_step_obj = source_step
         if isinstance(target_step, str):
-            input_step_obj = self.get_step(target_step)
+            target_step_obj = self.get_step(target_step)
         else:
-            input_step_obj = target_step
+            target_step_obj = target_step
 
-        output_step_id = output_step_obj.step_id
-        input_step_id = input_step_obj.step_id
+        source_step_id = source_step_obj.step_id
+        target_step_id = target_step_obj.step_id
 
         reversed = False
 
-        if source_field not in output_step_obj.module.outputs_schema.keys():
-            if source_field in output_step_obj.module.inputs_schema.keys():
-                reversed = True
-            else:
-                raise Exception(
-                    f"Can't connect steps '{output_step_id}.{source_field}' -> '{input_step_id}.{target_field}': step '{output_step_id}' does not have an output field '{source_field}'. Available fields: {', '.join(output_step_obj.module.outputs_schema.keys())}."
-                )
+        if source_field not in source_step_obj.module.outputs_schema.keys():
+            reversed = True
+        if target_field not in target_step_obj.module.inputs_schema.keys():
+            reversed = True
 
-        if not reversed:
-            if target_field not in input_step_obj.module.inputs_schema.keys():
+        if reversed:
+            if target_field not in target_step_obj.module.outputs_schema.keys():
                 raise Exception(
-                    f"Can't connect steps '{output_step_id}.{source_field}' -> '{input_step_id}.{target_field}': step '{input_step_id}' does not have an input field '{target_field}'. Available fields: {', '.join(input_step_obj.module.inputs_schema.keys())}."
+                    f"Can't connect steps '{source_step_id}.{source_field}' -> '{target_step_id}.{target_field}': invalid field name(s)."
+                )
+            if source_field not in source_step_obj.module.inputs_schema.keys():
+                raise Exception(
+                    f"Can't connect steps '{source_step_id}.{source_field}' -> '{target_step_id}.{target_field}': invalid field name(s)."
                 )
         else:
-            if target_field not in input_step_obj.module.outputs_schema.keys():
+            if target_field not in target_step_obj.module.inputs_schema.keys():
                 raise Exception(
-                    f"Can't connect steps '{output_step_id}.{source_field}' -> '{input_step_id}.{target_field}': step '{input_step_id}' does not have an output field '{target_field}'. Available fields: {', '.join(input_step_obj.module.outputs_schema.keys())}."
+                    f"Can't connect steps '{source_step_id}.{source_field}' -> '{target_step_id}.{target_field}': invalid field name(s)."
+                )
+            if source_field not in source_step_obj.module.outputs_schema.keys():
+                raise Exception(
+                    f"Can't connect steps '{source_step_id}.{source_field}' -> '{target_step_id}.{target_field}': invalid field name(s)."
                 )
 
         # we rely on the value of input links to always be a dict here
         if not reversed:
             source_addr = StepValueAddress(
-                step_id=output_step_id, value_name=source_field
+                step_id=source_step_id, value_name=source_field
             )
-            input_step_obj.input_links.setdefault(target_field, []).append(source_addr)  # type: ignore
+            target_step_obj.input_links.setdefault(target_field, []).append(source_addr)  # type: ignore
         else:
             source_addr = StepValueAddress(
-                step_id=input_step_id, value_name=target_field
+                step_id=target_step_id, value_name=target_field
             )
-            output_step_obj.input_links.setdefault(source_field, []).append(source_addr)  # type: ignore
+            source_step_obj.input_links.setdefault(source_field, []).append(source_addr)  # type: ignore
 
         self._invalidate_pipeline()
 
@@ -774,7 +787,7 @@ class Workflow(object):
 
         self.set_inputs(**state.inputs)
 
-        assert self.current_inputs == state.inputs
+        assert self._current_inputs == state.inputs
         self._current_outputs = state.pipeline_info.pipeline_details.pipeline_outputs
         self._pipeline_info = state.pipeline_info
         self._current_state = state
@@ -830,6 +843,7 @@ class Workflow(object):
             self._kiara.workflow_registry.register_workflow(
                 workflow_details=self._workflow_details, workflow_aliases=aliases
             )
+            self._is_stored = True
 
         if save:
             for value in state.inputs.values():

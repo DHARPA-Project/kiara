@@ -614,10 +614,12 @@ class DataRegistry(object):
             )
 
         if schema.default in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
-            if data is None or data is SpecialValue.NO_VALUE:
+            if (
+                data is None
+                or data is SpecialValue.NO_VALUE
+                or data is SpecialValue.NOT_SET
+            ):
                 return (self.NONE_VALUE, False)
-            elif data is SpecialValue.NOT_SET:
-                return (self.NOT_SET_VALUE, False)
         else:
             # TODO: allow other value_ids in defaults?
             if data in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:

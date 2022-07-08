@@ -313,6 +313,7 @@ class Workflow(object):
             return self._current_state
 
         self._current_state = WorkflowState.create_from_workflow(self)
+        self._state_cache[self._current_state.instance_id] = self._current_state
         return self._current_state
 
     @property
@@ -320,6 +321,8 @@ class Workflow(object):
 
         if self._pipeline is not None:
             return self._pipeline
+
+        self._invalidate_pipeline()
 
         # if not self._steps:
         #     raise Exception("Can't assemble pipeline, no steps set (yet).")
@@ -353,11 +356,13 @@ class Workflow(object):
 
     def _apply_inputs(self) -> Mapping[str, Mapping[str, Mapping[str, ChangedValue]]]:
 
+        pipeline = self.pipeline
+
         inputs_to_set = {}
         for field_name, value in self._all_inputs.items():
             if value in [NONE_VALUE_ID, NOT_SET_VALUE_ID]:
                 continue
-            if field_name in self.pipeline.structure.pipeline_inputs_schema.keys():
+            if field_name in pipeline.structure.pipeline_inputs_schema.keys():
                 inputs_to_set[field_name] = value
 
         logger.debug(
@@ -366,11 +371,10 @@ class Workflow(object):
             keys=", ".join(inputs_to_set.keys()),
         )
 
-        pipeline = self.pipeline
-
         changed: Mapping[
             str, Mapping[str, Mapping[str, ChangedValue]]
-        ] = self.pipeline.set_pipeline_inputs(inputs=inputs_to_set)
+        ] = pipeline.set_pipeline_inputs(inputs=inputs_to_set)
+
         self._current_inputs = pipeline.get_current_pipeline_inputs()
 
         for field_name, value_id in self._current_inputs.items():
@@ -401,9 +405,14 @@ class Workflow(object):
             if not stage_valid:
                 break
 
+        self._current_state = None
+        self._current_info = None
+        self._pipeline_info = None
         return changed
 
     def process_steps(self, *step_ids: str):
+
+        self.pipeline  # noqa
 
         if not step_ids:
             output_job_map = self._pipeline_controller.process_pipeline()
@@ -422,6 +431,7 @@ class Workflow(object):
 
         self._current_outputs = self.pipeline.get_current_pipeline_outputs()
         self._current_state = None
+        self._pipeline_info = None
         self._current_info = None
 
     def _invalidate_pipeline(self):
@@ -458,6 +468,9 @@ class Workflow(object):
         if changed:
             self._current_info = None
             self._current_state = None
+            self._current_inputs = None
+            self._current_outputs = None
+            self._pipeline_info = None
             self._apply_inputs()
 
     def add_steps(
@@ -750,18 +763,22 @@ class Workflow(object):
 
         self._state_cache[workflow_state_id] = state
 
+        self._all_inputs.clear()
+        self._current_inputs = None
         self.clear_steps()
         self._invalidate_pipeline()
 
+        self.add_steps(*state.steps)
         self._pipeline_input_aliases = dict(state.pipeline_config.input_aliases)
         self._pipeline_output_aliasess = dict(state.pipeline_config.output_aliases)
-        self.add_steps(*state.steps)
 
         self.set_inputs(**state.inputs)
 
+        assert self.current_inputs == state.inputs
         self._current_outputs = state.pipeline_info.pipeline_details.pipeline_outputs
         self._pipeline_info = state.pipeline_info
         self._current_state = state
+        self._current_info = None
 
         return state
 

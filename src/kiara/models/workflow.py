@@ -192,19 +192,30 @@ class WorkflowInfo(ItemInfo):
 
         if include_doc:
             table.add_row(
-                "Documentation",
+                "documentation",
                 Panel(self.documentation.create_renderable(), box=box.SIMPLE),
             )
         if include_authors:
-            table.add_row("Author(s)", self.authors.create_renderable(**config))
+            table.add_row("author(s)", self.authors.create_renderable(**config))
         if include_context:
-            table.add_row("Context", self.context.create_renderable(**config))
+            table.add_row("context", self.context.create_renderable(**config))
         if include_history:
-            pass
+            history_table = Table(show_header=False, box=box.SIMPLE)
+            history_table.add_column("date", style="i")
+            history_table.add_column("id")
+            for d, s_id in self.workflow_details.workflow_states.items():
+                history_table.add_row(str(d), s_id)
+            table.add_row("states", history_table)
 
         if include_current_state:
+            current_state_id = (
+                "-- n/a --"
+                if not self.workflow_details.current_state
+                else self.workflow_details.current_state
+            )
+            table.add_row("current state id", current_state_id)
             table.add_row(
-                "Current state", self.pipeline_info.create_renderable(**config)
+                "current state details", self.pipeline_info.create_renderable(**config)
             )
 
         if in_panel:

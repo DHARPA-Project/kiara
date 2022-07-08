@@ -12,9 +12,9 @@ from typing import Tuple, Union
 
 from kiara import Kiara
 from kiara.interfaces.python_api.workflow import Workflow
-from kiara.models.workflow import WorkflowGroupInfo, WorkflowInfo
+from kiara.models.workflow import WorkflowGroupInfo
 from kiara.utils import StringYAML, dict_from_cli_args
-from kiara.utils.cli import terminal_print_model
+from kiara.utils.cli import terminal_print, terminal_print_model
 
 logger = structlog.getLogger()
 
@@ -69,29 +69,34 @@ def create(
         alias=workflow_alias, blueprint=blueprint, kiara=kiara
     )
 
+    workflow_obj.process_steps()
+
     workflow_obj.snapshot()
-    workflow_info = WorkflowInfo.create_from_workflow(workflow=workflow_obj)
+
     terminal_print_model(
-        workflow_info, in_panel=f"Workflow: [b i]{workflow_alias}[/b i]"
+        workflow_obj.info.create_renderable(),
+        in_panel=f"Workflow: [b i]{workflow_alias}[/b i]",
     )
 
 
 @workflow.command()
 @click.argument("workflow", nargs=1)
+@click.option(
+    "--states", "-s", help="Display the history of this workflows states.", is_flag=True
+)
 @click.pass_context
-def explain(ctx, workflow: str):
+def explain(ctx, workflow: str, states: bool):
     """Explain the workflow with the specified id/alias."""
 
     kiara: Kiara = ctx.obj["kiara"]
-    # workflow_obj = kiara.workflow_registry.get_workflow_details(workflow=workflow)
-    # terminal_print_model(workflow_obj)
-    # state = kiara.workflow_registry.get_workflow_state(workflow=workflow)
-    # dbg(state)
+
     workflow_details = kiara.workflow_registry.get_workflow_details(workflow=workflow)
 
     workflow_obj = Workflow(kiara=kiara, workflow=workflow_details.workflow_id)
-    workflow_info = WorkflowInfo.create_from_workflow(workflow=workflow_obj)
-    terminal_print_model(workflow_info, in_panel=f"Workflow: [b i]{workflow}[/b i]")
+    terminal_print(
+        workflow_obj.info.create_renderable(include_history=states),
+        in_panel=f"Workflow: [b i]{workflow}[/b i]",
+    )
 
 
 @workflow.command()
@@ -110,7 +115,8 @@ def set_input(ctx, workflow: str, inputs: Tuple[str], process: bool):
 
     kiara: Kiara = ctx.obj["kiara"]
 
-    workflow_obj = Workflow(kiara=kiara, workflow=workflow)
+    workflow_details = kiara.workflow_registry.get_workflow_details(workflow=workflow)
+    workflow_obj = Workflow(kiara=kiara, workflow=workflow_details.workflow_id)
 
     inputs_schema = workflow_obj.current_inputs_schema
     list_keys = []
@@ -128,8 +134,7 @@ def set_input(ctx, workflow: str, inputs: Tuple[str], process: bool):
             print(e)
 
     workflow_obj.snapshot(save=True)
-    workflow_info = WorkflowInfo.create_from_workflow(workflow=workflow_obj)
-    terminal_print_model(workflow_info, in_panel=f"Workflow: [b i]{workflow}[/b i]")
+    terminal_print_model(workflow_obj.info, in_panel=f"Workflow: [b i]{workflow}[/b i]")
 
     # workflow_obj.save_state()
 

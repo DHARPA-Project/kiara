@@ -6977,8 +6977,16 @@ Workflow        </code>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">pipeline_inputs_schema</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">current_input_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">current_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">pipeline_outputs_schema</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">current_output_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">current_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
@@ -7319,49 +7327,54 @@ Workflow        </code>
     <span class="p">):</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source_step</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">output_step_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_step</span><span class="p">(</span><span class="n">source_step</span><span class="p">)</span>
+            <span class="n">source_step_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_step</span><span class="p">(</span><span class="n">source_step</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">output_step_obj</span> <span class="o">=</span> <span class="n">source_step</span>
+            <span class="n">source_step_obj</span> <span class="o">=</span> <span class="n">source_step</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_step</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">input_step_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_step</span><span class="p">(</span><span class="n">target_step</span><span class="p">)</span>
+            <span class="n">target_step_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_step</span><span class="p">(</span><span class="n">target_step</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">input_step_obj</span> <span class="o">=</span> <span class="n">target_step</span>
+            <span class="n">target_step_obj</span> <span class="o">=</span> <span class="n">target_step</span>
 
-        <span class="n">output_step_id</span> <span class="o">=</span> <span class="n">output_step_obj</span><span class="o">.</span><span class="n">step_id</span>
-        <span class="n">input_step_id</span> <span class="o">=</span> <span class="n">input_step_obj</span><span class="o">.</span><span class="n">step_id</span>
+        <span class="n">source_step_id</span> <span class="o">=</span> <span class="n">source_step_obj</span><span class="o">.</span><span class="n">step_id</span>
+        <span class="n">target_step_id</span> <span class="o">=</span> <span class="n">target_step_obj</span><span class="o">.</span><span class="n">step_id</span>
 
         <span class="nb">reversed</span> <span class="o">=</span> <span class="kc">False</span>
 
-        <span class="k">if</span> <span class="n">source_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">output_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">source_field</span> <span class="ow">in</span> <span class="n">output_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="nb">reversed</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t connect steps &#39;</span><span class="si">{</span><span class="n">output_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">source_field</span><span class="si">}</span><span class="s2">&#39; -&gt; &#39;</span><span class="si">{</span><span class="n">input_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">target_field</span><span class="si">}</span><span class="s2">&#39;: step &#39;</span><span class="si">{</span><span class="n">output_step_id</span><span class="si">}</span><span class="s2">&#39; does not have an output field &#39;</span><span class="si">{</span><span class="n">source_field</span><span class="si">}</span><span class="s2">&#39;. Available fields: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
-                <span class="p">)</span>
+        <span class="k">if</span> <span class="n">source_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">source_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="nb">reversed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">target_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="nb">reversed</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">reversed</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">target_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">reversed</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">target_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t connect steps &#39;</span><span class="si">{</span><span class="n">output_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">source_field</span><span class="si">}</span><span class="s2">&#39; -&gt; &#39;</span><span class="si">{</span><span class="n">input_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">target_field</span><span class="si">}</span><span class="s2">&#39;: step &#39;</span><span class="si">{</span><span class="n">input_step_id</span><span class="si">}</span><span class="s2">&#39; does not have an input field &#39;</span><span class="si">{</span><span class="n">target_field</span><span class="si">}</span><span class="s2">&#39;. Available fields: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t connect steps &#39;</span><span class="si">{</span><span class="n">source_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">source_field</span><span class="si">}</span><span class="s2">&#39; -&gt; &#39;</span><span class="si">{</span><span class="n">target_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">target_field</span><span class="si">}</span><span class="s2">&#39;: invalid field name(s).&quot;</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">source_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">source_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t connect steps &#39;</span><span class="si">{</span><span class="n">source_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">source_field</span><span class="si">}</span><span class="s2">&#39; -&gt; &#39;</span><span class="si">{</span><span class="n">target_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">target_field</span><span class="si">}</span><span class="s2">&#39;: invalid field name(s).&quot;</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">target_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">target_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t connect steps &#39;</span><span class="si">{</span><span class="n">output_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">source_field</span><span class="si">}</span><span class="s2">&#39; -&gt; &#39;</span><span class="si">{</span><span class="n">input_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">target_field</span><span class="si">}</span><span class="s2">&#39;: step &#39;</span><span class="si">{</span><span class="n">input_step_id</span><span class="si">}</span><span class="s2">&#39; does not have an output field &#39;</span><span class="si">{</span><span class="n">target_field</span><span class="si">}</span><span class="s2">&#39;. Available fields: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t connect steps &#39;</span><span class="si">{</span><span class="n">source_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">source_field</span><span class="si">}</span><span class="s2">&#39; -&gt; &#39;</span><span class="si">{</span><span class="n">target_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">target_field</span><span class="si">}</span><span class="s2">&#39;: invalid field name(s).&quot;</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">source_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">source_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t connect steps &#39;</span><span class="si">{</span><span class="n">source_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">source_field</span><span class="si">}</span><span class="s2">&#39; -&gt; &#39;</span><span class="si">{</span><span class="n">target_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">target_field</span><span class="si">}</span><span class="s2">&#39;: invalid field name(s).&quot;</span>
                 <span class="p">)</span>
 
         <span class="c1"># we rely on the value of input links to always be a dict here</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">reversed</span><span class="p">:</span>
             <span class="n">source_addr</span> <span class="o">=</span> <span class="n">StepValueAddress</span><span class="p">(</span>
-                <span class="n">step_id</span><span class="o">=</span><span class="n">output_step_id</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="n">source_field</span>
+                <span class="n">step_id</span><span class="o">=</span><span class="n">source_step_id</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="n">source_field</span>
             <span class="p">)</span>
-            <span class="n">input_step_obj</span><span class="o">.</span><span class="n">input_links</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">target_field</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source_addr</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="n">target_step_obj</span><span class="o">.</span><span class="n">input_links</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">target_field</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source_addr</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">source_addr</span> <span class="o">=</span> <span class="n">StepValueAddress</span><span class="p">(</span>
-                <span class="n">step_id</span><span class="o">=</span><span class="n">input_step_id</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="n">target_field</span>
+                <span class="n">step_id</span><span class="o">=</span><span class="n">target_step_id</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="n">target_field</span>
             <span class="p">)</span>
-            <span class="n">output_step_obj</span><span class="o">.</span><span class="n">input_links</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">source_field</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source_addr</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="n">source_step_obj</span><span class="o">.</span><span class="n">input_links</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">source_field</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source_addr</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_invalidate_pipeline</span><span class="p">()</span>
 
@@ -7472,7 +7485,7 @@ Workflow        </code>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">set_inputs</span><span class="p">(</span><span class="o">**</span><span class="n">state</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
 
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_inputs</span> <span class="o">==</span> <span class="n">state</span><span class="o">.</span><span class="n">inputs</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_inputs</span> <span class="o">==</span> <span class="n">state</span><span class="o">.</span><span class="n">inputs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_outputs</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">pipeline_info</span><span class="o">.</span><span class="n">pipeline_details</span><span class="o">.</span><span class="n">pipeline_outputs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_info</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">pipeline_info</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_state</span> <span class="o">=</span> <span class="n">state</span>
@@ -7528,6 +7541,7 @@ Workflow        </code>
             <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">workflow_registry</span><span class="o">.</span><span class="n">register_workflow</span><span class="p">(</span>
                 <span class="n">workflow_details</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_workflow_details</span><span class="p">,</span> <span class="n">workflow_aliases</span><span class="o">=</span><span class="n">aliases</span>
             <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_stored</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">if</span> <span class="n">save</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
@@ -7593,6 +7607,28 @@ Workflow        </code>
 
 
 
+<h9 id="kiara.interfaces.python_api.workflow.Workflow.current_input_names" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">current_input_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.current_input_names" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
 <h9 id="kiara.interfaces.python_api.workflow.Workflow.current_inputs" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">current_inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span></code>
 
@@ -7624,6 +7660,28 @@ Workflow        </code>
   </span>
 
 <a href="#kiara.interfaces.python_api.workflow.Workflow.current_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.interfaces.python_api.workflow.Workflow.current_output_names" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">current_output_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.current_output_names" class="headerlink" title="Permanent link">&para;</a></h9>
 
     <div class="doc doc-contents ">
 
@@ -8144,49 +8202,54 @@ Workflow        </code>
 <span class="p">):</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source_step</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">output_step_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_step</span><span class="p">(</span><span class="n">source_step</span><span class="p">)</span>
+        <span class="n">source_step_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_step</span><span class="p">(</span><span class="n">source_step</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">output_step_obj</span> <span class="o">=</span> <span class="n">source_step</span>
+        <span class="n">source_step_obj</span> <span class="o">=</span> <span class="n">source_step</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_step</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">input_step_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_step</span><span class="p">(</span><span class="n">target_step</span><span class="p">)</span>
+        <span class="n">target_step_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_step</span><span class="p">(</span><span class="n">target_step</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">input_step_obj</span> <span class="o">=</span> <span class="n">target_step</span>
+        <span class="n">target_step_obj</span> <span class="o">=</span> <span class="n">target_step</span>
 
-    <span class="n">output_step_id</span> <span class="o">=</span> <span class="n">output_step_obj</span><span class="o">.</span><span class="n">step_id</span>
-    <span class="n">input_step_id</span> <span class="o">=</span> <span class="n">input_step_obj</span><span class="o">.</span><span class="n">step_id</span>
+    <span class="n">source_step_id</span> <span class="o">=</span> <span class="n">source_step_obj</span><span class="o">.</span><span class="n">step_id</span>
+    <span class="n">target_step_id</span> <span class="o">=</span> <span class="n">target_step_obj</span><span class="o">.</span><span class="n">step_id</span>
 
     <span class="nb">reversed</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">if</span> <span class="n">source_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">output_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">source_field</span> <span class="ow">in</span> <span class="n">output_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="nb">reversed</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Can&#39;t connect steps &#39;</span><span class="si">{</span><span class="n">output_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">source_field</span><span class="si">}</span><span class="s2">&#39; -&gt; &#39;</span><span class="si">{</span><span class="n">input_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">target_field</span><span class="si">}</span><span class="s2">&#39;: step &#39;</span><span class="si">{</span><span class="n">output_step_id</span><span class="si">}</span><span class="s2">&#39; does not have an output field &#39;</span><span class="si">{</span><span class="n">source_field</span><span class="si">}</span><span class="s2">&#39;. Available fields: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
+    <span class="k">if</span> <span class="n">source_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">source_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="nb">reversed</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">target_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="nb">reversed</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">reversed</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">target_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="k">if</span> <span class="nb">reversed</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">target_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Can&#39;t connect steps &#39;</span><span class="si">{</span><span class="n">output_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">source_field</span><span class="si">}</span><span class="s2">&#39; -&gt; &#39;</span><span class="si">{</span><span class="n">input_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">target_field</span><span class="si">}</span><span class="s2">&#39;: step &#39;</span><span class="si">{</span><span class="n">input_step_id</span><span class="si">}</span><span class="s2">&#39; does not have an input field &#39;</span><span class="si">{</span><span class="n">target_field</span><span class="si">}</span><span class="s2">&#39;. Available fields: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t connect steps &#39;</span><span class="si">{</span><span class="n">source_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">source_field</span><span class="si">}</span><span class="s2">&#39; -&gt; &#39;</span><span class="si">{</span><span class="n">target_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">target_field</span><span class="si">}</span><span class="s2">&#39;: invalid field name(s).&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">source_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">source_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t connect steps &#39;</span><span class="si">{</span><span class="n">source_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">source_field</span><span class="si">}</span><span class="s2">&#39; -&gt; &#39;</span><span class="si">{</span><span class="n">target_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">target_field</span><span class="si">}</span><span class="s2">&#39;: invalid field name(s).&quot;</span>
             <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">target_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">target_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Can&#39;t connect steps &#39;</span><span class="si">{</span><span class="n">output_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">source_field</span><span class="si">}</span><span class="s2">&#39; -&gt; &#39;</span><span class="si">{</span><span class="n">input_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">target_field</span><span class="si">}</span><span class="s2">&#39;: step &#39;</span><span class="si">{</span><span class="n">input_step_id</span><span class="si">}</span><span class="s2">&#39; does not have an output field &#39;</span><span class="si">{</span><span class="n">target_field</span><span class="si">}</span><span class="s2">&#39;. Available fields: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t connect steps &#39;</span><span class="si">{</span><span class="n">source_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">source_field</span><span class="si">}</span><span class="s2">&#39; -&gt; &#39;</span><span class="si">{</span><span class="n">target_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">target_field</span><span class="si">}</span><span class="s2">&#39;: invalid field name(s).&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">source_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">source_step_obj</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t connect steps &#39;</span><span class="si">{</span><span class="n">source_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">source_field</span><span class="si">}</span><span class="s2">&#39; -&gt; &#39;</span><span class="si">{</span><span class="n">target_step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">target_field</span><span class="si">}</span><span class="s2">&#39;: invalid field name(s).&quot;</span>
             <span class="p">)</span>
 
     <span class="c1"># we rely on the value of input links to always be a dict here</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">reversed</span><span class="p">:</span>
         <span class="n">source_addr</span> <span class="o">=</span> <span class="n">StepValueAddress</span><span class="p">(</span>
-            <span class="n">step_id</span><span class="o">=</span><span class="n">output_step_id</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="n">source_field</span>
+            <span class="n">step_id</span><span class="o">=</span><span class="n">source_step_id</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="n">source_field</span>
         <span class="p">)</span>
-        <span class="n">input_step_obj</span><span class="o">.</span><span class="n">input_links</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">target_field</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source_addr</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="n">target_step_obj</span><span class="o">.</span><span class="n">input_links</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">target_field</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source_addr</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">source_addr</span> <span class="o">=</span> <span class="n">StepValueAddress</span><span class="p">(</span>
-            <span class="n">step_id</span><span class="o">=</span><span class="n">input_step_id</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="n">target_field</span>
+            <span class="n">step_id</span><span class="o">=</span><span class="n">target_step_id</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="n">target_field</span>
         <span class="p">)</span>
-        <span class="n">output_step_obj</span><span class="o">.</span><span class="n">input_links</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">source_field</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source_addr</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="n">source_step_obj</span><span class="o">.</span><span class="n">input_links</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">source_field</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source_addr</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_invalidate_pipeline</span><span class="p">()</span>
 </code></pre></div>
@@ -8503,7 +8566,7 @@ Workflow        </code>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">set_inputs</span><span class="p">(</span><span class="o">**</span><span class="n">state</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_inputs</span> <span class="o">==</span> <span class="n">state</span><span class="o">.</span><span class="n">inputs</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_inputs</span> <span class="o">==</span> <span class="n">state</span><span class="o">.</span><span class="n">inputs</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_current_outputs</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">pipeline_info</span><span class="o">.</span><span class="n">pipeline_details</span><span class="o">.</span><span class="n">pipeline_outputs</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_info</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">pipeline_info</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_current_state</span> <span class="o">=</span> <span class="n">state</span>
@@ -8717,6 +8780,7 @@ Workflow        </code>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">workflow_registry</span><span class="o">.</span><span class="n">register_workflow</span><span class="p">(</span>
             <span class="n">workflow_details</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_workflow_details</span><span class="p">,</span> <span class="n">workflow_aliases</span><span class="o">=</span><span class="n">aliases</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_stored</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">if</span> <span class="n">save</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>

@@ -10,7 +10,7 @@ import os
 import re
 import structlog
 import sys
-import traceback
+from rich.traceback import Traceback
 from typing import TYPE_CHECKING, Dict, Iterable, List, Type, TypeVar
 
 from kiara.defaults import INVALID_VALUE_NAMES
@@ -58,7 +58,25 @@ def is_jupyter() -> bool:
 def log_exception(exc: Exception):
 
     if is_debug():
-        traceback.print_exc()
+        logger.exception(exc)
+
+    if is_develop():
+        from kiara.interfaces import get_console
+        from kiara.utils.develop import log_dev_message
+
+        exc_info = sys.exc_info()
+        if not exc_info:
+            # TODO: create exc_info from exception?
+            if not is_debug():
+                logger.exception(exc)
+        else:
+            console = get_console()
+            log_dev_message(
+                Traceback.from_exception(
+                    *exc_info, show_locals=True, width=console.width - 4  # type: ignore
+                ),
+                title="Exception details",
+            )
 
 
 def log_message(msg: str, **data):

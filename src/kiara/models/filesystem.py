@@ -226,7 +226,7 @@ class FileBundle(KiaraModel):
             raise ValueError(f"Path does not exist: {source}")
 
         if not os.path.isdir(os.path.realpath(source)):
-            raise ValueError(f"Path is not a file: {source}")
+            raise ValueError(f"Path is not a folder: {source}")
 
         if source.endswith(os.path.sep):
             source = source[0:-1]

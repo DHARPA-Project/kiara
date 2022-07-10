@@ -7,12 +7,12 @@
 
 import abc
 import inspect
+import structlog
 import uuid
 from abc import abstractmethod
 from multiformats import CID
 from pydantic import BaseModel, Field, ValidationError
-from rich.console import Group, RenderableType
-from rich.traceback import Traceback
+from rich.console import RenderableType
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -26,11 +26,10 @@ from typing import (
 )
 
 from kiara.exceptions import KiaraModuleConfigException
-from kiara.interfaces import get_console
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.module.jobs import JobLog
 from kiara.models.values.value_schema import ValueSchema
-from kiara.utils import is_debug, is_develop
+from kiara.utils import is_debug, log_exception
 from kiara.utils.hashing import compute_cid
 from kiara.utils.values import (
     augment_values,
@@ -48,6 +47,8 @@ yaml = StringYAML()
 KIARA_CONFIG = TypeVar("KIARA_CONFIG", bound=KiaraModuleConfig)
 
 ValueSetSchema = Mapping[str, Union[ValueSchema, Mapping[str, Any]]]
+
+log = structlog.getLogger()
 
 
 class InputOutputObject(abc.ABC):
@@ -428,38 +429,14 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
             try:
                 self.process(inputs=inputs, outputs=outputs)  # type: ignore
             except Exception as e:
-                if is_debug():
-                    from kiara.utils.develop import log_dev_message
-
-                    try:
-                        import traceback
-
-                        traceback.print_exc()
-                    except Exception:
-                        pass
-                if is_develop():
-                    console = get_console()
-                    tb = Traceback(width=console.width - 10)
-                    msg = f"Error processing module '{self.module_type_name}': {e}"
-                    g = Group(msg, tb)
-                    log_dev_message(g)
+                log_exception(e)
                 raise e
-
         else:
 
             try:
                 self.process(inputs=inputs, outputs=outputs, job_log=job_log)  # type: ignore
             except Exception as e:
-                if is_debug():
-                    try:
-                        import traceback
-
-                        traceback.print_exc()
-                    except Exception:
-                        pass
-                if is_develop():
-                    tb = Traceback()
-                    log_dev_message(tb)
+                log_exception(e)
                 raise e
 
     def __eq__(self, other):

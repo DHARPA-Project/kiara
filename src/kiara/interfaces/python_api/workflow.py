@@ -24,7 +24,7 @@ from kiara.models.module.pipeline.pipeline import Pipeline, PipelineInfo
 from kiara.models.values.value import ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.models.workflow import WorkflowDetails, WorkflowInfo, WorkflowState
-from kiara.utils import find_free_id, is_debug
+from kiara.utils import find_free_id, log_exception
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -96,10 +96,7 @@ class WorkflowPipelineController(SinglePipelineController):
                         job_ids[step_id] = job_id
                     except Exception as e:
                         # TODO: cancel running jobs?
-                        if is_debug():
-                            import traceback
-
-                            traceback.print_exc()
+                        log_exception(e)
                         log.error(
                             "error.processing.pipeline",
                             step_id=step_id,
@@ -120,12 +117,8 @@ class WorkflowPipelineController(SinglePipelineController):
                         stage=idx,
                     )
                     break
-        except Exception:
-            if is_debug():
-                import traceback
-
-                traceback.print_exc()
-
+        except Exception as e:
+            log_exception(e)
         finally:
             self._is_running = False
 

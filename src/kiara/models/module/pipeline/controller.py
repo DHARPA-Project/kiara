@@ -12,7 +12,7 @@ from typing import Dict, Mapping, Union
 from kiara.context import JobRegistry
 from kiara.models.events.pipeline import PipelineDetails, PipelineEvent
 from kiara.models.module.pipeline.pipeline import Pipeline, PipelineListener
-from kiara.utils import is_debug
+from kiara.utils import log_exception
 
 logger = structlog.getLogger()
 
@@ -210,10 +210,7 @@ class SinglePipelineBatchController(SinglePipelineController):
                         job_ids[step_id] = job_id
                     except Exception as e:
                         # TODO: cancel running jobs?
-                        if is_debug():
-                            import traceback
-
-                            traceback.print_exc()
+                        log_exception(e)
                         log.error(
                             "error.processing.pipeline",
                             step_id=step_id,

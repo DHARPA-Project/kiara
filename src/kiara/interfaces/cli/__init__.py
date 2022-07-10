@@ -27,14 +27,6 @@ from kiara.utils.cli import terminal_print
 # click.rich_click.USE_MARKDOWN = True
 click.rich_click.USE_RICH_MARKUP = True
 
-# try:
-#     import uvloop
-#
-#     uvloop.install()
-# except Exception:
-#     pass
-
-# click.anyio_backend = "asyncio"
 
 if is_debug():
     structlog.configure(

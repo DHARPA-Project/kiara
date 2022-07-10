@@ -5,12 +5,11 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import uuid
-from rich import box
-from rich.console import RenderableType
-from rich.table import Table
 from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Type, Union
 
 if TYPE_CHECKING:
+    from rich.table import Table
+
     from kiara import KiaraModule
     from kiara.data_types import DataType
     from kiara.models.module.jobs import ActiveJob
@@ -158,7 +157,11 @@ class InvalidValuesException(Exception):
 
         super().__init__(_msg)
 
-    def create_renderable(self, **config: Any) -> Table:
+    def create_renderable(self, **config: Any) -> "Table":
+
+        from rich import box
+        from rich.console import RenderableType
+        from rich.table import Table
 
         table = Table(box=box.SIMPLE, show_header=True)
 
@@ -209,7 +212,27 @@ class FailedJobException(Exception):
         self.job: ActiveJob = job
         if msg is None:
             msg = "Job failed."
+        self.msg = msg
         super().__init__(msg)
+
+    def create_renderable(self, **config: Any):
+
+        from rich import box
+        from rich.console import Group
+        from rich.panel import Panel
+        from rich.table import Table
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("key", style="i")
+        table.add_column("value")
+
+        table.add_row("job_id", str(self.job.job_id))
+        table.add_row("module_type", self.job.job_config.module_type)
+
+        group = Group(
+            Panel(f"[red]Error[/red]: [i]{self.msg}[i]", box=box.SIMPLE), table
+        )
+        return group
 
 
 class NoSuchValueException(Exception):

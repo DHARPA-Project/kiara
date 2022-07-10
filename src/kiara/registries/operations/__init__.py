@@ -20,7 +20,7 @@ from kiara.models.module.operation import (
     PipelineOperationConfig,
 )
 from kiara.operations import OperationType
-from kiara.utils import is_debug
+from kiara.utils import log_exception
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -70,10 +70,7 @@ class OperationRegistry(object):
                     kiara=self._kiara, op_type_name=op_name
                 )
             except Exception as e:
-                if is_debug():
-                    import traceback
-
-                    traceback.print_exc()
+                log_exception(e)
                 logger.debug("ignore.operation_type", operation_name=op_name, reason=e)
 
         self._operation_types = _operation_types
@@ -212,11 +209,7 @@ class OperationRegistry(object):
                     msg = e
                 details["details"] = msg
                 logger.error("invalid.operation", **details)
-                if is_debug():
-                    import traceback
-
-                    traceback.print_exc()
-
+                log_exception(e)
                 continue
 
         error_details = {}
@@ -334,10 +327,8 @@ class OperationRegistry(object):
                         continue
                     details = error_details.get(missing_op_id, {"details": "-- n/a --"})
                     exception = details.pop("exception", None)
-                    if exception and is_debug():
-                        import traceback
-
-                        traceback.print_exception(*exception)
+                    if exception:
+                        log_exception(exception)
 
                     logger.error(f"invalid.operation.{mn}", operation_id=mn, **details)
                 break

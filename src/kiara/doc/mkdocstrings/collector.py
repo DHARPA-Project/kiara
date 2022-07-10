@@ -11,6 +11,7 @@ from mkdocstrings.loggers import get_logger
 
 from kiara.context import Kiara, KiaraContextInfo
 from kiara.models.info import ItemInfo
+from kiara.utils import log_exception
 
 logger = get_logger(__name__)
 
@@ -60,10 +61,8 @@ class KiaraCollector(BaseCollector):
         ctx: KiaraContextInfo = builtins.plugin_package_context_info  # type: ignore
         try:
             item: ItemInfo = ctx.get_info(item_type=item_type, item_id=item_id)
-        except Exception:
-            import traceback
-
-            traceback.print_exc()
+        except Exception as e:
+            log_exception(e)
             raise CollectionError(f"Invalid id: {identifier}")
 
         return {"obj": item, "identifier": identifier}

@@ -21,7 +21,7 @@ from kiara.models.values.value import (
     ValuePedigree,
 )
 from kiara.registries.ids import ID_REGISTRY
-from kiara.utils import get_dev_config, is_debug, is_develop
+from kiara.utils import get_dev_config, is_develop, log_exception
 
 try:
     from typing import Literal
@@ -219,19 +219,14 @@ class ModuleProcessor(abc.ABC):
             if not msg:
                 msg = repr(e)
             job.error = msg
-            if is_debug():
-                try:
-                    import traceback
 
-                    traceback.print_exc()
-                except Exception:
-                    pass
             if isinstance(e, KiaraProcessingException):
                 e._module = module
                 e._inputs = ValueMapReadOnly.create_from_ids(
                     data_registry=self._kiara.data_registry, **job_config.inputs
                 )
                 job._exception = e
+                log_exception(e)
                 raise e
             else:
                 kpe = KiaraProcessingException(
@@ -242,7 +237,8 @@ class ModuleProcessor(abc.ABC):
                     ),
                 )
                 job._exception = kpe
-                raise kpe
+                log_exception(kpe)
+                raise e
 
     def job_status_updated(
         self, job_id: uuid.UUID, status: Union[JobStatus, str, Exception]

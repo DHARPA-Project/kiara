@@ -51,7 +51,7 @@ from kiara.models.module.manifest import InputsManifest, Manifest
 from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
 from kiara.models.values.value_schema import ValueSchema
-from kiara.utils import is_debug, is_jupyter
+from kiara.utils import is_jupyter, log_exception
 from kiara.utils.hashing import create_cid_digest
 from kiara.utils.json import orjson_dumps
 from kiara.utils.yaml import StringYAML
@@ -1489,11 +1489,13 @@ class ValueMapWritable(ValueMap):  # type: ignore
 
         invalid = self.check_invalid()
         if invalid:
-            if is_debug():
-                import traceback
-
-                traceback.print_stack()
-            raise InvalidValuesException(invalid_values=invalid)
+            e = InvalidValuesException(invalid_values=invalid)
+            try:
+                raise e
+            except Exception:
+                # this is silly, I know
+                log_exception(e)
+                raise e
 
     def set_value(self, field_name: str, data: Any) -> None:
         """Set the value for the specified field."""

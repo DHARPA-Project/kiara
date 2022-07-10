@@ -897,7 +897,6 @@ class DataRegistry(object):
                 # )
                 values[input_name] = value
             except Exception as e:
-
                 log_exception(e)
 
                 msg: Any = str(e)

@@ -23,7 +23,7 @@ from kiara.exceptions import (
     NoSuchExecutionTargetException,
 )
 from kiara.interfaces.python_api.operation import KiaraOperation
-from kiara.utils import is_debug
+from kiara.utils import log_exception
 from kiara.utils.cli import dict_from_cli_args, terminal_print
 from kiara.utils.cli.rich_click import rich_format_operation_help
 from kiara.utils.output import OutputDetails, create_table_from_base_model_cls
@@ -161,10 +161,7 @@ def run(
         terminal_print(msg, in_panel="[b red]Module configuration error[/b red]")
         sys.exit(1)
     except Exception as e:
-        if is_debug():
-            import traceback
-
-            traceback.print_exc()
+        log_exception(e)
         terminal_print()
         terminal_print(
             f"Error when trying to validate the operation [i]'{kiara_op.operation_name}'[/i]:\n"
@@ -266,8 +263,11 @@ def run(
         outputs = kiara_op.retrieve_result(job_id=job_id)
     except FailedJobException as fje:
         print()
-        terminal_print(f"[red b]Job failed[/red b]: {fje.job.error}")
+        terminal_print(fje, in_panel="Processing error")
         sys.exit(1)
+    except Exception as e:
+        print()
+        terminal_print(e)
 
     if not silent:
         if len(outputs) > 1:

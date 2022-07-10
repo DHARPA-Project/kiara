@@ -12,6 +12,7 @@ from bidict import bidict
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Type, Union
 
 from kiara.context.config import JobCacheStrategy
+from kiara.exceptions import FailedJobException
 from kiara.models.events import KiaraEvent
 from kiara.models.events.job_registry import (
     JobArchiveAddedEvent,
@@ -504,7 +505,7 @@ class JobRegistry(object):
                     msg = str(job._exception)
                     if not msg:
                         msg = repr(job._exception)
-                raise Exception(f"Job failed: {msg}")
+                raise FailedJobException(job=job, msg=msg)
             else:
                 raise Exception(f"Can't retrieve job with id '{job_id}': no such job.")
 

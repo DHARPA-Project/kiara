@@ -14,7 +14,7 @@ from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import ValueSetSchema
 from kiara.modules.included_core_modules.create_from import CreateFromModule
 from kiara.operations import OperationType
-from kiara.utils import is_debug
+from kiara.utils import log_exception
 
 if TYPE_CHECKING:
     from kiara.modules import KiaraModule
@@ -120,10 +120,7 @@ class CreateFromOperationType(OperationType[CreateValueFromDetails]):
                     )
                     result[op_id] = oc
             except Exception as e:
-                if is_debug():
-                    import traceback
-
-                    traceback.print_exc()
+                log_exception(e)
                 logger.debug(
                     "ignore.create_operation_instance", module_type=name, reason=e
                 )

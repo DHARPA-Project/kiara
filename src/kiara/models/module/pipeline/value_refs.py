@@ -89,16 +89,6 @@ class ValueRef(BaseModel):
     _id: uuid.UUID = PrivateAttr(default_factory=uuid.uuid4)
     value_name: str
     value_schema: ValueSchema
-    # pipeline_id: str
-
-    # @validator("value_schema")
-    # def validate_schema(cls, value):
-    #
-    #     from kiara.models.documentation import DocumentationMetadataModel
-    #     import traceback
-    #     traceback.print_stack()
-    #     print(cls)
-    #     assert isinstance(value.doc, DocumentationMetadataModel)
 
     def __eq__(self, other):
 

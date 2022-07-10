@@ -19,7 +19,7 @@ from kiara.models.values.info import RENDER_FIELDS, ValueInfo, ValuesInfo
 from kiara.operations.included_core_operations.render_value import (
     RenderValueOperationType,
 )
-from kiara.utils import is_debug, is_develop, log_message
+from kiara.utils import is_develop, log_exception, log_message
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
 from kiara.utils.yaml import StringYAML
 
@@ -309,11 +309,7 @@ def load_value(ctx, value_id: str, single_page: bool):
                 value.value_id, target_type="terminal_renderable"
             )
         except Exception as e:
-
-            if is_debug():
-                import traceback
-
-                traceback.print_exc()
+            log_exception(e)
             log_message("error.pretty_print", value=value.value_id, error=e)
             renderable = [str(value.data)]
 

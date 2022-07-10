@@ -2,7 +2,7 @@
 import os.path
 from enum import Enum
 from pydantic import BaseModel, BaseSettings, Extra, Field
-from rich.console import RenderableType
+from rich.console import Group, RenderableType
 from rich.panel import Panel
 from typing import Any, ClassVar, Dict, Union
 
@@ -17,8 +17,8 @@ def log_dev_message(msg: RenderableType, title: Union[str, None] = None):
         return
 
     if not title:
-        title = "[yellow]DEV MESSAGE[/yellow]"
-    panel = Panel(msg, title=title, title_align="left")
+        title = "Develop-mode message"
+    panel = Panel(Group("", msg), title=f"[yellow]{title}[/yellow]", title_align="left")
 
     from kiara.utils.cli import terminal_print
 

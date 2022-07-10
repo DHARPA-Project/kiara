@@ -166,10 +166,16 @@ def _process_subclass(
                 if not hasattr(sub_class, "process"):
                     missing.append("process")
 
-                msg = f"Invalid kiara module: **{sub_class.__module__}.{sub_class.__name__}**\n\nMissing method(s):"
+                name = f"{sub_class.__module__}.{sub_class.__name__}"
+                title = "Invalid kiara module"
+                if hasattr(sub_class, "_module_type_name"):
+                    name = f"**{name}** ( *{sub_class._module_type_name}* )"  # type: ignore
+                    title = f"{title} '[i]{sub_class._module_type_name}[/i]'"  # type: ignore
+                msg = f"Invalid kiara module: {name}\n\nMissing method(s):"
                 for m in missing:
                     msg = f"{msg}\n- *{m}*"
-                log_dev_message(msg=Markdown(msg))
+
+                log_dev_message(msg=Markdown(msg), title=title)
 
         log_message(
             "ignore.subclass",
@@ -308,10 +314,7 @@ def load_all_subclasses_for_entry_point(
                     args = plugin.plugin[1:]
                 classes = func(*args)
             except Exception as e:
-                if is_debug():
-                    import traceback
-
-                    traceback.print_exc()
+                log_exception(e)
                 raise Exception(f"Error trying to load plugin '{plugin.plugin}': {e}")
 
             for sub_class in classes:
@@ -623,10 +626,7 @@ def find_all_kiara_pipeline_paths(
                         paths[path] = metadata
 
             except Exception as e:
-                if is_debug():
-                    import traceback
-
-                    traceback.print_exc()
+                log_exception(e)
                 if skip_errors:
                     log_message(
                         "ignore.pipline_entrypoint", entrypoint_name=name, reason=str(e)

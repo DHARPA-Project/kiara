@@ -13,10 +13,10 @@ import sys
 from rich.console import Console
 from typing import Union
 
+log = structlog.getLogger()
+
 # Global console used by alternative print
 _console: Union[Console, None] = None
-
-log = structlog.getLogger()
 
 
 def get_console() -> Console:

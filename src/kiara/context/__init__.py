@@ -40,7 +40,7 @@ from kiara.registries.modules import ModuleRegistry
 from kiara.registries.operations import OperationRegistry
 from kiara.registries.types import TypeRegistry
 from kiara.registries.workflows import WorkflowRegistry
-from kiara.utils import is_debug, log_message
+from kiara.utils import log_exception, log_message
 from kiara.utils.class_loading import find_all_archive_types
 from kiara.utils.operations import filter_operations
 
@@ -402,10 +402,7 @@ class Kiara(object):
                 )
 
             except Exception as e:
-                if is_debug():
-                    import traceback
-
-                    traceback.print_exc()
+                log_exception(e)
                 stored[field_name] = StoreValueResult.construct(
                     value=value, aliases=sorted(field_aliases), error=str(e)
                 )
